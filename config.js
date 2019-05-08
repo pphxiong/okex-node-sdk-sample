@@ -5,8 +5,8 @@ urlHost =  'https://www.okex.com';
 websocekHost='wss://real.okex.com:10442/ws/v3';
 
 
-module.exports.key = key;
-module.exports.secret = secret;
+module.exports.httpkey = key;
+module.exports.httpsecret = secret;
 module.exports.passphrase = passphrase;
 module.exports.urlHost = urlHost;
 module.exports.websocekHost = websocekHost;
