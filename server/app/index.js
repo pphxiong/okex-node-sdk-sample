@@ -31,13 +31,15 @@ app.get('/test', function(req, res) {
 
 app.get('/account/getCurrencies', function(req, response) {
     authClient.account().getCurrencies().then(res => {
-        console.log(JSON.stringify(res))
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
-
 });
 
-
+app.get('/account/getWallet', function(req, response) {
+    authClient.account().getWallet().then(res => {
+        send(response, { errcode: 0, errmsg: 'ok', data: res })
+    });
+});
 
 
 app.listen(80);
