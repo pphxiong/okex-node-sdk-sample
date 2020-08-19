@@ -36,7 +36,7 @@ app.get('/account/getCurrencies', function(req, response) {
 });
 
 app.get('/account/getWallet', function(req, response) {
-    authClient.account().getWallet().then(res => {
+    authClient.account().getWallet('BTC').then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
 });
