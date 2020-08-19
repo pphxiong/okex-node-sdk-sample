@@ -1,8 +1,8 @@
-key = 'f3d985bc-887d-45bb-8db4-ceff2sedd87fe';
-secret = '1319B1CBE5ddddwwsEF56DAA7';
-passphrase = 'xewwdd';
+key = 'b060841b-f9f0-4b23-a3e5-0520c5587087';
+secret = '0BD4704A951F18384D520B27882B5872';
+passphrase = 'Xiong092479';
 urlHost =  'https://www.okex.com';
-websocekHost='wss://real.okex.com:10442/ws/v3';
+websocekHost='wss://real.okex.com:8443/ws/v3';
 
 
 module.exports.httpkey = key;

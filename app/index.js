@@ -5,7 +5,7 @@ const { AuthenticatedClient } = require('@okfe/okex-node');
 
 var config  = require('./config');
 const pClient = new PublicClient(urlHost);
-const authClient = new AuthenticatedClient(config.httpkey, 
+const authClient = new AuthenticatedClient(config.httpkey,
                                         config.httpsecret, config.passphrase, config.urlHost);
 
 const wss= new V3WebsocketClient(config.websocekHost);
@@ -32,7 +32,7 @@ wss.on('open', data=>{
     console.log("websocket open!!!");
     wss.login(config.wskey, config.wssecret, config.passphrase);
     wss.subscribe('swap/depth:BTC-USD-SWAP');
-   
+
 });
 wss.on('message', wsMessage);
 event.on('login',data =>{
@@ -61,7 +61,7 @@ authClient.spot().getAccounts(currency).then(res => console.log(JSON.stringify(r
 
 /*************************** wallet test examples ******************************/
 //验证通过
-//authClient.account().getCurrencies().then(res => console.log(JSON.stringify(res)));  
+//authClient.account().getCurrencies().then(res => console.log(JSON.stringify(res)));
 
 
 //websocket 返回消息

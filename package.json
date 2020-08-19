@@ -1,0 +1,25 @@
+{
+  "name": "@ali/topSdk",
+  "author": "xuteng.xt@alibaba-inc.com",
+  "version": "1.6.0",
+  "description": "Taobao Open API & Message Client.",
+  "keywords": [
+    "top",
+    "taobao",
+    "open api",
+    "top client"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "start": "node app/index.js"
+  },
+  "dependencies": {
+    "@okfe/okex-node": "0.0.52"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "publishConfig": {
+    "registry": "http://registry.npm.alibaba-inc.com"
+  }
+}
