@@ -1,16 +1,16 @@
-var EventEmitter = require('events').EventEmitter;
+// var EventEmitter = require('events').EventEmitter;
 const { PublicClient } = require('@okfe/okex-node');
 // const { V3WebsocketClient } = require('@okfe/okex-node');
 const { AuthenticatedClient } = require('@okfe/okex-node');
 
 var config  = require('./config');
-const pClient = new PublicClient(urlHost);
+const pClient = new PublicClient(config.urlHost);
 const authClient = new AuthenticatedClient(config.httpkey,
     config.httpsecret, config.passphrase, config.urlHost);
 
 // const wss= new V3WebsocketClient(config.websocekHost);
 
-const event = new EventEmitter();
+// const event = new EventEmitter();
 const sample_instrument_id = 'BTC-USDT';
 var channel_id = 'swap/depth5:BTC-USD-SWAP';
 var instrument_id = "btc-usdt";
@@ -45,8 +45,8 @@ event.on('login',data =>{
 
 /*************************** ETT test examples ******************************/
 //验证通过
-authClient.ett().getAccounts(ett_currency).then(res => console.log(JSON.stringify(res)));
-pClient.ett().getConstituents(ett_currency).then(res => console.log(JSON.stringify(res)));
+// authClient.ett().getAccounts(ett_currency).then(res => console.log(JSON.stringify(res)));
+// pClient.ett().getConstituents(ett_currency).then(res => console.log(JSON.stringify(res)));
 
 
 
@@ -65,20 +65,20 @@ authClient.spot().getAccounts(currency).then(res => console.log(JSON.stringify(r
 
 
 //websocket 返回消息
-function wsMessage(data){
-    console.log(`!!! websocket message =${data}`);
-    var obj = JSON.parse(data);
-    var eventType = obj.event;
-    if(eventType == 'login'){
-        //登录消息
-        if(obj.success == true){
-            event.emit('login');
-        }
-    }else if(eventType == undefined){
-        //行情消息相关
-        tableMsg(obj);
-    }
-}
+// function wsMessage(data){
+//     console.log(`!!! websocket message =${data}`);
+//     var obj = JSON.parse(data);
+//     var eventType = obj.event;
+//     if(eventType == 'login'){
+//         //登录消息
+//         if(obj.success == true){
+//             event.emit('login');
+//         }
+//     }else if(eventType == undefined){
+//         //行情消息相关
+//         tableMsg(obj);
+//     }
+// }
 
 function tableMsg(marketData){
     var tableType = marketData.table;
