@@ -45,8 +45,8 @@ console.log('spot.......');
 
 /*************************** ETT test examples ******************************/
 //验证通过
-// authClient.ett().getAccounts(ett_currency).then(res => console.log(JSON.stringify(res)));
-// pClient.ett().getConstituents(ett_currency).then(res => console.log(JSON.stringify(res)));
+authClient.ett().getAccounts(ett_currency).then(res => console.log(JSON.stringify(res)));
+pClient.ett().getConstituents(ett_currency).then(res => console.log(JSON.stringify(res)));
 
 
 
