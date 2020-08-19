@@ -1,3 +1,11 @@
+const { PublicClient } = require('@okfe/okex-node');
+const { AuthenticatedClient } = require('@okfe/okex-node');
+
+var config  = require('./config');
+const pClient = new PublicClient(config.urlHost);
+const authClient = new AuthenticatedClient(config.httpkey,
+    config.httpsecret, config.passphrase, config.urlHost);
+
 var express = require('express');
 // var http = require('../utils/http');
 var app = express();
@@ -20,6 +28,17 @@ app.all('*', function(req, res, next) {
 app.get('/test', function(req, res) {
     send(res, { errcode: 0, errmsg: 'ok' })
 });
+
+app.get('/account/getCurrencies', function(req, response) {
+    authClient.account().getCurrencies().then(res => {
+        console.log(JSON.stringify(res))
+        send(response, { errcode: 0, errmsg: 'ok', data: res })
+    });
+
+});
+
+
+
 
 app.listen(80);
 
