@@ -35,13 +35,13 @@ console.log('spot.......');
 //
 // });
 // wss.on('message', wsMessage);
-event.on('login',data =>{
-
-    // (async function(){
-    //     //wss.subscribe('swap/account:BTC-USD-SWAP');
-    //     //wss.unsubscribe('swap/position:BTC-USD-SWAP');
-    // }())
-})
+// event.on('login',data =>{
+//
+//     (async function(){
+//         //wss.subscribe('swap/account:BTC-USD-SWAP');
+//         //wss.unsubscribe('swap/position:BTC-USD-SWAP');
+//     }())
+// })
 
 /*************************** ETT test examples ******************************/
 //验证通过
