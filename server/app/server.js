@@ -45,8 +45,8 @@ console.log('spot.......');
 
 /*************************** ETT test examples ******************************/
 //验证通过
-authClient.ett().getAccounts(ett_currency).then(res => console.log(JSON.stringify(res)));
-pClient.ett().getConstituents(ett_currency).then(res => console.log(JSON.stringify(res)));
+// authClient.ett().getAccounts(ett_currency).then(res => console.log(JSON.stringify(res)));
+// pClient.ett().getConstituents(ett_currency).then(res => console.log(JSON.stringify(res)));
 
 
 
@@ -61,7 +61,7 @@ authClient.futures().getPosition(futures_instrument_id).then(res => console.log(
 
 /*************************** wallet test examples ******************************/
 //验证通过
-//authClient.account().getCurrencies().then(res => console.log(JSON.stringify(res)));
+authClient.account().getCurrencies().then(res => console.log(JSON.stringify(res)));
 
 
 //websocket 返回消息
