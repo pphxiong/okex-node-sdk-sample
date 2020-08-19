@@ -1,4 +1,4 @@
-var http = require('http');
+var http = require('server/utils/http');
 var https = require('https');
 var qs = require('querystring');
 var fibers = require('fibers');
@@ -28,30 +28,30 @@ String.prototype.format = function(args) {
 };
 
 exports.post = function (host,port,path,data,callback) {
-	
-	var content = qs.stringify(data);  
-	var options = {  
-		hostname: host,  
-		port: port,  
-		path: path + '?' + content,  
+
+	var content = qs.stringify(data);
+	var options = {
+		hostname: host,
+		port: port,
+		path: path + '?' + content,
 		method:'GET'
-	};  
-	  
-	var req = http.request(options, function (res) {  
-		console.log('STATUS: ' + res.statusCode);  
-		console.log('HEADERS: ' + JSON.stringify(res.headers));  
-		res.setEncoding('utf8');  
-		res.on('data', function (chunk) {  
+	};
+
+	var req = http.request(options, function (res) {
+		console.log('STATUS: ' + res.statusCode);
+		console.log('HEADERS: ' + JSON.stringify(res.headers));
+		res.setEncoding('utf8');
+		res.on('data', function (chunk) {
 			//console.log('BODY: ' + chunk);
 			callback(chunk);
-		});  
+		});
 	});
-	  
-	req.on('error', function (e) {  
-		console.log('problem with request: ' + e.message);  
-	});  
-	  
-	req.end(); 
+
+	req.on('error', function (e) {
+		console.log('problem with request: ' + e.message);
+	});
+
+	req.end();
 };
 
 exports.get2 = function (url,data,callback,safe) {
@@ -61,30 +61,30 @@ exports.get2 = function (url,data,callback,safe) {
 	if(safe){
 		proto = https;
 	}
-	var req = proto.get(url, function (res) {  
-		//console.log('STATUS: ' + res.statusCode);  
-		//console.log('HEADERS: ' + JSON.stringify(res.headers));  
-		res.setEncoding('utf8');  
-		res.on('data', function (chunk) {  
+	var req = proto.get(url, function (res) {
+		//console.log('STATUS: ' + res.statusCode);
+		//console.log('HEADERS: ' + JSON.stringify(res.headers));
+		res.setEncoding('utf8');
+		res.on('data', function (chunk) {
 			//console.log('BODY: ' + chunk);
 			var json = JSON.parse(chunk);
 			callback(true,json);
-		});  
+		});
 	});
-	  
-	req.on('error', function (e) {  
+
+	req.on('error', function (e) {
 		console.log('problem with request: ' + e.message);
 		callback(false,e);
-	});  
-	  
-	req.end(); 
+	});
+
+	req.end();
 };
 
 exports.get = function (host,port,path,data,callback,safe) {
-	var content = qs.stringify(data);  
-	var options = {  
-		hostname: host,  
-		path: path + '?' + content,  
+	var content = qs.stringify(data);
+	var options = {
+		hostname: host,
+		path: path + '?' + content,
 		method:'GET'
 	};
 	if(port){
@@ -94,23 +94,23 @@ exports.get = function (host,port,path,data,callback,safe) {
 	if(safe){
 		proto = https;
 	}
-	var req = proto.request(options, function (res) {  
-		//console.log('STATUS: ' + res.statusCode);  
-		//console.log('HEADERS: ' + JSON.stringify(res.headers));  
-		res.setEncoding('utf8');  
-		res.on('data', function (chunk) {  
+	var req = proto.request(options, function (res) {
+		//console.log('STATUS: ' + res.statusCode);
+		//console.log('HEADERS: ' + JSON.stringify(res.headers));
+		res.setEncoding('utf8');
+		res.on('data', function (chunk) {
 			//console.log('BODY: ' + chunk);
 			var json = JSON.parse(chunk);
 			callback(true,json);
-		});  
+		});
 	});
-	  
-	req.on('error', function (e) {  
+
+	req.on('error', function (e) {
 		console.log('problem with request: ' + e.message);
 		callback(false,e);
-	});  
-	  
-	req.end(); 
+	});
+
+	req.end();
 };
 
 exports.getSync = function (url,data,safe,encoding) {
@@ -131,22 +131,22 @@ exports.getSync = function (url,data,safe,encoding) {
 
 	var f = fibers.current;
 
-	var req = proto.get(url, function (res) {  
-		//console.log('STATUS: ' + res.statusCode);  
-		//console.log('HEADERS: ' + JSON.stringify(res.headers));  
+	var req = proto.get(url, function (res) {
+		//console.log('STATUS: ' + res.statusCode);
+		//console.log('HEADERS: ' + JSON.stringify(res.headers));
 		res.setEncoding(encoding);
 		var body = '';
 
 		ret.type = res.headers["content-type"];
 		res.on('data', function (chunk) {
 			body += chunk;
-			
+
 		});
 
 		res.on('end',function(){
 			if(encoding != 'binary'){
 				try {
-						
+
 					ret.data = JSON.parse(body);
 					f.run();
 				} catch(e) {
@@ -159,13 +159,13 @@ exports.getSync = function (url,data,safe,encoding) {
 			}
 		});
 	});
-	  
-	req.on('error', function (e) {  
+
+	req.on('error', function (e) {
 		console.log('problem with request: ' + e.message);
 		ret.err = e;
 		f.run();
 	});
-	  
+
 	req.end();
 
 	fibers.yield();
