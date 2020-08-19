@@ -1,0 +1,130 @@
+@import '~@common/styles/reset.less';
+@import '~@common/styles/font-icons/fonts.css';
+
+@import "./config.less";
+
+.frame{
+  background-color:@appBgColor;
+  a{
+    color:@linkColor;
+    &:active,&.active{
+      color:@linkActiveColor;
+    }
+    &:hover{
+      color:@linkHoverColor;
+    }
+  }
+  .frame-header{
+    height:@headerHeight;
+    line-height:@headerHeight;
+    // box-shadow:0 0 3px 2px #ddd;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:2;
+    color:@appColor;
+  }
+  .frame-footer{
+    height:@footerHeight;
+    line-height:@footerHeight;
+    position:fixed;
+    bottom:0;
+    left:@menuWidth;
+    right:0;
+    z-index:1;
+    transition:left .3s;
+    &.showMenu{
+      left:0;
+      transition:left .3s;
+    }
+  }
+  .frame-main{
+    max-width:@maxWidth;
+    margin:0 auto;
+    padding-top:@headerHeight;
+    padding-bottom:@footerHeight;
+    .frame-container{
+      position:relative;
+      .frame-aside{
+        width:@menuWidth;
+        position:fixed;
+        left:calc(50% - @maxWidth/2);
+        top:@headerHeight;
+        bottom:0;
+        z-index:1;
+        color:@appColor;
+        transition:left .3s;
+        &.showMenu{
+          left:calc(0px - @menuWidth);
+          transition:left .3s;
+        }
+      }
+      .frame-view{
+        padding-left:@menuWidth;
+        min-height:calc(100vh - @footerHeight - @headerHeight);
+        transition:padding-left .3s;
+        &.showMenu{
+          padding-left:0;
+          transition:padding-left .3s;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width:@maxWidth){
+  .frame{
+    .frame-main{
+      .frame-container{
+        .frame-aside{
+          left:0;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width:1024px){
+  .frame{
+    .frame-main{
+      .frame-container{
+        .frame-aside{
+          left:calc(0px - @menuWidth);
+          &.showMenu{
+            left:0;
+          }
+        }
+        .frame-view{
+          padding-left:@collapseMenuWidth;
+        }
+      }
+    }
+    .frame-footer{
+      left:0;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
