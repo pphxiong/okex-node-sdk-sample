@@ -37,10 +37,10 @@ wss.on('open', data=>{
 wss.on('message', wsMessage);
 event.on('login',data =>{
 
-    (async function(){
-        //wss.subscribe('swap/account:BTC-USD-SWAP');
-        //wss.unsubscribe('swap/position:BTC-USD-SWAP');
-    }())
+    // (async function(){
+    //     //wss.subscribe('swap/account:BTC-USD-SWAP');
+    //     //wss.unsubscribe('swap/position:BTC-USD-SWAP');
+    // }())
 })
 
 /*************************** ETT test examples ******************************/
