@@ -46,8 +46,7 @@ app.get('/account/getWallet', function(req, response) {
 app.get('/futures/getOrders', function(req, response) {
     const { query = {} } = req;
     const { instrument_id } = query; // "BTC-USD-200828"
-    console.log(req,instrument_id)
-    authClient.futures().getOrders("BTC-USD-200828", { state: 2, limit: 20 }).then(res => {
+    authClient.futures().getOrders(instrument_id, { state: 2, limit: 20 }).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
 });
