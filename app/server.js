@@ -57,7 +57,7 @@ authClient.futures().getPosition(futures_instrument_id).then(res => console.log(
 
 /*************************** spot api test **********************************/
 //验证通过
-authClient.spot().getAccounts(currency).then(res => console.log(JSON.stringify(res)));
+// authClient.spot().getAccounts(currency).then(res => console.log(JSON.stringify(res)));
 
 /*************************** wallet test examples ******************************/
 //验证通过
