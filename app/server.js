@@ -1,6 +1,6 @@
 var EventEmitter = require('events').EventEmitter;
 const { PublicClient } = require('@okfe/okex-node');
-const { V3WebsocketClient } = require('@okfe/okex-node');
+// const { V3WebsocketClient } = require('@okfe/okex-node');
 const { AuthenticatedClient } = require('@okfe/okex-node');
 
 var config  = require('./config');
@@ -8,7 +8,7 @@ const pClient = new PublicClient(urlHost);
 const authClient = new AuthenticatedClient(config.httpkey,
     config.httpsecret, config.passphrase, config.urlHost);
 
-const wss= new V3WebsocketClient(config.websocekHost);
+// const wss= new V3WebsocketClient(config.websocekHost);
 
 const event = new EventEmitter();
 const sample_instrument_id = 'BTC-USDT';
@@ -27,14 +27,14 @@ var ett_currency = "ok06ett";
 
 //websocket 初始化
 console.log('spot.......');
-wss.connect();
-wss.on('open', data=>{
-    console.log("websocket open!!!");
-    wss.login(config.wskey, config.wssecret, config.passphrase);
-    wss.subscribe('swap/depth:BTC-USD-SWAP');
-
-});
-wss.on('message', wsMessage);
+// wss.connect();
+// wss.on('open', data=>{
+//     console.log("websocket open!!!");
+//     wss.login(config.wskey, config.wssecret, config.passphrase);
+//     wss.subscribe('swap/depth:BTC-USD-SWAP');
+//
+// });
+// wss.on('message', wsMessage);
 event.on('login',data =>{
 
     // (async function(){
