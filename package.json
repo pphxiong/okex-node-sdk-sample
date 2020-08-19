@@ -11,7 +11,8 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "node app/index.js"
+    "start": "node app/index.js",
+    "server": "node app/server.js"
   },
   "dependencies": {
     "@okfe/okex-node": "0.0.52",
