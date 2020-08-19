@@ -35,8 +35,18 @@ app.get('/account/getCurrencies', function(req, response) {
     });
 });
 
-app.get('/account/getAddress', function(req, response) {
-    authClient.account().getAddress('BTC').then(res => {
+app.get('/account/getWallet', function(req, response) {
+    const { query = {} } = req;
+    const currency = query.params || query;
+    authClient.account().getWallet(currency).then(res => {
+        send(response, { errcode: 0, errmsg: 'ok', data: res })
+    });
+});
+
+app.get('/futures/getOrders', function(req, response) {
+    const { query = {} } = req;
+    const instrument_id = query.params || query; // "BTC-USD-200828"
+    authClient.futures().getOrders(instrument_id).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
 });
