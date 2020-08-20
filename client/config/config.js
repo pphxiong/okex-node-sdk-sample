@@ -3,6 +3,8 @@ import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
+const path = require('path');
+
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
   hash: true,
@@ -51,9 +53,15 @@ export default defineConfig({
             },
             {
               path: '/monitor',
-              name: 'monitor',
+              name: '概览',
               icon: 'smile',
               component: './Monitor',
+            },
+            {
+              path: '/trade',
+              name: '交易',
+              icon: 'crown',
+              component: './Trade',
             },
             // {
             //   path: '/welcome',
@@ -109,4 +117,7 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  alias: {
+    '@': path.join(__dirname, '../src'),
+  }
 });

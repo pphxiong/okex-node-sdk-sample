@@ -1,5 +1,8 @@
+import React from 'react';
+
 import { parse } from 'querystring';
 import pathRegexp from 'path-to-regexp';
+import Ellipsis from '@/components/Ellipsis';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -56,4 +59,24 @@ export const getRouteAuthority = (path, routeData) => {
     }
   });
   return authorities;
+};
+
+const ellipsisRender = text => (
+  <Ellipsis title={text} tooltip lines={1}>
+    {text}
+  </Ellipsis>
+);
+
+export const columnEllipsisHandler = columns => {
+  let newColumns = [];
+  newColumns = columns.map(item => ({
+    ...item,
+    title: (
+      <Ellipsis title={item.title} tooltip lines={1}>
+        {item.title}
+      </Ellipsis>
+    ),
+    render: item.render || ellipsisRender,
+  }));
+  return newColumns;
 };

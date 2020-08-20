@@ -1,3 +1,5 @@
+import request from '../utils/request';
+
 const { PublicClient } = require('@okfe/okex-node');
 const { AuthenticatedClient } = require('@okfe/okex-node');
 
@@ -45,12 +47,19 @@ app.get('/account/getWallet', function(req, response) {
 
 app.get('/futures/getOrders', function(req, response) {
     const { query = {} } = req;
-    const { instrument_id } = query; // "BTC-USD-200828"
+    const { instrument_id } = query; // "BTC-USD-200821"
     authClient.futures().getOrders(instrument_id, { state: 2, limit: 20 }).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
 });
 
+app.get('/futures/information', function(req, response) {
+    const { query = {} } = req;
+    const currency = query.params || query;
+    request.get(`/api/information/v3/${currency}/long_short_ratio`).then(res => {
+        send(response, { errcode: 0, errmsg: 'ok', data: res })
+    });
+});
 
 app.listen(8090);
 

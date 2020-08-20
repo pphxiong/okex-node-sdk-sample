@@ -7,3 +7,9 @@ export async function getWallet(params) {
     params,
   });
 }
+
+export async function getOrders(params) {
+  return request(`${commonUrl}/futures/getOrders`, {
+    params,
+  });
+}

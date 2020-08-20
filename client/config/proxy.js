@@ -14,11 +14,11 @@ export default {
         '^': '',
       },
     },
-    '/okex/':{
+    '/okex':{
       target: 'http://www.paopaofunplus.com:8090',
       changeOrigin: true,
       pathRewrite: {
-        '^': '',
+        '/okex': '',
       },
     }
   },
