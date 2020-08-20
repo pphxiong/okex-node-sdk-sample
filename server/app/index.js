@@ -57,7 +57,7 @@ app.get('/futures/getOrders', function(req, response) {
 app.get('/futures/information', function(req, response) {
     const { query = {} } = req;
     const currency = query.params || query;
-    request.get(`/api/information/v3/${currency}/long_short_ratio`).then(res => {
+    request.get(`${config.urlHost}/api/information/v3/${currency}/long_short_ratio`).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
 });
