@@ -2,10 +2,8 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-// import { extend } from 'umi-request';
-// import { notification } from 'antd';
-const {extend} = require('umi-request');
-const { notification } = require('antd');
+import { extend } from 'umi-request';
+import { notification } from 'antd';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -56,5 +54,4 @@ const request = extend({
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
-// export default request;
-exports.request = request;
+export default request;

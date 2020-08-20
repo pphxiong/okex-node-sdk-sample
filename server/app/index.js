@@ -1,5 +1,5 @@
-// import request from '../utils/request';
-const request = require('../utils/request')
+import request from '../utils/request';
+
 const { PublicClient } = require('@okfe/okex-node');
 const { AuthenticatedClient } = require('@okfe/okex-node');
 
