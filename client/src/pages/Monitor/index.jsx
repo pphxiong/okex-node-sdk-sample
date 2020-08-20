@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, } from 'antd';
 import SearchTable from '@/components/SearchTable';
 import moment from "moment";
-import { getOrders } from './api';
+import { getOrders, getFuturesInformation } from './api';
 import { tradeTypeEnum } from '../config';
 
 export default props => {
@@ -14,6 +14,7 @@ export default props => {
 
   useEffect(()=>{
     // initData();
+    getFuturesInformation({ currency: 'BTC' })
   })
 
   const columns = [{

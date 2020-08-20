@@ -13,3 +13,9 @@ export async function getOrders(params) {
     params,
   });
 }
+
+export async function getFuturesInformation(params) {
+  return request(`${commonUrl}/futures/information`, {
+    params,
+  });
+}
