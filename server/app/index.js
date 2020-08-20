@@ -78,6 +78,14 @@ app.get('/futures/postLeverage', function(req, response) {
     });
 });
 
+app.get('/swap/postLeverage', function(req, response) {
+    const { query = {} } = req;
+    const { instrument_id, leverage, side } = query;
+    authClient.swap().postLeverage(instrument_id,{ leverage, side}).then(res => {
+        send(response, { errcode: 0, errmsg: 'ok', data: res })
+    });
+});
+
 app.listen(8090);
 
 console.log('server start');

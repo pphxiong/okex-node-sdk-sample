@@ -8,3 +8,8 @@ export async function postLeverage(params) {
   });
 }
 
+export async function postSwapLeverage(params) {
+  return request(`${commonUrl}/swap/postLeverage`, {
+    params,
+  });
+}
