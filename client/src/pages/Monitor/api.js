@@ -19,3 +19,9 @@ export async function getFuturesInformation(params) {
     params,
   });
 }
+
+export async function getFuturesInformationSentiment(params) {
+  return request(`${commonUrl}/futures/information/sentiment`, {
+    params,
+  });
+}
