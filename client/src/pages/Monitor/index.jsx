@@ -102,6 +102,16 @@ export default props => {
               time: { alias: '时间' },
               ratio: { alias: '多空人数比' },
             }}
+            point = {{
+              visible: true,
+              size: 5,
+              shape: 'diamond',
+              style: {
+                fill: 'white',
+                stroke: '#2593fc',
+                lineWidth: 2,
+              },
+            }}
           />
         ) : ''
       }

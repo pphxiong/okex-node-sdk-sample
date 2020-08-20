@@ -250,14 +250,4 @@ export default {
     visible: true,
     type: 'point',
   },
-  point: {
-    visible: true,
-    size: 5,
-    shape: 'diamond',
-    style: {
-      fill: 'white',
-      stroke: '#2593fc',
-      lineWidth: 2,
-    },
-  },
 };
