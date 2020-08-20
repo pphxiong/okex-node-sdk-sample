@@ -4,8 +4,8 @@
  */
 // import { extend } from 'umi-request';
 // import { notification } from 'antd';
-const { extend } = require(umi-request);
-const { notification } = require(antd);
+const {extend} = require('umi-request');
+const { notification } = require('antd');
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -56,4 +56,5 @@ const request = extend({
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
-export default request;
+// export default request;
+exports.request = request;
