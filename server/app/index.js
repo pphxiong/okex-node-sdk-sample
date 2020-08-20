@@ -86,6 +86,15 @@ app.get('/swap/postLeverage', function(req, response) {
     });
 });
 
+app.get('/swap/postOrder', function(req, response) {
+    const { params } = req;
+    console.log(req)
+    console.log(params)
+    authClient.swap().postOrder(params).then(res => {
+        send(response, { errcode: 0, errmsg: 'ok', data: res })
+    });
+});
+
 app.listen(8090);
 
 console.log('server start');

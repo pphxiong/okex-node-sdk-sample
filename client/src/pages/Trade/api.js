@@ -13,3 +13,10 @@ export async function postSwapLeverage(params) {
     params,
   });
 }
+
+export async function postSwapOrder(data) {
+  return request(`${commonUrl}/swap/postOrder`, {
+    method: 'POST',
+    data,
+  });
+}
