@@ -40,7 +40,7 @@ app.get('/account/getCurrencies', function(req, response) {
 
 app.get('/account/getWallet', function(req, response) {
     const { query = {} } = req;
-    const currency = query.params || query;
+    const { currency } = query.params || query;
     authClient.account().getWallet(currency).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
@@ -56,7 +56,7 @@ app.get('/futures/getOrders', function(req, response) {
 
 app.get('/futures/information', function(req, response) {
     const { query = {} } = req;
-    const currency = query.params || query;
+    const { currency } = query.params || query;
     request.get(`${config.urlHost}/api/information/v3/${currency}/long_short_ratio`).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
