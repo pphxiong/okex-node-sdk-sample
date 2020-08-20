@@ -15,7 +15,7 @@ export default {
       },
     },
     '/okex/':{
-      target: 'http://www.paopaofunplus.com',
+      target: 'http://localhost:8090',
       changeOrigin: true,
       pathRewrite: {
         '^': '',
