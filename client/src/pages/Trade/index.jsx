@@ -5,7 +5,7 @@ import { postLeverage } from './api'
 export default props => {
   const [leverage, setLeverage] = useState(10);
   const onSetLeverage = async () => {
-    const result = await postLeverage({ underlying: 'BTC-USDT', leverage, })
+    const result = await postLeverage({ underlying: 'BTC-USDT', leverage, instrument_id: 'BTC-USDT-200821', direction: 'long' })
     console.log(result)
   }
   return <>
