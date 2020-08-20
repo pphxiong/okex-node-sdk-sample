@@ -73,7 +73,7 @@ app.get('/futures/information/sentiment', function(req, response) {
 app.get('/futures/postLeverage', function(req, response) {
     const { query = {} } = req;
     const { underlying } = query;
-    authClient.futures().postLeverage(underlying).then(res => {
+    authClient.futures().postLeverage(underlying,{}).then(res => {
         send(response, { errcode: 0, errmsg: 'ok', data: res })
     });
 });
