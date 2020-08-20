@@ -24,7 +24,8 @@
     "request": "~2.72.0",
     "umi-request": "^1.3.5",
     "urlencode": "^1.1.0",
-    "ws": "^0.4.32"
+    "ws": "^0.4.32",
+    "nodemon": "^2.0.4"
   },
   "engines": {
     "node": ">=0.8"
@@ -33,8 +34,12 @@
     "registry": "http://registry.npm.alibaba-inc.com"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0"
+    "babel": "^6.5.2",
+    "babel-cli": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-2": "^6.5.0"
+  },
+  "babel": {
+    "presets": ["es2015"]
   }
 }
