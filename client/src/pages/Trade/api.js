@@ -14,9 +14,8 @@ export async function postSwapLeverage(params) {
   });
 }
 
-export async function postSwapOrder(data) {
+export async function postSwapOrder(params) {
   return request(`${commonUrl}/swap/postOrder`, {
-    method: 'POST',
-    data,
+    params,
   });
 }
