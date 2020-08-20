@@ -86,7 +86,7 @@ app.get('/swap/postLeverage', function(req, response) {
     });
 });
 
-app.get('/swap/postOrder', function(req, response) {
+app.post('/swap/postOrder', function(req, response) {
     const { params } = req;
     console.log(req)
     console.log(params)
