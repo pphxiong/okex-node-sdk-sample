@@ -1,10 +1,22 @@
 import React,{ useState, useEffect } from 'react';
 import { Button, InputNumber, Card, message, Divider, Popconfirm } from 'antd';
-import { postLeverage, postSwapLeverage, postSwapOrder } from './api'
+import { postLeverage, postSwapLeverage, postSwapOrder, getSwapAccount } from './api'
 
 export default props => {
   const [leverage, setLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
+
+  // 定时获取账户信息
+  const getAccountInterval = () => {
+      setTimeout(async ()=>{
+        const result = await getSwapAccount({ instrument_id: 'BTC-USD-SWAP' });
+        console.log(result);
+      },5000)
+  }
+
+  useEffect(()=>{
+    getAccountInterval();
+  },[])
 
   const onSetLeverage = async () => {
     const result = await postLeverage({ underlying: 'BTC-USDT', leverage, instrument_id: 'BTC-USDT-200821', direction: 'long' })
@@ -19,18 +31,45 @@ export default props => {
   }
 
   const openOrder = async () => {
+    // btc 多仓
     const payload = {
-      size: 0.01,
+      size: 1,
       type: 1,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-SWAP'
     }
     const result = await postSwapOrder(payload);
     console.log(result)
+    // eos 空仓
+    const eosPayload = {
+      size: 17,
+      type: 2,
+      order_type: 4, //市价委托
+      instrument_id: 'BTC-EOS-SWAP'
+    }
+    const eosResult = await postSwapOrder(eosPayload);
+    console.log(eosResult)
   }
 
-  const closeOrder = () => {
-
+  const closeOrder = async () => {
+    // btc 平多
+    const payload = {
+      size: 1,
+      type: 3,
+      order_type: 4, //市价委托
+      instrument_id: 'BTC-USD-SWAP'
+    }
+    const result = await postSwapOrder(payload);
+    console.log(result)
+    // eos 平空
+    const eosPayload = {
+      size: 17,
+      type: 4,
+      order_type: 4, //市价委托
+      instrument_id: 'BTC-EOS-SWAP'
+    }
+    const eosResult = await postSwapOrder(eosPayload);
+    console.log(eosResult)
   }
 
   return <>

@@ -118,6 +118,17 @@ app.get('/swap/postOrder', function(req, response) {
     });
 });
 
+app.get('/swap/getAccount', function(req, response) {
+  const {query = {}} = req;
+  const { instrument_id } = query;
+  authClient
+      .swap()
+      .getAccount(instrument_id)
+      .then(res => {
+        send(response, {errcode: 0, errmsg: 'ok', data: res});
+      });
+});
+
 app.listen(8090);
 
 console.log('server start');

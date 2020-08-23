@@ -19,3 +19,9 @@ export async function postSwapOrder(params) {
     params,
   });
 }
+
+export async function getSwapAccount(params) {
+  return request(`${commonUrl}/swap/getAccount`, {
+    params,
+  });
+}
