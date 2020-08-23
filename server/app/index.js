@@ -154,7 +154,7 @@ setInterval(()=>{
           authClient.futures().getPosition('EOS-USD-201225')
               .then(res=>{
                   const { holding } = res;
-                  console.log(holding[0]?.short_pnl_ratio, holding[0].short_pnl);
+                  console.log(holding[0].short_pnl_ratio, holding[0].short_pnl);
                   if(longHolding.long_pnl_ratio + holding[0].short_pnl_ratio > 15 || longHolding.long_pnl_ratio + holding[0].short_pnl_ratio < -10){
                       const payload = {
                           size: longHolding.long_avail_qty,
