@@ -143,10 +143,11 @@ app.get('/swap/getAccount', function(req, response) {
 setInterval(()=>{
   authClient
       .futures()
-      .getAccount('BTC-USD-201225')
+      .getPosition('BTC-USD-201225')
       .then(res => {
-        const { info } = res;
-
+          console.log(res)
+        // const { info } = res;
+        // console.log(info)
       });
 },5000)
 
