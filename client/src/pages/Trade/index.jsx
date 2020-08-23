@@ -1,21 +1,22 @@
-import React,{ useState, useEffect } from 'react';
+import React,{ useState, useEffect, useRef } from 'react';
 import { Button, InputNumber, Card, message, Divider, Popconfirm } from 'antd';
 import { postLeverage, postSwapLeverage, postSwapOrder, getSwapAccount } from './api'
 
 export default props => {
   const [leverage, setLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
+  const accountInterval = useRef();
 
   // 定时获取账户信息
   const getAccountInterval = () => {
-      setTimeout(async ()=>{
+      accountInterval.current = setInterval(async ()=>{
         const result = await getSwapAccount({ instrument_id: 'BTC-USD-SWAP' });
         console.log(result);
       },5000)
   }
 
   useEffect(()=>{
-    getAccountInterval();
+    // getAccountInterval();
   },[])
 
   const onSetLeverage = async () => {

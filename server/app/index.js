@@ -129,6 +129,16 @@ app.get('/swap/getAccount', function(req, response) {
       });
 });
 
+// 定时获取账户信息
+setInterval(()=>{
+  authClient
+      .swap()
+      .getAccount('BTC-USD-SWAP')
+      .then(res => {
+        console.log(res)
+      });
+},5000)
+
 app.listen(8090);
 
 console.log('server start');
