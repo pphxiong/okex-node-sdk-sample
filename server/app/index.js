@@ -97,6 +97,16 @@ app.get('/futures/postLeverage', function(req, response) {
     });
 });
 
+app.get('/futures/postOrder', function(req, response) {
+    const {query = {}} = req;
+    authClient
+        .futures()
+        .postOrder(query)
+        .then(res => {
+            send(response, {errcode: 0, errmsg: 'ok', data: res});
+        });
+});
+
 app.get('/swap/postLeverage', function(req, response) {
   const {query = {}} = req;
   const {instrument_id, leverage, side} = query;
@@ -129,13 +139,14 @@ app.get('/swap/getAccount', function(req, response) {
       });
 });
 
-// 定时获取账户信息
+// 定时获取交割合约账户信息
 setInterval(()=>{
   authClient
-      .swap()
-      .getAccount('BTC-USD-SWAP')
+      .futures()
+      .getAccount('BTC-USD-201225')
       .then(res => {
-        console.log(res)
+        const { info } = res;
+
       });
 },5000)
 
