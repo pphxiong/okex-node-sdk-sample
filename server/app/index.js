@@ -147,7 +147,7 @@ setInterval(()=>{
       .then(res => {
         const { holding } = res;
         console.log(new Date(), holding)
-        console.log(holding[0]?.long_pnl_ratio, holding[0].long_pnl);
+        console.log(holding[0].long_pnl_ratio, holding[0].long_pnl);
         return holding[0];
       })
       .then(longHolding=>{
@@ -155,7 +155,7 @@ setInterval(()=>{
               .then(res=>{
                   const { holding } = res;
                   console.log(holding[0]?.short_pnl_ratio, holding[0].short_pnl);
-                  if(longHolding.long_pnl_ratio + holding[0]?.short_pnl_ratio > 15 || longHolding.long_pnl_ratio + holding[0]?.short_pnl_ratio < -10){
+                  if(longHolding.long_pnl_ratio + holding[0].short_pnl_ratio > 15 || longHolding.long_pnl_ratio + holding[0].short_pnl_ratio < -10){
                       const payload = {
                           size: longHolding.long_avail_qty,
                           type: 3,

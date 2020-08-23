@@ -21,7 +21,7 @@ export default props => {
   const openOrder = async () => {
     // btc 多仓
     const payload = {
-      size: 1,
+      size: 0.0032,
       type: 1,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-201225'
@@ -30,7 +30,7 @@ export default props => {
     console.log(result)
     // eos 空仓
     const eosPayload = {
-      size: 17,
+      size: 10.5,
       type: 2,
       order_type: 4, //市价委托
       instrument_id: 'EOS-USD-201225'
@@ -42,7 +42,7 @@ export default props => {
   const closeOrder = async () => {
     // btc 平多
     const payload = {
-      size: 1,
+      size: 0.0032,
       type: 3,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-201225'
@@ -51,7 +51,7 @@ export default props => {
     console.log(result)
     // eos 平空
     const eosPayload = {
-      size: 17,
+      size: 10.5,
       type: 4,
       order_type: 4, //市价委托
       instrument_id: 'EOS-USD-201225'
