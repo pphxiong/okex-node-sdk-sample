@@ -145,9 +145,34 @@ setInterval(()=>{
       .futures()
       .getPosition('BTC-USD-201225')
       .then(res => {
-          console.log(res)
-        // const { info } = res;
-        // console.log(info)
+        const { holding } = res;
+        console.log(new Date(), holding)
+        console.log(holding[0]?.long_pnl_ratio, holding[0].long_pnl);
+        return holding[0];
+      })
+      .then(longHolding=>{
+          authClient.futures().getPosition('EOS-USD-201225')
+              .then(res=>{
+                  const { holding } = res;
+                  console.log(holding[0]?.short_pnl_ratio, holding[0].short_pnl);
+                  if(longHolding.long_pnl_ratio + holding[0]?.short_pnl_ratio > 15 || longHolding.long_pnl_ratio + holding[0]?.short_pnl_ratio < -10){
+                      const payload = {
+                          size: longHolding.long_avail_qty,
+                          type: 3,
+                          order_type: 4, //市价委托
+                          instrument_id: 'BTC-USD-201225'
+                      }
+                      authClient
+                          .futures()
+                          .postOrder(payload);
+                      const eosPayload = {
+                          size: holding[0].short_avail_qty,
+                          type: 4,
+                          order_type: 4, //市价委托
+                          instrument_id: 'EOS-USD-201225'
+                      }
+                  }
+              })
       });
 },5000)
 
