@@ -9,10 +9,10 @@ export default props => {
 
   const onSetLeverage = async () => {
     // const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'long' })
-    const result = await postFuturesLeverage({ underlying: 'BTC-USD' });
+    const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage });
     const data = result?.data;
     if(data) message.success('BTC杠杆设置成功');
-    const eosResult = await postFuturesLeverage({ underlying: 'EOS-USD' });
+    const eosResult = await postFuturesLeverage({ underlying: 'EOS-USD', leverage });
     const eosData = eosResult?.data;
     if(eosData) message.success('EOS杠杆设置成功');
   }

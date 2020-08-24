@@ -91,10 +91,10 @@ app.get('/futures/information/sentiment', function(req, response) {
 // 全仓模式
 app.get('/futures/postLeverage', function(req, response) {
     const {query = {}} = req;
-    const { underlying } = query;
+    const { underlying, leverage } = query;
     authClient
         .futures()
-        .postLeverage(underlying)
+        .postLeverage(underlying, { leverage })
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
