@@ -3,6 +3,8 @@ import request from '../utils/request';
 const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
 
+let myInterval;
+
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
 const authClient = new AuthenticatedClient(
@@ -140,7 +142,7 @@ app.get('/swap/getAccount', function(req, response) {
 });
 
 // 定时获取交割合约账户信息
-setInterval(()=>{
+myInterval = setInterval(()=>{
   authClient
       .futures()
       .getPosition('BTC-USD-201225')
@@ -168,6 +170,10 @@ setInterval(()=>{
                           type: 4,
                           order_type: 4, //市价委托
                           instrument_id: 'EOS-USD-201225'
+                      }
+                      if(myInterval) {
+                          clearInterval(myInterval);
+                          myInterval = null;
                       }
                   }
               })
