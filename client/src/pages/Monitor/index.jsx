@@ -11,8 +11,13 @@ export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
 
-  const initData = async () => {
-    const result = await getOrders({ instrument_id: 'BTC-USD-200821' });
+  const initBTCData = async () => {
+    const result = await getOrders({ instrument_id: 'BTC-USD-201225' });
+    return result;
+  }
+
+  const initEOSData = async () => {
+    const result = await getOrders({ instrument_id: 'EOS-USD-201225' });
     return result;
   }
 
@@ -57,8 +62,8 @@ export default props => {
     title: '交易类型',
     render: text=>tradeTypeEnum[text]
   },{
-    dataIndex: 'contract_val',
-    title: '合约数量'
+    dataIndex: 'size',
+    title: '数量（张）'
   },{
     dataIndex: 'price_avg',
     title: '成交均价'
@@ -72,6 +77,9 @@ export default props => {
   },{
     dataIndex: 'fee',
     title: '手续费'
+  },{
+    dataIndex: 'pnl',
+    title: '盈亏'
   }];
 
   const responseHandler = data=>{
@@ -81,10 +89,18 @@ export default props => {
   console.log(longShortRatioData)
 
   return <>
-    <Card title={'交易记录'}>
+    <Card title={'BTC交易记录'}>
       <SearchTable
         columns={columns}
-        getList={initData}
+        getList={initBTCData}
+        responseHandler={responseHandler}
+        rowKey={"order_id"}
+      />
+    </Card>
+    <Card title={'EOS交易记录'} style={{ marginTop: 10 }}>
+      <SearchTable
+        columns={columns}
+        getList={initEOSData}
         responseHandler={responseHandler}
         rowKey={"order_id"}
       />

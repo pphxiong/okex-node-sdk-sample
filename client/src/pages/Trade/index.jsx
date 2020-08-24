@@ -5,6 +5,7 @@ import { postFuturesLeverage, postSwapLeverage, postFuturesOrder, getSwapAccount
 export default props => {
   const [leverage, setLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
+  const [size, setSize] = useState(1);
 
   const onSetLeverage = async () => {
     const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'long' })
@@ -21,7 +22,7 @@ export default props => {
   const openOrder = async () => {
     // btc 多仓
     const payload = {
-      size: 1,
+      size,
       type: 1,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-201225'
@@ -30,7 +31,7 @@ export default props => {
     console.log(result)
     // eos 空仓
     const eosPayload = {
-      size: 10,
+      size: size * 10,
       type: 2,
       order_type: 4, //市价委托
       instrument_id: 'EOS-USD-201225'
@@ -42,7 +43,7 @@ export default props => {
   const closeOrder = async () => {
     // btc 平多
     const payload = {
-      size: 1,
+      size,
       type: 3,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-201225'
@@ -51,7 +52,7 @@ export default props => {
     console.log(result)
     // eos 平空
     const eosPayload = {
-      size: 10,
+      size: size * 10,
       type: 4,
       order_type: 4, //市价委托
       instrument_id: 'EOS-USD-201225'
@@ -63,6 +64,8 @@ export default props => {
   return <>
     <Card title={'交割合约'}>
       <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} onChange={v=>setLeverage(v)}/>
+      <Divider type="vertical" />
+      <span>开仓张数：</span><InputNumber value={size} step={1} onChange={v=>setSize(v)}/>
       <Button onClick={()=>onSetLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
 
       <Divider type="horizontal" />
