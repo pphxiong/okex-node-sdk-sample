@@ -1,17 +1,20 @@
 import React,{ useState, useEffect, useRef } from 'react';
-import { Button, InputNumber, Card, message, Divider, Popconfirm } from 'antd';
+import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col } from 'antd';
 import { postFuturesLeverage, postSwapLeverage, postFuturesOrder, getSwapAccount, getFuturesPosition } from './api'
+import moment from 'moment'
 
 export default props => {
   const [leverage, setLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
   const [size, setSize] = useState(1);
+  const [btcPosition, setBtcPosition] = useState({});
+  const [eosPosition, setEosPosition] = useState({})
 
   const getPosition = async () => {
-    const result = await getFuturesPosition('BTC-USD-201225');
-    console.log(result);
-    const eosResult = await getFuturesPosition('EOS-USD-201225');
-    console.log(eosResult)
+    const result = await getFuturesPosition({instrument_id: 'BTC-USD-201225'});
+    setBtcPosition(result?.data?.holding[0]);
+    const eosResult = await getFuturesPosition({instrument_id: 'EOS-USD-201225'});
+    setEosPosition(eosResult?.data?.holding[0]);
   }
 
   useEffect(()=>{
@@ -84,8 +87,47 @@ export default props => {
 
   return <>
     <Card title="持仓情况">
-      <h3>BTC</h3>
-      <p></p>
+      <Row gutter={12}>
+        <Col span={12}>
+          <h3>BTC</h3>
+          <p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>杠杆倍数：{btcPosition.leverage}</p>
+          <p>数量（张）：{btcPosition.long_qty}</p>
+          <p>开仓均价：{btcPosition.long_avg_cost}</p>
+          <p>最新成交价（美元）：{btcPosition.last}</p>
+          <p>多仓保证金(BTC)：{btcPosition.long_margin}</p>
+          <p>多仓收益(BTC)：{btcPosition.long_pnl}</p>
+          <p>多仓收益率（%）：{Number(btcPosition.long_pnl_ratio) * 100}</p>
+          <p>已实现盈余：{btcPosition.realised_pnl}</p>
+          <p>收益折合（美元）：{Number(btcPosition.long_pnl) * Number(btcPosition.last)}</p>
+          <p>已实现盈余折合（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last)}</p>
+        </Col>
+        <Col span={12}>
+          <h3>EOS</h3>
+          <p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>杠杆倍数：{eosPosition.leverage}</p>
+          <p>数量（张）：{eosPosition.short_qty}</p>
+          <p>开仓均价：{eosPosition.short_avg_cost}</p>
+          <p>最新成交价（美元）：{eosPosition.last}</p>
+          <p>空仓保证金（EOS)：{eosPosition.short_margin}</p>
+          <p>空仓收益（EOS)：{eosPosition.short_pnl}</p>
+          <p>空仓收益率（%）：{Number(eosPosition.short_pnl_ratio) * 100}</p>
+          <p>已实现盈余：{eosPosition.realised_pnl}</p>
+          <p>收益折合（美元）：{Number(eosPosition.short_pnl) * Number(eosPosition.last)}</p>
+          <p>已实现盈余折合（美元）：{Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
+        </Col>
+      </Row>
+      <Divider />
+      <Row>
+        <Col span={24}>
+          <h3>共计</h3>
+          <p>收益（美元）：{Number(btcPosition.long_pnl) * Number(btcPosition.last) + Number(eosPosition.short_pnl) * Number(eosPosition.last)}</p>
+          <p>收益率：{(Number(btcPosition.long_pnl) * Number(btcPosition.last) + Number(eosPosition.short_pnl) * Number(eosPosition.last)) * Number(btcPosition.leverage) / (btcPosition.long_qty * 2) }</p>
+          <p>已实现盈余（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last) + Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
+        </Col>
+      </Row>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>
       <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} onChange={v=>setLeverage(v)}/>
