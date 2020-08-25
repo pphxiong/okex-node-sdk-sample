@@ -86,11 +86,12 @@ export default props => {
   }
 
   return <>
-    <Card title="持仓情况">
+    <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
       <Row gutter={12}>
         <Col span={12}>
           <h3>BTC</h3>
-          <p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>ID：{btcPosition.instrument_id}</p>
+          {/*<p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
           <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD hh:mm:ss')}</p>
           <p>杠杆倍数：{btcPosition.leverage}</p>
           <p>数量（张）：{btcPosition.long_qty}</p>
@@ -105,7 +106,8 @@ export default props => {
         </Col>
         <Col span={12}>
           <h3>EOS</h3>
-          <p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>ID：{eosPosition.instrument_id}</p>
+          {/*<p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
           <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD hh:mm:ss')}</p>
           <p>杠杆倍数：{eosPosition.leverage}</p>
           <p>数量（张）：{eosPosition.short_qty}</p>
