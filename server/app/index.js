@@ -154,6 +154,17 @@ app.get('/swap/getAccount', function(req, response) {
       });
 });
 
+app.get('/futures/getPosition', function(req, response) {
+    const {query = {}} = req;
+    const { instrument_id } = query;
+    authClient
+        .futures()
+        .getPosition(instrument_id)
+        .then(res => {
+            send(response, {errcode: 0, errmsg: 'ok', data: res});
+        });
+});
+
 // 定时获取交割合约账户信息
 myInterval = setInterval(()=>{
   authClient

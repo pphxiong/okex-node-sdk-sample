@@ -31,3 +31,9 @@ export async function getSwapAccount(params) {
     params,
   });
 }
+
+export async function getFuturesPosition(params) {
+  return request(`${commonUrl}/futures/getPosition`, {
+    params,
+  });
+}

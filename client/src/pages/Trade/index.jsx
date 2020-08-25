@@ -1,11 +1,22 @@
 import React,{ useState, useEffect, useRef } from 'react';
 import { Button, InputNumber, Card, message, Divider, Popconfirm } from 'antd';
-import { postFuturesLeverage, postSwapLeverage, postFuturesOrder, getSwapAccount } from './api'
+import { postFuturesLeverage, postSwapLeverage, postFuturesOrder, getSwapAccount, getFuturesPosition } from './api'
 
 export default props => {
   const [leverage, setLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
   const [size, setSize] = useState(1);
+
+  const getPosition = async () => {
+    const result = await getFuturesPosition('BTC-USD-201225');
+    console.log(result);
+    const eosResult = await getFuturesPosition('EOS-USD-201225');
+    console.log(eosResult)
+  }
+
+  useEffect(()=>{
+    getPosition();
+  },[])
 
   const onSetLeverage = async () => {
     // const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'long' })
@@ -72,7 +83,11 @@ export default props => {
   }
 
   return <>
-    <Card title={'交割合约'}>
+    <Card title="持仓情况">
+      <h3>BTC</h3>
+      <p></p>
+    </Card>
+    <Card title={'交割合约'} style={{ marginTop: 10 }}>
       <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} onChange={v=>setLeverage(v)}/>
       <Divider type="vertical" />
       <span>开仓张数：</span><InputNumber value={size} step={1} onChange={v=>setSize(v)}/>
