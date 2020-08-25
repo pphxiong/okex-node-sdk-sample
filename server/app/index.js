@@ -236,11 +236,15 @@ myInterval = setInterval(()=>{
       });
 },5000)
 
-app.listen(80);
-
-console.log('server start');
 
 
+
+var bodyParser = require('body-parser')
+var cors = require('cors')
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use(cors())
 
 app.get('/api/currentUser', function(req, res) {
     const {query = {}} = req;
@@ -254,3 +258,8 @@ app.post('/api/login/account', function(req, res) {
 });
 
 app.use(express.static('../../web/dist'))
+
+
+app.listen(80);
+
+console.log('server start');
