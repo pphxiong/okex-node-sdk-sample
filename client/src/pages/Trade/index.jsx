@@ -16,7 +16,7 @@ export default props => {
       const eosResult = await postFuturesLeverage({ underlying: 'EOS-USD', leverage });
       const eosData = eosResult?.data;
       if(eosData) message.success('EOS杠杆设置成功');
-    },3000);
+    },1000);
   }
   //
   // const onSetSwapLeverage = async () => {
