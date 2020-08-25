@@ -165,6 +165,50 @@ app.get('/futures/getPosition', function(req, response) {
         });
 });
 
+// 开仓
+function autoOpenOrders(longHolding, shortHolding) {
+    const payload = {
+        size: longHolding.long_avail_qty,
+        type: 1,
+        order_type: 4, //市价委托
+        instrument_id: longHolding.instrument_id
+    }
+    authClient
+        .futures()
+        .postOrder(payload);
+    const eosPayload = {
+        size: shortHolding.short_avail_qty,
+        type: 2,
+        order_type: 4, //市价委托
+        instrument_id: short_avail_qty.instrument_id
+    }
+    authClient
+        .futures()
+        .postOrder(eosPayload);
+}
+
+// 平仓
+function autoCloseOrders(longHolding, shortHolding) {
+    const payload = {
+        size: longHolding.long_avail_qty,
+        type: 3,
+        order_type: 4, //市价委托
+        instrument_id: longHolding.instrument_id
+    }
+    authClient
+        .futures()
+        .postOrder(payload);
+    const eosPayload = {
+        size: shortHolding.short_avail_qty,
+        type: 4,
+        order_type: 4, //市价委托
+        instrument_id: short_avail_qty.instrument_id
+    }
+    authClient
+        .futures()
+        .postOrder(eosPayload);
+}
+
 // 定时获取交割合约账户信息
 myInterval = setInterval(()=>{
   authClient
@@ -179,30 +223,14 @@ myInterval = setInterval(()=>{
           authClient.futures().getPosition('EOS-USD-201225')
               .then(res=>{
                   const { holding } = res;
-                  if((Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 15)
-                      ||
-                      (Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -10)){
-                      const payload = {
-                          size: longHolding.long_avail_qty,
-                          type: 3,
-                          order_type: 4, //市价委托
-                          instrument_id: 'BTC-USD-201225'
-                      }
-                      authClient
-                          .futures()
-                          .postOrder(payload);
-                      const eosPayload = {
-                          size: holding[0].short_avail_qty,
-                          type: 4,
-                          order_type: 4, //市价委托
-                          instrument_id: 'EOS-USD-201225'
-                      }
-                      if(myInterval) {
-                          clearInterval(myInterval);
-                          myInterval = null;
-                      }
-                      // 5分钟后再开仓
-
+                  if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 10){
+                      autoCloseOrders(longHolding, holding[0]);
+                      // 1分钟后再开仓
+                      setTimeout(()=>{
+                          autoOpenOrders(longHolding, holding[0]);
+                      },1000*60*1)
+                  }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -10){
+                      autoCloseOrders(longHolding, holding[0]);
                   }
               })
       });
