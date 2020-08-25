@@ -253,4 +253,4 @@ app.post('/api/login/account', function(req, res) {
     res.send({errcode: 0, errmsg: 'ok', data: {query, params, data} })
 });
 
-app.use(express.static('./dist'))
+app.use(express.static('../../web/dist'))
