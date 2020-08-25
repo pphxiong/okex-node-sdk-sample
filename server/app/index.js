@@ -180,7 +180,7 @@ function autoOpenOrders(longHolding, shortHolding) {
         size: shortHolding.short_avail_qty,
         type: 2,
         order_type: 4, //市价委托
-        instrument_id: short_avail_qty.instrument_id
+        instrument_id: shortHolding.instrument_id
     }
     authClient
         .futures()
@@ -202,7 +202,7 @@ function autoCloseOrders(longHolding, shortHolding) {
         size: shortHolding.short_avail_qty,
         type: 4,
         order_type: 4, //市价委托
-        instrument_id: short_avail_qty.instrument_id
+        instrument_id: shortHolding.instrument_id
     }
     authClient
         .futures()
@@ -236,6 +236,21 @@ myInterval = setInterval(()=>{
       });
 },5000)
 
-app.listen(8090);
+app.listen(80);
 
 console.log('server start');
+
+
+
+app.get('/api/currentUser', function(req, res) {
+    const {query = {}} = req;
+    res.send({errcode: 0, errmsg: 'ok', data: query })
+});
+
+app.post('/api/login/account', function(req, res) {
+    const {query = {}, params, data} = req;
+    console.log(req)
+    res.send({errcode: 0, errmsg: 'ok', data: {query, params, data} })
+});
+
+app.use(express.static('./dist'))
