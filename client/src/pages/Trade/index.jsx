@@ -35,6 +35,7 @@ export default props => {
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
+    if(result?.data?.result) message.success('BTC开仓成功');
     // eos 空仓
     const eosPayload = {
       size: size * 10,
@@ -44,6 +45,7 @@ export default props => {
     }
     const eosResult = await postFuturesOrder(eosPayload);
     console.log(eosResult)
+    if(eosResult?.data?.result) message.success('EOS开仓成功');
   }
 
   const closeOrder = async () => {
@@ -56,6 +58,7 @@ export default props => {
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
+    if(result?.data?.result) message.success('BTC平仓成功');
     // eos 平空
     const eosPayload = {
       size: size * 10,
@@ -65,6 +68,7 @@ export default props => {
     }
     const eosResult = await postFuturesOrder(eosPayload);
     console.log(eosResult)
+    if(eosResult?.data?.result) message.success('EOS平仓成功');
   }
 
   return <>

@@ -188,6 +188,8 @@ myInterval = setInterval(()=>{
                           clearInterval(myInterval);
                           myInterval = null;
                       }
+                      // 5分钟后再开仓
+
                   }
               })
       });
