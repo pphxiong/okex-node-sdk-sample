@@ -189,24 +189,29 @@ function autoOpenOrders(longHolding, shortHolding) {
 
 // 平仓
 function autoCloseOrders(longHolding, shortHolding) {
-    const payload = {
-        size: longHolding.long_avail_qty,
-        type: 3,
-        order_type: 4, //市价委托
-        instrument_id: longHolding.instrument_id
+    if(Number(longHolding.long_avail_qty)) {
+        const payload = {
+            size: longHolding.long_avail_qty,
+            type: 3,
+            order_type: 4, //市价委托
+            instrument_id: longHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
     }
-    authClient
-        .futures()
-        .postOrder(payload);
-    const eosPayload = {
-        size: shortHolding.short_avail_qty,
-        type: 4,
-        order_type: 4, //市价委托
-        instrument_id: shortHolding.instrument_id
+
+    if(Number(shortHolding.short_avail_qty)){
+        const eosPayload = {
+            size: shortHolding.short_avail_qty,
+            type: 4,
+            order_type: 4, //市价委托
+            instrument_id: shortHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(eosPayload);
     }
-    authClient
-        .futures()
-        .postOrder(eosPayload);
 }
 
 // 定时获取交割合约账户信息
@@ -223,13 +228,17 @@ myInterval = setInterval(()=>{
               .then(res=>{
                   const { holding } = res;
                   console.log(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
-                  if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.12){
-                      autoCloseOrders(longHolding, holding[0]);
-                      // 1分钟后再开仓
-                      setTimeout(()=>{
-                          autoOpenOrders(longHolding, holding[0]);
-                      },1000*60*1)
-                  }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.1){
+                  if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
+                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.12){
+                          autoCloseOrders(longHolding, holding[0]);
+                          // 1分钟后再开仓
+                          setTimeout(()=>{
+                              autoOpenOrders(longHolding, holding[0]);
+                          },1000*60*1)
+                      }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.1){
+                          autoCloseOrders(longHolding, holding[0]);
+                      }
+                  }else{
                       autoCloseOrders(longHolding, holding[0]);
                   }
               })
