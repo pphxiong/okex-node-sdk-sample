@@ -229,7 +229,7 @@ myInterval = setInterval(()=>{
                   const { holding } = res;
                   console.log('收益率：',Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
                   if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
-                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.12){
+                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.8){
                           autoCloseOrders(longHolding, holding[0]);
                           // 1分钟后再开仓
                           setTimeout(()=>{
