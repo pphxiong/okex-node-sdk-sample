@@ -14,7 +14,7 @@
     "start": "pm2 start app/start.js",
     "restart": "pm2 restart all",
     "stop": "pm2 delete all",
-    "start normal": "node app/start.js"
+    "start:normal": "node app/start.js --env=production"
   },
   "dependencies": {
     "@okfe/okex-node": "0.0.52",
