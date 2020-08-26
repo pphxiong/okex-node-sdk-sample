@@ -9,7 +9,8 @@
   "scripts": {
     "start": "pm2 start server.js --env=production",
     "restart": "pm2 restart all",
-    "stop": "pm2 delete all"
+    "stop": "pm2 delete all",
+    "start:normal": "node server.js --env=production"
   },
   "keywords": [
     "koa",

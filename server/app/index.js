@@ -236,30 +236,6 @@ myInterval = setInterval(()=>{
       });
 },5000)
 
-
-
-
-var bodyParser = require('body-parser')
-var cors = require('cors')
-
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-app.use(cors())
-
-app.get('/api/currentUser', function(req, res) {
-    const {query = {}} = req;
-    res.send({errcode: 0, errmsg: 'ok', data: query })
-});
-
-app.post('/api/login/account', function(req, res) {
-    const {query = {}, params, data} = req;
-    console.log(req)
-    res.send({errcode: 0, errmsg: 'ok', data: {query, params, data} })
-});
-
-app.use(express.static('../../web/dist'))
-
-
-app.listen(80);
+app.listen(8090);
 
 console.log('server start');

@@ -35,6 +35,31 @@ app.listen(80, err => {
   }
 })
 
+
+const request = require('request');
+const url = require('url');
+
+function proxyRequest(req, res, next) {
+  const curl= url.parse(req.url);
+  console.log(curl)
+  let { path } = curl;
+  if(path.includes('okex')){
+    path = path.replace('/okex', ':8090');
+    path = 'http://www.paopaofunplus.com' + path;
+  }
+
+  console.log(path)
+  try {
+    req.pipe(request({
+      method: 'GET',
+      uri: path
+    })).pipe(res);
+
+  } catch (e) {
+    next(e);
+  }
+}
+
 app.all('*', function (req, res, next) {
   // console.log(req);
   res.header('Access-Control-Allow-Origin', '*')
@@ -43,19 +68,83 @@ app.all('*', function (req, res, next) {
     'Content-Type,Content-Length, Authorization, Accept,X-Requested-With'
   )
   res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
+  proxyRequest(req, res, next);
   if (req.method == 'OPTIONS') res.send(200)
   /* 让options请求快速返回 */ else next()
 })
 
 app.get('/api/currentUser', function(req, res) {
-  const {query = {}} = req;
-  res.send({errcode: 0, errmsg: 'ok', data: query })
+  const data = {
+    name: 'Serati Ma',
+    avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+    userid: '00000001',
+    email: 'antdesign@alipay.com',
+    signature: '海纳百川，有容乃大',
+    title: '交互专家',
+    group: '蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED',
+    tags: [
+      {
+        key: '0',
+        label: '很有想法的',
+      },
+      {
+        key: '1',
+        label: '专注设计',
+      },
+      {
+        key: '2',
+        label: '辣~',
+      },
+      {
+        key: '3',
+        label: '大长腿',
+      },
+      {
+        key: '4',
+        label: '川妹子',
+      },
+      {
+        key: '5',
+        label: '海纳百川',
+      },
+    ],
+    notifyCount: 12,
+    unreadCount: 11,
+    country: 'China',
+    geographic: {
+      province: {
+        label: '浙江省',
+        key: '330000',
+      },
+      city: {
+        label: '杭州市',
+        key: '330100',
+      },
+    },
+    address: '西湖区工专路 77 号',
+    phone: '0752-268888888',
+  };
+  res.send(data)
 });
 
 app.post('/api/login/account', function(req, res) {
-  const {query = {}, params, data} = req;
-  console.log(req)
-  res.send({errcode: 0, errmsg: 'ok', data: {query, params, data} })
+  const { password, userName, type } = req.body;
+
+  if (password === '@Xiong092479' && userName === 'pphxiong') {
+    res.send({
+      status: 'ok',
+      type,
+      currentAuthority: 'admin',
+    });
+    return;
+  }
+
+  res.send({
+    status: 'error',
+    type,
+    currentAuthority: 'guest',
+  });
 });
+
 
 app.use(express.static('./dist'))
