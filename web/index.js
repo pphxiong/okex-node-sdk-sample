@@ -1,8 +1,10 @@
+import request from './utils/request';
+
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
 
-var fs = require('fs')
+// var fs = require('fs')
 // var querystring = require("querystring");
 // var urlTool = require('url');
 // var http = require('http');
@@ -35,29 +37,20 @@ app.listen(80, err => {
   }
 })
 
-
-const request = require('request');
 const url = require('url');
 
 function proxyRequest(req, res, next) {
   const curl= url.parse(req.url);
-  console.log(curl)
   let { path } = curl;
   if(path.includes('okex')){
     path = path.replace('/okex', ':8090');
     path = 'http://www.paopaofunplus.com' + path;
+
+    return request.get(path)
   }
 
-  console.log(path)
-  try {
-    req.pipe(request({
-      method: 'GET',
-      uri: path
-    })).pipe(res);
+  return new Promise(resolve=>resolve({ type: 'normal' }))
 
-  } catch (e) {
-    next(e);
-  }
 }
 
 app.all('*', function (req, res, next) {
@@ -68,9 +61,16 @@ app.all('*', function (req, res, next) {
     'Content-Type,Content-Length, Authorization, Accept,X-Requested-With'
   )
   res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
-  proxyRequest(req, res, next);
-  if (req.method == 'OPTIONS') res.send(200)
-  /* 让options请求快速返回 */ else next()
+  proxyRequest(req, res, next).then(response=>{
+    console.log(response)
+    const { type } = response;
+    if(type=='normal'){
+      if (req.method == 'OPTIONS') res.send(200)
+      /* 让options请求快速返回 */ else next()
+    }else{
+      res.send(response)
+    }
+  })
 })
 
 app.get('/api/currentUser', function(req, res) {

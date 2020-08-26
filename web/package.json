@@ -2,15 +2,15 @@
   "name": "proxy",
   "version": "2.1.2",
   "description": "A Nodejs SFB(Separation of Front and Back ends) framework, build with koa 2.x",
-  "main": "./server.js",
+  "main": "./index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "start": "pm2 start server.js --env=production",
+    "start": "pm2 start start.js --env=production",
     "restart": "pm2 restart all",
     "stop": "pm2 delete all",
-    "start:normal": "node server.js --env=production"
+    "start:normal": "node start.js --env=production"
   },
   "keywords": [
     "koa",
@@ -22,6 +22,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
+    "babel-core": "^6.26.3",
     "body-parser": "^1.19.0",
     "express": "^4.16.3",
     "fs": "0.0.1-security",
@@ -31,10 +32,15 @@
     "path": "^0.12.7",
     "readline": "^1.3.0",
     "request": "^2.88.0",
+    "umi-request": "^1.3.5",
     "smb2": "^0.2.8",
     "url": "^0.11.0"
   },
   "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "cors": "^2.8.4",
     "formidable": "^1.2.1",
     "http-proxy-middleware": "^0.19.0",
