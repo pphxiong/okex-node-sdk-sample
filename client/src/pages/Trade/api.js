@@ -2,6 +2,12 @@ import request from '@/utils/request';
 
 const commonUrl = '/okex';
 
+export async function getFuturesLeverage(params) {
+  return request(`${commonUrl}/futures/getLeverage`, {
+    params,
+  });
+}
+
 export async function postFuturesLeverage(params) {
   return request(`${commonUrl}/futures/postLeverage`, {
     params,

@@ -100,6 +100,17 @@ app.get('/futures/postLeverage', function(req, response) {
         });
 });
 
+app.get('/futures/getLeverage', function(req, response) {
+    const {query = {}} = req;
+    const { underlying } = query;
+    authClient
+        .futures()
+        .getLeverage(underlying)
+        .then(res => {
+            send(response, {errcode: 0, errmsg: 'ok', data: res});
+        });
+});
+
 // 逐仓模式
 app.get('/futures/postSingleLeverage', function(req, response) {
   const {query = {}} = req;

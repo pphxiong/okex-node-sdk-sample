@@ -1,6 +1,13 @@
 import React,{ useState, useEffect, useRef } from 'react';
 import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col } from 'antd';
-import { postFuturesLeverage, postSwapLeverage, postFuturesOrder, getSwapAccount, getFuturesPosition } from './api'
+import {
+  postFuturesLeverage,
+  postSwapLeverage,
+  postFuturesOrder,
+  getSwapAccount,
+  getFuturesPosition,
+  getFuturesLeverage
+} from './api'
 import moment from 'moment'
 
 export default props => {
@@ -17,8 +24,14 @@ export default props => {
     setEosPosition(eosResult?.data?.holding[0]);
   }
 
+  const getLeverage = async () => {
+    const result = await getFuturesLeverage({ underlying: 'BTC-USD' });
+    setLeverage(result?.data?.leverage);
+  }
+
   useEffect(()=>{
     getPosition();
+    getLeverage();
   },[])
 
   const onSetLeverage = async () => {
