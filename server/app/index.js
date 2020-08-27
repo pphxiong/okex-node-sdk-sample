@@ -168,7 +168,7 @@ app.get('/futures/getPosition', function(req, response) {
 // 开仓
 function autoOpenOrders(longHolding, shortHolding) {
     const payload = {
-        size: longHolding.long_avail_qty,
+        size: Number(longHolding.long_avail_qty),
         type: 1,
         order_type: 4, //市价委托
         instrument_id: longHolding.instrument_id
@@ -177,7 +177,7 @@ function autoOpenOrders(longHolding, shortHolding) {
         .futures()
         .postOrder(payload);
     const eosPayload = {
-        size: shortHolding.short_avail_qty,
+        size: Number(shortHolding.short_avail_qty),
         type: 2,
         order_type: 4, //市价委托
         instrument_id: shortHolding.instrument_id
@@ -191,7 +191,7 @@ function autoOpenOrders(longHolding, shortHolding) {
 function autoCloseOrders(longHolding, shortHolding) {
     if(Number(longHolding.long_avail_qty)) {
         const payload = {
-            size: longHolding.long_avail_qty,
+            size: Number(longHolding.long_avail_qty),
             type: 3,
             order_type: 4, //市价委托
             instrument_id: longHolding.instrument_id
@@ -203,7 +203,7 @@ function autoCloseOrders(longHolding, shortHolding) {
 
     if(Number(shortHolding.short_avail_qty)){
         const eosPayload = {
-            size: shortHolding.short_avail_qty,
+            size: Number(shortHolding.short_avail_qty),
             type: 4,
             order_type: 4, //市价委托
             instrument_id: shortHolding.instrument_id
@@ -229,7 +229,7 @@ myInterval = setInterval(()=>{
                   const { holding } = res;
                   console.log('收益率：',Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
                   if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
-                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.8){
+                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.08){
                           autoCloseOrders(longHolding, holding[0]);
                           // 1分钟后再开仓
                           setTimeout(()=>{

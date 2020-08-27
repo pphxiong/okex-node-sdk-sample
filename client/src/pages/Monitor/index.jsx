@@ -24,7 +24,7 @@ export default props => {
   const getLongShortRatioData = async () => {
     const result = await getFuturesInformation({ currency: 'BTC' });
     const data = result?.data??[];
-    setLongShortRatioData(data.filter((_,index)=>index<40).map(item=>({ time: moment(item[0]).format('hh:mm:ss'), ratio: Number(item[1]) })));
+    setLongShortRatioData(data.filter((_,index)=>index<40).map(item=>({ time: moment(item[0]).format('HH:mm:ss'), ratio: Number(item[1]) })));
   }
 
   const getSentiment = async () => {
@@ -33,12 +33,12 @@ export default props => {
     const list = [];
     data.filter((_,index)=>index<40).map(item=>{
       list.push({
-        time: moment(item[0]).format('hh:mm:ss'),
+        time: moment(item[0]).format('HH:mm:ss'),
         ratio: Number(item[1]),
         type: '做多账户'
       });
       list.push({
-        time: moment(item[0]).format('hh:mm:ss'),
+        time: moment(item[0]).format('HH:mm:ss'),
         ratio: Number(item[2]),
         type: '做空账户'
       });
@@ -70,7 +70,7 @@ export default props => {
   },{
     dataIndex: 'timestamp',
     title: '成交时间',
-    render: text=>moment(text).format('YYYY-MM-DD hh:mm:ss')
+    render: text=>moment(text).format('YYYY-MM-DD HH:mm:ss')
   },{
     dataIndex: 'leverage',
     title: '杠杆倍数'

@@ -92,7 +92,7 @@ export default props => {
           <h3>BTC</h3>
           <p>ID：{btcPosition.instrument_id}</p>
           {/*<p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
-          <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
           <p>杠杆倍数：{btcPosition.leverage}</p>
           <p>数量（张）：{btcPosition.long_qty}</p>
           <p>开仓均价：{btcPosition.long_avg_cost}</p>
@@ -108,7 +108,7 @@ export default props => {
           <h3>EOS</h3>
           <p>ID：{eosPosition.instrument_id}</p>
           {/*<p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
-          <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD hh:mm:ss')}</p>
+          <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
           <p>杠杆倍数：{eosPosition.leverage}</p>
           <p>数量（张）：{eosPosition.short_qty}</p>
           <p>开仓均价：{eosPosition.short_avg_cost}</p>
