@@ -240,13 +240,13 @@ myInterval = setInterval(()=>{
                   const { holding } = res;
                   console.log('收益率：',Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
                   if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
-                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.08){
+                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.082){
                           autoCloseOrders(longHolding, holding[0]);
                           // 1分钟后再开仓
                           setTimeout(()=>{
                               autoOpenOrders(longHolding, holding[0]);
                           },1000*60*1)
-                      }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.1){
+                      }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.16){
                           autoCloseOrders(longHolding, holding[0]);
                       }
                   }else{
@@ -254,7 +254,7 @@ myInterval = setInterval(()=>{
                   }
               })
       });
-},5000)
+},1000 * 5)
 
 app.listen(8090);
 
