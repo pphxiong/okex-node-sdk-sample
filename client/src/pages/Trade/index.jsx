@@ -98,6 +98,14 @@ export default props => {
     if(eosResult?.data?.result) message.success('EOS平仓成功');
   }
 
+  const onStopMonitor = () => {
+
+  }
+
+  const onStartMonitor = () => {
+
+  }
+
   return <>
     <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
       <Row gutter={12}>
@@ -149,6 +157,12 @@ export default props => {
       <Divider type="vertical" />
       <span>开仓张数：</span><InputNumber value={size} step={1} onChange={v=>setSize(v)}/>
       <Button onClick={()=>onSetLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
+
+      <Divider type="horizontal" />
+
+      <span>操作：</span>
+      <Button onClick={()=>{}}>停止监控</Button>
+      <Button onClick={()=>{}} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
 
       <Divider type="horizontal" />
 

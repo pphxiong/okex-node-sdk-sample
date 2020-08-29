@@ -176,6 +176,21 @@ app.get('/futures/getPosition', function(req, response) {
         });
 });
 
+app.get('/operation/startMonitor', function(req, response) {
+    if(!myInterval){
+        myInterval = startInterval();
+    }
+    send(response, {errcode: 0, errmsg: 'ok', data: {} });
+});
+
+app.get('/operation/stopMonitor', function(req, response) {
+    if(myInterval) {
+        clearInterval(myInterval);
+        myInterval = null;
+    }
+    send(response, {errcode: 0, errmsg: 'ok', data: {} });
+});
+
 // 开仓
 function autoOpenOrders(longHolding, shortHolding) {
     const payload = {
@@ -225,36 +240,40 @@ function autoCloseOrders(longHolding, shortHolding) {
     }
 }
 
+function startInterval() {
+    return setInterval(()=>{
+        authClient
+            .futures()
+            .getPosition('BTC-USD-201225')
+            .then(res => {
+                const { holding } = res;
+                return holding[0];
+            })
+            .then(longHolding=>{
+                authClient.futures().getPosition('EOS-USD-201225')
+                    .then(res=>{
+                        const { holding } = res;
+                        console.log('收益率：',Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
+                        if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
+                            if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.082){
+                                autoCloseOrders(longHolding, holding[0]);
+                                // 1分钟后再开仓
+                                setTimeout(()=>{
+                                    autoOpenOrders(longHolding, holding[0]);
+                                },1000*60*1)
+                            }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.16){
+                                autoCloseOrders(longHolding, holding[0]);
+                            }
+                        }else{
+                            autoCloseOrders(longHolding, holding[0]);
+                        }
+                    })
+            });
+    },1000 * 5)
+}
+
 // 定时获取交割合约账户信息
-myInterval = setInterval(()=>{
-  authClient
-      .futures()
-      .getPosition('BTC-USD-201225')
-      .then(res => {
-        const { holding } = res;
-        return holding[0];
-      })
-      .then(longHolding=>{
-          authClient.futures().getPosition('EOS-USD-201225')
-              .then(res=>{
-                  const { holding } = res;
-                  console.log('收益率：',Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
-                  if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
-                      if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.082){
-                          autoCloseOrders(longHolding, holding[0]);
-                          // 1分钟后再开仓
-                          setTimeout(()=>{
-                              autoOpenOrders(longHolding, holding[0]);
-                          },1000*60*1)
-                      }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.16){
-                          autoCloseOrders(longHolding, holding[0]);
-                      }
-                  }else{
-                      autoCloseOrders(longHolding, holding[0]);
-                  }
-              })
-      });
-},1000 * 5)
+myInterval = startInterval()
 
 app.listen(8090);
 
