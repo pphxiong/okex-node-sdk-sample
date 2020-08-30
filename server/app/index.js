@@ -184,10 +184,7 @@ app.get('/operation/startMonitor', function(req, response) {
 });
 
 app.get('/operation/stopMonitor', function(req, response) {
-    if(myInterval) {
-        clearInterval(myInterval);
-        myInterval = null;
-    }
+    stopInterval();
     send(response, {errcode: 0, errmsg: '停止监控成功', data: {} });
 });
 
@@ -211,6 +208,8 @@ function autoOpenOrders(longHolding, shortHolding, btcType = 1, eosType = 2) {
     authClient
         .futures()
         .postOrder(eosPayload);
+
+    startInterval();
 }
 
 // 平仓
@@ -238,6 +237,20 @@ function autoCloseOrders(longHolding, shortHolding) {
             .futures()
             .postOrder(eosPayload);
     }
+
+    if(Number(shortHolding.long_avail_qty)){
+        const eosPayload = {
+            size: Number(shortHolding.long_avail_qty),
+            type: 3,
+            order_type: 4, //市价委托
+            instrument_id: shortHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(eosPayload);
+    }
+
+    stopInterval();
 }
 
 function startInterval() {
@@ -254,7 +267,9 @@ function startInterval() {
                     .then(res=>{
                         const { holding } = res;
                         const radio = Number(longHolding.long_pnl_ratio) + Number(longHolding.short_pnl_ratio) + Number(holding[0].long_pnl_ratio) + Number(holding[0].short_pnl_ratio);
-                        console.log('收益率：',radio)
+                        console.log(longHolding);
+                        console.log(holding[0]);
+                        console.log('收益率：',radio);
                         if(radio > 0.082){
                             autoCloseOrders(longHolding, holding[0]);
                             // 盈利后，1分钟后再开仓
@@ -290,6 +305,13 @@ function startInterval() {
                     })
             });
     },1000 * 5)
+}
+
+function stopInterval() {
+    if(myInterval) {
+        clearInterval(myInterval);
+        myInterval = null;
+    }
 }
 
 // 定时获取交割合约账户信息
