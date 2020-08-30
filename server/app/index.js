@@ -253,7 +253,7 @@ function startInterval() {
                 authClient.futures().getPosition('EOS-USD-201225')
                     .then(res=>{
                         const { holding } = res;
-                        const radio = Number(longHolding.long_pnl_ratio) + Number(longHolding.short_pnl_ratio) + Number(holding[0].long_pnl_ratio + Number(holding[0].short_pnl_ratio)
+                        const radio = Number(longHolding.long_pnl_ratio) + Number(longHolding.short_pnl_ratio) + Number(holding[0].long_pnl_ratio) + Number(holding[0].short_pnl_ratio);
                         console.log('收益率：',radio)
                         if(radio > 0.082){
                             autoCloseOrders(longHolding, holding[0]);
