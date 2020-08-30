@@ -6,7 +6,9 @@ import {
   postFuturesOrder,
   getSwapAccount,
   getFuturesPosition,
-  getFuturesLeverage
+  getFuturesLeverage,
+  startMonitor,
+  stopMonitor
 } from './api'
 import moment from 'moment'
 
@@ -98,12 +100,14 @@ export default props => {
     if(eosResult?.data?.result) message.success('EOS平仓成功');
   }
 
-  const onStopMonitor = () => {
-
+  const onStopMonitor = async () => {
+    const { errcode, errmsg } = await stopMonitor();
+    if(errcode == 0)  message.success(errmsg);
   }
 
-  const onStartMonitor = () => {
-
+  const onStartMonitor = async () => {
+    const { errcode, errmsg } = await startMonitor();
+    if(errcode == 0)  message.success(errmsg);
   }
 
   return <>
@@ -161,8 +165,8 @@ export default props => {
       <Divider type="horizontal" />
 
       <span>操作：</span>
-      <Button onClick={()=>{}}>停止监控</Button>
-      <Button onClick={()=>{}} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
+      <Button onClick={()=>onStopMonitor()}>停止监控</Button>
+      <Button onClick={()=>onStartMonitor()} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
 
       <Divider type="horizontal" />
 

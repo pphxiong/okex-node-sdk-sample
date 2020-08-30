@@ -180,7 +180,7 @@ app.get('/operation/startMonitor', function(req, response) {
     if(!myInterval){
         myInterval = startInterval();
     }
-    send(response, {errcode: 0, errmsg: 'ok', data: {} });
+    send(response, {errcode: 0, errmsg: '开始监控成功', data: {} });
 });
 
 app.get('/operation/stopMonitor', function(req, response) {
@@ -188,14 +188,14 @@ app.get('/operation/stopMonitor', function(req, response) {
         clearInterval(myInterval);
         myInterval = null;
     }
-    send(response, {errcode: 0, errmsg: 'ok', data: {} });
+    send(response, {errcode: 0, errmsg: '停止监控成功', data: {} });
 });
 
-// 开仓
-function autoOpenOrders(longHolding, shortHolding) {
+// 开仓，对冲仓或同方向仓
+function autoOpenOrders(longHolding, shortHolding, btcType = 1, eosType = 2) {
     const payload = {
         size: Number(longHolding.long_avail_qty),
-        type: 1,
+        type: btcType,
         order_type: 4, //市价委托
         instrument_id: longHolding.instrument_id
     }
@@ -204,7 +204,7 @@ function autoOpenOrders(longHolding, shortHolding) {
         .postOrder(payload);
     const eosPayload = {
         size: Number(shortHolding.short_avail_qty),
-        type: 2,
+        type: eosType,
         order_type: 4, //市价委托
         instrument_id: shortHolding.instrument_id
     }
@@ -253,20 +253,40 @@ function startInterval() {
                 authClient.futures().getPosition('EOS-USD-201225')
                     .then(res=>{
                         const { holding } = res;
-                        console.log('收益率：',Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio))
-                        if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
-                            if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) > 0.082){
-                                autoCloseOrders(longHolding, holding[0]);
-                                // 1分钟后再开仓
-                                setTimeout(()=>{
-                                    autoOpenOrders(longHolding, holding[0]);
-                                },1000*60*1)
-                            }else if(Number(longHolding.long_pnl_ratio) + Number(holding[0].short_pnl_ratio) < -0.16){
-                                autoCloseOrders(longHolding, holding[0]);
-                            }
-                        }else{
+                        const radio = Number(longHolding.long_pnl_ratio) + Number(longHolding.short_pnl_ratio) + Number(holding[0].long_pnl_ratio + Number(holding[0].short_pnl_ratio)
+                        console.log('收益率：',radio)
+                        if(radio > 0.082){
                             autoCloseOrders(longHolding, holding[0]);
+                            // 盈利后，1分钟后再开仓
+                            setTimeout(()=>{
+                                autoOpenOrders(longHolding, holding[0]);
+                            },1000*60*1)
+                        }else if(radio < -0.16){
+                            autoCloseOrders(longHolding, holding[0]);
+                            if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)) {
+                                // 亏损并且是对冲仓时，5分钟后开两个多仓
+                                setTimeout(()=>{
+                                    autoOpenOrders(longHolding, holding[0], 1, 1);
+                                },1000*60*5)
+                            }
                         }
+                        // if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
+                        //     if(radio > 0.082){
+                        //         autoCloseOrders(longHolding, holding[0]);
+                        //         // 1分钟后再开仓
+                        //         setTimeout(()=>{
+                        //             autoOpenOrders(longHolding, holding[0]);
+                        //         },1000*60*1)
+                        //     }else if(radio < -0.16){
+                        //         autoCloseOrders(longHolding, holding[0]);
+                        //         // 亏损后，5分钟后向同方向开仓
+                        //         setTimeout(()=>{
+                        //             autoOpenOrders(longHolding, holding[0], 1, 1);
+                        //         },1000*60*5)
+                        //     }
+                        // }else{
+                        //     autoCloseOrders(longHolding, holding[0]);
+                        // }
                     })
             });
     },1000 * 5)

@@ -43,3 +43,15 @@ export async function getFuturesPosition(params) {
     params,
   });
 }
+
+export async function startMonitor(params) {
+  return request(`${commonUrl}/operation/startMonitor`, {
+    params,
+  });
+}
+
+export async function stopMonitor(params) {
+  return request(`${commonUrl}/operation/stopMonitor`, {
+    params,
+  });
+}
