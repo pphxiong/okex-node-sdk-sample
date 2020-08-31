@@ -255,7 +255,12 @@ function autoCloseOrders(longHolding, shortHolding) {
 }
 
 function startInterval() {
-    if(myInterval) return myInterval;
+    if(myInterval) {
+        stopInterval();
+        setTimeout(()=>{
+            startInterval();
+        },1000*2);
+    }
     return setInterval(()=>{
         authClient
             .futures()
