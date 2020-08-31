@@ -287,13 +287,13 @@ function startInterval() {
                             setTimeout(()=>{
                                 autoOpenOrders(longHolding, holding[0]);
                             },1000*60*1)
-                        }else if(radio < -0.16){
+                        }else if(radio < -0.12){
                             autoCloseOrders(longHolding, holding[0]);
                             if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)) {
                                 // 亏损并且是对冲仓时，5分钟后开两个多仓
                                 setTimeout(()=>{
                                     autoOpenOrders(longHolding, holding[0], 1, 1);
-                                },1000*60*5)
+                                },1000*60*1)
                             }
                         }
                         // if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
