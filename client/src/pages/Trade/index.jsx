@@ -226,7 +226,7 @@ export default props => {
         title="是否确定以市价开同方向多仓？"
         onConfirm={()=>openLongOrder()}
       >
-        <Button>双多开仓</Button>
+        <Button style={{ marginLeft: 10 }}>双多开仓</Button>
       </Popconfirm>
 
       <Popconfirm

@@ -283,7 +283,7 @@ function startInterval() {
                         console.log(holding[0]);
                         console.log('收益率：',radio);
                         if(!qty) return;
-                        if(radio > 0.082){
+                        if(radio > 0.088){
                             autoCloseOrders(longHolding, holding[0]);
                             // 盈利后，1分钟后再开仓
                             setTimeout(()=>{
