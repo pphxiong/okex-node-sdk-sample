@@ -279,11 +279,9 @@ function startInterval() {
                             (Number(longHolding.short_avail_qty) && Number(longHolding.short_pnl_ratio)) +
                             (Number(holding[0].long_avail_qty) && Number(holding[0].long_pnl_ratio)) +
                             (Number(holding[0].short_avail_qty) && Number(holding[0].short_pnl_ratio));
-                        console.log(longHolding);
-                        console.log(holding[0]);
                         console.log('收益率：',radio);
                         if(!qty) return;
-                        if(radio > 0.088){
+                        if(radio > 0.098){
                             autoCloseOrders(longHolding, holding[0]);
                             // 盈利后，1分钟后再开仓
                             setTimeout(()=>{
