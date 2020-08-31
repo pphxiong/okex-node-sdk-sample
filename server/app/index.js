@@ -152,6 +152,7 @@ app.get('/swap/postOrder', function(req, response) {
     .then(res => {
       send(response, {errcode: 0, errmsg: 'ok', data: res});
     });
+  startInterval();
 });
 
 app.get('/swap/getAccount', function(req, response) {
@@ -254,6 +255,7 @@ function autoCloseOrders(longHolding, shortHolding) {
 }
 
 function startInterval() {
+    if(myInterval) return myInterval;
     return setInterval(()=>{
         authClient
             .futures()
