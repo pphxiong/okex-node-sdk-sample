@@ -300,6 +300,7 @@ function getAvailNo(currency = 'btc-usd',instrument_id = 'btc-usd-201225', val =
         .futures()
         .getAccounts(currency)
         .then(res=>{
+            console.log(res)
             const num = Number(res.data.total_avail_balance)
             return num;
         }).then(num=>{
@@ -383,7 +384,7 @@ function startInterval() {
                         // }
                     })
             });
-        console.log(getAvailNo())
+        getAvailNo().then(res=>{console.log(res)})
     },1000 * 5)
 }
 
