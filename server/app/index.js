@@ -300,14 +300,14 @@ function getAvailNo(currency = 'btc-usd',instrument_id = 'btc-usd-201225', val =
         .futures()
         .getAccounts(currency)
         .then(res=>{
-            console.log(res)
-            const num = Number(res.data.total_avail_balance)
+            const num = Number(res.total_avail_balance)
             return num;
         }).then(num=>{
             cAuthClient
             .futures
             .getMarkPrice(instrument_id)
             .then(cRes=>{
+                console.log(cRes)
                 const price = Number(cRes.data.mark_price);
                 return num * price;
             }).then(total=>{
