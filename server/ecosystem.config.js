@@ -14,7 +14,7 @@ module.exports = {
       out_file: "./logs/out-0.log",
       error_file: "./logs/err-0.log",
       watch: true,
-      exec_interpreter:"babel-node",
+      // exec_interpreter:"babel-node",
       exec_mode: "fork",
       env: {
         COMMON_VARIABLE: 'true'
