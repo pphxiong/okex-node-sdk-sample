@@ -8,7 +8,7 @@ module.exports = {
     // First application
     {
       name: 'API',
-      script: './app/start.js',
+      script: 'start.js',
       cwd: "./",
       log_date_format: "YYYY-MM-DD HH:mm:ss",
       out_file: "./logs/out-0.log",
