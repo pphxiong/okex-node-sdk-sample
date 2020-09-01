@@ -11,16 +11,17 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start app/start.js",
+    "start": "pm2 start ecosystem.config.js --interpreter babel-node",
     "restart": "pm2 restart all",
     "stop": "pm2 delete all",
-    "start:normal": "node app/start.js --env=production",
+    "start:normal": "babel-node app/start.js --env=production",
     "log": "pm2 log 0"
   },
   "dependencies": {
     "@okfe/okex-node": "0.0.52",
     "antd": "^4.5.4",
     "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",

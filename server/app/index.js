@@ -385,7 +385,6 @@ function startInterval() {
                         // }
                     })
             });
-        getAvailNo().then(res=>{console.log(res)})
     },1000 * 5)
 }
 
@@ -398,7 +397,7 @@ function stopInterval() {
 
 // 定时获取交割合约账户信息
 myInterval = startInterval()
-
+console.log({ ...{ a: 1} })
 app.listen(8090);
 
 console.log('server start');
