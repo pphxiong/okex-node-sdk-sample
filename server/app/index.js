@@ -307,15 +307,14 @@ function getAvailNo(currency = 'btc-usd',instrument_id = 'btc-usd-201225', val =
             .futures
             .getMarkPrice(instrument_id)
             .then(cRes=>{
-                console.log(cRes)
-                const price = Number(cRes.data.mark_price);
+                const price = Number(cRes.mark_price);
                 return num * price;
             }).then(total=>{
             authClient
                 .futures()
                 .getLeverage(currency)
                 .then(lRes=>{
-                    const leverage = lRes.data.leverage;
+                    const leverage = lRes.leverage;
                     return Math.floor(num * price * leverage * 0.97 / val)
                 })
         })
