@@ -294,13 +294,18 @@ function autoCloseOrders(longHolding, shortHolding) {
     stopInterval();
 }
 
+let isRequested = false;
 // 获取可开张数
-const getAvailNo = async (currency = 'btc-usd',instrument_id = 'btc-usd-201225', val = 100 ) => {
+const getAvailNo = async (is = isRequested, {currency = 'btc-usd', instrument_id = 'btc-usd-201225', val = 100}) => {
+    if(is) return false;
     const { total_avail_balance } = await authClient.futures().getAccounts(currency);
     const {  mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
     const { leverage } = await authClient.futures().getLeverage(currency);
 
-    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.97 / val)
+    return {
+        isRequested: true,
+        avail: Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.97 / val),
+    }
 }
 
 function startInterval() {
@@ -365,7 +370,11 @@ function startInterval() {
                         // }
                     })
             });
-        console.log(await getAvailNo())
+        const availRes = await getAvailNo();
+        if(availRes) {
+            isRequested = true;
+            console.log(availRes.avail)
+        }
     },1000 * 5)
 }
 
