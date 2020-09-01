@@ -296,7 +296,7 @@ function autoCloseOrders(longHolding, shortHolding) {
 
 let isRequested = false;
 // 获取可开张数
-const getAvailNo = async (is = isRequested, params) => {
+const getAvailNo = async (is = isRequested, params = {}) => {
     if(is) return false;
     const {currency = 'btc-usd', instrument_id = 'btc-usd-201225', val = 100} = params
     const { total_avail_balance } = await authClient.futures().getAccounts(currency);
