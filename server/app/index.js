@@ -383,9 +383,7 @@ function startInterval() {
                         // }
                     })
             });
-        getAvailNo.then(no=>{
-            console.log(no)
-        })
+        console.log(getAvailNo())
     },1000 * 5)
 }
 
