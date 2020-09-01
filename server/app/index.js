@@ -300,6 +300,7 @@ const getAvailNo = async (currency = 'btc-usd',instrument_id = 'btc-usd-201225',
     const {  mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
     const { leverage } = await authClient.futures().getLeverage(currency);
 
+    console.log(Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.97 / val))
     return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.97 / val)
 }
 
