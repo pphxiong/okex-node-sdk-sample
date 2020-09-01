@@ -11,7 +11,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ecosystem.config.js --interpreter babel-node --env=production",
+    "start": "pm2 start ecosystem.config.js --env=production --interpreter babel-node",
     "restart": "pm2 restart all",
     "stop": "pm2 delete all",
     "start:normal": "babel-node start.js --env=production",
