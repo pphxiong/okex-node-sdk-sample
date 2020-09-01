@@ -230,9 +230,10 @@ app.get('/operation/stopMonitor', function(req, response) {
 });
 
 // 开仓，对冲仓或同方向仓
-function autoOpenOrders(longHolding, shortHolding, btcType = 1, eosType = 2) {
+const autoOpenOrders = async (longHolding, shortHolding, btcType = 1, eosType = 2) => {
+    const btcAvail = await getAvailNo();
     const payload = {
-        size: Number(longHolding.long_avail_qty),
+        size: btcAvail,
         type: btcType,
         order_type: 4, //市价委托
         instrument_id: longHolding.instrument_id
@@ -240,8 +241,10 @@ function autoOpenOrders(longHolding, shortHolding, btcType = 1, eosType = 2) {
     authClient
         .futures()
         .postOrder(payload);
+
+    const eosAvail = await getAvailNo(10, 'eos-usd','eos-usd-201225');
     const eosPayload = {
-        size: Number(shortHolding.short_avail_qty),
+        size: eosAvail,
         type: eosType,
         order_type: 4, //市价委托
         instrument_id: shortHolding.instrument_id
@@ -294,19 +297,13 @@ function autoCloseOrders(longHolding, shortHolding) {
     stopInterval();
 }
 
-let isRequested = false;
 // 获取可开张数
-const getAvailNo = async (is = isRequested, params = {}) => {
-    if(is) return false;
-    const {currency = 'btc-usd', instrument_id = 'btc-usd-201225', val = 100} = params
+const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-usd-201225') => {
     const { total_avail_balance } = await authClient.futures().getAccounts(currency);
     const {  mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
     const { leverage } = await authClient.futures().getLeverage(currency);
 
-    return {
-        isRequested: true,
-        avail: Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.97 / val),
-    }
+    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.97 / val)
 }
 
 function startInterval() {
@@ -318,64 +315,33 @@ function startInterval() {
         return;
     }
     return setInterval(async ()=>{
-        authClient
-            .futures()
-            .getPosition('BTC-USD-201225')
-            .then(res => {
-                const { holding } = res;
-                return holding[0];
-            })
-            .then(longHolding=>{
-                authClient.futures().getPosition('EOS-USD-201225')
-                    .then(res=>{
-                        const { holding } = res;
-                        const qty = Number(longHolding.long_avail_qty) + Number(longHolding.short_avail_qty) + Number(holding[0].long_avail_qty) + Number(holding[0].short_avail_qty)
-                        const radio =
-                            (Number(longHolding.long_avail_qty) && Number(longHolding.long_pnl_ratio)) +
-                            (Number(longHolding.short_avail_qty) && Number(longHolding.short_pnl_ratio)) +
-                            (Number(holding[0].long_avail_qty) && Number(holding[0].long_pnl_ratio)) +
-                            (Number(holding[0].short_avail_qty) && Number(holding[0].short_pnl_ratio));
-                        console.log('收益率：',radio);
-                        if(!qty) return;
-                        if(radio > 0.098){
-                            autoCloseOrders(longHolding, holding[0]);
-                            // 盈利后，1分钟后再开仓
-                            setTimeout(()=>{
-                                autoOpenOrders(longHolding, holding[0]);
-                            },1000*60*1)
-                        }else if(radio < -0.12){
-                            autoCloseOrders(longHolding, holding[0]);
-                            if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)) {
-                                // 亏损并且是对冲仓时，1分钟后开两个多仓
-                                setTimeout(()=>{
-                                    autoOpenOrders(longHolding, holding[0], 1, 1);
-                                },1000*60*1)
-                            }
-                        }
-                        // if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)){
-                        //     if(radio > 0.082){
-                        //         autoCloseOrders(longHolding, holding[0]);
-                        //         // 1分钟后再开仓
-                        //         setTimeout(()=>{
-                        //             autoOpenOrders(longHolding, holding[0]);
-                        //         },1000*60*1)
-                        //     }else if(radio < -0.16){
-                        //         autoCloseOrders(longHolding, holding[0]);
-                        //         // 亏损后，5分钟后向同方向开仓
-                        //         setTimeout(()=>{
-                        //             autoOpenOrders(longHolding, holding[0], 1, 1);
-                        //         },1000*60*5)
-                        //     }
-                        // }else{
-                        //     autoCloseOrders(longHolding, holding[0]);
-                        // }
-                    })
-            });
-        const availRes = await getAvailNo();
-        if(availRes) {
-            isRequested = true;
-            console.log(availRes.avail)
+        const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
+        const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
+
+        const qty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty) + Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty)
+        const radio =
+            (Number(btcHolding[0].long_avail_qty) && Number(btcHolding[0].long_pnl_ratio)) +
+            (Number(btcHolding[0].short_avail_qty) && Number(btcHolding[0].short_pnl_ratio)) +
+            (Number(eosHolding[0].long_avail_qty) && Number(eosHolding[0].long_pnl_ratio)) +
+            (Number(eosHolding[0].short_avail_qty) && Number(eosHolding[0].short_pnl_ratio));
+        console.log('收益率：',radio);
+        if(!qty) return;
+        if(radio > 0.098){
+            autoCloseOrders(btcHolding[0], eosHolding[0]);
+            // 盈利后，1分钟后再开仓
+            setTimeout(()=>{
+                autoOpenOrders(btcHolding[0], eosHolding[0]);
+            },1000*60*1)
+        }else if(radio < -0.12){
+            autoCloseOrders(btcHolding[0], eosHolding[0]);
+            if(Number(btcHolding[0].long_avail_qty) && Number(eosHolding[0].short_avail_qty)) {
+                // 亏损并且是对冲仓时，1分钟后开两个多仓
+                setTimeout(()=>{
+                    autoOpenOrders(btcHolding[0], eosHolding[0], 1, 1);
+                },1000*60*1)
+            }
         }
+
     },1000 * 5)
 }
 
