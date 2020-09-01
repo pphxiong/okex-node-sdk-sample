@@ -1,8 +1,6 @@
 import request from '../utils/request';
 import * as crypto from 'crypto';
 
-var config = require('./config');
-
 function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.com', timeout = 3000, axiosConfig = {}) {
     const signRequest = (method, path, options = {}) => {
         const timestamp = Date.now() / 1000;
@@ -28,7 +26,7 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
     };
 
     const get = function(url, params) {
-        return request(url,{
+        return request(apiUri + url,{
             method: 'get',
             headers: getSignature('get', url)
         })
