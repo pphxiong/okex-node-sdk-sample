@@ -44,6 +44,12 @@ export async function getFuturesAccounts(params) {
   });
 }
 
+export async function getFuturesMarkPrice(params) {
+  return request(`${commonUrl}/futures/getMarkPrice`, {
+    params,
+  });
+}
+
 export async function getFuturesPosition(params) {
   return request(`${commonUrl}/futures/getPosition`, {
     params,

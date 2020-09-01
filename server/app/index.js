@@ -97,6 +97,17 @@ app.get('/futures/getAccounts', function(req, response) {
     });
 });
 
+app.get('/futures/getMarkPrice', function(req, response) {
+    const {query = {}} = req;
+    const {instrument_id} = query; // "BTC-USD"
+    cAuthClient
+        .futures
+        .getMarkPrice(instrument_id)
+        .then(res => {
+            send(response, {errcode: 0, errmsg: 'ok', data: res});
+        });
+});
+
 app.get('/futures/information/', function(req, response) {
   const {query = {}} = req;
   const {currency} = query.params || query;

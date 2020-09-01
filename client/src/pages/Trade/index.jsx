@@ -9,7 +9,8 @@ import {
   getFuturesLeverage,
   startMonitor,
   stopMonitor,
-  getFuturesAccounts
+  getFuturesAccounts,
+  getFuturesMarkPrice
 } from './api'
 import moment from 'moment'
 
@@ -21,6 +22,8 @@ export default props => {
   const [eosPosition, setEosPosition] = useState({});
   const [btcAccount, setBtcAccount] = useState(0);
   const [eosAccount, setEosAccount] = useState(0);
+  const [btcMarkPrice, setBtcMarkPrice] = useState(0);
+  const [eosMarkPrice, setEosMarkPrice] = useState(0);
 
   const getPosition = async () => {
     const result = await getFuturesPosition({instrument_id: 'BTC-USD-201225'});
@@ -41,10 +44,18 @@ export default props => {
     setEosAccount(eosResult?.data??{})
   }
 
+  const getMarkPrice = async () => {
+    const result = await getFuturesMarkPrice({ instrument_id: 'btc-usd-201225' });
+    setBtcMarkPrice(result?.data?.mark_price)
+    const eosResult = await getFuturesMarkPrice({ instrument_id: 'eos-usd-201225' });
+    setEosMarkPrice(eosResult?.data?.mark_price)
+  }
+
   useEffect(()=>{
     getPosition();
     getLeverage();
     getAccounts();
+    getMarkPrice();
   },[])
 
   const onSetLeverage = async () => {
@@ -213,8 +224,8 @@ export default props => {
       </Row>
     </Card>
     <Card title={'合约账户信息'} style={{ marginTop: 10 }}>
-      <p>BTC余额：{btcAccount.total_avail_balance}</p>
-      <p>EOS余额：{eosAccount.total_avail_balance}</p>
+      <p>BTC余额：{btcAccount.total_avail_balance} <Divider /> 标记价格：{btcMarkPrice}</p>
+      <p>EOS余额：{eosAccount.total_avail_balance} <Divider /> 标记价格：{eosMarkPrice}</p>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>
       <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} onChange={v=>setLeverage(v)}/>

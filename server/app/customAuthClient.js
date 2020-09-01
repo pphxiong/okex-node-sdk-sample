@@ -34,21 +34,17 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
 
     return {
         account: {
-            getAssetValuation: function (type) {
+            getAssetValuation: function (type = 3) {
                 return get(`/api/account/v3/asset-valuation?account_type=${type}&valuation_currency=btc`)
+            }
+        },
+        futures: {
+            getMarkPrice: function (instrument_id){
+                return get(`/api/futures/v3/instruments/${instrument_id}/mark_price`)
             }
         }
     }
 
-
-// const cusotmAuthClient = {
-//     account: {
-//         ...authClient.account,
-//         getAssetValuation: function (type) {
-//             return request.get(`/api/account/v3/asset-valuation?account_type=${type}&valuation_currency=btc`)
-//         }
-//     }
-// }
 }
 
 
