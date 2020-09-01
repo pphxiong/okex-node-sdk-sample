@@ -57,12 +57,33 @@ app.get('/account/getWallet', function(req, response) {
     });
 });
 
+
+app.get('/account/getAssetValuation', function(req, response) {
+    const {query = {}} = req;
+    const { type = 3, } = query;
+    authClient.get(`/api/account/v3/asset-valuation?account_type=${type}&valuation_currency=btc`)
+        .then(res => {
+            send(response, {errcode: 0, errmsg: 'ok', data: res});
+        });
+});
+
 app.get('/futures/getOrders', function(req, response) {
+    const {query = {}} = req;
+    const {instrument_id} = query; // "BTC-USD-200821"
+    authClient
+        .futures()
+        .getOrders(instrument_id, {state: 2, limit: 20})
+        .then(res => {
+            send(response, {errcode: 0, errmsg: 'ok', data: res});
+        });
+});
+
+app.get('/futures/getAccounts', function(req, response) {
   const {query = {}} = req;
-  const {instrument_id} = query; // "BTC-USD-200821"
+  const {currency} = query; // "BTC-USD"
   authClient
     .futures()
-    .getOrders(instrument_id, {state: 2, limit: 20})
+    .getAccounts(currency)
     .then(res => {
       send(response, {errcode: 0, errmsg: 'ok', data: res});
     });
@@ -260,6 +281,7 @@ function startInterval() {
         setTimeout(()=>{
             startInterval();
         },1000*2);
+        return;
     }
     return setInterval(()=>{
         authClient
@@ -290,7 +312,7 @@ function startInterval() {
                         }else if(radio < -0.12){
                             autoCloseOrders(longHolding, holding[0]);
                             if(Number(longHolding.long_avail_qty) && Number(holding[0].short_avail_qty)) {
-                                // 亏损并且是对冲仓时，5分钟后开两个多仓
+                                // 亏损并且是对冲仓时，1分钟后开两个多仓
                                 setTimeout(()=>{
                                     autoOpenOrders(longHolding, holding[0], 1, 1);
                                 },1000*60*1)

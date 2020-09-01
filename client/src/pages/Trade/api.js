@@ -38,6 +38,12 @@ export async function getSwapAccount(params) {
   });
 }
 
+export async function getFuturesAccounts(params) {
+  return request(`${commonUrl}/futures/getAccounts`, {
+    params,
+  });
+}
+
 export async function getFuturesPosition(params) {
   return request(`${commonUrl}/futures/getPosition`, {
     params,

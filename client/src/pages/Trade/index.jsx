@@ -8,7 +8,8 @@ import {
   getFuturesPosition,
   getFuturesLeverage,
   startMonitor,
-  stopMonitor
+  stopMonitor,
+  getFuturesAccounts
 } from './api'
 import moment from 'moment'
 
@@ -17,7 +18,9 @@ export default props => {
   const [swapLeverage, setSwapLeverage] = useState(5);
   const [size, setSize] = useState(1);
   const [btcPosition, setBtcPosition] = useState({});
-  const [eosPosition, setEosPosition] = useState({})
+  const [eosPosition, setEosPosition] = useState({});
+  const [btcAccount, setBtcAccount] = useState(0);
+  const [eosAccount, setEosAccount] = useState(0);
 
   const getPosition = async () => {
     const result = await getFuturesPosition({instrument_id: 'BTC-USD-201225'});
@@ -31,9 +34,17 @@ export default props => {
     setLeverage(result?.data?.leverage);
   }
 
+  const getAccounts = async () => {
+    const result = await getFuturesAccounts({ currency: 'btc-usd' });
+    setBtcAccount(result?.data??{})
+    const eosResult = await getFuturesAccounts({ currency: 'eos-usd' });
+    setEosAccount(eosResult?.data??{})
+  }
+
   useEffect(()=>{
     getPosition();
     getLeverage();
+    getAccounts();
   },[])
 
   const onSetLeverage = async () => {
@@ -200,6 +211,10 @@ export default props => {
           <p>已实现盈余（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last) + Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
         </Col>
       </Row>
+    </Card>
+    <Card title={'合约账户信息'} style={{ marginTop: 10 }}>
+      <p>BTC余额：{btcAccount.total_avail_balance}</p>
+      <p>EOS余额：{eosAccount.total_avail_balance}</p>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>
       <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} onChange={v=>setLeverage(v)}/>
