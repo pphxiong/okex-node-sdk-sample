@@ -15,6 +15,12 @@ const authClient = new AuthenticatedClient(
   config.passphrase,
   config.urlHost
 );
+const cAuthClient = new customAuthClient(
+    config.httpkey,
+    config.httpsecret,
+    config.passphrase,
+    config.urlHost
+)
 
 var express = require('express');
 // var http = require('../utils/http');
@@ -63,7 +69,7 @@ app.get('/account/getWallet', function(req, response) {
 app.get('/account/getAssetValuation', function(req, response) {
     const {query = {}} = req;
     const { type = 3, } = query;
-    customAuthClient.account.getAssetValuation(type)
+    cAuthClient.account.getAssetValuation(type)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
