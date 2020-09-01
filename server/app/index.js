@@ -99,7 +99,7 @@ app.get('/futures/getAccounts', function(req, response) {
 
 app.get('/futures/getMarkPrice', function(req, response) {
     const {query = {}} = req;
-    const {instrument_id} = query; // "BTC-USD"
+    const {instrument_id} = query;
     cAuthClient
         .futures
         .getMarkPrice(instrument_id)
@@ -294,6 +294,33 @@ function autoCloseOrders(longHolding, shortHolding) {
     stopInterval();
 }
 
+// 获取可开张数
+function getAvailNo(currency = 'btc-usd',instrument_id = 'btc-usd-201225', val = 100 ) {
+    return authClient
+        .futures()
+        .getAccounts(currency)
+        .then(res=>{
+            const num = Number(res.data.total_avail_balance)
+            return num;
+        }).then(num=>{
+            cAuthClient
+            .futures
+            .getMarkPrice(instrument_id)
+            .then(cRes=>{
+                const price = Number(cRes.data.mark_price);
+                return num * price;
+            }).then(total=>{
+            authClient
+                .futures()
+                .getLeverage(currency)
+                .then(lRes=>{
+                    const leverage = lRes.data.leverage;
+                    return Math.floor(num * price * leverage * 0.97 / val)
+                })
+        })
+    })
+}
+
 function startInterval() {
     if(myInterval) {
         stopInterval();
@@ -356,6 +383,9 @@ function startInterval() {
                         // }
                     })
             });
+        getAvailNo.then(no=>{
+            console.log(no)
+        })
     },1000 * 5)
 }
 
