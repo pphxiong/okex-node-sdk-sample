@@ -315,7 +315,7 @@ function getAvailNo(currency = 'btc-usd',instrument_id = 'btc-usd-201225', val =
                 .getLeverage(currency)
                 .then(lRes=>{
                     const leverage = lRes.leverage;
-                    return Math.floor(num * price * leverage * 0.97 / val)
+                    return Math.floor(total * leverage * 0.97 / val)
                 })
         })
     })
