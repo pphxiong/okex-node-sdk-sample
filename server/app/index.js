@@ -3,6 +3,8 @@ import request from '../utils/request';
 const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
 
+const customAuthClient = require('./customAuthClient');
+
 let myInterval;
 
 var config = require('./config');
@@ -61,7 +63,7 @@ app.get('/account/getWallet', function(req, response) {
 app.get('/account/getAssetValuation', function(req, response) {
     const {query = {}} = req;
     const { type = 3, } = query;
-    authClient.get(`/api/account/v3/asset-valuation?account_type=${type}&valuation_currency=btc`)
+    customAuthClient.account.getAssetValuation(type)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
