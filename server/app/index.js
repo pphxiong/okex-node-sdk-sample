@@ -353,7 +353,7 @@ function stopInterval() {
 }
 
 // 定时获取交割合约账户信息
-// myInterval = startInterval()
+myInterval = startInterval()
 app.listen(8090);
 
 console.log('server start');
