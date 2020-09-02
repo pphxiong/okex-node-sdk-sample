@@ -99,27 +99,27 @@ export default props => {
     if(eosResult?.data?.result) message.success('EOS开空仓成功');
   }
 
-  const openLongOrder = async () => {
+  const openSameOrder = async type => {
     // btc 多仓
     const payload = {
       size,
-      type: 1,
+      type,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-201225'
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
-    if(result?.data?.result) message.success('BTC开多仓成功');
+    if(result?.data?.result) message.success('BTC开仓成功');
     // eos 空仓
     const eosPayload = {
       size: size * 10,
-      type: 1,
+      type,
       order_type: 4, //市价委托
       instrument_id: 'EOS-USD-201225'
     }
     const eosResult = await postFuturesOrder(eosPayload);
     console.log(eosResult)
-    if(eosResult?.data?.result) message.success('EOS开多仓成功');
+    if(eosResult?.data?.result) message.success('EOS开仓成功');
   }
 
   const closeOrder = async () => {
@@ -262,9 +262,16 @@ export default props => {
 
       <Popconfirm
         title="是否确定以市价开同方向多仓？"
-        onConfirm={()=>openLongOrder()}
+        onConfirm={()=>openSameOrder(1)}
       >
         <Button style={{ marginLeft: 10 }}>双多开仓</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定以市价开同方向空仓？"
+        onConfirm={()=>openSameOrder(2)}
+      >
+        <Button style={{ marginLeft: 10 }}>双多空仓</Button>
       </Popconfirm>
 
       <Popconfirm
