@@ -325,11 +325,11 @@ function autoCloseOrders(longHolding, shortHolding) {
 
 // 获取可开张数
 const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-usd-201225') => {
-    const { total_avail_balance } = await authClient.futures().getAccounts(currency);
+    const { equity } = await authClient.futures().getAccounts(currency);
     const {  mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
     const { leverage } = await authClient.futures().getLeverage(currency);
 
-    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(leverage) * 0.95 / val)
+    return Math.floor(Number(equity) * Number(mark_price) * Number(leverage) * 0.97 / val)
 }
 
 // 当前持仓方向

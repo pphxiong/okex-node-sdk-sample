@@ -225,18 +225,18 @@ export default props => {
     </Card>
     <Card title={'合约账户信息'} style={{ marginTop: 10 }}>
       <p>
-        BTC余额：{btcAccount.total_avail_balance}
+        BTC余额：{btcAccount.equity}
         <Divider type="vertical" />
         标记价格：{btcMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(btcAccount.total_avail_balance) * Number(btcMarkPrice) * leverage * 0.97 / 100) }
+        可开张数：{ Math.floor(Number(btcAccount.equity) * Number(btcMarkPrice) * leverage * 0.97 / 100) }
       </p>
       <p>
-        EOS余额：{eosAccount.total_avail_balance}
+        EOS余额：{eosAccount.equity}
         <Divider type="vertical" />
         标记价格：{eosMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(eosAccount.total_avail_balance) * Number(eosMarkPrice) * leverage * 0.97 / 10) }
+        可开张数：{ Math.floor(Number(eosAccount.equity) * Number(eosMarkPrice) * leverage * 0.97 / 10) }
       </p>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>
@@ -271,7 +271,7 @@ export default props => {
         title="是否确定以市价开同方向空仓？"
         onConfirm={()=>openSameOrder(2)}
       >
-        <Button style={{ marginLeft: 10 }}>双多空仓</Button>
+        <Button style={{ marginLeft: 10 }}>双空开仓</Button>
       </Popconfirm>
 
       <Popconfirm
