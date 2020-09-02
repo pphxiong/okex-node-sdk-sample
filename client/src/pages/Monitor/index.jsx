@@ -51,13 +51,16 @@ export default props => {
     getSentiment();
   },[])
 
-  const columns = [{
-    dataIndex: 'order_id',
-    title: '订单ID'
-  },{
-    dataIndex: 'instrument_id',
-    title: '合约ID'
-  },{
+  const columns = [
+  //   {
+  //   dataIndex: 'order_id',
+  //   title: '订单ID'
+  // },
+  //   {
+  //   dataIndex: 'instrument_id',
+  //   title: '合约ID'
+  // },
+    {
     dataIndex: 'type',
     title: '交易类型',
     render: text=>tradeTypeEnum[text]
@@ -74,13 +77,34 @@ export default props => {
   },{
     dataIndex: 'leverage',
     title: '杠杆倍数'
+  },
+  //   {
+  //   dataIndex: 'fee',
+  //   title: '手续费'
+  // },
+    {
+      dataIndex: 'bzj-usd',
+      title: '保证金（美元）',
+      render: (_,{size, contract_val, price_avg, leverage})=> (Number(size) * Number(contract_val) / leverage).toFixed(2)
+    },
+    {
+    dataIndex: 'fee-usd',
+    title: '手续费（美元）',
+    render: (text,record) => (Number(record.fee) * Number(record.price_avg)).toFixed(2)
+  },
+  //   {
+  //   dataIndex: 'pnl',
+  //   title: '盈亏'
+  // },
+    {
+    dataIndex: 'pnl-usd',
+    title: '盈亏（美元）',
+    render: (text,record) => (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
   },{
-    dataIndex: 'fee',
-    title: '手续费'
-  },{
-    dataIndex: 'pnl',
-    title: '盈亏'
-  }];
+      dataIndex: 'ratio',
+      title: '盈亏占比',
+      render: (text,{ size, contract_val, price_avg, leverage, pnl }) => (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage)).toFixed(2) + '%'
+    }];
 
   const responseHandler = data=>{
     return { records : data.order_info };

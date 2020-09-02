@@ -271,49 +271,49 @@ function autoCloseOrdersAll() {
 }
 
 // 平仓
-function autoCloseOrders(longHolding, shortHolding) {
-    if(Number(longHolding.long_avail_qty)) {
+function autoCloseOrders(btcHolding, eosHolding) {
+    if(Number(btcHolding.long_avail_qty)) {
         const payload = {
-            size: Number(longHolding.long_avail_qty),
+            size: Number(btcHolding.long_avail_qty),
             type: 3,
             order_type: 4, //市价委托
-            instrument_id: longHolding.instrument_id
+            instrument_id: btcHolding.instrument_id
         }
         authClient
             .futures()
             .postOrder(payload);
     }
 
-    if(Number(longHolding.short_avail_qty)) {
+    if(Number(btcHolding.short_avail_qty)) {
         const payload = {
-            size: Number(longHolding.short_avail_qty),
+            size: Number(btcHolding.short_avail_qty),
             type: 4,
             order_type: 4, //市价委托
-            instrument_id: longHolding.instrument_id
+            instrument_id: btcHolding.instrument_id
         }
         authClient
             .futures()
             .postOrder(payload);
     }
 
-    if(Number(shortHolding.short_avail_qty)){
+    if(Number(eosHolding.short_avail_qty)){
         const eosPayload = {
-            size: Number(shortHolding.short_avail_qty),
+            size: Number(eosHolding.short_avail_qty),
             type: 4,
             order_type: 4, //市价委托
-            instrument_id: shortHolding.instrument_id
+            instrument_id: eosHolding.instrument_id
         }
         authClient
             .futures()
             .postOrder(eosPayload);
     }
 
-    if(Number(shortHolding.long_avail_qty)){
+    if(Number(eosHolding.long_avail_qty)){
         const eosPayload = {
-            size: Number(shortHolding.long_avail_qty),
+            size: Number(eosHolding.long_avail_qty),
             type: 3,
             order_type: 4, //市价委托
-            instrument_id: shortHolding.instrument_id
+            instrument_id: eosHolding.instrument_id
         }
         authClient
             .futures()

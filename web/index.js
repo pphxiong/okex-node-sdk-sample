@@ -54,7 +54,6 @@ function proxyRequest(req, res, next) {
 }
 
 app.all('*', function (req, res, next) {
-  // console.log(req);
   res.header('Access-Control-Allow-Origin', '*')
   res.header(
     'Access-Control-Allow-Headers',
@@ -62,7 +61,6 @@ app.all('*', function (req, res, next) {
   )
   res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
   proxyRequest(req, res, next).then(response=>{
-    console.log(response)
     const { type } = response;
     if(type=='normal'){
       if (req.method == 'OPTIONS') res.send(200)
@@ -74,7 +72,6 @@ app.all('*', function (req, res, next) {
 })
 
 app.get('/okex', function (req, res, next) {
-  // console.log(req);
   res.header('Access-Control-Allow-Origin', '*')
   res.header(
       'Access-Control-Allow-Headers',
