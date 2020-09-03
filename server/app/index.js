@@ -8,6 +8,7 @@ const customAuthClient = require('./customAuthClient');
 let myInterval;
 let mode = 1; //下单模式
 let continuousLossNum = 0; //连续亏损次数
+let continuousWinNum = 0; //连续盈利次数
 const timeoutNo = 1000 * 60 * 2; //下单间隔时间
 
 var config = require('./config');
@@ -398,12 +399,17 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
             continuousLossNum = 0;
-            setTimeout(()=>{
-                autoOpenOrders(btcHolding, eosHolding);
-            },timeoutNo)
+            continuousWinNum++;
+            // 连续盈利2次后，不再开仓
+            if(continuousWinNum<2){
+                setTimeout(()=>{
+                    autoOpenOrders(btcHolding, eosHolding);
+                },timeoutNo)
+            }
         }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4 / 100){
             autoCloseOrders(btcHolding, eosHolding);
             continuousLossNum++;
+            continuousWinNum = 0;
             // 连续亏损2次后，反向开仓，亏损3次，不再开仓
             let isReverse = false;
             if(continuousLossNum<3) {
@@ -456,6 +462,9 @@ function startInterval() {
         },1000*3);
         return;
     }
+    mode = 1;
+    continuousLossNum = 0;
+    continuousWinNum = 0;
     return setInterval(async ()=>{
         const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
