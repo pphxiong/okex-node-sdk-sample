@@ -51,7 +51,11 @@ export default props => {
     getSentiment();
   },[])
 
-  const columns = [
+  const columns = [{
+    dataIndex: 'index',
+    title: '序号',
+    render:(_,__,index)=>(++index)
+  },
   //   {
   //   dataIndex: 'order_id',
   //   title: '订单ID'

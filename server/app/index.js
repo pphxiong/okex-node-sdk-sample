@@ -259,6 +259,8 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const eosType = isReverse ? reverseDirection(getCurrentDirection(e)) : getCurrentDirection(e);
 
     console.log('avail',btcAvail, eosAvail)
+    console.log(btcAvail,btcType,btcHolding.instrument_id)
+    console.log(eosAvail,eosType,eosHolding.instrument_id)
     // 目前是空仓
     if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty)){
         const payload = {
