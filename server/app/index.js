@@ -401,10 +401,12 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             // 盈利后再开仓
             continuousLossNum = 0;
             continuousWinNum++;
-            // 连续盈利2次后，不再开仓
-            if(continuousWinNum<2){
+            // 连续盈利2次后，反向开仓，盈利3次，不再开仓
+            let isReverse = false;
+            if(continuousWinNum<3){
+                if(continuousWinNum==2) isReverse = true;
                 setTimeout(()=>{
-                    autoOpenOrders(btcHolding, eosHolding);
+                    autoOpenOrders(btcHolding, eosHolding, isReverse);
                 },timeoutNo)
             }
         }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4 / 100){

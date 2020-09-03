@@ -283,7 +283,7 @@ export default props => {
         title="是否确定开btc空仓，eos多仓？"
         onConfirm={()=>openOrders(2,1)}
       >
-        <Button>方向对冲</Button>
+        <Button style={{ marginLeft: 10 }}>反向对冲</Button>
       </Popconfirm>
 
       <Popconfirm
