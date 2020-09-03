@@ -415,6 +415,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             let isReverse = false;
             if(continuousLossNum<3) {
                 if(continuousLossNum==2) isReverse = true;
+                console.log('continuousLossNum', continuousLossNum);
                 setTimeout(()=>{
                     autoOpenOrders(btcHolding, eosHolding, isReverse);
                 },timeoutNo)
