@@ -1,5 +1,5 @@
 import React,{ useState, useEffect, useRef } from 'react';
-import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col } from 'antd';
+import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col, Radio } from 'antd';
 import {
   postFuturesLeverage,
   postSwapLeverage,
@@ -9,6 +9,7 @@ import {
   getFuturesLeverage,
   startMonitor,
   stopMonitor,
+  changeMode,
   getFuturesAccounts,
   getFuturesMarkPrice
 } from './api'
@@ -169,6 +170,12 @@ export default props => {
     if(errcode == 0)  message.success(errmsg);
   }
 
+  const onChangeMode = async (mode = 1) => {
+    console.log(mode)
+    const { errcode, errmsg } = await changeMode({ mode });
+    if(errcode == 0)  message.success(errmsg);
+  }
+
   return <>
     <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
       <Row gutter={12}>
@@ -248,6 +255,13 @@ export default props => {
       <Divider type="horizontal" />
 
       <span>操作：</span>
+      <p>下单模式：
+        <Radio.Group defaultValue="1" buttonStyle="solid" onChange={e=>onChangeMode(e.target.value)}>
+          <Radio.Button value="1">模式1</Radio.Button>
+          <Radio.Button value="2">模式2</Radio.Button>
+        </Radio.Group>
+      </p>
+      <Divider type="horizontal" />
       <Button onClick={()=>onStopMonitor()}>停止监控</Button>
       <Button onClick={()=>onStartMonitor()} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
 

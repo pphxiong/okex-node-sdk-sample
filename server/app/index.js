@@ -6,6 +6,8 @@ const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
 let myInterval;
+let mode = 1; //下单模式
+let continuousLossNum = 0; //连续亏损次数
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -217,6 +219,12 @@ app.get('/futures/getPosition', function(req, response) {
         });
 });
 
+app.get('/operation/changeMode', function(req, response) {
+    const {query = {}} = req;
+    mode = query.mode || 1;
+    send(response, {errcode: 0, errmsg: '切换下单模式成功', data: { mode } });
+});
+
 app.get('/operation/startMonitor', function(req, response) {
     if(!myInterval){
         myInterval = startInterval();
@@ -247,10 +255,9 @@ const autoOpenOrders = async (btcHolding, eosHolding, isReverse = false) => {
         order_type: 4, //市价委托
         instrument_id: btcHolding.instrument_id
     }
-    authClient
+    await authClient
         .futures()
         .postOrder(payload);
-
 
     const eosPayload = {
         size: eosAvail,
@@ -258,7 +265,7 @@ const autoOpenOrders = async (btcHolding, eosHolding, isReverse = false) => {
         order_type: 4, //市价委托
         instrument_id: eosHolding.instrument_id
     }
-    authClient
+    await authClient
         .futures()
         .postOrder(eosPayload);
 
@@ -323,6 +330,32 @@ function autoCloseOrders(btcHolding, eosHolding) {
     stopInterval();
 }
 
+function autoCloseOrderSingle(holding) {
+    if(Number(holding.long_avail_qty)) {
+        const payload = {
+            size: Number(holding.long_avail_qty),
+            type: 3,
+            order_type: 4, //市价委托
+            instrument_id: holding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
+    }
+
+    if(Number(holding.short_avail_qty)) {
+        const payload = {
+            size: Number(holding.short_avail_qty),
+            type: 4,
+            order_type: 4, //市价委托
+            instrument_id: holding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
+    }
+}
+
 // 获取可开张数
 const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-usd-201225') => {
     const { equity } = await authClient.futures().getAccounts(currency);
@@ -347,7 +380,76 @@ function reverseDirection(direction) {
     return newDirection;
 }
 
-let continuousLossNum = 0;
+// 下单模式
+function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
+    if(mode == 1){
+        if(radio > (Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 2){
+            autoCloseOrders(btcHolding, eosHolding);
+            // 盈利后，3分钟后再开仓
+            continuousLossNum = 0;
+            setTimeout(()=>{
+                autoOpenOrders(btcHolding, eosHolding);
+            },1000*60*3)
+        }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4){
+            autoCloseOrders(btcHolding, eosHolding);
+            continuousLossNum++;
+            // 连续亏损两次后，不再开仓
+            if(continuousLossNum<2) {
+                setTimeout(()=>{
+                    autoOpenOrders(btcHolding, eosHolding, true);
+                },1000*60*3)
+            }
+        }
+        return;
+    }
+    if(mode == 2) {
+        const btcSingleRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
+            (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
+        if(btcSingleRatio > Number(btcHolding.leverage) / 100) {
+            autoCloseOrderSingle(btcHolding);
+            continuousLossNum = 0;
+        };
+
+        const eosSingleRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
+            (Number(eosHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
+        if(eosSingleRatio > Number(eosHolding.leverage) / 100) {
+            autoCloseOrderSingle(eosHolding);
+            continuousLossNum = 0;
+        };
+
+        if( (btcSingleRatio + eosSingleRatio) < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4 ) {
+            autoCloseOrders(btcHolding, eosHolding);
+            continuousLossNum++;
+
+            // 连续亏损两次后，不再开仓
+            if(continuousLossNum<2) {
+                setTimeout(()=>{
+                    autoOpenOrders(btcHolding, eosHolding, true);
+                },1000*60*3)
+            }
+        }
+
+        if(radio > 0.098){
+            autoCloseOrders(btcHolding, eosHolding);
+            // 盈利后，1分钟后再开仓
+            continuousLossNum = 0;
+            setTimeout(()=>{
+                autoOpenOrders(btcHolding, eosHolding);
+            },1000*60*1)
+        }else if(radio < -0.112){
+            autoCloseOrders(btcHolding, eosHolding);
+            continuousLossNum++;
+            // 连续亏损两次后，不再开仓
+            if(continuousLossNum<2) {
+                setTimeout(()=>{
+                    autoOpenOrders(btcHolding, eosHolding, true);
+                },1000*60*1)
+            }
+        }
+        return;
+    }
+}
+
 function startInterval() {
     if(myInterval) {
         stopInterval();
@@ -368,23 +470,7 @@ function startInterval() {
             (Number(eosHolding[0].short_avail_qty) && Number(eosHolding[0].short_pnl_ratio));
         console.log('收益率：',radio);
         if(!qty) return;
-        if(radio > 0.098){
-            autoCloseOrders(btcHolding[0], eosHolding[0]);
-            // 盈利后，1分钟后再开仓
-            continuousLossNum = 0;
-            setTimeout(()=>{
-                autoOpenOrders(btcHolding[0], eosHolding[0]);
-            },1000*60*1)
-        }else if(radio < -0.112){
-            autoCloseOrders(btcHolding[0], eosHolding[0]);
-            continuousLossNum++;
-            // 连续亏损两次后，不再开仓
-            if(continuousLossNum<2) {
-                setTimeout(()=>{
-                    autoOpenOrders(btcHolding[0], eosHolding[0], true);
-                },1000*60*1)
-            }
-        }
+        getOrderMode(mode, radio, btcHolding[0], eosHolding[0]);
     },1000 * 5)
 }
 

@@ -67,3 +67,9 @@ export async function stopMonitor(params) {
     params,
   });
 }
+
+export async function changeMode(params) {
+  return request(`${commonUrl}/operation/changeMode`, {
+    params,
+  });
+}
