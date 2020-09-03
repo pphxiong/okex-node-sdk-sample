@@ -415,7 +415,6 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             let isReverse = false;
             if(continuousLossNum<3) {
                 if(continuousLossNum==2) isReverse = true;
-                console.log('continuousLossNum', continuousLossNum);
                 setTimeout(()=>{
                     autoOpenOrders(btcHolding, eosHolding, isReverse);
                 },timeoutNo)
@@ -478,6 +477,7 @@ function startInterval() {
             (Number(eosHolding[0].long_avail_qty) && Number(eosHolding[0].long_pnl_ratio)) +
             (Number(eosHolding[0].short_avail_qty) && Number(eosHolding[0].short_pnl_ratio));
         console.log('收益率：',radio);
+        console.log('continuousLossNum', continuousLossNum);
         if(!qty) return;
         getOrderMode(mode, radio, btcHolding[0], eosHolding[0]);
     },1000 * 5)
