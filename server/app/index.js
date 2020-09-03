@@ -465,9 +465,6 @@ function startInterval() {
         },1000*3);
         return;
     }
-    mode = 1;
-    continuousLossNum = 0;
-    continuousWinNum = 0;
     return setInterval(async ()=>{
         const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
