@@ -176,6 +176,11 @@ export default props => {
     if(errcode == 0)  message.success(errmsg);
   }
 
+  // 共计收益
+  const pnl = (Number(btcPosition.long_pnl)+Number(btcPosition.short_pnl)) * Number(btcPosition.last) + (Number(eosPosition.long_pnl)+Number(eosPosition.short_pnl)) * Number(eosPosition.last);
+  // 共计保证金
+  const margin = (Number(btcPosition.long_margin)+Number(btcPosition.short_margin)) * Number(btcPosition.last) + (Number(eosPosition.long_margin)+Number(eosPosition.short_margin)) * Number(eosPosition.last);
+
   return <>
     <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
       <Row gutter={12}>
@@ -185,7 +190,7 @@ export default props => {
           {/*<p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
           <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
           <p>杠杆倍数：{btcPosition.leverage}</p>
-          <p>数量（张）：{btcPosition.long_qty}</p>
+          <p>数量（张）：多 {btcPosition.long_qty} 空 {btcPosition.short_qty}</p>
           <p>开仓均价：{btcPosition.long_avg_cost}</p>
           <p>最新成交价（美元）：{btcPosition.last}</p>
           <p>多仓保证金(BTC)：{btcPosition.long_margin}</p>
@@ -205,7 +210,7 @@ export default props => {
           {/*<p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
           <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
           <p>杠杆倍数：{eosPosition.leverage}</p>
-          <p>数量（张）：{eosPosition.short_qty}</p>
+          <p>数量（张）：多 {eosPosition.long_qty} 空 {eosPosition.short_qty}</p>
           <p>开仓均价：{eosPosition.short_avg_cost}</p>
           <p>最新成交价（美元）：{eosPosition.last}</p>
           <p>空仓保证金（EOS)：{eosPosition.short_margin}</p>
@@ -224,8 +229,8 @@ export default props => {
       <Row>
         <Col span={24}>
           <h3>共计</h3>
-          <p>收益（美元）：{Number(btcPosition.long_pnl) * Number(btcPosition.last) + Number(eosPosition.short_pnl) * Number(eosPosition.last)}</p>
-          <p>收益率（%）：{(Number(btcPosition.long_pnl) * Number(btcPosition.last) + Number(eosPosition.short_pnl) * Number(eosPosition.last)) * 100 / ( Number(btcPosition.long_margin) * Number(btcPosition.last) + Number(eosPosition.short_margin) * Number(eosPosition.last)) }</p>
+          <p>收益（美元）：{pnl}</p>
+          <p>收益率（%）：{pnl*margin*100}</p>
           <p>已实现盈余（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last) + Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
         </Col>
       </Row>

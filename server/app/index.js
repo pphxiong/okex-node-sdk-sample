@@ -8,6 +8,7 @@ const customAuthClient = require('./customAuthClient');
 let myInterval;
 let mode = 1; //下单模式
 let continuousLossNum = 0; //连续亏损次数
+const timeoutNo = 1000 * 60 * 2; //下单间隔时间
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -389,15 +390,17 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             continuousLossNum = 0;
             setTimeout(()=>{
                 autoOpenOrders(btcHolding, eosHolding);
-            },1000*60*3)
-        }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4){
+            },timeoutNo)
+        }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) * 2 / 4 / 3){
             autoCloseOrders(btcHolding, eosHolding);
             continuousLossNum++;
-            // 连续亏损两次后，不再开仓
-            if(continuousLossNum<2) {
+            // 连续亏损2次后，反向开仓，亏损3次，不再开仓
+            let isReverse = false;
+            if(continuousLossNum<3) {
+                if(continuousLossNum==2) isReverse = true;
                 setTimeout(()=>{
-                    autoOpenOrders(btcHolding, eosHolding, true);
-                },1000*60*3)
+                    autoOpenOrders(btcHolding, eosHolding, isReverse);
+                },timeoutNo)
             }
         }
         return;
@@ -425,27 +428,10 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             if(continuousLossNum<2) {
                 setTimeout(()=>{
                     autoOpenOrders(btcHolding, eosHolding, true);
-                },1000*60*3)
+                },timeoutNo)
             }
         }
 
-        if(radio > 0.098){
-            autoCloseOrders(btcHolding, eosHolding);
-            // 盈利后，1分钟后再开仓
-            continuousLossNum = 0;
-            setTimeout(()=>{
-                autoOpenOrders(btcHolding, eosHolding);
-            },1000*60*1)
-        }else if(radio < -0.112){
-            autoCloseOrders(btcHolding, eosHolding);
-            continuousLossNum++;
-            // 连续亏损两次后，不再开仓
-            if(continuousLossNum<2) {
-                setTimeout(()=>{
-                    autoOpenOrders(btcHolding, eosHolding, true);
-                },1000*60*1)
-            }
-        }
         return;
     }
 }
@@ -455,7 +441,7 @@ function startInterval() {
         stopInterval();
         setTimeout(()=>{
             startInterval();
-        },1000*2);
+        },1000*3);
         return;
     }
     return setInterval(async ()=>{
