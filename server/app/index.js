@@ -250,14 +250,14 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const btcAvailNo = await getAvailNo();
     const eosAvailNo = await getAvailNo(10, 'eos-usd','eos-usd-201225');
 
-    const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(btcHolding.long_avail_qty), Number(btcHolding.short_avail_qty)));
-    const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(eosHolding.long_avail_qty), Number(eosHolding.short_avail_qty)));
+    const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
+    const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty)));
 
     const btcType = isReverse ? reverseDirection(getCurrentDirection(btcHolding)) : getCurrentDirection(btcHolding);
     const eosType = isReverse ? reverseDirection(getCurrentDirection(eosHolding)) : getCurrentDirection(eosHolding);
 
     // 目前是空仓
-    if(!Number(btcHolding.long_avail_qty) && !Number(btcHolding.short_avail_qty)){
+    if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty)){
         const payload = {
             size: btcAvail,
             type: btcType,
@@ -269,7 +269,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
             .postOrder(payload);
     }
 
-    if(!Number(eosPayload.long_avail_qty) && !Number(eosPayload.short_avail_qty)){
+    if(!Number(eosPayload.long_qty) && !Number(eosPayload.short_qty)){
         const eosPayload = {
             size: eosAvail,
             type: eosType,
