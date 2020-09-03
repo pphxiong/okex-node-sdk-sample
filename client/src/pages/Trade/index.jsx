@@ -213,12 +213,12 @@ export default props => {
           <p>数量（张）：多 {eosPosition.long_qty} 空 {eosPosition.short_qty}</p>
           <p>开仓均价：{eosPosition.short_avg_cost}</p>
           <p>最新成交价（美元）：{eosPosition.last}</p>
-          <p>空仓保证金（EOS)：{eosPosition.short_margin}</p>
-          <p>空仓收益（EOS)：{eosPosition.short_pnl}</p>
-          <p>空仓收益率（%）：{Number(eosPosition.short_pnl_ratio) * 100}</p>
           <p>多仓保证金(EOS)：{eosPosition.long_margin}</p>
           <p>多仓收益(EOS)：{eosPosition.long_pnl}</p>
           <p>多仓收益率（%）：{Number(eosPosition.long_pnl_ratio) * 100}</p>
+          <p>空仓保证金（EOS)：{eosPosition.short_margin}</p>
+          <p>空仓收益（EOS)：{eosPosition.short_pnl}</p>
+          <p>空仓收益率（%）：{Number(eosPosition.short_pnl_ratio) * 100}</p>
           <p>已实现盈余：{eosPosition.realised_pnl}</p>
           <p>保证金折合（美元）：{(Number(eosPosition.short_margin) + Number(eosPosition.long_margin)) * Number(eosPosition.last)}</p>
           <p>收益折合（美元）：{Number(eosPosition.short_pnl) * Number(eosPosition.last)}</p>
