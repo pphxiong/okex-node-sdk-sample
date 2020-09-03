@@ -250,25 +250,30 @@ const autoOpenOrders = async (btcHolding, eosHolding, isReverse = false) => {
     const btcType = isReverse ? reverseDirection(getCurrentDirection(btcHolding)) : getCurrentDirection(btcHolding);
     const eosType = isReverse ? reverseDirection(getCurrentDirection(eosHolding)) : getCurrentDirection(eosHolding);
 
-    const payload = {
-        size: btcAvail,
-        type: btcType,
-        order_type: 4, //市价委托
-        instrument_id: btcHolding.instrument_id
+    // 目前是空仓
+    if(!Number(btcHolding.long_avail_qty) && !Number(btcHolding.short_avail_qty)){
+        const payload = {
+            size: btcAvail,
+            type: btcType,
+            order_type: 4, //市价委托
+            instrument_id: btcHolding.instrument_id
+        }
+        await authClient
+            .futures()
+            .postOrder(payload);
     }
-    await authClient
-        .futures()
-        .postOrder(payload);
 
-    const eosPayload = {
-        size: eosAvail,
-        type: eosType,
-        order_type: 4, //市价委托
-        instrument_id: eosHolding.instrument_id
+    if(!Number(eosPayload.long_avail_qty) && !Number(eosPayload.short_avail_qty)){
+        const eosPayload = {
+            size: eosAvail,
+            type: eosType,
+            order_type: 4, //市价委托
+            instrument_id: eosHolding.instrument_id
+        }
+        await authClient
+            .futures()
+            .postOrder(eosPayload);
     }
-    await authClient
-        .futures()
-        .postOrder(eosPayload);
 
     startInterval();
 }
@@ -386,7 +391,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
     if(mode == 1){
         if(radio > (Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 2 / 100){
             autoCloseOrders(btcHolding, eosHolding);
-            // 盈利后，3分钟后再开仓
+            // 盈利后再开仓
             continuousLossNum = 0;
             setTimeout(()=>{
                 autoOpenOrders(btcHolding, eosHolding);
