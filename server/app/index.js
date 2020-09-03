@@ -239,7 +239,12 @@ app.get('/operation/stopMonitor', function(req, response) {
 });
 
 // 开仓，对冲仓或同方向仓
-const autoOpenOrders = async (btcHolding, eosHolding, isReverse = false) => {
+const autoOpenOrders = async (b, e, isReverse = false) => {
+    const { holding: btc } = await authClient.futures().getPosition('BTC-USD-201225');
+    const { holding: eos } = await authClient.futures().getPosition('EOS-USD-201225');
+    const btcHolding = btc[0];
+    const eosHolding = eos[0];
+
     // 可开张数
     const btcAvailNo = await getAvailNo();
     const eosAvailNo = await getAvailNo(10, 'eos-usd','eos-usd-201225');
@@ -365,7 +370,7 @@ function autoCloseOrderSingle(holding) {
 // 获取可开张数
 const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-usd-201225') => {
     const { equity } = await authClient.futures().getAccounts(currency);
-    const {  mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
+    const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
     const { leverage } = await authClient.futures().getLeverage(currency);
 
     return Math.floor(Number(equity) * Number(mark_price) * Number(leverage) * 0.97 / val)
