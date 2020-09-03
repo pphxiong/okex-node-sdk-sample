@@ -253,8 +253,8 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
     const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
 
-    const btcType = isReverse ? reverseDirection(getCurrentDirection(btcHolding)) : getCurrentDirection(btcHolding);
-    const eosType = isReverse ? reverseDirection(getCurrentDirection(eosHolding)) : getCurrentDirection(eosHolding);
+    const btcType = isReverse ? reverseDirection(getCurrentDirection(b)) : getCurrentDirection(b);
+    const eosType = isReverse ? reverseDirection(getCurrentDirection(e)) : getCurrentDirection(e);
 
     console.log('avail',btcAvail, eosAvail)
     // 目前是空仓
@@ -381,7 +381,7 @@ const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-
 // 当前持仓方向
 function getCurrentDirection(holding) {
     let direction = 1; // 多
-    if(Number(holding.short_avail_qty)) direction = 2; // 空
+    if(Number(holding.short_qty)) direction = 2; // 空
     return direction;
 }
 
