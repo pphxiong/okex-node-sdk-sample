@@ -478,6 +478,7 @@ function startInterval() {
             (Number(eosHolding[0].short_avail_qty) && Number(eosHolding[0].short_pnl_ratio));
         console.log('收益率：',radio);
         console.log('continuousLossNum', continuousLossNum);
+        console.log('continuousWinNum', continuousWinNum);
         if(!qty) return;
         getOrderMode(mode, radio, btcHolding[0], eosHolding[0]);
     },1000 * 5)

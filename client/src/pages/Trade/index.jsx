@@ -77,21 +77,21 @@ export default props => {
   //   if(data) message.success('设置成功')
   // }
 
-  const openOrder = async () => {
-    // btc 多仓
+  const openOrders = async (btcType = 1, eosType = 2) => {
+    // btc
     const payload = {
       size,
-      type: 1,
+      type: btcType,
       order_type: 4, //市价委托
       instrument_id: 'BTC-USD-201225'
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
     if(result?.data?.result) message.success('BTC开多仓成功');
-    // eos 空仓
+    // eos
     const eosPayload = {
       size: size * 10,
-      type: 2,
+      type: eosType,
       order_type: 4, //市价委托
       instrument_id: 'EOS-USD-201225'
     }
@@ -100,7 +100,7 @@ export default props => {
     if(eosResult?.data?.result) message.success('EOS开空仓成功');
   }
 
-  const openSameOrder = async type => {
+  const openSameOrders = async type => {
     // btc 多仓
     const payload = {
       size,
@@ -273,22 +273,29 @@ export default props => {
       <Divider type="horizontal" />
 
       <Popconfirm
-        title="是否确定以市价开仓？"
-        onConfirm={()=>openOrder()}
+        title="是否确定开btc多仓，eos空仓？"
+        onConfirm={()=>openOrders(1,2)}
       >
         <Button>对冲开仓</Button>
       </Popconfirm>
 
       <Popconfirm
-        title="是否确定以市价开同方向多仓？"
-        onConfirm={()=>openSameOrder(1)}
+        title="是否确定开btc空仓，eos多仓？"
+        onConfirm={()=>openOrders(2,1)}
+      >
+        <Button>方向对冲</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定开btc多仓，eos多仓？"
+        onConfirm={()=>openSameOrders(1)}
       >
         <Button style={{ marginLeft: 10 }}>双多开仓</Button>
       </Popconfirm>
 
       <Popconfirm
-        title="是否确定以市价开同方向空仓？"
-        onConfirm={()=>openSameOrder(2)}
+        title="是否确定开btc空仓，eos空仓？"
+        onConfirm={()=>openSameOrders(2)}
       >
         <Button style={{ marginLeft: 10 }}>双空开仓</Button>
       </Popconfirm>
