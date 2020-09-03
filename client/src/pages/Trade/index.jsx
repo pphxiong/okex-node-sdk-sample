@@ -230,7 +230,7 @@ export default props => {
         <Col span={24}>
           <h3>共计</h3>
           <p>收益（美元）：{pnl}</p>
-          <p>收益率（%）：{pnl*margin*100}</p>
+          <p>收益率（%）：{pnl/margin*100}</p>
           <p>已实现盈余（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last) + Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
         </Col>
       </Row>
