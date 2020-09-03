@@ -270,7 +270,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
             .postOrder(payload);
     }
 
-    if(!Number(eosPayload.long_qty) && !Number(eosPayload.short_qty)){
+    if(!Number(eosHolding.long_qty) && !Number(eosHolding.short_qty)){
         const eosPayload = {
             size: eosAvail,
             type: eosType,
