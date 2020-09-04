@@ -298,10 +298,12 @@ app.get('/futures/autoCloseOrderByInstrumentId', function(req, response) {
 });
 
 // 市价全平By instrument_id
-const autoCloseOrderByInstrumentId =  async ({instrument_id}) => {
-    const { holding } = await authClient.futures().getPosition(instrument_id);
-    let direction = 'long';
-    if(Number(holding[0].short_avail_qty)) direction = 'short'
+const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
+    if(!direction){
+        const { holding } = await authClient.futures().getPosition(instrument_id);
+        direction = 'long';
+        if(Number(holding[0].short_avail_qty)) direction = 'short'
+    }
     const result = await cAuthClient
         .futures
         .closePosition({instrument_id, direction})
@@ -320,55 +322,55 @@ const autoCloseOrderByHolding =  async ({ short_avail_qty, instrument_id }) => {
 
 // 平仓
 function autoCloseOrders(btcHolding, eosHolding) {
-    autoCloseOrderByHolding(btcHolding);
-    autoCloseOrderByHolding(eosHolding);
-    // if(Number(btcHolding.long_avail_qty)) {
-    //     const payload = {
-    //         size: Number(btcHolding.long_avail_qty),
-    //         type: 3,
-    //         order_type: 4, //市价委托
-    //         instrument_id: btcHolding.instrument_id
-    //     }
-    //     authClient
-    //         .futures()
-    //         .postOrder(payload);
-    // }
-    //
-    // if(Number(btcHolding.short_avail_qty)) {
-    //     const payload = {
-    //         size: Number(btcHolding.short_avail_qty),
-    //         type: 4,
-    //         order_type: 4, //市价委托
-    //         instrument_id: btcHolding.instrument_id
-    //     }
-    //     authClient
-    //         .futures()
-    //         .postOrder(payload);
-    // }
-    //
-    // if(Number(eosHolding.short_avail_qty)){
-    //     const eosPayload = {
-    //         size: Number(eosHolding.short_avail_qty),
-    //         type: 4,
-    //         order_type: 4, //市价委托
-    //         instrument_id: eosHolding.instrument_id
-    //     }
-    //     authClient
-    //         .futures()
-    //         .postOrder(eosPayload);
-    // }
-    //
-    // if(Number(eosHolding.long_avail_qty)){
-    //     const eosPayload = {
-    //         size: Number(eosHolding.long_avail_qty),
-    //         type: 3,
-    //         order_type: 4, //市价委托
-    //         instrument_id: eosHolding.instrument_id
-    //     }
-    //     authClient
-    //         .futures()
-    //         .postOrder(eosPayload);
-    // }
+    // autoCloseOrderByHolding(btcHolding);
+    // autoCloseOrderByHolding(eosHolding);
+    if(Number(btcHolding.long_avail_qty)) {
+        const payload = {
+            size: Number(btcHolding.long_avail_qty),
+            type: 3,
+            order_type: 4, //市价委托
+            instrument_id: btcHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
+    }
+
+    if(Number(btcHolding.short_avail_qty)) {
+        const payload = {
+            size: Number(btcHolding.short_avail_qty),
+            type: 4,
+            order_type: 4, //市价委托
+            instrument_id: btcHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
+    }
+
+    if(Number(eosHolding.short_avail_qty)){
+        const eosPayload = {
+            size: Number(eosHolding.short_avail_qty),
+            type: 4,
+            order_type: 4, //市价委托
+            instrument_id: eosHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(eosPayload);
+    }
+
+    if(Number(eosHolding.long_avail_qty)){
+        const eosPayload = {
+            size: Number(eosHolding.long_avail_qty),
+            type: 3,
+            order_type: 4, //市价委托
+            instrument_id: eosHolding.instrument_id
+        }
+        authClient
+            .futures()
+            .postOrder(eosPayload);
+    }
 
     stopInterval();
 }
