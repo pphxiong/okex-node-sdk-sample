@@ -289,9 +289,33 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     startInterval();
 }
 
-// 市价全平
-function autoCloseOrdersAll() {
+app.get('/futures/autoCloseOrderByInstrumentId', function(req, response) {
+    const {query = {}} = req;
+    const { instrument_id, direction } = query;
+    autoCloseOrderByInstrumentId({instrument_id, direction}).then(res=>{
+        send(response, {errcode: 0, errmsg: '市价全平成功', data: res });
+    })
+});
 
+// 市价全平By instrument_id
+const autoCloseOrderByInstrumentId =  async ({instrument_id}) => {
+    const { holding } = await authClient.futures().getPosition(instrument_id);
+    let direction = 'long';
+    if(Number(holding[0].short_avail_qty)) direction = 'short'
+    const result = await cAuthClient
+        .futures
+        .closePosition({instrument_id, direction})
+    return result;
+}
+
+// 市价全平By holding
+const autoCloseOrderByHolding =  async ({ short_avail_qty, instrument_id }) => {
+    let direction = 'long';
+    if(Number(short_avail_qty)) direction = 'short'
+    const result = await cAuthClient
+        .futures
+        .closePosition({instrument_id, direction})
+    return result;
 }
 
 // 平仓
@@ -395,6 +419,11 @@ function reverseDirection(direction) {
     if(direction==1) newDirection = 2;
     if(direction==2) newDirection = 1;
     return newDirection;
+}
+
+// 检测某币持仓盈亏
+function validateRatio(holding) {
+
 }
 
 // 下单模式

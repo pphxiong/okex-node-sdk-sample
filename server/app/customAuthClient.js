@@ -32,6 +32,16 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         })
     }
 
+    const post = function(url, body, params) {
+        const bodyJson = JSON.stringify(body);
+        const signObj = getSignature('post', url, { body: bodyJson });
+        signObj['content-type'] = 'application/json; charset=utf-8';
+        return request(apiUri + url,{
+            method: 'post',
+            headers: signObj
+        })
+    }
+
     return {
         account: {
             getAssetValuation: function (type = 3) {
@@ -41,6 +51,9 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         futures: {
             getMarkPrice: function (instrument_id){
                 return get(`/api/futures/v3/instruments/${instrument_id}/mark_price`)
+            },
+            closePosition: function (params) {
+                return post('/api/futures/v3/close_position', params)
             }
         }
     }
