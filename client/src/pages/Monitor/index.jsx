@@ -49,7 +49,7 @@ export default props => {
 
   const getFee = async () => {
     const { data } = await getTradeFee();
-    setFeeObj(data);
+    setFeeObj(data||{});
   }
 
   useEffect(()=>{

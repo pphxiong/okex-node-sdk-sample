@@ -293,7 +293,7 @@ app.get('/futures/autoCloseOrderByInstrumentId', function(req, response) {
     const {query = {}} = req;
     const { instrument_id, direction } = query;
     autoCloseOrderByInstrumentId({instrument_id, direction}).then(res=>{
-        send(response, {errcode: 0, errmsg: '市价全平成功', data: res });
+        send(response, {errcode: 0, errmsg: 'ok', data: res });
     })
 });
 
@@ -444,12 +444,10 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             // 盈利后再开仓
             continuousLossNum = 0;
             continuousWinNum++;
-            // 连续盈利2次后，反向开仓，盈利3次，不再开仓
-            let isReverse = false;
+            // 连续盈利3次，不再开仓
             if(continuousWinNum<3){
-                if(continuousWinNum==2) isReverse = true;
                 setTimeout(()=>{
-                    autoOpenOrders(btcHolding, eosHolding, isReverse);
+                    autoOpenOrders(btcHolding, eosHolding);
                 },timeoutNo)
             }
         }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4 / 100){
@@ -459,7 +457,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             // 连续亏损2次后，反向开仓，亏损3次，不再开仓
             let isReverse = false;
             if(continuousLossNum<3) {
-                if(continuousLossNum==2) isReverse = true;
+                // if(continuousLossNum==2) isReverse = true;
                 setTimeout(()=>{
                     autoOpenOrders(btcHolding, eosHolding, isReverse);
                 },timeoutNo)

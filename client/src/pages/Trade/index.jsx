@@ -11,7 +11,8 @@ import {
   stopMonitor,
   changeMode,
   getFuturesAccounts,
-  getFuturesMarkPrice
+  getFuturesMarkPrice,
+  autoCloseOrderByInstrumentId
 } from './api'
 import moment from 'moment'
 
@@ -82,8 +83,9 @@ export default props => {
     const payload = {
       size,
       type: btcType,
-      order_type: 4, //市价委托
-      instrument_id: 'BTC-USD-201225'
+      order_type: 1, //1：只做Maker 4：市价委托
+      price: btcMarkPrice,
+      instrument_id: 'BTC-USD-201225',
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
@@ -92,7 +94,8 @@ export default props => {
     const eosPayload = {
       size: size * 10,
       type: eosType,
-      order_type: 4, //市价委托
+      order_type: 1, //1：只做Maker 4：市价委托
+      price: eosMarkPrice,
       instrument_id: 'EOS-USD-201225'
     }
     const eosResult = await postFuturesOrder(eosPayload);
@@ -101,21 +104,23 @@ export default props => {
   }
 
   const openSameOrders = async type => {
-    // btc 多仓
+    // btc
     const payload = {
       size,
       type,
-      order_type: 4, //市价委托
+      order_type: 1, //1：只做Maker 4：市价委托
+      price: btcMarkPrice,
       instrument_id: 'BTC-USD-201225'
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
     if(result?.data?.result) message.success('BTC开仓成功');
-    // eos 空仓
+    // eos
     const eosPayload = {
       size: size * 10,
       type,
-      order_type: 4, //市价委托
+      order_type: 1, //1：只做Maker 4：市价委托
+      price: eosMarkPrice,
       instrument_id: 'EOS-USD-201225'
     }
     const eosResult = await postFuturesOrder(eosPayload);
@@ -124,40 +129,36 @@ export default props => {
   }
 
   const closeOrder = async () => {
-    // btc 平多
+    // btc
     const payload = {
       size,
-      type: 3,
-      order_type: 4, //市价委托
-      instrument_id: 'BTC-USD-201225'
+      type: Number(btcPosition.long_avail_qty) ? 3 : 4,
+      order_type: 1, //1：只做Maker 4：市价委托
+      price: btcMarkPrice,
+      instrument_id: btcPosition.instrument_id
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
     if(result?.data?.result) message.success('BTC平仓成功');
-    // eos 平空
+    // eos
     const eosPayload = {
       size: size * 10,
-      type: 4,
-      order_type: 4, //市价委托
-      instrument_id: 'EOS-USD-201225'
+      type: Number(eosPosition.long_avail_qty) ? 3 : 4,
+      order_type: 1, //1：只做Maker 4：市价委托
+      price: eosMarkPrice,
+      instrument_id: eosPosition.instrument_id
     }
     const eosResult = await postFuturesOrder(eosPayload);
     console.log(eosResult)
     if(eosResult?.data?.result) message.success('EOS平仓成功');
+  }
 
-    await postFuturesOrder({
-      size,
-      type: 4,
-      order_type: 4, //市价委托
-      instrument_id: 'BTC-USD-201225'
-    })
+  const closeOrderByMarkPrice = async () => {
+    const result = await autoCloseOrderByInstrumentId({ instrument_id: btcPosition.instrument_id, direction: Number(btcPosition.long_avail_qty) ? 'long' : 'short'})
+    if(result?.data?.result) message.success('btc平仓成功')
 
-    await postFuturesOrder({
-      size,
-      type: 3,
-      order_type: 4, //市价委托
-      instrument_id: 'EOS-USD-201225'
-    })
+    const eosResult = await autoCloseOrderByInstrumentId({ instrument_id: eosPosition.instrument_id, direction: Number(eosPosition.long_avail_qty) ? 'long' : 'short'})
+    if(eosResult?.data?.result) message.success('eos平仓成功')
   }
 
   const onStopMonitor = async () => {
@@ -305,6 +306,13 @@ export default props => {
         onConfirm={()=>closeOrder()}
       >
         <Button type="primary" style={{ marginLeft: 10 }}>全平</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定要市价全平？"
+        onConfirm={()=>closeOrderByMarkPrice()}
+      >
+        <Button type="primary" style={{ marginLeft: 10 }}>市价全平</Button>
       </Popconfirm>
 
     </Card>

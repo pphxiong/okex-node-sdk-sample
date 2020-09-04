@@ -56,6 +56,12 @@ export async function getFuturesPosition(params) {
   });
 }
 
+export async function autoCloseOrderByInstrumentId(params) {
+  return request(`${commonUrl}/futures/autoCloseOrderByInstrumentId`, {
+    params,
+  });
+}
+
 export async function startMonitor(params) {
   return request(`${commonUrl}/operation/startMonitor`, {
     params,
