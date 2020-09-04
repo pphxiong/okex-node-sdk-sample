@@ -9,7 +9,7 @@ let myInterval;
 let mode = 1; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
-const timeoutNo = 1000 * 60 * 2; //下单间隔时间
+const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -379,7 +379,7 @@ const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-
     const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
     const { leverage } = await authClient.futures().getLeverage(currency);
 
-    return Math.floor(Number(equity) * Number(mark_price) * Number(leverage) * 0.97 / val)
+    return Math.floor(Number(equity) * Number(mark_price) * Number(leverage) * 0.97 / val) || 0;
 }
 
 // 当前持仓方向
@@ -399,6 +399,7 @@ function reverseDirection(direction) {
 
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
+    console.log('mode',mode,btcHolding,eosHolding)
     if(mode == 1){
         if(radio > (Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 2 / 100){
             autoCloseOrders(btcHolding, eosHolding);
@@ -482,6 +483,8 @@ function startInterval() {
         console.log('收益率：',radio);
         console.log('continuousLossNum', continuousLossNum);
         console.log('continuousWinNum', continuousWinNum);
+        console.log(btcHolding[0]);
+        console.log(eosHolding[0])
         if(!qty) return;
         getOrderMode(mode, radio, btcHolding[0], eosHolding[0]);
     },1000 * 5)
