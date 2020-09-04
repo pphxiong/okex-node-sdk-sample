@@ -25,3 +25,9 @@ export async function getFuturesInformationSentiment(params) {
     params,
   });
 }
+
+export async function getTradeFee(params) {
+  return request(`${commonUrl}/futures/getTradeFee`, {
+    params,
+  });
+}

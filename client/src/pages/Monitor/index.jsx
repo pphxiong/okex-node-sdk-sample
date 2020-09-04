@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Card, } from 'antd';
+import { Card, Divider } from 'antd';
 import SearchTable from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
-import { getOrders, getFuturesInformation, getFuturesInformationSentiment } from './api';
+import { getOrders, getFuturesInformation, getFuturesInformationSentiment, getTradeFee } from './api';
 import { tradeTypeEnum } from '../config';
 import lineConfig from '../g2ChartConfigs/Line';
 
 export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
+  const [feeObj, setFeeObj] = useState({});
 
   const initBTCData = async () => {
     const result = await getOrders({ instrument_id: 'BTC-USD-201225' });
@@ -22,13 +23,13 @@ export default props => {
   }
 
   const getLongShortRatioData = async () => {
-    const result = await getFuturesInformation({ currency: 'BTC' });
+    const result = await getFuturesInformation({ currency: 'BTC', granularity: 86400 * 10 });
     const data = result?.data??[];
     setLongShortRatioData(data.filter((_,index)=>index<40).map(item=>({ time: moment(item[0]).format('HH:mm:ss'), ratio: Number(item[1]) })));
   }
 
   const getSentiment = async () => {
-    const result = await getFuturesInformationSentiment({ currency: 'BTC' });
+    const result = await getFuturesInformationSentiment({ currency: 'BTC', granularity: 86400 * 10 });
     const data = result?.data??[];
     const list = [];
     data.filter((_,index)=>index<40).map(item=>{
@@ -46,9 +47,15 @@ export default props => {
     setSentimentData(list);
   }
 
+  const getFee = async () => {
+    const { data } = await getTradeFee();
+    setFeeObj(data);
+  }
+
   useEffect(()=>{
     getLongShortRatioData();
     getSentiment();
+    getFee();
   },[])
 
   const columns = [{
@@ -117,6 +124,13 @@ export default props => {
   console.log(longShortRatioData)
 
   return <>
+    <Card title='概况'>
+      <p>手续费率：
+        吃单手续费率: {feeObj.taker} <Divider type='vertical' />
+        挂单手续费率: {feeObj.maker} <Divider type='vertical' />
+        交割手续费率: {feeObj.delivery} <Divider type='vertical' />
+      </p>
+    </Card>
     <Card title={'BTC交易记录'}>
       <SearchTable
         columns={columns}

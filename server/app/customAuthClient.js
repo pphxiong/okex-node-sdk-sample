@@ -54,7 +54,10 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             },
             closePosition: function (params) {
                 return post('/api/futures/v3/close_position', params)
-            }
+            },
+            getTradeFee: function (){
+                return get(`/api/futures/v3/trade_fee`)
+            },
         }
     }
 

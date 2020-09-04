@@ -320,53 +320,55 @@ const autoCloseOrderByHolding =  async ({ short_avail_qty, instrument_id }) => {
 
 // 平仓
 function autoCloseOrders(btcHolding, eosHolding) {
-    if(Number(btcHolding.long_avail_qty)) {
-        const payload = {
-            size: Number(btcHolding.long_avail_qty),
-            type: 3,
-            order_type: 4, //市价委托
-            instrument_id: btcHolding.instrument_id
-        }
-        authClient
-            .futures()
-            .postOrder(payload);
-    }
-
-    if(Number(btcHolding.short_avail_qty)) {
-        const payload = {
-            size: Number(btcHolding.short_avail_qty),
-            type: 4,
-            order_type: 4, //市价委托
-            instrument_id: btcHolding.instrument_id
-        }
-        authClient
-            .futures()
-            .postOrder(payload);
-    }
-
-    if(Number(eosHolding.short_avail_qty)){
-        const eosPayload = {
-            size: Number(eosHolding.short_avail_qty),
-            type: 4,
-            order_type: 4, //市价委托
-            instrument_id: eosHolding.instrument_id
-        }
-        authClient
-            .futures()
-            .postOrder(eosPayload);
-    }
-
-    if(Number(eosHolding.long_avail_qty)){
-        const eosPayload = {
-            size: Number(eosHolding.long_avail_qty),
-            type: 3,
-            order_type: 4, //市价委托
-            instrument_id: eosHolding.instrument_id
-        }
-        authClient
-            .futures()
-            .postOrder(eosPayload);
-    }
+    autoCloseOrderByHolding(btcHolding);
+    autoCloseOrderByHolding(eosHolding);
+    // if(Number(btcHolding.long_avail_qty)) {
+    //     const payload = {
+    //         size: Number(btcHolding.long_avail_qty),
+    //         type: 3,
+    //         order_type: 4, //市价委托
+    //         instrument_id: btcHolding.instrument_id
+    //     }
+    //     authClient
+    //         .futures()
+    //         .postOrder(payload);
+    // }
+    //
+    // if(Number(btcHolding.short_avail_qty)) {
+    //     const payload = {
+    //         size: Number(btcHolding.short_avail_qty),
+    //         type: 4,
+    //         order_type: 4, //市价委托
+    //         instrument_id: btcHolding.instrument_id
+    //     }
+    //     authClient
+    //         .futures()
+    //         .postOrder(payload);
+    // }
+    //
+    // if(Number(eosHolding.short_avail_qty)){
+    //     const eosPayload = {
+    //         size: Number(eosHolding.short_avail_qty),
+    //         type: 4,
+    //         order_type: 4, //市价委托
+    //         instrument_id: eosHolding.instrument_id
+    //     }
+    //     authClient
+    //         .futures()
+    //         .postOrder(eosPayload);
+    // }
+    //
+    // if(Number(eosHolding.long_avail_qty)){
+    //     const eosPayload = {
+    //         size: Number(eosHolding.long_avail_qty),
+    //         type: 3,
+    //         order_type: 4, //市价委托
+    //         instrument_id: eosHolding.instrument_id
+    //     }
+    //     authClient
+    //         .futures()
+    //         .postOrder(eosPayload);
+    // }
 
     stopInterval();
 }
@@ -406,6 +408,13 @@ const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-
     return Math.floor(Number(equity) * Number(mark_price) * Number(leverage) * 0.97 / val) || 0;
 }
 
+// 合约费率
+app.get('/futures/getTradeFee', function(req, response) {
+    cAuthClient.futures.getTradeFee().then(res=>{
+        send(response, {errcode: 0, errmsg: 'ok', data: res });
+    })
+});
+
 // 当前持仓方向
 function getCurrentDirection(holding) {
     let direction = 1; // 多
@@ -428,7 +437,7 @@ function validateRatio(holding) {
 
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
-    console.log('mode',mode,btcHolding,eosHolding)
+    console.log('mode',mode,radio,btcHolding,eosHolding)
     if(mode == 1){
         if(radio > (Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 2 / 100){
             autoCloseOrders(btcHolding, eosHolding);
@@ -509,11 +518,6 @@ function startInterval() {
             (Number(btcHolding[0].short_avail_qty) && Number(btcHolding[0].short_pnl_ratio)) +
             (Number(eosHolding[0].long_avail_qty) && Number(eosHolding[0].long_pnl_ratio)) +
             (Number(eosHolding[0].short_avail_qty) && Number(eosHolding[0].short_pnl_ratio));
-        console.log('收益率：',radio);
-        console.log('continuousLossNum', continuousLossNum);
-        console.log('continuousWinNum', continuousWinNum);
-        console.log(btcHolding[0]);
-        console.log(eosHolding[0])
         if(!qty) return;
         getOrderMode(mode, radio, btcHolding[0], eosHolding[0]);
     },1000 * 5)
