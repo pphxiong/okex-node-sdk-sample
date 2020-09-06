@@ -298,7 +298,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty)){
         const payload = {
             size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-            type: Number(btcPosition.long_avail_qty) ? 3 : 4,
+            type: Number(btcHolding.long_avail_qty) ? 3 : 4,
             order_type: 1, //1：只做Maker 4：市价委托
             instrument_id: btcHolding.instrument_id,
             price: btcMarkPrice,
@@ -333,7 +333,7 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
 
     const payload = {
         size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-        type: Number(btcPosition.long_avail_qty) ? 3 : 4,
+        type: Number(btcHolding.long_avail_qty) ? 3 : 4,
         order_type: 1, //1：只做Maker 4：市价委托
         instrument_id: btcHolding.instrument_id,
         price: btcMarkPrice,

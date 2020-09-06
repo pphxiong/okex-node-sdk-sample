@@ -55,7 +55,7 @@ export default props => {
   useEffect(()=>{
     getLongShortRatioData();
     getSentiment();
-    getFee();
+    // getFee();
   },[])
 
   const columns = [{
@@ -124,13 +124,13 @@ export default props => {
   console.log(longShortRatioData)
 
   return <>
-    <Card title='概况'>
-      <p>手续费率：
-        吃单手续费率: {feeObj.taker} <Divider type='vertical' />
-        挂单手续费率: {feeObj.maker} <Divider type='vertical' />
-        交割手续费率: {feeObj.delivery} <Divider type='vertical' />
-      </p>
-    </Card>
+    {/*<Card title='概况'>*/}
+    {/*  <p>手续费率：*/}
+    {/*    吃单手续费率: {feeObj.taker} <Divider type='vertical' />*/}
+    {/*    挂单手续费率: {feeObj.maker} <Divider type='vertical' />*/}
+    {/*    交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
+    {/*  </p>*/}
+    {/*</Card>*/}
     <Card title={'BTC交易记录'}>
       <SearchTable
         columns={columns}
