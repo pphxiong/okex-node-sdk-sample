@@ -83,7 +83,7 @@ export default props => {
     const payload = {
       size,
       type: btcType,
-      order_type: 1, //1：只做Maker 4：市价委托
+      order_type: 0, //1：只做Maker 4：市价委托
       price: btcMarkPrice,
       instrument_id: 'BTC-USD-201225',
     }
@@ -94,7 +94,7 @@ export default props => {
     const eosPayload = {
       size: size * 10,
       type: eosType,
-      order_type: 1, //1：只做Maker 4：市价委托
+      order_type: 0, //1：只做Maker 4：市价委托
       price: eosMarkPrice,
       instrument_id: 'EOS-USD-201225'
     }
@@ -108,9 +108,10 @@ export default props => {
     const payload = {
       size,
       type,
-      order_type: 1, //1：只做Maker 4：市价委托
+      order_type: 0, //1：只做Maker 4：市价委托
       price: btcMarkPrice,
-      instrument_id: 'BTC-USD-201225'
+      instrument_id: 'BTC-USD-201225',
+      match_price: 0
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
@@ -119,9 +120,10 @@ export default props => {
     const eosPayload = {
       size: size * 10,
       type,
-      order_type: 1, //1：只做Maker 4：市价委托
+      order_type: 0, //1：只做Maker 4：市价委托
       price: eosMarkPrice,
-      instrument_id: 'EOS-USD-201225'
+      instrument_id: 'EOS-USD-201225',
+      match_price: 0
     }
     const eosResult = await postFuturesOrder(eosPayload);
     console.log(eosResult)
@@ -133,7 +135,7 @@ export default props => {
     const payload = {
       size,
       type: Number(btcPosition.long_avail_qty) ? 3 : 4,
-      order_type: 1, //1：只做Maker 4：市价委托
+      order_type: 0, //1：只做Maker 4：市价委托
       price: btcMarkPrice,
       instrument_id: btcPosition.instrument_id
     }
@@ -144,7 +146,7 @@ export default props => {
     const eosPayload = {
       size: size * 10,
       type: Number(eosPosition.long_avail_qty) ? 3 : 4,
-      order_type: 1, //1：只做Maker 4：市价委托
+      order_type: 0, //1：只做Maker 4：市价委托
       price: eosMarkPrice,
       instrument_id: eosPosition.instrument_id
     }

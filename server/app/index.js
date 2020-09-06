@@ -299,7 +299,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
         const payload = {
             size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
             type: Number(btcHolding.long_avail_qty) ? 3 : 4,
-            order_type: 1, //1：只做Maker 4：市价委托
+            order_type: 0, //1：只做Maker 4：市价委托
             instrument_id: btcHolding.instrument_id,
             price: btcMarkPrice,
         }
@@ -312,7 +312,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
         const eosPayload = {
             size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
             type: Number(eosHolding.long_avail_qty) ? 3 : 4,
-            order_type: 1, //1：只做Maker 4：市价委托
+            order_type: 0, //1：只做Maker 4：市价委托
             instrument_id: eosHolding.instrument_id,
             price: eosMarkPrice,
         }
@@ -334,7 +334,7 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     // const payload = {
     //     size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
     //     type: Number(btcHolding.long_avail_qty) ? 3 : 4,
-    //     order_type: 1, //1：只做Maker 4：市价委托
+    //     order_type: 0, //1：只做Maker 4：市价委托
     //     instrument_id: btcHolding.instrument_id,
     //     price: btcMarkPrice,
     // }
@@ -345,7 +345,7 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     // const eosPayload = {
     //     size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
     //     type: Number(eosHolding.long_avail_qty) ? 3 : 4,
-    //     order_type: 1, //1：只做Maker 4：市价委托
+    //     order_type: 0, //1：只做Maker 4：市价委托
     //     instrument_id: eosHolding.instrument_id,
     //     price: eosMarkPrice,
     // }
@@ -406,9 +406,12 @@ function validateRatio(holding) {
 
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
-    console.log('mode',mode,radio,btcHolding,eosHolding)
+    // console.log('mode',mode,radio,btcHolding,eosHolding)
     if(mode == 1){
-        if(radio > (Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 2 / 100){
+        const btcLeverage = Math.max(Number(btcHolding.long_avail_qty), Number(btcHolding.short_avail_qty)) ? btcHolding.leverage : 0;
+        const eosLeverage = Math.max(Number(eosHolding.long_avail_qty), Number(eosHolding.short_avail_qty)) ? eosHolding.leverage : 0;
+        const totalLeverage = btcLeverage + eosLeverage;
+        if(radio > totalLeverage / 100){
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
             continuousLossNum = 0;
@@ -419,14 +422,14 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
                     autoOpenOrders(btcHolding, eosHolding);
                 },timeoutNo)
             }
-        }else if(radio < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) / 4 / 100){
+        }else if(radio < -totalLeverage / 2 / 100){
             autoCloseOrders(btcHolding, eosHolding);
             continuousLossNum++;
             continuousWinNum = 0;
             // 连续亏损2次后，反向开仓，亏损3次，不再开仓
             let isReverse = false;
             if(continuousLossNum<3) {
-                // if(continuousLossNum==2) isReverse = true;
+                if(continuousLossNum==2) isReverse = true;
                 setTimeout(()=>{
                     autoOpenOrders(btcHolding, eosHolding, isReverse);
                 },timeoutNo)
