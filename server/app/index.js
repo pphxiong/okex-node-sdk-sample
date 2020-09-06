@@ -175,8 +175,6 @@ app.get('/futures/postOrder', function(req, response) {
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
-    continuousWinNum = 0;
-    continuousLossNum = 0;
 });
 
 app.get('/swap/postLeverage', function(req, response) {
