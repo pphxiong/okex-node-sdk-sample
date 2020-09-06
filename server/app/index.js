@@ -326,32 +326,32 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
 
 // 平仓
 const autoCloseOrders = async (btcHolding, eosHolding) => {
-    // autoCloseOrderByHolding(btcHolding);
-    // autoCloseOrderByHolding(eosHolding);
-    const { mark_price: btcMarkPrice } = await cAuthClient.futures.getMarkPrice(btcHolding.instrument_id);
-    const { mark_price: eosMarkPrice } = await cAuthClient.futures.getMarkPrice(eosHolding.instrument_id);
-
-    const payload = {
-        size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-        type: Number(btcHolding.long_avail_qty) ? 3 : 4,
-        order_type: 1, //1：只做Maker 4：市价委托
-        instrument_id: btcHolding.instrument_id,
-        price: btcMarkPrice,
-    }
-    authClient
-        .futures()
-        .postOrder(payload);
-
-    const eosPayload = {
-        size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
-        type: Number(eosHolding.long_avail_qty) ? 3 : 4,
-        order_type: 1, //1：只做Maker 4：市价委托
-        instrument_id: eosHolding.instrument_id,
-        price: eosMarkPrice,
-    }
-    authClient
-        .futures()
-        .postOrder(eosPayload);
+    autoCloseOrderByHolding(btcHolding);
+    autoCloseOrderByHolding(eosHolding);
+    // const { mark_price: btcMarkPrice } = await cAuthClient.futures.getMarkPrice(btcHolding.instrument_id);
+    // const { mark_price: eosMarkPrice } = await cAuthClient.futures.getMarkPrice(eosHolding.instrument_id);
+    //
+    // const payload = {
+    //     size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
+    //     type: Number(btcHolding.long_avail_qty) ? 3 : 4,
+    //     order_type: 1, //1：只做Maker 4：市价委托
+    //     instrument_id: btcHolding.instrument_id,
+    //     price: btcMarkPrice,
+    // }
+    // authClient
+    //     .futures()
+    //     .postOrder(payload);
+    //
+    // const eosPayload = {
+    //     size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
+    //     type: Number(eosHolding.long_avail_qty) ? 3 : 4,
+    //     order_type: 1, //1：只做Maker 4：市价委托
+    //     instrument_id: eosHolding.instrument_id,
+    //     price: eosMarkPrice,
+    // }
+    // authClient
+    //     .futures()
+    //     .postOrder(eosPayload);
 
     stopInterval();
 }

@@ -38,7 +38,8 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         signObj['content-type'] = 'application/json; charset=utf-8';
         return request(apiUri + url,{
             method: 'post',
-            headers: signObj
+            headers: signObj,
+            data: body
         })
     }
 
