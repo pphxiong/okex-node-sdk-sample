@@ -294,8 +294,8 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     console.log('avail',btcAvail, eosAvail)
     console.log(btcHolding.instrument_id,btcAvail,btcType)
     console.log(eosHolding.instrument_id,eosAvail,eosType)
-    // 目前是空仓
-    if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty)){
+    // 目前是空仓，且可开张数不为0
+    if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty) && btcAvail){
         const payload = {
             size: btcAvail,
             type: btcType,
@@ -309,7 +309,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
             .postOrder(payload);
     }
 
-    if(!Number(eosHolding.long_qty) && !Number(eosHolding.short_qty)){
+    if(!Number(eosHolding.long_qty) && !Number(eosHolding.short_qty) && eosAvail){
         const eosPayload = {
             size: eosAvail,
             type: eosType,
