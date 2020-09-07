@@ -11,14 +11,15 @@ export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
   const [feeObj, setFeeObj] = useState({});
+  const ordersLimit = 40;
 
   const initBTCData = async () => {
-    const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: 40 });
+    const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: ordersLimit });
     return result;
   }
 
   const initEOSData = async () => {
-    const result = await getOrders({ instrument_id: 'EOS-USD-201225', limit: 40 });
+    const result = await getOrders({ instrument_id: 'EOS-USD-201225', limit: ordersLimit });
     return result;
   }
 
@@ -62,7 +63,7 @@ export default props => {
     dataIndex: 'index',
     title: '序号',
     render:(text,__,index)=> {
-      if(index==20) return text;
+      if(index==ordersLimit) return text;
       return ++index
     }
   },
@@ -88,7 +89,7 @@ export default props => {
     dataIndex: 'timestamp',
     title: '成交时间',
     render: (text,record,index)=> {
-      if(index==20) return '';
+      if(index==ordersLimit) return '';
       return moment(text).format('YYYY-MM-DD HH:mm:ss')
     }
   },{
@@ -103,7 +104,7 @@ export default props => {
       dataIndex: 'bzj-usd',
       title: '保证金（美元）',
       render: (_,{size, contract_val, price_avg, leverage},index)=> {
-        if(index==20) return '';
+        if(index==ordersLimit) return '';
         return (Number(size) * Number(contract_val) / leverage).toFixed(2)
       }
     },
@@ -111,7 +112,7 @@ export default props => {
     dataIndex: 'feeUsd',
     title: '手续费（美元）',
     render: (text,record,index) => {
-      if(index==20) return text.toFixed(2);
+      if(index==ordersLimit) return text ? text.toFixed(2) : '';
       return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
     }
   },
@@ -123,14 +124,14 @@ export default props => {
     dataIndex: 'pnlUsd',
     title: '盈亏（美元）',
     render: (text,record,index) => {
-      if(index==20) return text.toFixed(2);
+      if(index==ordersLimit) return text ? text.toFixed(2) : '';
       return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
     }
   },{
       dataIndex: 'ratio',
       title: '盈亏占比',
       render: (text,{ size, contract_val, price_avg, leverage, pnl },index) => {
-        if(index==20) return text.toFixed(2) + '%';
+        if(index==ordersLimit) return text ? (text.toFixed(2) + '%') : '-';
         return (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
       }
     }];

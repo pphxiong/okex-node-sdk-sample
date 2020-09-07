@@ -36,7 +36,7 @@ export default props => {
 
   const getLeverage = async () => {
     const result = await getFuturesLeverage({ underlying: 'BTC-USD' });
-    setLeverage(result?.data?.leverage);
+    setLeverage(result['BTC-USD-201225']['long_leverage']);
   }
 
   const getAccounts = async () => {
@@ -61,13 +61,15 @@ export default props => {
   },[])
 
   const onSetLeverage = async () => {
-    // const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'long' })
-    const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage });
+    const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'long' })
+    // const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage });
     const data = result?.data;
+    await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'short' })
     if(data) message.success('BTC杠杆设置成功');
     setTimeout(async ()=>{
-      const eosResult = await postFuturesLeverage({ underlying: 'EOS-USD', leverage });
+      const eosResult = await postFuturesLeverage({ underlying: 'EOS-USD', leverage, instrument_id: 'EOS-USD-201225', direction: 'long' });
       const eosData = eosResult?.data;
+      await postFuturesLeverage({ underlying: 'EOS-USD', leverage, instrument_id: 'EOS-USD-201225', direction: 'short' });
       if(eosData) message.success('EOS杠杆设置成功');
     },1000);
   }

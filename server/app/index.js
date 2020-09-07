@@ -132,13 +132,13 @@ app.get('/futures/information/sentiment', function(req, response) {
     });
 });
 
-// 全仓模式
+// 逐仓模式
 app.get('/futures/postLeverage', function(req, response) {
     const {query = {}} = req;
-    const { underlying, leverage } = query;
+    const { underlying, leverage, direction, instrument_id } = query;
     authClient
         .futures()
-        .postLeverage(underlying, { leverage })
+        .postLeverage(underlying, { leverage, direction, instrument_id })
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -375,9 +375,10 @@ function autoCloseOrderSingle(holding) {
 const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-usd-201225') => {
     const { equity } = await authClient.futures().getAccounts(currency);
     const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
-    const { leverage } = await authClient.futures().getLeverage(currency);
+    const leverageResult = await authClient.futures().getLeverage(currency);
+    const { long_leverage } = leverageResult[instrument_id];
 
-    return Math.floor(Number(equity) * Number(mark_price) * Number(leverage) * 0.97 / val) || 0;
+    return Math.floor(Number(equity) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
 }
 
 // 合约费率
