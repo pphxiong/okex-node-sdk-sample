@@ -288,8 +288,8 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
     const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
 
-    const btcType = isReverse ? reverseDirection(getCurrentDirection(b)) : getCurrentDirection(b);
-    const eosType = isReverse ? reverseDirection(getCurrentDirection(e)) : getCurrentDirection(e);
+    const btcType = isReverse ? reverseDirection(getCurrentDirection(btcHolding)) : getCurrentDirection(btcHolding);
+    const eosType = isReverse ? reverseDirection(getCurrentDirection(eosHolding)) : getCurrentDirection(eosHolding);
 
     console.log('avail',btcAvail, eosAvail)
     console.log(btcHolding.instrument_id,btcAvail,btcType)
