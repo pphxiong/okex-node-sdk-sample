@@ -412,6 +412,8 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
         const totalLeverage = btcLeverage + eosLeverage;
         console.log('radio',radio)
         console.log('totalLeverage',totalLeverage)
+        console.log('continuousLossNum',continuousLossNum)
+        console.log('continuousWinNum',continuousWinNum)
         if(radio > totalLeverage / 100){
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
