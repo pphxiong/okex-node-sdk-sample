@@ -283,7 +283,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
 
     // 可开张数
     const btcAvailNo = await getAvailNo();
-    const eosAvailNo = await getAvailNo(10, 'eos-usd','eos-usd-201225');
+    const eosAvailNo = await getAvailNo(10, 'EOS-USD','EOS-USD-201225');
 
     const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
     const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
@@ -375,7 +375,7 @@ function autoCloseOrderSingle(holding) {
 const getAvailNo = async (val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225') => {
     const { equity } = await authClient.futures().getAccounts(currency);
     const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
-    const { data: leverageResult} = await authClient.futures().getLeverage(currency);
+    const leverageResult = await authClient.futures().getLeverage(currency);
     const { long_leverage } = leverageResult[instrument_id];
 
     return Math.floor(Number(equity) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
