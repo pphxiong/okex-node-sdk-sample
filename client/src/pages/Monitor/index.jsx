@@ -99,7 +99,7 @@ export default props => {
       render: (_,{size, contract_val, price_avg, leverage})=> (Number(size) * Number(contract_val) / leverage).toFixed(2)
     },
     {
-    dataIndex: 'fee-usd',
+    dataIndex: 'feeUsd',
     title: '手续费（美元）',
     render: (text,record) => (Number(record.fee) * Number(record.price_avg)).toFixed(2)
   },
@@ -108,7 +108,7 @@ export default props => {
   //   title: '盈亏'
   // },
     {
-    dataIndex: 'pnl-usd',
+    dataIndex: 'pnlUsd',
     title: '盈亏（美元）',
     render: (text,record) => (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
   },{
@@ -118,7 +118,22 @@ export default props => {
     }];
 
   const responseHandler = data=>{
-    return { records : data.order_info };
+    const records = data.order_info;
+    let feeUsd = 0;
+    let pnlUsd = 0;
+    let ratio = 0;
+    records.forEach(record => {
+      feeUsd += (Number(record.fee) * Number(record.price_avg)).toFixed(2);
+      pnlUsd += (Number(record.pnl) * Number(record.price_avg)).toFixed(2);
+      ratio += (text,{ size, contract_val, price_avg, leverage, pnl }) => (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage)).toFixed(2)
+    });
+    const newRecord = records.concat({
+      index: '总计',
+      feeUsd,
+      pnlUsd,
+      ratio
+    });
+    return { records: newRecord };
   }
 
   console.log(longShortRatioData)

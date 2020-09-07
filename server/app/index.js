@@ -355,7 +355,7 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     //     .futures()
     //     .postOrder(eosPayload);
 
-    stopInterval();
+    // stopInterval();
 }
 
 function autoCloseOrderSingle(holding) {
@@ -508,6 +508,8 @@ function stopInterval() {
     if(myInterval) {
         clearInterval(myInterval);
         myInterval = null;
+        continuousLossNum = 0;
+        continuousWinNum = 0;
     }
 }
 
