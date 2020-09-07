@@ -196,7 +196,7 @@ app.get('/swap/postOrder', function(req, response) {
     .then(res => {
       send(response, {errcode: 0, errmsg: 'ok', data: res});
     });
-  startInterval();
+  // startInterval();
 });
 
 app.get('/swap/getAccount', function(req, response) {
@@ -487,7 +487,7 @@ function startInterval() {
     if(myInterval) {
         stopInterval();
         setTimeout(()=>{
-            startInterval();
+            myInterval = startInterval();
         },1000*3);
         return;
     }
