@@ -292,16 +292,17 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const eosType = isReverse ? reverseDirection(getCurrentDirection(e)) : getCurrentDirection(e);
 
     console.log('avail',btcAvail, eosAvail)
-    console.log(btcAvail,btcType,btcHolding.instrument_id)
-    console.log(eosAvail,eosType,eosHolding.instrument_id)
+    console.log(btcHolding.instrument_id,btcAvail,btcType)
+    console.log(eosHolding.instrument_id,eosAvail,eosType)
     // 目前是空仓
     if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty)){
         const payload = {
-            size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-            type: Number(btcHolding.long_avail_qty) ? 3 : 4,
+            size: btcAvail,
+            type: btcType,
             order_type: 0, //1：只做Maker 4：市价委托
             instrument_id: btcHolding.instrument_id,
             price: btcMarkPrice,
+            match_price: 0
         }
         authClient
             .futures()
@@ -310,11 +311,12 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
 
     if(!Number(eosHolding.long_qty) && !Number(eosHolding.short_qty)){
         const eosPayload = {
-            size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
-            type: Number(eosHolding.long_avail_qty) ? 3 : 4,
+            size: eosAvail,
+            type: eosType,
             order_type: 0, //1：只做Maker 4：市价委托
             instrument_id: eosHolding.instrument_id,
             price: eosMarkPrice,
+            match_price: 0
         }
         await authClient
             .futures()

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Divider } from 'antd';
-import SearchTable from '@/components/SearchTable';
+import { Card, Divider, Button } from 'antd';
+import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
 import { getOrders, getFuturesInformation, getFuturesInformationSentiment, getTradeFee } from './api';
@@ -131,7 +131,7 @@ export default props => {
     {/*    交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
     {/*  </p>*/}
     {/*</Card>*/}
-    <Card title={'BTC交易记录'}>
+    <Card title={'BTC交易记录'} extra={<Button onClick={()=>{refreshTable()}}>刷新</Button>}>
       <SearchTable
         columns={columns}
         getList={initBTCData}
