@@ -406,11 +406,12 @@ function validateRatio(holding) {
 
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
-    // console.log('mode',mode,radio,btcHolding,eosHolding)
     if(mode == 1){
-        const btcLeverage = Math.max(Number(btcHolding.long_avail_qty), Number(btcHolding.short_avail_qty)) ? btcHolding.leverage : 0;
-        const eosLeverage = Math.max(Number(eosHolding.long_avail_qty), Number(eosHolding.short_avail_qty)) ? eosHolding.leverage : 0;
+        const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? btcHolding.leverage : 0;
+        const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? eosHolding.leverage : 0;
         const totalLeverage = btcLeverage + eosLeverage;
+        console.log('radio',radio)
+        console.log('totalLeverage',totalLeverage)
         if(radio > totalLeverage / 100){
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
@@ -429,7 +430,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             // 连续亏损2次后，反向开仓，亏损3次，不再开仓
             let isReverse = false;
             if(continuousLossNum<3) {
-                if(continuousLossNum==2) isReverse = true;
+                // if(continuousLossNum==2) isReverse = true;
                 setTimeout(()=>{
                     autoOpenOrders(btcHolding, eosHolding, isReverse);
                 },timeoutNo)
