@@ -411,8 +411,8 @@ function validateRatio(holding) {
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
     if(mode == 1){
-        const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? btcHolding.leverage : 0;
-        const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? eosHolding.leverage : 0;
+        const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? btcHolding.long_leverage : 0;
+        const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? eosHolding.long_leverage : 0;
         const totalLeverage = Number(btcLeverage) + Number(eosLeverage);
         console.log('radio',radio)
         console.log('totalLeverage',totalLeverage)
