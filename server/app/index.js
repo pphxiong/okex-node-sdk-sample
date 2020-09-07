@@ -328,34 +328,34 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
 
 // 平仓
 const autoCloseOrders = async (btcHolding, eosHolding) => {
-    autoCloseOrderByHolding(btcHolding);
-    autoCloseOrderByHolding(eosHolding);
-    // const { mark_price: btcMarkPrice } = await cAuthClient.futures.getMarkPrice(btcHolding.instrument_id);
-    // const { mark_price: eosMarkPrice } = await cAuthClient.futures.getMarkPrice(eosHolding.instrument_id);
-    //
-    // const payload = {
-    //     size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-    //     type: Number(btcHolding.long_avail_qty) ? 3 : 4,
-    //     order_type: 0, //1：只做Maker 4：市价委托
-    //     instrument_id: btcHolding.instrument_id,
-    //     price: btcMarkPrice,
-    //     match_price: 0
-    // }
-    // authClient
-    //     .futures()
-    //     .postOrder(payload);
-    //
-    // const eosPayload = {
-    //     size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
-    //     type: Number(eosHolding.long_avail_qty) ? 3 : 4,
-    //     order_type: 0, //1：只做Maker 4：市价委托
-    //     instrument_id: eosHolding.instrument_id,
-    //     price: eosMarkPrice,
-    //     match_price: 0
-    // }
-    // authClient
-    //     .futures()
-    //     .postOrder(eosPayload);
+    // autoCloseOrderByHolding(btcHolding);
+    // autoCloseOrderByHolding(eosHolding);
+    const { mark_price: btcMarkPrice } = await cAuthClient.futures.getMarkPrice(btcHolding.instrument_id);
+    const { mark_price: eosMarkPrice } = await cAuthClient.futures.getMarkPrice(eosHolding.instrument_id);
+
+    const payload = {
+        size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
+        type: Number(btcHolding.long_avail_qty) ? 3 : 4,
+        order_type: 0, //1：只做Maker 4：市价委托
+        instrument_id: btcHolding.instrument_id,
+        price: btcMarkPrice,
+        match_price: 0
+    }
+    authClient
+        .futures()
+        .postOrder(payload);
+
+    const eosPayload = {
+        size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
+        type: Number(eosHolding.long_avail_qty) ? 3 : 4,
+        order_type: 0, //1：只做Maker 4：市价委托
+        instrument_id: eosHolding.instrument_id,
+        price: eosMarkPrice,
+        match_price: 0
+    }
+    authClient
+        .futures()
+        .postOrder(eosPayload);
 
 }
 
@@ -372,10 +372,10 @@ function autoCloseOrderSingle(holding) {
 }
 
 // 获取可开张数
-const getAvailNo = async (val = 100, currency = 'btc-usd', instrument_id = 'btc-usd-201225') => {
+const getAvailNo = async (val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225') => {
     const { equity } = await authClient.futures().getAccounts(currency);
     const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
-    const leverageResult = await authClient.futures().getLeverage(currency);
+    const { data: leverageResult} = await authClient.futures().getLeverage(currency);
     const { long_leverage } = leverageResult[instrument_id];
 
     return Math.floor(Number(equity) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;

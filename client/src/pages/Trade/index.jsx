@@ -35,21 +35,21 @@ export default props => {
   }
 
   const getLeverage = async () => {
-    const result = await getFuturesLeverage({ underlying: 'BTC-USD' });
+    const { data: result } = await getFuturesLeverage({ underlying: 'BTC-USD' });
     setLeverage(result['BTC-USD-201225']['long_leverage']);
   }
 
   const getAccounts = async () => {
-    const result = await getFuturesAccounts({ currency: 'btc-usd' });
+    const result = await getFuturesAccounts({ currency: 'BTC-USD' });
     setBtcAccount(result?.data??{})
-    const eosResult = await getFuturesAccounts({ currency: 'eos-usd' });
+    const eosResult = await getFuturesAccounts({ currency: 'EOS-USD' });
     setEosAccount(eosResult?.data??{})
   }
 
   const getMarkPrice = async () => {
-    const result = await getFuturesMarkPrice({ instrument_id: 'btc-usd-201225' });
+    const result = await getFuturesMarkPrice({ instrument_id: 'BTC-USD-201225' });
     setBtcMarkPrice(result?.data?.mark_price)
-    const eosResult = await getFuturesMarkPrice({ instrument_id: 'eos-usd-201225' });
+    const eosResult = await getFuturesMarkPrice({ instrument_id: 'EOS-USD-201225' });
     setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
