@@ -422,7 +422,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
             continuousLossNum = 0;
-            continuousWinNum++;
+            ++continuousWinNum;
             // 连续盈利3次，反向开仓
             let isReverse = false;
             if(continuousWinNum>2) {
@@ -435,7 +435,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             },timeoutNo)
         }else if(radio < -totalLeverage / 4 / 100){
             autoCloseOrders(btcHolding, eosHolding);
-            continuousLossNum++;
+            ++continuousLossNum;
             continuousWinNum = 0;
             // 连续亏损3次，反向开仓
             let isReverse = false;
