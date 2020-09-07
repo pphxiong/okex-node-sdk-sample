@@ -101,8 +101,6 @@ export default ({
     }
   }
 
-  console.log(tableId)
-
   rfTable = function (refKey?:any,params?: object) {
     console.log(refKey,tableId)
     if(refKey == tableId) fnGetList(params);

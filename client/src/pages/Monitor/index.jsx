@@ -61,7 +61,10 @@ export default props => {
   const columns = [{
     dataIndex: 'index',
     title: '序号',
-    render:(_,__,index)=>(++index)
+    render:(text,__,index)=> {
+      if(index==20) return text;
+      return ++index
+    }
   },
   //   {
   //   dataIndex: 'order_id',
@@ -84,7 +87,10 @@ export default props => {
   },{
     dataIndex: 'timestamp',
     title: '成交时间',
-    render: text=>moment(text).format('YYYY-MM-DD HH:mm:ss')
+    render: (text,record,index)=> {
+      if(index==20) return '';
+      return moment(text).format('YYYY-MM-DD HH:mm:ss')
+    }
   },{
     dataIndex: 'leverage',
     title: '杠杆倍数'
@@ -96,12 +102,18 @@ export default props => {
     {
       dataIndex: 'bzj-usd',
       title: '保证金（美元）',
-      render: (_,{size, contract_val, price_avg, leverage})=> (Number(size) * Number(contract_val) / leverage).toFixed(2)
+      render: (_,{size, contract_val, price_avg, leverage},index)=> {
+        if(index==20) return '';
+        return (Number(size) * Number(contract_val) / leverage).toFixed(2)
+      }
     },
     {
     dataIndex: 'feeUsd',
     title: '手续费（美元）',
-    render: (text,record) => (Number(record.fee) * Number(record.price_avg)).toFixed(2)
+    render: (text,record,index) => {
+      if(index==20) return text.toFixed(2);
+      return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
+    }
   },
   //   {
   //   dataIndex: 'pnl',
@@ -110,11 +122,17 @@ export default props => {
     {
     dataIndex: 'pnlUsd',
     title: '盈亏（美元）',
-    render: (text,record) => (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
+    render: (text,record,index) => {
+      if(index==20) return text.toFixed(2);
+      return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
+    }
   },{
       dataIndex: 'ratio',
       title: '盈亏占比',
-      render: (text,{ size, contract_val, price_avg, leverage, pnl }) => (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage)).toFixed(2) + '%'
+      render: (text,{ size, contract_val, price_avg, leverage, pnl },index) => {
+        if(index==20) return text.toFixed(2) + '%';
+        return (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
+      }
     }];
 
   const responseHandler = data=>{
@@ -122,10 +140,10 @@ export default props => {
     let feeUsd = 0;
     let pnlUsd = 0;
     let ratio = 0;
-    records.forEach(record => {
-      feeUsd += (Number(record.fee) * Number(record.price_avg)).toFixed(2);
-      pnlUsd += (Number(record.pnl) * Number(record.price_avg)).toFixed(2);
-      ratio += (text,{ size, contract_val, price_avg, leverage, pnl }) => (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage)).toFixed(2)
+    records.forEach(({ size, contract_val, price_avg, leverage, pnl, fee }) => {
+      feeUsd += Number(fee) * Number(price_avg);
+      pnlUsd += Number(pnl) * Number(price_avg);
+      ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
     });
     const newRecord = records.concat({
       index: '总计',
@@ -154,6 +172,7 @@ export default props => {
         rowKey={"order_id"}
         tableId={"btc"}
         key={'btc'}
+        hidePagination
       />
     </Card>
     <Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>
@@ -164,6 +183,7 @@ export default props => {
         rowKey={"order_id"}
         tableId={"eos"}
         key={'eos'}
+        hidePagination
       />
     </Card>
     <Card title={'多空人数比'} style={{ marginTop: 10 }}>

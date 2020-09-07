@@ -339,6 +339,7 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     //     order_type: 0, //1：只做Maker 4：市价委托
     //     instrument_id: btcHolding.instrument_id,
     //     price: btcMarkPrice,
+    //     match_price: 0
     // }
     // authClient
     //     .futures()
@@ -350,12 +351,12 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     //     order_type: 0, //1：只做Maker 4：市价委托
     //     instrument_id: eosHolding.instrument_id,
     //     price: eosMarkPrice,
+    //     match_price: 0
     // }
     // authClient
     //     .futures()
     //     .postOrder(eosPayload);
 
-    // stopInterval();
 }
 
 function autoCloseOrderSingle(holding) {
