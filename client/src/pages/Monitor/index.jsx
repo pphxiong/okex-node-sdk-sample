@@ -11,7 +11,7 @@ export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
   const [feeObj, setFeeObj] = useState({});
-  const ordersLimit = 40;
+  const ordersLimit = 100;
 
   const initBTCData = async () => {
     const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: ordersLimit });
