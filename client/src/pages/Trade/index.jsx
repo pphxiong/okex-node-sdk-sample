@@ -198,7 +198,7 @@ export default props => {
           <p>ID：{btcPosition.instrument_id}</p>
           {/*<p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
           <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
-          <p>杠杆倍数：{btcPosition.leverage}</p>
+          <p>杠杆倍数：{btcPosition.long_leverage}</p>
           <p>数量（张）：多 {btcPosition.long_qty} 空 {btcPosition.short_qty}</p>
           <p>开仓均价：{btcPosition.long_avg_cost}</p>
           <p>最新成交价（美元）：{btcPosition.last}</p>
@@ -218,7 +218,7 @@ export default props => {
           <p>ID：{eosPosition.instrument_id}</p>
           {/*<p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
           <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
-          <p>杠杆倍数：{eosPosition.leverage}</p>
+          <p>杠杆倍数：{eosPosition.long_leverage}</p>
           <p>数量（张）：多 {eosPosition.long_qty} 空 {eosPosition.short_qty}</p>
           <p>开仓均价：{eosPosition.short_avg_cost}</p>
           <p>最新成交价（美元）：{eosPosition.last}</p>

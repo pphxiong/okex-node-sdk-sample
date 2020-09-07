@@ -333,30 +333,33 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     const { mark_price: btcMarkPrice } = await cAuthClient.futures.getMarkPrice(btcHolding.instrument_id);
     const { mark_price: eosMarkPrice } = await cAuthClient.futures.getMarkPrice(eosHolding.instrument_id);
 
-    const payload = {
-        size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-        type: Number(btcHolding.long_avail_qty) ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
-        instrument_id: btcHolding.instrument_id,
-        price: btcMarkPrice,
-        match_price: 0
+    if(Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty)){
+        const payload = {
+            size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
+            type: Number(btcHolding.long_avail_qty) ? 3 : 4,
+            order_type: 0, //1：只做Maker 4：市价委托
+            instrument_id: btcHolding.instrument_id,
+            price: btcMarkPrice,
+            match_price: 0
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
     }
-    authClient
-        .futures()
-        .postOrder(payload);
 
-    const eosPayload = {
-        size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
-        type: Number(eosHolding.long_avail_qty) ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
-        instrument_id: eosHolding.instrument_id,
-        price: eosMarkPrice,
-        match_price: 0
+    if(Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty)){
+        const eosPayload = {
+            size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
+            type: Number(eosHolding.long_avail_qty) ? 3 : 4,
+            order_type: 0, //1：只做Maker 4：市价委托
+            instrument_id: eosHolding.instrument_id,
+            price: eosMarkPrice,
+            match_price: 0
+        }
+        authClient
+            .futures()
+            .postOrder(eosPayload);
     }
-    authClient
-        .futures()
-        .postOrder(eosPayload);
-
 }
 
 function autoCloseOrderSingle(holding) {
