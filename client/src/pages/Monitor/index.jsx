@@ -13,12 +13,12 @@ export default props => {
   const [feeObj, setFeeObj] = useState({});
 
   const initBTCData = async () => {
-    const result = await getOrders({ instrument_id: 'BTC-USD-201225' });
+    const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: 40 });
     return result;
   }
 
   const initEOSData = async () => {
-    const result = await getOrders({ instrument_id: 'EOS-USD-201225' });
+    const result = await getOrders({ instrument_id: 'EOS-USD-201225', limit: 40 });
     return result;
   }
 

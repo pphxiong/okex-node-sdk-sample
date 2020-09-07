@@ -81,10 +81,10 @@ app.get('/account/getAssetValuation', function(req, response) {
 
 app.get('/futures/getOrders', function(req, response) {
     const {query = {}} = req;
-    const {instrument_id} = query; // "BTC-USD-200821"
+    const {instrument_id, limit} = query; // "BTC-USD-200821"
     authClient
         .futures()
-        .getOrders(instrument_id, {state: 2, limit: 20})
+        .getOrders(instrument_id, {state: 2, limit})
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -288,8 +288,8 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
     const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
 
-    const btcType = isReverse ? reverseDirection(getCurrentDirection(btcHolding)) : getCurrentDirection(btcHolding);
-    const eosType = isReverse ? reverseDirection(getCurrentDirection(eosHolding)) : getCurrentDirection(eosHolding);
+    const btcType = isReverse ? reverseDirection(getCurrentDirection(b)) : getCurrentDirection(b);
+    const eosType = isReverse ? reverseDirection(getCurrentDirection(e)) : getCurrentDirection(e);
 
     console.log('avail',btcAvail, eosAvail)
     console.log(btcHolding.instrument_id,btcAvail,btcType)
