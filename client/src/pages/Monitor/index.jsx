@@ -131,20 +131,24 @@ export default props => {
     {/*    交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
     {/*  </p>*/}
     {/*</Card>*/}
-    <Card title={'BTC交易记录'} extra={<Button onClick={()=>{refreshTable()}}>刷新</Button>}>
+    <Card title={'BTC交易记录'} >
       <SearchTable
         columns={columns}
         getList={initBTCData}
         responseHandler={responseHandler}
         rowKey={"order_id"}
+        tableId={"btc"}
+        key={'btc'}
       />
     </Card>
-    <Card title={'EOS交易记录'} style={{ marginTop: 10 }}>
+    <Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>
       <SearchTable
         columns={columns}
         getList={initEOSData}
         responseHandler={responseHandler}
         rowKey={"order_id"}
+        tableId={"eos"}
+        key={'eos'}
       />
     </Card>
     <Card title={'多空人数比'} style={{ marginTop: 10 }}>

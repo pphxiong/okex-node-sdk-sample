@@ -6,9 +6,9 @@ import { columnEllipsisHandler } from '@/utils/utils';
 
 let rfTable: Function;
 
-export const refreshTable = (params?: object) => {
+export const refreshTable = (refKey?: any,params?: object) => {
   setTimeout(() => {
-    rfTable(params);
+    rfTable(refKey,params);
   });
 };
 
@@ -35,6 +35,7 @@ export interface CustomTableProps {
   hidePagination?: Boolean;
   listParams?: object;
   rowSelection?: object;
+  tableId?: any;
 }
 
 export default ({
@@ -62,6 +63,7 @@ export default ({
   showSizeChanger,
   rowSelection = {},
   listParams = {},
+  tableId,
   ...rest
 }: CustomTableProps) => {
   const initPageOption = { current: 1, size: 10, currentPage: 1, pageSize: 10, pageNum: 1 }; // 后台分页参数怎么不统一啊。。
@@ -99,8 +101,11 @@ export default ({
     }
   }
 
-  rfTable = function (params?: object) {
-    fnGetList(params);
+  console.log(tableId)
+
+  rfTable = function (refKey?:any,params?: object) {
+    console.log(refKey,tableId)
+    if(refKey == tableId) fnGetList(params);
   };
 
   function handelPageChange(cr: number, ps?: number) {
