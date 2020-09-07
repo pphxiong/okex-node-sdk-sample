@@ -409,7 +409,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
     if(mode == 1){
         const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? btcHolding.leverage : 0;
         const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? eosHolding.leverage : 0;
-        const totalLeverage = btcLeverage + eosLeverage;
+        const totalLeverage = Number(btcLeverage) + Number(eosLeverage);
         console.log('radio',radio)
         console.log('totalLeverage',totalLeverage)
         console.log('continuousLossNum',continuousLossNum)
