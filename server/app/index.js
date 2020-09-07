@@ -419,36 +419,39 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
         const totalLeverage = btcLeverage + eosLeverage;
         const num = (btcLeverage ? 1 : 0) + (eosLeverage ? 1 : 0);
         console.log('radio',radio)
-        console.log('totalLeverage',totalLeverage)
-        console.log('continuousLossNum',continuousLossNum)
-        console.log('continuousWinNum',continuousWinNum)
         if(radio > totalLeverage / num / 100){
             autoCloseOrders(btcHolding, eosHolding);
-            // 盈利后再开仓
-            continuousLossNum = 0;
-            continuousWinNum = continuousWinNum + 1;
-            // 连续盈利3次，反向开仓
-            let isReverse = false;
-            if(continuousWinNum>2) {
-                isReverse = true;
-                continuousLossNum = 0;
-                continuousWinNum = 0;
-            }
             setTimeout(()=>{
+                // 盈利后再开仓
+                continuousLossNum = 0;
+                continuousWinNum = continuousWinNum + 1;
+                console.log('totalLeverage',totalLeverage)
+                console.log('continuousLossNum',continuousLossNum)
+                console.log('continuousWinNum',continuousWinNum)
+                // 连续盈利3次，反向开仓
+                let isReverse = false;
+                if(continuousWinNum>2) {
+                    isReverse = true;
+                    continuousLossNum = 0;
+                    continuousWinNum = 0;
+                }
                 autoOpenOrders(btcHolding, eosHolding, isReverse);
             },timeoutNo)
         }else if(radio < - totalLeverage / num / 2 / 100){
             autoCloseOrders(btcHolding, eosHolding);
-            continuousLossNum = continuousLossNum + 1;
-            continuousWinNum = 0;
-            // 连续亏损3次，反向开仓
-            let isReverse = false;
-            if(continuousLossNum>2) {
-                isReverse = true;
-                continuousLossNum = 0;
-                continuousWinNum = 0;
-            }
             setTimeout(()=>{
+                continuousLossNum = continuousLossNum + 1;
+                continuousWinNum = 0;
+                console.log('totalLeverage',totalLeverage)
+                console.log('continuousLossNum',continuousLossNum)
+                console.log('continuousWinNum',continuousWinNum)
+                // 连续亏损3次，反向开仓
+                let isReverse = false;
+                if(continuousLossNum>2) {
+                    isReverse = true;
+                    continuousLossNum = 0;
+                    continuousWinNum = 0;
+                }
                 autoOpenOrders(btcHolding, eosHolding, isReverse);
             },timeoutNo)
         }
