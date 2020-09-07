@@ -414,14 +414,15 @@ function validateRatio(holding) {
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
     if(mode == 1){
-        const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? btcHolding.long_leverage : 0;
-        const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? eosHolding.long_leverage : 0;
-        const totalLeverage = Number(btcLeverage) + Number(eosLeverage);
+        const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? Number(btcHolding.long_leverage) : 0;
+        const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? Number(eosHolding.long_leverage) : 0;
+        const totalLeverage = btcLeverage + eosLeverage;
+        const num = (btcLeverage ? 1 : 0) + (eosLeverage ? 1 : 0);
         console.log('radio',radio)
         console.log('totalLeverage',totalLeverage)
         console.log('continuousLossNum',continuousLossNum)
         console.log('continuousWinNum',continuousWinNum)
-        if(radio > totalLeverage / 2 / 100){
+        if(radio > totalLeverage / num / 100){
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
             continuousLossNum = 0;
@@ -436,7 +437,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
             setTimeout(()=>{
                 autoOpenOrders(btcHolding, eosHolding, isReverse);
             },timeoutNo)
-        }else if(radio < -totalLeverage / 4 / 100){
+        }else if(radio < - totalLeverage / num / 2 / 100){
             autoCloseOrders(btcHolding, eosHolding);
             continuousLossNum = continuousLossNum + 1;
             continuousWinNum = 0;
