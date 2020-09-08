@@ -393,7 +393,7 @@ const autoOpenOrderSingle = async (holding,isReverse) => {
             .futures()
             .postOrder(payload);
     }
-    return new Promise(resolve=>{ resolve({ result: true }) })
+    return new Promise(resolve=>{ resolve({ result: false }) })
 }
 
 const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrument_id, last }) => {
@@ -405,7 +405,7 @@ const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrumen
         price: last,
         match_price: 0
     }
-    authClient
+    await authClient
         .futures()
         .postOrder(payload);
 }
@@ -454,7 +454,7 @@ function validateRatio(holding) {
 }
 
 // 下单模式
-function getOrderMode(mode = 1, btcHolding, eosHolding) {
+function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
     const btcRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
         (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
     const eosRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
@@ -473,7 +473,7 @@ function getOrderMode(mode = 1, btcHolding, eosHolding) {
     console.log('eosRatio',eosRatio)
     console.log('condition',condition)
     console.log('mode',mode)
-    if(mode == 1) {
+    if(orderMode == 1) {
         if(btcRatio + eosRatio > condition){
             autoCloseOrders(btcHolding, eosHolding);
             // 盈利后再开仓
@@ -512,7 +512,7 @@ function getOrderMode(mode = 1, btcHolding, eosHolding) {
         }
         return;
     }
-    if(mode == 2){
+    if(orderMode == 2){
         if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHolding(btcHolding,btcRatio,condition)
         if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHolding(eosHolding,eosRatio,condition)
     }
