@@ -388,17 +388,18 @@ const autoOpenOrderSingle = async (holding,isReverse) => {
             price: mark_price,
             match_price: 0
         }
-        authClient
+        return authClient
             .futures()
             .postOrder(payload);
     }
+    return new Promise(resolve=>{ resolve({ result: true }) })
 }
 
 const autoCloseOrderSingle = async ({ long_avail_qty, instrument_id, last }) => {
     const payload = {
         size: Number(long_avail_qty),
         type: Number(long_avail_qty) ? 3 : 4,
-        order_type: 0, //市价委托
+        order_type: 0,
         instrument_id: instrument_id,
         price: last,
         match_price: 0
@@ -528,11 +529,12 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         continuousBatchNum = continuousBatchNum + 1;
         // 补仓3次后还是亏损后，平仓并反向
         if(continuousBatchNum>2){
-            autoCloseOrderSingle(holding);
-            autoOpenOrderSingle(holding,true);
+            await autoCloseOrderSingle(holding);
+            await autoOpenOrderSingle(holding,true);
             return;
         }
-        autoOpenOrderSingle(holding);
+        const { result } = await autoOpenOrderSingle(holding);
+        console.log('result', result)
         return;
     }
 }
