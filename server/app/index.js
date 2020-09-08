@@ -10,7 +10,7 @@ let mode = 2; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 let continuousBatchNum = 0; //连续补仓次数
-const timeoutNo = 1000 * 60 * 5; //下单间隔时间
+const timeoutNo = 1000 * 60 * 3; //下单间隔时间
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
