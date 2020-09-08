@@ -283,8 +283,8 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
     const { mark_price: eosMarkPrice } = await cAuthClient.futures.getMarkPrice(e.instrument_id);
 
     // 可开张数
-    const btcAvailNo = await getAvailNo();
-    const eosAvailNo = await getAvailNo(10, 'EOS-USD','EOS-USD-201225');
+    const btcAvailNo = await getAvailNo({ mark_price: btcMarkPrice });
+    const eosAvailNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: 'EOS-USD-201225', mark_price: eosMarkPrice });
 
     const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
     const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
@@ -371,14 +371,15 @@ const autoOpenOrderSingle = async (holding,isReverse) => {
     let avail = 0;
 
     if(instrument_id.includes('BTC')){
-        availNo = await getAvailNo();
+        availNo = await getAvailNo({ mark_price });
     }else{
-        availNo = await getAvailNo(10, 'EOS-USD','EOS-USD-201225');
+        availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: 'EOS-USD-201225', mark_price });
     }
     avail = Math.min(Number(availNo), Math.max(Number(long_avail_qty), Number(short_avail_qty)));
 
     const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
 
+    console.log('availNo', availNo, 'avail', avail, 'type', type)
     if(avail) {
         const payload = {
             size: avail,
@@ -410,13 +411,17 @@ const autoCloseOrderSingle = async ({ long_avail_qty, instrument_id, last }) => 
 }
 
 // 获取可开张数
-const getAvailNo = async (val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225') => {
-    const { equity } = await authClient.futures().getAccounts(currency);
-    const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225', mark_price}) => {
+    const { available_qty } = await authClient.futures().getAccounts(currency);
+    console.log('available_qty', available_qty)
+    if(!mark_price) {
+        const result = await cAuthClient.futures.getMarkPrice(instrument_id);
+        mark_price = result.mark_price;
+    }
     const leverageResult = await authClient.futures().getLeverage(currency);
     const { long_leverage } = leverageResult[instrument_id];
 
-    return Math.floor(Number(equity) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
+    return Math.floor(Number(available_qty) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
 }
 
 // 合约费率
