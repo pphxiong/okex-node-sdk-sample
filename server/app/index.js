@@ -525,7 +525,7 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         },timeoutNo)
         return;
     }
-    if(ratio < - condition * 2){
+    if(ratio < - condition * 1.5){
         continuousBatchNum = 0;
         autoCloseOrderSingle(holding);
         return;
