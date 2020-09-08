@@ -323,7 +323,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
             .postOrder(eosPayload);
     }
 
-    startInterval();
+    myInterval = startInterval();
 }
 
 // 平仓
@@ -464,13 +464,7 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
 }
 
 function startInterval() {
-    if(myInterval) {
-        stopInterval();
-        setTimeout(()=>{
-            myInterval = startInterval();
-        },1000*3);
-        return;
-    }
+    if(myInterval) return myInterval;
     return setInterval(async ()=>{
         const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');

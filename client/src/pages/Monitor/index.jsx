@@ -11,7 +11,11 @@ export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
   const [feeObj, setFeeObj] = useState({});
-  const ordersLimit = 50;
+  const ordersLimit = 40;
+  const [current,setCurrent] = useState(1);
+  const [pageSize,setPageSize] = useState(10);
+  const [eosCurrent,setEosCurrent] = useState(1);
+  const [eosPageSize,setEosPageSize] = useState(10);
 
   const initBTCData = async () => {
     const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: ordersLimit });
@@ -59,11 +63,11 @@ export default props => {
     // getFee();
   },[])
 
-  const columns = [{
+  const getColumns = ps => ([{
     dataIndex: 'index',
     title: '序号',
     render:(text,__,index)=> {
-      if(index==ordersLimit) return text;
+      if(index+1==ps) return text;
       return ++index
     }
   },
@@ -89,7 +93,7 @@ export default props => {
     dataIndex: 'timestamp',
     title: '成交时间',
     render: (text,record,index)=> {
-      if(index==ordersLimit) return '';
+      if(index+1==ps) return '';
       return moment(text).format('YYYY-MM-DD HH:mm:ss')
     }
   },{
@@ -104,7 +108,7 @@ export default props => {
       dataIndex: 'bzj-usd',
       title: '保证金（美元）',
       render: (_,{size, contract_val, price_avg, leverage},index)=> {
-        if(index==ordersLimit) return '';
+        if(index+1==ps) return '';
         return (Number(size) * Number(contract_val) / leverage).toFixed(2)
       }
     },
@@ -112,7 +116,7 @@ export default props => {
     dataIndex: 'feeUsd',
     title: '手续费（美元）',
     render: (text,record,index) => {
-      if(index==ordersLimit) return text ? text.toFixed(2) : '';
+      if(index+1==ps) return text ? text.toFixed(2) : '';
       return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
     }
   },
@@ -124,35 +128,39 @@ export default props => {
     dataIndex: 'pnlUsd',
     title: '盈亏（美元）',
     render: (text,record,index) => {
-      if(index==ordersLimit) return text ? text.toFixed(2) : '';
+      if(index+1==ps) return text ? text.toFixed(2) : '';
       return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
     }
   },{
       dataIndex: 'ratio',
       title: '盈亏占比',
       render: (text,{ size, contract_val, price_avg, leverage, pnl },index) => {
-        if(index==ordersLimit) return text ? (text.toFixed(2) + '%') : '-';
+        if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
         return (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
       }
-    }];
+    }]);
 
-  const responseHandler = data=>{
+  const responseHandler = (data, cr, ps)=>{
+    if(Array.isArray(data)) data = { order_info: data };
     const records = data.order_info;
     let feeUsd = 0;
     let pnlUsd = 0;
     let ratio = 0;
-    records.forEach(({ size, contract_val, price_avg, leverage, pnl, fee }) => {
-      feeUsd += Number(fee) * Number(price_avg);
-      pnlUsd += Number(pnl) * Number(price_avg);
-      ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
+    records.some(({ size, contract_val, price_avg, leverage, pnl, fee }, index) => {
+      if((index >= (cr - 1) * ps) && (index < cr * ps)){
+        feeUsd += Number(fee) * Number(price_avg);
+        pnlUsd += Number(pnl) * Number(price_avg);
+        ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
+      }
+      if(index == cr * ps - 2) return true;
     });
-    const newRecord = records.concat({
+    records.splice((cr * ps-1), 0, {
       index: '总计',
       feeUsd,
       pnlUsd,
       ratio
     });
-    return { records: newRecord };
+    return { records };
   }
 
   console.log(longShortRatioData)
@@ -167,24 +175,30 @@ export default props => {
     {/*</Card>*/}
     <Card title={'BTC交易记录'} >
       <SearchTable
-        columns={columns}
+        columns={getColumns(pageSize)}
         getList={initBTCData}
-        responseHandler={responseHandler}
+        responseHandler={data=>responseHandler(data,current,pageSize)}
         rowKey={"order_id"}
         tableId={"btc"}
         key={'btc'}
-        hidePagination
+        callbackPageSize={(cr,ps)=> {
+          setCurrent(cr)
+          setPageSize(ps)
+        }}
       />
     </Card>
     <Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>
       <SearchTable
-        columns={columns}
+        columns={getColumns(eosPageSize)}
         getList={initEOSData}
-        responseHandler={responseHandler}
+        responseHandler={data=>responseHandler(data,eosCurrent,eosPageSize)}
         rowKey={"order_id"}
         tableId={"eos"}
         key={'eos'}
-        hidePagination
+        callbackPageSize={(cr,ps)=> {
+          setEosCurrent(cr)
+          setEosPageSize(ps)
+        }}
       />
     </Card>
     <Card title={'多空人数比'} style={{ marginTop: 10 }}>

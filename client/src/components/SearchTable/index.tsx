@@ -36,6 +36,7 @@ export interface CustomTableProps {
   listParams?: object;
   rowSelection?: object;
   tableId?: any;
+  callbackPageSize?: Function;
 }
 
 export default ({
@@ -64,6 +65,7 @@ export default ({
   rowSelection = {},
   listParams = {},
   tableId,
+  callbackPageSize,
   ...rest
 }: CustomTableProps) => {
   const initPageOption = { current: 1, size: 10, currentPage: 1, pageSize: 10, pageNum: 1 }; // 后台分页参数怎么不统一啊。。
@@ -115,6 +117,8 @@ export default ({
       pageSize: ps || searchValues.size,
       pageNum: cr,
     });
+    callbackPageSize && callbackPageSize(cr,ps);
+    responseHandler(dataSource.records)
   }
 
   const handleSearch = function (values: object) {
