@@ -6,9 +6,10 @@ const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
 let myInterval;
-let mode = 1; //下单模式
+let mode = 2; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
+let continuousBatchNum = 0; //连续补仓次数
 const timeoutNo = 1000 * 60 * 5; //下单间隔时间
 
 var config = require('./config');
@@ -362,12 +363,45 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     }
 }
 
-function autoCloseOrderSingle(holding) {
+const autoOpenOrderSingle = async (holding,isReverse) => {
+    const { instrument_id, long_avail_qty, short_avail_qty } = holding;
+    const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
+    // 可开张数
+    let availNo;
+    let avail = 0;
+
+    if(instrument_id.includes('BTC')){
+        availNo = await getAvailNo();
+    }else{
+        availNo = await getAvailNo(10, 'EOS-USD','EOS-USD-201225');
+    }
+    avail = Math.min(Number(availNo), Math.max(Number(long_avail_qty), Number(short_avail_qty)));
+
+    const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
+
+    if(avail) {
+        const payload = {
+            size: avail,
+            type,
+            order_type: 0, //1：只做Maker 4：市价委托
+            instrument_id: instrument_id,
+            price: mark_price,
+            match_price: 0
+        }
+        authClient
+            .futures()
+            .postOrder(payload);
+    }
+}
+
+const autoCloseOrderSingle = async ({ long_avail_qty, instrument_id, last }) => {
     const payload = {
-        size: Number(holding.long_avail_qty),
-        type: 3,
-        order_type: 4, //市价委托
-        instrument_id: holding.instrument_id
+        size: Number(long_avail_qty),
+        type: Number(long_avail_qty) ? 3 : 4,
+        order_type: 0, //市价委托
+        instrument_id: instrument_id,
+        price: last,
+        match_price: 0
     }
     authClient
         .futures()
@@ -412,7 +446,12 @@ function validateRatio(holding) {
 }
 
 // 下单模式
-function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
+function getOrderMode(mode = 1, btcHolding, eosHolding) {
+    const btcRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
+        (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
+    const eosRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
+        (Number(eosHolding.short_avail_qty) && Number(eosHolding.short_pnl_ratio));
+
     const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? Number(btcHolding.long_leverage) : 0;
     const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? Number(eosHolding.long_leverage) : 0;
     const totalLeverage = btcLeverage + eosLeverage;
@@ -422,45 +461,80 @@ function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
     if(num == 2 && ((Number(btcHolding.long_margin) && Number(eosHolding.short_margin)) || (Number(btcHolding.short_margin) && Number(eosHolding.long_margin))) ) {
         condition = totalLeverage / num / 100 * 2 / 3;
     }
-    console.log('radio',radio)
+    console.log('btcRatio',btcRatio)
+    console.log('eosRatio',eosRatio)
     console.log('condition',condition)
-    if(radio > condition){
-        autoCloseOrders(btcHolding, eosHolding);
-        // 盈利后再开仓
-        continuousLossNum = 0;
-        continuousWinNum = continuousWinNum + 1;
-        console.log('totalLeverage',totalLeverage)
-        console.log('continuousLossNum',continuousLossNum)
-        console.log('continuousWinNum',continuousWinNum)
-        // 连续盈利3次，反向开仓
-        if(continuousWinNum>2) {
-            autoOpenOrders(btcHolding, eosHolding, true);
+    console.log('mode',mode)
+    if(mode == 1) {
+        if(btcRatio + eosRatio > condition){
+            autoCloseOrders(btcHolding, eosHolding);
+            // 盈利后再开仓
             continuousLossNum = 0;
+            continuousWinNum = continuousWinNum + 1;
+            console.log('totalLeverage',totalLeverage)
+            console.log('continuousLossNum',continuousLossNum)
+            console.log('continuousWinNum',continuousWinNum)
+            // 连续盈利3次，反向开仓
+            if(continuousWinNum>2) {
+                autoOpenOrders(btcHolding, eosHolding, true);
+                continuousLossNum = 0;
+                continuousWinNum = 0;
+                return;
+            }
+            setTimeout(()=>{
+                autoOpenOrders(btcHolding, eosHolding);
+            },timeoutNo)
+        }else if(btcRatio + eosRatio < - condition / 2){
+            autoCloseOrders(btcHolding, eosHolding);
             continuousWinNum = 0;
-            return;
+            continuousLossNum = continuousLossNum + 1;
+            console.log('totalLeverage',totalLeverage)
+            console.log('continuousLossNum',continuousLossNum)
+            console.log('continuousWinNum',continuousWinNum)
+            // 连续亏损3次，反向立即开仓
+            if(continuousLossNum>2) {
+                autoOpenOrders(btcHolding, eosHolding, true);
+                continuousLossNum = 0;
+                continuousWinNum = 0;
+                return;
+            }
+            setTimeout(()=>{
+                autoOpenOrders(btcHolding, eosHolding);
+            },timeoutNo)
         }
-        setTimeout(()=>{
-            autoOpenOrders(btcHolding, eosHolding);
-        },timeoutNo)
-    }else if(radio < - condition / 2){
-        autoCloseOrders(btcHolding, eosHolding);
-        continuousWinNum = 0;
-        continuousLossNum = continuousLossNum + 1;
-        console.log('totalLeverage',totalLeverage)
-        console.log('continuousLossNum',continuousLossNum)
-        console.log('continuousWinNum',continuousWinNum)
-        // 连续亏损3次，反向立即开仓
-        if(continuousLossNum>2) {
-            autoOpenOrders(btcHolding, eosHolding, true);
-            continuousLossNum = 0;
-            continuousWinNum = 0;
-            return;
-        }
-        setTimeout(()=>{
-            autoOpenOrders(btcHolding, eosHolding);
-        },timeoutNo)
+        return;
     }
-    return;
+    if(mode == 2){
+        if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHolding(btcHolding,btcRatio,condition)
+        if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHolding(eosHolding,eosRatio,condition)
+    }
+}
+
+const autoOperateByHolding = async (holding,ratio,condition) => {
+    if(ratio > condition){
+        continuousBatchNum = 0;
+        autoCloseOrderSingle(holding)
+        setTimeout(()=>{
+            autoOpenOrderSingle(holding);
+        },timeoutNo)
+        return;
+    }
+    if(ratio < - condition * 2){
+        continuousBatchNum = 0;
+        autoCloseOrderSingle(holding);
+        return;
+    }
+    if(ratio < - condition * 2 / 3){
+        continuousBatchNum = continuousBatchNum + 1;
+        // 补仓3次后还是亏损后，平仓并反向
+        if(continuousBatchNum>2){
+            autoCloseOrderSingle(holding);
+            autoOpenOrderSingle(holding,true);
+            return;
+        }
+        autoOpenOrderSingle(holding);
+        return;
+    }
 }
 
 function startInterval() {
@@ -470,13 +544,8 @@ function startInterval() {
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
 
         const qty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty) + Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty)
-        const radio =
-            (Number(btcHolding[0].long_avail_qty) && Number(btcHolding[0].long_pnl_ratio)) +
-            (Number(btcHolding[0].short_avail_qty) && Number(btcHolding[0].short_pnl_ratio)) +
-            (Number(eosHolding[0].long_avail_qty) && Number(eosHolding[0].long_pnl_ratio)) +
-            (Number(eosHolding[0].short_avail_qty) && Number(eosHolding[0].short_pnl_ratio));
         if(!qty) return;
-        getOrderMode(mode, radio, btcHolding[0], eosHolding[0]);
+        getOrderMode(mode, btcHolding[0], eosHolding[0]);
     },1000 * 5)
 }
 
