@@ -532,7 +532,7 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         autoCloseOrderSingle(holding);
         return;
     }
-    if(ratio < - condition * 2 / 3){
+    if(ratio < - condition * 1 / 3){
         console.log('continuousBatchNum', continuousBatchNum)
         // 补仓3次后还是亏损后，平仓并反向
         if(continuousBatchNum>2){
