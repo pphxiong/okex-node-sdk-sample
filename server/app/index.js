@@ -396,9 +396,9 @@ const autoOpenOrderSingle = async (holding,isReverse) => {
     return new Promise(resolve=>{ resolve({ result: true }) })
 }
 
-const autoCloseOrderSingle = async ({ long_avail_qty, instrument_id, last }) => {
+const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrument_id, last }) => {
     const payload = {
-        size: Number(long_avail_qty),
+        size: Number(long_avail_qty) || Number(short_avail_qty),
         type: Number(long_avail_qty) ? 3 : 4,
         order_type: 0,
         instrument_id: instrument_id,
@@ -519,9 +519,9 @@ function getOrderMode(mode = 1, btcHolding, eosHolding) {
 const autoOperateByHolding = async (holding,ratio,condition) => {
     if(ratio > condition){
         continuousBatchNum = 0;
-        autoCloseOrderSingle(holding)
-        setTimeout(()=>{
-            autoOpenOrderSingle(holding);
+        await autoCloseOrderSingle(holding)
+        setTimeout(async ()=>{
+            await autoOpenOrderSingle(holding);
         },timeoutNo)
         return;
     }
