@@ -526,14 +526,16 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         return;
     }
     if(ratio < - condition * 2 / 3){
-        continuousBatchNum = continuousBatchNum + 1;
+        console.log('continuousBatchNum', continuousBatchNum)
         // 补仓3次后还是亏损后，平仓并反向
         if(continuousBatchNum>2){
             await autoCloseOrderSingle(holding);
             await autoOpenOrderSingle(holding,true);
             return;
         }
+        // 补仓
         const { result } = await autoOpenOrderSingle(holding);
+        if(result) continuousBatchNum = continuousBatchNum + 1;
         console.log('result', result)
         return;
     }
