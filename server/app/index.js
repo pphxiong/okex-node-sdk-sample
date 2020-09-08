@@ -413,81 +413,54 @@ function validateRatio(holding) {
 
 // 下单模式
 function getOrderMode(mode = 1, radio, btcHolding, eosHolding) {
-    if(mode == 1){
-        const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? Number(btcHolding.long_leverage) : 0;
-        const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? Number(eosHolding.long_leverage) : 0;
-        const totalLeverage = btcLeverage + eosLeverage;
-        const num = (btcLeverage ? 1 : 0) + (eosLeverage ? 1 : 0);
-        console.log('radio',radio)
-        if(radio > totalLeverage / num / 100){
-            autoCloseOrders(btcHolding, eosHolding);
-            setTimeout(()=>{
-                // 盈利后再开仓
-                continuousLossNum = 0;
-                continuousWinNum = continuousWinNum + 1;
-                console.log('totalLeverage',totalLeverage)
-                console.log('continuousLossNum',continuousLossNum)
-                console.log('continuousWinNum',continuousWinNum)
-                // 连续盈利3次，反向开仓
-                let isReverse = false;
-                if(continuousWinNum>2) {
-                    isReverse = true;
-                    continuousLossNum = 0;
-                    continuousWinNum = 0;
-                }
-                autoOpenOrders(btcHolding, eosHolding, isReverse);
-            },timeoutNo)
-        }else if(radio < - totalLeverage / num / 2 / 100){
-            autoCloseOrders(btcHolding, eosHolding);
-            setTimeout(()=>{
-                continuousLossNum = continuousLossNum + 1;
-                continuousWinNum = 0;
-                console.log('totalLeverage',totalLeverage)
-                console.log('continuousLossNum',continuousLossNum)
-                console.log('continuousWinNum',continuousWinNum)
-                // 连续亏损3次，反向开仓
-                let isReverse = false;
-                if(continuousLossNum>2) {
-                    isReverse = true;
-                    continuousLossNum = 0;
-                    continuousWinNum = 0;
-                }
-                autoOpenOrders(btcHolding, eosHolding, isReverse);
-            },timeoutNo)
-        }
-        return;
+    const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? Number(btcHolding.long_leverage) : 0;
+    const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? Number(eosHolding.long_leverage) : 0;
+    const totalLeverage = btcLeverage + eosLeverage;
+    const num = (btcLeverage ? 1 : 0) + (eosLeverage ? 1 : 0);
+    let condition = totalLeverage / num / 100;
+    // 对冲仓
+    if(num == 2 && ((Number(btcHolding.long_margin) && Number(eosHolding.short_margin)) || (Number(btcHolding.short_margin) && Number(eosHolding.long_margin))) ) {
+        condition = totalLeverage / num / 100 * 2 / 3;
     }
-    // if(mode == 2) {
-    //     const btcSingleRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
-    //         (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
-    //     if(btcSingleRatio > Number(btcHolding.leverage) / 100) {
-    //         autoCloseOrderSingle(btcHolding);
-    //         continuousLossNum = 0;
-    //     };
-    //
-    //     const eosSingleRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
-    //         (Number(eosHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
-    //     if(eosSingleRatio > Number(eosHolding.leverage) / 100) {
-    //         autoCloseOrderSingle(eosHolding);
-    //         continuousLossNum = 0;
-    //     };
-    //
-    //     if( (btcSingleRatio + eosSingleRatio) < -(Number(btcHolding.leverage) + Number(eosHolding.leverage)) * 2 / 4 / 3 / 100 ) {
-    //         autoCloseOrders(btcHolding, eosHolding);
-    //         continuousLossNum++;
-    //
-    //         // 连续亏损2次后，反向开仓，亏损3次，不再开仓
-    //         let isReverse = false;
-    //         if(continuousLossNum<3) {
-    //             if(continuousLossNum==2) isReverse = true;
-    //             setTimeout(()=>{
-    //                 autoOpenOrders(btcHolding, eosHolding, isReverse);
-    //             },timeoutNo)
-    //         }
-    //     }
-    //
-    //     return;
-    // }
+    console.log('radio',radio)
+    console.log('condition',condition)
+    if(radio > condition){
+        autoCloseOrders(btcHolding, eosHolding);
+        setTimeout(()=>{
+            // 盈利后再开仓
+            continuousLossNum = 0;
+            continuousWinNum = continuousWinNum + 1;
+            console.log('totalLeverage',totalLeverage)
+            console.log('continuousLossNum',continuousLossNum)
+            console.log('continuousWinNum',continuousWinNum)
+            // 连续盈利3次，反向开仓
+            let isReverse = false;
+            if(continuousWinNum>2) {
+                // isReverse = true;
+                continuousLossNum = 0;
+                continuousWinNum = 0;
+            }
+            autoOpenOrders(btcHolding, eosHolding, isReverse);
+        },timeoutNo)
+    }else if(radio < - condition / 2){
+        autoCloseOrders(btcHolding, eosHolding);
+        setTimeout(()=>{
+            continuousLossNum = continuousLossNum + 1;
+            continuousWinNum = 0;
+            console.log('totalLeverage',totalLeverage)
+            console.log('continuousLossNum',continuousLossNum)
+            console.log('continuousWinNum',continuousWinNum)
+            // 连续亏损3次，反向开仓
+            let isReverse = false;
+            if(continuousLossNum>2) {
+                // isReverse = true;
+                continuousLossNum = 0;
+                continuousWinNum = 0;
+            }
+            autoOpenOrders(btcHolding, eosHolding, isReverse);
+        },timeoutNo)
+    }
+    return;
 }
 
 function startInterval() {
