@@ -545,7 +545,9 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         // 补过仓，平仓并反向
         continuousBatchNum = 0;
         await autoCloseOrderSingle(holding);
-        await autoOpenOrderSingle(holding,true);
+        setTimeout(async ()=>{
+            await autoOpenOrderSingle(holding);
+        },timeoutNo)
         return;
     }
 }
