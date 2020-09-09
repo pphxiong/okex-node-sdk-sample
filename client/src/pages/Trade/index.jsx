@@ -191,14 +191,16 @@ export default props => {
   const margin = (Number(btcPosition.long_margin)+Number(btcPosition.short_margin)) * Number(btcPosition.last) + (Number(eosPosition.long_margin)+Number(eosPosition.short_margin)) * Number(eosPosition.last);
 
   // btc余额
-  const { equity, contracts = [{}] } = btcAccount;
+  const { equity, contracts = [{}], total_avail_balance } = btcAccount;
   const { margin_frozen, margin_for_unfilled } = contracts[0];
   const available_qty = Number(equity) - Number(margin_frozen) - Number(margin_for_unfilled);
 
   // eos余额
-  const { equity: eosEquity, contracts: eosContracts = [{}] } = eosAccount;
+  const { equity: eosEquity, contracts: eosContracts = [{}], total_avail_balance: eos_total_avail_balance } = eosAccount;
   const { margin_frozen: eos_margin_frozen, margin_for_unfilled: eos_margin_for_unfilled } = eosContracts[0];
   const eos_available_qty = Number(eosEquity) - Number(eos_margin_frozen) - Number(eos_margin_for_unfilled);
+
+  console.log(eosEquity, eosContracts)
 
   return <>
     <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
@@ -256,18 +258,18 @@ export default props => {
     </Card>
     <Card title={'合约账户信息'} style={{ marginTop: 10 }}>
       <p>
-        BTC余额：{available_qty}
+        BTC余额：{total_avail_balance}
         <Divider type="vertical" />
         标记价格：{btcMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(available_qty) * Number(btcMarkPrice) * leverage * 0.97 / 100) }
+        可开张数：{ Math.floor(Number(total_avail_balance) * Number(btcMarkPrice) * leverage * 0.97 / 100) }
       </p>
       <p>
-        EOS余额：{eos_available_qty}
+        EOS余额：{eos_total_avail_balance}
         <Divider type="vertical" />
         标记价格：{eosMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(eos_available_qty) * Number(eosMarkPrice) * leverage * 0.97 / 10) }
+        可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * leverage * 0.97 / 10) }
       </p>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>

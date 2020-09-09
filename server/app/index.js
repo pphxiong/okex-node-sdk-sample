@@ -413,12 +413,13 @@ const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrumen
 // 获取可开张数
 const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225', mark_price}) => {
     const result = await authClient.futures().getAccounts(currency);
-    const { equity, contracts } = result;
+    const { equity, contracts, total_avail_balance } = result;
     const { margin_frozen, margin_for_unfilled } = contracts[0];
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin_for_unfilled);
     console.log('availResult', result)
     console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin_for_unfilled', margin_for_unfilled)
     console.log('available_qty', available_qty)
+    console.log('total_avail_balance', total_avail_balance)
     if(!mark_price) {
         const result = await cAuthClient.futures.getMarkPrice(instrument_id);
         mark_price = result.mark_price;
@@ -426,7 +427,7 @@ const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = 'BTC
     const leverageResult = await authClient.futures().getLeverage(currency);
     const { long_leverage } = leverageResult[instrument_id];
 
-    return Math.floor(Number(available_qty) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
+    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
 }
 
 // 合约费率
