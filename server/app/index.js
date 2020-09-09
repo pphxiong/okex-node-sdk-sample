@@ -534,22 +534,18 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         return;
     }
     if(ratio < - condition * 1.5){
-        continuousBatchNum = 0;
-        autoCloseOrderSingle(holding);
-        return;
-    }
-    if(ratio < - condition * 2 / 3){
-        // 补仓2次后还是亏损后，平仓并反向
-        if(continuousBatchNum>1){
-            continuousBatchNum = 0;
-            await autoCloseOrderSingle(holding);
-            await autoOpenOrderSingle(holding,true);
+        // 没有补过仓
+        if(!continuousBatchNum) {
+            // 补仓
+            const { result } = await autoOpenOrderSingle(holding);
+            if(result) continuousBatchNum = continuousBatchNum + 1;
+            console.log('result', result)
             return;
         }
-        // 补仓
-        const { result } = await autoOpenOrderSingle(holding);
-        if(result) continuousBatchNum = continuousBatchNum + 1;
-        console.log('result', result)
+        // 补过仓，平仓并反向
+        continuousBatchNum = 0;
+        await autoCloseOrderSingle(holding);
+        await autoOpenOrderSingle(holding,true);
         return;
     }
 }
