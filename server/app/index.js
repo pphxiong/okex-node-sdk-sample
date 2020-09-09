@@ -522,7 +522,8 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 }
 
 const autoOperateByHolding = async (holding,ratio,condition) => {
-    if(ratio > condition){
+    // 补仓后，回本即平仓
+    if(ratio > condition || (continuousBatchNum && (ratio > 0.025 * continuousBatchNum) )){
         continuousBatchNum = 0;
         await autoCloseOrderSingle(holding)
         setTimeout(async ()=>{
