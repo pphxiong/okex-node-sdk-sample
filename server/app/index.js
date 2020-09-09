@@ -412,8 +412,11 @@ const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrumen
 
 // 获取可开张数
 const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225', mark_price}) => {
-    const { equity, margin_frozen, margin_for_unfilled } = await authClient.futures().getAccounts(currency);
+    const result = await authClient.futures().getAccounts(currency);
+    const { equity, contracts } = result;
+    const { margin_frozen, margin_for_unfilled } = contracts[0];
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin_for_unfilled);
+    console.log('availResult', result)
     console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin_for_unfilled', margin_for_unfilled)
     console.log('available_qty', available_qty)
     if(!mark_price) {
