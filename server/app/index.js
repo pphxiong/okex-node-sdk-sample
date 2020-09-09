@@ -523,6 +523,7 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 }
 
 const autoOperateByHolding = async (holding,ratio,condition) => {
+    console.log('continuousBatchNum', continuousBatchNum)
     // 补仓后，回本即平仓
     if(ratio > condition || (continuousBatchNum && (ratio > 0.02 * continuousBatchNum) )){
         continuousBatchNum = 0;
@@ -538,7 +539,6 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         return;
     }
     if(ratio < - condition * 2 / 3){
-        console.log('continuousBatchNum', continuousBatchNum)
         // 补仓2次后还是亏损后，平仓并反向
         if(continuousBatchNum>1){
             await autoCloseOrderSingle(holding);
