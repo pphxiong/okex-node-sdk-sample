@@ -200,8 +200,6 @@ export default props => {
   const { margin_frozen: eos_margin_frozen, margin_for_unfilled: eos_margin_for_unfilled } = eosContracts[0];
   const eos_available_qty = Number(eosEquity) - Number(eos_margin_frozen) - Number(eos_margin_for_unfilled);
 
-  console.log(eosEquity, eosContracts)
-
   return <>
     <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
       <Row gutter={12}>
@@ -262,14 +260,14 @@ export default props => {
         <Divider type="vertical" />
         标记价格：{btcMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(total_avail_balance) * Number(btcMarkPrice) * leverage * 0.97 / 100) }
+        可开张数：{ Math.floor(Number(total_avail_balance) * Number(btcMarkPrice) * leverage * 0.98 / 100) }
       </p>
       <p>
         EOS余额：{eos_total_avail_balance}
         <Divider type="vertical" />
         标记价格：{eosMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * leverage * 0.97 / 10) }
+        可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * leverage * 0.98 / 10) }
       </p>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>

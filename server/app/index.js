@@ -427,7 +427,7 @@ const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = 'BTC
     const leverageResult = await authClient.futures().getLeverage(currency);
     const { long_leverage } = leverageResult[instrument_id];
 
-    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.97 / val) || 0;
+    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.98 / val) || 0;
 }
 
 // 合约费率
@@ -524,7 +524,7 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 
 const autoOperateByHolding = async (holding,ratio,condition) => {
     // 补仓后，回本即平仓
-    if(ratio > condition || (continuousBatchNum && (ratio > 0.025 * continuousBatchNum) )){
+    if(ratio > condition || (continuousBatchNum && (ratio > 0.02 * continuousBatchNum) )){
         continuousBatchNum = 0;
         await autoCloseOrderSingle(holding)
         setTimeout(async ()=>{
