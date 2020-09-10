@@ -376,7 +376,7 @@ const autoOpenOrderSingle = async (holding, { isReverse = false, availRatio = 1 
     }else{
         availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: 'EOS-USD-201225', mark_price });
     }
-    avail = Math.min(Number(Math.floor(availNo * availRatio)), Math.max(Number(long_avail_qty), Number(short_avail_qty)));
+    avail = Math.min(Math.floor(Number(availNo) * availRatio), Math.max(Number(long_avail_qty), Number(short_avail_qty)));
 
     const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
 
