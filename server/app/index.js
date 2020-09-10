@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import moment from 'moment'
 
 const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
@@ -381,6 +382,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
 
+    console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
     if(avail) {
         const payload = {
