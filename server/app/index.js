@@ -364,7 +364,7 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
 }
 
 // availRatio开仓比例
-constautoOpenOrderSingle = async (holding, params = {}) => {
+const autoOpenOrderSingle = async (holding, params = {}) => {
     const { isReverse = false, availRatio = 1 } = params;
     const { instrument_id, long_avail_qty, short_avail_qty } = holding;
     const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
