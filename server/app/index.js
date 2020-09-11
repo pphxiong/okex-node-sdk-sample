@@ -11,7 +11,7 @@ let mode = 3; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 let continuousBatchNum = 0; //连续补仓次数
-const timeoutNo = 1000 * 60 * 1; //下单间隔时间
+const timeoutNo = 1000 * 60 * 1 / 2; //下单间隔时间
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -532,10 +532,11 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
     }
 }
 
+// 杠杆越大，手续费占比越高。。
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     console.log('continuousBatchNum', continuousBatchNum)
     // 补仓后，回本即平仓
-    if( (ratio > condition * 0.5) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
+    if( (ratio > condition * 0.5 / 2) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
         continuousBatchNum = 0;
         continuousLossNum = 0;
         await autoCloseOrderSingle(holding)
@@ -544,7 +545,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         },timeoutNo)
         return;
     }
-    if(ratio < - condition * 1){
+    if(ratio < - condition * 1 / 2){
         // 没有补过仓
         if(!continuousBatchNum) {
             // 补仓
