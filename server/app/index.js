@@ -540,7 +540,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         continuousLossNum = 0;
         await autoCloseOrderSingle(holding)
         setTimeout(async ()=>{
-            await autoOpenOrderSingle(holding);
+            await autoOpenOrderSingle(holding, { availRatio: 0.5 });
         },timeoutNo)
         return;
     }
@@ -552,6 +552,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             if(result) {
                 continuousBatchNum = continuousBatchNum + 1;
             }else{
+                continuousBatchNum = 0;
                 await autoCloseOrderSingle(holding);
             }
             console.log('result', result)
