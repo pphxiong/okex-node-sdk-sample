@@ -7,11 +7,11 @@ const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
 let myInterval;
-let mode = 2; //下单模式
+let mode = 3; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 let continuousBatchNum = 0; //连续补仓次数
-const timeoutNo = 1000 * 60 * 5; //下单间隔时间
+const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -520,16 +520,61 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
         }
         return;
     }
+    // 减少交易次数
     if(orderMode == 2){
         if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHolding(btcHolding,btcRatio,condition)
         if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHolding(eosHolding,eosRatio,condition)
+    }
+    // 频繁交易
+    if(orderMode == 3){
+        if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHoldingTime(btcHolding,btcRatio,condition)
+        if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHoldingTime(eosHolding,eosRatio,condition)
+    }
+}
+
+const autoOperateByHoldingTime = async (holding,ratio,condition) => {
+    console.log('continuousBatchNum', continuousBatchNum)
+    // 补仓后，回本即平仓
+    if( (ratio > condition * 0.5) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
+        continuousBatchNum = 0;
+        continuousLossNum = 0;
+        await autoCloseOrderSingle(holding)
+        setTimeout(async ()=>{
+            await autoOpenOrderSingle(holding);
+        },timeoutNo)
+        return;
+    }
+    if(ratio < - condition * 1){
+        // 没有补过仓
+        if(!continuousBatchNum) {
+            // 补仓
+            const { result } = await autoOpenOrderSingle(holding);
+            if(result) {
+                continuousBatchNum = continuousBatchNum + 1;
+            }else{
+                await autoCloseOrderSingle(holding);
+            }
+            console.log('result', result)
+            return;
+        }
+        // 补过仓，平仓并再开半仓
+        continuousBatchNum = 0;
+        await autoCloseOrderSingle(holding);
+        continuousLossNum = continuousLossNum + 1;
+        // 连续亏损2次，反向
+        let isReverse = false;
+        if(continuousLossNum>1) isReverse = true;
+        setTimeout(async ()=>{
+            await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
+        },timeoutNo)
+        return;
     }
 }
 
 const autoOperateByHolding = async (holding,ratio,condition) => {
     console.log('continuousBatchNum', continuousBatchNum)
     // 补仓后，回本即平仓
-    if( (ratio > condition * 0.8) || (continuousBatchNum && (ratio > 0.02 * continuousBatchNum) )){
+    if( (ratio > condition * 0.8) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
         continuousBatchNum = 0;
         continuousLossNum = 0;
         await autoCloseOrderSingle(holding)
