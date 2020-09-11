@@ -463,10 +463,14 @@ function validateRatio(holding) {
 
 // 下单模式
 function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
-    const btcRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
-        (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
-    const eosRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
-        (Number(eosHolding.short_avail_qty) && Number(eosHolding.short_pnl_ratio));
+    // const btcRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
+    //     (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
+    // const eosRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
+    //     (Number(eosHolding.short_avail_qty) && Number(eosHolding.short_pnl_ratio));
+    const btcRatio = Number(btcHolding.long_unrealised_pnl) / Number(btcHolding.long_margin) +
+        Number(btcHolding.short_unrealised_pnl) / Number(btcHolding.short_margin);
+    const eosRatio = Number(eosHolding.long_unrealised_pnl) / Number(eosHolding.long_margin) +
+        Number(eosHolding.short_unrealised_pnl) / Number(eosHolding.short_margin);
 
     const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? Number(btcHolding.long_leverage) : 0;
     const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? Number(eosHolding.long_leverage) : 0;
