@@ -409,7 +409,7 @@ const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrumen
         price: last,
         match_price: 0
     }
-    await authClient
+    return authClient
         .futures()
         .postOrder(payload);
 }
@@ -540,7 +540,7 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     console.log('continuousBatchNum', continuousBatchNum)
     // 补仓后，回本即平仓
-    if( (ratio > condition * 0.5 / 2) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
+    if( (ratio > condition * 1 / 2) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
         continuousBatchNum = 0;
         continuousLossNum = 0;
         await autoCloseOrderSingle(holding)
@@ -549,7 +549,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         },timeoutNo)
         return;
     }
-    if(ratio < - condition * 1 / 2){
+    if(ratio < - condition){
         // 没有补过仓
         if(!continuousBatchNum) {
             // 补仓
@@ -583,10 +583,12 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
     if( (ratio > condition * 0.8) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
         continuousBatchNum = 0;
         continuousLossNum = 0;
-        await autoCloseOrderSingle(holding)
-        setTimeout(async ()=>{
-            await autoOpenOrderSingle(holding);
-        },timeoutNo)
+        const { result } = await autoCloseOrderSingle(holding)
+        if( result ) {
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding);
+            },timeoutNo)
+        }
         return;
     }
     if(ratio < - condition * 1.5){
@@ -604,15 +606,18 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
         }
         // 补过仓，平仓并再开半仓
         continuousBatchNum = 0;
-        await autoCloseOrderSingle(holding);
+        const { result } = await autoCloseOrderSingle(holding);
+        console.log('close_result', result)
         continuousLossNum = continuousLossNum + 1;
-        // 连续亏损2次，反向
-        let isReverse = false;
-        if(continuousLossNum>1) isReverse = true;
-        setTimeout(async ()=>{
-            await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
-        },timeoutNo)
-        return;
+        if( result ){
+            // 连续亏损2次，反向
+            let isReverse = false;
+            if(continuousLossNum>1) isReverse = true;
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
+            },timeoutNo)
+            return;
+        }
     }
 }
 
