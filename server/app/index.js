@@ -401,17 +401,20 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 }
 
 const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrument_id, last }) => {
-    const payload = {
-        size: Number(long_avail_qty) || Number(short_avail_qty),
-        type: Number(long_avail_qty) ? 3 : 4,
-        order_type: 0,
-        instrument_id: instrument_id,
-        price: last,
-        match_price: 0
+    if(Number(long_avail_qty) || Number(short_avail_qty)){
+        const payload = {
+            size: Number(long_avail_qty) || Number(short_avail_qty),
+            type: Number(long_avail_qty) ? 3 : 4,
+            order_type: 0,
+            instrument_id: instrument_id,
+            price: last,
+            match_price: 0
+        }
+        return authClient
+            .futures()
+            .postOrder(payload);
     }
-    return authClient
-        .futures()
-        .postOrder(payload);
+    return new Promise(resolve=>{ resolve({ result: false }) })
 }
 
 // 获取可开张数
