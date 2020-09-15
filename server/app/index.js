@@ -177,6 +177,7 @@ app.get('/futures/postOrder', function(req, response) {
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
+    myInterval = startInterval();
 });
 
 app.get('/swap/postLeverage', function(req, response) {
@@ -565,7 +566,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         },timeoutNo)
         return;
     }
-    if(ratio < - condition){
+    if(ratio < - condition * 2 / 3){
         // 没有补过仓
         if(!continuousBatchNum) {
             // 补仓
@@ -649,7 +650,11 @@ function startInterval() {
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
 
         const qty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty) + Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty)
-        if(!qty) return;
+        if(!qty) {
+            await validateAndCancelOrder('BTC-USD-201225');
+            await validateAndCancelOrder('EOS-USD-201225');
+            return;
+        }
         getOrderMode(mode, btcHolding[0], eosHolding[0]);
     },1000 * 5)
 }
