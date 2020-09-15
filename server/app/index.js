@@ -385,8 +385,8 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
+    await validateAndCancelOrder(instrument_id);
     if(avail) {
-        await validateAndCancelOrder(instrument_id);
         const payload = {
             size: avail,
             type,
@@ -542,16 +542,21 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
         }
         return;
     }
-    // 减少交易次数
+    // 补仓，减少交易次数
     if(orderMode == 2){
         if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHolding(btcHolding,btcRatio,condition)
         if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHolding(eosHolding,eosRatio,condition)
     }
-    // 频繁交易
+    // 补仓，频繁交易
     if(orderMode == 3){
         if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHoldingTime(btcHolding,btcRatio,condition)
         if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHoldingTime(eosHolding,eosRatio,condition)
     }
+    // 不补仓，亏单早抛
+    // if(orderMode == 4){
+    //     if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHoldingTime(btcHolding,btcRatio,condition)
+    //     if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHoldingTime(eosHolding,eosRatio,condition)
+    // }
 }
 
 // 杠杆越大，手续费占比越高。。
@@ -647,9 +652,6 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
 function startInterval() {
     if(myInterval) return myInterval;
     return setInterval(async ()=>{
-        await validateAndCancelOrder('BTC-USD-201225');
-        await validateAndCancelOrder('EOS-USD-201225');
-
         const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
 
