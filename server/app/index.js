@@ -83,10 +83,10 @@ app.get('/account/getAssetValuation', function(req, response) {
 
 app.get('/futures/getOrders', function(req, response) {
     const {query = {}} = req;
-    const {instrument_id, limit} = query; // "BTC-USD-200821"
+    const {instrument_id, limit, state = 2} = query; // "BTC-USD-200821"
     authClient
         .futures()
-        .getOrders(instrument_id, {state: 2, limit})
+        .getOrders(instrument_id, {state, limit})
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -385,6 +385,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
     if(avail) {
+        await validateAndCancelOrder(instrument_id);
         const payload = {
             size: avail,
             type,
@@ -400,8 +401,20 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
 
+// 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
+// 如果有就撤销
+const validateAndCancelOrder = async (instrument_id) => {
+    const { result, order_info } = await authClient.futures().getOrders(instrument_id, {state: 6, limit: 1})
+    if( result && order_info && order_info.length ){
+        const { order_id } = order_info[0];
+        const { result: cancelResult, error_code } = await authClient.futures().cancelOrder(instrument_id,order_id)
+        console.log('cancelorder', cancelResult, error_code)
+    }
+}
+
 const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrument_id, last }) => {
     if(Number(long_avail_qty) || Number(short_avail_qty)){
+        await validateAndCancelOrder(instrument_id);
         const payload = {
             size: Number(long_avail_qty) || Number(short_avail_qty),
             type: Number(long_avail_qty) ? 3 : 4,
@@ -543,7 +556,7 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     console.log('continuousBatchNum', continuousBatchNum)
     // 补仓后，回本即平仓
-    if( (ratio > condition * 1 / 2) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
+    if( (ratio > condition * 2 / 3) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
         continuousBatchNum = 0;
         continuousLossNum = 0;
         await autoCloseOrderSingle(holding)
@@ -570,12 +583,17 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         continuousBatchNum = 0;
         await autoCloseOrderSingle(holding);
         continuousLossNum = continuousLossNum + 1;
-        // 连续亏损2次，反向
+
         let isReverse = false;
-        if(continuousLossNum>1) isReverse = true;
+        let timeout = timeoutNo * 10;
+        // 连续亏损2次，立即反向
+        if(continuousLossNum>1) {
+            isReverse = true;
+            timeout = timeoutNo / 10;
+        }
         setTimeout(async ()=>{
             await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
-        },timeoutNo)
+        },timeout)
         return;
     }
 }

@@ -18,12 +18,12 @@ export default props => {
   const [eosPageSize,setEosPageSize] = useState(10);
 
   const initBTCData = async () => {
-    const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: ordersLimit });
+    const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: ordersLimit, state: 7 });
     return result;
   }
 
   const initEOSData = async () => {
-    const result = await getOrders({ instrument_id: 'EOS-USD-201225', limit: ordersLimit });
+    const result = await getOrders({ instrument_id: 'EOS-USD-201225', limit: ordersLimit, state: 7 });
     return result;
   }
 
@@ -134,23 +134,25 @@ export default props => {
   },{
       dataIndex: 'ratio',
       title: '盈亏占比',
-      render: (text,{ size, contract_val, price_avg, leverage, pnl },index) => {
+      render: (text,{ fee, size, contract_val, price_avg, leverage, pnl },index) => {
         if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
-        return (Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
+        return ( (Number(fee) * Number(price_avg) + Number(pnl) * Number(price_avg)) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
       }
     }]);
 
   const responseHandler = (data, cr, ps)=>{
     if(Array.isArray(data)) data = { order_info: data };
     const records = data.order_info;
+    let bzjUsd = 0;
     let feeUsd = 0;
     let pnlUsd = 0;
-    let ratio = 0;
+    // let ratio = 0;
     records.some(({ size, contract_val, price_avg, leverage, pnl, fee }, index) => {
       if((index >= (cr - 1) * ps) && (index < cr * ps)){
+        bzjUsd += Number(size) * Number(contract_val) / Number(leverage)
         feeUsd += Number(fee) * Number(price_avg);
         pnlUsd += Number(pnl) * Number(price_avg);
-        ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
+        // ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
       }
       if(index == cr * ps - 2) return true;
     });
@@ -158,12 +160,11 @@ export default props => {
       index: '总计',
       feeUsd,
       pnlUsd,
-      ratio
+      ratio: ( feeUsd + pnlUsd ) * 100 / (bzjUsd / (ps - 1))
     });
     return { records };
   }
 
-  console.log(longShortRatioData)
 
   return <>
     {/*<Card title='概况'>*/}
