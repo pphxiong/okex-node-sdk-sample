@@ -406,6 +406,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 // 如果有就撤销
 const validateAndCancelOrder = async (instrument_id) => {
     const { result, order_info } = await authClient.futures().getOrders(instrument_id, {state: 6, limit: 1})
+    console.log('cancelorder', result)
     if( result && order_info && order_info.length ){
         const { order_id } = order_info[0];
         const { result: cancelResult, error_code } = await authClient.futures().cancelOrder(instrument_id,order_id)
@@ -646,13 +647,14 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
 function startInterval() {
     if(myInterval) return myInterval;
     return setInterval(async ()=>{
+        await validateAndCancelOrder('BTC-USD-201225');
+        await validateAndCancelOrder('EOS-USD-201225');
+
         const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
 
         const qty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty) + Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty)
         if(!qty) {
-            await validateAndCancelOrder('BTC-USD-201225');
-            await validateAndCancelOrder('EOS-USD-201225');
             return;
         }
         getOrderMode(mode, btcHolding[0], eosHolding[0]);
