@@ -406,11 +406,11 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 // 如果有就撤销
 const validateAndCancelOrder = async (instrument_id) => {
     const { result, order_info } = await authClient.futures().getOrders(instrument_id, {state: 6, limit: 1})
-    console.log('cancelorder', result)
+    console.log('cancelorder', instrument_id, result, order_info)
     if( result && order_info && order_info.length ){
         const { order_id } = order_info[0];
         const { result: cancelResult, error_code } = await authClient.futures().cancelOrder(instrument_id,order_id)
-        console.log('cancelorder', cancelResult, error_code)
+        console.log('cancelorder', instrument_id, cancelResult, error_code)
     }
 }
 
