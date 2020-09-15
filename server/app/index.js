@@ -385,7 +385,8 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
-    await validateAndCancelOrder(instrument_id);
+    const { result } = await validateAndCancelOrder(instrument_id);
+    if(result) return new Promise(resolve=>{ resolve({ result: false }) })
     if(avail) {
         const payload = {
             size: avail,
@@ -395,9 +396,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             price: mark_price,
             match_price: 0
         }
-        return authClient
-            .futures()
-            .postOrder(payload);
+        return await authClient.futures().postOrder(payload);
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -409,14 +408,25 @@ const validateAndCancelOrder = async (instrument_id) => {
     console.log('cancelorder', instrument_id, result, order_info)
     if( result && order_info && order_info.length ){
         const { order_id } = order_info[0];
-        const { result: cancelResult, error_code } = await authClient.futures().cancelOrder(instrument_id,order_id)
-        console.log('cancelorder', instrument_id, cancelResult, error_code)
+        return await authClient.futures().cancelOrder(instrument_id,order_id)
     }
+    return new Promise(resolve=>{ resolve({ result: false }) })
+}
+
+// 下单，并返回订单信息
+const getOrderState = async (payload) => {
+    const { instrument_id } = payload;
+    const { order_id } = await authClient.futures().postOrder(payload);
+    return await authClient.futures().getOrder(instrument_id,order_id)
 }
 
 const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrument_id, last }) => {
     if(Number(long_avail_qty) || Number(short_avail_qty)){
-        await validateAndCancelOrder(instrument_id);
+        const { result } = await validateAndCancelOrder(instrument_id);
+        // 有撤销单
+        if(result) {
+            return new Promise(resolve=>{ resolve({ result: false }) })
+        }
         const payload = {
             size: Number(long_avail_qty) || Number(short_avail_qty),
             type: Number(long_avail_qty) ? 3 : 4,
@@ -425,11 +435,10 @@ const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrumen
             price: last,
             match_price: 0
         }
-        return authClient
-            .futures()
-            .postOrder(payload);
+
+        return await authClient.futures().postOrder(payload);
     }
-    return new Promise(resolve=>{ resolve({ result: false }) })
+    return new Promise(resolve=>{ resolve({ result: true }) })
 }
 
 // 获取可开张数
@@ -566,41 +575,51 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     if( (ratio > condition * 2 / 3) || (continuousBatchNum && (ratio > 0.005 * continuousBatchNum) )){
         continuousBatchNum = 0;
         continuousLossNum = 0;
-        await autoCloseOrderSingle(holding)
-        setTimeout(async ()=>{
-            await autoOpenOrderSingle(holding, { availRatio: 0.5 });
-        },timeoutNo)
+        const { result } = await autoCloseOrderSingle(holding)
+        if(result){
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding, { availRatio: 0.5 });
+            },timeoutNo)
+        }
+        return;
+    }
+    if(ratio < - condition * 2){
+        const { result } = await autoCloseOrderSingle(holding);
+        if(result) {
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding,{ availRatio: 0.5 });
+            },timeoutNo * 10 * 2)
+        }
         return;
     }
     if(ratio < - condition * 2 / 3){
         // 没有补过仓
         if(!continuousBatchNum) {
-            // 补仓
+            // 补仓，state:2 完全成交，补仓成功
             const { result } = await autoOpenOrderSingle(holding);
             if(result) {
                 continuousBatchNum = continuousBatchNum + 1;
-            }else{
-                continuousBatchNum = 0;
-                await autoCloseOrderSingle(holding);
             }
             console.log('result', result)
             return;
         }
         // 补过仓，平仓并再开半仓
-        continuousBatchNum = 0;
-        await autoCloseOrderSingle(holding);
-        continuousLossNum = continuousLossNum + 1;
+        const { result } = await autoCloseOrderSingle(holding);
+        if(result) {
+            continuousBatchNum = 0;
+            continuousLossNum = continuousLossNum + 1;
 
-        let isReverse = false;
-        let timeout = timeoutNo * 10;
-        // 连续亏损2次，立即反向
-        if(continuousLossNum>1) {
-            isReverse = true;
-            timeout = timeoutNo / 10;
+            let isReverse = false;
+            let timeout = timeoutNo * 10;
+            // 连续亏损2次，立即反向
+            if(continuousLossNum>1) {
+                isReverse = true;
+                timeout = timeoutNo / 10;
+            }
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
+            },timeout)
         }
-        setTimeout(async ()=>{
-            await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
-        },timeout)
         return;
     }
 }
