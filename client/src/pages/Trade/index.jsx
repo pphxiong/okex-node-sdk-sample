@@ -12,7 +12,8 @@ import {
   changeMode,
   getFuturesAccounts,
   getFuturesMarkPrice,
-  autoCloseOrderByInstrumentId
+  autoCloseOrderByInstrumentId,
+  setFrequencyApi
 } from './api'
 import moment from 'moment'
 
@@ -26,6 +27,8 @@ export default props => {
   const [eosAccount, setEosAccount] = useState({});
   const [btcMarkPrice, setBtcMarkPrice] = useState(0);
   const [eosMarkPrice, setEosMarkPrice] = useState(0);
+  const [position, setPosition] = useState(0.5);
+  const [frequency, setFrequency] = useState(1);
 
   const getPosition = async () => {
     const result = await getFuturesPosition({instrument_id: 'BTC-USD-201225'});
@@ -51,6 +54,12 @@ export default props => {
     setBtcMarkPrice(result?.data?.mark_price)
     const eosResult = await getFuturesMarkPrice({ instrument_id: 'EOS-USD-201225' });
     setEosMarkPrice(eosResult?.data?.mark_price)
+  }
+
+  const onSetFrequency = async (value) => {
+    setFrequency(value);
+    const { errcode, errmsg } = await setFrequencyApi({ frequency: value });
+    if(errcode == 0)  message.success(errmsg);
   }
 
   useEffect(()=>{
@@ -271,9 +280,9 @@ export default props => {
       </p>
     </Card>
     <Card title={'交割合约'} style={{ marginTop: 10 }}>
-      <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} onChange={v=>setLeverage(v)}/>
+      <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} min={1} max={100} onChange={v=>setLeverage(v)}/>
       <Divider type="vertical" />
-      <span>开仓张数：</span><InputNumber value={size} step={1} onChange={v=>setSize(v)}/>
+      <span>开仓张数：</span><InputNumber value={size} step={1} min={1} onChange={v=>setSize(v)}/>
       <Button onClick={()=>onSetLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
 
       <Divider type="horizontal" />
@@ -285,7 +294,17 @@ export default props => {
           <Radio.Button value="2">模式2</Radio.Button>
         </Radio.Group>
       </p>
+      {/*<p>开仓仓位：*/}
+      {/*  <Radio.Group defaultValue={position} buttonStyle="solid" onChange={e=>setPosition(e.target.value)}>*/}
+      {/*    <Radio.Button value={0.5}>半仓</Radio.Button>*/}
+      {/*    <Radio.Button value={1}>全仓</Radio.Button>*/}
+      {/*  </Radio.Group>*/}
+      {/*</p>*/}
+      <p>交易频次：
+        <InputNumber value={frequency} step={0.1} min={0.1} onChange={v=>onSetFrequency(v)}/>
+      </p>
       <Divider type="horizontal" />
+
       <Button onClick={()=>onStopMonitor()}>停止监控</Button>
       <Button onClick={()=>onStartMonitor()} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
 

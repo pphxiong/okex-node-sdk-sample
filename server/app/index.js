@@ -614,7 +614,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const leverage = Math.max(Number(long_leverage),Number(short_leverage));
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
-    console.log('continuousObj', instrument_id, continuousObj)
+    console.log('continuousObj', instrument_id, continuousObj, frequency)
     // 盈利，半仓，盈利0.65
     if(ratio > condition * 1.3 * frequency){
         const { result } = await autoCloseOrderSingle(holding)

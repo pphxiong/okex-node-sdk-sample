@@ -79,3 +79,9 @@ export async function changeMode(params) {
     params,
   });
 }
+
+export async function setFrequencyApi(params) {
+  return request(`${commonUrl}/operation/setFrequency`, {
+    params,
+  });
+}
