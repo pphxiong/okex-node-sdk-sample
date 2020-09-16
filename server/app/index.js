@@ -606,8 +606,8 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj)
-    // 盈利
-    if(ratio > condition * 1.1){
+    // 盈利，盈利0.6
+    if(ratio > condition * 1.2){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
@@ -669,8 +669,8 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         return;
     }
-    // 亏损不平仓，补仓
-    if(ratio < - condition * 3 / 4){
+    // 亏损不平仓，补仓，亏损0.5
+    if(ratio < - condition * 1 / 2){
         // 没有补过仓
         if(!continuousObj.continuousBatchNum) {
             // 补仓，state:2 完全成交，补仓成功
