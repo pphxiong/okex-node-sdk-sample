@@ -604,13 +604,13 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const lastObj = lastOrderMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj)
     // 盈利
-    if(ratio > condition){
-        continuousObj.continuousBatchNum = 0;
-        continuousObj.continuousLossNum = 0;
-        continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-
+    if(ratio > condition * 1.1){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
+            continuousObj.continuousBatchNum = 0;
+            continuousObj.continuousLossNum = 0;
+            continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+
             lastObj.last = Number(last);
 
             let isReverse = false;
