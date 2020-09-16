@@ -614,8 +614,12 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             lastObj.last = Number(last);
 
             let isReverse = false;
+            let timeout = timeoutNo;
             // 第3次盈利后反向
-            if(continuousObj.continuousWinNum>2) isReverse = true;
+            if(continuousObj.continuousWinNum>2) {
+                isReverse = true;
+                timeout = timeoutNo / 10;
+            }
             setTimeout(async ()=>{
                 // 多仓时，本次价格比上次低，则过十倍时间后再开仓
                 const { holding: latestHolding } = await authClient.futures().getPosition(instrument_id);
@@ -627,8 +631,8 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
                 if(isNeedOpenOrder && continuousObj.continuousWinNum>1) timeMultiple = 10;
                 setTimeout(async ()=>{
                     await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
-                },timeoutNo * timeMultiple)
-            },timeoutNo * continuousObj.continuousWinNum * 2)
+                },timeout * timeMultiple)
+            },timeout * continuousObj.continuousWinNum)
         }
         return;
     }
