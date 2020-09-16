@@ -307,7 +307,7 @@ const autoOpenOrders = async (b, e, isReverse = false) => {
 
     // 可开张数
     const btcAvailNo = await getAvailNo({ mark_price: btcMarkPrice });
-    const eosAvailNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: 'EOS-USD-201225', mark_price: eosMarkPrice });
+    const eosAvailNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price: eosMarkPrice });
 
     const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
     const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
@@ -398,7 +398,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     if(instrument_id.includes('BTC')){
         availNo = await getAvailNo({ mark_price });
     }else{
-        availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: 'EOS-USD-201225', mark_price });
+        availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
     }
     avail = Math.min(Math.floor(Number(availNo) * availRatio), Math.max(Number(long_avail_qty), Number(short_avail_qty)));
 
@@ -426,7 +426,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 // 如果有就撤销
 const validateAndCancelOrder = async (instrument_id) => {
     const { result, order_info } = await authClient.futures().getOrders(instrument_id, {state: 6, limit: 1})
-    console.log('cancelorder', instrument_id, result, order_info)
+    console.log('cancelorder', instrument_id, result)
     if( result && order_info && order_info.length ){
         const { order_id } = order_info[0];
         return await authClient.futures().cancelOrder(instrument_id,order_id)
@@ -463,12 +463,11 @@ const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrumen
 }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = 'BTC-USD-201225', mark_price}) => {
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
     const result = await authClient.futures().getAccounts(currency);
     const { equity, contracts, total_avail_balance } = result;
     const { margin_frozen, margin_for_unfilled } = contracts[0];
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin_for_unfilled);
-    console.log('availResult', result)
     console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin_for_unfilled', margin_for_unfilled)
     console.log('available_qty', available_qty)
     console.log('total_avail_balance', total_avail_balance)
@@ -612,18 +611,24 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
 
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
-            // 多仓时，本次价格比上次低，则过十倍时间后再开仓
-            let timeMultiple = 1;
-            const type = getCurrentDirection(holding);
-            const isNeedOpenOrder = !!((type == 1 && last < lastObj.last) || (type == 2 && last > lastObj.last));
-            if(isNeedOpenOrder) timeMultiple = 10;
+            lastObj.last = Number(last);
 
             let isReverse = false;
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) isReverse = true;
             setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
-            },timeoutNo * continuousObj.continuousWinNum * 2 * timeMultiple)
+                // 多仓时，本次价格比上次低，则过十倍时间后再开仓
+                const { holding: latestHolding } = await authClient.futures().getPosition(instrument_id);
+                const latestPrice = latestHolding[0] && latestHolding[0].last;
+                const type = getCurrentDirection(latestHolding[0]);
+                const isNeedOpenOrder = !!((type == 1 && latestPrice < lastObj.last) || (type == 2 && latestPrice > lastObj.last));
+
+                let timeMultiple = 0;
+                if(isNeedOpenOrder && continuousObj.continuousWinNum>1) timeMultiple = 10;
+                setTimeout(async ()=>{
+                    await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
+                },timeoutNo * timeMultiple)
+            },timeoutNo * continuousObj.continuousWinNum * 2)
         }
         return;
     }
@@ -730,8 +735,8 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
 function startInterval() {
     if(myInterval) return myInterval;
     return setInterval(async ()=>{
-        const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
-        const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
+        const { holding: btcHolding } = await authClient.futures().getPosition(BTC_INSTRUMENT_ID);
+        const { holding: eosHolding } = await authClient.futures().getPosition(EOS_INSTRUMENT_ID);
 
         const btcQty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty);
         const eosQty = Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty);
