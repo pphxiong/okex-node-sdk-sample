@@ -32,7 +32,7 @@ const lastOrderMap = {
         type: 1,
     },
 }
-const timeoutNo = 1000 * 60 * 1 / 2; //下单间隔时间
+const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
