@@ -591,7 +591,7 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const { instrument_id } = holding;
     const continuousObj = continuousMap[instrument_id];
-    console.log('continuousBatchNum', instrument_id, continuousObj.continuousBatchNum)
+    console.log('continuousObj', instrument_id, continuousObj)
     // 补仓后，回本即平仓
     if( (ratio > condition) || (continuousObj.continuousBatchNum && (ratio > 0.0068 * continuousObj.continuousBatchNum) )){
         continuousObj.continuousBatchNum = 0;
@@ -600,7 +600,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             let isReverse = false;
-            // 连续盈利4次后反向
+            // 第5次盈利后反向
             if(continuousObj.continuousWinNum>3) isReverse = true;
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
