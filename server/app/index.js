@@ -18,10 +18,20 @@ const continuousInit = {
     continuousWinNum: 0,
     continuousBatchNum: 0,
 }
-let continuousMap = {
-    "BTC-USD-201225": continuousInit,
-    "EOS-USD-201225": continuousInit,
+const continuousMap = {
+    [BTC_INSTRUMENT_ID]: continuousInit,
+    [EOS_INSTRUMENT_ID]: continuousInit,
 };
+const lastOrderMap = {
+    [BTC_INSTRUMENT_ID]: {
+        last: 0, //上次成交价格
+        type: 1, //类型
+    },
+    [EOS_INSTRUMENT_ID]: {
+        last: 0,
+        type: 1,
+    },
+}
 const timeoutNo = 1000 * 60 * 1 / 2; //下单间隔时间
 
 var config = require('./config');
@@ -590,22 +600,30 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 
 // 杠杆越大，手续费占比越高。。
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
-    const { instrument_id } = holding;
+    const { instrument_id, last } = holding;
     const continuousObj = continuousMap[instrument_id];
+    const lastObj = lastOrderMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj)
     // 盈利
     if(ratio > condition){
         continuousObj.continuousBatchNum = 0;
         continuousObj.continuousLossNum = 0;
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
+            // 多仓时，本次价格比上次低，则过十倍时间后再开仓
+            let timeMultiple = 1;
+            const type = getCurrentDirection(holding);
+            const isNeedOpenOrder = !!((type == 1 && last < lastObj.last) || (type == 2 && last > lastObj.last));
+            if(isNeedOpenOrder) timeMultiple = 10;
+
             let isReverse = false;
-            // 第5次盈利后反向
-            if(continuousObj.continuousWinNum>3) isReverse = true;
+            // 第3次盈利后反向
+            if(continuousObj.continuousWinNum>2) isReverse = true;
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
-            },timeoutNo)
+            },timeoutNo * continuousObj.continuousWinNum * 2 * timeMultiple)
         }
         return;
     }
