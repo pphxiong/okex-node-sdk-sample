@@ -656,7 +656,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         return;
     }
     // 亏损，平仓
-    if(ratio < - condition * 2){
+    if(ratio < - condition){
         const { result } = await autoCloseOrderSingle(holding);
         if(result) {
             continuousMap[instrument_id] = {
