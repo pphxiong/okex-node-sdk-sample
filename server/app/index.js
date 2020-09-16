@@ -452,16 +452,16 @@ const getOrderState = async (payload) => {
     return await authClient.futures().getOrder(instrument_id,order_id)
 }
 
-const autoCloseOrderSingle = async ({ long_avail_qty, short_avail_qty, instrument_id, last }) => {
-    if(Number(long_avail_qty) || Number(short_avail_qty)){
+const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }) => {
+    if(Number(long_qty) || Number(short_qty)){
         const { result } = await validateAndCancelOrder(instrument_id);
         // 有撤销单
         if(result) {
             return new Promise(resolve=>{ resolve({ result: false }) })
         }
         const payload = {
-            size: Number(long_avail_qty) || Number(short_avail_qty),
-            type: Number(long_avail_qty) ? 3 : 4,
+            size: Number(long_qty) || Number(short_qty),
+            type: Number(long_qty) ? 3 : 4,
             order_type: 0,
             instrument_id: instrument_id,
             price: last,
@@ -762,8 +762,8 @@ function startInterval() {
         const { holding: btcHolding } = await authClient.futures().getPosition(BTC_INSTRUMENT_ID);
         const { holding: eosHolding } = await authClient.futures().getPosition(EOS_INSTRUMENT_ID);
 
-        const btcQty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty);
-        const eosQty = Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty);
+        const btcQty = Number(btcHolding[0].long_qty) + Number(btcHolding[0].short_qty);
+        const eosQty = Number(eosHolding[0].long_qty) + Number(eosHolding[0].short_qty);
 
         const qty = btcQty + eosQty;
         if(!qty) {
