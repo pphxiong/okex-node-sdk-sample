@@ -6,11 +6,22 @@ const {AuthenticatedClient} = require('@okfe/okex-node');
 
 const customAuthClient = require('./customAuthClient');
 
+let BTC_INSTRUMENT_ID = "BTC-USD-201225";
+let EOS_INSTRUMENT_ID = "EOS-USD-201225";
 let myInterval;
 let mode = 3; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 let continuousBatchNum = 0; //连续补仓次数
+const continuousInit = {
+    continuousLossNum: 0,
+    continuousWinNum: 0,
+    continuousBatchNum: 0,
+}
+let continuousMap = {
+    "BTC-USD-201225": continuousInit,
+    "EOS-USD-201225": continuousInit,
+};
 const timeoutNo = 1000 * 60 * 1 / 2; //下单间隔时间
 
 var config = require('./config');
@@ -488,6 +499,14 @@ function validateRatio(holding) {
 
 }
 
+const getOrderModeSingle = async (orderMode = 3, holding) => {
+    const ratio = (Number(holding.long_margin) && (Number(holding.long_unrealised_pnl) / Number(holding.long_margin))) +
+        (Number(holding.short_margin) && (Number(holding.short_unrealised_pnl) / Number(holding.short_margin)));
+    const leverage = Math.min(Number(holding.long_leverage), Number(holding.short_leverage));
+    let condition = leverage / 100;
+    await autoOperateByHoldingTime(holding,ratio,condition)
+}
+
 // 下单模式
 function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
     // const btcRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
@@ -570,15 +589,21 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 
 // 杠杆越大，手续费占比越高。。
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
-    console.log('continuousBatchNum', continuousBatchNum)
+    const { instrument_id } = holding;
+    const continuousObj = continuousMap[instrument_id];
+    console.log('continuousBatchNum', instrument_id, continuousObj.continuousBatchNum)
     // 补仓后，回本即平仓
-    if( (ratio > condition) || (continuousBatchNum && (ratio > 0.0068 * continuousBatchNum) )){
-        continuousBatchNum = 0;
-        continuousLossNum = 0;
+    if( (ratio > condition) || (continuousObj.continuousBatchNum && (ratio > 0.0068 * continuousObj.continuousBatchNum) )){
+        continuousObj.continuousBatchNum = 0;
+        continuousObj.continuousLossNum = 0;
+        if( ratio > condition ) continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
+            let isReverse = false;
+            // 连续盈利4次后反向
+            if(continuousObj.continuousWinNum>3) isReverse = true;
             setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding, { availRatio: 0.5 });
+                await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
             },timeoutNo)
         }
         return;
@@ -586,6 +611,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     if(ratio < - condition * 2){
         const { result } = await autoCloseOrderSingle(holding);
         if(result) {
+            continuousMap[instrument_id] = continuousInit;
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5 });
             },timeoutNo * 10 * 2)
@@ -594,11 +620,11 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     }
     if(ratio < - condition * 3 / 4){
         // 没有补过仓
-        if(!continuousBatchNum) {
+        if(!continuousObj.continuousBatchNum) {
             // 补仓，state:2 完全成交，补仓成功
             const { result } = await autoOpenOrderSingle(holding);
             if(result) {
-                continuousBatchNum = continuousBatchNum + 1;
+                continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
             }
             console.log('result', result)
             return;
@@ -606,13 +632,14 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         // 补过仓，平仓并再开半仓
         const { result } = await autoCloseOrderSingle(holding);
         if(result) {
-            continuousBatchNum = 0;
-            continuousLossNum = continuousLossNum + 1;
+            continuousObj.continuousBatchNum = 0;
+            continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+            continuousObj.continuousWinNum = 0;
 
             let isReverse = false;
             let timeout = timeoutNo * 10;
-            // 连续亏损2次，立即反向
-            if(continuousLossNum>1) {
+            // 连续亏损3次，立即反向
+            if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
                 timeout = timeoutNo / 10;
             }
@@ -674,11 +701,16 @@ function startInterval() {
         const { holding: btcHolding } = await authClient.futures().getPosition('BTC-USD-201225');
         const { holding: eosHolding } = await authClient.futures().getPosition('EOS-USD-201225');
 
-        const qty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty) + Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty)
+        const btcQty = Number(btcHolding[0].long_avail_qty) + Number(btcHolding[0].short_avail_qty);
+        const eosQty = Number(eosHolding[0].long_avail_qty) + Number(eosHolding[0].short_avail_qty);
+
+        const qty = btcQty + eosQty;
         if(!qty) {
             return;
         }
-        getOrderMode(mode, btcHolding[0], eosHolding[0]);
+        // getOrderMode(mode, btcHolding[0], eosHolding[0]);
+        if(btcQty) getOrderModeSingle(mode, btcHolding[0]);
+        if(eosQty) getOrderModeSingle(mode, eosHolding[0]);
     },1000 * 5)
 }
 
