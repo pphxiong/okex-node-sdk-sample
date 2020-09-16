@@ -36,6 +36,7 @@ const lastOrderMap = {
     },
 }
 const timeoutNo = 1000 * 60 * 1; //下单间隔时间
+let frequency = 1; //交易频次
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -264,6 +265,13 @@ app.get('/operation/startMonitor', function(req, response) {
 app.get('/operation/stopMonitor', function(req, response) {
     stopInterval();
     send(response, {errcode: 0, errmsg: '停止监控成功', data: {} });
+});
+
+app.get('/operation/setFrequency', function(req, response) {
+    const {query = {}} = req;
+    const { frequency: customFrequency } = query;
+    frequency = customFrequency || 1;
+    send(response, {errcode: 0, errmsg: '设置交易频次成功', data: { frequency } });
 });
 
 app.get('/futures/autoCloseOrderByInstrumentId', function(req, response) {
@@ -608,7 +616,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const lastObj = lastOrderMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj)
     // 盈利，半仓，盈利0.65
-    if(ratio > condition * 1.3){
+    if(ratio > condition * 1.3 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
@@ -635,8 +643,8 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
                 if(isNeedOpenOrder && continuousObj.continuousWinNum>1) timeMultiple = 10;
                 setTimeout(async ()=>{
                     await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
-                },timeout * timeMultiple)
-            },timeout * continuousObj.continuousWinNum)
+                },timeout * timeMultiple * frequency)
+            },timeout * continuousObj.continuousWinNum * frequency)
         }
         return;
     }
@@ -651,12 +659,12 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             };
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding, { availRatio: 0.5 });
-            },timeoutNo * 2)
+            },timeoutNo * 2 * frequency)
         }
         return;
     }
     // 亏损，平仓
-    if(ratio < - condition){
+    if(ratio < - condition * frequency){
         const { result } = await autoCloseOrderSingle(holding);
         if(result) {
             continuousMap[instrument_id] = {
@@ -666,12 +674,12 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             };
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5 });
-            },timeoutNo * 10 * 2)
+            },timeoutNo * 10 * 2 * frequency)
         }
         return;
     }
     // 亏损不平仓，补仓，亏损0.5
-    if(ratio < - condition * 1 / 2){
+    if(ratio < - condition * 1 / 2 * frequency){
         // 没有补过仓
         if(!continuousObj.continuousBatchNum) {
             // 补仓，state:2 完全成交，补仓成功
@@ -698,7 +706,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             }
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
-            },timeout)
+            },timeout * frequency)
         }
         return;
     }
