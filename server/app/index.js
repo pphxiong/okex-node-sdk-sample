@@ -593,11 +593,11 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const { instrument_id } = holding;
     const continuousObj = continuousMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj)
-    // 补仓后，回本即平仓
-    if( (ratio > condition) || (continuousObj.continuousBatchNum && (ratio > 0.0068 * continuousObj.continuousBatchNum) )){
+    // 盈利
+    if(ratio > condition){
         continuousObj.continuousBatchNum = 0;
         continuousObj.continuousLossNum = 0;
-        if( ratio > condition ) continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+        continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             let isReverse = false;
@@ -609,6 +609,18 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         return;
     }
+    // 补仓后，回本即平仓
+    if(continuousObj.continuousBatchNum && (ratio > 0.0068 * continuousObj.continuousBatchNum)) {
+        const { result } = await autoCloseOrderSingle(holding)
+        if(result){
+            continuousMap[instrument_id] = continuousInit;
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding, { availRatio: 0.5 });
+            },timeoutNo * 2)
+        }
+        return;
+    }
+    // 亏损，平仓
     if(ratio < - condition * 2){
         const { result } = await autoCloseOrderSingle(holding);
         if(result) {
@@ -619,6 +631,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         return;
     }
+    // 亏损不平仓，补仓
     if(ratio < - condition * 3 / 4){
         // 没有补过仓
         if(!continuousObj.continuousBatchNum) {
