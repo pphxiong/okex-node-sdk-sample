@@ -602,7 +602,8 @@ function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
 
 // 杠杆越大，手续费占比越高。。
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
-    const { instrument_id, last } = holding;
+    const { instrument_id, last, long_leverage, short_leverage } = holding;
+    const leverage = Math.max(Number(long_leverage),Number(short_leverage));
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj)
@@ -640,7 +641,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         return;
     }
     // 补仓后，回本即平仓
-    if(continuousObj.continuousBatchNum && (ratio > 0.0068 * continuousObj.continuousBatchNum)) {
+    if(continuousObj.continuousBatchNum && (ratio > 0.1 * leverage / 10 * continuousObj.continuousBatchNum)) {
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousMap[instrument_id] = {
