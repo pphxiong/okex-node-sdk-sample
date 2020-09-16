@@ -504,6 +504,7 @@ const getOrderModeSingle = async (orderMode = 3, holding) => {
         (Number(holding.short_margin) && (Number(holding.short_unrealised_pnl) / Number(holding.short_margin)));
     const leverage = Math.min(Number(holding.long_leverage), Number(holding.short_leverage));
     let condition = leverage / 100;
+    console.log(holding.instrument_id,ratio,condition)
     await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
