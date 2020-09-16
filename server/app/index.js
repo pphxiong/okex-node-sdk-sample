@@ -13,14 +13,17 @@ let mode = 3; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 let continuousBatchNum = 0; //连续补仓次数
-const continuousInit = {
-    continuousLossNum: 0,
-    continuousWinNum: 0,
-    continuousBatchNum: 0,
-}
 const continuousMap = {
-    [BTC_INSTRUMENT_ID]: continuousInit,
-    [EOS_INSTRUMENT_ID]: continuousInit,
+    [BTC_INSTRUMENT_ID]: {
+        continuousLossNum: 0,
+        continuousWinNum: 0,
+        continuousBatchNum: 0,
+    },
+    [EOS_INSTRUMENT_ID]: {
+        continuousLossNum: 0,
+        continuousWinNum: 0,
+        continuousBatchNum: 0,
+    },
 };
 const lastOrderMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -622,10 +625,10 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             }
             setTimeout(async ()=>{
                 // 多仓时，本次价格比上次低，则过十倍时间后再开仓
-                const { holding: latestHolding } = await authClient.futures().getPosition(instrument_id);
-                const latestPrice = latestHolding[0] && latestHolding[0].last;
-                const type = getCurrentDirection(latestHolding[0]);
-                const isNeedOpenOrder = !!((type == 1 && latestPrice < lastObj.last) || (type == 2 && latestPrice > lastObj.last));
+                const { mark_price } = await cAuthClient.futures.getMarkPrice(instrument_id);
+                const type = getCurrentDirection(holding);
+                console.log('last', mark_price, lastObj.last, type)
+                const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
 
                 let timeMultiple = 0;
                 if(isNeedOpenOrder && continuousObj.continuousWinNum>1) timeMultiple = 10;
@@ -640,7 +643,11 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     if(continuousObj.continuousBatchNum && (ratio > 0.0068 * continuousObj.continuousBatchNum)) {
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
-            continuousMap[instrument_id] = continuousInit;
+            continuousMap[instrument_id] = {
+                continuousLossNum: 0,
+                continuousWinNum: 0,
+                continuousBatchNum: 0,
+            };
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding, { availRatio: 0.5 });
             },timeoutNo * 2)
@@ -651,7 +658,11 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     if(ratio < - condition * 2){
         const { result } = await autoCloseOrderSingle(holding);
         if(result) {
-            continuousMap[instrument_id] = continuousInit;
+            continuousMap[instrument_id] = {
+                continuousLossNum: 0,
+                continuousWinNum: 0,
+                continuousBatchNum: 0,
+            };
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5 });
             },timeoutNo * 10 * 2)
