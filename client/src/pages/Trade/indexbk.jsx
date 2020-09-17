@@ -1,5 +1,5 @@
 import React,{ useState, useEffect, useRef } from 'react';
-import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col, Radio, Tabs } from 'antd';
+import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col, Radio } from 'antd';
 import {
   postFuturesLeverage,
   postSwapLeverage,
@@ -17,12 +17,8 @@ import {
 } from './api'
 import moment from 'moment'
 
-const BTC_INSTRUMENT_ID = 'BTC-USD-201225';
-const EOS_INSTRUMENT_ID = 'EOS-USD-201225';
-
 export default props => {
-  const [btcLeverage, setBtcLeverage] = useState(10);
-  const [eosLeverage, setEosLeverage] = useState(10);
+  const [leverage, setLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
   const [size, setSize] = useState(1);
   const [btcPosition, setBtcPosition] = useState({});
@@ -33,20 +29,17 @@ export default props => {
   const [eosMarkPrice, setEosMarkPrice] = useState(0);
   const [position, setPosition] = useState(0.5);
   const [frequency, setFrequency] = useState(1);
-  const [currentInstrumentId, setCurrentInstrumentId] = useState(BTC_INSTRUMENT_ID);
 
   const getPosition = async () => {
-    const result = await getFuturesPosition({instrument_id: BTC_INSTRUMENT_ID});
+    const result = await getFuturesPosition({instrument_id: 'BTC-USD-201225'});
     setBtcPosition(result?.data?.holding[0]);
-    const eosResult = await getFuturesPosition({instrument_id: EOS_INSTRUMENT_ID});
+    const eosResult = await getFuturesPosition({instrument_id: 'EOS-USD-201225'});
     setEosPosition(eosResult?.data?.holding[0]);
   }
 
   const getLeverage = async () => {
     const { data: result } = await getFuturesLeverage({ underlying: 'BTC-USD' });
-    setBtcLeverage(result[BTC_INSTRUMENT_ID]['long_leverage']);
-    const { data: eosResult } = await getFuturesLeverage({ underlying: 'EOS-USD' });
-    setEosLeverage(eosResult[EOS_INSTRUMENT_ID]['long_leverage']);
+    setLeverage(result['BTC-USD-201225']['long_leverage']);
   }
 
   const getAccounts = async () => {
@@ -57,9 +50,9 @@ export default props => {
   }
 
   const getMarkPrice = async () => {
-    const result = await getFuturesMarkPrice({ instrument_id: BTC_INSTRUMENT_ID });
+    const result = await getFuturesMarkPrice({ instrument_id: 'BTC-USD-201225' });
     setBtcMarkPrice(result?.data?.mark_price)
-    const eosResult = await getFuturesMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
+    const eosResult = await getFuturesMarkPrice({ instrument_id: 'EOS-USD-201225' });
     setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
@@ -76,12 +69,18 @@ export default props => {
     getMarkPrice();
   },[])
 
-  const onSetLeverage = async ({ underlying, leverage, instrument_id, currency }) => {
-    const result = await postFuturesLeverage({ underlying, leverage, instrument_id, direction: 'long' })
+  const onSetLeverage = async () => {
+    const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'long' })
     // const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage });
     const data = result?.data;
-    await postFuturesLeverage({ underlying, leverage, instrument_id, direction: 'short' })
-    if(data) message.success(`${currency}杠杆设置成功`);
+    await postFuturesLeverage({ underlying: 'BTC-USD', leverage, instrument_id: 'BTC-USD-201225', direction: 'short' })
+    if(data) message.success('BTC杠杆设置成功');
+    setTimeout(async ()=>{
+      const eosResult = await postFuturesLeverage({ underlying: 'EOS-USD', leverage, instrument_id: 'EOS-USD-201225', direction: 'long' });
+      const eosData = eosResult?.data;
+      await postFuturesLeverage({ underlying: 'EOS-USD', leverage, instrument_id: 'EOS-USD-201225', direction: 'short' });
+      if(eosData) message.success('EOS杠杆设置成功');
+    },1000);
   }
   //
   // const onSetSwapLeverage = async () => {
@@ -90,18 +89,31 @@ export default props => {
   //   if(data) message.success('设置成功')
   // }
 
-  const openOrder = async (type, currency) => {
+  const openOrders = async (btcType = 1, eosType = 2) => {
+    // btc
     const payload = {
       size,
-      type: type,
+      type: btcType,
       order_type: 0, //1：只做Maker 4：市价委托
-      price: currency == 'BTC' ? btcMarkPrice : eosMarkPrice,
-      instrument_id: currentInstrumentId,
+      price: btcMarkPrice,
+      instrument_id: 'BTC-USD-201225',
       match_price: 0
     }
     const result = await postFuturesOrder(payload);
     console.log(result)
-    if(result?.data?.result) message.success(`${currency}开仓成功`);
+    if(result?.data?.result) message.success('BTC开多仓成功');
+    // eos
+    const eosPayload = {
+      size: size * 10,
+      type: eosType,
+      order_type: 0, //1：只做Maker 4：市价委托
+      price: eosMarkPrice,
+      instrument_id: 'EOS-USD-201225',
+      match_price: 0
+    }
+    const eosResult = await postFuturesOrder(eosPayload);
+    console.log(eosResult)
+    if(eosResult?.data?.result) message.success('EOS开空仓成功');
   }
 
   const openSameOrders = async type => {
@@ -111,7 +123,7 @@ export default props => {
       type,
       order_type: 0, //1：只做Maker 4：市价委托
       price: btcMarkPrice,
-      instrument_id: BTC_INSTRUMENT_ID,
+      instrument_id: 'BTC-USD-201225',
       match_price: 0
     }
     const result = await postFuturesOrder(payload);
@@ -123,7 +135,7 @@ export default props => {
       type,
       order_type: 0, //1：只做Maker 4：市价委托
       price: eosMarkPrice,
-      instrument_id: EOS_INSTRUMENT_ID,
+      instrument_id: 'EOS-USD-201225',
       match_price: 0
     }
     const eosResult = await postFuturesOrder(eosPayload);
@@ -133,34 +145,29 @@ export default props => {
 
   const closeOrder = async () => {
     // btc
-    if(Number(btcPosition.long_avail_qty) || Number(btcPosition.short_avail_qty)) {
-      const payload = {
-        size: Number(btcPosition.long_avail_qty) || Number(btcPosition.short_avail_qty),
-        type: Number(btcPosition.long_avail_qty) ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
-        price: btcMarkPrice,
-        instrument_id: btcPosition.instrument_id,
-        match_price: 0
-      }
-      const result = await postFuturesOrder(payload);
-      console.log(result)
-      if(result?.data?.result) message.success('BTC平仓挂单成功');
+    const payload = {
+      size,
+      type: Number(btcPosition.long_avail_qty) ? 3 : 4,
+      order_type: 0, //1：只做Maker 4：市价委托
+      price: btcMarkPrice,
+      instrument_id: btcPosition.instrument_id,
+      match_price: 0
     }
-
+    const result = await postFuturesOrder(payload);
+    console.log(result)
+    if(result?.data?.result) message.success('BTC平仓成功');
     // eos
-    if(Number(eosPosition.long_avail_qty) || Number(eosPosition.short_avail_qty)){
-      const eosPayload = {
-        size: Number(eosPosition.long_avail_qty) || Number(eosPosition.short_avail_qty),
-        type: Number(eosPosition.long_avail_qty) ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
-        price: eosMarkPrice,
-        instrument_id: eosPosition.instrument_id,
-        match_price: 0
-      }
-      const eosResult = await postFuturesOrder(eosPayload);
-      console.log(eosResult)
-      if(eosResult?.data?.result) message.success('EOS平仓挂单成功');
+    const eosPayload = {
+      size: size * 10,
+      type: Number(eosPosition.long_avail_qty) ? 3 : 4,
+      order_type: 0, //1：只做Maker 4：市价委托
+      price: eosMarkPrice,
+      instrument_id: eosPosition.instrument_id,
+      match_price: 0
     }
+    const eosResult = await postFuturesOrder(eosPayload);
+    console.log(eosResult)
+    if(eosResult?.data?.result) message.success('EOS平仓成功');
   }
 
   const closeOrderByMarkPrice = async () => {
@@ -201,52 +208,6 @@ export default props => {
   const { equity: eosEquity, contracts: eosContracts = [{}], total_avail_balance: eos_total_avail_balance } = eosAccount;
   const { margin_frozen: eos_margin_frozen, margin_for_unfilled: eos_margin_for_unfilled } = eosContracts[0];
   const eos_available_qty = Number(eosEquity) - Number(eos_margin_frozen) - Number(eos_margin_for_unfilled);
-
-  const OrderPanelC = ({ currency, instrument_id, underlying, leverage }) => (<>
-    <span>设置杠杆倍数：</span>
-    <InputNumber
-      value={ currency == 'BTC' ? btcLeverage : eosLeverage }
-      step={1}
-      min={1}
-      max={100}
-      onChange={v=> {
-        currency == 'BTC' ? setBtcLeverage(v) : setEosLeverage(v)
-      }}
-    />
-    <Divider type="vertical" />
-    <span>开仓张数：</span><InputNumber value={size} step={1} min={1} onChange={v=>setSize(v)}/>
-    <Button onClick={()=>onSetLeverage({ currency, instrument_id, underlying, leverage })} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
-
-    <Divider type="horizontal" />
-
-    <Popconfirm
-      title={`是否确定开${currency}多仓？`}
-      onConfirm={()=>openOrder(1, currency)}
-    >
-      <Button>开多</Button>
-    </Popconfirm>
-
-    <Popconfirm
-      title={`是否确定开${currency}空仓？`}
-      onConfirm={()=>openOrder(2, currency)}
-    >
-      <Button style={{ marginLeft: 10 }}>开空</Button>
-    </Popconfirm>
-
-    <Popconfirm
-      title="是否确定要全部平仓？"
-      onConfirm={()=>closeOrder()}
-    >
-      <Button type="primary" style={{ marginLeft: 10 }}>全平</Button>
-    </Popconfirm>
-
-    <Popconfirm
-      title="是否确定要市价全平？"
-      onConfirm={()=>closeOrderByMarkPrice()}
-    >
-      <Button type="primary" style={{ marginLeft: 10 }}>市价全平</Button>
-    </Popconfirm>
-  </>)
 
   return <>
     <Card title="持仓情况" extra={<Button onClick={()=>getPosition()}>刷新</Button>}>
@@ -308,25 +269,15 @@ export default props => {
         <Divider type="vertical" />
         标记价格：{btcMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(total_avail_balance) * Number(btcMarkPrice) * btcLeverage * 0.98 / 100) }
+        可开张数：{ Math.floor(Number(total_avail_balance) * Number(btcMarkPrice) * leverage * 0.98 / 100) }
       </p>
       <p>
         EOS余额：{eos_total_avail_balance}
         <Divider type="vertical" />
         标记价格：{eosMarkPrice}
         <Divider type="vertical" />
-        可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * eosLeverage * 0.98 / 10) }
+        可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * leverage * 0.98 / 10) }
       </p>
-    </Card>
-    <Card title={'交割合约'} style={{ marginTop: 10 }}>
-      <Tabs defaultActiveKey={BTC_INSTRUMENT_ID} onChange={key=>setCurrentInstrumentId(key)}>
-        <Tabs.TabPane tab="BTC" key={BTC_INSTRUMENT_ID}>
-          <OrderPanelC instrument_id={BTC_INSTRUMENT_ID} currency={"BTC"} underlying={"BTC-USD"} leverage={btcLeverage} />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="EOS" key={EOS_INSTRUMENT_ID}>
-          <OrderPanelC instrument_id={EOS_INSTRUMENT_ID} currency={"EOS"} underlying={"EOS-USD"} leverage={eosLeverage} />
-        </Tabs.TabPane>
-      </Tabs>
     </Card>
     <Card title={'操作'} style={{ marginTop: 10 }}>
       {/*<p>下单模式：*/}
@@ -349,5 +300,77 @@ export default props => {
       <Button onClick={()=>onStopMonitor()}>停止监控</Button>
       <Button onClick={()=>onStartMonitor()} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
     </Card>
+    <Card title={'交割合约'} style={{ marginTop: 10 }}>
+      <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} min={1} max={100} onChange={v=>setLeverage(v)}/>
+      <Divider type="vertical" />
+      <span>开仓张数：</span><InputNumber value={size} step={1} min={1} onChange={v=>setSize(v)}/>
+      <Button onClick={()=>onSetLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
+
+      <Divider type="horizontal" />
+
+      <Popconfirm
+        title="是否确定开btc多仓，eos空仓？"
+        onConfirm={()=>openOrders(1,2)}
+      >
+        <Button>对冲开仓</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定开btc空仓，eos多仓？"
+        onConfirm={()=>openOrders(2,1)}
+      >
+        <Button style={{ marginLeft: 10 }}>反向对冲</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定开btc多仓，eos多仓？"
+        onConfirm={()=>openSameOrders(1)}
+      >
+        <Button style={{ marginLeft: 10 }}>双多开仓</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定开btc空仓，eos空仓？"
+        onConfirm={()=>openSameOrders(2)}
+      >
+        <Button style={{ marginLeft: 10 }}>双空开仓</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定要全部平仓？"
+        onConfirm={()=>closeOrder()}
+      >
+        <Button type="primary" style={{ marginLeft: 10 }}>全平</Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="是否确定要市价全平？"
+        onConfirm={()=>closeOrderByMarkPrice()}
+      >
+        <Button type="primary" style={{ marginLeft: 10 }}>市价全平</Button>
+      </Popconfirm>
+
+    </Card>
+    {/*<Card title={'永续合约'} style={{ marginTop: 10 }}>*/}
+    {/*  <span>设置杠杆倍数：</span><InputNumber value={swapLeverage} step={1} onChange={v=>setSwapLeverage(v)}/>*/}
+    {/*  <Button onClick={()=>onSetSwapLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>*/}
+
+    {/*  <Divider type="horizontal" />*/}
+
+    {/*  <Popconfirm*/}
+    {/*    title="是否确定以市价开仓？"*/}
+    {/*    onConfirm={()=>openOrder()}*/}
+    {/*    >*/}
+    {/*    <Button>对冲开仓</Button>*/}
+    {/*  </Popconfirm>*/}
+
+    {/*  <Popconfirm*/}
+    {/*    title="是否确定要全部平仓？"*/}
+    {/*    onConfirm={()=>closeOrder()}*/}
+    {/*  >*/}
+    {/*    <Button type="primary" style={{ marginLeft: 10 }}>全平</Button>*/}
+    {/*  </Popconfirm>*/}
+
+    {/*</Card>*/}
   </>
 }
