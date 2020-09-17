@@ -683,11 +683,9 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         // const { result } = await autoCloseOrderSingle(holding);
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
-            continuousMap[instrument_id] = {
-                continuousLossNum: 0,
-                continuousWinNum: 0,
-                continuousBatchNum: 0,
-            };
+            continuousObj.continuousBatchNum = 0;
+            continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+            continuousObj.continuousWinNum = 0;
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5 });
             },timeoutNo * 10 * 2 * frequency)
