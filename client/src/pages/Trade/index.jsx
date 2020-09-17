@@ -279,21 +279,13 @@ export default props => {
         可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * leverage * 0.98 / 10) }
       </p>
     </Card>
-    <Card title={'交割合约'} style={{ marginTop: 10 }}>
-      <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} min={1} max={100} onChange={v=>setLeverage(v)}/>
-      <Divider type="vertical" />
-      <span>开仓张数：</span><InputNumber value={size} step={1} min={1} onChange={v=>setSize(v)}/>
-      <Button onClick={()=>onSetLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
-
-      <Divider type="horizontal" />
-
-      <span>操作：</span>
-      <p>下单模式：
-        <Radio.Group defaultValue="1" buttonStyle="solid" onChange={e=>onChangeMode(e.target.value)}>
-          <Radio.Button value="1">模式1</Radio.Button>
-          <Radio.Button value="2">模式2</Radio.Button>
-        </Radio.Group>
-      </p>
+    <Card title={'操作'} style={{ marginTop: 10 }}>
+      {/*<p>下单模式：*/}
+      {/*  <Radio.Group defaultValue="1" buttonStyle="solid" onChange={e=>onChangeMode(e.target.value)}>*/}
+      {/*    <Radio.Button value="1">模式1</Radio.Button>*/}
+      {/*    <Radio.Button value="2">模式2</Radio.Button>*/}
+      {/*  </Radio.Group>*/}
+      {/*</p>*/}
       {/*<p>开仓仓位：*/}
       {/*  <Radio.Group defaultValue={position} buttonStyle="solid" onChange={e=>setPosition(e.target.value)}>*/}
       {/*    <Radio.Button value={0.5}>半仓</Radio.Button>*/}
@@ -307,6 +299,12 @@ export default props => {
 
       <Button onClick={()=>onStopMonitor()}>停止监控</Button>
       <Button onClick={()=>onStartMonitor()} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
+    </Card>
+    <Card title={'交割合约'} style={{ marginTop: 10 }}>
+      <span>设置杠杆倍数：</span><InputNumber value={leverage} step={1} min={1} max={100} onChange={v=>setLeverage(v)}/>
+      <Divider type="vertical" />
+      <span>开仓张数：</span><InputNumber value={size} step={1} min={1} onChange={v=>setSize(v)}/>
+      <Button onClick={()=>onSetLeverage()} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
 
       <Divider type="horizontal" />
 

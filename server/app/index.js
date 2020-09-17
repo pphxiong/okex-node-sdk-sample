@@ -39,18 +39,18 @@ const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 let frequency = 1; //交易频次
 const batchOrderMap = {
     [BTC_INSTRUMENT_ID]: {
-        order_id: -1, //上次补仓订单id
+        order_id: 0, //上次补仓订单id
     },
     [EOS_INSTRUMENT_ID]: {
-        order_id: -1
+        order_id: 0
     },
 }
 const closeOrderMap = {
     [BTC_INSTRUMENT_ID]: {
-        order_id: -1, //上次平仓订单id
+        order_id: 0, //上次平仓订单id
     },
     [EOS_INSTRUMENT_ID]: {
-        order_id: -1
+        order_id: 0
     },
 }
 
