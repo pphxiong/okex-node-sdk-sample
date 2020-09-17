@@ -312,7 +312,7 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 }
 
 // 市价全平By holding
-const autoCloseOrderByMarketPriceByHolding =  async ({ short_avail_qty, instrument_id }) => {
+const autoCloseOrderByMarketPriceByHolding =  async ({ short_qty, instrument_id }) => {
     let direction = 'long';
     if(Number(short_qty)) direction = 'short'
     return await cAuthClient
@@ -467,12 +467,8 @@ const getOrderState = async (payload) => {
 }
 
 const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }) => {
+    const { result } = await validateAndCancelOrder(instrument_id);
     if(Number(long_qty) || Number(short_qty)){
-        const { result } = await validateAndCancelOrder(instrument_id);
-        // 有撤销单
-        if(result) {
-            return new Promise(resolve=>{ resolve({ result: false }) })
-        }
         const payload = {
             size: Number(long_qty) || Number(short_qty),
             type: Number(long_qty) ? 3 : 4,
@@ -481,10 +477,9 @@ const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }
             price: last,
             match_price: 0
         }
-
         return await authClient.futures().postOrder(payload);
     }
-    return new Promise(resolve=>{ resolve({ result: true }) })
+    return new Promise(resolve=>{ resolve({ result: !result }) })
 }
 
 // 获取可开张数
