@@ -418,7 +418,6 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
     const { result } = await validateAndCancelOrder(instrument_id);
-    if(result) return new Promise(resolve=>{ resolve({ result: false }) })
     if(avail) {
         const payload = {
             size: avail,
@@ -428,9 +427,9 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             price: mark_price,
             match_price: 0
         }
-        return await authClient.futures().postOrder(payload);
+        await authClient.futures().postOrder(payload);
     }
-    return new Promise(resolve=>{ resolve({ result: false }) })
+    return new Promise(resolve=>{ resolve({ result: avail && !result }) })
 }
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
@@ -639,8 +638,9 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
                 console.log('last', mark_price, lastObj.last, type)
                 const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
 
-                let timeMultiple = 0;
-                if(isNeedOpenOrder && continuousObj.continuousWinNum>1) timeMultiple = 10;
+                let timeMultiple = 10;
+                // 头两次盈利马上开仓
+                if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 0;
                 setTimeout(async ()=>{
                     await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
                 },timeout * timeMultiple * frequency)
