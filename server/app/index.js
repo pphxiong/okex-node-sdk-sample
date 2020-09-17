@@ -303,7 +303,7 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
     if(!direction){
         const { holding } = await authClient.futures().getPosition(instrument_id);
         direction = 'long';
-        if(Number(holding[0].short_avail_qty)) direction = 'short'
+        if(Number(holding[0].short_qty)) direction = 'short'
     }
     const result = await cAuthClient
         .futures
@@ -312,13 +312,12 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 }
 
 // 市价全平By holding
-const autoCloseOrderByHolding =  async ({ short_avail_qty, instrument_id }) => {
+const autoCloseOrderByMarketPriceByHolding =  async ({ short_avail_qty, instrument_id }) => {
     let direction = 'long';
-    if(Number(short_avail_qty)) direction = 'short'
-    const result = await cAuthClient
+    if(Number(short_qty)) direction = 'short'
+    return await cAuthClient
         .futures
         .closePosition({instrument_id, direction})
-    return result;
 }
 
 
@@ -679,9 +678,10 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         return;
     }
-    // 亏损，平仓
+    // 亏损，平仓，市价全平
     if(ratio < - condition * frequency){
-        const { result } = await autoCloseOrderSingle(holding);
+        // const { result } = await autoCloseOrderSingle(holding);
+        const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
             continuousMap[instrument_id] = {
                 continuousLossNum: 0,
