@@ -37,6 +37,22 @@ const lastOrderMap = {
 }
 const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 let frequency = 1; //交易频次
+const batchOrderMap = {
+    [BTC_INSTRUMENT_ID]: {
+        order_id: -1, //上次补仓订单id
+    },
+    [EOS_INSTRUMENT_ID]: {
+        order_id: -1
+    },
+}
+const closeOrderMap = {
+    [BTC_INSTRUMENT_ID]: {
+        order_id: -1, //上次平仓订单id
+    },
+    [EOS_INSTRUMENT_ID]: {
+        order_id: -1
+    },
+}
 
 var config = require('./config');
 const pClient = new PublicClient(config.urlHost);
@@ -680,13 +696,21 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     }
     // 亏损不平仓，补仓，亏损0.5
     if(ratio < - condition * 1 / 2 * frequency){
+        const batchObj = batchOrderMap[instrument_id]
         // 没有补过仓
         if(!continuousObj.continuousBatchNum) {
-            // 补仓，state:2 完全成交，补仓成功
-            const { result } = await autoOpenOrderSingle(holding);
-            if(result) {
-                continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
+            if(batchObj.order_id) {
+                const { state } = await authClient.futures().getOrder(instrument_id,batchObj.order_id);
+                // state:2 完全成交，补仓成功
+                if(state==2) {
+                    continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
+                    batchObj.order_id = -1;
+                    return;
+                }
             }
+            // 补仓
+            const { result, order_id } = await autoOpenOrderSingle(holding);
+            batchObj.order_id = order_id;
             console.log('result', result)
             return;
         }
