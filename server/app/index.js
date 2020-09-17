@@ -443,7 +443,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             price: mark_price,
             match_price: 0
         }
-        await authClient.futures().postOrder(payload);
+        return await authClient.futures().postOrder(payload);
     }
     return new Promise(resolve=>{ resolve({ result: avail && !result }) })
 }
@@ -711,7 +711,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             // 补仓
             const { result, order_id } = await autoOpenOrderSingle(holding);
             batchObj.order_id = order_id;
-            console.log('result', result)
+            console.log('result', result, 'order_id', order_id)
             return;
         }
         // 补过仓，平仓并再开半仓
