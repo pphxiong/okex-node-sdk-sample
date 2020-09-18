@@ -680,6 +680,15 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         return;
     }
+    if(condition < 0 && batchObj.order_id){
+        const { state } = await authClient.futures().getOrder(instrument_id,batchObj.order_id);
+        console.log('state',state,instrument_id, 'order_id', order_id)
+        // state:2 完全成交，补仓成功
+        if(state=='2') {
+            continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
+            batchObj.order_id = 0;
+        }
+    }
     // 补仓后，回本即平仓
     if(continuousObj.continuousBatchNum && (ratio > 0.1 * leverage / 10 * continuousObj.continuousBatchNum)) {
         const { result } = await autoCloseOrderSingle(holding)
@@ -714,16 +723,6 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         const batchObj = batchOrderMap[instrument_id]
         // 没有补过仓
         if(!continuousObj.continuousBatchNum) {
-            if(batchObj.order_id) {
-                const { state } = await authClient.futures().getOrder(instrument_id,batchObj.order_id);
-                console.log('state',state,instrument_id, 'order_id', order_id)
-                // state:2 完全成交，补仓成功
-                if(state=='2') {
-                    continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
-                    batchObj.order_id = 0;
-                    return;
-                }
-            }
             // 补仓
             const { result, order_id } = await autoOpenOrderSingle(holding);
             batchObj.order_id = order_id;
