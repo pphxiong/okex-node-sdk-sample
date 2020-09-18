@@ -720,7 +720,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
                 // state:2 完全成交，补仓成功
                 if(state=='2') {
                     continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
-                    batchObj.order_id = -1;
+                    batchObj.order_id = 0;
                     return;
                 }
             }
