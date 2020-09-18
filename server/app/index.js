@@ -18,11 +18,13 @@ const continuousMap = {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
+        continuousProfitNum: 0,
     },
     [EOS_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
+        continuousProfitNum: 0,
     },
 };
 const lastOrderMap = {
@@ -45,9 +47,9 @@ const batchOrderMap = {
         order_id: 0
     },
 }
-const closeOrderMap = {
+const winOrderMap = {
     [BTC_INSTRUMENT_ID]: {
-        order_id: 0, //上次平仓订单id
+        order_id: 0, //上次止盈订单id
     },
     [EOS_INSTRUMENT_ID]: {
         order_id: 0
@@ -315,9 +317,8 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 const autoCloseOrderByMarketPriceByHolding =  async ({ short_qty, instrument_id }) => {
     let direction = 'long';
     if(Number(short_qty)) direction = 'short'
-    return await cAuthClient
-        .futures
-        .closePosition({instrument_id, direction})
+    await validateAndCancelOrder(instrument_id);
+    return await cAuthClient.futures.closePosition({instrument_id, direction})
 }
 
 
@@ -412,7 +413,26 @@ const autoCloseOrders = async (btcHolding, eosHolding) => {
     }
 }
 
-// availRatio开仓比例
+// 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
+// 如果有就撤销
+const validateAndCancelOrder = async (instrument_id) => {
+    const { result, order_info } = await authClient.futures().getOrders(instrument_id, {state: 6, limit: 1})
+    console.log('cancelorder', instrument_id, result)
+    if( result && order_info && order_info.length ){
+        const { order_id } = order_info[0];
+        return await authClient.futures().cancelOrder(instrument_id,order_id)
+    }
+    return new Promise(resolve=>{ resolve({ result: false }) })
+}
+
+// 下单，并返回订单信息
+const getOrderState = async (payload) => {
+    const { instrument_id } = payload;
+    const { order_id } = await authClient.futures().postOrder(payload);
+    return await authClient.futures().getOrder(instrument_id,order_id)
+}
+
+// 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { isReverse = false, availRatio = 1 } = params;
     const { instrument_id, long_avail_qty, short_avail_qty } = holding;
@@ -447,30 +467,16 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     return new Promise(resolve=>{ resolve({ result: avail && !result }) })
 }
 
-// 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
-// 如果有就撤销
-const validateAndCancelOrder = async (instrument_id) => {
-    const { result, order_info } = await authClient.futures().getOrders(instrument_id, {state: 6, limit: 1})
-    console.log('cancelorder', instrument_id, result)
-    if( result && order_info && order_info.length ){
-        const { order_id } = order_info[0];
-        return await authClient.futures().cancelOrder(instrument_id,order_id)
-    }
-    return new Promise(resolve=>{ resolve({ result: false }) })
-}
-
-// 下单，并返回订单信息
-const getOrderState = async (payload) => {
-    const { instrument_id } = payload;
-    const { order_id } = await authClient.futures().postOrder(payload);
-    return await authClient.futures().getOrder(instrument_id,order_id)
-}
-
-const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }) => {
+// 平仓，closeRatio平仓比例
+const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }, params) => {
+    const { closeRatio = 1 } = params;
     const { result } = await validateAndCancelOrder(instrument_id);
-    if(Number(long_qty) || Number(short_qty)){
+    const qty = Number(long_qty) || Number(short_qty)
+    let size = Math.floor(qty * closeRatio)
+    if(qty == 1) size = 1;
+    if(size){
         const payload = {
-            size: Number(long_qty) || Number(short_qty),
+            size,
             type: Number(long_qty) ? 3 : 4,
             order_type: 0,
             instrument_id: instrument_id,
@@ -623,19 +629,35 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const leverage = Math.max(Number(long_leverage),Number(short_leverage));
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
+    const winOrderObj = winOrderMap[instrument_id];
     console.log('continuousObj', instrument_id, continuousObj, frequency)
-    // 盈利，半仓，盈利0.65
-    if(ratio > condition * 1.3 * frequency){
+    // 盈利，半仓，止盈
+    if(ratio > condition * 1 * frequency && !continuousMap.continuousProfitNum) {
+        if(winOrderObj.order_id){
+            const { state } = await authClient.futures().getOrder(instrument_id,winOrderObj.order_id);
+            if(state=='2'){
+                continuousMap.continuousProfitNum = continuousMap.continuousProfitNum + 1;
+                winOrderObj.order_id = 0;
+                return;
+            }
+        }
+        const { order_id } = await autoCloseOrderSingle(holding,{ closeRatio: 0.5 })
+        winOrderObj.order_id = order_id;
+        return;
+    }
+    // 盈利
+    if(ratio > condition * 2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
             continuousObj.continuousLossNum = 0;
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+            continuousMap.continuousProfitNum = 0;
 
             lastObj.last = Number(last);
 
             let isReverse = false;
-            let timeout = timeoutNo;
+            let timeout = timeoutNo * 10;
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
@@ -694,8 +716,9 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         if(!continuousObj.continuousBatchNum) {
             if(batchObj.order_id) {
                 const { state } = await authClient.futures().getOrder(instrument_id,batchObj.order_id);
+                console.log('state',state,instrument_id, 'order_id', order_id)
                 // state:2 完全成交，补仓成功
-                if(state==2) {
+                if(state=='2') {
                     continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
                     batchObj.order_id = -1;
                     return;
@@ -704,7 +727,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             // 补仓
             const { result, order_id } = await autoOpenOrderSingle(holding);
             batchObj.order_id = order_id;
-            console.log('result', result, 'order_id', order_id)
+            console.log('result', result, instrument_id, 'order_id', order_id)
             return;
         }
         // 补过仓，平仓并再开半仓
