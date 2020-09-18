@@ -632,11 +632,11 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const winOrderObj = winOrderMap[instrument_id];
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum, continuousObj.continuousBatchNum, continuousObj.continuousProfitNum)
     // 盈利，半仓，止盈
-    if(ratio > condition * 1 * frequency && !continuousMap.continuousProfitNum) {
+    if(ratio > condition * 1 * frequency && !continuousObj.continuousProfitNum) {
         if(winOrderObj.order_id){
             const { state } = await authClient.futures().getOrder(instrument_id,winOrderObj.order_id);
             if(state=='2'){
-                continuousMap.continuousProfitNum = continuousMap.continuousProfitNum + 1;
+                continuousObj.continuousProfitNum = continuousObj.continuousProfitNum + 1;
                 winOrderObj.order_id = 0;
                 return;
             }
@@ -652,7 +652,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             continuousObj.continuousBatchNum = 0;
             continuousObj.continuousLossNum = 0;
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-            continuousMap.continuousProfitNum = 0;
+            continuousObj.continuousProfitNum = 0;
 
             lastObj.last = Number(last);
 
