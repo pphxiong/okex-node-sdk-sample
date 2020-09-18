@@ -630,7 +630,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
     const winOrderObj = winOrderMap[instrument_id];
-    console.log('continuousObj', instrument_id, continuousObj, frequency)
+    console.log(instrument_id, continuousObj)
     // 盈利，半仓，止盈
     if(ratio > condition * 1 * frequency && !continuousMap.continuousProfitNum) {
         if(winOrderObj.order_id){
