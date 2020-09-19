@@ -468,7 +468,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 }
 
 // 平仓，closeRatio平仓比例
-const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }, params) => {
+const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }, params = {}) => {
     const { closeRatio = 1 } = params;
     const { result } = await validateAndCancelOrder(instrument_id);
     const qty = Number(long_qty) || Number(short_qty)
