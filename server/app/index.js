@@ -646,7 +646,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         return;
     }
     // 盈利
-    if(ratio > condition * 2 * frequency){
+    if(ratio > condition * 1.5 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
@@ -680,7 +680,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         return;
     }
-    if(condition < 0 && batchObj.order_id){
+    if(ratio < 0 && batchObj.order_id){
         const { state } = await authClient.futures().getOrder(instrument_id,batchObj.order_id);
         console.log('state',state,instrument_id, 'order_id', order_id)
         // state:2 完全成交，补仓成功
