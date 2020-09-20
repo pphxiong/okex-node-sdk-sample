@@ -796,6 +796,7 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
 }
 
 function startInterval() {
+    console.log('myInterval',myInterval)
     if(myInterval) return myInterval;
     return setInterval(async ()=>{
         const { holding: btcHolding } = await authClient.futures().getPosition(BTC_INSTRUMENT_ID);
