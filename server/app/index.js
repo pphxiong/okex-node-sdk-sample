@@ -683,7 +683,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     }
     if(ratio < 0 && batchObj.order_id){
         const { state } = await authClient.futures().getOrder(instrument_id,batchObj.order_id);
-        console.log('state',state,instrument_id, 'order_id', order_id)
+        console.log('state',state,instrument_id, 'order_id', batchObj.order_id)
         // state:2 完全成交，补仓成功
         if(state=='2') {
             continuousObj.continuousBatchNum = continuousObj.continuousBatchNum + 1;
