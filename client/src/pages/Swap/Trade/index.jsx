@@ -42,27 +42,20 @@ export default props => {
   }
 
   const getLeverage = async () => {
-    const { data: result } = await getSwapLeverage({ underlying: 'BTC-USD' });
-    setBtcLeverage(result[BTC_INSTRUMENT_ID]['long_leverage']);
-    const { data: eosResult } = await getSwapLeverage({ underlying: 'EOS-USD' });
-    setEosLeverage(eosResult[EOS_INSTRUMENT_ID]['long_leverage']);
+    const { data: result } = await getSwapLeverage({ instrument_id: BTC_INSTRUMENT_ID });
+    setBtcLeverage(result['long_leverage']);
   }
 
   const getAccounts = async () => {
-    const result = await getSwapAccounts({ currency: 'BTC-USD' });
+    const result = await getSwapAccounts({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcAccount(result?.data??{})
-    const eosResult = await getSwapAccounts({ currency: 'EOS-USD' });
-    setEosAccount(eosResult?.data??{})
-
-    await getSwapAccount({ currency: 'BTC-USD' });
-
   }
 
   const getMarkPrice = async () => {
     const result = await getSwapMarkPrice({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcMarkPrice(result?.data?.mark_price)
-    const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
-    setEosMarkPrice(eosResult?.data?.mark_price)
+    // const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
+    // setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
   const onSetFrequency = async (value) => {

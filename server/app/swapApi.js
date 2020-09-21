@@ -136,10 +136,10 @@ app.get('/swap/getOrders', function(req, response) {
 
 app.get('/swap/getAccounts', function(req, response) {
     const {query = {}} = req;
-    const {currency} = query; // "BTC-USD"
+    const {instrument_id} = query;
     authClient
         .swap()
-        .getAccounts(currency)
+        .getAccount(instrument_id)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -190,10 +190,10 @@ app.get('/swap/postLeverage', function(req, response) {
 
 app.get('/swap/getLeverage', function(req, response) {
     const {query = {}} = req;
-    const { underlying } = query;
+    const { instrument_id } = query;
     authClient
         .swap()
-        .getLeverage(underlying)
+        .getSettings(instrument_id)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
