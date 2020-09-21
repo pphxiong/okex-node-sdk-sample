@@ -50,6 +50,13 @@ function proxyRequest(req, res, next) {
     return request.get(path)
   }
 
+  if(path.includes('okexSwap')){
+    path = path.replace('/okexSwap', ':8091');
+    path = 'http://8.210.214.167' + path;
+
+    return request.get(path)
+  }
+
   return new Promise(resolve=>resolve({ type: 'normal' }))
 
 }

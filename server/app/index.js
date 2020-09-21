@@ -70,8 +70,6 @@ const cAuthClient = new customAuthClient(
     config.urlHost
 )
 
-var swapApi = require('./swapApi');
-
 var express = require('express');
 // var http = require('../utils/http');
 var app = express();

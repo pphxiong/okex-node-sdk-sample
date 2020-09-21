@@ -71,21 +71,21 @@ export default defineConfig({
               ]
             },
             {
-              path: '/future',
+              path: '/futures',
               name: '交割合约',
               icon: 'fund',
               routes:[
                 {
-                  path: '/future/monitor',
+                  path: '/futures/monitor',
                   name: '概览',
                   icon: 'smile',
-                  component: './Future/Monitor',
+                  component: './Futures/Monitor',
                 },
                 {
-                  path: '/future/trade',
+                  path: '/futures/trade',
                   name: '交易',
                   icon: 'crown',
-                  component: './Future/Trade',
+                  component: './Futures/Trade',
                 },
               ]
             },

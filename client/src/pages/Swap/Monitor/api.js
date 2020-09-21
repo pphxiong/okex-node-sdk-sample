@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-const commonUrl = '/okex';
+const commonUrl = '/okexSwap';
 
 export async function getWallet(params) {
   return request(`${commonUrl}/account/getCurrencies`, {
@@ -9,25 +9,25 @@ export async function getWallet(params) {
 }
 
 export async function getOrders(params) {
-  return request(`${commonUrl}/futures/getOrders`, {
+  return request(`${commonUrl}/swap/getOrders`, {
     params,
   });
 }
 
-export async function getFuturesInformation(params) {
-  return request(`${commonUrl}/futures/information`, {
+export async function getSwapInformation(params) {
+  return request(`${commonUrl}/swap/information`, {
     params,
   });
 }
 
-export async function getFuturesInformationSentiment(params) {
-  return request(`${commonUrl}/futures/information/sentiment`, {
+export async function getSwapInformationSentiment(params) {
+  return request(`${commonUrl}/swap/information/sentiment`, {
     params,
   });
 }
 
 export async function getTradeFee(params) {
-  return request(`${commonUrl}/futures/getTradeFee`, {
+  return request(`${commonUrl}/swap/getTradeFee`, {
     params,
   });
 }

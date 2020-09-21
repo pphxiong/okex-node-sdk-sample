@@ -3,7 +3,7 @@ import { Card, Divider, Button } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
-import { getOrders, getFuturesInformation, getFuturesInformationSentiment, getTradeFee } from './api';
+import { getOrders, getSwapInformation, getSwapInformationSentiment, getTradeFee } from './api';
 import { tradeTypeEnum } from '../../config';
 import lineConfig from '../../pageComponents/g2ChartConfigs/Line';
 
@@ -28,13 +28,13 @@ export default props => {
   }
 
   const getLongShortRatioData = async () => {
-    const result = await getFuturesInformation({ currency: 'BTC', granularity: 86400 * 10 });
+    const result = await getSwapInformation({ currency: 'BTC', granularity: 86400 * 10 });
     const data = result?.data??[];
     setLongShortRatioData(data.filter((_,index)=>index<40).map(item=>({ time: moment(item[0]).format('HH:mm:ss'), ratio: Number(item[1]) })));
   }
 
   const getSentiment = async () => {
-    const result = await getFuturesInformationSentiment({ currency: 'BTC', granularity: 86400 * 10 });
+    const result = await getSwapInformationSentiment({ currency: 'BTC', granularity: 86400 * 10 });
     const data = result?.data??[];
     const list = [];
     data.filter((_,index)=>index<40).map(item=>{

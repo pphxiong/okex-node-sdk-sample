@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-const commonUrl = '/okex';
+const commonUrl = '/okexSwap';
 
 export async function getFuturesLeverage(params) {
   return request(`${commonUrl}/futures/getLeverage`, {

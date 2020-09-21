@@ -59,6 +59,17 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             getTradeFee: function (){
                 return get(`/api/futures/v3/trade_fee`)
             },
+        },
+        swap: {
+            getMarkPrice: function (instrument_id){
+                return get(`/api/swap/v3/instruments/${instrument_id}/mark_price`)
+            },
+            closePosition: function (params) {
+                return post('/api/swap/v3/close_position', params)
+            },
+            getTradeFee: function (){
+                return get(`/api/swap/v3/trade_fee`)
+            },
         }
     }
 

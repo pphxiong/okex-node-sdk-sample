@@ -15,10 +15,17 @@ export default {
       },
     },
     '/okex':{
-      target: 'http://www.paopaofunplus.com:8090',
+      target: 'http://8.210.214.167:8090',
       changeOrigin: true,
       pathRewrite: {
         '/okex': '',
+      },
+    },
+    '/okexSwap':{
+      target: 'http://8.210.214.167:8091',
+      changeOrigin: true,
+      pathRewrite: {
+        '/okexSwap': '',
       },
     }
   },
