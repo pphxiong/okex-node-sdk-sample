@@ -633,7 +633,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const batchObj = batchOrderMap[instrument_id]
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum, continuousObj.continuousBatchNum, continuousObj.continuousProfitNum)
     // 盈利，半仓，止盈
-    if(ratio > condition * 1 * frequency && !continuousObj.continuousProfitNum) {
+    if((ratio > condition * 1 * frequency) && !continuousObj.continuousProfitNum) {
         if(winOrderObj.order_id){
             const { state } = await authClient.futures().getOrder(instrument_id,winOrderObj.order_id);
             if(state=='2'){
@@ -644,6 +644,9 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         const { order_id } = await autoCloseOrderSingle(holding,{ closeRatio: 0.5 })
         winOrderObj.order_id = order_id;
+        setTimeout(async ()=>{
+            await autoOpenOrderSingle(holding, { availRatio: 0.5 });
+        },timeoutNo * 2 * frequency)
         return;
     }
     // 盈利
@@ -698,6 +701,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
                 continuousLossNum: 0,
                 continuousWinNum: 0,
                 continuousBatchNum: 0,
+                continuousProfitNum: 0
             };
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding, { availRatio: 0.5 });
@@ -796,7 +800,6 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
 }
 
 function startInterval() {
-    console.log('myInterval',myInterval)
     if(myInterval) return myInterval;
     return setInterval(async ()=>{
         const { holding: btcHolding } = await authClient.futures().getPosition(BTC_INSTRUMENT_ID);
