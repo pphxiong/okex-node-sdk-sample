@@ -37,7 +37,7 @@ const lastOrderMap = {
     },
 }
 const timeoutNo = 1000 * 60 * 1; //下单间隔时间
-let frequency = 0.5; //交易频次
+let frequency = 0.75; //交易频次
 const batchOrderMap = {
     [BTC_INSTRUMENT_ID]: {
         order_id: 0, //上次补仓订单id
