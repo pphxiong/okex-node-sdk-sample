@@ -5,8 +5,8 @@ import moment from 'moment'
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
-let BTC_INSTRUMENT_ID = "BTC-USD-201225";
-let EOS_INSTRUMENT_ID = "EOS-USD-201225";
+let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
+let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
 let mode = 3; //下单模式
 let continuousLossNum = 0; //连续亏损次数

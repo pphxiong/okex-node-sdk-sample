@@ -18,12 +18,12 @@ export default props => {
   const [eosPageSize,setEosPageSize] = useState(10);
 
   const initBTCData = async () => {
-    const result = await getOrders({ instrument_id: 'BTC-USD-201225', limit: ordersLimit, state: 7 });
+    const result = await getOrders({ instrument_id: 'BTC-USD-SWAP', limit: ordersLimit, state: 7 });
     return result;
   }
 
   const initEOSData = async () => {
-    const result = await getOrders({ instrument_id: 'EOS-USD-201225', limit: ordersLimit, state: 7 });
+    const result = await getOrders({ instrument_id: 'EOS-USD-SWAP', limit: ordersLimit, state: 7 });
     return result;
   }
 
