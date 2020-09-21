@@ -2,9 +2,7 @@ import React,{ useState, useEffect, useRef } from 'react';
 import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col, Radio, Tabs } from 'antd';
 import {
   postFuturesLeverage,
-  postSwapLeverage,
   postFuturesOrder,
-  getSwapAccount,
   getFuturesPosition,
   getFuturesLeverage,
   startMonitor,
@@ -23,7 +21,6 @@ const EOS_INSTRUMENT_ID = 'EOS-USD-201225';
 export default props => {
   const [btcLeverage, setBtcLeverage] = useState(10);
   const [eosLeverage, setEosLeverage] = useState(10);
-  const [swapLeverage, setSwapLeverage] = useState(5);
   const [size, setSize] = useState(1);
   const [btcPosition, setBtcPosition] = useState({});
   const [eosPosition, setEosPosition] = useState({});
@@ -83,12 +80,6 @@ export default props => {
     await postFuturesLeverage({ underlying, leverage, instrument_id, direction: 'short' })
     if(data) message.success(`${currency}杠杆设置成功`);
   }
-  //
-  // const onSetSwapLeverage = async () => {
-  //   const result = await postSwapLeverage({ instrument_id: 'BTC-USD-SWAP', leverage: swapLeverage, side: 3 })
-  //   const data = result?.data;
-  //   if(data) message.success('设置成功')
-  // }
 
   const openOrder = async (type, currency) => {
     const payload = {

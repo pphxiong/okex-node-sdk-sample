@@ -3,19 +3,19 @@ import request from '@/utils/request';
 const commonUrl = '/okexSwap';
 
 export async function getSwapLeverage(params) {
-  return request(`${commonUrl}/futures/getLeverage`, {
+  return request(`${commonUrl}/swap/getLeverage`, {
     params,
   });
 }
 
 export async function postSwapLeverage(params) {
-  return request(`${commonUrl}/futures/postLeverage`, {
+  return request(`${commonUrl}/swap/postLeverage`, {
     params,
   });
 }
 
 export async function postSwapOrder(params) {
-  return request(`${commonUrl}/futures/postOrder`, {
+  return request(`${commonUrl}/swap/postOrder`, {
     params,
   });
 }
@@ -27,25 +27,25 @@ export async function getSwapAccount(params) {
 }
 
 export async function getSwapAccounts(params) {
-  return request(`${commonUrl}/futures/getAccounts`, {
+  return request(`${commonUrl}/swap/getAccounts`, {
     params,
   });
 }
 
 export async function getSwapMarkPrice(params) {
-  return request(`${commonUrl}/futures/getMarkPrice`, {
+  return request(`${commonUrl}/swap/getMarkPrice`, {
     params,
   });
 }
 
 export async function getSwapPosition(params) {
-  return request(`${commonUrl}/futures/getPosition`, {
+  return request(`${commonUrl}/swap/getPosition`, {
     params,
   });
 }
 
 export async function autoCloseOrderByInstrumentId(params) {
-  return request(`${commonUrl}/futures/autoCloseOrderByInstrumentId`, {
+  return request(`${commonUrl}/swap/autoCloseOrderByInstrumentId`, {
     params,
   });
 }
