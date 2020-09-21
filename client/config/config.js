@@ -49,19 +49,45 @@ export default defineConfig({
           routes: [
             {
               path: '/',
-              redirect: '/monitor',
+              redirect: '/swap/monitor',
             },
             {
-              path: '/monitor',
-              name: '概览',
+              path: '/swap',
+              name: '永续合约',
               icon: 'smile',
-              component: './Monitor',
+              routes:[
+                {
+                  path: '/swap/monitor',
+                  name: '概览',
+                  icon: 'smile',
+                  component: './Swap/Monitor',
+                },
+                {
+                  path: '/swap/trade',
+                  name: '交易',
+                  icon: 'crown',
+                  component: './Swap/Trade',
+                },
+              ]
             },
             {
-              path: '/trade',
-              name: '交易',
-              icon: 'crown',
-              component: './Trade',
+              path: '/future',
+              name: '交割合约',
+              icon: 'fund',
+              routes:[
+                {
+                  path: '/future/monitor',
+                  name: '概览',
+                  icon: 'smile',
+                  component: './Future/Monitor',
+                },
+                {
+                  path: '/future/trade',
+                  name: '交易',
+                  icon: 'crown',
+                  component: './Future/Trade',
+                },
+              ]
             },
             // {
             //   path: '/welcome',

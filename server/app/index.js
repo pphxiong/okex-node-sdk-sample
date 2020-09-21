@@ -1,9 +1,8 @@
 import request from '../utils/request';
 import moment from 'moment'
 
-const {PublicClient} = require('@okfe/okex-node');
+// const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
-
 const customAuthClient = require('./customAuthClient');
 
 let BTC_INSTRUMENT_ID = "BTC-USD-201225";
@@ -38,7 +37,7 @@ const lastOrderMap = {
     },
 }
 const timeoutNo = 1000 * 60 * 1; //下单间隔时间
-let frequency = 1; //交易频次
+let frequency = 0.5; //交易频次
 const batchOrderMap = {
     [BTC_INSTRUMENT_ID]: {
         order_id: 0, //上次补仓订单id
@@ -57,7 +56,7 @@ const winOrderMap = {
 }
 
 var config = require('./config');
-const pClient = new PublicClient(config.urlHost);
+// const pClient = new PublicClient(config.urlHost);
 const authClient = new AuthenticatedClient(
   config.httpkey,
   config.httpsecret,
@@ -70,6 +69,8 @@ const cAuthClient = new customAuthClient(
     config.passphrase,
     config.urlHost
 )
+
+var swapApi = require('./swapApi');
 
 var express = require('express');
 // var http = require('../utils/http');
@@ -221,39 +222,6 @@ app.get('/futures/postOrder', function(req, response) {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
     myInterval = startInterval();
-});
-
-app.get('/swap/postLeverage', function(req, response) {
-  const {query = {}} = req;
-  const {instrument_id, leverage, side} = query;
-  authClient
-    .swap()
-    .postLeverage(instrument_id, {leverage, side})
-    .then(res => {
-      send(response, {errcode: 0, errmsg: 'ok', data: res});
-    });
-});
-
-app.get('/swap/postOrder', function(req, response) {
-  const {query = {}} = req;
-  authClient
-    .swap()
-    .postOrder(query)
-    .then(res => {
-      send(response, {errcode: 0, errmsg: 'ok', data: res});
-    });
-  // startInterval();
-});
-
-app.get('/swap/getAccount', function(req, response) {
-  const {query = {}} = req;
-  const { instrument_id } = query;
-  authClient
-      .swap()
-      .getAccount(instrument_id)
-      .then(res => {
-        send(response, {errcode: 0, errmsg: 'ok', data: res});
-      });
 });
 
 app.get('/futures/getPosition', function(req, response) {

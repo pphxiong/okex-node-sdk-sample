@@ -4,8 +4,8 @@ import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
 import { getOrders, getFuturesInformation, getFuturesInformationSentiment, getTradeFee } from './api';
-import { tradeTypeEnum } from '../config';
-import lineConfig from '../g2ChartConfigs/Line';
+import { tradeTypeEnum } from '../../config';
+import lineConfig from '../../pageComponents/g2ChartConfigs/Line';
 
 export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);

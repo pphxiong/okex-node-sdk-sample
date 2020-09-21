@@ -32,7 +32,7 @@ export default props => {
   const [btcMarkPrice, setBtcMarkPrice] = useState(0);
   const [eosMarkPrice, setEosMarkPrice] = useState(0);
   const [position, setPosition] = useState(0.5);
-  const [frequency, setFrequency] = useState(1);
+  const [frequency, setFrequency] = useState(0.5);
   const [currentInstrumentId, setCurrentInstrumentId] = useState(BTC_INSTRUMENT_ID);
 
   const getPosition = async () => {
