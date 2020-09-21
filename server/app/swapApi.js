@@ -176,7 +176,6 @@ app.get('/swap/information/sentiment', function(req, response) {
         });
 });
 
-// 逐仓模式
 app.get('/swap/postLeverage', function(req, response) {
     const {query = {}} = req;
     const { leverage, side, instrument_id } = query;
@@ -194,18 +193,6 @@ app.get('/swap/getLeverage', function(req, response) {
     authClient
         .swap()
         .getSettings(instrument_id)
-        .then(res => {
-            send(response, {errcode: 0, errmsg: 'ok', data: res});
-        });
-});
-
-// 逐仓模式
-app.get('/swap/postSingleLeverage', function(req, response) {
-    const {query = {}} = req;
-    const {underlying, leverage} = query;
-    authClient
-        .swap()
-        .postLeverage(underlying, query)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
