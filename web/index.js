@@ -42,13 +42,6 @@ const url = require('url');
 function proxyRequest(req, res, next) {
   const curl= url.parse(req.url);
   let { path } = curl;
-  if(path.includes('okex')){
-    path = path.replace('/okex', ':8090');
-    // path = 'http://www.paopaofunplus.com' + path;
-    path = 'http://8.210.214.167' + path;
-
-    return request.get(path)
-  }
 
   if(path.includes('okexSwap')){
     path = path.replace('/okexSwap', ':8091');
@@ -57,8 +50,15 @@ function proxyRequest(req, res, next) {
     return request.get(path)
   }
 
-  return new Promise(resolve=>resolve({ type: 'normal' }))
+  if(path.includes('okex')){
+    path = path.replace('/okex', ':8090');
+    // path = 'http://www.paopaofunplus.com' + path;
+    path = 'http://8.210.214.167' + path;
 
+    return request.get(path)
+  }
+
+  return new Promise(resolve=>resolve({ type: 'normal' }))
 }
 
 app.all('*', function (req, res, next) {
