@@ -1,24 +1,23 @@
 import React,{ useState, useEffect, useRef } from 'react';
 import { Button, InputNumber, Card, message, Divider, Popconfirm, Row, Col, Radio, Tabs } from 'antd';
 import {
-  postFuturesLeverage,
   postSwapLeverage,
-  postFuturesOrder,
+  postSwapOrder,
   getSwapAccount,
-  getFuturesPosition,
-  getFuturesLeverage,
+  getSwapPosition,
+  getSwapLeverage,
   startMonitor,
   stopMonitor,
   changeMode,
-  getFuturesAccounts,
-  getFuturesMarkPrice,
+  getSwapAccounts,
+  getSwapMarkPrice,
   autoCloseOrderByInstrumentId,
   setFrequencyApi
 } from './api'
 import moment from 'moment'
 
-const BTC_INSTRUMENT_ID = 'BTC-USD-201225';
-const EOS_INSTRUMENT_ID = 'EOS-USD-201225';
+const BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
+const EOS_INSTRUMENT_ID = 'EOS-USD-SWAP';
 
 export default props => {
   const [btcLeverage, setBtcLeverage] = useState(10);
@@ -36,23 +35,23 @@ export default props => {
   const [currentInstrumentId, setCurrentInstrumentId] = useState(BTC_INSTRUMENT_ID);
 
   const getPosition = async () => {
-    const result = await getFuturesPosition({instrument_id: BTC_INSTRUMENT_ID});
+    const result = await getSwapPosition({instrument_id: BTC_INSTRUMENT_ID});
     setBtcPosition(result?.data?.holding[0]);
-    const eosResult = await getFuturesPosition({instrument_id: EOS_INSTRUMENT_ID});
+    const eosResult = await getSwapPosition({instrument_id: EOS_INSTRUMENT_ID});
     setEosPosition(eosResult?.data?.holding[0]);
   }
 
   const getLeverage = async () => {
-    const { data: result } = await getFuturesLeverage({ underlying: 'BTC-USD' });
+    const { data: result } = await getSwapLeverage({ underlying: 'BTC-USD' });
     setBtcLeverage(result[BTC_INSTRUMENT_ID]['long_leverage']);
-    const { data: eosResult } = await getFuturesLeverage({ underlying: 'EOS-USD' });
+    const { data: eosResult } = await getSwapLeverage({ underlying: 'EOS-USD' });
     setEosLeverage(eosResult[EOS_INSTRUMENT_ID]['long_leverage']);
   }
 
   const getAccounts = async () => {
-    const result = await getFuturesAccounts({ currency: 'BTC-USD' });
+    const result = await getSwapAccounts({ currency: 'BTC-USD' });
     setBtcAccount(result?.data??{})
-    const eosResult = await getFuturesAccounts({ currency: 'EOS-USD' });
+    const eosResult = await getSwapAccounts({ currency: 'EOS-USD' });
     setEosAccount(eosResult?.data??{})
 
     await getSwapAccount({ currency: 'BTC-USD' });
@@ -60,9 +59,9 @@ export default props => {
   }
 
   const getMarkPrice = async () => {
-    const result = await getFuturesMarkPrice({ instrument_id: BTC_INSTRUMENT_ID });
+    const result = await getSwapMarkPrice({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcMarkPrice(result?.data?.mark_price)
-    const eosResult = await getFuturesMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
+    const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
     setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
@@ -80,10 +79,10 @@ export default props => {
   },[])
 
   const onSetLeverage = async ({ underlying, leverage, instrument_id, currency }) => {
-    const result = await postFuturesLeverage({ underlying, leverage, instrument_id, direction: 'long' })
-    // const result = await postFuturesLeverage({ underlying: 'BTC-USD', leverage });
+    const result = await postSwapLeverage({ underlying, leverage, instrument_id, direction: 'long' })
+    // const result = await postSwapLeverage({ underlying: 'BTC-USD', leverage });
     const data = result?.data;
-    await postFuturesLeverage({ underlying, leverage, instrument_id, direction: 'short' })
+    await postSwapLeverage({ underlying, leverage, instrument_id, direction: 'short' })
     if(data) message.success(`${currency}杠杆设置成功`);
   }
   //
@@ -102,7 +101,7 @@ export default props => {
       instrument_id: currentInstrumentId,
       match_price: 0
     }
-    const result = await postFuturesOrder(payload);
+    const result = await postSwapOrder(payload);
     console.log(result)
     if(result?.data?.result) message.success(`${currency}开仓成功`);
   }
@@ -117,7 +116,7 @@ export default props => {
       instrument_id: BTC_INSTRUMENT_ID,
       match_price: 0
     }
-    const result = await postFuturesOrder(payload);
+    const result = await postSwapOrder(payload);
     console.log(result)
     if(result?.data?.result) message.success('BTC开仓成功');
     // eos
@@ -129,7 +128,7 @@ export default props => {
       instrument_id: EOS_INSTRUMENT_ID,
       match_price: 0
     }
-    const eosResult = await postFuturesOrder(eosPayload);
+    const eosResult = await postSwapOrder(eosPayload);
     console.log(eosResult)
     if(eosResult?.data?.result) message.success('EOS开仓成功');
   }
@@ -146,7 +145,7 @@ export default props => {
         instrument_id: position.instrument_id,
         match_price: 0
       }
-      const result = await postFuturesOrder(payload);
+      const result = await postSwapOrder(payload);
       console.log(result)
       if(result?.data?.result) message.success(`${currency}平仓挂单成功`);
     }

@@ -14,18 +14,18 @@ export default {
         '^': '',
       },
     },
-    '/okex':{
+    '/okex/':{
       target: 'http://8.210.214.167:8090',
       changeOrigin: true,
       pathRewrite: {
-        '/okex': '',
+        '/okex/': '/',
       },
     },
-    '/okexSwap':{
+    '/okexSwap/':{
       target: 'http://8.210.214.167:8091',
       changeOrigin: true,
       pathRewrite: {
-        '/okexSwap': '',
+        '/okexSwap/': '/',
       },
     }
   },

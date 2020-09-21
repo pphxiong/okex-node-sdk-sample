@@ -53,7 +53,7 @@ export default defineConfig({
             },
             {
               path: '/swap',
-              name: '永续合约',
+              name: '永续',
               icon: 'smile',
               routes:[
                 {
@@ -72,7 +72,7 @@ export default defineConfig({
             },
             {
               path: '/futures',
-              name: '交割合约',
+              name: '交割',
               icon: 'fund',
               routes:[
                 {
