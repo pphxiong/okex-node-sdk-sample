@@ -44,7 +44,8 @@ function proxyRequest(req, res, next) {
   let { path } = curl;
   if(path.includes('okex')){
     path = path.replace('/okex', ':8090');
-    path = 'http://www.paopaofunplus.com' + path;
+    // path = 'http://www.paopaofunplus.com' + path;
+    path = 'http://8.210.214.167' + path;
 
     return request.get(path)
   }

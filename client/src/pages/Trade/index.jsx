@@ -131,44 +131,28 @@ export default props => {
     if(eosResult?.data?.result) message.success('EOS开仓成功');
   }
 
-  const closeOrder = async () => {
-    // btc
-    if(Number(btcPosition.long_avail_qty) || Number(btcPosition.short_avail_qty)) {
+  const closeOrder = async (currency) => {
+    const position = currency == 'BTC' ? btcPosition : eosPosition;
+    const price = currency == 'BTC' ? btcMarkPrice : eosMarkPrice;
+    if(Number(position.long_avail_qty) || Number(position.short_avail_qty)) {
       const payload = {
-        size: Number(btcPosition.long_avail_qty) || Number(btcPosition.short_avail_qty),
-        type: Number(btcPosition.long_avail_qty) ? 3 : 4,
+        size: Number(position.long_avail_qty) || Number(position.short_avail_qty),
+        type: Number(position.long_avail_qty) ? 3 : 4,
         order_type: 0, //1：只做Maker 4：市价委托
-        price: btcMarkPrice,
-        instrument_id: btcPosition.instrument_id,
+        price,
+        instrument_id: position.instrument_id,
         match_price: 0
       }
       const result = await postFuturesOrder(payload);
       console.log(result)
-      if(result?.data?.result) message.success('BTC平仓挂单成功');
-    }
-
-    // eos
-    if(Number(eosPosition.long_avail_qty) || Number(eosPosition.short_avail_qty)){
-      const eosPayload = {
-        size: Number(eosPosition.long_avail_qty) || Number(eosPosition.short_avail_qty),
-        type: Number(eosPosition.long_avail_qty) ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
-        price: eosMarkPrice,
-        instrument_id: eosPosition.instrument_id,
-        match_price: 0
-      }
-      const eosResult = await postFuturesOrder(eosPayload);
-      console.log(eosResult)
-      if(eosResult?.data?.result) message.success('EOS平仓挂单成功');
+      if(result?.data?.result) message.success(`${currency}平仓挂单成功`);
     }
   }
 
-  const closeOrderByMarkPrice = async () => {
-    const result = await autoCloseOrderByInstrumentId({ instrument_id: btcPosition.instrument_id, direction: Number(btcPosition.long_avail_qty) ? 'long' : 'short'})
-    if(result?.data?.result) message.success('btc平仓成功')
-
-    const eosResult = await autoCloseOrderByInstrumentId({ instrument_id: eosPosition.instrument_id, direction: Number(eosPosition.long_avail_qty) ? 'long' : 'short'})
-    if(eosResult?.data?.result) message.success('eos平仓成功')
+  const closeOrderByMarkPrice = async (currency) => {
+    const position = currency == 'BTC' ? btcPosition : eosPosition;
+    const result = await autoCloseOrderByInstrumentId({ instrument_id: position.instrument_id, direction: Number(position.long_avail_qty) ? 'long' : 'short'})
+    if(result?.data?.result) message.success(`${currency}平仓成功`)
   }
 
   const onStopMonitor = async () => {
@@ -234,17 +218,17 @@ export default props => {
     </Popconfirm>
 
     <Popconfirm
-      title="是否确定要全部平仓？"
-      onConfirm={()=>closeOrder()}
+      title={`是否确定要${currency}平仓？`}
+      onConfirm={()=>closeOrder(currency)}
     >
-      <Button type="primary" style={{ marginLeft: 10 }}>全平</Button>
+      <Button type="primary" style={{ marginLeft: 10 }}>平仓</Button>
     </Popconfirm>
 
     <Popconfirm
-      title="是否确定要市价全平？"
-      onConfirm={()=>closeOrderByMarkPrice()}
+      title={`是否确定要${currency}市价平仓？`}
+      onConfirm={()=>closeOrderByMarkPrice(currency)}
     >
-      <Button type="primary" style={{ marginLeft: 10 }}>市价全平</Button>
+      <Button type="primary" style={{ marginLeft: 10 }}>市价平仓</Button>
     </Popconfirm>
   </>)
 
