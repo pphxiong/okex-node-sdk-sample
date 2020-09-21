@@ -712,6 +712,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
                 timeout = timeoutNo / 10;
+                continuousObj.continuousLossNum = 0;
             }
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
