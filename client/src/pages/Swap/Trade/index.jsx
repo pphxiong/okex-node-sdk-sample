@@ -31,7 +31,7 @@ export default props => {
   const [btcMarkPrice, setBtcMarkPrice] = useState(0);
   const [eosMarkPrice, setEosMarkPrice] = useState(0);
   const [position, setPosition] = useState(0.5);
-  const [frequency, setFrequency] = useState(0.5);
+  const [frequency, setFrequency] = useState(0.75);
   const [currentInstrumentId, setCurrentInstrumentId] = useState(BTC_INSTRUMENT_ID);
 
   const getPosition = async () => {
@@ -71,11 +71,10 @@ export default props => {
     getMarkPrice();
   },[])
 
-  const onSetLeverage = async ({ underlying, leverage, instrument_id, currency }) => {
-    const result = await postSwapLeverage({ underlying, leverage, instrument_id, direction: 'long' })
-    // const result = await postSwapLeverage({ underlying: 'BTC-USD', leverage });
+  const onSetLeverage = async ({ leverage, instrument_id, currency }) => {
+    const result = await postSwapLeverage({ leverage, instrument_id, side: '1' })
     const data = result?.data;
-    await postSwapLeverage({ underlying, leverage, instrument_id, direction: 'short' })
+    await postSwapLeverage({ leverage, instrument_id, side: '2' })
     if(data) message.success(`${currency}杠杆设置成功`);
   }
   //
@@ -181,7 +180,7 @@ export default props => {
   const { margin_frozen: eos_margin_frozen, margin_for_unfilled: eos_margin_for_unfilled } = eosContracts[0];
   const eos_available_qty = Number(eosEquity) - Number(eos_margin_frozen) - Number(eos_margin_for_unfilled);
 
-  const OrderPanelC = ({ currency, instrument_id, underlying, leverage }) => (<>
+  const OrderPanelC = ({ currency, instrument_id, leverage }) => (<>
     <span>设置杠杆倍数：</span>
     <InputNumber
       value={ currency == 'BTC' ? btcLeverage : eosLeverage }
@@ -194,7 +193,7 @@ export default props => {
     />
     <Divider type="vertical" />
     <span>开仓张数：</span><InputNumber value={size} step={1} min={1} onChange={v=>setSize(v)}/>
-    <Button onClick={()=>onSetLeverage({ currency, instrument_id, underlying, leverage })} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
+    <Button onClick={()=>onSetLeverage({ currency, instrument_id, leverage })} type={'primary'} style={{ marginLeft: 10 }}>确定</Button>
 
     <Divider type="horizontal" />
 
@@ -297,13 +296,13 @@ export default props => {
         可开张数：{ Math.floor(Number(eos_total_avail_balance) * Number(eosMarkPrice) * eosLeverage * 0.98 / 10) }
       </p>
     </Card>
-    <Card title={'交割合约'} style={{ marginTop: 10 }}>
+    <Card title={'永续合约'} style={{ marginTop: 10 }}>
       <Tabs defaultActiveKey={BTC_INSTRUMENT_ID} onChange={key=>setCurrentInstrumentId(key)}>
         <Tabs.TabPane tab="BTC" key={BTC_INSTRUMENT_ID}>
-          <OrderPanelC instrument_id={BTC_INSTRUMENT_ID} currency={"BTC"} underlying={"BTC-USD"} leverage={btcLeverage} />
+          <OrderPanelC instrument_id={BTC_INSTRUMENT_ID} currency={"BTC"} leverage={btcLeverage} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="EOS" key={EOS_INSTRUMENT_ID}>
-          <OrderPanelC instrument_id={EOS_INSTRUMENT_ID} currency={"EOS"} underlying={"EOS-USD"} leverage={eosLeverage} />
+          <OrderPanelC instrument_id={EOS_INSTRUMENT_ID} currency={"EOS"} leverage={eosLeverage} />
         </Tabs.TabPane>
       </Tabs>
     </Card>

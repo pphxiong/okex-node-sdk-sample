@@ -202,50 +202,50 @@ export default props => {
         }}
       />
     </Card>
-    <Card title={'多空人数比'} style={{ marginTop: 10 }}>
-      {
-        longShortRatioData.length ? (
-          <Line
-            {...lineConfig}
-            height={300}
-            data={longShortRatioData}
-            xField = 'time'
-            yField = 'ratio'
-            meta = {{
-              time: { alias: '时间' },
-              ratio: { alias: '多空人数比' },
-            }}
-            point = {{
-              visible: true,
-              size: 5,
-              shape: 'diamond',
-              style: {
-                fill: 'white',
-                stroke: '#2593fc',
-                lineWidth: 2,
-              },
-            }}
-          />
-        ) : ''
-      }
-    </Card>
-    <Card title={'多空精英趋向指标'} style={{ marginTop: 10 }}>
-      {
-        longShortRatioData.length ? (
-          <Line
-            {...lineConfig}
-            height={300}
-            data={sentimentData}
-            xField = 'time'
-            yField = 'ratio'
-            seriesField = 'type'
-            meta = {{
-              time: { alias: '时间' },
-              ratio: { alias: '多空人数比' },
-            }}
-          />
-        ) : ''
-      }
-    </Card>
+    {/*<Card title={'多空人数比'} style={{ marginTop: 10 }}>*/}
+    {/*  {*/}
+    {/*    longShortRatioData.length ? (*/}
+    {/*      <Line*/}
+    {/*        {...lineConfig}*/}
+    {/*        height={300}*/}
+    {/*        data={longShortRatioData}*/}
+    {/*        xField = 'time'*/}
+    {/*        yField = 'ratio'*/}
+    {/*        meta = {{*/}
+    {/*          time: { alias: '时间' },*/}
+    {/*          ratio: { alias: '多空人数比' },*/}
+    {/*        }}*/}
+    {/*        point = {{*/}
+    {/*          visible: true,*/}
+    {/*          size: 5,*/}
+    {/*          shape: 'diamond',*/}
+    {/*          style: {*/}
+    {/*            fill: 'white',*/}
+    {/*            stroke: '#2593fc',*/}
+    {/*            lineWidth: 2,*/}
+    {/*          },*/}
+    {/*        }}*/}
+    {/*      />*/}
+    {/*    ) : ''*/}
+    {/*  }*/}
+    {/*</Card>*/}
+    {/*<Card title={'多空精英趋向指标'} style={{ marginTop: 10 }}>*/}
+    {/*  {*/}
+    {/*    longShortRatioData.length ? (*/}
+    {/*      <Line*/}
+    {/*        {...lineConfig}*/}
+    {/*        height={300}*/}
+    {/*        data={sentimentData}*/}
+    {/*        xField = 'time'*/}
+    {/*        yField = 'ratio'*/}
+    {/*        seriesField = 'type'*/}
+    {/*        meta = {{*/}
+    {/*          time: { alias: '时间' },*/}
+    {/*          ratio: { alias: '多空人数比' },*/}
+    {/*        }}*/}
+    {/*      />*/}
+    {/*    ) : ''*/}
+    {/*  }*/}
+    {/*</Card>*/}
   </>
 }

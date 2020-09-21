@@ -179,10 +179,10 @@ app.get('/swap/information/sentiment', function(req, response) {
 // 逐仓模式
 app.get('/swap/postLeverage', function(req, response) {
     const {query = {}} = req;
-    const { underlying, leverage, direction, instrument_id } = query;
+    const { leverage, side, instrument_id } = query;
     authClient
         .swap()
-        .postLeverage(underlying, { leverage, direction, instrument_id })
+        .postLeverage(instrument_id, { leverage, side })
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -627,7 +627,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             lastObj.last = Number(last);
 
             let isReverse = false;
-            let timeout = timeoutNo * 10;
+            let timeout = timeoutNo * 10 / 2;
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
@@ -707,7 +707,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             continuousObj.continuousWinNum = 0;
 
             let isReverse = false;
-            let timeout = timeoutNo * 10 / 2;
+            let timeout = timeoutNo * 10;
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;

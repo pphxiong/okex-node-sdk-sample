@@ -37,7 +37,7 @@ const lastOrderMap = {
     },
 }
 const timeoutNo = 1000 * 60 * 1; //下单间隔时间
-let frequency = 1; //交易频次
+let frequency = 0.75; //交易频次
 const batchOrderMap = {
     [BTC_INSTRUMENT_ID]: {
         order_id: 0, //上次补仓订单id
@@ -627,7 +627,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             lastObj.last = Number(last);
 
             let isReverse = false;
-            let timeout = timeoutNo * 10;
+            let timeout = timeoutNo * 10 / 2;
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
@@ -707,7 +707,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             continuousObj.continuousWinNum = 0;
 
             let isReverse = false;
-            let timeout = timeoutNo * 10 / 2;
+            let timeout = timeoutNo * 10;
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
