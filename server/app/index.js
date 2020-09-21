@@ -707,7 +707,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             continuousObj.continuousWinNum = 0;
 
             let isReverse = false;
-            let timeout = timeoutNo * 10;
+            let timeout = timeoutNo * 10 / 2;
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
