@@ -181,7 +181,7 @@ app.get('/swap/postLeverage', function(req, response) {
     const { leverage, side, instrument_id } = query;
     authClient
         .swap()
-        .postLeverage(instrument_id, { leverage, side })
+        .postLeverage(instrument_id, { instrument_id, leverage, side })
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -586,24 +586,24 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     const batchObj = batchOrderMap[instrument_id]
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum, continuousObj.continuousBatchNum, continuousObj.continuousProfitNum)
     // 盈利，半仓，止盈
-    if((ratio > condition * 1 * frequency) && !continuousObj.continuousProfitNum) {
-        if(winOrderObj.order_id){
-            const { state } = await authClient.swap().getOrder(instrument_id,winOrderObj.order_id);
-            if(state=='2'){
-                continuousObj.continuousProfitNum = continuousObj.continuousProfitNum + 1;
-                winOrderObj.order_id = 0;
-                return;
-            }
-        }
-        const { order_id } = await autoCloseOrderSingle(holding,{ closeRatio: 0.5 })
-        winOrderObj.order_id = order_id;
-        setTimeout(async ()=>{
-            await autoOpenOrderSingle(holding, { availRatio: 0.5 });
-        },timeoutNo * 2 * frequency)
-        return;
-    }
+    // if((ratio > condition * 1 * frequency) && !continuousObj.continuousProfitNum) {
+    //     if(winOrderObj.order_id){
+    //         const { state } = await authClient.swap().getOrder(instrument_id,winOrderObj.order_id);
+    //         if(state=='2'){
+    //             continuousObj.continuousProfitNum = continuousObj.continuousProfitNum + 1;
+    //             winOrderObj.order_id = 0;
+    //             return;
+    //         }
+    //     }
+    //     const { order_id } = await autoCloseOrderSingle(holding,{ closeRatio: 0.5 })
+    //     winOrderObj.order_id = order_id;
+    //     setTimeout(async ()=>{
+    //         await autoOpenOrderSingle(holding, { availRatio: 0.5 });
+    //     },timeoutNo * 2 * frequency)
+    //     return;
+    // }
     // 盈利
-    if(ratio > condition * 1.5 * frequency){
+    if(ratio > condition * 1.2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
@@ -614,7 +614,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             lastObj.last = Number(last);
 
             let isReverse = false;
-            let timeout = timeoutNo * 10 / 2;
+            let timeout = timeoutNo;
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
@@ -627,7 +627,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
                 console.log('last', mark_price, lastObj.last, type)
                 const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
 
-                let timeMultiple = 10;
+                let timeMultiple = 1;
                 // 头两次盈利马上开仓
                 if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 0;
                 setTimeout(async ()=>{
@@ -650,12 +650,12 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     if(continuousObj.continuousBatchNum && (ratio > 0.01 * leverage / 10 * continuousObj.continuousBatchNum)) {
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
-            continuousMap[instrument_id] = {
-                continuousLossNum: 0,
-                continuousWinNum: 0,
-                continuousBatchNum: 0,
-                continuousProfitNum: 0
-            };
+            // continuousMap[instrument_id] = {
+            //     continuousLossNum: 0,
+            //     continuousWinNum: 0,
+            //     continuousBatchNum: 0,
+            //     continuousProfitNum: 0
+            // };
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding, { availRatio: 0.5 });
             },timeoutNo * 2 * frequency)
@@ -694,11 +694,12 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             continuousObj.continuousWinNum = 0;
 
             let isReverse = false;
-            let timeout = timeoutNo * 10;
+            let timeout = timeoutNo;
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
                 timeout = timeoutNo / 10;
+                continuousObj.continuousLossNum = 0;
             }
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
