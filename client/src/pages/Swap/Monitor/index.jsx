@@ -113,32 +113,41 @@ export default props => {
       }
     },
     {
-    dataIndex: 'feeUsd',
-    title: '手续费（美元）',
-    render: (text,record,index) => {
-      if(index+1==ps) return text ? text.toFixed(2) : '';
-      return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
-    }
+      dataIndex: 'feeUsd',
+      title: '手续费（美元）',
+      render: (text,record,index) => {
+        if (index + 1 == ps) return text ? text.toFixed(2) : '';
+        return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
+      }
+    },
+    {
+      dataIndex: 'feeUsdPercent',
+      title: '手续费占比(%)',
+      render: (text,{size, fee, contract_val, price_avg, leverage},index) => {
+        if(index+1==ps) return text ? text.toFixed(2) : '';
+        return ( Number(fee) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage) ).toFixed(2)
+      }
   },
   //   {
   //   dataIndex: 'pnl',
   //   title: '盈亏'
   // },
-    {
-    dataIndex: 'pnlUsd',
-    title: '盈亏（美元）',
-    render: (text,record,index) => {
-      if(index+1==ps) return text ? text.toFixed(2) : '';
-      return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
-    }
-  },{
-      dataIndex: 'ratio',
-      title: '盈亏占比',
-      render: (text,{ fee, size, contract_val, price_avg, leverage, pnl },index) => {
-        if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
-        return ( (Number(fee) * Number(price_avg) + Number(pnl) * Number(price_avg)) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
-      }
-    }]);
+  //   {
+  //   dataIndex: 'pnlUsd',
+  //   title: '盈亏（美元）',
+  //   render: (text,record,index) => {
+  //     if(index+1==ps) return text ? text.toFixed(2) : '';
+  //     return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
+  //   }
+  // },{
+  //     dataIndex: 'ratio',
+  //     title: '盈亏占比',
+  //     render: (text,{ fee, size, contract_val, price_avg, leverage, pnl },index) => {
+  //       if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
+  //       return ( (Number(fee) * Number(price_avg) + Number(pnl) * Number(price_avg)) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
+  //     }
+  //   }
+    ]);
 
   const responseHandler = (data, cr, ps)=>{
     if(Array.isArray(data)) data = { order_info: data };

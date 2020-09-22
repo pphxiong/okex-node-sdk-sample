@@ -257,8 +257,7 @@ app.get('/swap/autoCloseOrderByInstrumentId', function(req, response) {
 const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
     if(!direction){
         const { holding } = await authClient.swap().getPosition(instrument_id);
-        direction = 'long';
-        if(Number(holding[1].position)) direction = 'short'
+        direction = holding[0].side;
     }
     const result = await cAuthClient
         .swap
@@ -583,15 +582,15 @@ function startInterval() {
         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
         const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
 
-        const btcQty = Number(btcHolding[0].position) + Number(btcHolding[1].position);
-        const eosQty = Number(eosHolding[0].position) + Number(eosHolding[1].position);
+        const btcQty = Number(btcHolding[0].position);
+        const eosQty = Number(eosHolding[0].position);
 
         const qty = btcQty + eosQty;
         if(!qty) {
             return;
         }
-        if(btcQty) getOrderModeSingle(mode, Number(btcHolding[0].position) ? btcHolding[0] : btcHolding[1]);
-        if(eosQty) getOrderModeSingle(mode, Number(eosHolding[0].position) ? btcHolding[0] : eosHolding[1]);
+        if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
+        if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
     },1000 * 5)
 }
 

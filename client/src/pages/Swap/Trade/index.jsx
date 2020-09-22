@@ -38,11 +38,23 @@ export default props => {
 
   const getPosition = async () => {
     const result = await getSwapPosition({instrument_id: BTC_INSTRUMENT_ID});
-    setBtcLongPosition(result?.data?.holding[0]);
-    setBtcShortPosition(result?.data?.holding[1]);
+    const { side } = result?.data?.holding[0]??{};
+    if(side == 'long') {
+      setBtcLongPosition(result?.data?.holding[0]);
+      setBtcShortPosition({})
+    }else{
+      setBtcLongPosition({});
+      setBtcShortPosition(result?.data?.holding[0])
+    }
     const eosResult = await getSwapPosition({instrument_id: EOS_INSTRUMENT_ID});
-    setEosLongPosition(eosResult?.data?.holding[0]);
-    setEosShortPosition(eosResult?.data?.holding[1]);
+    const { side: eosSide } = eosResult?.data?.holding[0]??{};
+    if(eosSide == 'long') {
+      setEosLongPosition(eosResult?.data?.holding[0]);
+      setEosShortPosition({})
+    }else{
+      setEosLongPosition({});
+      setEosShortPosition(eosResult?.data?.holding[0])
+    }
   }
 
   const getLeverage = async () => {
@@ -128,15 +140,15 @@ export default props => {
   }
 
   const closeOrder = async (currency) => {
-    const position = currency == 'BTC' ? [btcLongPosition, btcShortPosition] : [eosLongPosition,eosShortPosition];
+    const position = currency == 'BTC' ? ( Number(btcLongPosition.position) ? btcLongPosition : btcShortPosition ) : ( Number(eosLongPosition.position) ? eosLongPosition : eosShortPosition );
     const price = currency == 'BTC' ? btcMarkPrice : eosMarkPrice;
-    if(Number(position.long_avail_qty) || Number(position.short_avail_qty)) {
+    if(Number(position.position)) {
       const payload = {
-        size: Number(position[0].avail_position) || Number(position[1].avail_position),
-        type: Number(position[0].position) ? 3 : 4,
+        size: Number(position.avail_position),
+        type: position.side == 'long' ? 3 : 4,
         order_type: 0, //1：只做Maker 4：市价委托
         price,
-        instrument_id: position[0].instrument_id,
+        instrument_id: position.instrument_id,
         match_price: 0
       }
       const result = await postSwapOrder(payload);
