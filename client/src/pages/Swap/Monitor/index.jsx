@@ -169,6 +169,7 @@ export default props => {
       index: '总计',
       feeUsd,
       pnlUsd,
+      feeUsdPercent: feeUsd * 100 / bzjUsd,
       ratio: ( feeUsd + pnlUsd ) * 100 / (bzjUsd / (ps - 1))
     });
     return { records };

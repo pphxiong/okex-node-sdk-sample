@@ -120,6 +120,14 @@ export default props => {
       return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
     }
   },
+    {
+      dataIndex: 'feeUsdPercent',
+      title: '手续费占比（%）',
+      render: (text,{size, contract_val, fee, price_avg, leverage},index) => {
+        if(index+1==ps) return text ? text.toFixed(2) : '';
+        return (Number(fee) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage) ).toFixed(2)
+      }
+    },
   //   {
   //   dataIndex: 'pnl',
   //   title: '盈亏'
@@ -160,6 +168,7 @@ export default props => {
       index: '总计',
       feeUsd,
       pnlUsd,
+      feeUsdPercent: feeUsd * 100 / bzjUsd,
       ratio: ( feeUsd + pnlUsd ) * 100 / (bzjUsd / (ps - 1))
     });
     return { records };

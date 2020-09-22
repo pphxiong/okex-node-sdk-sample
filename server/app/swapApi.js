@@ -274,11 +274,11 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id,side  }) =>
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销
 const validateAndCancelOrder = async (instrument_id) => {
-    const { result, order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
-    console.log('cancelorder', instrument_id, result)
-    if( result && order_info && order_info.length ){
+    const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
+    console.log('cancelorder', instrument_id, order_info)
+    if( order_info && order_info.length ){
         const { order_id } = order_info[0];
-        return await authClient.swap().cancelOrder(instrument_id,order_id)
+        return await authClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -326,10 +326,10 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 }
 
 // 平仓，closeRatio平仓比例
-const autoCloseOrderSingle = async ({ position, instrument_id, last, side }, params = {}) => {
+const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, last, side }, params = {}) => {
     const { closeRatio = 1 } = params;
     const { result } = await validateAndCancelOrder(instrument_id);
-    const qty = Number(position)
+    const qty = Number(avail_position)
     let size = Math.floor(qty * closeRatio)
     if(qty == 1) size = 1;
     if(size){
@@ -470,7 +470,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
     }
     // 补仓后，回本即平仓
-    if(continuousObj.continuousBatchNum && (ratio > 0.01 * leverage / 10 * continuousObj.continuousBatchNum)) {
+    if(continuousObj.continuousBatchNum && (ratio > 0.01 * leverage / 10)) {
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             // continuousMap[instrument_id] = {
