@@ -392,10 +392,10 @@ function validateRatio(holding) {
 }
 
 const getOrderModeSingle = async (orderMode = 3, holding) => {
-    const ratio = Number(holding.unrealised_pnl) / Number(holding.position);
+    const ratio = Number(holding.unrealised_pnl) / Number(holding.margin);
     const leverage = Number(holding.leverage);
     let condition = leverage / 100;
-    console.log(holding.instrument_id,ratio,condition)
+    console.log(holding.instrument_id,ratio,condition, holding.margin, holding.unrealised_pnl)
     await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
