@@ -275,7 +275,7 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id,side  }) =>
 // 如果有就撤销
 const validateAndCancelOrder = async (instrument_id) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
-    console.log('cancelorder', instrument_id, order_info)
+    console.log('cancelorder', instrument_id, order_info.length)
     if( order_info && order_info.length ){
         const { order_id } = order_info[0];
         return await authClient.swap().postCancelOrder(instrument_id,order_id)
@@ -308,7 +308,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
 
-    console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
     const { result } = await validateAndCancelOrder(instrument_id);
     if(avail) {
@@ -579,6 +579,8 @@ const autoOperateByHolding = async (holding,ratio,condition) => {
 function startInterval() {
     if(myInterval) return myInterval;
     return setInterval(async ()=>{
+        console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
+
         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
         const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
 
