@@ -24,8 +24,10 @@ export default props => {
   const [eosLeverage, setEosLeverage] = useState(10);
   const [swapLeverage, setSwapLeverage] = useState(5);
   const [size, setSize] = useState(1);
-  const [btcPosition, setBtcPosition] = useState({});
-  const [eosPosition, setEosPosition] = useState({});
+  const [btcLongPosition, setBtcLongPosition] = useState({});
+  const [btcShortPosition, setBtcShortPosition] = useState({});
+  const [eosLongPosition, setEosLongPosition] = useState({});
+  const [eosShortPosition, setEosShortPosition] = useState({});
   const [btcAccount, setBtcAccount] = useState({});
   const [eosAccount, setEosAccount] = useState({});
   const [btcMarkPrice, setBtcMarkPrice] = useState(0);
@@ -36,26 +38,32 @@ export default props => {
 
   const getPosition = async () => {
     const result = await getSwapPosition({instrument_id: BTC_INSTRUMENT_ID});
-    setBtcPosition(result?.data?.holding[0]);
+    setBtcLongPosition(result?.data?.holding[0]);
+    setBtcShortPosition(result?.data?.holding[1]);
     const eosResult = await getSwapPosition({instrument_id: EOS_INSTRUMENT_ID});
-    setEosPosition(eosResult?.data?.holding[0]);
+    setEosLongPosition(eosResult?.data?.holding[0]);
+    setEosShortPosition(eosResult?.data?.holding[1]);
   }
 
   const getLeverage = async () => {
     const { data: result } = await getSwapLeverage({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcLeverage(result['long_leverage']);
+    const { data: eosResult } = await getSwapLeverage({ instrument_id: EOS_INSTRUMENT_ID });
+    setEosLeverage(eosResult['long_leverage']);
   }
 
   const getAccounts = async () => {
     const result = await getSwapAccounts({ instrument_id: BTC_INSTRUMENT_ID });
-    setBtcAccount(result?.data??{})
+    setBtcAccount(result?.data?.info??{})
+    const eosResult = await getSwapAccounts({ instrument_id: EOS_INSTRUMENT_ID });
+    setEosAccount(result?.data?.info??{})
   }
 
   const getMarkPrice = async () => {
     const result = await getSwapMarkPrice({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcMarkPrice(result?.data?.mark_price)
-    // const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
-    // setEosMarkPrice(eosResult?.data?.mark_price)
+    const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
+    setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
   const onSetFrequency = async (value) => {
@@ -77,12 +85,6 @@ export default props => {
     await postSwapLeverage({ leverage, instrument_id, side: '2' })
     if(data) message.success(`${currency}杠杆设置成功`);
   }
-  //
-  // const onSetSwapLeverage = async () => {
-  //   const result = await postSwapLeverage({ instrument_id: 'BTC-USD-SWAP', leverage: swapLeverage, side: 3 })
-  //   const data = result?.data;
-  //   if(data) message.success('设置成功')
-  // }
 
   const openOrder = async (type, currency) => {
     const payload = {
@@ -126,15 +128,15 @@ export default props => {
   }
 
   const closeOrder = async (currency) => {
-    const position = currency == 'BTC' ? btcPosition : eosPosition;
+    const position = currency == 'BTC' ? [btcLongPosition, btcShortPosition] : [eosLongPosition,eosShortPosition];
     const price = currency == 'BTC' ? btcMarkPrice : eosMarkPrice;
     if(Number(position.long_avail_qty) || Number(position.short_avail_qty)) {
       const payload = {
-        size: Number(position.long_avail_qty) || Number(position.short_avail_qty),
-        type: Number(position.long_avail_qty) ? 3 : 4,
+        size: Number(position[0].avail_position) || Number(position[1].avail_position),
+        type: Number(position[0].position) ? 3 : 4,
         order_type: 0, //1：只做Maker 4：市价委托
         price,
-        instrument_id: position.instrument_id,
+        instrument_id: position[0].instrument_id,
         match_price: 0
       }
       const result = await postSwapOrder(payload);
@@ -144,8 +146,8 @@ export default props => {
   }
 
   const closeOrderByMarkPrice = async (currency) => {
-    const position = currency == 'BTC' ? btcPosition : eosPosition;
-    const result = await autoCloseOrderByInstrumentId({ instrument_id: position.instrument_id, direction: Number(position.long_avail_qty) ? 'long' : 'short'})
+    const position = currency == 'BTC' ? [btcLongPosition, btcShortPosition] : [eosLongPosition,eosShortPosition];
+    const result = await autoCloseOrderByInstrumentId({ instrument_id: position[0].instrument_id, direction: Number(position[0].position) ? 'long' : 'short'})
     if(result?.data?.result) message.success(`${currency}平仓成功`)
   }
 
@@ -166,9 +168,9 @@ export default props => {
   }
 
   // 共计收益
-  const pnl = (Number(btcPosition.long_pnl)+Number(btcPosition.short_pnl)) * Number(btcPosition.last) + (Number(eosPosition.long_pnl)+Number(eosPosition.short_pnl)) * Number(eosPosition.last);
+  const pnl = (Number(btcLongPosition.unrealized_pnl)+Number(btcShortPosition.unrealized_pnl)) * Number(btcLongPosition.last) + (Number(eosLongPosition.unrealized_pnl)+Number(eosShortPosition.unrealized_pnl)) * Number(eosLongPosition.last);
   // 共计保证金
-  const margin = (Number(btcPosition.long_margin)+Number(btcPosition.short_margin)) * Number(btcPosition.last) + (Number(eosPosition.long_margin)+Number(eosPosition.short_margin)) * Number(eosPosition.last);
+  const margin = (Number(btcLongPosition.margin)+Number(btcShortPosition.margin)) * Number(btcLongPosition.last) + (Number(eosLongPosition.margin)+Number(eosShortPosition.margin)) * Number(eosLongPosition.last);
 
   // btc余额
   const { equity, contracts = [{}], total_avail_balance } = btcAccount;
@@ -231,43 +233,43 @@ export default props => {
       <Row gutter={12}>
         <Col span={12}>
           <h3>BTC</h3>
-          <p>ID：{btcPosition.instrument_id}</p>
+          <p>ID：{btcLongPosition.instrument_id}</p>
           {/*<p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
-          <p>更新时间：{moment(btcPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
-          <p>杠杆倍数：{btcPosition.long_leverage}</p>
-          <p>数量（张）：多 {btcPosition.long_qty} 空 {btcPosition.short_qty}</p>
-          <p>开仓均价：{btcPosition.long_avg_cost}</p>
-          <p>最新成交价（美元）：{btcPosition.last}</p>
-          <p>多仓保证金(BTC)：{btcPosition.long_margin}</p>
-          <p>多仓收益(BTC)：{btcPosition.long_pnl}</p>
-          <p>多仓收益率（%）：{Number(btcPosition.long_margin) && (Number(btcPosition.long_unrealised_pnl) / Number(btcPosition.long_margin) * 100)}</p>
-          <p>空仓保证金（BTC)：{btcPosition.short_margin}</p>
-          <p>空仓收益（BTC)：{btcPosition.short_pnl}</p>
-          <p>空仓收益率（%）：{Number(btcPosition.short_margin) && (Number(btcPosition.short_unrealised_pnl) / Number(btcPosition.short_margin) * 100)}</p>
-          <p>已实现盈余：{btcPosition.realised_pnl}</p>
-          <p>保证金折合（美元）：{Number(btcPosition.long_margin) * Number(btcPosition.last)}</p>
-          <p>收益折合（美元）：{Number(btcPosition.long_pnl) * Number(btcPosition.last)}</p>
-          <p>已实现盈余折合（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last)}</p>
+          <p>更新时间：{moment(btcLongPosition.timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+          <p>杠杆倍数：{btcLongPosition.leverage}</p>
+          <p>数量（张）：多 {btcLongPosition.position} 空 {btcShortPosition.position}</p>
+          <p>开仓均价：{btcLongPosition.avg_cost}</p>
+          <p>最新成交价（美元）：{btcLongPosition.last}</p>
+          <p>多仓保证金(BTC)：{btcLongPosition.margin}</p>
+          <p>多仓收益(BTC)：{btcLongPosition.unrealized_pnl}</p>
+          <p>多仓收益率（%）：{Number(btcLongPosition.margin) && (Number(btcLongPosition.unrealized_pnl) / Number(btcLongPosition.margin) * 100)}</p>
+          <p>空仓保证金（BTC)：{btcShortPosition.margin}</p>
+          <p>空仓收益（BTC)：{btcShortPosition.unrealized_pnl}</p>
+          <p>空仓收益率（%）：{Number(btcShortPosition.margin) && (Number(btcShortPosition.unrealized_pnl) / Number(btcShortPosition.margin) * 100)}</p>
+          <p>已实现盈余：{Number(btcShortPosition.realized_pnl) + Number(btcShortPosition.realized_pnl)}</p>
+          <p>保证金折合（美元）：{Number(btcLongPosition.margin) * Number(btcLongPosition.last) + Number(btcShortPosition.margin) * Number(btcShortPosition.last)}</p>
+          {/*<p>收益折合（美元）：{Number(btcLongPosition.realized_pnl) * Number(btcLongPosition.last) + Number(btcShortPosition.realized_pnl) * Number(btcShortPosition.last)}</p>*/}
+          <p>已实现盈余折合（美元）：{Number(btcLongPosition.realized_pnl) * Number(btcLongPosition.last) + Number(btcShortPosition.realized_pnl) * Number(btcShortPosition.last)}</p>
         </Col>
         <Col span={12}>
           <h3>EOS</h3>
-          <p>ID：{eosPosition.instrument_id}</p>
-          {/*<p>成交时间：{moment(eosPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
-          <p>更新时间：{moment(eosPosition.updated_at).format('YYYY-MM-DD HH:mm:ss')}</p>
-          <p>杠杆倍数：{eosPosition.long_leverage}</p>
-          <p>数量（张）：多 {eosPosition.long_qty} 空 {eosPosition.short_qty}</p>
-          <p>开仓均价：{eosPosition.short_avg_cost}</p>
-          <p>最新成交价（美元）：{eosPosition.last}</p>
-          <p>多仓保证金(EOS)：{eosPosition.long_margin}</p>
-          <p>多仓收益(EOS)：{eosPosition.long_pnl}</p>
-          <p>多仓收益率（%）：{Number(eosPosition.long_margin) && (Number(eosPosition.long_unrealised_pnl) / Number(eosPosition.long_margin) * 100)}</p>
-          <p>空仓保证金（EOS)：{eosPosition.short_margin}</p>
-          <p>空仓收益（EOS)：{eosPosition.short_pnl}</p>
-          <p>空仓收益率（%）：{Number(btcPosition.short_margin) && (Number(btcPosition.short_unrealised_pnl) / Number(btcPosition.short_margin) * 100)}</p>
-          <p>已实现盈余：{eosPosition.realised_pnl}</p>
-          <p>保证金折合（美元）：{(Number(eosPosition.short_margin) + Number(eosPosition.long_margin)) * Number(eosPosition.last)}</p>
-          <p>收益折合（美元）：{Number(eosPosition.short_pnl) * Number(eosPosition.last)}</p>
-          <p>已实现盈余折合（美元）：{Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
+          <p>ID：{eosLongPosition.instrument_id}</p>
+          {/*<p>成交时间：{moment(btcPosition.created_at).format('YYYY-MM-DD hh:mm:ss')}</p>*/}
+          <p>更新时间：{moment(eosLongPosition.timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+          <p>杠杆倍数：{eosLongPosition.leverage}</p>
+          <p>数量（张）：多 {eosLongPosition.position} 空 {eosShortPosition.position}</p>
+          <p>开仓均价：{eosLongPosition.avg_cost}</p>
+          <p>最新成交价（美元）：{eosLongPosition.last}</p>
+          <p>多仓保证金(EOS)：{eosLongPosition.margin}</p>
+          <p>多仓收益(EOS)：{eosLongPosition.unrealized_pnl}</p>
+          <p>多仓收益率（%）：{Number(eosLongPosition.margin) && (Number(eosLongPosition.unrealized_pnl) / Number(eosLongPosition.margin) * 100)}</p>
+          <p>空仓保证金（EOS)：{eosShortPosition.margin}</p>
+          <p>空仓收益（EOS)：{eosShortPosition.unrealized_pnl}</p>
+          <p>空仓收益率（%）：{Number(eosShortPosition.margin) && (Number(eosShortPosition.unrealized_pnl) / Number(eosShortPosition.margin) * 100)}</p>
+          <p>已实现盈余：{Number(eosShortPosition.realized_pnl) + Number(eosShortPosition.realized_pnl)}</p>
+          <p>保证金折合（美元）：{Number(eosLongPosition.margin) * Number(eosLongPosition.last) + Number(eosShortPosition.margin) * Number(eosShortPosition.last)}</p>
+          {/*<p>收益折合（美元）：{Number(btcLongPosition.realized_pnl) * Number(btcLongPosition.last) + Number(btcShortPosition.realized_pnl) * Number(btcShortPosition.last)}</p>*/}
+          <p>已实现盈余折合（美元）：{Number(eosLongPosition.realized_pnl) * Number(eosLongPosition.last) + Number(eosShortPosition.realized_pnl) * Number(eosShortPosition.last)}</p>
         </Col>
       </Row>
       <Divider />
@@ -276,7 +278,12 @@ export default props => {
           <h3>共计</h3>
           <p>收益（美元）：{pnl}</p>
           <p>收益率（%）：{pnl/margin*100}</p>
-          <p>已实现盈余（美元）：{Number(btcPosition.realised_pnl) * Number(btcPosition.last) + Number(eosPosition.realised_pnl) * Number(eosPosition.last)}</p>
+          <p>已实现盈余（美元）：{
+            Number(btcLongPosition.realised_pnl) * Number(btcLongPosition.last)
+            + Number(btcShortPosition.realised_pnl) * Number(btcShortPosition.last)
+            + Number(eosLongPosition.realised_pnl) * Number(eosLongPosition.last)
+            + Number(eosShortPosition.realised_pnl) * Number(eosShortPosition.last)
+          }</p>
         </Col>
       </Row>
     </Card>

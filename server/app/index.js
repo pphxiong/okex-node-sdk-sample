@@ -660,7 +660,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
     }
     // 补仓后，回本即平仓
-    if(continuousObj.continuousBatchNum && (ratio > 0.01 * leverage / 10 * continuousObj.continuousBatchNum)) {
+    if(continuousObj.continuousBatchNum && (ratio > 0.01 * leverage * frequency / 10 * continuousObj.continuousBatchNum)) {
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             // continuousMap[instrument_id] = {

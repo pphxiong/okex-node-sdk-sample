@@ -181,7 +181,7 @@ app.get('/swap/postLeverage', function(req, response) {
     const { leverage, side, instrument_id } = query;
     authClient
         .swap()
-        .postLeverage(instrument_id, { instrument_id, leverage, side })
+        .postLeverage(instrument_id, { leverage, side })
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
@@ -258,7 +258,7 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
     if(!direction){
         const { holding } = await authClient.swap().getPosition(instrument_id);
         direction = 'long';
-        if(Number(holding[0].short_qty)) direction = 'short'
+        if(Number(holding[1].position)) direction = 'short'
     }
     const result = await cAuthClient
         .swap
@@ -267,103 +267,9 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 }
 
 // 市价全平By holding
-const autoCloseOrderByMarketPriceByHolding =  async ({ short_qty, instrument_id }) => {
-    let direction = 'long';
-    if(Number(short_qty)) direction = 'short'
+const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id,side  }) => {
     await validateAndCancelOrder(instrument_id);
-    return await cAuthClient.swap.closePosition({instrument_id, direction})
-}
-
-
-// 开仓，对冲仓或同方向仓
-const autoOpenOrders = async (b, e, isReverse = false) => {
-    const { holding: btc } = await authClient.swap().getPosition(b.instrument_id);
-    const { holding: eos } = await authClient.swap().getPosition(e.instrument_id);
-    const btcHolding = btc[0];
-    const eosHolding = eos[0];
-
-    const { mark_price: btcMarkPrice } = await cAuthClient.swap.getMarkPrice(b.instrument_id);
-    const { mark_price: eosMarkPrice } = await cAuthClient.swap.getMarkPrice(e.instrument_id);
-
-    // 可开张数
-    const btcAvailNo = await getAvailNo({ mark_price: btcMarkPrice });
-    const eosAvailNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price: eosMarkPrice });
-
-    const btcAvail = Math.min(Number(btcAvailNo), Math.max(Number(b.long_avail_qty), Number(b.short_avail_qty)));
-    const eosAvail = Math.min(Number(eosAvailNo), Math.max(Number(e.long_avail_qty), Number(e.short_avail_qty))) || (btcAvail * 10);
-
-    const btcType = isReverse ? reverseDirection(getCurrentDirection(b)) : getCurrentDirection(b);
-    const eosType = isReverse ? reverseDirection(getCurrentDirection(e)) : getCurrentDirection(e);
-
-    console.log('avail',btcAvail, eosAvail)
-    console.log(btcHolding.instrument_id,btcAvail,btcType)
-    console.log(eosHolding.instrument_id,eosAvail,eosType)
-    // 目前是空仓，且可开张数不为0
-    if(!Number(btcHolding.long_qty) && !Number(btcHolding.short_qty) && btcAvail){
-        const payload = {
-            size: btcAvail,
-            type: btcType,
-            order_type: 0, //1：只做Maker 4：市价委托
-            instrument_id: btcHolding.instrument_id,
-            price: btcMarkPrice,
-            match_price: 0
-        }
-        authClient
-            .swap()
-            .postOrder(payload);
-    }
-
-    if(!Number(eosHolding.long_qty) && !Number(eosHolding.short_qty) && eosAvail){
-        const eosPayload = {
-            size: eosAvail,
-            type: eosType,
-            order_type: 0, //1：只做Maker 4：市价委托
-            instrument_id: eosHolding.instrument_id,
-            price: eosMarkPrice,
-            match_price: 0
-        }
-        await authClient
-            .swap()
-            .postOrder(eosPayload);
-    }
-
-    myInterval = startInterval();
-}
-
-// 平仓
-const autoCloseOrders = async (btcHolding, eosHolding) => {
-    // autoCloseOrderByHolding(btcHolding);
-    // autoCloseOrderByHolding(eosHolding);
-    const { mark_price: btcMarkPrice } = await cAuthClient.swap.getMarkPrice(btcHolding.instrument_id);
-    const { mark_price: eosMarkPrice } = await cAuthClient.swap.getMarkPrice(eosHolding.instrument_id);
-
-    if(Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty)){
-        const payload = {
-            size: Number(btcHolding.long_avail_qty) || Number(btcHolding.short_avail_qty),
-            type: Number(btcHolding.long_avail_qty) ? 3 : 4,
-            order_type: 0, //1：只做Maker 4：市价委托
-            instrument_id: btcHolding.instrument_id,
-            price: btcMarkPrice,
-            match_price: 0
-        }
-        authClient
-            .swap()
-            .postOrder(payload);
-    }
-
-    if(Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty)){
-        const eosPayload = {
-            size: Number(eosHolding.long_avail_qty) || Number(eosHolding.short_avail_qty),
-            type: Number(eosHolding.long_avail_qty) ? 3 : 4,
-            order_type: 0, //1：只做Maker 4：市价委托
-            instrument_id: eosHolding.instrument_id,
-            price: eosMarkPrice,
-            match_price: 0
-        }
-        authClient
-            .swap()
-            .postOrder(eosPayload);
-    }
+    return await cAuthClient.swap.closePosition({instrument_id, side})
 }
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
@@ -388,7 +294,7 @@ const getOrderState = async (payload) => {
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { isReverse = false, availRatio = 1 } = params;
-    const { instrument_id, long_avail_qty, short_avail_qty } = holding;
+    const { instrument_id, position } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
     // 可开张数
     let availNo;
@@ -399,7 +305,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     }else{
         availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
     }
-    avail = Math.min(Math.floor(Number(availNo) * availRatio), Math.max(Number(long_avail_qty), Number(short_avail_qty)));
+    avail = Math.min(Math.floor(Number(availNo) * availRatio), Number(position));
 
     const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
 
@@ -421,16 +327,16 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 }
 
 // 平仓，closeRatio平仓比例
-const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }, params = {}) => {
+const autoCloseOrderSingle = async ({ position, instrument_id, last, side }, params = {}) => {
     const { closeRatio = 1 } = params;
     const { result } = await validateAndCancelOrder(instrument_id);
-    const qty = Number(long_qty) || Number(short_qty)
+    const qty = Number(position)
     let size = Math.floor(qty * closeRatio)
     if(qty == 1) size = 1;
     if(size){
         const payload = {
             size,
-            type: Number(long_qty) ? 3 : 4,
+            type: side == 'long' ? 3 : 4,
             order_type: 0,
             instrument_id: instrument_id,
             price: last,
@@ -443,19 +349,18 @@ const autoCloseOrderSingle = async ({ long_qty, short_qty, instrument_id, last }
 
 // 获取可开张数
 const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
-    const result = await authClient.swap().getAccounts(currency);
-    const { equity, contracts, total_avail_balance } = result;
-    const { margin_frozen, margin_for_unfilled } = contracts[0];
-    const available_qty = Number(equity) - Number(margin_frozen) - Number(margin_for_unfilled);
-    console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin_for_unfilled', margin_for_unfilled)
+    const result = await authClient.swap().getAccount(instrument_id);
+    const { equity, margin_frozen, margin, total_avail_balance } = result.info;
+    const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
+    console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin', margin)
     console.log('available_qty', available_qty)
     console.log('total_avail_balance', total_avail_balance)
     if(!mark_price) {
         const result = await cAuthClient.swap.getMarkPrice(instrument_id);
         mark_price = result.mark_price;
     }
-    const leverageResult = await authClient.swap().getLeverage(currency);
-    const { long_leverage } = leverageResult[instrument_id];
+    const leverageResult = await authClient.swap().getSettings(instrument_id);
+    const { long_leverage } = leverageResult;
 
     return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.98 / val) || 0;
 }
@@ -470,7 +375,7 @@ app.get('/swap/getTradeFee', function(req, response) {
 // 当前持仓方向
 function getCurrentDirection(holding) {
     let direction = 1; // 多
-    if(Number(holding.short_qty)) direction = 2; // 空
+    if(holding.side=='short') direction = 2; // 空
     return direction;
 }
 
@@ -488,98 +393,17 @@ function validateRatio(holding) {
 }
 
 const getOrderModeSingle = async (orderMode = 3, holding) => {
-    const ratio = (Number(holding.long_margin) && (Number(holding.long_unrealised_pnl) / Number(holding.long_margin))) +
-        (Number(holding.short_margin) && (Number(holding.short_unrealised_pnl) / Number(holding.short_margin)));
-    const leverage = Math.min(Number(holding.long_leverage), Number(holding.short_leverage));
+    const ratio = Number(holding.unrealised_pnl) / Number(holding.margin);
+    const leverage = Number(holding.leverage);
     let condition = leverage / 100;
     console.log(holding.instrument_id,ratio,condition)
     await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
-// 下单模式
-function getOrderMode(orderMode = 2, btcHolding, eosHolding) {
-    // const btcRatio = (Number(btcHolding.long_avail_qty) && Number(btcHolding.long_pnl_ratio)) +
-    //     (Number(btcHolding.short_avail_qty) && Number(btcHolding.short_pnl_ratio));
-    // const eosRatio = (Number(eosHolding.long_avail_qty) && Number(eosHolding.long_pnl_ratio)) +
-    //     (Number(eosHolding.short_avail_qty) && Number(eosHolding.short_pnl_ratio));
-    const btcRatio = (Number(btcHolding.long_margin) && (Number(btcHolding.long_unrealised_pnl) / Number(btcHolding.long_margin))) +
-        (Number(btcHolding.short_margin) && (Number(btcHolding.short_unrealised_pnl) / Number(btcHolding.short_margin)));
-    const eosRatio = (Number(eosHolding.long_margin) && (Number(eosHolding.long_unrealised_pnl) / Number(eosHolding.long_margin))) +
-        (Number(eosHolding.short_margin) && (Number(eosHolding.short_unrealised_pnl) / Number(eosHolding.short_margin)));
-
-    const btcLeverage = Math.max(Number(btcHolding.long_margin), Number(btcHolding.short_margin)) ? Number(btcHolding.long_leverage) : 0;
-    const eosLeverage = Math.max(Number(eosHolding.long_margin), Number(eosHolding.short_margin)) ? Number(eosHolding.long_leverage) : 0;
-    const totalLeverage = btcLeverage + eosLeverage;
-    const num = (btcLeverage ? 1 : 0) + (eosLeverage ? 1 : 0);
-    let condition = totalLeverage / num / 100;
-    // 对冲仓
-    if(num == 2 && ((Number(btcHolding.long_margin) && Number(eosHolding.short_margin)) || (Number(btcHolding.short_margin) && Number(eosHolding.long_margin))) ) {
-        condition = totalLeverage / num / 100 * 2 / 3;
-    }
-    console.log('btcRatio',btcRatio)
-    console.log('eosRatio',eosRatio)
-    console.log('condition',condition)
-    console.log('mode',mode)
-    if(orderMode == 1) {
-        if(btcRatio + eosRatio > condition){
-            autoCloseOrders(btcHolding, eosHolding);
-            // 盈利后再开仓
-            continuousLossNum = 0;
-            continuousWinNum = continuousWinNum + 1;
-            console.log('totalLeverage',totalLeverage)
-            console.log('continuousLossNum',continuousLossNum)
-            console.log('continuousWinNum',continuousWinNum)
-            // 连续盈利3次，反向开仓
-            if(continuousWinNum>2) {
-                autoOpenOrders(btcHolding, eosHolding, true);
-                continuousLossNum = 0;
-                continuousWinNum = 0;
-                return;
-            }
-            setTimeout(()=>{
-                autoOpenOrders(btcHolding, eosHolding);
-            },timeoutNo)
-        }else if(btcRatio + eosRatio < - condition / 2){
-            autoCloseOrders(btcHolding, eosHolding);
-            continuousWinNum = 0;
-            continuousLossNum = continuousLossNum + 1;
-            console.log('totalLeverage',totalLeverage)
-            console.log('continuousLossNum',continuousLossNum)
-            console.log('continuousWinNum',continuousWinNum)
-            // 连续亏损3次，反向立即开仓
-            if(continuousLossNum>2) {
-                autoOpenOrders(btcHolding, eosHolding, true);
-                continuousLossNum = 0;
-                continuousWinNum = 0;
-                return;
-            }
-            setTimeout(()=>{
-                autoOpenOrders(btcHolding, eosHolding);
-            },timeoutNo)
-        }
-        return;
-    }
-    // 补仓，减少交易次数
-    if(orderMode == 2){
-        if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHolding(btcHolding,btcRatio,condition)
-        if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHolding(eosHolding,eosRatio,condition)
-    }
-    // 补仓，频繁交易
-    if(orderMode == 3){
-        if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHoldingTime(btcHolding,btcRatio,condition)
-        if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHoldingTime(eosHolding,eosRatio,condition)
-    }
-    // 不补仓，亏单早抛
-    // if(orderMode == 4){
-    //     if(Number(btcHolding.long_margin) || Number(btcHolding.short_margin)) autoOperateByHoldingTime(btcHolding,btcRatio,condition)
-    //     if(Number(eosHolding.long_margin) || Number(eosHolding.short_margin)) autoOperateByHoldingTime(eosHolding,eosRatio,condition)
-    // }
-}
-
 // 杠杆越大，手续费占比越高。。
 const autoOperateByHoldingTime = async (holding,ratio,condition) => {
-    const { instrument_id, last, long_leverage, short_leverage } = holding;
-    const leverage = Math.max(Number(long_leverage),Number(short_leverage));
+    const { instrument_id, last } = holding;
+    const leverage = Number(holding.leverage);
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
     const winOrderObj = winOrderMap[instrument_id];
@@ -759,16 +583,15 @@ function startInterval() {
         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
         const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
 
-        const btcQty = Number(btcHolding[0].long_qty) + Number(btcHolding[0].short_qty);
-        const eosQty = Number(eosHolding[0].long_qty) + Number(eosHolding[0].short_qty);
+        const btcQty = Number(btcHolding[0].position) + Number(btcHolding[1].position);
+        const eosQty = Number(eosHolding[0].position) + Number(eosHolding[1].position);
 
         const qty = btcQty + eosQty;
         if(!qty) {
             return;
         }
-        // getOrderMode(mode, btcHolding[0], eosHolding[0]);
-        if(btcQty) getOrderModeSingle(mode, btcHolding[0]);
-        if(eosQty) getOrderModeSingle(mode, eosHolding[0]);
+        if(btcQty) getOrderModeSingle(mode, Number(btcHolding[0].position) ? btcHolding[0] : btcHolding[1]);
+        if(eosQty) getOrderModeSingle(mode, Number(eosHolding[0].position) ? btcHolding[0] : eosHolding[1]);
     },1000 * 5)
 }
 
