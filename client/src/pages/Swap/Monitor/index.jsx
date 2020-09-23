@@ -128,6 +128,14 @@ export default props => {
         return ( Number(fee) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage) ).toFixed(2)
       }
   },
+    {
+      dataIndex: 'value',
+      title: '合约价值',
+      render: (text,{type, size, price_avg},index)=>{
+        if(index+1==ps) return text ? text.toFixed(2) : '';
+        return (type == 1 || type == 2) ? ( Number(size) * Number(price_avg) ) : ( - Number(size) * Number(price_avg))
+      }
+    }
   //   {
   //   dataIndex: 'pnl',
   //   title: '盈亏'
@@ -155,12 +163,14 @@ export default props => {
     let bzjUsd = 0;
     let feeUsd = 0;
     let pnlUsd = 0;
+    let value = 0;
     // let ratio = 0;
-    records.some(({ size, contract_val, price_avg, leverage, pnl, fee }, index) => {
+    records.some(({ type, size, contract_val, price_avg, leverage, pnl, fee }, index) => {
       if((index >= (cr - 1) * ps) && (index < cr * ps)){
         bzjUsd += Number(size) * Number(contract_val) / Number(leverage)
         feeUsd += Number(fee) * Number(price_avg);
         pnlUsd += Number(pnl) * Number(price_avg);
+        value += (type == 1 || type == 2) ? (Number(size) * Number(price_avg)) : ( - Number(size) * Number(price_avg));
         // ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
       }
       if(index == cr * ps - 2) return true;
@@ -170,6 +180,7 @@ export default props => {
       feeUsd,
       pnlUsd,
       feeUsdPercent: feeUsd * 100 / bzjUsd,
+      value,
       ratio: ( feeUsd + pnlUsd ) * 100 / (bzjUsd / (ps - 1))
     });
     return { records };

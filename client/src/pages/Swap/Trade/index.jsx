@@ -78,9 +78,8 @@ export default props => {
     setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
-  const onSetFrequency = async (value) => {
-    setFrequency(value);
-    const { errcode, errmsg } = await setFrequencyApi({ frequency: value });
+  const onSetFrequency = async () => {
+    const { errcode, errmsg } = await setFrequencyApi({ frequency: frequency });
     if(errcode == 0)  message.success(errmsg);
   }
 
@@ -339,7 +338,8 @@ export default props => {
       {/*  </Radio.Group>*/}
       {/*</p>*/}
       <p>交易频次：
-        <InputNumber value={frequency} step={0.1} min={0.1} onChange={v=>onSetFrequency(v)}/>
+        <InputNumber value={frequency} step={0.1} min={0.1} onChange={v=>setFrequency(v)}/>
+        <Button onClick={()=>onSetFrequency()} style={{ marginLeft: 10 }}>确定</Button>
       </p>
       <Divider type="horizontal" />
 

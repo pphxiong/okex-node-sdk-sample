@@ -511,7 +511,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         }
         // 补过仓，平仓并再开半仓
         const { result } = await autoCloseOrderSingle(holding);
-        if(result) {
+        if(result && !batchObj.order_id) {
             continuousObj.continuousBatchNum = 0;
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
             continuousObj.continuousWinNum = 0;
@@ -529,50 +529,6 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             },timeout * frequency)
         }
         return;
-    }
-}
-
-const autoOperateByHolding = async (holding,ratio,condition) => {
-    console.log('continuousBatchNum', continuousBatchNum)
-    // 补仓后，回本即平仓
-    if( (ratio > condition * 0.8) || (continuousBatchNum && (ratio > 0.01 * continuousBatchNum) )){
-        continuousBatchNum = 0;
-        continuousLossNum = 0;
-        const { result } = await autoCloseOrderSingle(holding)
-        if( result ) {
-            setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding);
-            },timeoutNo)
-        }
-        return;
-    }
-    if(ratio < - condition * 1.5){
-        // 没有补过仓
-        if(!continuousBatchNum) {
-            // 补仓
-            const { result } = await autoOpenOrderSingle(holding);
-            if(result) {
-                continuousBatchNum = continuousBatchNum + 1;
-            }else{
-                await autoCloseOrderSingle(holding);
-            }
-            console.log('result', result)
-            return;
-        }
-        // 补过仓，平仓并再开半仓
-        continuousBatchNum = 0;
-        const { result } = await autoCloseOrderSingle(holding);
-        console.log('close_result', result)
-        continuousLossNum = continuousLossNum + 1;
-        if( result ){
-            // 连续亏损2次，反向
-            let isReverse = false;
-            if(continuousLossNum>1) isReverse = true;
-            setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
-            },timeoutNo)
-            return;
-        }
     }
 }
 
