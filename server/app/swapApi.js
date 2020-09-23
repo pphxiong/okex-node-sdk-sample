@@ -426,7 +426,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     //     return;
     // }
     // 盈利
-    if(ratio > condition * 1.2 * frequency){
+    if(ratio > condition * 1.2 * 2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
@@ -437,7 +437,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             lastObj.last = Number(last);
 
             let isReverse = false;
-            let timeout = timeoutNo;
+            let timeout = timeoutNo * 10;
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
