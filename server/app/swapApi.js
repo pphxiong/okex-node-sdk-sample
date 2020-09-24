@@ -292,7 +292,7 @@ const getOrderState = async (payload) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { isReverse = false, availRatio = 1 } = params;
+    const { isReverse = false, availRatio = 1, order_type = 0 } = params;
     const { instrument_id, position } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
     // 可开张数
@@ -315,7 +315,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
         const payload = {
             size: avail,
             type,
-            order_type: 0, //1：只做Maker 4：市价委托
+            order_type, //1：只做Maker 4：市价委托
             instrument_id: instrument_id,
             price: mark_price,
             match_price: 0
@@ -396,6 +396,9 @@ const getOrderModeSingle = async (orderMode = 3, holding) => {
     const leverage = Number(holding.leverage);
     let condition = leverage / 100;
     console.log(holding.instrument_id,ratio,condition)
+    if(orderMode == 4){
+
+    }
     await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
@@ -426,7 +429,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     //     return;
     // }
     // 盈利
-    if(ratio > condition * 1.2 * 2 * frequency){
+    if(ratio > condition * 1.2 * 2 * 2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousBatchNum = 0;
@@ -521,11 +524,12 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
-                timeout = timeoutNo / 10;
+                timeout = timeoutNo * 0 / 10;
                 continuousObj.continuousLossNum = 0;
             }
             setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
+                // await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse });
+                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse, order_type: 4 });
             },timeout * frequency)
         }
         return;
