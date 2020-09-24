@@ -397,9 +397,78 @@ const getOrderModeSingle = async (orderMode = 3, holding) => {
     let condition = leverage / 100;
     console.log(holding.instrument_id,ratio,condition)
     if(orderMode == 4){
-
+        return await autoOperateSwap(holding,ratio,condition)
     }
     await autoOperateByHoldingTime(holding,ratio,condition)
+}
+
+const autoOperateSwap = async (holding,ratio,condition) => {
+    const { instrument_id, last } = holding;
+    const leverage = Number(holding.leverage);
+    const continuousObj = continuousMap[instrument_id];
+    const lastObj = lastOrderMap[instrument_id];
+    const winOrderObj = winOrderMap[instrument_id];
+    const batchObj = batchOrderMap[instrument_id]
+    console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
+    // 盈利
+    if(ratio > condition * 1.2 * 2 * frequency){
+        const { result } = await autoCloseOrderSingle(holding)
+        if(result){
+            continuousObj.continuousLossNum = 0;
+            continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+
+            lastObj.last = Number(last);
+
+            let isReverse = false;
+            let timeMultiple = 10 * 2;
+
+            // 第3次盈利后反向
+            if(continuousObj.continuousWinNum>2) {
+                isReverse = true;
+                timeMultiple = 0;
+            }
+
+            setTimeout(async ()=>{
+                // 多仓时，本次价格比上次低
+                const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+                const type = getCurrentDirection(holding);
+                console.log('last', mark_price, lastObj.last, type)
+                // const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
+
+
+                // 头两次盈利十倍时间后再开仓
+                // if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 10;
+                setTimeout(async ()=>{
+                    await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
+                },timeoutNo * timeMultiple * frequency)
+            },timeoutNo * continuousObj.continuousWinNum * frequency)
+        }
+        return;
+    }
+    // 亏损，平仓，市价全平
+    if(ratio < - condition * frequency){
+        const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
+        if(result) {
+            continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+            continuousObj.continuousWinNum = 0;
+
+            let isReverse = false;
+            let timeout = timeoutNo;
+            let order_type = 0;
+            // 连续亏损3次，立即反向
+            if(continuousObj.continuousLossNum>2) {
+                isReverse = true;
+                timeout = timeoutNo * 0 / 10;
+                continuousObj.continuousLossNum = 0;
+                order_type = 4;
+            }
+            setTimeout(async ()=>{
+                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse, order_type });
+            },timeout * frequency)
+
+        }
+        return;
+    }
 }
 
 // 杠杆越大，手续费占比越高。。
