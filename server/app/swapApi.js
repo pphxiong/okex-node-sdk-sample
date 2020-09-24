@@ -8,7 +8,7 @@ const customAuthClient = require('./customAuthClient');
 let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
-let mode = 3; //下单模式
+let mode = 4; //下单模式
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 let continuousBatchNum = 0; //连续补仓次数
@@ -391,7 +391,7 @@ function validateRatio(holding) {
 
 }
 
-const getOrderModeSingle = async (orderMode = 3, holding) => {
+const getOrderModeSingle = async (orderMode = mode, holding) => {
     const ratio = Number(holding.unrealized_pnl) / Number(holding.margin);
     const leverage = Number(holding.leverage);
     let condition = leverage / 100;
