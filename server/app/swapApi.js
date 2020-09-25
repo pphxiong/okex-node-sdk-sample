@@ -411,7 +411,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
     const batchObj = batchOrderMap[instrument_id]
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
     // 盈利
-    if(ratio > condition * 1.2 * 2 * frequency){
+    if(ratio > condition * 1.3 * 2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousLossNum = 0;
@@ -428,20 +428,17 @@ const autoOperateSwap = async (holding,ratio,condition) => {
                 timeMultiple = 0;
             }
 
+            // 多仓时，本次价格比上次低
+            // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+            // const type = getCurrentDirection(holding);
+            // console.log('last', mark_price, lastObj.last, type)
+            // const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
+
+            // 头两次盈利十倍时间后再开仓
+            // if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 10;
             setTimeout(async ()=>{
-                // 多仓时，本次价格比上次低
-                const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-                const type = getCurrentDirection(holding);
-                console.log('last', mark_price, lastObj.last, type)
-                // const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
-
-
-                // 头两次盈利十倍时间后再开仓
-                // if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 10;
-                setTimeout(async ()=>{
-                    await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
-                },timeoutNo * timeMultiple * frequency)
-            },timeoutNo * continuousObj.continuousWinNum * frequency)
+                await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
+            },timeoutNo * timeMultiple * frequency)
         }
         return;
     }
