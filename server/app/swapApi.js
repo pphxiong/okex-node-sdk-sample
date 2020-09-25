@@ -399,7 +399,7 @@ const getOrderModeSingle = async (orderMode = mode, holding) => {
     if(orderMode == 4){
         return await autoOperateSwap(holding,ratio,condition)
     }
-    await autoOperateByHoldingTime(holding,ratio,condition)
+    // await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
 const autoOperateSwap = async (holding,ratio,condition) => {
@@ -411,7 +411,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
     const batchObj = batchOrderMap[instrument_id]
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
     // 盈利
-    if(ratio > condition * 1.3 * 2 * frequency){
+    if(ratio > condition * 1.22 * 2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousLossNum = 0;
@@ -421,11 +421,15 @@ const autoOperateSwap = async (holding,ratio,condition) => {
 
             let isReverse = false;
             let timeMultiple = 10 * 2;
+            let availRatio = 0.5;
 
             // 第3次盈利后反向
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
                 timeMultiple = 0;
+                availRatio = 0.65;
+
+                continuousObj.continuousWinNum = 0;
             }
 
             // 多仓时，本次价格比上次低
@@ -437,7 +441,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             // 头两次盈利十倍时间后再开仓
             // if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 10;
             setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding, { availRatio: 0.5, isReverse });
+                await autoOpenOrderSingle(holding, { availRatio, isReverse });
             },timeoutNo * timeMultiple * frequency)
         }
         return;
@@ -452,15 +456,18 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             let isReverse = false;
             let timeout = timeoutNo;
             let order_type = 0;
+            let availRatio = 0.5;
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
                 timeout = timeoutNo * 0 / 10;
-                continuousObj.continuousLossNum = 0;
                 order_type = 4;
+                availRatio = 0.65;
+
+                continuousObj.continuousLossNum = 0;
             }
             setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding,{ availRatio: 0.5, isReverse, order_type });
+                await autoOpenOrderSingle(holding,{ availRatio, isReverse, order_type });
             },timeout * frequency)
 
         }
