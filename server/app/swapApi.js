@@ -266,9 +266,9 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 }
 
 // 市价全平By holding
-const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id,side  }) => {
+const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }) => {
     await validateAndCancelOrder(instrument_id);
-    return await cAuthClient.swap.closePosition({instrument_id, side})
+    return await cAuthClient.swap.closePosition({instrument_id, direction: side })
 }
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
