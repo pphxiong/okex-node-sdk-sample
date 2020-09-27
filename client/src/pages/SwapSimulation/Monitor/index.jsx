@@ -17,8 +17,10 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
 
+  const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
+
   const initBTCData = async () => {
-    const result = await getOrders({ instrument_id: 'MNBTC-USD-SWAP', limit: ordersLimit, state: 7 });
+    const result = await getOrders({ instrument_id: BTC_INSTRUMENT_ID, limit: ordersLimit, state: 7 });
     return result;
   }
 
@@ -52,15 +54,15 @@ export default props => {
     setSentimentData(list);
   }
 
-  const getFee = async () => {
-    const { data } = await getTradeFee();
+  const getFee = async (params) => {
+    const { data } = await getTradeFee(params);
     setFeeObj(data||{});
   }
 
   useEffect(()=>{
     getLongShortRatioData();
     getSentiment();
-    // getFee();
+    getFee({ instrument_id : BTC_INSTRUMENT_ID });
   },[])
 
   const getColumns = ps => ([{
@@ -188,13 +190,15 @@ export default props => {
 
 
   return <>
-    {/*<Card title='概况'>*/}
-    {/*  <p>手续费率：*/}
-    {/*    吃单手续费率: {feeObj.taker} <Divider type='vertical' />*/}
-    {/*    挂单手续费率: {feeObj.maker} <Divider type='vertical' />*/}
-    {/*    交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
-    {/*  </p>*/}
-    {/*</Card>*/}
+    <Card title='概况'>
+      <p>手续费率：
+        手续费档位: {feeObj.category} <Divider type='vertical' />
+        吃单手续费率: {feeObj.taker} <Divider type='vertical' />
+        挂单手续费率: {feeObj.maker} <Divider type='vertical' />
+        时间: {moment(feeObj.timestamp).format('YYYY-MM-DD HH:mm:ss')} <Divider type='vertical' />
+        {/*交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
+      </p>
+    </Card>
     <Card title={'BTC交易记录'} >
       <SearchTable
         columns={getColumns(pageSize)}
