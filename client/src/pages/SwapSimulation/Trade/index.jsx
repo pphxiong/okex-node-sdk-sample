@@ -292,9 +292,9 @@ export default props => {
         <Tabs.TabPane tab="BTC" key={BTC_INSTRUMENT_ID}>
           <OrderPanelC instrument_id={BTC_INSTRUMENT_ID} currency={"BTC"} leverage={btcLeverage} />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="EOS" key={EOS_INSTRUMENT_ID}>
-          <OrderPanelC instrument_id={EOS_INSTRUMENT_ID} currency={"EOS"} leverage={eosLeverage} />
-        </Tabs.TabPane>
+        {/*<Tabs.TabPane tab="EOS" key={EOS_INSTRUMENT_ID}>*/}
+        {/*  <OrderPanelC instrument_id={EOS_INSTRUMENT_ID} currency={"EOS"} leverage={eosLeverage} />*/}
+        {/*</Tabs.TabPane>*/}
       </Tabs>
     </Card>
     <Card title={'操作'} style={{ marginTop: 10 }}>

@@ -285,7 +285,7 @@ const getOrderState = async (payload) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { isReverse = false, availRatio = 1, order_type = 0 } = params;
+    const { isReverse = false, availRatio = 1, order_type = 4 } = params;
     const { instrument_id, position } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
     // 可开张数
@@ -320,7 +320,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
 // 平仓，closeRatio平仓比例
 const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, last, side }, params = {}) => {
-    const { closeRatio = 1 } = params;
+    const { closeRatio = 1, order_type = 4 } = params;
     const { result } = await validateAndCancelOrder(instrument_id);
     const qty = Number(avail_position)
     let size = Math.floor(qty * closeRatio)
@@ -329,7 +329,7 @@ const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, l
         const payload = {
             size,
             type: side == 'long' ? 3 : 4,
-            order_type: 0,
+            order_type,
             instrument_id: instrument_id,
             price: last,
             match_price: 0
