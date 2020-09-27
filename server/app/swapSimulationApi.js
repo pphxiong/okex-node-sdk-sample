@@ -360,7 +360,8 @@ const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_
 
 // 合约费率
 app.get('/swap/getTradeFee', function(req, response) {
-    cAuthClient.swap.getTradeFee().then(res=>{
+    const {query = {}} = req;
+    cAuthClient.swap.getTradeFee(query).then(res=>{
         send(response, {errcode: 0, errmsg: 'ok', data: res });
     })
 });
