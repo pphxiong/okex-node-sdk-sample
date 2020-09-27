@@ -2,11 +2,10 @@ import request from '../utils/request';
 import moment from 'moment'
 
 // const {PublicClient} = require('@okfe/okex-node');
-const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
-let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
-let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
+let BTC_INSTRUMENT_ID = "MNBTC-USD-SWAP";
+let EOS_INSTRUMENT_ID = "MNEOS-USD-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 let continuousLossNum = 0; //连续亏损次数
@@ -57,12 +56,6 @@ const winOrderMap = {
 
 var config = require('./config');
 // const pClient = new PublicClient(config.urlHost);
-const authClient = new AuthenticatedClient(
-    config.httpkey,
-    config.httpsecret,
-    config.passphrase,
-    config.urlHost
-);
 const cAuthClient = new customAuthClient(
     config.httpkey,
     config.httpsecret,
@@ -94,7 +87,7 @@ app.get('/test', function(req, res) {
 });
 
 app.get('/account/getCurrencies', function(req, response) {
-    authClient
+    cAuthClient
         .account()
         .getCurrencies()
         .then(res => {
@@ -105,7 +98,7 @@ app.get('/account/getCurrencies', function(req, response) {
 app.get('/account/getWallet', function(req, response) {
     const {query = {}} = req;
     const {currency} = query.params || query;
-    authClient
+    cAuthClient
         .account()
         .getWallet(currency)
         .then(res => {
@@ -126,7 +119,7 @@ app.get('/account/getAssetValuation', function(req, response) {
 app.get('/swap/getOrders', function(req, response) {
     const {query = {}} = req;
     const {instrument_id, limit, state = 2} = query; // "BTC-USD-200821"
-    authClient
+    cAuthClient
         .swap()
         .getOrders(instrument_id, {state, limit})
         .then(res => {
@@ -137,7 +130,7 @@ app.get('/swap/getOrders', function(req, response) {
 app.get('/swap/getAccounts', function(req, response) {
     const {query = {}} = req;
     const {instrument_id} = query;
-    authClient
+    cAuthClient
         .swap()
         .getAccount(instrument_id)
         .then(res => {
@@ -179,7 +172,7 @@ app.get('/swap/information/sentiment', function(req, response) {
 app.get('/swap/postLeverage', function(req, response) {
     const {query = {}} = req;
     const { leverage, side, instrument_id } = query;
-    authClient
+    cAuthClient
         .swap()
         .postLeverage(instrument_id, { leverage, side })
         .then(res => {
@@ -190,7 +183,7 @@ app.get('/swap/postLeverage', function(req, response) {
 app.get('/swap/getLeverage', function(req, response) {
     const {query = {}} = req;
     const { instrument_id } = query;
-    authClient
+    cAuthClient
         .swap()
         .getSettings(instrument_id)
         .then(res => {
@@ -200,7 +193,7 @@ app.get('/swap/getLeverage', function(req, response) {
 
 app.get('/swap/postOrder', function(req, response) {
     const {query = {}} = req;
-    authClient
+    cAuthClient
         .swap()
         .postOrder(query)
         .then(res => {
@@ -212,7 +205,7 @@ app.get('/swap/postOrder', function(req, response) {
 app.get('/swap/getPosition', function(req, response) {
     const {query = {}} = req;
     const { instrument_id } = query;
-    authClient
+    cAuthClient
         .swap()
         .getPosition(instrument_id)
         .then(res => {
@@ -256,7 +249,7 @@ app.get('/swap/autoCloseOrderByInstrumentId', function(req, response) {
 // 市价全平By instrument_id
 const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
     if(!direction){
-        const { holding } = await authClient.swap().getPosition(instrument_id);
+        const { holding } = await cAuthClient.swap().getPosition(instrument_id);
         direction = holding[0].side;
     }
     const result = await cAuthClient
@@ -274,11 +267,11 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }) =
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销
 const validateAndCancelOrder = async (instrument_id) => {
-    const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
+    const { order_info } = await cAuthClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
     console.log('cancelorder', instrument_id, order_info.length)
     if( order_info && order_info.length ){
         const { order_id } = order_info[0];
-        return await authClient.swap().postCancelOrder(instrument_id,order_id)
+        return await cAuthClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -286,8 +279,8 @@ const validateAndCancelOrder = async (instrument_id) => {
 // 下单，并返回订单信息
 const getOrderState = async (payload) => {
     const { instrument_id } = payload;
-    const { order_id } = await authClient.swap().postOrder(payload);
-    return await authClient.swap().getOrder(instrument_id,order_id)
+    const { order_id } = await cAuthClient.swap().postOrder(payload);
+    return await cAuthClient.swap().getOrder(instrument_id,order_id)
 }
 
 // 开仓，availRatio开仓比例
@@ -320,7 +313,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             price: mark_price,
             match_price: 0
         }
-        return await authClient.swap().postOrder(payload);
+        return await cAuthClient.swap().postOrder(payload);
     }
     return new Promise(resolve=>{ resolve({ result: avail && !result }) })
 }
@@ -341,14 +334,14 @@ const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, l
             price: last,
             match_price: 0
         }
-        return await authClient.swap().postOrder(payload);
+        return await cAuthClient.swap().postOrder(payload);
     }
     return new Promise(resolve=>{ resolve({ result: !result }) })
 }
 
 // 获取可开张数
 const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
-    const result = await authClient.swap().getAccount(instrument_id);
+    const result = await cAuthClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
     console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin', margin)
@@ -358,7 +351,7 @@ const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_
         const result = await cAuthClient.swap.getMarkPrice(instrument_id);
         mark_price = result.mark_price;
     }
-    const leverageResult = await authClient.swap().getSettings(instrument_id);
+    const leverageResult = await cAuthClient.swap().getSettings(instrument_id);
     const { long_leverage } = leverageResult;
 
     return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.98 / val) || 0;
@@ -490,7 +483,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
     // 盈利，半仓，止盈
     // if((ratio > condition * 1 * frequency) && !continuousObj.continuousProfitNum) {
     //     if(winOrderObj.order_id){
-    //         const { state } = await authClient.swap().getOrder(instrument_id,winOrderObj.order_id);
+    //         const { state } = await cAuthClient.swap().getOrder(instrument_id,winOrderObj.order_id);
     //         if(state=='2'){
     //             continuousObj.continuousProfitNum = continuousObj.continuousProfitNum + 1;
     //             winOrderObj.order_id = 0;
@@ -540,7 +533,7 @@ const autoOperateByHoldingTime = async (holding,ratio,condition) => {
         return;
     }
     if(ratio < 0 && batchObj.order_id){
-        const { state } = await authClient.swap().getOrder(instrument_id,batchObj.order_id);
+        const { state } = await cAuthClient.swap().getOrder(instrument_id,batchObj.order_id);
         console.log('state',state,instrument_id, 'order_id', batchObj.order_id)
         // state:2 完全成交，补仓成功
         if(state=='2') {
@@ -617,8 +610,8 @@ function startInterval() {
     return setInterval(async ()=>{
         console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
 
-        const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-        const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+        const { holding: btcHolding } = await cAuthClient.swap().getPosition(BTC_INSTRUMENT_ID);
+        const { holding: eosHolding } = await cAuthClient.swap().getPosition(EOS_INSTRUMENT_ID);
 
         const btcQty = Number(btcHolding[0].position);
         const eosQty = Number(eosHolding[0].position);
@@ -643,6 +636,6 @@ function stopInterval() {
 
 // 定时获取交割合约账户信息
 myInterval = startInterval()
-app.listen(8091);
+app.listen(8092);
 
 console.log('8091 server start');

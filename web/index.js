@@ -1,5 +1,7 @@
 import request from './utils/request';
 
+const SERVER_URL = 'http://8.210.214.167';
+
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
@@ -43,9 +45,16 @@ function proxyRequest(req, res, next) {
   const curl= url.parse(req.url);
   let { path } = curl;
 
+  if(path.includes('okexSwapSimulation')){
+    path = path.replace('/okexSwapSimulation', ':8092');
+    path = SERVER_URL + path;
+
+    return request.get(path)
+  }
+
   if(path.includes('okexSwap')){
     path = path.replace('/okexSwap', ':8091');
-    path = 'http://8.210.214.167' + path;
+    path = SERVER_URL + path;
 
     return request.get(path)
   }
@@ -53,7 +62,7 @@ function proxyRequest(req, res, next) {
   if(path.includes('okex')){
     path = path.replace('/okex', ':8090');
     // path = 'http://www.paopaofunplus.com' + path;
-    path = 'http://8.210.214.167' + path;
+    path = SERVER_URL + path;
 
     return request.get(path)
   }
