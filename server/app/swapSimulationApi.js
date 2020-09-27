@@ -54,7 +54,7 @@ const winOrderMap = {
     },
 }
 
-var config = require('./config');
+var config = require('./simulationConfig');
 // const pClient = new PublicClient(config.urlHost);
 const cAuthClient = new customAuthClient(
     config.httpkey,
