@@ -611,17 +611,17 @@ function startInterval() {
         console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
 
         const { holding: btcHolding } = await cAuthClient.swap.getPosition(BTC_INSTRUMENT_ID);
-        const { holding: eosHolding } = await cAuthClient.swap.getPosition(EOS_INSTRUMENT_ID);
+        // const { holding: eosHolding } = await cAuthClient.swap.getPosition(EOS_INSTRUMENT_ID);
 
         const btcQty = Number(btcHolding[0].position);
-        const eosQty = Number(eosHolding[0].position);
+        // const eosQty = Number(eosHolding[0].position);
 
-        const qty = btcQty + eosQty;
+        const qty = btcQty;
         if(!qty) {
             return;
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
-        if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
+        // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
     },1000 * 5)
 }
 

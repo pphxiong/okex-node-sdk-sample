@@ -209,20 +209,20 @@ export default props => {
         }}
       />
     </Card>
-    <Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>
-      <SearchTable
-        columns={getColumns(eosPageSize)}
-        getList={initEOSData}
-        responseHandler={data=>responseHandler(data,eosCurrent,eosPageSize)}
-        rowKey={"order_id"}
-        tableId={"eos"}
-        key={'eos'}
-        callbackPageSize={(cr,ps)=> {
-          setEosCurrent(cr)
-          setEosPageSize(ps)
-        }}
-      />
-    </Card>
+    {/*<Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>*/}
+    {/*  <SearchTable*/}
+    {/*    columns={getColumns(eosPageSize)}*/}
+    {/*    getList={initEOSData}*/}
+    {/*    responseHandler={data=>responseHandler(data,eosCurrent,eosPageSize)}*/}
+    {/*    rowKey={"order_id"}*/}
+    {/*    tableId={"eos"}*/}
+    {/*    key={'eos'}*/}
+    {/*    callbackPageSize={(cr,ps)=> {*/}
+    {/*      setEosCurrent(cr)*/}
+    {/*      setEosPageSize(ps)*/}
+    {/*    }}*/}
+    {/*  />*/}
+    {/*</Card>*/}
     {/*<Card title={'多空人数比'} style={{ marginTop: 10 }}>*/}
     {/*  {*/}
     {/*    longShortRatioData.length ? (*/}

@@ -46,36 +46,36 @@ export default props => {
       setBtcLongPosition({});
       setBtcShortPosition(result?.data?.holding[0])
     }
-    const eosResult = await getSwapPosition({instrument_id: EOS_INSTRUMENT_ID});
-    const { side: eosSide } = eosResult?.data?.holding[0]??{};
-    if(eosSide == 'long') {
-      setEosLongPosition(eosResult?.data?.holding[0]);
-      setEosShortPosition({})
-    }else{
-      setEosLongPosition({});
-      setEosShortPosition(eosResult?.data?.holding[0])
-    }
+    // const eosResult = await getSwapPosition({instrument_id: EOS_INSTRUMENT_ID});
+    // const { side: eosSide } = eosResult?.data?.holding[0]??{};
+    // if(eosSide == 'long') {
+    //   setEosLongPosition(eosResult?.data?.holding[0]);
+    //   setEosShortPosition({})
+    // }else{
+    //   setEosLongPosition({});
+    //   setEosShortPosition(eosResult?.data?.holding[0])
+    // }
   }
 
   const getLeverage = async () => {
     const { data: result } = await getSwapLeverage({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcLeverage(result['long_leverage']);
-    const { data: eosResult } = await getSwapLeverage({ instrument_id: EOS_INSTRUMENT_ID });
-    setEosLeverage(eosResult['long_leverage']);
+    // const { data: eosResult } = await getSwapLeverage({ instrument_id: EOS_INSTRUMENT_ID });
+    // setEosLeverage(eosResult['long_leverage']);
   }
 
   const getAccounts = async () => {
     const result = await getSwapAccounts({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcAccount(result?.data?.info??{})
-    const eosResult = await getSwapAccounts({ instrument_id: EOS_INSTRUMENT_ID });
-    setEosAccount(result?.data?.info??{})
+    // const eosResult = await getSwapAccounts({ instrument_id: EOS_INSTRUMENT_ID });
+    // setEosAccount(result?.data?.info??{})
   }
 
   const getMarkPrice = async () => {
     const result = await getSwapMarkPrice({ instrument_id: BTC_INSTRUMENT_ID });
     setBtcMarkPrice(result?.data?.mark_price)
-    const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
-    setEosMarkPrice(eosResult?.data?.mark_price)
+    // const eosResult = await getSwapMarkPrice({ instrument_id: EOS_INSTRUMENT_ID });
+    // setEosMarkPrice(eosResult?.data?.mark_price)
   }
 
   const onSetFrequency = async () => {
@@ -109,33 +109,6 @@ export default props => {
     const result = await postSwapOrder(payload);
     console.log(result)
     if(result?.data?.result) message.success(`${currency}开仓成功`);
-  }
-
-  const openSameOrders = async type => {
-    // btc
-    const payload = {
-      size,
-      type,
-      order_type: 0, //1：只做Maker 4：市价委托
-      price: btcMarkPrice,
-      instrument_id: BTC_INSTRUMENT_ID,
-      match_price: 0
-    }
-    const result = await postSwapOrder(payload);
-    console.log(result)
-    if(result?.data?.result) message.success('BTC开仓成功');
-    // eos
-    const eosPayload = {
-      size: size * 10,
-      type,
-      order_type: 0, //1：只做Maker 4：市价委托
-      price: eosMarkPrice,
-      instrument_id: EOS_INSTRUMENT_ID,
-      match_price: 0
-    }
-    const eosResult = await postSwapOrder(eosPayload);
-    console.log(eosResult)
-    if(eosResult?.data?.result) message.success('EOS开仓成功');
   }
 
   const closeOrder = async (currency) => {
