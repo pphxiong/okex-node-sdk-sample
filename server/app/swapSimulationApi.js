@@ -2,7 +2,7 @@ import request from '../utils/request';
 import moment from 'moment'
 
 // const {PublicClient} = require('@okfe/okex-node');
-const customAuthClient = require('./customAuthClient');
+const customAuthClient = require('./customSimulationAuthClient');
 
 let BTC_INSTRUMENT_ID = "MNBTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "MNEOS-USD-SWAP";
