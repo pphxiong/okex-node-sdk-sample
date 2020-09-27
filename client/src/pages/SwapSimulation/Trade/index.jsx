@@ -16,8 +16,8 @@ import {
 } from './api'
 import moment from 'moment'
 
-const BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
-const EOS_INSTRUMENT_ID = 'EOS-USD-SWAP';
+const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
+const EOS_INSTRUMENT_ID = 'MNEOS-USD-SWAP';
 
 export default props => {
   const [btcLeverage, setBtcLeverage] = useState(10);
