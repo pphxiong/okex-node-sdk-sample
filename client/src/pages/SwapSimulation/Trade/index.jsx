@@ -104,7 +104,7 @@ export default props => {
       order_type: 0, //1：只做Maker 4：市价委托
       price: currency == 'BTC' ? btcMarkPrice : eosMarkPrice,
       instrument_id: currentInstrumentId,
-      match_price: 0
+      match_price: 0,
     }
     const result = await postSwapOrder(payload);
     console.log(result)

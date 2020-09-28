@@ -193,7 +193,7 @@ app.get('/swap/getLeverage', function(req, response) {
 
 app.get('/swap/postOrder', function(req, response) {
     const {query = {}} = req;
-    query['order_type'] = 4;
+    query['order_type'] = '4';
     cAuthClient
         .swap
         .postOrder(query)
