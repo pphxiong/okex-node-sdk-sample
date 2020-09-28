@@ -390,7 +390,7 @@ const getOrderModeSingle = async (orderMode = mode, holding) => {
     const ratio = Number(holding.unrealized_pnl) / Number(holding.margin);
     const leverage = Number(holding.leverage);
     let condition = leverage / 100;
-    console.log(holding.instrument_id,ratio,condition)
+    console.log('unrealized_pnl, margin',holding.instrument_id,ratio,condition, holding.unrealized_pnl, holding.margin)
     if(orderMode == 4){
         return await autoOperateSwap(holding,ratio,condition)
     }

@@ -101,7 +101,7 @@ export default props => {
     const payload = {
       size,
       type: type,
-      order_type: 0, //1：只做Maker 4：市价委托
+      order_type: 4, //1：只做Maker 4：市价委托
       price: currency == 'BTC' ? btcMarkPrice : eosMarkPrice,
       instrument_id: currentInstrumentId,
       match_price: 0,
@@ -118,7 +118,7 @@ export default props => {
       const payload = {
         size: Number(position.avail_position),
         type: position.side == 'long' ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
+        order_type: 4, //1：只做Maker 4：市价委托
         price,
         instrument_id: position.instrument_id,
         match_price: 0
