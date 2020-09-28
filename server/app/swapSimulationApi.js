@@ -335,6 +335,7 @@ const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, l
             price: last,
             match_price: 0
         }
+        console.log('payload',payload)
         return await cAuthClient.swap.postOrder(payload);
     }
     return new Promise(resolve=>{ resolve({ result: !result }) })
