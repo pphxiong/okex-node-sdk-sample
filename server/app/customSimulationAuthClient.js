@@ -38,11 +38,10 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         const bodyJson = JSON.stringify(body);
         const signObj = getSignature('post', url, { body: bodyJson });
         signObj['content-type'] = 'application/json; charset=utf-8';
-        console.log('signObj',signObj)
         return request(apiUri + url,{
             method: 'post',
             headers: signObj,
-            data: body
+            data: bodyJson
         })
     }
 
