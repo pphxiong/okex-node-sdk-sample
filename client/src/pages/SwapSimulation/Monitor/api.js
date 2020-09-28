@@ -31,3 +31,9 @@ export async function getTradeFee(params) {
     params,
   });
 }
+
+export async function getHistory(params) {
+  return request(`${commonUrl}/swap/getHistory`, {
+    params,
+  });
+}

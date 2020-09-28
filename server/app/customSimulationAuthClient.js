@@ -97,6 +97,9 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             getOrder: function (instrument_id, order_id) {
                 return get(`/api/swap/v3/orders/${instrument_id}/${order_id}`);
             },
+            getHistory: function (instrument_id, params) {
+                return get(`/api/swap/v3/instruments/${instrument_id}/history/candles`, params);
+            },
         }
     }
 

@@ -3,7 +3,7 @@ import { Card, Divider, Button } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
-import { getOrders, getSwapInformation, getSwapInformationSentiment, getTradeFee } from './api';
+import { getOrders, getSwapInformation, getSwapInformationSentiment, getTradeFee, getHistory } from './api';
 import { tradeTypeEnum } from '../../config';
 import lineConfig from '../../pageComponents/g2ChartConfigs/Line';
 
@@ -59,10 +59,21 @@ export default props => {
     setFeeObj(data||{});
   }
 
+  const fnGetHistory = async () => {
+    const result = await getHistory({
+      instrument_id:
+      BTC_INSTRUMENT_ID,
+      granularity: 60,
+      limit: 20,
+    })
+    console.log(result)
+  }
+
   useEffect(()=>{
     // getLongShortRatioData();
     // getSentiment();
     getFee({ instrument_id : BTC_INSTRUMENT_ID });
+    fnGetHistory();
   },[])
 
   const getColumns = ps => ([{

@@ -366,6 +366,15 @@ app.get('/swap/getTradeFee', function(req, response) {
     })
 });
 
+// 历史数据
+app.get('/swap/getHistory', function(req, response) {
+    const {query = {}} = req;
+    const { instrument_id } = query
+    cAuthClient.swap.getHistory(instrument_id, query).then(res=>{
+        send(response, {errcode: 0, errmsg: 'ok', data: res });
+    })
+});
+
 // 当前持仓方向
 function getCurrentDirection(holding) {
     let direction = 1; // 多
