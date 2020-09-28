@@ -193,7 +193,6 @@ app.get('/swap/getLeverage', function(req, response) {
 
 app.get('/swap/postOrder', function(req, response) {
     const {query = {}} = req;
-    // query['order_type'] = '4';
     cAuthClient
         .swap
         .postOrder(query)
@@ -405,7 +404,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
     const lastObj = lastOrderMap[instrument_id];
     const winOrderObj = winOrderMap[instrument_id];
     const batchObj = batchOrderMap[instrument_id]
-    console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
+    console.log(instrument_id, ratio, condition, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
     // 盈利
     if(ratio > condition * 1.2 * 2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
