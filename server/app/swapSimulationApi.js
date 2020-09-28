@@ -490,7 +490,7 @@ function startInterval() {
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
-    },1000 * 5)
+    },1000 * 1)
 }
 
 function stopInterval() {
