@@ -428,8 +428,8 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
                 timeMultiple = 0;
-                availRatio = 0.65;
                 order_type = 4;
+                availRatio = 0.65;
 
                 continuousObj.continuousWinNum = 0;
             }
@@ -472,7 +472,6 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio, isReverse, order_type });
             },timeout * frequency)
-
         }
         return;
     }
@@ -484,17 +483,17 @@ function startInterval() {
         console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
 
         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-        const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+        // const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
 
         const btcQty = Number(btcHolding[0].position);
-        const eosQty = Number(eosHolding[0].position);
+        // const eosQty = Number(eosHolding[0].position);
 
-        const qty = btcQty + eosQty;
+        const qty = btcQty;
         if(!qty) {
             return;
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
-        if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
+        // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
     },1000 * 5)
 }
 
