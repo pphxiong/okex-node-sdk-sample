@@ -89,25 +89,25 @@ export default defineConfig({
                 },
               ]
             },
-            {
-              path: '/futures',
-              name: '交割',
-              icon: 'fund',
-              routes:[
-                {
-                  path: '/futures/monitor',
-                  name: '概览',
-                  icon: 'smile',
-                  component: './Futures/Monitor',
-                },
-                {
-                  path: '/futures/trade',
-                  name: '交易',
-                  icon: 'crown',
-                  component: './Futures/Trade',
-                },
-              ]
-            },
+            // {
+            //   path: '/futures',
+            //   name: '交割',
+            //   icon: 'fund',
+            //   routes:[
+            //     {
+            //       path: '/futures/monitor',
+            //       name: '概览',
+            //       icon: 'smile',
+            //       component: './Futures/Monitor',
+            //     },
+            //     {
+            //       path: '/futures/trade',
+            //       name: '交易',
+            //       icon: 'crown',
+            //       component: './Futures/Trade',
+            //     },
+            //   ]
+            // },
             // {
             //   path: '/welcome',
             //   name: 'welcome',

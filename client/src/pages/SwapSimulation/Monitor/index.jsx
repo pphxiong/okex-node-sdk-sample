@@ -61,7 +61,7 @@ export default props => {
 
   useEffect(()=>{
     getLongShortRatioData();
-    getSentiment();
+    // getSentiment();
     getFee({ instrument_id : BTC_INSTRUMENT_ID });
   },[])
 
