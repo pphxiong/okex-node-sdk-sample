@@ -207,6 +207,9 @@ app.get('/swap/testOrder', function(req, response) {
     const { historyList } = query;
     const holding = {
         margin: 0,
+        leverage: 10,
+        type: 1,
+        size: 100,
 
     }
 });
@@ -447,6 +450,8 @@ const autoOperateSwap = async (holding,ratio,condition) => {
 
                 continuousObj.continuousWinNum = 0;
             }
+
+            if(holding.side=='short') isReverse = true;
 
             // 多仓时，本次价格比上次低
             // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);

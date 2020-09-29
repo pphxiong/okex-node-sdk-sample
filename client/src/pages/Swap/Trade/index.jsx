@@ -101,7 +101,7 @@ export default props => {
     const payload = {
       size,
       type: type,
-      order_type: 0, //1：只做Maker 4：市价委托
+      // order_type: 0, //1：只做Maker 4：市价委托
       price: currency == 'BTC' ? btcMarkPrice : eosMarkPrice,
       instrument_id: currentInstrumentId,
       match_price: 0
@@ -111,33 +111,6 @@ export default props => {
     if(result?.data?.result) message.success(`${currency}开仓成功`);
   }
 
-  const openSameOrders = async type => {
-    // btc
-    const payload = {
-      size,
-      type,
-      order_type: 0, //1：只做Maker 4：市价委托
-      price: btcMarkPrice,
-      instrument_id: BTC_INSTRUMENT_ID,
-      match_price: 0
-    }
-    const result = await postSwapOrder(payload);
-    console.log(result)
-    if(result?.data?.result) message.success('BTC开仓成功');
-    // eos
-    const eosPayload = {
-      size: size * 10,
-      type,
-      order_type: 0, //1：只做Maker 4：市价委托
-      price: eosMarkPrice,
-      instrument_id: EOS_INSTRUMENT_ID,
-      match_price: 0
-    }
-    const eosResult = await postSwapOrder(eosPayload);
-    console.log(eosResult)
-    if(eosResult?.data?.result) message.success('EOS开仓成功');
-  }
-
   const closeOrder = async (currency) => {
     const position = currency == 'BTC' ? ( Number(btcLongPosition.position) ? btcLongPosition : btcShortPosition ) : ( Number(eosLongPosition.position) ? eosLongPosition : eosShortPosition );
     const price = currency == 'BTC' ? btcMarkPrice : eosMarkPrice;
@@ -145,7 +118,7 @@ export default props => {
       const payload = {
         size: Number(position.avail_position),
         type: position.side == 'long' ? 3 : 4,
-        order_type: 0, //1：只做Maker 4：市价委托
+        // order_type: 0, //1：只做Maker 4：市价委托
         price,
         instrument_id: position.instrument_id,
         match_price: 0

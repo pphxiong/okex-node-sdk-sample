@@ -315,7 +315,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
         const payload = {
             size: avail,
             type,
-            order_type, //1：只做Maker 4：市价委托
+            // order_type, //1：只做Maker 4：市价委托
             instrument_id: instrument_id,
             price: mark_price,
             match_price: 0
@@ -336,7 +336,7 @@ const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, l
         const payload = {
             size,
             type: side == 'long' ? 3 : 4,
-            order_type: 0,
+            // order_type: 0,
             instrument_id: instrument_id,
             price: last,
             match_price: 0
@@ -433,6 +433,8 @@ const autoOperateSwap = async (holding,ratio,condition) => {
 
                 continuousObj.continuousWinNum = 0;
             }
+
+            if(holding.side=='short') isReverse = true;
 
             // 多仓时，本次价格比上次低
             // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
