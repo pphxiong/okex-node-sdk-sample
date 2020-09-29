@@ -202,6 +202,15 @@ app.get('/swap/postOrder', function(req, response) {
     myInterval = startInterval();
 });
 
+app.get('/swap/testOrder', function(req, response) {
+    const {query = {}} = req;
+    const { historyList } = query;
+    const holding = {
+        margin: 0,
+
+    }
+});
+
 app.get('/swap/getPosition', function(req, response) {
     const {query = {}} = req;
     const { instrument_id } = query;
@@ -285,7 +294,7 @@ const getOrderState = async (payload) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { isReverse = false, availRatio = 1, order_type = 4 } = params;
+    const { isReverse = false, availRatio = 1, order_type = 0 } = params;
     const { instrument_id, position } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
     // 可开张数
@@ -320,7 +329,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
 // 平仓，closeRatio平仓比例
 const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, last, side }, params = {}) => {
-    const { closeRatio = 1, order_type = 4 } = params;
+    const { closeRatio = 1, order_type = 0 } = params;
     const { result } = await validateAndCancelOrder(instrument_id);
     const qty = Number(avail_position)
     let size = Math.floor(qty * closeRatio)
@@ -434,7 +443,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
                 isReverse = true;
                 timeMultiple = 0;
                 availRatio = 0.65;
-                order_type = 4;
+                order_type = 0;
 
                 continuousObj.continuousWinNum = 0;
             }
@@ -469,7 +478,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
                 timeout = timeoutNo * 0 / 10;
-                order_type = 4;
+                order_type = 0;
                 availRatio = 0.65;
 
                 continuousObj.continuousLossNum = 0;

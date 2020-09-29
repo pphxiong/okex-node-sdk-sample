@@ -428,7 +428,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             if(continuousObj.continuousWinNum>2) {
                 isReverse = true;
                 timeMultiple = 0;
-                order_type = 4;
+                order_type = 0;
                 availRatio = 0.65;
 
                 continuousObj.continuousWinNum = 0;
@@ -464,7 +464,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
                 timeout = timeoutNo * 0 / 10;
-                order_type = 4;
+                order_type = 0;
                 availRatio = 0.65;
 
                 continuousObj.continuousLossNum = 0;

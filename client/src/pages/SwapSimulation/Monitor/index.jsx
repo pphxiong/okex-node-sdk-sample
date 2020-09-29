@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Divider, Button } from 'antd';
+import { Card, Divider, Button, DatePicker } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
 import { getOrders, getSwapInformation, getSwapInformationSentiment, getTradeFee, getHistory } from './api';
 import { tradeTypeEnum } from '../../config';
 import lineConfig from '../../pageComponents/g2ChartConfigs/Line';
+
+const { RangePicker } = DatePicker;
 
 export default props => {
   const [longShortRatioData, setLongShortRatioData] = useState([]);
@@ -59,21 +61,26 @@ export default props => {
     setFeeObj(data||{});
   }
 
-  const fnGetHistory = async () => {
-    const result = await getHistory({
-      instrument_id:
-      BTC_INSTRUMENT_ID,
-      granularity: 60,
-      limit: 20,
-    })
-    console.log(result)
+  const fnGetHistory = async dates => {
+    if(dates) {
+      const start = moment(dates[1]).toISOString();
+      const end = moment(dates[0]).toISOString()
+      const result = await getHistory({
+        instrument_id: 'BTC-USD-SWAP',
+        granularity: 1800,
+        // limit: 20,
+        start,
+        end
+      })
+      console.log(result)
+    }
   }
 
   useEffect(()=>{
     // getLongShortRatioData();
     // getSentiment();
     getFee({ instrument_id : BTC_INSTRUMENT_ID });
-    fnGetHistory();
+    // fnGetHistory();
   },[])
 
   const getColumns = ps => ([{
@@ -199,6 +206,9 @@ export default props => {
     return { records };
   }
 
+  const disabledDate = current => {
+    return current && current > moment().endOf('day');
+  }
 
   return <>
     <Card title='概况'>
@@ -209,6 +219,14 @@ export default props => {
         时间: {moment(feeObj.timestamp).format('YYYY-MM-DD HH:mm:ss')} <Divider type='vertical' />
         {/*交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
       </p>
+      <Divider />
+      历史数据范围：
+      <RangePicker
+        showTime
+        showNow
+        onChange={fnGetHistory}
+        disabledDate={disabledDate}
+      />
     </Card>
     <Card title={'BTC交易记录'} >
       <SearchTable
