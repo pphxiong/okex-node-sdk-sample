@@ -37,3 +37,9 @@ export async function getHistory(params) {
     params,
   });
 }
+
+export async function getSwapPosition(params) {
+  return request(`${commonUrl}/swap/getPosition`, {
+    params,
+  });
+}

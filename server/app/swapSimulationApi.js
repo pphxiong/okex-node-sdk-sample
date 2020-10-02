@@ -202,16 +202,11 @@ app.get('/swap/postOrder', function(req, response) {
     myInterval = startInterval();
 });
 
-app.get('/swap/testOrder', function(req, response) {
+app.get('/swap/testOrder', async (req, response) => {
     const {query = {}} = req;
-    const { historyList } = query;
-    const holding = {
-        margin: 0,
-        leverage: 10,
-        type: 1,
-        size: 100,
+    const { historyList = [] } = query;
 
-    }
+    send(response, {errcode: 0, errmsg: 'ok', data: res});
 });
 
 app.get('/swap/getPosition', function(req, response) {

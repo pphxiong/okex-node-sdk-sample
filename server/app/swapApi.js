@@ -451,7 +451,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
         return;
     }
     // 亏损，平仓，市价全平
-    if(ratio < - condition * frequency){
+    if(ratio < - condition * 0.9 * frequency){
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
