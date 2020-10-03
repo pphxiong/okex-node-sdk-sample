@@ -18,12 +18,14 @@ const continuousMap = {
         continuousWinNum: 0,
         continuousBatchNum: 0,
         continuousProfitNum: 0,
+        continuousTripleLossNum: 0,
     },
     [EOS_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
         continuousProfitNum: 0,
+        continuousTripleLossNum: 0,
     },
 };
 const lastOrderMap = {
@@ -437,6 +439,8 @@ const autoOperateSwap = async (holding,ratio,condition) => {
 
             if(holding.side=='short') isReverse = true;
 
+            continuousObj.continuousTripleLossNum = 0;
+
             // 多仓时，本次价格比上次低
             // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
             // const type = getCurrentDirection(holding);
@@ -463,6 +467,11 @@ const autoOperateSwap = async (holding,ratio,condition) => {
             let availRatio = 0.5;
             let order_type = 0;
 
+            if(continuousObj.continuousTripleLossNum) {
+                isReverse = true;
+                continuousObj.continuousTripleLossNum = 0;
+            }
+
             // 连续亏损3次，立即反向
             if(continuousObj.continuousLossNum>2) {
                 isReverse = true;
@@ -471,6 +480,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
                 availRatio = 0.65;
 
                 continuousObj.continuousLossNum = 0;
+                continuousObj.continuousTripleLossNum = 1;
             }
             setTimeout(async ()=>{
                 await autoOpenOrderSingle(holding,{ availRatio, isReverse, order_type });
