@@ -304,7 +304,8 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     }else{
         availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
     }
-    avail = Math.min(Math.floor(Number(availNo) * availRatio), Number(position));
+    // avail = Math.min(Math.floor(Number(availNo) * availRatio), Number(position));
+    avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
 
@@ -451,7 +452,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
         return;
     }
     // 亏损，平仓，市价全平
-    if(ratio < - condition * 0.9 * frequency){
+    if(ratio < - condition * frequency){
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
