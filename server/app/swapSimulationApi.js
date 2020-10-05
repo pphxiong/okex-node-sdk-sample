@@ -199,7 +199,7 @@ app.get('/swap/postOrder', function(req, response) {
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
         });
-    myInterval = startInterval();
+    // myInterval = startInterval();
 });
 
 app.get('/swap/testOrder', async (req, response) => {
@@ -510,7 +510,7 @@ function startInterval() {
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
-    },1000 * 1)
+    },1000 * 2.5)
 }
 
 function stopInterval() {
@@ -523,7 +523,7 @@ function stopInterval() {
 }
 
 // 定时获取交割合约账户信息
-myInterval = startInterval()
+// myInterval = startInterval()
 app.listen(8092);
 
 console.log('8092 server start');

@@ -68,6 +68,7 @@ export default props => {
 
   let totalPnl = 0;
   let isCurrentSideShort = false;
+  const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 
   const testAutoOperateSwap = async (unrealized_pnl,ratio,condition, holding) => {
     const frequency = 0.6;
@@ -102,9 +103,7 @@ export default props => {
         isCurrentSideShort = true;
         continuousObj.continuousLossNum = 0;
       }
-      setTimeout(async ()=>{
-        await autoOpenOrderSingle(holding,{ availRatio, isReverse, order_type });
-      },timeout * frequency)
+      // await autoOpenOrderSingle(holding,{ availRatio, isReverse, order_type });
       return;
     }
   }

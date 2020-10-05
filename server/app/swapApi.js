@@ -424,7 +424,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
 
             let isReverse = false;
             let timeMultiple = 10 * 2;
-            let availRatio = 0.5;
+            let availRatio = 0.8;
             let order_type = 0;
 
             // 第3次盈利后反向
@@ -432,7 +432,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
                 isReverse = true;
                 timeMultiple = 0;
                 order_type = 0;
-                availRatio = 0.65;
+                availRatio = 0.9;
 
                 continuousObj.continuousWinNum = 0;
             }
@@ -464,7 +464,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
 
             let isReverse = false;
             let timeout = timeoutNo;
-            let availRatio = 0.5;
+            let availRatio = 0.8;
             let order_type = 0;
 
             if(continuousObj.continuousTripleLossNum) {
@@ -477,7 +477,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
                 isReverse = true;
                 timeout = timeoutNo * 0 / 10;
                 order_type = 0;
-                availRatio = 0.65;
+                availRatio = 0.9;
 
                 continuousObj.continuousLossNum = 0;
                 continuousObj.continuousTripleLossNum = 1;
@@ -507,7 +507,7 @@ function startInterval() {
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
-    },1000 * 5)
+    },1000 * 2.5)
 }
 
 function stopInterval() {
