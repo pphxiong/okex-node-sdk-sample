@@ -414,7 +414,7 @@ const autoOperateSwap = async (holding,ratio,condition) => {
     const batchObj = batchOrderMap[instrument_id]
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
     // 盈利
-    if(ratio > condition * 1.2 * 2 * frequency){
+    if(ratio > condition * 1.2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousLossNum = 0;
