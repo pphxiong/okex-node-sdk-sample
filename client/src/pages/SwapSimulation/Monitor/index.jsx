@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Divider, Button, DatePicker } from 'antd';
+import { Card, Divider, Button, DatePicker, InputNumber } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
@@ -19,6 +19,12 @@ export default props => {
   const [pageSize,setPageSize] = useState(10);
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
+  const [frequency, setFrequency] = useState(0.6);
+  const [winRatio,setWinRatio] = useState(0.45);
+  const [lossRatio,setLossRatio] = useState(0.7);
+  const [tPnlList,setTPnlList] = useState([{}]);
+  const [tPnl, setTPnl] = useState(0);
+  const [tPnlRatio, setTPnlRatio] = useState(0);
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
   const SWAP_BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
@@ -84,7 +90,6 @@ export default props => {
     const { avg_cost, side, margin, leverage: btcLeverage, position } = holding;
     const leverage = Number(btcLeverage);
     let condition = leverage / 100;
-    const frequency = 0.6;
 
     console.log(historyList)
 
@@ -97,8 +102,8 @@ export default props => {
       const ratio = Number(unrealized_pnl) / Number(margin);
 
       // 盈利
-      if(ratio > condition * 1.5 * frequency){
-        totalPnl += unrealized_pnl;
+      if(ratio > condition * winRatio * frequency){
+        totalPnl += unrealized_pnl - Number(position) * 100 * 5 * 2 / 10000 / Number(item[1]);
         continuousObj.continuousLossNum = 0;
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
@@ -111,11 +116,11 @@ export default props => {
         }
 
         primaryPrice = item[1];
-        console.log('win::totalPnl',totalPnl, ratio)
+        console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
       }
       // 亏损，平仓，市价全平
-      if(ratio < - condition * 0.5 * frequency){
-        totalPnl += unrealized_pnl;
+      if(ratio < - condition * lossRatio * frequency){
+        totalPnl += unrealized_pnl - Number(position) * 100 * 5 * 2 / 10000 / Number(item[1]);
 
         continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
         continuousObj.continuousWinNum = 0;
@@ -129,33 +134,48 @@ export default props => {
         }
 
         primaryPrice = item[1];
-        console.log('loss::totalPnl',totalPnl,ratio)
+        console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
       }
-
       console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
       console.log(continuousObj.continuousWinNum, continuousObj.continuousLossNum)
-
     })
 
-    console.log('totalPnl',totalPnl, margin, totalPnl * 100 / Number(margin) )
+    const totalRatio = totalPnl * 100 / Number(margin);
+    // setTPnl(totalPnl)
+    // setTpnlRatio(totalPnl * 100 / Number(margin))
+
+    console.log('totalPnl',totalPnl, margin, totalRatio )
+    return { time: historyList[0][0], totalPnl, totalRatio }
   }
 
   const fnGetHistory = async dates => {
     console.log(dates)
-    let start = '2020-09-05T01:00:00.105Z';
-    let end = '2020-09-02T01:00:00.105Z';
-    if(dates) {
-      start = moment(dates[1]).toISOString();
-      end = moment(dates[0]).toISOString();
+    const firstDay = '2020-09-02 00:00:00';
+
+    let loopNum = 0;
+    let list = [];
+    let t = 0;
+    let tRatio = 0;
+    while(loopNum < 7) {
+      const start = moment(firstDay,'YYYY-MM-DD HH:mm:ss').add(loopNum + 1,'days').toISOString();
+      const end = moment(firstDay,'YYYY-MM-DD HH:mm:ss').add(loopNum,'days').toISOString();
+      const { data } = await getHistory({
+        instrument_id: 'BTC-USD-SWAP',
+        granularity: 180,
+        // limit: 20,
+        start,
+        end
+      })
+      const result = await testOrder(data.reverse());
+      t += result.totalPnl;
+      tRatio += result.totalRatio;
+      list.push(result);
+      loopNum++;
     }
-    const { data } = await getHistory({
-      instrument_id: 'BTC-USD-SWAP',
-      granularity: 300,
-      // limit: 20,
-      start,
-      end
-    })
-    await testOrder(data.reverse());
+
+    setTPnlList(list);
+    setTPnl(t);
+    setTPnlRatio(tRatio);
   }
 
   useEffect(()=>{
@@ -302,14 +322,59 @@ export default props => {
         {/*交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
       </p>
       <Divider />
+
+      frequency:
+      <InputNumber
+        value={ frequency }
+        step={0.1}
+        min={0.1}
+        max={1}
+        onChange={v=>setFrequency(Number(v))}
+      />
+
+      winRatio:
+      <InputNumber
+        value={ winRatio }
+        step={0.1}
+        min={0.1}
+        max={10}
+        onChange={v=>setWinRatio(Number(v))}
+      />
+
+      lossRatio:
+      <InputNumber
+        value={ lossRatio }
+        step={0.1}
+        min={0.1}
+        max={10}
+        onChange={v=>setLossRatio(Number(v))}
+      />
+
+      <Divider />
       历史数据范围：
       <RangePicker
         showTime
         showNow
         onChange={fnGetHistory}
         disabledDate={disabledDate}
-        defaultValue={[moment('2020-07-25 00:00:00','YYYY-MM-DD HH:mm:ss'),moment('2020-07-28 23:59:59','YYYY-MM-DD HH:mm:ss')]}
+        defaultValue={[moment('2020-09-02 00:00:00','YYYY-MM-DD HH:mm:ss'),moment('2020-09-03 00:00:00','YYYY-MM-DD HH:mm:ss')]}
       />
+
+      <Divider />
+
+      {
+        tPnlList.map((item,index)=>{
+          return <div key={item.time}>
+            <p>时间：{item.time}</p>
+            <p>盈亏：{item.totalPnl} </p>
+            <p>盈亏比：{item.totalRatio}</p>
+          </div>
+        })
+      }
+
+      <p>总盈亏：{tPnl} </p>
+      <p>总盈亏比：{tPnlRatio}</p>
+
     </Card>
     <Card title={'BTC交易记录'} >
       <SearchTable

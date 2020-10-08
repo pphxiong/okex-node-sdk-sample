@@ -424,7 +424,8 @@ const autoOperateSwap = async (holding) => {
     console.log(ratio,avg_cost,last)
     // 盈利
     if(ratio > condition * 1.5 * frequency){
-        const { result } = await autoCloseOrderSingle(holding)
+        // const { result } = await autoCloseOrderSingle(holding)
+        const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result){
             continuousObj.continuousLossNum = 0;
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
