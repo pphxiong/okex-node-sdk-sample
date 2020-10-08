@@ -70,25 +70,25 @@ export default defineConfig({
                 },
               ]
             },
-            // {
-            //   path: '/swapSimulation',
-            //   name: '模拟',
-            //   icon: 'smile',
-            //   routes:[
-            //     {
-            //       path: '/swapSimulation/monitor',
-            //       name: '概览',
-            //       icon: 'smile',
-            //       component: './SwapSimulation/Monitor',
-            //     },
-            //     {
-            //       path: '/swapSimulation/trade',
-            //       name: '交易',
-            //       icon: 'crown',
-            //       component: './SwapSimulation/Trade',
-            //     },
-            //   ]
-            // },
+            {
+              path: '/swapSimulation',
+              name: '模拟',
+              icon: 'smile',
+              routes:[
+                {
+                  path: '/swapSimulation/monitor',
+                  name: '概览',
+                  icon: 'smile',
+                  component: './SwapSimulation/Monitor',
+                },
+                {
+                  path: '/swapSimulation/trade',
+                  name: '交易',
+                  icon: 'crown',
+                  component: './SwapSimulation/Trade',
+                },
+              ]
+            },
             // {
             //   path: '/futures',
             //   name: '交割',

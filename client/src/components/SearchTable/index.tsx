@@ -91,7 +91,6 @@ export default ({
             let newData = data || records || {};
             if(Array.isArray(newData)) newData = { records: newData };
             if (responseHandler) newData = responseHandler(newData);
-            console.log(newData)
             setDataSource(newData || {});
           } catch (e) {
             console.log(e);
@@ -104,7 +103,6 @@ export default ({
   }
 
   rfTable = function (refKey?:any,params?: object) {
-    console.log(refKey,tableId)
     if(refKey == tableId) fnGetList(params);
   };
 

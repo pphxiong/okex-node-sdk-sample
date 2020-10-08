@@ -395,24 +395,33 @@ function validateRatio(holding) {
 }
 
 const getOrderModeSingle = async (orderMode = mode, holding) => {
-    const ratio = Number(holding.unrealized_pnl) / Number(holding.margin);
-    const leverage = Number(holding.leverage);
-    let condition = leverage / 100;
-    console.log(holding.instrument_id,ratio,condition)
+    // const ratio = Number(holding.unrealized_pnl) / Number(holding.margin);
+    // const leverage = Number(holding.leverage);
+    // let condition = leverage / 100;
+    // console.log(holding.instrument_id,ratio,condition)
     if(orderMode == 4){
-        return await autoOperateSwap(holding,ratio,condition)
+        return await autoOperateSwap(holding)
     }
     // await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
-const autoOperateSwap = async (holding,ratio,condition) => {
-    const { instrument_id, last } = holding;
-    const leverage = Number(holding.leverage);
+const autoOperateSwap = async (holding) => {
+    const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
+
+    const size = Number(position) * 100 / Number(last);
+    let unrealized_pnl = size * (Number(last) - Number(avg_cost)) / Number(last);
+    if(side=='short') unrealized_pnl = - unrealized_pnl;
+
+    const ratio = Number(unrealized_pnl) / Number(margin);
+
+    const condition = Number(leverage) / 100;
+
     const continuousObj = continuousMap[instrument_id];
     const lastObj = lastOrderMap[instrument_id];
-    const winOrderObj = winOrderMap[instrument_id];
-    const batchObj = batchOrderMap[instrument_id]
+    // const winOrderObj = winOrderMap[instrument_id];
+    // const batchObj = batchOrderMap[instrument_id];
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
+    console.log(ratio,avg_cost,last)
     // 盈利
     if(ratio > condition * 1.2 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
