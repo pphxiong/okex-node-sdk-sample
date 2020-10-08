@@ -97,7 +97,7 @@ export default props => {
       const ratio = Number(unrealized_pnl) / Number(margin);
 
       // 盈利
-      if(ratio > condition * 1.2 * frequency){
+      if(ratio > condition * 1.5 * frequency){
         totalPnl += unrealized_pnl;
         continuousObj.continuousLossNum = 0;
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
@@ -111,9 +111,10 @@ export default props => {
         }
 
         primaryPrice = item[1];
+        console.log('win::totalPnl',totalPnl, ratio)
       }
       // 亏损，平仓，市价全平
-      if(ratio < - condition * frequency){
+      if(ratio < - condition * 0.5 * frequency){
         totalPnl += unrealized_pnl;
 
         continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
@@ -128,17 +129,19 @@ export default props => {
         }
 
         primaryPrice = item[1];
+        console.log('loss::totalPnl',totalPnl,ratio)
       }
 
-      console.log(ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
+      console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
       console.log(continuousObj.continuousWinNum, continuousObj.continuousLossNum)
 
     })
 
-    console.log('totalPnl',totalPnl)
+    console.log('totalPnl',totalPnl, margin, totalPnl * 100 / Number(margin) )
   }
 
   const fnGetHistory = async dates => {
+    console.log(dates)
     let start = '2020-09-05T01:00:00.105Z';
     let end = '2020-09-02T01:00:00.105Z';
     if(dates) {
@@ -147,7 +150,7 @@ export default props => {
     }
     const { data } = await getHistory({
       instrument_id: 'BTC-USD-SWAP',
-      granularity: 900,
+      granularity: 300,
       // limit: 20,
       start,
       end
@@ -305,6 +308,7 @@ export default props => {
         showNow
         onChange={fnGetHistory}
         disabledDate={disabledDate}
+        defaultValue={[moment('2020-07-25 00:00:00','YYYY-MM-DD HH:mm:ss'),moment('2020-07-28 23:59:59','YYYY-MM-DD HH:mm:ss')]}
       />
     </Card>
     <Card title={'BTC交易记录'} >

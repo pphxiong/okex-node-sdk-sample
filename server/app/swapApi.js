@@ -423,7 +423,7 @@ const autoOperateSwap = async (holding) => {
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
     console.log(ratio,avg_cost,last)
     // 盈利
-    if(ratio > condition * 1.2 * frequency){
+    if(ratio > condition * 1.5 * frequency){
         const { result } = await autoCloseOrderSingle(holding)
         if(result){
             continuousObj.continuousLossNum = 0;
@@ -465,7 +465,7 @@ const autoOperateSwap = async (holding) => {
         return;
     }
     // 亏损，平仓，市价全平
-    if(ratio < - condition * frequency){
+    if(ratio < - condition * 0.5 * frequency){
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
