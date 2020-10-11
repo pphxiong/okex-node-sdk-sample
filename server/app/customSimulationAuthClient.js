@@ -100,6 +100,9 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             getHistory: function (instrument_id, params) {
                 return get(`/api/swap/v3/instruments/${instrument_id}/history/candles?` + querystring.stringify(params));
             },
+            getKData: function (instrument_id, params) {
+                return get(`/api/swap/v3/instruments/${instrument_id}/candles?` + querystring.stringify(params));
+            },
         }
     }
 
