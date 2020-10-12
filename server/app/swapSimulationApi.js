@@ -379,7 +379,7 @@ app.get('/swap/getHistory', function(req, response) {
     const {query = {}} = req;
     const { instrument_id } = query;
     delete query.instrument_id;
-    cAuthClient.swap.getKData(instrument_id, query).then(res=>{
+    cAuthClient.swap.getHistory(instrument_id, query).then(res=>{
         send(response, {errcode: 0, errmsg: 'ok', data: res });
     })
 });
