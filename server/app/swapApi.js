@@ -281,7 +281,7 @@ const getOrderState = async (payload) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { isReverse = false, availRatio = 1, order_type = 0 } = params;
+    const { isReverse = true, availRatio = 1, order_type = 0, isOpenShort = false } = params;
     const { instrument_id, position } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
     // 可开张数
@@ -296,7 +296,8 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     // avail = Math.min(Math.floor(Number(availNo) * availRatio), Number(position));
     avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
-    const type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
+    let type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
+    if(isOpenShort) type = 2;
 
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
@@ -408,18 +409,30 @@ const autoOperateSwap = async (holding) => {
     // const winOrderObj = winOrderMap[instrument_id];
     // const batchObj = batchOrderMap[instrument_id];
     console.log(instrument_id, ratio)
-    console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage)
+    console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
     // 盈利
     if(ratio > condition * winRatio * frequency){
         // const { result } = await autoCloseOrderSingle(holding)
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
-        if(result) await autoOpenOrderSingle(holding);
+        if(result) {
+            continuousObj.continuousLossNum = 0;
+            continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+
+            await autoOpenOrderSingle(holding);
+        }
         return;
     }
     // 亏损，平仓，市价全平
     if(ratio < - condition * lossRatio * frequency){
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
-        if(result) await autoOpenOrderSingle(holding);
+        if(result) {
+            continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+            continuousObj.continuousWinNum = 0;
+
+            let isOpenShort = false;
+            if(continuousObj.continuousLossNum>1) isOpenShort = true;
+            await autoOpenOrderSingle(holding, isOpenShort);
+        }
         return;
     }
 }

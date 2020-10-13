@@ -104,7 +104,7 @@ export default props => {
 
       const ratio = Number(unrealized_pnl) / Number(margin);
 
-      if(ratio < -0.1) console.info(item[0],'ratio',ratio)
+      if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
       // if(passNum) {
       //   passNum--;
       //   if(passNum == 0)  primaryPrice = item[1];
@@ -148,6 +148,8 @@ export default props => {
 
         isCurrentSideShort = !isCurrentSideShort;
 
+        if(continuousObj.continuousLossNum>1) isCurrentSideShort = true;
+
         // 连续亏损3次，立即反向
         // if(continuousObj.continuousLossNum>2) {
         //   isCurrentSideShort = !isCurrentSideShort;
@@ -158,7 +160,7 @@ export default props => {
         // console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
       }
       // console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
-      // console.log(continuousObj.continuousWinNum, continuousObj.continuousLossNum)
+      console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
 
     const totalRatio = totalPnl * 100 / Number(margin);
@@ -178,18 +180,18 @@ export default props => {
     continuousObj.continuousLossNum = 0;
     continuousObj.continuousWinNum = 0;
     totalPnl = 0;
-    while(loopNum < 14 * 4) {
-      const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 12,'hours').toISOString();
-      const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 12,'hours').toISOString();
+    while(loopNum < 134) {
+      const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
+      const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
       const { data } = await getHistory({
         instrument_id: 'BTC-USD-SWAP',
-        granularity: 180,
+        granularity: 60,
         // limit: 20,
         start,
         end
       })
       const result = await testOrder(data.reverse());
-      console.log(start,result.totalPnl,result.totalRatio, isCurrentSideShort)
+      console.log(start,result.totalPnl,result.totalRatio)
       t += result.totalPnl;
       tRatio += result.totalRatio;
       list.push(result);
