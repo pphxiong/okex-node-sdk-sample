@@ -429,6 +429,8 @@ const autoOperateSwap = async (holding) => {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
             continuousObj.continuousWinNum = 0;
 
+            if(continuousObj.continuousLossNum>3) return;
+
             let isOpenShort = false;
             if(continuousObj.continuousLossNum>1) isOpenShort = true;
             await autoOpenOrderSingle(holding, isOpenShort);

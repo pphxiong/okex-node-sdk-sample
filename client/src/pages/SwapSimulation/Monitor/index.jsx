@@ -148,7 +148,11 @@ export default props => {
 
         isCurrentSideShort = !isCurrentSideShort;
 
-        if(continuousObj.continuousLossNum>1) isCurrentSideShort = true;
+        if(continuousObj.continuousLossNum>1) {
+          console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
+          console.info('ratio', ratio)
+          isCurrentSideShort = true;
+        }
 
         // 连续亏损3次，立即反向
         // if(continuousObj.continuousLossNum>2) {
@@ -160,7 +164,7 @@ export default props => {
         // console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
       }
       // console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
-      console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
+      // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
 
     const totalRatio = totalPnl * 100 / Number(margin);
