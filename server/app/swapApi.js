@@ -9,9 +9,13 @@ let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
 let mode = 4; //下单模式
+
+const frequency = 1;
+const winRatio = 1.5;
+const lossRatio = 3;
+
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
-let continuousBatchNum = 0; //连续补仓次数
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
         continuousLossNum: 0,
@@ -39,23 +43,6 @@ const lastOrderMap = {
     },
 }
 const timeoutNo = 1000 * 60 * 1; //下单间隔时间
-let frequency = 0.6; //交易频次
-const batchOrderMap = {
-    [BTC_INSTRUMENT_ID]: {
-        order_id: 0, //上次补仓订单id
-    },
-    [EOS_INSTRUMENT_ID]: {
-        order_id: 0
-    },
-}
-const winOrderMap = {
-    [BTC_INSTRUMENT_ID]: {
-        order_id: 0, //上次止盈订单id
-    },
-    [EOS_INSTRUMENT_ID]: {
-        order_id: 0
-    },
-}
 
 var config = require('./config');
 // const pClient = new PublicClient(config.urlHost);
@@ -423,79 +410,16 @@ const autoOperateSwap = async (holding) => {
     console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
     console.log(ratio,avg_cost,last)
     // 盈利
-    if(ratio > condition * 1.5 * frequency){
+    if(ratio > condition * winRatio * frequency){
         // const { result } = await autoCloseOrderSingle(holding)
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
-        if(result){
-            continuousObj.continuousLossNum = 0;
-            continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-
-            lastObj.last = Number(last);
-
-            let isReverse = false;
-            let timeMultiple = 10 * 2;
-            let availRatio = 0.8;
-            let order_type = 0;
-
-            // 第3次盈利后反向
-            if(continuousObj.continuousWinNum>2) {
-                isReverse = true;
-                timeMultiple = 0;
-                order_type = 0;
-                availRatio = 0.9;
-
-                continuousObj.continuousWinNum = 0;
-            }
-
-            if(holding.side=='short') isReverse = true;
-
-            continuousObj.continuousTripleLossNum = 0;
-
-            // 多仓时，本次价格比上次低
-            // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-            // const type = getCurrentDirection(holding);
-            // console.log('last', mark_price, lastObj.last, type)
-            // const isNeedOpenOrder = !!((type == 1 && Number(mark_price) < lastObj.last) || (type == 2 && Number(mark_price) > lastObj.last));
-
-            // 头两次盈利十倍时间后再开仓
-            // if(isNeedOpenOrder && continuousObj.continuousWinNum<3) timeMultiple = 10;
-            setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding, { availRatio, isReverse, order_type });
-            },timeoutNo * timeMultiple * frequency)
-        }
+        if(result) await autoOpenOrderSingle(holding);
         return;
     }
     // 亏损，平仓，市价全平
-    if(ratio < - condition * 0.5 * frequency){
+    if(ratio < - condition * lossRatio * frequency){
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
-        if(result) {
-            continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-            continuousObj.continuousWinNum = 0;
-
-            let isReverse = false;
-            let timeout = timeoutNo;
-            let availRatio = 0.8;
-            let order_type = 0;
-
-            if(continuousObj.continuousTripleLossNum) {
-                isReverse = true;
-                continuousObj.continuousTripleLossNum = 0;
-            }
-
-            // 连续亏损3次，立即反向
-            if(continuousObj.continuousLossNum>2) {
-                isReverse = true;
-                timeout = timeoutNo * 0 / 10;
-                order_type = 0;
-                availRatio = 0.9;
-
-                continuousObj.continuousLossNum = 0;
-                continuousObj.continuousTripleLossNum = 1;
-            }
-            setTimeout(async ()=>{
-                await autoOpenOrderSingle(holding,{ availRatio, isReverse, order_type });
-            },timeout * frequency)
-        }
+        if(result) await autoOpenOrderSingle(holding);
         return;
     }
 }
