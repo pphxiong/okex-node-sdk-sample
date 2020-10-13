@@ -408,6 +408,7 @@ const autoOperateSwap = async (holding) => {
     // const winOrderObj = winOrderMap[instrument_id];
     // const batchObj = batchOrderMap[instrument_id];
     console.log(instrument_id, ratio)
+    console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage)
     // 盈利
     if(ratio > condition * winRatio * frequency){
         // const { result } = await autoCloseOrderSingle(holding)

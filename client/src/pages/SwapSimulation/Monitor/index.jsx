@@ -103,6 +103,8 @@ export default props => {
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
+
+      if(ratio < -0.1) console.info(item[0],'ratio',ratio)
       // if(passNum) {
       //   passNum--;
       //   if(passNum == 0)  primaryPrice = item[1];
