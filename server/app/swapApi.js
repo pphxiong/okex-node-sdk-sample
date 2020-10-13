@@ -10,7 +10,7 @@ let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 
-const frequency = 1;
+let frequency = 1;
 const winRatio = 1.5;
 const lossRatio = 3;
 
@@ -407,8 +407,7 @@ const autoOperateSwap = async (holding) => {
     const lastObj = lastOrderMap[instrument_id];
     // const winOrderObj = winOrderMap[instrument_id];
     // const batchObj = batchOrderMap[instrument_id];
-    console.log(instrument_id, continuousObj.continuousWinNum, continuousObj.continuousLossNum)
-    console.log(ratio,avg_cost,last)
+    console.log(instrument_id, ratio)
     // 盈利
     if(ratio > condition * winRatio * frequency){
         // const { result } = await autoCloseOrderSingle(holding)
