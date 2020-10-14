@@ -21,8 +21,8 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const [winRatio,setWinRatio] = useState(1.5);
-  const [lossRatio,setLossRatio] = useState(3);
+  const [winRatio,setWinRatio] = useState(2);
+  const [lossRatio,setLossRatio] = useState(1);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
@@ -81,10 +81,12 @@ export default props => {
 
   let continuousObj = initContinuousObj;
 
-  let totalPnl = 0;
   let isCurrentSideShort = false;
+  let lastPrice = 0;
 
-  const testOrder = async (historyList,holding) => {
+  const testOrder = async (historyList,endPrice) => {
+    let totalPnl = 0;
+
     // const { avg_cost, side, margin, leverage: btcLeverage, position } = holding;
     const position = 10;
     const margin = position * 100 / historyList[0][1] / leverage;
@@ -93,7 +95,7 @@ export default props => {
     // console.log(historyList)
     // console.log('margin', margin)
 
-    let primaryPrice = historyList[0][1];
+    let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
     let totalFee = 0;
 
@@ -103,6 +105,8 @@ export default props => {
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
+      console.log(item[0],'isCurrentSideShort',isCurrentSideShort,'ratio',ratio);
+      console.log('price1',primaryPrice,'price2',item[1])
 
       if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
       // if(passNum) {
@@ -131,7 +135,8 @@ export default props => {
         //   continuousObj.continuousWinNum = 0;
         //   passNum = 0;
         // }
-
+        console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
+        console.info('ratio', ratio)
         primaryPrice = item[1];
         // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
       }
@@ -149,10 +154,11 @@ export default props => {
         isCurrentSideShort = !isCurrentSideShort;
 
         if(continuousObj.continuousLossNum>1) {
-          console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
-          console.info('ratio', ratio)
           isCurrentSideShort = true;
         }
+
+        console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
+        console.info('ratio', ratio)
 
         // 连续亏损3次，立即反向
         // if(continuousObj.continuousLossNum>2) {
@@ -172,7 +178,7 @@ export default props => {
     // setTpnlRatio(totalPnl * 100 / Number(margin))
 
     // console.log('totalPnl',totalPnl, totalFee, margin, totalRatio,  )
-    return { time: historyList[0][0], totalPnl, totalRatio, totalFee }
+    return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice }
   }
 
   const getMonthPnl = async day => {
@@ -180,10 +186,11 @@ export default props => {
     let list = [];
     let t = 0;
     let tRatio = 0;
-    isCurrentSideShort = false;
-    continuousObj.continuousLossNum = 0;
-    continuousObj.continuousWinNum = 0;
-    totalPnl = 0;
+    // isCurrentSideShort = false;
+    // continuousObj.continuousLossNum = 0;
+    // continuousObj.continuousWinNum = 0;
+    // totalPnl = 0;
+
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
       const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
@@ -194,12 +201,13 @@ export default props => {
         start,
         end
       })
-      const result = await testOrder(data.reverse());
+      const result = await testOrder(data.reverse(),lastPrice);
       console.log(start,result.totalPnl,result.totalRatio)
       t += result.totalPnl;
       tRatio += result.totalRatio;
       list.push(result);
       loopNum++;
+      lastPrice = result.endPrice;
     }
     return { pnl: t, ratio: tRatio };
   }
@@ -215,7 +223,7 @@ export default props => {
     let mList = [];
     let i = 0;
     while(i<9) {
-      const firstDay = `2020-${monthMap[i]}-02 00:00:00`;
+      const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
       const { pnl , ratio } = await getMonthPnl(firstDay);
       console.log('pnl,ratio',monthMap[i],pnl,ratio)
       t += pnl;
@@ -240,7 +248,7 @@ export default props => {
     // const { holding: btcHolding } = result?.data??{};
     // const holding = btcHolding[0];
 
-    const firstDay = `2020-${month}-02 00:00:00`;
+    const firstDay = `2020-${month}-01 00:00:00`;
     const { pnl , ratio } = await getMonthPnl(firstDay);
 
     setTPnl(pnl);

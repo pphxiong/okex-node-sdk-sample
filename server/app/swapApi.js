@@ -11,8 +11,8 @@ let myInterval;
 let mode = 4; //下单模式
 
 let frequency = 1;
-const winRatio = 1.5;
-const lossRatio = 3;
+const winRatio = 2;
+const lossRatio = 1;
 
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
@@ -429,7 +429,7 @@ const autoOperateSwap = async (holding) => {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
             continuousObj.continuousWinNum = 0;
 
-            if(continuousObj.continuousLossNum>3) return;
+            // if(continuousObj.continuousLossNum>3) return;
 
             let isOpenShort = false;
             if(continuousObj.continuousLossNum>1) isOpenShort = true;
