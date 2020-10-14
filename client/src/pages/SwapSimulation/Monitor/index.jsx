@@ -22,7 +22,7 @@ export default props => {
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
   const [winRatio,setWinRatio] = useState(2);
-  const [lossRatio,setLossRatio] = useState(1);
+  const [lossRatio,setLossRatio] = useState(0.8);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
@@ -222,7 +222,7 @@ export default props => {
     let tRatio = 0;
     let mList = [];
     let i = 0;
-    while(i<9) {
+    while(i<4) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
       const { pnl , ratio } = await getMonthPnl(firstDay);
       console.log('pnl,ratio',monthMap[i],pnl,ratio)
