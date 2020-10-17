@@ -12,7 +12,7 @@ let mode = 4; //下单模式
 
 let frequency = 1;
 const winRatio = 2;
-const lossRatio = 0.8;
+const lossRatio = 0.6;
 
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
@@ -410,6 +410,11 @@ const autoOperateSwap = async (holding) => {
     // const batchObj = batchOrderMap[instrument_id];
     console.log(instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
+
+    if(continuousObj.continuousLossNum>2){
+        console.log('continuousLossNum',continuousObj.continuousLossNum)
+    }
+
     // 盈利
     if(ratio > condition * winRatio * frequency){
         // const { result } = await autoCloseOrderSingle(holding)

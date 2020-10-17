@@ -105,8 +105,8 @@ export default props => {
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
-      console.log(item[0],'isCurrentSideShort',isCurrentSideShort,'ratio',ratio);
-      console.log('price1',primaryPrice,'price2',item[1])
+      // console.log(item[0],'isCurrentSideShort',isCurrentSideShort,'ratio',ratio);
+      // console.log('price1',primaryPrice,'price2',item[1])
 
       if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
       // if(passNum) {
@@ -135,8 +135,8 @@ export default props => {
         //   continuousObj.continuousWinNum = 0;
         //   passNum = 0;
         // }
-        console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
-        console.info('ratio', ratio)
+        // console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
+        // console.info('ratio', ratio)
         primaryPrice = item[1];
         // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
       }
@@ -152,13 +152,15 @@ export default props => {
         continuousObj.continuousWinNum = 0;
 
         isCurrentSideShort = !isCurrentSideShort;
+        // if(continuousObj.continuousLossNum>1) {
+        //   isCurrentSideShort = !isCurrentSideShort;
+        // }
 
-        if(continuousObj.continuousLossNum>1) {
+        if(continuousObj.continuousLossNum>2) {
           isCurrentSideShort = true;
+          console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
+          console.info('ratio', ratio)
         }
-
-        console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
-        console.info('ratio', ratio)
 
         // 连续亏损3次，立即反向
         // if(continuousObj.continuousLossNum>2) {
@@ -201,13 +203,16 @@ export default props => {
         start,
         end
       })
-      const result = await testOrder(data.reverse(),lastPrice);
-      console.log(start,result.totalPnl,result.totalRatio)
-      t += result.totalPnl;
-      tRatio += result.totalRatio;
-      list.push(result);
-      loopNum++;
-      lastPrice = result.endPrice;
+
+      if(Array.isArray(data)){
+        const result = await testOrder(data.reverse(),lastPrice);
+        // console.log(start,result.totalPnl,result.totalRatio)
+        t += result.totalPnl;
+        tRatio += result.totalRatio;
+        list.push(result);
+        loopNum++;
+        lastPrice = result.endPrice;
+      }
     }
     return { pnl: t, ratio: tRatio };
   }
@@ -222,7 +227,7 @@ export default props => {
     let tRatio = 0;
     let mList = [];
     let i = 0;
-    while(i<4) {
+    while(i<9) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
       const { pnl , ratio } = await getMonthPnl(firstDay);
       console.log('pnl,ratio',monthMap[i],pnl,ratio)
