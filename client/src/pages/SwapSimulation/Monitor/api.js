@@ -43,3 +43,9 @@ export async function getSwapPosition(params) {
     params,
   });
 }
+
+export async function testOrderApi(params) {
+  return request(`${commonUrl}/swap/testOrderApi`, {
+    params,
+  });
+}

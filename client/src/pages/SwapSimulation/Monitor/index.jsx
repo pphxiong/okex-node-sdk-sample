@@ -3,10 +3,16 @@ import { Card, Divider, Button, DatePicker, InputNumber, Select, Spin } from 'an
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
-import { getOrders, getSwapInformation, getSwapInformationSentiment, getTradeFee, getHistory } from './api';
+import {
+  getOrders,
+  getSwapInformation,
+  getSwapInformationSentiment,
+  getTradeFee,
+  getHistory,
+  testOrderApi
+} from './api';
 import { getSwapPosition } from '../../Swap/Trade/api'
 import { tradeTypeEnum } from '../../config';
-import lineConfig from '../../pageComponents/g2ChartConfigs/Line';
 
 const { RangePicker } = DatePicker;
 
@@ -22,7 +28,7 @@ export default props => {
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
   const [winRatio,setWinRatio] = useState(2);
-  const [lossRatio,setLossRatio] = useState(0.8);
+  const [lossRatio,setLossRatio] = useState(0.6);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
@@ -249,15 +255,13 @@ export default props => {
   }
 
   const fnGetHistoryByMonth = async () => {
-    // const result = await getSwapPosition({ instrument_id: SWAP_BTC_INSTRUMENT_ID });
-    // const { holding: btcHolding } = result?.data??{};
-    // const holding = btcHolding[0];
-
     const firstDay = `2020-${month}-01 00:00:00`;
-    const { pnl , ratio } = await getMonthPnl(firstDay);
 
-    setTPnl(pnl);
-    setTPnlRatio(ratio);
+    const result = await testOrderApi(firstDay);
+    // const { pnl , ratio } = await getMonthPnl(firstDay);
+
+    // setTPnl(pnl);
+    // setTPnlRatio(ratio);
   }
 
   useEffect(()=>{
