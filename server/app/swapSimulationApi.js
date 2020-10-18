@@ -292,7 +292,7 @@ const getMonthPnl = async day => {
         }
 
 
-        new Promise(resolve => { setTimeout( ()=>{ resolve() }, 2000 / 5) })
+        await new Promise(resolve => { setTimeout( ()=>{ resolve() }, 2000 / 5) })
     }
     return { pnl: t, ratio: tRatio };
 }
