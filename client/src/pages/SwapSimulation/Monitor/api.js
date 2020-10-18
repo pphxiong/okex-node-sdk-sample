@@ -45,7 +45,7 @@ export async function getSwapPosition(params) {
 }
 
 export async function testOrderApi(params) {
-  return request(`${commonUrl}/swap/testOrderApi`, {
+  return request(`${commonUrl}/swap/testOrder`, {
     params,
   });
 }

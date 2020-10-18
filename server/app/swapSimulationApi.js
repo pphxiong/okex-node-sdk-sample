@@ -279,7 +279,7 @@ const getMonthPnl = async day => {
             start,
             end
         }
-        const { data } =  cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
+        const { data } =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
 
         if(Array.isArray(data)){
             const result = await testOrder(data.reverse(),lastPrice);

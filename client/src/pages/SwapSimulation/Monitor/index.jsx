@@ -257,7 +257,7 @@ export default props => {
   const fnGetHistoryByMonth = async () => {
     const firstDay = `2020-${month}-01 00:00:00`;
 
-    const result = await testOrderApi(firstDay);
+    const result = await testOrderApi({ month });
     // const { pnl , ratio } = await getMonthPnl(firstDay);
 
     // setTPnl(pnl);
