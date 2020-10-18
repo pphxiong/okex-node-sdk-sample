@@ -280,18 +280,19 @@ const getMonthPnl = async day => {
             end
         }
 
-        setInterval(async ()=>{
-            const { data } =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
+        const { data } =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
 
-            if(Array.isArray(data)){
-                const result = await testOrder(data.reverse(),lastPrice);
-                t += result.totalPnl;
-                tRatio += result.totalRatio;
-                list.push(result);
-                loopNum++;
-                lastPrice = result.endPrice;
-            }
-        }, 2000 / 5)
+        if(Array.isArray(data)){
+            const result = await testOrder(data.reverse(),lastPrice);
+            t += result.totalPnl;
+            tRatio += result.totalRatio;
+            list.push(result);
+            loopNum++;
+            lastPrice = result.endPrice;
+        }
+
+
+        new Promise(resolve => { setTimeout( ()=>{ resolve() }, 2000 / 5) })
     }
     return { pnl: t, ratio: tRatio };
 }
