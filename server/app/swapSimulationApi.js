@@ -255,7 +255,7 @@ const testOrder = async (historyList,endPrice) => {
             primaryPrice = item[1];
             // console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
         }
-        // console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
+        console.log(item[0],'ratio',ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
         // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
 
