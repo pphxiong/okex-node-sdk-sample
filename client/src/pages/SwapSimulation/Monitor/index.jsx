@@ -10,7 +10,8 @@ import {
   getTradeFee,
   getHistory,
   testOrderApi,
-  testOrderMultiApi
+  testOrderMultiApi,
+  getMultiStatus
 } from './api';
 import { getSwapPosition } from '../../Swap/Trade/api'
 import { tradeTypeEnum } from '../../config';
@@ -266,15 +267,24 @@ export default props => {
       frequency
     }
 
-    const result = await testOrderMultiApi(payload);
-    const data = result?.data??{}
-    const { mList, pnl, ratio} = data
+    await testOrderMultiApi(payload);
 
-    setTPnlList(mList);
-    setTPnl(pnl);
-    setTPnlRatio(ratio);
+    let myInterval;
+    myInterval = setInterval(async ()=>{
+      const { status, result } = await getMultiStatus()
+      if(status){
+        const { mList = [], pnl, ratio} = result
 
-    setPageLoading(false);
+        setTPnlList(mList);
+        setTPnl(pnl);
+        setTPnlRatio(ratio);
+
+        setPageLoading(false);
+
+        clearInterval(myInterval);
+        myInterval = null
+      }
+    }, 1000 * 10)
   }
 
   const fnGetHistoryByMonth = async () => {

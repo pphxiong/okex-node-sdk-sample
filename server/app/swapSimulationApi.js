@@ -348,11 +348,19 @@ app.get('/swap/testOrder', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: res});
 });
 
-
+let multiStatus = 0;
+let multiResult = {}
 app.get('/swap/testOrderMulti', async (req, response) => {
     const {query = {}} = req;
+    send(response, {errcode: 0, errmsg: 'ok', });
+
     const res = await getMonthMultiPnl(query);
-    send(response, {errcode: 0, errmsg: 'ok', data: res});
+    multiStatus = 1;
+    multiResult = res;
+});
+
+app.get('/swap/getMultiStatus', async (req, response) => {
+    send(response, {errcode: 0, errmsg: 'ok', data: { status: multiStatus, result: multiResult } });
 });
 
 app.get('/swap/getPosition', function(req, response) {

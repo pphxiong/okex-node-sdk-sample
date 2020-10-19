@@ -55,3 +55,9 @@ export async function testOrderMultiApi(params) {
     params,
   });
 }
+
+export async function getMultiStatus(params) {
+  return request(`${commonUrl}/swap/getMultiStatus`, {
+    params,
+  });
+}
