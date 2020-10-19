@@ -95,13 +95,9 @@ export default props => {
   const testOrder = async (historyList,endPrice) => {
     let totalPnl = 0;
 
-    // const { avg_cost, side, margin, leverage: btcLeverage, position } = holding;
     const position = 10;
     const margin = position * 100 / historyList[0][1] / leverage;
     let condition = leverage / 100;
-
-    // console.log(historyList)
-    // console.log('margin', margin)
 
     let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
@@ -196,10 +192,6 @@ export default props => {
     let list = [];
     let t = 0;
     let tRatio = 0;
-    // isCurrentSideShort = false;
-    // continuousObj.continuousLossNum = 0;
-    // continuousObj.continuousWinNum = 0;
-    // totalPnl = 0;
 
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
@@ -274,6 +266,7 @@ export default props => {
       const res = await getMultiStatus()
       const { status, result } = res?.data??{}
       if(status){
+        console.log(result)
         const { mList = [], pnl, ratio} = result
 
         setTPnlList(mList);
@@ -289,6 +282,7 @@ export default props => {
   }
 
   const fnGetHistoryByMonth = async () => {
+    setPageLoading(true);
     const firstDay = `2020-${month}-01 00:00:00`;
 
     const payload = {
@@ -304,6 +298,7 @@ export default props => {
 
     setTPnl(pnl);
     setTPnlRatio(ratio);
+    setPageLoading(false);
   }
 
   useEffect(()=>{

@@ -361,6 +361,10 @@ app.get('/swap/testOrderMulti', async (req, response) => {
 
 app.get('/swap/getMultiStatus', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: { status: multiStatus, result: multiResult } });
+    if(multiStatus){
+        multiStatus = 0;
+        multiResult = {}
+    }
 });
 
 app.get('/swap/getPosition', function(req, response) {
