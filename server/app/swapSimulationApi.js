@@ -1,8 +1,11 @@
 import request from '../utils/request';
 import moment from 'moment'
+import {testOrderApi} from "../../client/src/pages/SwapSimulation/Monitor/api";
 
 // const {PublicClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customSimulationAuthClient');
+
+const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
 let BTC_INSTRUMENT_ID = "MNBTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "MNEOS-USD-SWAP";
@@ -10,8 +13,8 @@ let myInterval;
 let mode = 4; //下单模式
 
 let frequency = 1;
-const winRatio = 2;
-const lossRatio = 0.6;
+// const winRatio = 2;
+// const lossRatio = 0.6;
 
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
@@ -197,8 +200,10 @@ let continuousObj = initContinuousObj;
 
 let isCurrentSideShort = false;
 let lastPrice = 0;
-const leverage = 10;
-const testOrder = async (historyList,endPrice) => {
+
+const testOrder = async (historyList,endPrice, params) => {
+    const { leverage, frequency, winRatio, lossRatio } = params;
+
     let totalPnl = 0;
 
     // const { avg_cost, side, margin, leverage: btcLeverage, position } = holding;
@@ -263,15 +268,54 @@ const testOrder = async (historyList,endPrice) => {
     return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice }
 }
 
-const getMonthPnl = async day => {
+const getMonthMultiPnl = async params => {
+    const { duration } = params;
+
+    let t = 0;
+    let tRatio = 0;
+    let mList = [];
+    let i = 0;
+    while(i<duration) {
+        const {
+            leverage,
+            winRatio,
+            lossRatio,
+            frequency
+        } = params;
+        const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
+        const payload = {
+            date: firstDay,
+            leverage,
+            winRatio,
+            lossRatio,
+            frequency
+        }
+        const  { pnl, ratio } = await getMonthPnl(payload);
+
+        console.log('pnl,ratio',monthMap[i],pnl,ratio)
+        t += pnl;
+        tRatio += ratio;
+        mList.push({
+            month: monthMap[i],
+            totalPnl: pnl,
+            totalRatio: ratio
+        })
+        i++;
+    }
+
+    return { mList, pnl: t, ratio: tRatio }
+}
+
+const getMonthPnl = async params => {
+    const { date } = params;
     let loopNum = 0;
     let list = [];
     let t = 0;
     let tRatio = 0;
 
     while(loopNum < 134) {
-        const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
-        const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
+        const start = moment(date,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
+        const end = moment(date,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
 
         const payload = {
             granularity: 60,
@@ -283,7 +327,7 @@ const getMonthPnl = async day => {
         const data  =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
 
         if(Array.isArray(data)){
-            const result = await testOrder(data.reverse(),lastPrice);
+            const result = await testOrder(data.reverse(),lastPrice, params);
             t += result.totalPnl;
             tRatio += result.totalRatio;
             list.push(result);
@@ -299,11 +343,16 @@ const getMonthPnl = async day => {
 
 app.get('/swap/testOrder', async (req, response) => {
     const {query = {}} = req;
-    const { month } = query;
+    // const { month } = query;
+    // const firstDay = `2020-${month}-01 00:00:00`;
+    const res = await getMonthPnl(query);
+    send(response, {errcode: 0, errmsg: 'ok', data: res});
+});
 
-    const firstDay = `2020-${month}-01 00:00:00`;
-    const res = await getMonthPnl(firstDay);
-    console.log('res',res)
+
+app.get('/swap/testOrderMulti', async (req, response) => {
+    const {query = {}} = req;
+    const res = await getMonthMultiPnl(query);
     send(response, {errcode: 0, errmsg: 'ok', data: res});
 });
 

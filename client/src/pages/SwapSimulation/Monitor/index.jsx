@@ -9,7 +9,8 @@ import {
   getSwapInformationSentiment,
   getTradeFee,
   getHistory,
-  testOrderApi
+  testOrderApi,
+  testOrderMultiApi
 } from './api';
 import { getSwapPosition } from '../../Swap/Trade/api'
 import { tradeTypeEnum } from '../../config';
@@ -202,13 +203,15 @@ export default props => {
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
       const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
-      const { data } = await getHistory({
+      const result = await getHistory({
         instrument_id: 'BTC-USD-SWAP',
         granularity: 60,
         // limit: 20,
         start,
         end
       })
+
+      const data = result?.data;
 
       if(Array.isArray(data)){
         const result = await testOrder(data.reverse(),lastPrice);
@@ -225,31 +228,49 @@ export default props => {
 
   const fnGetHistory = async () => {
     setPageLoading(true);
-    // const result = await getSwapPosition({ instrument_id: SWAP_BTC_INSTRUMENT_ID });
-    // const { holding: btcHolding } = result?.data??{};
-    // const holding = btcHolding[0];
 
-    let t = 0;
-    let tRatio = 0;
-    let mList = [];
-    let i = 0;
-    while(i<9) {
-      const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
-      const { pnl , ratio } = await getMonthPnl(firstDay);
-      console.log('pnl,ratio',monthMap[i],pnl,ratio)
-      t += pnl;
-      tRatio += ratio;
-      mList.push({
-        month: monthMap[i],
-        totalPnl: pnl,
-        totalRatio: ratio
-      })
-      i++;
+    // let t = 0;
+    // let tRatio = 0;
+    // let mList = [];
+    // let i = 0;
+    // while(i<9) {
+    //   const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
+    //
+    //   const payload = {
+    //     date: firstDay,
+    //     leverage,
+    //     winRatio,
+    //     lossRatio,
+    //     frequency
+    //   }
+    //
+    //   const { data: {pnl, ratio} } = await testOrderApi(payload);
+    //   // const { pnl , ratio } = await getMonthPnl(firstDay);
+    //
+    //   console.log('pnl,ratio',monthMap[i],pnl,ratio)
+    //   t += pnl;
+    //   tRatio += ratio;
+    //   mList.push({
+    //     month: monthMap[i],
+    //     totalPnl: pnl,
+    //     totalRatio: ratio
+    //   })
+    //   i++;
+    // }
+
+    const payload = {
+      duration: 3,
+      leverage,
+      winRatio,
+      lossRatio,
+      frequency
     }
 
+    const { data: { mList, pnl, ratio} } = await testOrderMultiApi(payload);
+
     setTPnlList(mList);
-    setTPnl(t);
-    setTPnlRatio(tRatio);
+    setTPnl(pnl);
+    setTPnlRatio(ratio);
 
     setPageLoading(false);
   }
@@ -257,11 +278,19 @@ export default props => {
   const fnGetHistoryByMonth = async () => {
     const firstDay = `2020-${month}-01 00:00:00`;
 
-    const result = await testOrderApi({ month });
+    const payload = {
+      date: firstDay,
+      leverage,
+      winRatio,
+      lossRatio,
+      frequency
+    }
+
+    const { data: {pnl, ratio} } = await testOrderApi(payload);
     // const { pnl , ratio } = await getMonthPnl(firstDay);
 
-    // setTPnl(pnl);
-    // setTPnlRatio(ratio);
+    setTPnl(pnl);
+    setTPnlRatio(ratio);
   }
 
   useEffect(()=>{

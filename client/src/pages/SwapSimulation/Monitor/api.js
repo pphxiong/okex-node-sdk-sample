@@ -49,3 +49,9 @@ export async function testOrderApi(params) {
     params,
   });
 }
+
+export async function testOrderMultiApi(params) {
+  return request(`${commonUrl}/swap/testOrderMulti`, {
+    params,
+  });
+}
