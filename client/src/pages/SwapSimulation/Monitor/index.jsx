@@ -271,7 +271,8 @@ export default props => {
 
     let myInterval;
     myInterval = setInterval(async ()=>{
-      const { status, result } = await getMultiStatus()
+      const res = await getMultiStatus()
+      const { status, result } = res?.data??{}
       if(status){
         const { mList = [], pnl, ratio} = result
 
