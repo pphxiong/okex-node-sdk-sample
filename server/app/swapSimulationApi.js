@@ -1,6 +1,5 @@
 import request from '../utils/request';
 import moment from 'moment'
-import {testOrderApi} from "../../client/src/pages/SwapSimulation/Monitor/api";
 
 // const {PublicClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customSimulationAuthClient');
