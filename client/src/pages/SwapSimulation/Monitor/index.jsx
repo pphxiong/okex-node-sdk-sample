@@ -266,7 +266,9 @@ export default props => {
       frequency
     }
 
-    const { data: { mList, pnl, ratio} } = await testOrderMultiApi(payload);
+    const result = await testOrderMultiApi(payload);
+    const data = result?.data??{}
+    const { mList, pnl, ratio} = data
 
     setTPnlList(mList);
     setTPnl(pnl);
