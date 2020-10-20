@@ -355,6 +355,7 @@ app.get('/swap/testOrderMulti', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', });
 
     const res = await getMonthMultiPnl(query);
+    console.log(res)
     multiStatus = 1;
     multiResult = res;
 });
