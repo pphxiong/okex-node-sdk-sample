@@ -34,7 +34,7 @@ export default props => {
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
-  const [month,setMonth] = useState('03');
+  const [month,setMonth] = useState('01');
   const [leverage,setLeverage] = useState(10);
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
@@ -109,15 +109,8 @@ export default props => {
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
-      // console.log(item[0],'isCurrentSideShort',isCurrentSideShort,'ratio',ratio);
-      // console.log('price1',primaryPrice,'price2',item[1])
 
       if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
-      // if(passNum) {
-      //   passNum--;
-      //   if(passNum == 0)  primaryPrice = item[1];
-      //   return;
-      // }
 
       // 盈利
       if(ratio > condition * winRatio * frequency){
@@ -125,22 +118,11 @@ export default props => {
         // console.log('totalFee',fee, fee / Number(margin))
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
-        // totalPnl += unrealized_pnl - Number(position) * 100 * 5 * 2 / 10000 / Number(item[1]);
         continuousObj.continuousLossNum = 0;
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
         isCurrentSideShort = !isCurrentSideShort;
 
-        // passNum = 3;
-
-        // 第3次盈利后反向
-        // if(continuousObj.continuousWinNum>2) {
-        //   isCurrentSideShort = !isCurrentSideShort;
-        //   continuousObj.continuousWinNum = 0;
-        //   passNum = 0;
-        // }
-        // console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
-        // console.info('ratio', ratio)
         primaryPrice = item[1];
         // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
       }
@@ -150,20 +132,18 @@ export default props => {
         // console.log('totalFee',fee, fee / Number(margin))
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
-        // totalPnl += unrealized_pnl - Number(position) * 100 * 5 * 2 / 10000 / Number(item[1]);
 
         continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
         continuousObj.continuousWinNum = 0;
 
         isCurrentSideShort = !isCurrentSideShort;
-        // if(continuousObj.continuousLossNum>1) {
-        //   isCurrentSideShort = !isCurrentSideShort;
-        // }
 
         if(continuousObj.continuousLossNum>2) {
           isCurrentSideShort = true;
+          console.log('------------continuousLossNum---------------')
           console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
           console.info('ratio', ratio)
+          console.log('------------continuousLossNum---------------')
         }
 
         // 连续亏损3次，立即反向
@@ -173,9 +153,8 @@ export default props => {
         // }
 
         primaryPrice = item[1];
-        // console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
       }
-      // console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
+      console.log(item[0],ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
       // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
 
@@ -293,8 +272,8 @@ export default props => {
       frequency
     }
 
-    const { data: {pnl, ratio} } = await testOrderApi(payload);
-    // const { pnl , ratio } = await getMonthPnl(firstDay);
+    // const { data: {pnl, ratio} } = await testOrderApi(payload);
+    const { pnl , ratio } = await getMonthPnl(firstDay);
 
     setTPnl(pnl);
     setTPnlRatio(ratio);
