@@ -36,6 +36,7 @@ export default props => {
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('01');
   const [leverage,setLeverage] = useState(10);
+  const [duration,setDuration] = useState(3);
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
   const SWAP_BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
@@ -91,7 +92,8 @@ export default props => {
 
   let isCurrentSideShort = false;
   let lastPrice = 0;
-
+  let timeout = 2;
+  let isTimeOut = false;
   const testOrder = async (historyList,endPrice) => {
     let totalPnl = 0;
 
@@ -104,16 +106,35 @@ export default props => {
     let totalFee = 0;
 
     historyList.map(item=>{
+      // if(isTimeOut && timeout) {
+      //   timeout--;
+      //   return;
+      // }
+      //
+      // if(!timeout) {
+      //   isTimeOut = false;
+      //   timeout = 2;
+      // }
+
       const size = Number(position) * 100 / Number(item[1]);
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
 
-      if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
+      let newWinRatio = winRatio;
+      let newLossRatio = lossRatio;
+
+      // if(continuousObj.continuousWinNum==1) {
+      //   newLossRatio = newLossRatio / 2;
+      //   newWinRatio = newWinRatio / 2;
+      // }
+
+      if(ratio < newLossRatio) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
 
       // 盈利
-      if(ratio > condition * winRatio * frequency){
+      if(ratio > condition * newWinRatio * frequency){
+        isTimeOut =  true;
         const fee = Number(margin) * 5 * 2 / 10000;
         // console.log('totalFee',fee, fee / Number(margin))
         totalFee += fee;
@@ -127,7 +148,8 @@ export default props => {
         // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
       }
       // 亏损，平仓，市价全平
-      if(ratio < - condition * lossRatio * frequency){
+      if(ratio < - condition * newLossRatio * frequency){
+        isTimeOut =  true;
         const fee = Number(margin) * 5 * 2 / 10000;
         // console.log('totalFee',fee, fee / Number(margin))
         totalFee += fee;
@@ -231,7 +253,7 @@ export default props => {
     // }
 
     const payload = {
-      duration: 3,
+      duration,
       leverage,
       winRatio,
       lossRatio,
@@ -474,7 +496,16 @@ export default props => {
 
       <Divider />
 
-      <Button onClick={()=>fnGetHistory()} type="primary">测算</Button>
+      查询时长:
+      <InputNumber
+        value={ duration }
+        step={1}
+        min={1}
+        max={9}
+        onChange={v=>setDuration(Number(v))}
+      />
+      个月
+      <Button onClick={()=>fnGetHistory()} type="primary" style={{ marginLeft: 10 }}>测算</Button>
       <Divider />
       {/*历史数据范围：*/}
       {/*<RangePicker*/}

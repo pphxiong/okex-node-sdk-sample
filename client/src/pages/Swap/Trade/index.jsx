@@ -12,7 +12,8 @@ import {
   getSwapAccounts,
   getSwapMarkPrice,
   autoCloseOrderByInstrumentId,
-  setFrequencyApi
+  setFrequencyApi,
+  setContinousWinAndLoss
 } from './api'
 import moment from 'moment'
 
@@ -35,6 +36,18 @@ export default props => {
   const [position, setPosition] = useState(0.5);
   const [frequency, setFrequency] = useState(1);
   const [currentInstrumentId, setCurrentInstrumentId] = useState(BTC_INSTRUMENT_ID);
+  const [continuousWinNum, setContinuousWinNum] = useState(0);
+  const [continuousLossNum, setContinuousLossNum] = useState(0);
+
+  const onSetContinousWinAndLoss = async () => {
+    const payload = {
+      instrument_id: BTC_INSTRUMENT_ID,
+      continuousWinNum,
+      continuousLossNum
+    }
+    const { errcode, errmsg } = await setContinousWinAndLoss(payload)
+    if(errcode == 0)  message.success(errmsg);
+  }
 
   const getPosition = async () => {
     const result = await getSwapPosition({instrument_id: BTC_INSTRUMENT_ID});
@@ -318,6 +331,15 @@ export default props => {
 
       <Button onClick={()=>onStopMonitor()}>停止监控</Button>
       <Button onClick={()=>onStartMonitor()} type="primary" style={{ marginLeft: 10 }}>开始监控</Button>
+
+      <Divider type="horizontal" />
+
+      <p>已盈亏次数：
+        盈利：<InputNumber value={continuousWinNum} step={1} min={0} onChange={v=>setContinuousWinNum(v)}/>
+        亏损：<InputNumber value={continuousLossNum} step={1} min={0} onChange={v=>setContinuousLossNum(v)}/>
+        <Button onClick={()=>onSetContinousWinAndLoss()} style={{ marginLeft: 10 }}>确定</Button>
+      </p>
+
     </Card>
   </>
 }

@@ -223,8 +223,16 @@ const testOrder = async (historyList,endPrice, params) => {
 
         if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
 
+        let newWinRatio = winRatio;
+        let newLossRatio = lossRatio;
+
+        // if(continuousObj.continuousWinNum==1) {
+        //     newLossRatio = newLossRatio / 2;
+        //     newWinRatio = newWinRatio / 2;
+        // }
+
         // 盈利
-        if(ratio > condition * winRatio * frequency){
+        if(ratio > condition * newWinRatio * frequency){
             const fee = Number(margin) * 5 * 2 / 10000;
             totalFee += fee;
             totalPnl += unrealized_pnl - fee;
@@ -237,7 +245,7 @@ const testOrder = async (historyList,endPrice, params) => {
             // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
         }
         // 亏损，平仓，市价全平
-        if(ratio < - condition * lossRatio * frequency){
+        if(ratio < - condition * newLossRatio * frequency){
             const fee = Number(margin) * 5 * 2 / 10000;
             totalFee += fee;
             totalPnl += unrealized_pnl - fee;
@@ -274,7 +282,7 @@ const getMonthMultiPnl = async params => {
     let tRatio = 0;
     let mList = [];
     let i = 0;
-    while(i<duration) {
+    while(i<duration && !multiStatus) {
         const {
             leverage,
             winRatio,
@@ -354,18 +362,15 @@ app.get('/swap/testOrderMulti', async (req, response) => {
     const {query = {}} = req;
     send(response, {errcode: 0, errmsg: 'ok', });
 
+    multiStatus = 0;
+    multiResult = {}
     const res = await getMonthMultiPnl(query);
-    console.log(res)
     multiStatus = 1;
     multiResult = res;
 });
 
 app.get('/swap/getMultiStatus', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: { status: multiStatus, result: multiResult } });
-    if(multiStatus){
-        multiStatus = 0;
-        multiResult = {}
-    }
 });
 
 app.get('/swap/getPosition', function(req, response) {

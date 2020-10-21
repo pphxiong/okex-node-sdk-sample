@@ -362,6 +362,17 @@ app.get('/swap/getTradeFee', function(req, response) {
     })
 });
 
+// 设置亏损和盈利数据
+app.get('/swap/setContinousWinAndLoss', function(req, response) {
+    const {query = {}} = req;
+    const { instrument_id, continuousWinNum, continuousLossNum } = query;
+    const continuousObj = continuousMap[instrument_id];
+    continuousObj.continuousLossNum = continuousLossNum;
+    continuousObj.continuousWinNum = continuousWinNum;
+
+    send(response, {errcode: 0, errmsg: 'ok', data: { instrument_id, continuousMap } });
+});
+
 // 当前持仓方向
 function getCurrentDirection(holding) {
     let direction = 1; // 多
@@ -410,10 +421,7 @@ const autoOperateSwap = async (holding) => {
     // const batchObj = batchOrderMap[instrument_id];
     console.log(instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
-
-    if(continuousObj.continuousLossNum>2){
-        console.log('continuousLossNum',continuousObj.continuousLossNum)
-    }
+    console.log('continuousLossNum',continuousObj.continuousLossNum, 'continuousWinNum',continuousObj.continuousWinNum)
 
     // 盈利
     if(ratio > condition * winRatio * frequency){

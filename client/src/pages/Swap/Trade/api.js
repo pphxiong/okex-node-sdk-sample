@@ -73,3 +73,9 @@ export async function setFrequencyApi(params) {
     params,
   });
 }
+
+export async function setContinousWinAndLoss(params) {
+  return request(`${commonUrl}/swap/setContinousWinAndLoss`, {
+    params,
+  });
+}
