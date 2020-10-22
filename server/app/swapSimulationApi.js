@@ -227,21 +227,8 @@ const testOrder = async (historyList,endPrice, params) => {
 
         const ratio = Number(unrealized_pnl) / Number(margin);
 
-        // if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
-
         let newWinRatio = Number(winRatio);
         let newLossRatio = Number(lossRatio);
-
-        // if(continuousObj.continuousWinNum==1) {
-        //     newLossRatio = newLossRatio / 2;
-        //     newWinRatio = newWinRatio / 2;
-        // }
-
-        console.log(item[0])
-        console.log('primaryPrice',primaryPrice, 'price', item[1])
-        console.log('ratio', ratio, 'condition', condition, 'isCurrentSideShort', isCurrentSideShort)
-        console.log('condition * newWinRatio * frequency', condition * newWinRatio * frequency)
-        console.log(ratio > condition * newWinRatio * frequency, ratio < - condition * newLossRatio * frequency)
 
         // 盈利
         if(ratio > condition * newWinRatio * frequency){
@@ -288,7 +275,7 @@ const testOrder = async (historyList,endPrice, params) => {
 
             primaryPrice = item[1];
         }
-        // console.log(item[0],'ratio',ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
+        console.log(item[0],'ratio',ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
         // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
 
@@ -374,8 +361,6 @@ const getMonthPnl = async params => {
 
 app.get('/swap/testOrder', async (req, response) => {
     const {query = {}} = req;
-    // const { month } = query;
-    // const firstDay = `2020-${month}-01 00:00:00`;
     const res = await getMonthPnl(query);
     send(response, {errcode: 0, errmsg: 'ok', data: res});
 });

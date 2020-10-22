@@ -130,8 +130,8 @@ export default props => {
 
       const ratio = Number(unrealized_pnl) / Number(margin);
 
-      let newWinRatio = winRatio.current;
-      let newLossRatio = lossRatio.current;
+      let newWinRatio = Number(winRatio.current);
+      let newLossRatio = Number(lossRatio.current);
 
       // if(continuousObj.continuousWinNum==1) {
       //   newLossRatio = newLossRatio / 2;
@@ -296,8 +296,8 @@ export default props => {
     const payload = {
       duration,
       leverage,
-      winRatio,
-      lossRatio,
+      winRatio: winRatio.current,
+      lossRatio: lossRatio.current,
       frequency
     }
 
@@ -330,13 +330,13 @@ export default props => {
     const payload = {
       date: firstDay,
       leverage,
-      winRatio,
-      lossRatio,
+      winRatio: winRatio.current,
+      lossRatio: lossRatio.current,
       frequency
     }
 
-    const { data: {pnl, ratio} } = await testOrderApi(payload);
-    // const { pnl , ratio } = await getMonthPnl(firstDay);
+    // const { data: {pnl, ratio} } = await testOrderApi(payload);
+    const { pnl , ratio } = await getMonthPnl(firstDay);
 
     setTPnl(pnl);
     setTPnlRatio(ratio);
