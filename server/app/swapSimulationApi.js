@@ -10,6 +10,7 @@ let BTC_INSTRUMENT_ID = "MNBTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "MNEOS-USD-SWAP";
 let myInterval;
 let mode = 4; //下单模式
+let initPosition = 0; //初始持仓数量
 
 let frequency = 1;
 // const winRatio = 2;
