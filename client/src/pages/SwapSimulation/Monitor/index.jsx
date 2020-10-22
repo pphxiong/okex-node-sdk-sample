@@ -140,9 +140,10 @@ export default props => {
         let currentSide = 'long';
         if(isCurrentSideShort) currentSide = 'short';
 
-        if(!(currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-          isCurrentSideShort = !isCurrentSideShort;
-        }
+        isCurrentSideShort = !isCurrentSideShort;
+        // if(!(currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+        //   isCurrentSideShort = !isCurrentSideShort;
+        // }
 
         lastWinDirection = currentSide;
 
