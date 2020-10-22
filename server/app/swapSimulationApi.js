@@ -245,8 +245,8 @@ const testOrder = async (historyList,endPrice, params) => {
             continuousObj.continuousLossNum = 0;
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-            isCurrentSideShort = !isCurrentSideShort;
-            if((isCurrentSideShort && lastWinDirection == 'short') || (!isCurrentSideShort && lastWinDirection == 'long')){
+            // isCurrentSideShort = !isCurrentSideShort;
+            if(!(isCurrentSideShort && lastWinDirection == 'short') || (!isCurrentSideShort && lastWinDirection == 'long')){
                 isCurrentSideShort = !isCurrentSideShort;
             }
 
@@ -264,13 +264,13 @@ const testOrder = async (historyList,endPrice, params) => {
 
             isCurrentSideShort = !isCurrentSideShort;
 
-            if(continuousObj.continuousLossNum > 1) {
-                if(lastWinDirection == 'short'){
-                    isCurrentSideShort = true;
-                }else{
-                    isCurrentSideShort = false;
-                }
-            }
+            // if(continuousObj.continuousLossNum > 1) {
+            //     if(lastWinDirection == 'short'){
+            //         isCurrentSideShort = true;
+            //     }else{
+            //         isCurrentSideShort = false;
+            //     }
+            // }
 
             console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
             console.info('ratio', ratio)

@@ -97,6 +97,7 @@ export default props => {
   let timeout = 2;
   let isTimeOut = false;
   let lastWinDirection = null; // 上次盈利方向
+  let lastLossDirection = null;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -153,20 +154,20 @@ export default props => {
         continuousObj.continuousLossNum = 0;
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-        isCurrentSideShort = !isCurrentSideShort;
-        if((isCurrentSideShort && lastWinDirection == 'short') || (!isCurrentSideShort && lastWinDirection == 'long')){
+        // isCurrentSideShort = !isCurrentSideShort;
+        if(!(isCurrentSideShort && lastWinDirection == 'short') || (!isCurrentSideShort && lastWinDirection == 'long')){
           isCurrentSideShort = !isCurrentSideShort;
         }
-
-        // if(lastWinDirection == 'long' && continuousObj.continuousWinNum > 1){
-        //   isCurrentSideShort = false;
-        // }
 
         primaryPrice = item[1];
         // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
       }
       // 亏损，平仓，市价全平
       if(ratio < - condition * newLossRatio * frequency){
+        lastLossDirection = 'long';
+        if(isCurrentSideShort){
+          lastLossDirection = 'short'
+        }
         isTimeOut =  true;
         const fee = Number(margin) * 5 * 2 / 10000;
         // console.log('totalFee',fee, fee / Number(margin))
@@ -177,14 +178,17 @@ export default props => {
         continuousObj.continuousWinNum = 0;
 
         isCurrentSideShort = !isCurrentSideShort;
+        // if((isCurrentSideShort && lastLossDirection == 'short') || (!isCurrentSideShort && lastLossDirection == 'long')){
+        //   isCurrentSideShort = !isCurrentSideShort;
+        // }
 
-        if(continuousObj.continuousLossNum > 1) {
-          if(lastWinDirection == 'short'){
-            isCurrentSideShort = true;
-          }else{
-            isCurrentSideShort = false;
-          }
-        }
+        // if(continuousObj.continuousLossNum > 1) {
+        //   if(lastWinDirection == 'short'){
+        //     isCurrentSideShort = true;
+        //   }else{
+        //     isCurrentSideShort = false;
+        //   }
+        // }
 
         // if(continuousObj.continuousLossNum>2){
         //   if(lastWinDirection == 'long'){
