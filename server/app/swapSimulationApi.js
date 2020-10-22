@@ -203,14 +203,19 @@ let lastPrice = 0;
 let lastWinDirection = null;
 
 const testOrder = async (historyList,endPrice, params) => {
-    const { leverage, frequency, winRatio, lossRatio } = params;
+    if(!historyList.length) {
+        return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
+    }
+
+    const { leverage, winRatio, lossRatio } = params;
+    const frequency = Number(params.frequency);
 
     let totalPnl = 0;
 
     // const { avg_cost, side, margin, leverage: btcLeverage, position } = holding;
     const position = 10;
-    const margin = position * 100 / historyList[0][1] / leverage;
-    let condition = leverage / 100;
+    const margin = position * 100 / historyList[0][1] / Number(leverage);
+    let condition = Number(leverage) / 100;
 
     let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
@@ -225,8 +230,8 @@ const testOrder = async (historyList,endPrice, params) => {
 
         if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
 
-        let newWinRatio = winRatio;
-        let newLossRatio = lossRatio;
+        let newWinRatio = Number(winRatio);
+        let newLossRatio = Number(lossRatio);
 
         // if(continuousObj.continuousWinNum==1) {
         //     newLossRatio = newLossRatio / 2;
