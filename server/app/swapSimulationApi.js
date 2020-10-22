@@ -212,7 +212,6 @@ const testOrder = async (historyList,endPrice, params) => {
 
     let totalPnl = 0;
 
-    // const { avg_cost, side, margin, leverage: btcLeverage, position } = holding;
     const position = 10;
     const margin = position * 100 / historyList[0][1] / Number(leverage);
     let condition = Number(leverage) / 100;
@@ -228,7 +227,7 @@ const testOrder = async (historyList,endPrice, params) => {
 
         const ratio = Number(unrealized_pnl) / Number(margin);
 
-        if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
+        // if(ratio < -condition * lossRatio * frequency) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
 
         let newWinRatio = Number(winRatio);
         let newLossRatio = Number(lossRatio);
@@ -237,6 +236,9 @@ const testOrder = async (historyList,endPrice, params) => {
         //     newLossRatio = newLossRatio / 2;
         //     newWinRatio = newWinRatio / 2;
         // }
+
+        console.log('ratio', ratio, 'condition', condition)
+        console.log(ratio > condition * newWinRatio * frequency)
 
         // 盈利
         if(ratio > condition * newWinRatio * frequency){
@@ -282,11 +284,13 @@ const testOrder = async (historyList,endPrice, params) => {
             console.info('ratio', ratio)
 
             primaryPrice = item[1];
-            // console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
         }
-        console.log(item[0],'ratio',ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
+        // console.log(item[0],'ratio',ratio,item[1],primaryPrice,unrealized_pnl, margin, isCurrentSideShort, condition)
         // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
+
+    console.log('totalPnl',totalPnl)
+    console.log()
 
     const totalRatio = totalPnl * 100 / Number(margin);
     return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice }
@@ -360,7 +364,6 @@ const getMonthPnl = async params => {
             loopNum++;
             lastPrice = result.endPrice;
         }
-
 
         await new Promise(resolve => { setTimeout( ()=>{ resolve() }, 2000 / 6 ) })
     }
