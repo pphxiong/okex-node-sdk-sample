@@ -199,6 +199,7 @@ let continuousObj = initContinuousObj;
 
 let isCurrentSideShort = false;
 let lastPrice = 0;
+let lastWinDirection = null;
 
 const testOrder = async (historyList,endPrice, params) => {
     const { leverage, frequency, winRatio, lossRatio } = params;
@@ -233,6 +234,11 @@ const testOrder = async (historyList,endPrice, params) => {
 
         // 盈利
         if(ratio > condition * newWinRatio * frequency){
+            lastWinDirection = 'long';
+            if(isCurrentSideShort){
+                lastWinDirection = 'short'
+            }
+
             const fee = Number(margin) * 5 * 2 / 10000;
             totalFee += fee;
             totalPnl += unrealized_pnl - fee;
@@ -240,6 +246,9 @@ const testOrder = async (historyList,endPrice, params) => {
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
             isCurrentSideShort = !isCurrentSideShort;
+            if((isCurrentSideShort && lastWinDirection == 'short') || (!isCurrentSideShort && lastWinDirection == 'long')){
+                isCurrentSideShort = !isCurrentSideShort;
+            }
 
             primaryPrice = item[1];
             // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
@@ -254,15 +263,17 @@ const testOrder = async (historyList,endPrice, params) => {
             continuousObj.continuousWinNum = 0;
 
             isCurrentSideShort = !isCurrentSideShort;
-            // if(continuousObj.continuousLossNum>1) {
-            //   isCurrentSideShort = !isCurrentSideShort;
-            // }
 
-            if(continuousObj.continuousLossNum>2) {
-                isCurrentSideShort = true;
-                console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
-                console.info('ratio', ratio)
+            if(continuousObj.continuousLossNum > 1) {
+                if(lastWinDirection == 'short'){
+                    isCurrentSideShort = true;
+                }else{
+                    isCurrentSideShort = false;
+                }
             }
+
+            console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
+            console.info('ratio', ratio)
 
             primaryPrice = item[1];
             // console.log('loss::totalPnl',totalPnl,ratio,unrealized_pnl)
@@ -308,6 +319,8 @@ const getMonthMultiPnl = async params => {
             totalRatio: ratio
         })
         i++;
+
+        multiResult = { mList, pnl: t, ratio: tRatio };
     }
 
     return { mList, pnl: t, ratio: tRatio }

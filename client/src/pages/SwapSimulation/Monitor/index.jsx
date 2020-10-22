@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, Divider, Button, DatePicker, InputNumber, Select, Spin } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
@@ -29,12 +29,14 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const [winRatio,setWinRatio] = useState(2);
-  const [lossRatio,setLossRatio] = useState(0.6);
+  const winRatio = useRef(2);
+  const lossRatio = useRef(0.6);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
+  const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
-  const [month,setMonth] = useState('01');
+  const [month,setMonth] = useState('10');
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(3);
 
@@ -94,7 +96,12 @@ export default props => {
   let lastPrice = 0;
   let timeout = 2;
   let isTimeOut = false;
+  let lastWinDirection = null; // 上次盈利方向
   const testOrder = async (historyList,endPrice) => {
+    if(!historyList.length) {
+      return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
+    }
+
     let totalPnl = 0;
 
     const position = 10;
@@ -122,8 +129,8 @@ export default props => {
 
       const ratio = Number(unrealized_pnl) / Number(margin);
 
-      let newWinRatio = winRatio;
-      let newLossRatio = lossRatio;
+      let newWinRatio = winRatio.current;
+      let newLossRatio = lossRatio.current;
 
       // if(continuousObj.continuousWinNum==1) {
       //   newLossRatio = newLossRatio / 2;
@@ -134,6 +141,10 @@ export default props => {
 
       // 盈利
       if(ratio > condition * newWinRatio * frequency){
+        lastWinDirection = 'long';
+        if(isCurrentSideShort){
+          lastWinDirection = 'short'
+        }
         isTimeOut =  true;
         const fee = Number(margin) * 5 * 2 / 10000;
         // console.log('totalFee',fee, fee / Number(margin))
@@ -143,6 +154,13 @@ export default props => {
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
         isCurrentSideShort = !isCurrentSideShort;
+        if((isCurrentSideShort && lastWinDirection == 'short') || (!isCurrentSideShort && lastWinDirection == 'long')){
+          isCurrentSideShort = !isCurrentSideShort;
+        }
+
+        // if(lastWinDirection == 'long' && continuousObj.continuousWinNum > 1){
+        //   isCurrentSideShort = false;
+        // }
 
         primaryPrice = item[1];
         // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
@@ -160,13 +178,28 @@ export default props => {
 
         isCurrentSideShort = !isCurrentSideShort;
 
-        if(continuousObj.continuousLossNum>2) {
-          isCurrentSideShort = true;
-          console.log('------------continuousLossNum---------------')
-          console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
-          console.info('ratio', ratio)
-          console.log('------------continuousLossNum---------------')
+        if(continuousObj.continuousLossNum > 1) {
+          if(lastWinDirection == 'short'){
+            isCurrentSideShort = true;
+          }else{
+            isCurrentSideShort = false;
+          }
         }
+
+        // if(continuousObj.continuousLossNum>2){
+        //   if(lastWinDirection == 'long'){
+        //     isCurrentSideShort = false;
+        //   }else{
+        //     isCurrentSideShort = true;
+        //   }
+        //   lossRatio.current = newLossRatio * 2;
+        // }
+
+        console.log('------------continuousLossNum---------------')
+        console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
+        console.info('ratio', ratio)
+        console.log('lastWinDirection', lastWinDirection, 'newWinRatio', newWinRatio)
+        console.log('------------continuousLossNum---------------')
 
         // 连续亏损3次，立即反向
         // if(continuousObj.continuousLossNum>2) {
@@ -227,7 +260,7 @@ export default props => {
     // let tRatio = 0;
     // let mList = [];
     // let i = 0;
-    // while(i<9) {
+    // while(i<duration) {
     //   const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
     //
     //   const payload = {
@@ -251,6 +284,10 @@ export default props => {
     //   })
     //   i++;
     // }
+    //
+    // setTPnlList(mList);
+    // setTPnl(t);
+    // setTPnlRatio(tRatio);
 
     const payload = {
       duration,
@@ -458,20 +495,26 @@ export default props => {
 
       winRatio:
       <InputNumber
-        value={ winRatio }
+        value={ changebleWinRatio }
         step={0.1}
         min={0.1}
         max={10}
-        onChange={v=>setWinRatio(Number(v))}
+        onChange={v=> {
+          setChangebleWinRatio(Number(v))
+          winRatio.current = (Number(v))
+        }}
       />
 
       lossRatio:
       <InputNumber
-        value={ lossRatio }
+        value={ changebleLossRatio }
         step={0.1}
         min={0.1}
         max={10}
-        onChange={v=>setLossRatio(Number(v))}
+        onChange={v=> {
+          setChangebleLossRatio(Number(v))
+          lossRatio.current = (Number(v))
+        }}
       />
 
       杠杆:

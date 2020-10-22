@@ -367,8 +367,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     const {query = {}} = req;
     const { instrument_id, continuousWinNum, continuousLossNum } = query;
     const continuousObj = continuousMap[instrument_id];
-    continuousObj.continuousLossNum = continuousLossNum;
-    continuousObj.continuousWinNum = continuousWinNum;
+    continuousObj.continuousLossNum = Number(continuousLossNum);
+    continuousObj.continuousWinNum = Number(continuousWinNum);
 
     send(response, {errcode: 0, errmsg: 'ok', data: { instrument_id, continuousMap } });
 });
