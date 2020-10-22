@@ -238,6 +238,7 @@ const testOrder = async (historyList,endPrice, params) => {
         // }
 
         console.log(item[0])
+        console.log('primaryPrice',primaryPrice, 'price', item[1])
         console.log('ratio', ratio, 'condition', condition, 'isCurrentSideShort', isCurrentSideShort)
         console.log(ratio > condition * newWinRatio * frequency, ratio < - condition * newLossRatio * frequency)
 
