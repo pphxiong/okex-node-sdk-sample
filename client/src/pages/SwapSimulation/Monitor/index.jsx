@@ -275,8 +275,8 @@ export default props => {
     //     frequency
     //   }
     //
-    //   const { data: {pnl, ratio} } = await testOrderApi(payload);
-    //   // const { pnl , ratio } = await getMonthPnl(firstDay);
+    //   // const { data: {pnl, ratio} } = await testOrderApi(payload);
+    //   const { pnl , ratio } = await getMonthPnl(firstDay);
     //
     //   console.log('pnl,ratio',monthMap[i],pnl,ratio)
     //   t += pnl;
@@ -548,7 +548,7 @@ export default props => {
         value={ duration }
         step={1}
         min={1}
-        max={9}
+        max={12}
         onChange={v=>setDuration(Number(v))}
       />
       个月
