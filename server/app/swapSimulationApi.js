@@ -361,6 +361,7 @@ const getMonthPnl = async params => {
 
 app.get('/swap/testOrder', async (req, response) => {
     const {query = {}} = req;
+    lastPrice = 0;
     const res = await getMonthPnl(query);
     send(response, {errcode: 0, errmsg: 'ok', data: res});
 });
@@ -369,6 +370,7 @@ let multiStatus = 0;
 let multiResult = {}
 app.get('/swap/testOrderMulti', async (req, response) => {
     const {query = {}} = req;
+    lastPrice = 0;
     send(response, {errcode: 0, errmsg: 'ok', });
 
     multiStatus = 0;

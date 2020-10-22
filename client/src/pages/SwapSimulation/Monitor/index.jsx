@@ -335,8 +335,8 @@ export default props => {
       frequency
     }
 
-    // const { data: {pnl, ratio} } = await testOrderApi(payload);
-    const { pnl , ratio } = await getMonthPnl(firstDay);
+    const { data: {pnl, ratio} } = await testOrderApi(payload);
+    // const { pnl , ratio } = await getMonthPnl(firstDay);
 
     setTPnl(pnl);
     setTPnlRatio(ratio);
