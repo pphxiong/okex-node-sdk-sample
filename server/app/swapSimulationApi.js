@@ -237,8 +237,9 @@ const testOrder = async (historyList,endPrice, params) => {
         //     newWinRatio = newWinRatio / 2;
         // }
 
-        console.log('ratio', ratio, 'condition', condition)
-        console.log(ratio > condition * newWinRatio * frequency)
+        console.log(item[0])
+        console.log('ratio', ratio, 'condition', condition, 'isCurrentSideShort', isCurrentSideShort)
+        console.log(ratio > condition * newWinRatio * frequency, ratio < - condition * newLossRatio * frequency)
 
         // 盈利
         if(ratio > condition * newWinRatio * frequency){
