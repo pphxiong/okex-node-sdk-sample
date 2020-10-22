@@ -290,7 +290,6 @@ const testOrder = async (historyList,endPrice, params) => {
     })
 
     console.log('totalPnl',totalPnl)
-    console.log()
 
     const totalRatio = totalPnl * 100 / Number(margin);
     return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice }
