@@ -117,6 +117,7 @@ export default props => {
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
+      const fee = Number(margin) * 5 * 2 / 10000;
 
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
@@ -126,12 +127,10 @@ export default props => {
       //   newWinRatio = newWinRatio / 2;
       // }
 
-      // 盈利
       if(ratio > condition * newWinRatio * frequency){
-        const fee = Number(margin) * 5 * 2 / 10000;
-        // console.log('totalFee',fee, fee / Number(margin))
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
+
         continuousObj.continuousLossNum = 0;
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
@@ -139,8 +138,8 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        // if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-        if( (currentSide == 'short' && lastWinDirection == 'short') ){
+        if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+        // if( (currentSide == 'short' && lastWinDirection == 'short') ){
           isCurrentSideShort = !isCurrentSideShort;
         }
 
@@ -150,10 +149,7 @@ export default props => {
 
         // console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
       }
-      // 亏损，平仓，市价全平
       if(ratio < - condition * newLossRatio * frequency){
-        const fee = Number(margin) * 5 * 2 / 10000;
-        // console.log('totalFee',fee, fee / Number(margin))
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
 
@@ -164,8 +160,8 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        // if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
-        if( (currentSide == 'long' && lastWinDirection == 'short') ){
+        if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
+        // if( (currentSide == 'long' && lastWinDirection == 'short') ){
           isCurrentSideShort = !isCurrentSideShort;
         }
 
@@ -179,8 +175,8 @@ export default props => {
 
         console.log('------------continuousLossNum---------------')
         console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
-        console.info('ratio', ratio)
-        console.log('lastWinDirection', lastWinDirection, 'newWinRatio', newWinRatio)
+        console.info('ratio', ratio, 'currentSide', currentSide, 'isCurrentSideShort', isCurrentSideShort)
+        console.log('lastWinDirection', lastWinDirection, 'lastLossDirection', lastLossDirection)
         console.log('------------continuousLossNum---------------')
 
       }

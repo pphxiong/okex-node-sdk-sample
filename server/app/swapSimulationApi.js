@@ -230,7 +230,6 @@ const testOrder = async (historyList,endPrice, params) => {
         let newWinRatio = Number(winRatio);
         let newLossRatio = Number(lossRatio);
 
-        // 盈利
         if(ratio > condition * newWinRatio * frequency){
             const fee = Number(margin) * 5 * 2 / 10000;
             // console.log('totalFee',fee, fee / Number(margin))
@@ -243,8 +242,8 @@ const testOrder = async (historyList,endPrice, params) => {
             if(isCurrentSideShort) currentSide = 'short';
 
             isCurrentSideShort = !isCurrentSideShort;
-            // if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-            if( (currentSide == 'short' && lastWinDirection == 'short') ){
+            if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+            // if( (currentSide == 'short' && lastWinDirection == 'short') ){
                 isCurrentSideShort = !isCurrentSideShort;
             }
 
@@ -253,7 +252,6 @@ const testOrder = async (historyList,endPrice, params) => {
             primaryPrice = item[1];
             // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
         }
-        // 亏损，平仓，市价全平
         if(ratio < - condition * newLossRatio * frequency){
             const fee = Number(margin) * 5 * 2 / 10000;
             // console.log('totalFee',fee, fee / Number(margin))
@@ -267,8 +265,8 @@ const testOrder = async (historyList,endPrice, params) => {
             if(isCurrentSideShort) currentSide = 'short';
 
             isCurrentSideShort = !isCurrentSideShort;
-            // if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
-            if( (currentSide == 'long' && lastWinDirection == 'short') ){
+            if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
+            // if( (currentSide == 'long' && lastWinDirection == 'short') ){
                 isCurrentSideShort = !isCurrentSideShort;
             }
 

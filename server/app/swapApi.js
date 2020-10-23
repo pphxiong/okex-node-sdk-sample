@@ -281,7 +281,7 @@ const getOrderState = async (payload) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { isReverse = true, availRatio = 1, order_type = 0, isOpenShort = false } = params;
+    const { isReverse = true, availRatio = 1, order_type = 0, isOpenShort = false, openSide = 'long' } = params;
     const { instrument_id, position } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
     // 可开张数
@@ -296,8 +296,9 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     // avail = Math.min(Math.floor(Number(availNo) * availRatio), Number(position));
     avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
-    let type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
-    if(isOpenShort) type = 2;
+    // let type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
+    // if(isOpenShort) type = 2;
+    const type = openSide == 'long' ? 1 : 2;
 
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
@@ -366,11 +367,10 @@ app.get('/swap/getTradeFee', function(req, response) {
 app.get('/swap/setContinousWinAndLoss', function(req, response) {
     const {query = {}} = req;
     const { instrument_id, continuousWinNum, continuousLossNum } = query;
-    const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
     continuousObj.continuousWinNum = Number(continuousWinNum);
 
-    send(response, {errcode: 0, errmsg: 'ok', data: { instrument_id, continuousMap } });
+    send(response, {errcode: 0, errmsg: 'ok', data: { instrument_id, continuousObj } });
 });
 
 // 当前持仓方向
@@ -404,49 +404,70 @@ const getOrderModeSingle = async (orderMode = mode, holding) => {
     // await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
+const initContinuousObj = {
+    continuousLossNum: 0,
+    continuousWinNum: 0,
+}
+
+let continuousObj = initContinuousObj;
+
+let lastWinDirection = null;
+let lastLossDirection = null;
 const autoOperateSwap = async (holding) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
     const size = Number(position) * 100 / Number(last);
     let unrealized_pnl = size * (Number(last) - Number(avg_cost)) / Number(last);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
+    let isOpenShort = side == 'short';
 
     const ratio = Number(unrealized_pnl) / Number(margin);
-
     const condition = Number(leverage) / 100;
 
     const continuousObj = continuousMap[instrument_id];
-    const lastObj = lastOrderMap[instrument_id];
-    // const winOrderObj = winOrderMap[instrument_id];
-    // const batchObj = batchOrderMap[instrument_id];
+
     console.log(instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
     console.log('continuousLossNum',continuousObj.continuousLossNum, 'continuousWinNum',continuousObj.continuousWinNum)
 
-    // 盈利
     if(ratio > condition * winRatio * frequency){
+        isOpenShort = !isOpenShort;
+        if((side == 'short' && lastWinDirection == 'short') || (side == 'long' && lastWinDirection == 'long')){
+            isOpenShort = !isOpenShort;
+        }
+
+        lastWinDirection = side;
+
         // const { result } = await autoCloseOrderSingle(holding)
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
             continuousObj.continuousLossNum = 0;
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-            await autoOpenOrderSingle(holding);
+            const openSide = isOpenShort ? 'short' : 'long';
+            await autoOpenOrderSingle(holding, { openSide });
         }
         return;
     }
-    // 亏损，平仓，市价全平
     if(ratio < - condition * lossRatio * frequency){
+        isOpenShort = !isOpenShort;
+        if((side == 'long' && lastWinDirection == 'short') || (side == 'short' && lastWinDirection == 'long')){
+            isOpenShort = !isOpenShort;
+        }
+
+        if(continuousObj.continuousLossNum > 1 ){
+            isOpenShort = side == 'long';
+        }
+
+        lastLossDirection = side;
+
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
             continuousObj.continuousWinNum = 0;
 
-            // if(continuousObj.continuousLossNum>3) return;
-
-            let isOpenShort = false;
-            if(continuousObj.continuousLossNum>1) isOpenShort = true;
-            await autoOpenOrderSingle(holding, isOpenShort);
+            const openSide = isOpenShort ? 'short' : 'long';
+            await autoOpenOrderSingle(holding, { openSide });
         }
         return;
     }
