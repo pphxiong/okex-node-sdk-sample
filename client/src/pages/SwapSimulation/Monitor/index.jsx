@@ -126,8 +126,6 @@ export default props => {
       //   newWinRatio = newWinRatio / 2;
       // }
 
-      if(ratio < newLossRatio) console.info(item[0],'ratio',ratio, 'isCurrentSideShort', isCurrentSideShort)
-
       // 盈利
       if(ratio > condition * newWinRatio * frequency){
         const fee = Number(margin) * 5 * 2 / 10000;
@@ -141,9 +139,9 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        // if(!(currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-        //   isCurrentSideShort = !isCurrentSideShort;
-        // }
+        if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+          isCurrentSideShort = !isCurrentSideShort;
+        }
 
         lastWinDirection = currentSide;
 
@@ -164,11 +162,19 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        // if((currentSide == 'short' && lastLossDirection == 'short') || (currentSide == 'long' && lastLossDirection == 'long')){
-        //   isCurrentSideShort = !isCurrentSideShort;
-        // }
+        if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
+          isCurrentSideShort = !isCurrentSideShort;
+        }
 
-        lastWinDirection = currentSide;
+        if(continuousObj.continuousLossNum>1 && currentSide == 'long'){
+          isCurrentSideShort = true;
+        }
+
+        if(continuousObj.continuousLossNum>1 && currentSide == 'short'){
+          isCurrentSideShort = false;
+        }
+
+        lastLossDirection = currentSide;
 
         primaryPrice = item[1];
 
