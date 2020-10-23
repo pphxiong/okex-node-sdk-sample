@@ -139,14 +139,15 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+        if((currentSide == 'short' && lastWinDirection == 'short') ){
           isCurrentSideShort = !isCurrentSideShort;
         }
 
         lastWinDirection = currentSide;
 
         primaryPrice = item[1];
-        // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
+
+        // console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
       }
       // 亏损，平仓，市价全平
       if(ratio < - condition * newLossRatio * frequency){
@@ -162,16 +163,12 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
+        if((currentSide == 'long' && lastWinDirection == 'short') ){
           isCurrentSideShort = !isCurrentSideShort;
         }
 
-        if(continuousObj.continuousLossNum>1 && currentSide == 'long'){
-          isCurrentSideShort = true;
-        }
-
-        if(continuousObj.continuousLossNum>1 && currentSide == 'short'){
-          isCurrentSideShort = false;
+        if(continuousObj.continuousLossNum > 1){
+          isCurrentSideShort = currentSide == 'long';
         }
 
         lastLossDirection = currentSide;
@@ -185,7 +182,7 @@ export default props => {
         console.log('------------continuousLossNum---------------')
 
       }
-      console.log(item[0],ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
+      // console.log(item[0],ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
       // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
 
