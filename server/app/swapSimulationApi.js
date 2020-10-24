@@ -244,8 +244,10 @@ const testOrder = async (historyList,endPrice, params) => {
 
             isCurrentSideShort = !isCurrentSideShort;
             if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-            // if( (currentSide == 'short' && lastWinDirection == 'short') ){
-                isCurrentSideShort = !isCurrentSideShort;
+                //  isCurrentSideShort = !isCurrentSideShort;
+                if(continuousLossSameSideNum < 1){
+                    isCurrentSideShort = !isCurrentSideShort;
+                }
             }
 
             continuousLossSameSideNum = 0;
