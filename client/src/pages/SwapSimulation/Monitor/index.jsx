@@ -96,6 +96,7 @@ export default props => {
   let lastPrice = 0;
   let lastWinDirection = null; // 上次盈利方向
   let lastLossDirection = null;
+  let continuousLossSameSideNum = 0;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -143,6 +144,7 @@ export default props => {
           isCurrentSideShort = !isCurrentSideShort;
         }
 
+        continuousLossSameSideNum = 0;
         lastWinDirection = currentSide;
 
         primaryPrice = item[1];
@@ -162,24 +164,30 @@ export default props => {
         isCurrentSideShort = !isCurrentSideShort;
         if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
         // if( (currentSide == 'long' && lastWinDirection == 'short') ){
-          isCurrentSideShort = !isCurrentSideShort;
+          continuousLossSameSideNum++;
+          if(continuousLossSameSideNum < 2){
+            isCurrentSideShort = !isCurrentSideShort;
+          }
         }
 
-        if(continuousObj.continuousLossNum > 1){
-          isCurrentSideShort = currentSide == 'long';
-        }
+        // if(continuousObj.continuousLossNum > 1){
+        //   isCurrentSideShort = currentSide == 'long';
+        // }
 
         lastLossDirection = currentSide;
 
         primaryPrice = item[1];
 
-        console.log('------------continuousLossNum---------------')
-        console.info(item[0],'continuousLossNum', continuousObj.continuousLossNum)
-        console.info('ratio', ratio, 'currentSide', currentSide, 'isCurrentSideShort', isCurrentSideShort)
-        console.log('lastWinDirection', lastWinDirection, 'lastLossDirection', lastLossDirection)
-        console.log('------------continuousLossNum---------------')
-
       }
+
+      console.log('------------continuousLossNum---------------')
+      console.info(item[0])
+      console.info('continuousLossNum', continuousObj.continuousLossNum)
+      console.info('continuousWinNum', continuousObj.continuousWinNum)
+      console.info('ratio', ratio, 'isCurrentSideShort', isCurrentSideShort)
+      console.log('lastWinDirection', lastWinDirection, 'lastLossDirection', lastLossDirection)
+      console.log('------------continuousLossNum---------------')
+
       // console.log(item[0],ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
       // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
     })
