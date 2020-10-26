@@ -231,6 +231,10 @@ const testOrder = async (historyList,endPrice, params) => {
         let newWinRatio = Number(winRatio);
         let newLossRatio = Number(lossRatio);
 
+        if(continuousObj.continuousLossNum > 2 && lastWinDirection == 'long') {
+            newWinRatio = newWinRatio / 3;
+        }
+
         if(ratio > condition * newWinRatio * frequency){
             const fee = Number(margin) * 5 * 2 / 10000;
             // console.log('totalFee',fee, fee / Number(margin))
@@ -244,10 +248,7 @@ const testOrder = async (historyList,endPrice, params) => {
 
             isCurrentSideShort = !isCurrentSideShort;
             if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-                 // isCurrentSideShort = !isCurrentSideShort;
-                if(continuousLossSameSideNum < 2){
-                    isCurrentSideShort = !isCurrentSideShort;
-                }
+                 isCurrentSideShort = !isCurrentSideShort;
             }
 
             continuousLossSameSideNum = 0;
