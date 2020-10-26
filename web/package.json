@@ -1,7 +1,7 @@
 {
   "name": "proxy",
   "version": "web",
-  "description": "A Nodejs SFB(Separation of Front and Back ends) framework, build with koa 2.x",
+  "description": "A Nodejs SFB(Separation of Front and Back ends) framework, build with koa 2.x.",
   "main": "./index.js",
   "directories": {
     "test": "test"
