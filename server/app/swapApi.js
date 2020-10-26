@@ -366,11 +366,27 @@ app.get('/swap/getTradeFee', function(req, response) {
 // 设置亏损和盈利数据
 app.get('/swap/setContinousWinAndLoss', function(req, response) {
     const {query = {}} = req;
-    const { instrument_id, continuousWinNum, continuousLossNum } = query;
+    const {
+        instrument_id,
+        continuousWinNum,
+        continuousLossNum,
+        lastWinDirection : lsd,
+        lastLossDirection: lld,
+        continuousLossSameSideNum: clss,
+    } = query;
     continuousObj.continuousLossNum = Number(continuousLossNum);
     continuousObj.continuousWinNum = Number(continuousWinNum);
+    lastWinDirection = lsd;
+    lastLossDirection = lld;
+    continuousLossSameSideNum = clss
 
-    send(response, {errcode: 0, errmsg: 'ok', data: { instrument_id, continuousObj } });
+    send(response, {errcode: 0, errmsg: 'ok', data: {
+        instrument_id,
+        continuousObj,
+        lastWinDirection: lsd,
+        lastLossDirection: lld,
+        continuousLossSameSideNum: clss
+    } });
 });
 
 // 当前持仓方向
@@ -430,6 +446,9 @@ const autoOperateSwap = async (holding) => {
     console.log(instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
     console.log('continuousLossNum',continuousObj.continuousLossNum, 'continuousWinNum',continuousObj.continuousWinNum)
+    console.log('lastWinDirection',lastWinDirection)
+    console.log('lastLossDirection',lastLossDirection)
+    console.log('continuousLossSameSideNum',continuousLossSameSideNum)
 
     if(ratio > condition * winRatio * frequency){
         isOpenShort = !isOpenShort;
