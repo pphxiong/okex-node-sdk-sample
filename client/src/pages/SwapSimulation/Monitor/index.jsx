@@ -123,10 +123,6 @@ export default props => {
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
 
-      if(continuousObj.continuousLossNum > 2 && lastWinDirection == 'long') {
-        newWinRatio = newWinRatio / 3;
-      }
-
       if(ratio > condition * newWinRatio * frequency){
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
@@ -140,7 +136,7 @@ export default props => {
         isCurrentSideShort = !isCurrentSideShort;
         if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
           isCurrentSideShort = !isCurrentSideShort;
-          // if(continuousLossSameSideNum < 1 || lastLossDirection != currentSide){
+          // if(continuousLossSameSideNum > 0){
           //   isCurrentSideShort = !isCurrentSideShort;
           // }
         }
@@ -165,9 +161,9 @@ export default props => {
         isCurrentSideShort = !isCurrentSideShort;
         if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
           continuousLossSameSideNum++;
-          if(continuousLossSameSideNum < 2){
-            isCurrentSideShort = !isCurrentSideShort;
-          }
+          // if(continuousLossSameSideNum > 2){
+          //   isCurrentSideShort = !isCurrentSideShort;
+          // }
         }
 
         // if(continuousObj.continuousLossNum > 1){
@@ -182,6 +178,7 @@ export default props => {
 
       console.log('------------continuousLossNum---------------')
       console.info(item[0])
+      console.info(totalPnl * 100 / Number(margin))
       console.info('continuousLossNum', continuousObj.continuousLossNum)
       console.info('continuousWinNum', continuousObj.continuousWinNum)
       console.info('ratio', ratio, 'isCurrentSideShort', isCurrentSideShort)
