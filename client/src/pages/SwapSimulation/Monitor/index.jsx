@@ -123,6 +123,10 @@ export default props => {
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
 
+      // if(lastWinDirection == 'long' && continuousObj.continuousLossNum < 2){
+      //   newWinRatio = newWinRatio / 3;
+      // }
+
       if(ratio > condition * newWinRatio * frequency){
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
@@ -136,9 +140,6 @@ export default props => {
         isCurrentSideShort = !isCurrentSideShort;
         if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
           isCurrentSideShort = !isCurrentSideShort;
-          // if(continuousLossSameSideNum > 0){
-          //   isCurrentSideShort = !isCurrentSideShort;
-          // }
         }
 
         continuousLossSameSideNum = 0;
@@ -159,12 +160,19 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
+        if(currentSide == 'short' && lastWinDirection == 'long'){
           continuousLossSameSideNum++;
           if(continuousLossSameSideNum < 2){
             isCurrentSideShort = !isCurrentSideShort;
           }
         }
+
+        // if(currentSide == 'long' && lastWinDirection == 'long'){
+        //   continuousLossSameSideNum++;
+        //   if(continuousLossSameSideNum < 3){
+        //     isCurrentSideShort = !isCurrentSideShort;
+        //   }
+        // }
 
         // if(continuousObj.continuousLossNum > 1){
         //   isCurrentSideShort = currentSide == 'long';
