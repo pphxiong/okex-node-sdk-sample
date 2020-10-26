@@ -19,7 +19,8 @@
     "stop:all": "pm2 delete all",
     "start:normal": "babel-node start.js --env=production",
     "start:pm2": "pm2 start ecosystem.config.js --env=production --interpreter babel-node",
-    "log": "pm2 log 0"
+    "log": "pm2 log 1",
+    "log:product": "pm2 log 2"
   },
   "dependencies": {
     "@okfe/okex-node": "0.0.52",
