@@ -161,9 +161,9 @@ export default props => {
         isCurrentSideShort = !isCurrentSideShort;
         if((currentSide == 'long' && lastWinDirection == 'short') || (currentSide == 'short' && lastWinDirection == 'long')){
           continuousLossSameSideNum++;
-          // if(continuousLossSameSideNum > 2){
-          //   isCurrentSideShort = !isCurrentSideShort;
-          // }
+          if(continuousLossSameSideNum < 2){
+            isCurrentSideShort = !isCurrentSideShort;
+          }
         }
 
         // if(continuousObj.continuousLossNum > 1){
