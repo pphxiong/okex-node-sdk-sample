@@ -123,8 +123,9 @@ export default props => {
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
 
-      // if(lastWinDirection == 'long' && continuousObj.continuousLossNum < 2){
+      // if(continuousLossSameSideNum > 0 && lastWinDirection == 'long'){
       //   newWinRatio = newWinRatio / 3;
+      //   newLossRatio = newLossRatio * 2;
       // }
 
       if(ratio > condition * newWinRatio * frequency){
@@ -160,22 +161,15 @@ export default props => {
         if(isCurrentSideShort) currentSide = 'short';
 
         isCurrentSideShort = !isCurrentSideShort;
-        if(currentSide == 'short' && lastWinDirection == 'long'){
+        if((currentSide == 'short' && lastWinDirection == 'long') || (currentSide == 'long' && lastWinDirection == 'short') && (lastWinDirection != lastLossDirection) ){
           continuousLossSameSideNum++;
           if(continuousLossSameSideNum < 2){
             isCurrentSideShort = !isCurrentSideShort;
           }
         }
 
-        // if(currentSide == 'long' && lastWinDirection == 'long'){
-        //   continuousLossSameSideNum++;
-        //   if(continuousLossSameSideNum < 3){
-        //     isCurrentSideShort = !isCurrentSideShort;
-        //   }
-        // }
-
-        // if(continuousObj.continuousLossNum > 1){
-        //   isCurrentSideShort = currentSide == 'long';
+        // if(lastWinDirection == 'long' && continuousObj.continuousLossNum < 3) {
+        //   isCurrentSideShort = false
         // }
 
         lastLossDirection = currentSide;
