@@ -14,18 +14,11 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
 
-const initContinuousObj = {
-    continuousLossNum: 0,
-    continuousWinNum: 0,
-}
-let continuousObj = initContinuousObj;
 let lastWinDirection = null;
 let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
 let continuousWinSameSideNum = 0;
 
-let continuousLossNum = 0; //连续亏损次数
-let continuousWinNum = 0; //连续盈利次数
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
         continuousLossNum: 0,
@@ -42,17 +35,6 @@ const continuousMap = {
         continuousTripleLossNum: 0,
     },
 };
-const lastOrderMap = {
-    [BTC_INSTRUMENT_ID]: {
-        last: 0, //上次成交价格
-        type: 1, //类型
-    },
-    [EOS_INSTRUMENT_ID]: {
-        last: 0,
-        type: 1,
-    },
-}
-const timeoutNo = 1000 * 60 * 1; //下单间隔时间
 
 var config = require('./config');
 // const pClient = new PublicClient(config.urlHost);
@@ -384,6 +366,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastLossDirection: lld,
         continuousLossSameSideNum: clss,
     } = query;
+    const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
     continuousObj.continuousWinNum = Number(continuousWinNum);
     lastWinDirection = lsd;
@@ -522,8 +505,6 @@ function stopInterval() {
     if(myInterval) {
         clearInterval(myInterval);
         myInterval = null;
-        continuousLossNum = 0;
-        continuousWinNum = 0;
     }
 }
 
