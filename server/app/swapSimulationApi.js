@@ -203,6 +203,7 @@ let lastPrice = 0;
 let lastWinDirection = null;
 let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
+let continuousWinSameSideNum = 0;
 const testOrder = async (historyList,endPrice, params) => {
     if(!historyList.length) {
         return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -244,7 +245,10 @@ const testOrder = async (historyList,endPrice, params) => {
 
             isCurrentSideShort = !isCurrentSideShort;
             if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
-                 isCurrentSideShort = !isCurrentSideShort;
+                continuousWinSameSideNum++;
+                isCurrentSideShort = !isCurrentSideShort;
+            }else{
+                continuousWinSameSideNum = 0;
             }
 
             continuousLossSameSideNum = 0;
@@ -265,7 +269,9 @@ const testOrder = async (historyList,endPrice, params) => {
             if(isCurrentSideShort) currentSide = 'short';
 
             isCurrentSideShort = !isCurrentSideShort;
-            if((currentSide == 'short' && lastWinDirection == 'long') || (currentSide == 'long' && lastWinDirection == 'short') && (lastWinDirection != lastLossDirection) ){
+            if((currentSide == 'short' && lastWinDirection == 'long')
+                || (currentSide == 'long' && lastWinDirection == 'short')
+                && continuousWinSameSideNum < 1){
                 continuousLossSameSideNum++;
                 if(continuousLossSameSideNum < 2){
                     isCurrentSideShort = !isCurrentSideShort;
