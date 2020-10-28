@@ -14,11 +14,6 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
 
-let lastWinDirection = null;
-let lastLossDirection = null;
-let continuousLossSameSideNum = 0;
-let continuousWinSameSideNum = 0;
-
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
         continuousLossNum: 0,
@@ -365,6 +360,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastWinDirection : lsd,
         lastLossDirection: lld,
         continuousLossSameSideNum: clss,
+        continuousWinSameSideNum: cwss,
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -372,13 +368,15 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     lastWinDirection = lsd;
     lastLossDirection = lld;
     continuousLossSameSideNum = Number(clss)
+    continuousWinSameSideNum = Number(cwss)
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
         continuousObj,
         lastWinDirection: lsd,
         lastLossDirection: lld,
-        continuousLossSameSideNum: clss
+        continuousLossSameSideNum: clss,
+        continuousWinSameSideNum: cwss
     } });
 });
 
@@ -413,6 +411,10 @@ const getOrderModeSingle = async (orderMode = mode, holding) => {
     // await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
+let lastWinDirection = null;
+let lastLossDirection = null;
+let continuousLossSameSideNum = 0;
+let continuousWinSameSideNum = 0;
 const autoOperateSwap = async (holding) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
