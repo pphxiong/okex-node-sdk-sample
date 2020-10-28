@@ -14,6 +14,16 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
 
+const initContinuousObj = {
+    continuousLossNum: 0,
+    continuousWinNum: 0,
+}
+let continuousObj = initContinuousObj;
+let lastWinDirection = null;
+let lastLossDirection = null;
+let continuousLossSameSideNum = 0;
+let continuousWinSameSideNum = 0;
+
 let continuousLossNum = 0; //连续亏损次数
 let continuousWinNum = 0; //连续盈利次数
 const continuousMap = {
@@ -420,17 +430,6 @@ const getOrderModeSingle = async (orderMode = mode, holding) => {
     // await autoOperateByHoldingTime(holding,ratio,condition)
 }
 
-const initContinuousObj = {
-    continuousLossNum: 0,
-    continuousWinNum: 0,
-}
-
-let continuousObj = initContinuousObj;
-
-let lastWinDirection = null;
-let lastLossDirection = null;
-let continuousLossSameSideNum = 0;
-let continuousWinSameSideNum = 0;
 const autoOperateSwap = async (holding) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
