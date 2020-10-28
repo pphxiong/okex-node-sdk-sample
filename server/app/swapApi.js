@@ -430,10 +430,9 @@ const autoOperateSwap = async (holding) => {
 
     console.log(instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
-    console.log('continuousLossNum',continuousObj.continuousLossNum, 'continuousWinNum',continuousObj.continuousWinNum)
-    console.log('lastWinDirection',lastWinDirection)
-    console.log('lastLossDirection',lastLossDirection)
-    console.log('continuousLossSameSideNum',continuousLossSameSideNum)
+    console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
+    console.log('lastWinDirection',lastWinDirection,'lastLossDirection',lastLossDirection)
+    console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
 
     if(ratio > condition * winRatio * frequency){
         isOpenShort = !isOpenShort;
