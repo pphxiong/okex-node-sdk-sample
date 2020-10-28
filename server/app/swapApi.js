@@ -378,7 +378,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     continuousObj.continuousWinNum = Number(continuousWinNum);
     lastWinDirection = lsd;
     lastLossDirection = lld;
-    continuousLossSameSideNum = clss
+    continuousLossSameSideNum = Number(clss)
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
