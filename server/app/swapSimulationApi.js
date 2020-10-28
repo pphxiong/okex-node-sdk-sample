@@ -244,9 +244,12 @@ const testOrder = async (historyList,endPrice, params) => {
             if(isCurrentSideShort) currentSide = 'short';
 
             isCurrentSideShort = !isCurrentSideShort;
-            if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+            if((currentSide == 'short' && lastWinDirection == 'short')
+                || (currentSide == 'long' && lastWinDirection == 'long')){
                 continuousWinSameSideNum++;
-                isCurrentSideShort = !isCurrentSideShort;
+                if(continuousObj.continuousWinNum < 2){
+                    isCurrentSideShort = !isCurrentSideShort;
+                }
             }else{
                 continuousWinSameSideNum = 0;
             }

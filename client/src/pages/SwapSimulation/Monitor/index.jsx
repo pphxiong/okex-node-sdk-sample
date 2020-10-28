@@ -135,9 +135,12 @@ export default props => {
         continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
         isCurrentSideShort = !isCurrentSideShort;
-        if((currentSide == 'short' && lastWinDirection == 'short') || (currentSide == 'long' && lastWinDirection == 'long')){
+        if((currentSide == 'short' && lastWinDirection == 'short')
+          || (currentSide == 'long' && lastWinDirection == 'long')){
           continuousWinSameSideNum++;
-          isCurrentSideShort = !isCurrentSideShort;
+          if(continuousWinSameSideNum < 1){
+            isCurrentSideShort = !isCurrentSideShort;
+          }
         }else{
           continuousWinSameSideNum = 0;
         }
