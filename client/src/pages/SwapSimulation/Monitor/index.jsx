@@ -15,6 +15,7 @@ import {
 } from './api';
 import { getSwapPosition } from '../../Swap/Trade/api'
 import { tradeTypeEnum } from '../../config';
+import mockData from '../mock'
 
 const { RangePicker } = DatePicker;
 
@@ -29,9 +30,9 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const winRatio = useRef(2);
+  const winRatio = useRef(1.6);
   const lossRatio = useRef(0.6);
-  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(1.6);
   const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
@@ -98,6 +99,9 @@ export default props => {
   let lastLossDirection = null;
   let continuousLossSameSideNum = 0;
   let continuousWinSameSideNum = 0;
+  let lastlastWinDirection = null;
+  let lastlastLossDirection = null;
+  let isReverse = false;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -112,6 +116,7 @@ export default props => {
     let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
     let totalFee = 0;
+    let dayRatioList = [];
 
     historyList.map(item=>{
       const size = Number(position) * 100 / Number(item[1]);
@@ -127,6 +132,16 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
+      if(lastlastLossDirection
+        && lastLossDirection
+        && lastlastLossDirection != lastLossDirection
+        && lastLossDirection != currentSide
+        || isReverse
+      ){
+        newWinRatio = newWinRatio / 4;
+        newLossRatio = newLossRatio * 1.5;
+      }
+
       if(ratio > condition * newWinRatio * frequency){
         totalFee += fee;
         totalPnl += unrealized_pnl - fee;
@@ -136,21 +151,21 @@ export default props => {
 
         isCurrentSideShort = !isCurrentSideShort;
         if((currentSide == 'short' && lastWinDirection == 'short')
-          || (currentSide == 'long' && lastWinDirection == 'long')){
+          || (currentSide == 'long' && lastWinDirection == 'long')
+        ){
           continuousWinSameSideNum++;
-          if(continuousWinSameSideNum < 1){
-            isCurrentSideShort = !isCurrentSideShort;
-          }
+          isCurrentSideShort = !isCurrentSideShort;
         }else{
           continuousWinSameSideNum = 0;
         }
 
         continuousLossSameSideNum = 0;
+        lastlastWinDirection = lastWinDirection;
         lastWinDirection = currentSide;
 
         primaryPrice = item[1];
 
-        // console.info(item[0],'continuousWinNum', continuousObj.continuousWinNum)
+        isReverse = false;
       }
       if(ratio < - condition * newLossRatio * frequency){
         totalFee += fee;
@@ -160,23 +175,30 @@ export default props => {
         continuousObj.continuousWinNum = 0;
 
         isCurrentSideShort = !isCurrentSideShort;
-        if((currentSide == 'short' && lastWinDirection == 'long')
+        if(
+          (currentSide == 'short' && lastWinDirection == 'long')
           || (currentSide == 'long' && lastWinDirection == 'short')
-          && continuousWinSameSideNum < 1){
+          && continuousWinSameSideNum < 1
+        ){
           continuousLossSameSideNum++;
           if(continuousLossSameSideNum < 2){
             isCurrentSideShort = !isCurrentSideShort;
           }
         }
 
+        lastlastLossDirection = lastLossDirection;
         lastLossDirection = currentSide;
-        // if(continuousObj.continuousLossNum > 1) lastWinDirection = null;
 
         primaryPrice = item[1];
 
       }
 
-      if(totalPnl * 100 / Number(margin) < -40) {
+      if(continuousObj.continuousLossNum > 0) {
+        isReverse = true;
+        isCurrentSideShort = !isCurrentSideShort;
+      }
+
+      if(totalPnl * 100 / Number(margin) < -20) {
         console.log('------------continuousLossNum---------------')
         console.info(item[0])
         console.info(totalPnl * 100 / Number(margin))
@@ -189,6 +211,12 @@ export default props => {
 
       // console.log(item[0],ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
       // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
+
+      dayRatioList.push({
+        time: item[0],
+        ratio: ratio * 100,
+        totalRatio: totalPnl * 100 / Number(margin)
+      })
     })
 
     const totalRatio = totalPnl * 100 / Number(margin);
@@ -196,125 +224,150 @@ export default props => {
     // setTpnlRatio(totalPnl * 100 / Number(margin))
 
     // console.log('totalPnl',totalPnl, totalFee, margin, totalRatio,  )
-    return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice }
+    return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice, dayRatioList }
   }
 
-  const getMonthPnl = async day => {
+  const getMonthPnl = async (day,month) => {
+    setPageLoading(true);
+
     let loopNum = 0;
     let list = [];
     let t = 0;
     let tRatio = 0;
+    let dList = [];
 
+    let mockObj = {}
+
+    const monthData = mockData[month]
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
-      const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
-      const result = await getHistory({
-        instrument_id: 'BTC-USD-SWAP',
-        granularity: 60,
-        // limit: 20,
-        start,
-        end
-      })
+      // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
+      // const result = await getHistory({
+      //   instrument_id: 'BTC-USD-SWAP',
+      //   granularity: 60,
+      //   // limit: 20,
+      //   start,
+      //   end
+      // })
+      // let data = result?.data;
 
-      const data = result?.data;
+      let data = monthData[start]
 
       if(Array.isArray(data)){
-        const result = await testOrder(data.reverse(),lastPrice);
-        // console.log(start,result.totalPnl,result.totalRatio)
+        // data = data.reverse()
+        const result = await testOrder(data,lastPrice);
         t += result.totalPnl;
         tRatio += result.totalRatio;
         list.push(result);
         loopNum++;
         lastPrice = result.endPrice;
+        dList.push({
+          time: start,
+          dList: result.dayRatioList
+        })
+
+        mockObj[start] = data;
       }
     }
-    return { pnl: t, ratio: tRatio };
+
+    setPageLoading(false);
+    // console.log(JSON.stringify(mockObj))
+    return { pnl: t, ratio: tRatio, dList, };
   }
 
   const fnGetHistory = async () => {
     setPageLoading(true);
 
-    // let t = 0;
-    // let tRatio = 0;
-    // let mList = [];
-    // let i = 0;
-    // while(i<duration) {
-    //   const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
-    //
-    //   const payload = {
-    //     date: firstDay,
-    //     leverage,
-    //     winRatio,
-    //     lossRatio,
-    //     frequency
-    //   }
-    //
-    //   // const { data: {pnl, ratio} } = await testOrderApi(payload);
-    //   const { pnl , ratio } = await getMonthPnl(firstDay);
-    //
-    //   console.log('pnl,ratio',monthMap[i],pnl,ratio)
-    //   t += pnl;
-    //   tRatio += ratio;
-    //   mList.push({
-    //     month: monthMap[i],
-    //     totalPnl: pnl,
-    //     totalRatio: ratio
-    //   })
-    //   i++;
-    // }
-    //
-    // setTPnlList(mList);
-    // setTPnl(t);
-    // setTPnlRatio(tRatio);
+    let t = 0;
+    let tRatio = 0;
+    let mList = [];
+    let i = 0;
+    while(i<duration) {
+      const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
 
-    const payload = {
-      duration,
-      leverage,
-      winRatio: winRatio.current,
-      lossRatio: lossRatio.current,
-      frequency
+      // const payload = {
+      //   date: firstDay,
+      //   leverage,
+      //   winRatio,
+      //   lossRatio,
+      //   frequency
+      // }
+
+      // const { data: {pnl, ratio} } = await testOrderApi(payload);
+      const { pnl , ratio } = await getMonthPnl(firstDay,monthMap[i]);
+
+      console.log('pnl,ratio',monthMap[i],pnl,ratio)
+      t += pnl;
+      tRatio += ratio;
+      mList.push({
+        month: monthMap[i],
+        totalPnl: pnl,
+        totalRatio: ratio
+      })
+      i++;
     }
 
-    await testOrderMultiApi(payload);
+    setTPnlList(mList);
+    setTPnl(t);
+    setTPnlRatio(tRatio);
 
-    let myInterval;
-    myInterval = setInterval(async ()=>{
-      const res = await getMultiStatus()
-      const { status, result } = res?.data??{}
-      if(status){
-        console.log(result)
-        const { mList = [], pnl, ratio} = result
+    setPageLoading(false);
 
-        setTPnlList(mList);
-        setTPnl(pnl);
-        setTPnlRatio(ratio);
-
-        setPageLoading(false);
-
-        clearInterval(myInterval);
-        myInterval = null
-      }
-    }, 1000 * 10)
+    // const payload = {
+    //   duration,
+    //   leverage,
+    //   winRatio: winRatio.current,
+    //   lossRatio: lossRatio.current,
+    //   frequency
+    // }
+    //
+    // await testOrderMultiApi(payload);
+    //
+    // let myInterval;
+    // myInterval = setInterval(async ()=>{
+    //   const res = await getMultiStatus()
+    //   const { status, result } = res?.data??{}
+    //   if(status){
+    //     console.log(result)
+    //     const { mList = [], pnl, ratio} = result
+    //
+    //     setTPnlList(mList);
+    //     setTPnl(pnl);
+    //     setTPnlRatio(ratio);
+    //
+    //     setPageLoading(false);
+    //
+    //     clearInterval(myInterval);
+    //     myInterval = null
+    //   }
+    // }, 1000 * 10)
   }
 
   const fnGetHistoryByMonth = async () => {
     setPageLoading(true);
     const firstDay = `2020-${month}-01 00:00:00`;
 
-    const payload = {
-      date: firstDay,
-      leverage,
-      winRatio: winRatio.current,
-      lossRatio: lossRatio.current,
-      frequency
-    }
+    // const payload = {
+    //   date: firstDay,
+    //   leverage,
+    //   winRatio: winRatio.current,
+    //   lossRatio: lossRatio.current,
+    //   frequency
+    // }
 
     // const { data: {pnl, ratio} } = await testOrderApi(payload);
-    const { pnl , ratio } = await getMonthPnl(firstDay);
+    const { pnl , ratio, dList } = await getMonthPnl(firstDay,month);
 
     setTPnl(pnl);
     setTPnlRatio(ratio);
     setPageLoading(false);
+
+    console.log(dList)
+    const newDList = dList.map(item=>({
+      ...item,
+      dList: item.dList.filter(it=>it.ratio < 0)
+    }))
+    console.log(newDList)
   }
 
   useEffect(()=>{

@@ -204,6 +204,9 @@ let lastWinDirection = null;
 let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
 let continuousWinSameSideNum = 0;
+let lastlastWinDirection = null;
+let lastlastLossDirection = null;
+let isReverse = false;
 const testOrder = async (historyList,endPrice, params) => {
     if(!historyList.length) {
         return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -233,6 +236,19 @@ const testOrder = async (historyList,endPrice, params) => {
         let newWinRatio = Number(winRatio);
         let newLossRatio = Number(lossRatio);
 
+        let currentSide = 'long';
+        if(isCurrentSideShort) currentSide = 'short';
+
+        if(lastlastLossDirection
+            && lastLossDirection
+            && lastlastLossDirection != lastLossDirection
+            && lastLossDirection != currentSide
+            || isReverse
+        ){
+            newWinRatio = newWinRatio / 4;
+            newLossRatio = newLossRatio * 1.5;
+        }
+
         if(ratio > condition * newWinRatio * frequency){
             // console.log('totalFee',fee, fee / Number(margin))
             totalFee += fee;
@@ -240,16 +256,14 @@ const testOrder = async (historyList,endPrice, params) => {
             continuousObj.continuousLossNum = 0;
             continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-            let currentSide = 'long';
-            if(isCurrentSideShort) currentSide = 'short';
-
             isCurrentSideShort = !isCurrentSideShort;
             if((currentSide == 'short' && lastWinDirection == 'short')
                 || (currentSide == 'long' && lastWinDirection == 'long')){
                 continuousWinSameSideNum++;
-                if(continuousObj.continuousWinNum < 2){
-                    isCurrentSideShort = !isCurrentSideShort;
-                }
+                isCurrentSideShort = !isCurrentSideShort;
+                // if(continuousObj.continuousWinNum < 2){
+                //     isCurrentSideShort = !isCurrentSideShort;
+                // }
             }else{
                 continuousWinSameSideNum = 0;
             }
@@ -258,7 +272,8 @@ const testOrder = async (historyList,endPrice, params) => {
             lastWinDirection = currentSide;
 
             primaryPrice = item[1];
-            // console.log('win::totalPnl',totalPnl, ratio,unrealized_pnl)
+
+            isReverse = false;
         }
         if(ratio < - condition * newLossRatio * frequency){
             // console.log('totalFee',fee, fee / Number(margin))
@@ -268,24 +283,29 @@ const testOrder = async (historyList,endPrice, params) => {
             continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
             continuousObj.continuousWinNum = 0;
 
-            let currentSide = 'long';
-            if(isCurrentSideShort) currentSide = 'short';
-
             isCurrentSideShort = !isCurrentSideShort;
             if((currentSide == 'short' && lastWinDirection == 'long')
                 || (currentSide == 'long' && lastWinDirection == 'short')
-                && continuousWinSameSideNum < 1){
+                && continuousWinSameSideNum < 1
+            ){
                 continuousLossSameSideNum++;
                 if(continuousLossSameSideNum < 2){
                     isCurrentSideShort = !isCurrentSideShort;
                 }
             }
 
+            lastlastLossDirection = lastLossDirection;
             lastLossDirection = currentSide;
 
             primaryPrice = item[1];
 
         }
+
+        if(continuousObj.continuousLossNum > 0) {
+            isReverse = true;
+            isCurrentSideShort = !isCurrentSideShort;
+        }
+
         console.log(item[0],'ratio',ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
 
     })
