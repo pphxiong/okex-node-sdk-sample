@@ -100,7 +100,7 @@ export default props => {
   let continuousLossSameSideNum = 0;
   let continuousWinSameSideNum = 0;
   let lastlastWinDirection = null;
-  let lastlastLossDirection = null;
+  let lastLastLossDirection = null;
   let isReverse = false;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
@@ -132,9 +132,9 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
-      if(lastlastLossDirection
+      if(lastLastLossDirection
         && lastLossDirection
-        && lastlastLossDirection != lastLossDirection
+        && lastLastLossDirection != lastLossDirection
         && lastLossDirection != currentSide
         || isReverse
       ){
@@ -186,7 +186,7 @@ export default props => {
           }
         }
 
-        lastlastLossDirection = lastLossDirection;
+        lastLastLossDirection = lastLossDirection;
         lastLossDirection = currentSide;
 
         primaryPrice = item[1];
@@ -284,16 +284,6 @@ export default props => {
     let i = 0;
     while(i<duration) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
-
-      // const payload = {
-      //   date: firstDay,
-      //   leverage,
-      //   winRatio,
-      //   lossRatio,
-      //   frequency
-      // }
-
-      // const { data: {pnl, ratio} } = await testOrderApi(payload);
       const { pnl , ratio } = await getMonthPnl(firstDay,monthMap[i]);
 
       console.log('pnl,ratio',monthMap[i],pnl,ratio)

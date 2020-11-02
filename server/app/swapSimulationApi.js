@@ -205,7 +205,7 @@ let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
 let continuousWinSameSideNum = 0;
 let lastlastWinDirection = null;
-let lastlastLossDirection = null;
+let lastLastLossDirection = null;
 let isReverse = false;
 const testOrder = async (historyList,endPrice, params) => {
     if(!historyList.length) {
@@ -239,9 +239,9 @@ const testOrder = async (historyList,endPrice, params) => {
         let currentSide = 'long';
         if(isCurrentSideShort) currentSide = 'short';
 
-        if(lastlastLossDirection
+        if(lastLastLossDirection
             && lastLossDirection
-            && lastlastLossDirection != lastLossDirection
+            && lastLastLossDirection != lastLossDirection
             && lastLossDirection != currentSide
             || isReverse
         ){
@@ -294,7 +294,7 @@ const testOrder = async (historyList,endPrice, params) => {
                 }
             }
 
-            lastlastLossDirection = lastLossDirection;
+            lastLastLossDirection = lastLossDirection;
             lastLossDirection = currentSide;
 
             primaryPrice = item[1];
