@@ -362,6 +362,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         continuousLossSameSideNum: clss,
         continuousWinSameSideNum: cwss,
         isReverse: isR,
+        lastLastLossDirection: llld,
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -371,15 +372,17 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     continuousLossSameSideNum = Number(clss)
     continuousWinSameSideNum = Number(cwss)
     isReverse = Boolean(Number(isR))
+    lastLastLossDirection = llld
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
         continuousObj,
         lastWinDirection: lsd,
         lastLossDirection: lld,
-        continuousLossSameSideNum: clss,
-        continuousWinSameSideNum: cwss,
-        isReverse: Boolean(Number(isR))
+        continuousLossSameSideNum: Number(clss),
+        continuousWinSameSideNum: Number(cwss),
+        isReverse: Boolean(Number(isR)),
+        lastLastLossDirection: llld
     } });
 });
 

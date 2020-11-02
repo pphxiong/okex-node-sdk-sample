@@ -49,6 +49,7 @@ export default props => {
       continuousLossSameSideNum: 0,
       continuousWinSameSideNum: 0,
       isReverse: 0,
+      lastLastLossDirection: 'long',
     }
     const { errcode, errmsg } = await setContinousWinAndLoss(payload)
     if(errcode == 0)  message.success(errmsg);
