@@ -361,6 +361,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastLossDirection: lld,
         continuousLossSameSideNum: clss,
         continuousWinSameSideNum: cwss,
+        isReverse: isR,
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -369,6 +370,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     lastLossDirection = lld;
     continuousLossSameSideNum = Number(clss)
     continuousWinSameSideNum = Number(cwss)
+    isReverse = Boolean(Number(isR))
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
@@ -376,7 +378,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastWinDirection: lsd,
         lastLossDirection: lld,
         continuousLossSameSideNum: clss,
-        continuousWinSameSideNum: cwss
+        continuousWinSameSideNum: cwss,
+        isReverse: Boolean(Number(isR))
     } });
 });
 
@@ -433,7 +436,7 @@ const autoOperateSwap = async (holding) => {
     console.log(instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
     console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
-    console.log('lastLastLossDirection',lastLastLossDirection,'lastLossDirection',lastLossDirection)
+    console.log('lastLastLossDirection',lastLastLossDirection,'lastLossDirection',lastLossDirection, 'lastWinDirection', lastWinDirection)
     console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
     console.log('isReverse',isReverse)
 

@@ -42,12 +42,13 @@ export default props => {
   const onSetContinousWinAndLoss = async () => {
     const payload = {
       instrument_id: BTC_INSTRUMENT_ID,
-      continuousWinNum: 0,
-      continuousLossNum: 1,
-      lastWinDirection : 'long',
-      lastLossDirection: 'long',
+      continuousWinNum: 1,
+      continuousLossNum: 0,
+      lastWinDirection : 'short',
+      lastLossDirection: 'short',
       continuousLossSameSideNum: 0,
-      continuousWinSameSideNum: 1
+      continuousWinSameSideNum: 0,
+      isReverse: 0,
     }
     const { errcode, errmsg } = await setContinousWinAndLoss(payload)
     if(errcode == 0)  message.success(errmsg);
