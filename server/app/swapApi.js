@@ -422,6 +422,7 @@ let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
 let continuousWinSameSideNum = 0;
 let lastLastLossDirection = null;
+let isReverse = false;
 const autoOperateSwap = async (holding) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
@@ -440,7 +441,7 @@ const autoOperateSwap = async (holding) => {
     console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
     console.log('lastLastLossDirection',lastLastLossDirection,'lastLossDirection',lastLossDirection, 'lastWinDirection', lastWinDirection)
     console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
-    // console.log('isReverse',isReverse)
+    console.log('isReverse',isReverse)
 
     let newWinRatio = Number(winRatio);
     let newLossRatio = Number(lossRatio);

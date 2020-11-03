@@ -132,16 +132,15 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
-      // if(lastLastLossDirection
-      //   && lastLossDirection
-      //   && lastLastLossDirection != lastLossDirection
-      //   && lastLossDirection != currentSide
-      //   && continuousWinSameSideNum
-      //   || isReverse
-      // ){
-      //   newWinRatio = newWinRatio / 4;
-      //   newLossRatio = newLossRatio * 1.5;
-      // }
+      if(lastLastLossDirection
+        && lastLossDirection
+        && lastLastLossDirection != lastLossDirection
+        && lastLossDirection != currentSide
+        || isReverse
+      ){
+        newWinRatio = newWinRatio / 4;
+        // newLossRatio = newLossRatio * 1.5;
+      }
 
       if(ratio > condition * newWinRatio * frequency){
         totalFee += fee;
