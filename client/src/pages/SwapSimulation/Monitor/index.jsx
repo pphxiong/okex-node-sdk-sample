@@ -30,16 +30,16 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const winRatio = useRef(1.6);
+  const winRatio = useRef(2);
   const lossRatio = useRef(0.6);
-  const [changebleWinRatio, setChangebleWinRatio] = useState(1.6);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
   const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('10');
   const [leverage,setLeverage] = useState(10);
-  const [duration,setDuration] = useState(3);
+  const [duration,setDuration] = useState(10);
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
   const SWAP_BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
@@ -132,15 +132,16 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
-      if(lastLastLossDirection
-        && lastLossDirection
-        && lastLastLossDirection != lastLossDirection
-        && lastLossDirection != currentSide
-        || isReverse
-      ){
-        newWinRatio = newWinRatio / 4;
-        newLossRatio = newLossRatio * 1.5;
-      }
+      // if(lastLastLossDirection
+      //   && lastLossDirection
+      //   && lastLastLossDirection != lastLossDirection
+      //   && lastLossDirection != currentSide
+      //   && continuousWinSameSideNum
+      //   || isReverse
+      // ){
+      //   newWinRatio = newWinRatio / 4;
+      //   newLossRatio = newLossRatio * 1.5;
+      // }
 
       if(ratio > condition * newWinRatio * frequency){
         totalFee += fee;
@@ -155,6 +156,9 @@ export default props => {
         ){
           continuousWinSameSideNum++;
           isCurrentSideShort = !isCurrentSideShort;
+          // if(continuousWinSameSideNum < 2){
+          //   isCurrentSideShort = !isCurrentSideShort;
+          // }
         }else{
           continuousWinSameSideNum = 0;
         }
@@ -186,6 +190,9 @@ export default props => {
           }
         }
 
+        // isReverse = true;
+        // isCurrentSideShort = !isCurrentSideShort;
+
         lastLastLossDirection = lastLossDirection;
         lastLossDirection = currentSide;
 
@@ -193,12 +200,12 @@ export default props => {
 
       }
 
-      if(continuousObj.continuousLossNum > 0) {
-        isReverse = true;
-        isCurrentSideShort = !isCurrentSideShort;
-      }
+      // if(continuousObj.continuousLossNum > 0) {
+      //   isReverse = true;
+      //   isCurrentSideShort = !isCurrentSideShort;
+      // }
 
-      if(totalPnl * 100 / Number(margin) < -20) {
+      if(totalPnl * 100 / Number(margin) < -40) {
         console.log('------------continuousLossNum---------------')
         console.info(item[0])
         console.info(totalPnl * 100 / Number(margin))

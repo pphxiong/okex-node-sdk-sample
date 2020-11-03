@@ -11,7 +11,7 @@ let myInterval;
 let mode = 4; //下单模式
 
 let frequency = 1;
-const winRatio = 1.6;
+const winRatio = 2;
 const lossRatio = 0.6;
 
 const continuousMap = {
@@ -422,7 +422,6 @@ let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
 let continuousWinSameSideNum = 0;
 let lastLastLossDirection = null;
-let isReverse = false;
 const autoOperateSwap = async (holding) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
@@ -441,20 +440,20 @@ const autoOperateSwap = async (holding) => {
     console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
     console.log('lastLastLossDirection',lastLastLossDirection,'lastLossDirection',lastLossDirection, 'lastWinDirection', lastWinDirection)
     console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
-    console.log('isReverse',isReverse)
+    // console.log('isReverse',isReverse)
 
     let newWinRatio = Number(winRatio);
     let newLossRatio = Number(lossRatio);
 
-    if(lastLastLossDirection
-        && lastLossDirection
-        && lastLastLossDirection != lastLossDirection
-        && lastLossDirection != side
-        || isReverse
-    ){
-        newWinRatio = newWinRatio / 4;
-        newLossRatio = newLossRatio * 1.5;
-    }
+    // if(lastLastLossDirection
+    //     && lastLossDirection
+    //     && lastLastLossDirection != lastLossDirection
+    //     && lastLossDirection != side
+    //     || isReverse
+    // ){
+    //     newWinRatio = newWinRatio / 4;
+    //     newLossRatio = newLossRatio * 1.5;
+    // }
 
     if(ratio > condition * newWinRatio * frequency){
         isOpenShort = !isOpenShort;
@@ -475,7 +474,6 @@ const autoOperateSwap = async (holding) => {
 
             continuousLossSameSideNum = 0;
             lastWinDirection = side;
-            isReverse = false;
 
             const openSide = isOpenShort ? 'short' : 'long';
             await autoOpenOrderSingle(holding, { openSide });
@@ -500,11 +498,6 @@ const autoOperateSwap = async (holding) => {
 
             lastLastLossDirection = lastLossDirection;
             lastLossDirection = side;
-
-            if(continuousObj.continuousLossNum > 0) {
-                isReverse = true;
-                isOpenShort = !isOpenShort;
-            }
 
             const openSide = isOpenShort ? 'short' : 'long';
             await autoOpenOrderSingle(holding, { openSide });
