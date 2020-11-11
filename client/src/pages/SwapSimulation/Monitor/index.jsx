@@ -99,7 +99,7 @@ export default props => {
   let lastLossDirection = null;
   let continuousLossSameSideNum = 0;
   let continuousWinSameSideNum = 0;
-  let lastlastWinDirection = null;
+  let lastLastWinDirection = null;
   let lastLastLossDirection = null;
   let reboundNum = 0;
   let isReverse = false;
@@ -159,6 +159,10 @@ export default props => {
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
           newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
         }
+        if(continuousObj.continuousLossNum > 1){
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : newWinRatio;
+          newLossRatio = continuousWinSameSideNum ? newLossRatio * 1.2 : newLossRatio;
+        }
       }
 
       if(delayTimes) {
@@ -206,7 +210,7 @@ export default props => {
           }
 
           continuousLossSameSideNum = 0;
-          lastlastWinDirection = lastWinDirection;
+          lastLastWinDirection = lastWinDirection;
           lastWinDirection = currentSide;
           isReverse = false;
 
@@ -277,7 +281,7 @@ export default props => {
         console.info(totalPnl * 100 / Number(margin))
         console.info('continuousLossNum', continuousObj.continuousLossNum)
         console.info('continuousWinNum', continuousObj.continuousWinNum)
-        console.log('lastWinDirection', lastWinDirection, 'lastlastWinDirection', lastlastWinDirection,)
+        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
         console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
         console.log('continuousWinSameSideNum', continuousWinSameSideNum)
         console.log('------------continuousLossNum end---------------')
