@@ -362,6 +362,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         continuousLossSameSideNum: clss,
         continuousWinSameSideNum: cwss,
         lastLastLossDirection: llld,
+        lastLastWinDirection: llwd
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -371,6 +372,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     continuousLossSameSideNum = Number(clss)
     continuousWinSameSideNum = Number(cwss)
     lastLastLossDirection = llld
+    lastLastWinDirection = llwd
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
@@ -379,7 +381,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastLossDirection: lld,
         continuousLossSameSideNum: Number(clss),
         continuousWinSameSideNum: Number(cwss),
-        lastLastLossDirection: llld
+        lastLastLossDirection: llld,
+        lastLastWinDirection: llwd
     } });
 });
 
@@ -474,8 +477,8 @@ const autoOperateSwap = async (holding) => {
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)
     console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
-    console.log('lastLastLossDirection',lastLastLossDirection,'lastLossDirection',lastLossDirection )
     console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
+    console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
     console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
     console.log('------------continuousLossNum end---------------')
 
