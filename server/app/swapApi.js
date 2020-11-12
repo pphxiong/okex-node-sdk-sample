@@ -461,6 +461,15 @@ const autoOperateSwap = async (holding) => {
         }
     }
 
+    if(
+        continuousWinSameSideNum > 1
+        &&
+        lastWinDirection == 'short'
+    ){
+        newWinRatio = Number(winRatio)
+        newLossRatio = Number(lossRatio)
+    }
+
     console.log('------------continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio)
     console.info('frequency', frequency, 'winRatio', winRatio, 'lossRatio', lossRatio, 'leverage', leverage, 'side', side)

@@ -106,6 +106,7 @@ export default props => {
   let isFirstWin = false;
   let lastMostWinRatio = 0;
   let maxContinousLossObj = { time: null, continuousLossNum: 0 }
+  let maxLossRatio = { time: null, ratio: 0 }
   let delayTimes = 0;
   let isHalfOpen = false
   let isLatestWin = false
@@ -163,6 +164,15 @@ export default props => {
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : newWinRatio;
           newLossRatio = continuousWinSameSideNum ? newLossRatio * 1.2 : newLossRatio;
         }
+      }
+
+      if(
+        continuousWinSameSideNum > 1
+        &&
+        lastWinDirection == 'short'
+      ){
+        newWinRatio = Number(winRatio.current)
+        newLossRatio = Number(lossRatio.current)
       }
 
       if(delayTimes) {
@@ -249,7 +259,10 @@ export default props => {
             newLossRatio != Number(lossRatio.current)
           ){
             ratioChangeNum++;
-            isCurrentSideShort = currentSide != 'short'
+            if(!continuousWinSameSideNum){
+              isCurrentSideShort = currentSide != 'short'
+            }
+
             if(
               continuousWinSameSideNum
               &&
@@ -285,6 +298,11 @@ export default props => {
         console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
         console.log('continuousWinSameSideNum', continuousWinSameSideNum)
         console.log('------------continuousLossNum end---------------')
+      }
+
+      maxLossRatio = {
+        time: totalRatio < maxLossRatio.ratio ? item[0] : maxLossRatio.time,
+        ratio: Math.min(totalRatio, maxLossRatio.ratio)
       }
 
       maxContinousLossObj = {
@@ -353,7 +371,8 @@ export default props => {
       }
     }
 
-    console.log(maxContinousLossObj)
+    console.log('maxContinousLossObj',maxContinousLossObj)
+    console.log('maxLossRatio',maxLossRatio)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
     return { pnl: t, ratio: tRatio, dList, };
