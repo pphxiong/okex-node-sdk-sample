@@ -161,18 +161,50 @@ export default props => {
           newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
         }
         if(continuousObj.continuousLossNum > 1){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : newWinRatio;
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
           newLossRatio = continuousWinSameSideNum ? newLossRatio * continuousWinSameSideNum * 1.2 : newLossRatio;
         }
       }
 
       if(
         continuousWinSameSideNum > 1
-        &&
-        lastWinDirection == 'short'
       ){
-        newWinRatio = Number(winRatio.current)
-        newLossRatio = Number(lossRatio.current)
+        if(lastWinDirection == 'short'){
+          newWinRatio = Number(winRatio.current)
+          newLossRatio = Number(lossRatio.current)
+          // if(continuousObj.continuousLossNum > 2) {
+          //   newWinRatio = newWinRatio / 1.5;
+          //   newLossRatio = newLossRatio * 2;
+          // }
+        }
+      }
+
+      // if(
+      //   continuousWinSameSideNum < 1
+      //   &&
+      //   lastWinDirection == 'long'
+      // ) {
+      //   newWinRatio = Number(winRatio.current)
+      //   newLossRatio = Number(lossRatio.current)
+      // }
+
+      const totalRatio = totalPnl * 100 / Number(margin)
+      if(
+        // totalRatio <= 0
+        // &&
+        lastTotalRatio != totalRatio
+      ) {
+        lastTotalRatio = totalRatio
+        console.log('------------continuousLossNum start---------------')
+        console.info(item[0],item[1],'ratio', ratio)
+        console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
+        console.info(totalPnl * 100 / Number(margin))
+        console.info('continuousLossNum', continuousObj.continuousLossNum)
+        console.info('continuousWinNum', continuousObj.continuousWinNum)
+        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
+        console.log('currentSide', currentSide, 'lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+        console.log('continuousWinSameSideNum', continuousWinSameSideNum)
+        console.log('------------continuousLossNum end---------------')
       }
 
       if(delayTimes) {
@@ -288,21 +320,6 @@ export default props => {
           primaryPrice = item[1];
 
         }
-      }
-
-      const totalRatio = totalPnl * 100 / Number(margin)
-      if(totalRatio <= 0 && lastTotalRatio != totalRatio) {
-        lastTotalRatio = totalRatio
-        console.log('------------continuousLossNum start---------------')
-        console.info(item[0],item[1],'ratio', ratio, 'isCurrentSideShort', isCurrentSideShort, 'currentSide', currentSide)
-        console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
-        console.info(totalPnl * 100 / Number(margin))
-        console.info('continuousLossNum', continuousObj.continuousLossNum)
-        console.info('continuousWinNum', continuousObj.continuousWinNum)
-        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
-        console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-        console.log('continuousWinSameSideNum', continuousWinSameSideNum)
-        console.log('------------continuousLossNum end---------------')
       }
 
       maxLossRatio = {

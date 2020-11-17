@@ -289,7 +289,9 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('availNo', availNo, 'avail', avail, 'type', type)
+
     const { result } = await validateAndCancelOrder(instrument_id);
+
     if(avail) {
         const payload = {
             size: avail,
@@ -299,6 +301,17 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             price: mark_price,
             match_price: 0
         }
+
+        let hasOrderInterval = setInterval(async ()=>{
+            const { result } = await validateAndCancelOrder(instrument_id);
+            if(result) {
+                await authClient.swap().postOrder(payload);
+                return;
+            }
+            clearInterval(hasOrderInterval)
+            hasOrderInterval = null;
+        },1000)
+
         return await authClient.swap().postOrder(payload);
     }
     return new Promise(resolve=>{ resolve({ result: avail && !result }) })
@@ -459,8 +472,8 @@ const autoOperateSwap = async (holding) => {
             newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
         }
         if(continuousObj.continuousLossNum > 1){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : newWinRatio;
-            newLossRatio = continuousWinSameSideNum ? newLossRatio * 1.2 : newLossRatio;
+            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+            newLossRatio = continuousWinSameSideNum ? newLossRatio * continuousWinSameSideNum * 1.2 : newLossRatio;
         }
     }
 
@@ -547,17 +560,22 @@ const autoOperateSwap = async (holding) => {
             newLossRatio != Number(lossRatio)
         ){
             ratioChangeNum++;
-            isOpenShort = side != 'short'
+            if(!continuousWinSameSideNum){
+                isOpenShort = side != 'short'
+            }
+
             if(
                 continuousWinSameSideNum
-                &&
-                lastWinDirection == 'short'
-                &&
-                ratioChangeNum > 1
-                &&
-                ratioChangeNum < 3
             ){
-                isOpenShort = !isOpenShort
+                if(
+                    lastWinDirection == 'short'
+                    &&
+                    ratioChangeNum > 1
+                    &&
+                    ratioChangeNum < 3
+                ){
+                    isOpenShort = !isOpenShort
+                }
             }
         }
 
@@ -595,7 +613,7 @@ function startInterval() {
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
-    },1000 * 2.5)
+    },1000 * 60)
 }
 
 function stopInterval() {
