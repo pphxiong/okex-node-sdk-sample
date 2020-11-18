@@ -13,6 +13,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
+let initPosition = 1;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -268,33 +269,31 @@ const getOrderState = async (payload) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { isReverse = true, availRatio = 1, order_type = 0, isOpenShort = false, openSide = 'long' } = params;
-    const { instrument_id, position } = holding;
+    const { openSide = 'long', lossNum = 0 } = params;
+    const position = Math.round(initPosition * (lossNum * 1.2 + 3) / 3)
+
+    const { instrument_id, position: holdingPosition } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-    // 可开张数
-    let availNo;
-    let avail = 0;
 
-    if(instrument_id.includes('BTC')){
-        availNo = await getAvailNo({ mark_price });
-    }else{
-        availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
-    }
-    // avail = Math.min(Math.floor(Number(availNo) * availRatio), Number(position));
-    avail = Math.min(Math.floor(Number(availNo)), Number(position));
+    // // 可开张数
+    // let availNo;
+    // let avail = 0;
+    //
+    // if(instrument_id.includes('BTC')){
+    //     availNo = await getAvailNo({ mark_price });
+    // }else{
+    //     availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
+    // }
+    // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
-    // let type = isReverse ? reverseDirection(getCurrentDirection(holding)) : getCurrentDirection(holding);
-    // if(isOpenShort) type = 2;
     const type = openSide == 'long' ? 1 : 2;
-
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
-    console.log('availNo', availNo, 'avail', avail, 'type', type)
+    console.log('position', position, 'type', type)
 
     const { result } = await validateAndCancelOrder(instrument_id);
-
-    if(avail) {
+    if(position) {
         const payload = {
-            size: avail,
+            size: position,
             type,
             // order_type: 0, //1：只做Maker 4：市价委托
             instrument_id: instrument_id,
@@ -309,6 +308,15 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             if(result == false) {
                 clearInterval(hasOrderInterval)
                 hasOrderInterval = null;
+            }
+            const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+            const payload = {
+                size: position,
+                type,
+                // order_type: 0, //1：只做Maker 4：市价委托
+                instrument_id: instrument_id,
+                price: mark_price,
+                match_price: 0
             }
             await authClient.swap().postOrder(payload);
             return;
@@ -502,7 +510,7 @@ const autoOperateSwap = async (holding) => {
         if(
             ratio < condition * newWinRatio * frequency / 10
             &&
-            lastMostWinRatio > condition * newWinRatio * frequency * 2 / 4
+            lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
             &&
             continuousLossSameSideNum == 1
         ){
@@ -511,7 +519,7 @@ const autoOperateSwap = async (holding) => {
                 lastMostWinRatio = 0;
 
                 const openSide = side == 'long' ? 'short' : 'long';
-                await autoOpenOrderSingle(holding, { openSide });
+                await autoOpenOrderSingle(holding, { openSide, lossNum: continuousObj.continuousLossNum });
             }
         }
     }
@@ -541,9 +549,10 @@ const autoOperateSwap = async (holding) => {
             lastLastLossDirection = null;
 
             ratioChangeNum = 0
+            lastMostWinRatio = 0;
 
             const openSide = isOpenShort ? 'short' : 'long';
-            await autoOpenOrderSingle(holding, { openSide });
+            await autoOpenOrderSingle(holding, { openSide, lossNum: continuousObj.continuousLossNum });
         }
         return;
     }
@@ -578,6 +587,10 @@ const autoOperateSwap = async (holding) => {
                 ){
                     isOpenShort = !isOpenShort
                 }
+
+                if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
+                    isOpenShort = !isOpenShort
+                }
             }
         }
 
@@ -592,7 +605,7 @@ const autoOperateSwap = async (holding) => {
             lastMostWinRatio = 0;
 
             const openSide = isOpenShort ? 'short' : 'long';
-            await autoOpenOrderSingle(holding, { openSide });
+            await autoOpenOrderSingle(holding, { openSide, lossNum: continuousObj.continuousLossNum });
         }
         return;
     }

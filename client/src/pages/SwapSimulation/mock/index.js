@@ -8,6 +8,7 @@ import m07 from './07'
 import m08 from './08'
 import m09 from './09'
 import m10 from './10'
+import m11 from './11'
 
 const data = {
   "01": m01,
@@ -20,6 +21,7 @@ const data = {
   "08": m08,
   "09": m09,
   '10': m10,
+  '11': m11
 }
 
 export default data

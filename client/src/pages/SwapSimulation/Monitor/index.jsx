@@ -37,9 +37,9 @@ export default props => {
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
-  const [month,setMonth] = useState('10');
+  const [month,setMonth] = useState('11');
   const [leverage,setLeverage] = useState(10);
-  const [duration,setDuration] = useState(10);
+  const [duration,setDuration] = useState(11);
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
   const SWAP_BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
@@ -120,7 +120,7 @@ export default props => {
     let totalPnl = 0;
 
     let position = initPosition;
-    // position = initPosition / (continuousObj.continuousLossNum + 1)
+    position = Math.round(initPosition * (continuousObj.continuousLossNum * 1.2 + 3) / 3)
 
     const margin = position * 100 / historyList[0][1] / leverage;
     let condition = leverage / 100;
@@ -186,10 +186,14 @@ export default props => {
       }
 
       // if(
-      //   lastLossDirection == lastLastLossDirection
+      //   continuousWinSameSideNum > 2
+      //   &&
+      //   lastWinDirection == 'long'
+      //   &&
+      //   currentSide == 'long'
       // ){
-      //   newWinRatio = newWinRatio / 2
-      //   newLossRatio = newLossRatio * 2
+      //   newWinRatio = Number(winRatio.current) * 1.2
+      //   newLossRatio = Number(lossRatio.current) * 2
       // }
 
       const totalRatio = totalPnl * 100 / Number(margin)
@@ -220,19 +224,20 @@ export default props => {
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
           if(
             ratio < condition * newWinRatio * frequency / 10
-            &&
-            lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-            &&
-            continuousLossSameSideNum == 1
           ){
-            totalFee += fee;
-            totalPnl += unrealized_pnl - fee;
+            if(
+              (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
+              &&
+              continuousLossSameSideNum == 1)
+            ){
+              totalFee += fee;
+              totalPnl += unrealized_pnl - fee;
 
-            isCurrentSideShort = !isCurrentSideShort;
+              isCurrentSideShort = !isCurrentSideShort;
 
-            lastMostWinRatio = 0;
-            primaryPrice = item[1];
-
+              lastMostWinRatio = 0;
+              primaryPrice = item[1];
+            }
           }
         }
 
@@ -271,7 +276,7 @@ export default props => {
           isHalfOpen = false
           reboundNum = 0;
 
-          // lastMostWinRatio = 0;
+          lastMostWinRatio = 0;
           primaryPrice = item[1];
 
         }
@@ -314,14 +319,12 @@ export default props => {
               ){
                 isCurrentSideShort = !isCurrentSideShort
               }
+
+              if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
+                isCurrentSideShort = !isCurrentSideShort
+              }
             }
           }
-
-          // if(
-          //   lastLossDirection == currentSide
-          // ){
-          //   isCurrentSideShort = currentSide == 'short'
-          // }
 
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
@@ -374,20 +377,20 @@ export default props => {
     const monthData = mockData[month]
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
-      const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
-      const result = await getHistory({
-        instrument_id: 'BTC-USD-SWAP',
-        granularity: 60,
-        // limit: 20,
-        start,
-        end
-      })
-      let data = result?.data;
+      // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
+      // const result = await getHistory({
+      //   instrument_id: 'BTC-USD-SWAP',
+      //   granularity: 60,
+      //   // limit: 20,
+      //   start,
+      //   end
+      // })
+      // let data = result?.data;
 
-      // let data = monthData[start]
+      let data = monthData[start]
 
       if(Array.isArray(data)){
-        data = data.reverse()
+        // data = data.reverse()
         const result = await testOrder(data,lastPrice);
         t += result.totalPnl;
         tRatio += result.totalRatio;
@@ -490,7 +493,7 @@ export default props => {
     console.log(dList)
     const newDList = dList.map(item=>({
       ...item,
-      dList: item.dList.filter(it=>it.ratio < 0)
+      dList: item.dList?.filter(it=>it.ratio < 0)
     }))
     console.log(newDList)
   }
