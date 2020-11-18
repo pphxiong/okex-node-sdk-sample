@@ -111,6 +111,7 @@ export default props => {
   let isHalfOpen = false
   let isLatestWin = false
   let ratioChangeNum = 0;
+  const initPosition = 10;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -118,8 +119,9 @@ export default props => {
 
     let totalPnl = 0;
 
-    let position = 10;
-    // if(isHalfOpen) position = position / 2
+    let position = initPosition;
+    // position = initPosition / (continuousObj.continuousLossNum + 1)
+
     const margin = position * 100 / historyList[0][1] / leverage;
     let condition = leverage / 100;
 
@@ -177,15 +179,17 @@ export default props => {
           //   newLossRatio = newLossRatio * 2;
           // }
         }
+        // if(lastWinDirection == 'long'){
+        //   newWinRatio = Number(winRatio.current) * 1.5
+        //   newLossRatio = Number(lossRatio.current)
+        // }
       }
 
       // if(
-      //   continuousWinSameSideNum < 1
-      //   &&
-      //   lastWinDirection == 'long'
-      // ) {
-      //   newWinRatio = Number(winRatio.current)
-      //   newLossRatio = Number(lossRatio.current)
+      //   lastLossDirection == lastLastLossDirection
+      // ){
+      //   newWinRatio = newWinRatio / 2
+      //   newLossRatio = newLossRatio * 2
       // }
 
       const totalRatio = totalPnl * 100 / Number(margin)
@@ -217,7 +221,7 @@ export default props => {
           if(
             ratio < condition * newWinRatio * frequency / 10
             &&
-            lastMostWinRatio > condition * newWinRatio * frequency * 2 / 4
+            lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
             &&
             continuousLossSameSideNum == 1
           ){
@@ -313,6 +317,12 @@ export default props => {
             }
           }
 
+          // if(
+          //   lastLossDirection == currentSide
+          // ){
+          //   isCurrentSideShort = currentSide == 'short'
+          // }
+
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
 
@@ -364,20 +374,20 @@ export default props => {
     const monthData = mockData[month]
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
-      // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
-      // const result = await getHistory({
-      //   instrument_id: 'BTC-USD-SWAP',
-      //   granularity: 60,
-      //   // limit: 20,
-      //   start,
-      //   end
-      // })
-      // let data = result?.data;
+      const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
+      const result = await getHistory({
+        instrument_id: 'BTC-USD-SWAP',
+        granularity: 60,
+        // limit: 20,
+        start,
+        end
+      })
+      let data = result?.data;
 
-      let data = monthData[start]
+      // let data = monthData[start]
 
       if(Array.isArray(data)){
-        // data = data.reverse()
+        data = data.reverse()
         const result = await testOrder(data,lastPrice);
         t += result.totalPnl;
         tRatio += result.totalRatio;

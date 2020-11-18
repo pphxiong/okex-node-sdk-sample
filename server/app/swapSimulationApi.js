@@ -200,31 +200,42 @@ let continuousObj = initContinuousObj;
 
 let isCurrentSideShort = false;
 let lastPrice = 0;
-let lastWinDirection = null;
+let lastWinDirection = null; // 上次盈利方向
 let lastLossDirection = null;
 let continuousLossSameSideNum = 0;
 let continuousWinSameSideNum = 0;
-let lastlastWinDirection = null;
+let lastLastWinDirection = null;
 let lastLastLossDirection = null;
+let reboundNum = 0;
 let isReverse = false;
-const testOrder = async (historyList,endPrice, params) => {
+let isFirstWin = false;
+let lastMostWinRatio = 0;
+let maxContinousLossObj = { time: null, continuousLossNum: 0 }
+let maxLossRatio = { time: null, ratio: 0 }
+let delayTimes = 0;
+let isHalfOpen = false
+let isLatestWin = false
+let ratioChangeNum = 0;
+const initPosition = 10;
+const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
         return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
     }
 
-    const { leverage, winRatio, lossRatio } = params;
-    const frequency = Number(params.frequency);
-
     let totalPnl = 0;
 
-    const position = 10;
-    const margin = position * 100 / historyList[0][1] / Number(leverage);
-    let condition = Number(leverage) / 100;
+    let position = initPosition;
+    // position = initPosition / (continuousObj.continuousLossNum + 1)
+
+    const margin = position * 100 / historyList[0][1] / leverage;
+    let condition = leverage / 100;
 
     let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
     let totalFee = 0;
+    let dayRatioList = [];
 
+    let lastTotalRatio = 0;
     historyList.map(item=>{
         const size = Number(position) * 100 / Number(item[1]);
         let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
@@ -233,87 +244,225 @@ const testOrder = async (historyList,endPrice, params) => {
         const ratio = Number(unrealized_pnl) / Number(margin);
         const fee = Number(margin) * 5 * 2 / 10000;
 
-        let newWinRatio = Number(winRatio);
-        let newLossRatio = Number(lossRatio);
+        let newWinRatio = Number(winRatio.current);
+        let newLossRatio = Number(lossRatio.current);
 
         let currentSide = 'long';
         if(isCurrentSideShort) currentSide = 'short';
 
-        if(lastLastLossDirection
-            && lastLossDirection
-            && lastLastLossDirection != lastLossDirection
-            && lastLossDirection != currentSide
-            || isReverse
+        if(
+            lastLastLossDirection != lastLossDirection
+            &&
+            lastLossDirection != currentSide
         ){
-            newWinRatio = newWinRatio / 4;
-            newLossRatio = newLossRatio * 1.5;
-        }
-
-        if(ratio > condition * newWinRatio * frequency){
-            // console.log('totalFee',fee, fee / Number(margin))
-            totalFee += fee;
-            totalPnl += unrealized_pnl - fee;
-            continuousObj.continuousLossNum = 0;
-            continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-
-            isCurrentSideShort = !isCurrentSideShort;
-            if((currentSide == 'short' && lastWinDirection == 'short')
-                || (currentSide == 'long' && lastWinDirection == 'long')){
-                continuousWinSameSideNum++;
-                isCurrentSideShort = !isCurrentSideShort;
-                // if(continuousObj.continuousWinNum < 2){
-                //     isCurrentSideShort = !isCurrentSideShort;
-                // }
-            }else{
-                continuousWinSameSideNum = 0;
+            if(continuousObj.continuousLossNum > 7){
+                newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
+                newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
             }
-
-            continuousLossSameSideNum = 0;
-            lastWinDirection = currentSide;
-
-            primaryPrice = item[1];
-
-            isReverse = false;
+            if(continuousObj.continuousLossNum > 4){
+                newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
+                newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+            }
+            if(continuousObj.continuousLossNum > 2){
+                newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
+                newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+            }
+            if(continuousObj.continuousLossNum > 1){
+                newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+                newLossRatio = continuousWinSameSideNum ? newLossRatio * continuousWinSameSideNum * 1.2 : newLossRatio;
+            }
         }
-        if(ratio < - condition * newLossRatio * frequency){
-            // console.log('totalFee',fee, fee / Number(margin))
-            totalFee += fee;
-            totalPnl += unrealized_pnl - fee;
 
-            continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-            continuousObj.continuousWinNum = 0;
+        if(
+            continuousWinSameSideNum > 1
+        ){
+            if(lastWinDirection == 'short'){
+                newWinRatio = Number(winRatio.current)
+                newLossRatio = Number(lossRatio.current)
+                // if(continuousObj.continuousLossNum > 2) {
+                //   newWinRatio = newWinRatio / 1.5;
+                //   newLossRatio = newLossRatio * 2;
+                // }
+            }
+            // if(lastWinDirection == 'long'){
+            //   newWinRatio = Number(winRatio.current) * 1.5
+            //   newLossRatio = Number(lossRatio.current)
+            // }
+        }
 
-            isCurrentSideShort = !isCurrentSideShort;
-            if((currentSide == 'short' && lastWinDirection == 'long')
-                || (currentSide == 'long' && lastWinDirection == 'short')
-                && continuousWinSameSideNum < 1
-            ){
-                continuousLossSameSideNum++;
-                if(continuousLossSameSideNum < 2){
+        // if(
+        //   lastLossDirection == lastLastLossDirection
+        // ){
+        //   newWinRatio = newWinRatio / 2
+        //   newLossRatio = newLossRatio * 2
+        // }
+
+        const totalRatio = totalPnl * 100 / Number(margin)
+        if(
+            // totalRatio <= 0
+            // &&
+            lastTotalRatio != totalRatio
+        ) {
+            lastTotalRatio = totalRatio
+            console.log('------------continuousLossNum start---------------')
+            console.info(item[0],item[1],'ratio', ratio)
+            console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
+            console.info(totalPnl * 100 / Number(margin))
+            console.info('continuousLossNum', continuousObj.continuousLossNum)
+            console.info('continuousWinNum', continuousObj.continuousWinNum)
+            console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
+            console.log('currentSide', currentSide, 'lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+            console.log('continuousWinSameSideNum', continuousWinSameSideNum)
+            console.log('------------continuousLossNum end---------------')
+        }
+
+        if(delayTimes) {
+            delayTimes = delayTimes - 1;
+            primaryPrice = item[1];
+            console.log('delayTimes', item[0], delayTimes)
+        }else{
+            if(ratio > 0){
+                lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
+                if(
+                    ratio < condition * newWinRatio * frequency / 10
+                    &&
+                    lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
+                    &&
+                    continuousLossSameSideNum == 1
+                ){
+                    totalFee += fee;
+                    totalPnl += unrealized_pnl - fee;
+
                     isCurrentSideShort = !isCurrentSideShort;
+
+                    lastMostWinRatio = 0;
+                    primaryPrice = item[1];
+
                 }
             }
 
-            lastLastLossDirection = lastLossDirection;
-            lastLossDirection = currentSide;
+            // console.log(item[0],newWinRatio,ratio,condition * newWinRatio * frequency,currentSide,lastWinDirection)
+            // console.log(continuousWinSameSideNum)
 
-            primaryPrice = item[1];
+            if(ratio > condition * newWinRatio * frequency){
+                totalFee += fee;
+                totalPnl += unrealized_pnl - fee;
 
+                continuousObj.continuousLossNum = 0;
+                continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+
+                isCurrentSideShort = !isCurrentSideShort;
+                if(
+                    (currentSide == 'short' && lastWinDirection == 'short')
+                    ||
+                    (currentSide == 'long' && lastWinDirection == 'long')
+                ){
+                    continuousWinSameSideNum = continuousWinSameSideNum + 1;
+                    isCurrentSideShort = !isCurrentSideShort;
+                }else{
+                    continuousWinSameSideNum = 0;
+                }
+
+                continuousLossSameSideNum = 0;
+                lastLastWinDirection = lastWinDirection;
+                lastWinDirection = currentSide;
+                isReverse = false;
+
+                lastLossDirection = null;
+                lastLastLossDirection = null;
+
+                ratioChangeNum = 0
+                isLatestWin = true
+                isHalfOpen = false
+                reboundNum = 0;
+
+                // lastMostWinRatio = 0;
+                primaryPrice = item[1];
+
+            }
+            if(ratio < - condition * newLossRatio * frequency){
+                totalFee += fee;
+                totalPnl += unrealized_pnl - fee;
+
+                continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+                continuousObj.continuousWinNum = 0;
+
+                isCurrentSideShort = !isCurrentSideShort;
+                if(
+                    (currentSide == 'short' && lastWinDirection == 'long')
+                    || (currentSide == 'long' && lastWinDirection == 'short')
+                    && continuousWinSameSideNum < 1
+                ){
+                    continuousLossSameSideNum++;
+                    if(continuousLossSameSideNum < 2){
+                        isCurrentSideShort = !isCurrentSideShort;
+                    }
+                }
+
+                if(
+                    newLossRatio != Number(lossRatio.current)
+                ){
+                    ratioChangeNum++;
+                    if(!continuousWinSameSideNum){
+                        isCurrentSideShort = currentSide != 'short'
+                    }
+
+                    if(
+                        continuousWinSameSideNum
+                    ){
+                        if(
+                            lastWinDirection == 'short'
+                            &&
+                            ratioChangeNum > 1
+                            &&
+                            ratioChangeNum < 3
+                        ){
+                            isCurrentSideShort = !isCurrentSideShort
+                        }
+                    }
+                }
+
+                // if(
+                //   lastLossDirection == currentSide
+                // ){
+                //   isCurrentSideShort = currentSide == 'short'
+                // }
+
+                lastLastLossDirection = lastLossDirection;
+                lastLossDirection = currentSide;
+
+                lastMostWinRatio = 0;
+                primaryPrice = item[1];
+
+            }
         }
 
-        if(continuousObj.continuousLossNum > 0) {
-            isReverse = true;
-            isCurrentSideShort = !isCurrentSideShort;
+        maxLossRatio = {
+            time: totalRatio < maxLossRatio.ratio ? item[0] : maxLossRatio.time,
+            ratio: Math.min(totalRatio, maxLossRatio.ratio)
         }
 
-        console.log(item[0],'ratio',ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
+        maxContinousLossObj = {
+            time: continuousObj.continuousLossNum > maxContinousLossObj.continuousLossNum ? item[0] : maxContinousLossObj.time,
+            continuousLossNum: Math.max(maxContinousLossObj.continuousLossNum, continuousObj.continuousLossNum)
+        }
 
+        // console.log(item[0],ratio,primaryPrice,item[1],unrealized_pnl, margin, isCurrentSideShort, condition)
+        // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum', continuousObj.continuousLossNum)
+
+        dayRatioList.push({
+            time: item[0],
+            ratio: ratio * 100,
+            totalRatio: totalPnl * 100 / Number(margin)
+        })
     })
 
-    console.log('totalPnl',totalPnl)
-
     const totalRatio = totalPnl * 100 / Number(margin);
-    return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice }
+    // setTPnl(totalPnl)
+    // setTpnlRatio(totalPnl * 100 / Number(margin))
+
+    // console.log('totalPnl',totalPnl, totalFee, margin, totalRatio,  )
+    return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice, dayRatioList }
 }
 
 const getMonthMultiPnl = async params => {

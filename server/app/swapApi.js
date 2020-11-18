@@ -302,17 +302,19 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             match_price: 0
         }
 
+        const result = await authClient.swap().postOrder(payload);
+
         let hasOrderInterval = setInterval(async ()=>{
             const { result } = await validateAndCancelOrder(instrument_id);
-            if(result) {
-                await authClient.swap().postOrder(payload);
-                return;
+            if(result == false) {
+                clearInterval(hasOrderInterval)
+                hasOrderInterval = null;
             }
-            clearInterval(hasOrderInterval)
-            hasOrderInterval = null;
-        },1000)
+            await authClient.swap().postOrder(payload);
+            return;
+        },2000)
 
-        return await authClient.swap().postOrder(payload);
+        return result;
     }
     return new Promise(resolve=>{ resolve({ result: avail && !result }) })
 }
