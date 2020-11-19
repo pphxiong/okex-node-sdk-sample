@@ -270,7 +270,8 @@ const getOrderState = async (payload) => {
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0 } = params;
-    const position = Math.round(initPosition * (lossNum * 1.2 + 3) / 3)
+    const positionRatio = lossNum * (1 - lossNum / 10 ) + 1
+    const position = initPosition * positionRatio
 
     const { instrument_id, position: holdingPosition } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
