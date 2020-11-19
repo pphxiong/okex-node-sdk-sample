@@ -125,7 +125,8 @@ export default props => {
 
     let totalPnl = 0;
 
-    const positionRatio = continuousObj.continuousLossNum * (1 - continuousObj.continuousLossNum / 10 ) + 1
+    const positionRatio = Math.ceil(continuousObj.continuousLossNum * (1 - continuousObj.continuousLossNum / 10 ) + 1)
+      // / (continuousObj.continuousWinNum + 1)
     const position = initPosition * positionRatio
 
     const margin = position * 100 / historyList[0][1] / leverage;
