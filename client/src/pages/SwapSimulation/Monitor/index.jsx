@@ -111,6 +111,12 @@ export default props => {
   let isHalfOpen = false
   let isLatestWin = false
   let ratioChangeNum = 0;
+  const lossMap = {
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0
+  }
+  const winMap = {
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0
+  }
   const initPosition = 10;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
@@ -119,8 +125,7 @@ export default props => {
 
     let totalPnl = 0;
 
-    let position = initPosition;
-    position = Math.round(initPosition * (continuousObj.continuousLossNum * 1.2 + 3) / 3)
+    const position = initPosition * ( continuousObj.continuousLossNum * 0.5 + 1 )
 
     const margin = position * 100 / historyList[0][1] / leverage;
     let condition = leverage / 100;
@@ -277,6 +282,9 @@ export default props => {
           reboundNum = 0;
 
           lastMostWinRatio = 0;
+          lossMap[0] = lossMap[0] + 1
+          winMap[continuousObj.continuousWinNum] = winMap[continuousObj.continuousWinNum] + 1
+
           primaryPrice = item[1];
 
         }
@@ -330,6 +338,9 @@ export default props => {
           lastLossDirection = currentSide;
 
           lastMostWinRatio = 0;
+          lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
+          winMap[0] = winMap[0] + 1
+
           primaryPrice = item[1];
 
         }
@@ -408,6 +419,8 @@ export default props => {
 
     console.log('maxContinousLossObj',maxContinousLossObj)
     console.log('maxLossRatio',maxLossRatio)
+    console.log('lossMap',lossMap)
+    console.log('winMap',winMap)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
     return { pnl: t, ratio: tRatio, dList, };

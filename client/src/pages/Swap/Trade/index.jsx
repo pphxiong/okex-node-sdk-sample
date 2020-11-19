@@ -46,9 +46,9 @@ export default props => {
       continuousLossNum: 5,
       lastWinDirection : 'long',
       lastLastWinDirection: 'short',
-      lastLossDirection: 'long',
-      lastLastLossDirection: 'short',
-      continuousLossSameSideNum: 3,
+      lastLossDirection: 'short',
+      lastLastLossDirection: 'long',
+      continuousLossSameSideNum: 0,
       continuousWinSameSideNum: 0,
       initPosition: 10,
     }

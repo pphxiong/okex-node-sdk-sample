@@ -308,6 +308,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             if(result == false) {
                 clearInterval(hasOrderInterval)
                 hasOrderInterval = null;
+                return;
             }
             const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
             const payload = {
@@ -319,7 +320,6 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
                 match_price: 0
             }
             await authClient.swap().postOrder(payload);
-            return;
         },2000)
 
         return result;
@@ -408,7 +408,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         continuousWinSameSideNum: Number(cwss),
         lastLastLossDirection: llld,
         lastLastWinDirection: llwd,
-        initPosition: ip
+        initPosition: Number(ip)
     } });
 });
 
