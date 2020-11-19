@@ -13,7 +13,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
-let initPosition = 1;
+let initPosition = 10;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -385,7 +385,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         continuousLossSameSideNum: clss,
         continuousWinSameSideNum: cwss,
         lastLastLossDirection: llld,
-        lastLastWinDirection: llwd
+        lastLastWinDirection: llwd,
+        initPosition: ip
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -396,6 +397,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     continuousWinSameSideNum = Number(cwss)
     lastLastLossDirection = llld
     lastLastWinDirection = llwd
+    initPosition = Number(ip)
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
@@ -405,7 +407,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         continuousLossSameSideNum: Number(clss),
         continuousWinSameSideNum: Number(cwss),
         lastLastLossDirection: llld,
-        lastLastWinDirection: llwd
+        lastLastWinDirection: llwd,
+        initPosition: ip
     } });
 });
 
