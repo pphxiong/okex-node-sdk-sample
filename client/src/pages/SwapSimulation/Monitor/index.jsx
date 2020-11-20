@@ -124,13 +124,8 @@ export default props => {
     }
 
     let totalPnl = 0;
-
-    const positionRatio = continuousObj.continuousLossNum * (1 - continuousObj.continuousLossNum / 10 ) + 1
-      // / (continuousObj.continuousWinNum + 1)
-    const position = Math.ceil(initPosition * positionRatio)
-
-    const margin = position * 100 / historyList[0][1] / leverage;
-    let condition = leverage / 100;
+    let totalRatio = 0;
+    let totalMargin = 0;
 
     let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
@@ -139,6 +134,21 @@ export default props => {
 
     let lastTotalRatio = 0;
     historyList.map(item=>{
+      let changeRatio = 1;
+      if(continuousObj.continuousLossNum < 3) {
+        changeRatio = 1.5
+      }else if(continuousObj.continuousLossNum > 3){
+        changeRatio = 0.5
+      }else{
+        changeRatio = 3 / 10;
+      }
+      let positionRatio = (continuousObj.continuousLossNum * (1 - continuousObj.continuousLossNum / 10 * changeRatio ) + 1)
+
+      const position = Math.ceil(initPosition * positionRatio)
+
+      const margin = position * 100 / historyList[0][1] / leverage;
+      let condition = leverage / 100;
+
       const size = Number(position) * 100 / Number(item[1]);
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
@@ -181,39 +191,17 @@ export default props => {
         if(lastWinDirection == 'short'){
           newWinRatio = Number(winRatio.current)
           newLossRatio = Number(lossRatio.current)
-          // if(continuousObj.continuousLossNum > 2) {
-          //   newWinRatio = newWinRatio / 1.5;
-          //   newLossRatio = newLossRatio * 2;
-          // }
         }
-        // if(lastWinDirection == 'long'){
-        //   newWinRatio = Number(winRatio.current) * 1.5
-        //   newLossRatio = Number(lossRatio.current)
-        // }
       }
 
-      // if(
-      //   continuousWinSameSideNum > 2
-      //   &&
-      //   lastWinDirection == 'long'
-      //   &&
-      //   currentSide == 'long'
-      // ){
-      //   newWinRatio = Number(winRatio.current) * 1.2
-      //   newLossRatio = Number(lossRatio.current) * 2
-      // }
-
-      const totalRatio = totalPnl * 100 / Number(margin)
       if(
-        // totalRatio <= 0
-        // &&
         lastTotalRatio != totalRatio
       ) {
         lastTotalRatio = totalRatio
         console.log('------------continuousLossNum start---------------')
         console.info(item[0],item[1],'ratio', ratio)
         console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
-        console.info(totalPnl * 100 / Number(margin))
+        console.info('totalPnl', totalPnl, 'totalMargin', totalMargin, 'totalRatio', totalRatio)
         console.info('continuousLossNum', continuousObj.continuousLossNum)
         console.info('continuousWinNum', continuousObj.continuousWinNum)
         console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
@@ -239,6 +227,8 @@ export default props => {
             ){
               totalFee += fee;
               totalPnl += unrealized_pnl - fee;
+              totalMargin += margin
+              totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
 
               isCurrentSideShort = !isCurrentSideShort;
 
@@ -254,6 +244,10 @@ export default props => {
         if(ratio > condition * newWinRatio * frequency){
           totalFee += fee;
           totalPnl += unrealized_pnl - fee;
+          totalMargin += margin
+          totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
+
+          winMap[continuousObj.continuousLossNum] = winMap[continuousObj.continuousLossNum] + 1
 
           continuousObj.continuousLossNum = 0;
           continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
@@ -284,8 +278,8 @@ export default props => {
           reboundNum = 0;
 
           lastMostWinRatio = 0;
-          lossMap[0] = lossMap[0] + 1
-          winMap[continuousObj.continuousWinNum] = winMap[continuousObj.continuousWinNum] + 1
+          // lossMap[0] = lossMap[0] + 1
+          // winMap[continuousObj.continuousWinNum] = winMap[continuousObj.continuousWinNum] + 1
 
           primaryPrice = item[1];
 
@@ -293,6 +287,10 @@ export default props => {
         if(ratio < - condition * newLossRatio * frequency){
           totalFee += fee;
           totalPnl += unrealized_pnl - fee;
+          totalMargin += margin
+          totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
+
+          lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
@@ -340,8 +338,8 @@ export default props => {
           lastLossDirection = currentSide;
 
           lastMostWinRatio = 0;
-          lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
-          winMap[0] = winMap[0] + 1
+          // lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
+          // winMap[0] = winMap[0] + 1
 
           primaryPrice = item[1];
 
@@ -364,11 +362,12 @@ export default props => {
       dayRatioList.push({
         time: item[0],
         ratio: ratio * 100,
-        totalRatio: totalPnl * 100 / Number(margin)
+        totalRatio
       })
+
     })
 
-    const totalRatio = totalPnl * 100 / Number(margin);
+    // totalRatio = totalPnl * 100 / Number(totalMargin);
     // setTPnl(totalPnl)
     // setTpnlRatio(totalPnl * 100 / Number(margin))
 
