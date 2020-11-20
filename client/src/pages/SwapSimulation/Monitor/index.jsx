@@ -271,9 +271,6 @@ export default props => {
           lastWinDirection = currentSide;
           isReverse = false;
 
-          lastLossDirection = null;
-          lastLastLossDirection = null;
-
           ratioChangeNum = 0
           isLatestWin = true
           isHalfOpen = false

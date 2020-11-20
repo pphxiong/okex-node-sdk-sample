@@ -560,9 +560,6 @@ const autoOperateSwap = async (holding) => {
             lastLastWinDirection = lastWinDirection;
             lastWinDirection = side;
 
-            lastLossDirection = null;
-            lastLastLossDirection = null;
-
             ratioChangeNum = 0
             lastMostWinRatio = 0;
 
