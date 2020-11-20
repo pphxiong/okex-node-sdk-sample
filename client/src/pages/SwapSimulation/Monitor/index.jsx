@@ -117,7 +117,7 @@ export default props => {
   const winMap = {
     0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0
   }
-  const initPosition = 10;
+  const initPosition = 20;
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -135,14 +135,16 @@ export default props => {
     let lastTotalRatio = 0;
     historyList.map(item=>{
       let changeRatio = 1;
-      if(continuousObj.continuousLossNum < 3) {
-        changeRatio = 1.5
-      }else if(continuousObj.continuousLossNum > 3){
-        changeRatio = 0.5
-      }else{
-        changeRatio = 3 / 10;
+      if(continuousObj.continuousLossNum > 2) {
+        const temp = continuousObj.continuousLossNum - 3
+        changeRatio = temp * (1 - temp / 5 ) + 1
+      }else if(continuousObj.continuousLossNum == 1) {
+        changeRatio = 1.5;
+      }else if(continuousObj.continuousLossNum == 2) {
+        changeRatio = 1;
       }
-      let positionRatio = (continuousObj.continuousLossNum * (1 - continuousObj.continuousLossNum / 10 * changeRatio ) + 1)
+      changeRatio = changeRatio > 0 ? changeRatio : 1
+      let positionRatio = changeRatio
 
       const position = Math.ceil(initPosition * positionRatio)
 
