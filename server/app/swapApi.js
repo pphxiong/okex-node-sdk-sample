@@ -13,7 +13,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
-let initPosition = 10;
+let initPosition = 20;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -270,7 +270,18 @@ const getOrderState = async (payload) => {
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0 } = params;
-    const positionRatio = lossNum * (1 - lossNum / 10 ) + 1
+    let changeRatio = 1;
+    if(lossNum > 2) {
+        const temp = lossNum - 3
+        changeRatio = temp * (1 - temp / 5 ) + 1
+    }else if(lossNum == 1) {
+        changeRatio = 1.5;
+    }else if(lossNum == 2) {
+        changeRatio = 1;
+    }
+    changeRatio = changeRatio > 0 ? changeRatio : 1
+    let positionRatio = changeRatio
+
     const position = Math.ceil(initPosition * positionRatio)
 
     const { instrument_id, position: holdingPosition } = holding;
