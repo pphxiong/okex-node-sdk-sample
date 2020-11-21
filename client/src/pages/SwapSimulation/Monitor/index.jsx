@@ -40,6 +40,7 @@ export default props => {
   const [month,setMonth] = useState('11');
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
+  const [dayStep, setDayStep] = useState(0)
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
   const SWAP_BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
@@ -95,6 +96,7 @@ export default props => {
 
   let isCurrentSideShort = false;
   let lastPrice = 0;
+  let lastDayPrice = useRef(0)
   let lastWinDirection = null; // 上次盈利方向
   let lastLossDirection = null;
   let continuousLossSameSideNum = 0;
@@ -132,16 +134,19 @@ export default props => {
     let totalFee = 0;
     let dayRatioList = [];
 
+    console.log(historyList[0][0],primaryPrice, endPrice)
+    console.log(continuousObj)
+
     let lastTotalRatio = 0;
     historyList.map(item=>{
       let changeRatio = 1;
-      if(continuousObj.continuousLossNum > 2) {
+      if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
+        changeRatio = 0.2;
+      }else if(continuousObj.continuousLossNum > 2) {
         const temp = continuousObj.continuousLossNum - 3
         changeRatio = temp * (1 - temp / 5 ) + 1
       }else if(continuousObj.continuousLossNum == 1) {
         changeRatio = 1.5;
-      }else if(continuousObj.continuousLossNum == 2) {
-        changeRatio = 1;
       }
       changeRatio = changeRatio > 0 ? changeRatio : 1
       let positionRatio = changeRatio
@@ -402,6 +407,7 @@ export default props => {
 
       if(Array.isArray(data)){
         // data = data.reverse()
+        console.log(lastPrice)
         const result = await testOrder(data,lastPrice);
         t += result.totalPnl;
         tRatio += result.totalRatio;
@@ -410,7 +416,9 @@ export default props => {
         lastPrice = result.endPrice;
         dList.push({
           time: start,
-          dList: result.dayRatioList
+          dList: result.dayRatioList,
+          pnl: result.totalPnl,
+          ratio: result.totalRatio
         })
 
         mockObj[start] = data;
@@ -435,9 +443,9 @@ export default props => {
     let i = 0;
     while(i<duration) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
-      const { pnl , ratio } = await getMonthPnl(firstDay,monthMap[i]);
+      const { pnl , ratio, dList } = await getMonthPnl(firstDay,monthMap[i]);
 
-      console.log('pnl,ratio',monthMap[i],pnl,ratio)
+      console.log(`2020-${monthMap[i]}-01 00:00:00`,'pnl,ratio,dList',monthMap[i],pnl,ratio,dList)
       t += pnl;
       tRatio += ratio;
       mList.push({
@@ -498,6 +506,67 @@ export default props => {
 
     // const { data: {pnl, ratio} } = await testOrderApi(payload);
     const { pnl , ratio, dList } = await getMonthPnl(firstDay,month);
+
+    setTPnl(pnl);
+    setTPnlRatio(ratio);
+    setPageLoading(false);
+
+    console.log(dList)
+    const newDList = dList.map(item=>({
+      ...item,
+      dList: item.dList?.filter(it=>it.ratio < 0)
+    }))
+    console.log(newDList)
+  }
+
+  const getDayPnl = async (day,month) => {
+    setPageLoading(true);
+
+    let loopNum = dayStep;
+    let list = [];
+    let t = 0;
+    let tRatio = 0;
+    let dList = [];
+
+    let mockObj = {}
+
+    const monthData = mockData[month]
+    const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
+
+    let data = monthData[start]
+    if(Array.isArray(data)){
+      // data = data.reverse()
+      const result = await testOrder(data,lastDayPrice.current);
+      t += result.totalPnl;
+      tRatio += result.totalRatio;
+      list.push(result);
+      loopNum++;
+      lastDayPrice.current = result.endPrice;
+      dList.push({
+        time: start,
+        dList: result.dayRatioList
+      })
+
+      mockObj[start] = data;
+    }
+
+    console.log('maxContinousLossObj',maxContinousLossObj)
+    console.log('maxLossRatio',maxLossRatio)
+    console.log('lossMap',lossMap)
+    console.log('winMap',winMap)
+    console.log('time',start)
+    setPageLoading(false);
+    // console.log(JSON.stringify(mockObj))
+    return { pnl: t, ratio: tRatio, dList,  };
+  }
+
+  const fnGetHistoryByDay = async () => {
+    setPageLoading(true);
+    const firstDay = `2020-${month}-01 00:00:00`;
+
+    setDayStep(dayStep+1)
+
+    const { pnl , ratio, dList } = await getDayPnl(firstDay,month);
 
     setTPnl(pnl);
     setTPnlRatio(ratio);
@@ -699,7 +768,7 @@ export default props => {
       />
 
       月份：
-      <Select value={month} onChange={v=>{setMonth(v)}} style={{ width: 120 }}>
+      <Select value={month} onChange={v=>{setMonth(v);setDayStep(0)}} style={{ width: 120 }}>
         {
           monthMap.map(item=>{
             return  <Select.Option value={item} key={item}>{item}</Select.Option>
@@ -708,6 +777,8 @@ export default props => {
       </Select>
 
       <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>确定</Button>
+
+      <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
 
       <Divider />
 

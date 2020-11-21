@@ -271,13 +271,13 @@ const getOrderState = async (payload) => {
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0 } = params;
     let changeRatio = 1;
-    if(lossNum > 2) {
+    if(lossNum == 2 || lossNum == 4) {
+        changeRatio = 0.2;
+    }else if(lossNum > 2) {
         const temp = lossNum - 3
         changeRatio = temp * (1 - temp / 5 ) + 1
-    }else if(lossNum == 1) {
+    }else if(lossNum) {
         changeRatio = 1.5;
-    }else if(lossNum == 2) {
-        changeRatio = 1;
     }
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
@@ -640,7 +640,7 @@ function startInterval() {
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
-    },1000 * 60)
+    },1000 * 5)
 }
 
 function stopInterval() {
