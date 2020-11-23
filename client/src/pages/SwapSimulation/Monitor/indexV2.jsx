@@ -113,30 +113,11 @@ export default props => {
   let isHalfOpen = false
   let isLatestWin = false
   let ratioChangeNum = 0;
-  let maxLossRatioT = 0;
   const lossMap = {
     0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0
   }
   const winMap = {
     0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0
-  }
-  const loss2Maps = {
-    currentSide: { long: 0, short: 0 },
-    lastLossDirection: { long: 0, short: 0 },
-    lastLastLossDirection: { long: 0, short: 0 },
-    lastWinDirection: { long: 0, short: 0 },
-    lastLastWinDirection: { long: 0, short: 0 },
-    continuousLossSameSideNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
-    continuousWinSameSideNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
-    ratioChangeNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
-  }
-  const winMaps = {
-    continuousLossNum: {},
-    continuousWinNum: {},
-    lastLossDirection: {},
-    lastLastLossDirection: {},
-    lastWinDirection: {},
-    lastLastWinDirection: {}
   }
   const initPosition = 20;
   const testOrder = async (historyList,endPrice) => {
@@ -153,37 +134,19 @@ export default props => {
     let totalFee = 0;
     let dayRatioList = [];
 
-    // console.log(historyList[0][0],primaryPrice, endPrice)
-    // console.log(continuousObj)
+    console.log(historyList[0][0],primaryPrice, endPrice)
+    console.log(continuousObj)
 
     let lastTotalRatio = 0;
     historyList.map(item=>{
-      let currentSide = 'long';
-      if(isCurrentSideShort) currentSide = 'short';
-
       let changeRatio = 1;
       if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
-        changeRatio = 1;
+        changeRatio = 0.2;
       }else if(continuousObj.continuousLossNum > 2) {
         const temp = continuousObj.continuousLossNum - 3
         changeRatio = temp * (1 - temp / 5 ) + 1
       }else if(continuousObj.continuousLossNum == 1) {
         changeRatio = 1.5;
-      }
-      if(
-        // lastLossDirection == 'short'
-        // &&
-        // lastWinDirection == 'long'
-        // &&
-        // continuousLossSameSideNum == 1
-        // // &&
-        // // currentSide == 'short'
-        // &&
-        (!continuousWinSameSideNum
-        &&
-        continuousObj.continuousLossNum == 2)
-      ){
-        changeRatio = 0.1;
       }
       changeRatio = changeRatio > 0 ? changeRatio : 1
       let positionRatio = changeRatio
@@ -202,6 +165,9 @@ export default props => {
 
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
+
+      let currentSide = 'long';
+      if(isCurrentSideShort) currentSide = 'short';
 
       if(
         lastLastLossDirection != lastLossDirection
@@ -222,7 +188,7 @@ export default props => {
         }
         if(continuousObj.continuousLossNum > 1){
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
-          newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
+          newLossRatio = continuousWinSameSideNum ? newLossRatio * continuousWinSameSideNum * 1.2 : newLossRatio;
         }
       }
 
@@ -235,26 +201,21 @@ export default props => {
         }
       }
 
-      maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
-
-      // if(
-      //   lastTotalRatio != totalRatio
-      //   && continuousObj.continuousLossNum == 2
-      //   && continuousLossSameSideNum == 1
-      // ) {
-      //   lastTotalRatio = totalRatio
-      //   console.log('------------continuousLossNum start---------------')
-      //   console.info(item[0],item[1],'ratio', ratio)
-      //   console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
-      //   console.info('totalPnl', totalPnl, 'totalMargin', totalMargin, 'totalRatio', totalRatio)
-      //   console.info('continuousLossNum', continuousObj.continuousLossNum)
-      //   console.info('continuousWinNum', continuousObj.continuousWinNum)
-      //   console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
-      //   console.log('currentSide', currentSide, 'lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-      //   console.log('continuousWinSameSideNum', continuousWinSameSideNum)
-      //   console.log('continuousLossSameSideNum', continuousLossSameSideNum)
-      //   console.log('------------continuousLossNum end---------------')
-      // }
+      if(
+        lastTotalRatio != totalRatio
+      ) {
+        lastTotalRatio = totalRatio
+        console.log('------------continuousLossNum start---------------')
+        console.info(item[0],item[1],'ratio', ratio)
+        console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
+        console.info('totalPnl', totalPnl, 'totalMargin', totalMargin, 'totalRatio', totalRatio)
+        console.info('continuousLossNum', continuousObj.continuousLossNum)
+        console.info('continuousWinNum', continuousObj.continuousWinNum)
+        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
+        console.log('currentSide', currentSide, 'lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+        console.log('continuousWinSameSideNum', continuousWinSameSideNum)
+        console.log('------------continuousLossNum end---------------')
+      }
 
       if(delayTimes) {
         delayTimes = delayTimes - 1;
@@ -263,28 +224,13 @@ export default props => {
       }else{
         if(ratio > 0){
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
-          // if(
-          //   continuousObj.continuousLossNum == 2
-          //   &&
-          //   ratio < condition * newWinRatio * frequency / 2
-          //   &&
-          //   lastMostWinRatio > condition * newWinRatio * frequency * 2.5 / 4
-          // ) {
-          //   totalFee += fee;
-          //   totalPnl += unrealized_pnl - fee;
-          //   totalMargin += margin
-          //   totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
-          //
-          //   lastMostWinRatio = 0;
-          //   primaryPrice = item[1];
-          // }
           if(
             ratio < condition * newWinRatio * frequency / 10
           ){
             if(
               (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-                &&
-                continuousLossSameSideNum == 1)
+              &&
+              continuousLossSameSideNum == 1)
             ){
               totalFee += fee;
               totalPnl += unrealized_pnl - fee;
@@ -349,55 +295,16 @@ export default props => {
           totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
 
           lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
-          if(
-            // lastWinDirection == 'long'
-            // && lastLossDirection == 'short'
-            // && currentSide == 'short'
-            continuousObj.continuousLossNum == 1
-          ) {
-            loss2Maps["currentSide"][currentSide] += 1
-            loss2Maps["lastLossDirection"][lastLossDirection] += 1
-            loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
-            loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
-            loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
-            loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
-            loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
-            loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
-            console.log('currentSide',currentSide)
-            console.log('lastWinDirection',lastWinDirection,'lastLossDirection',lastLossDirection)
-            console.log('lastLastLossDirection',lastLastLossDirection,'lastLastWinDirection',lastLastWinDirection)
-            console.log('continuousLossSameSideNum',continuousLossSameSideNum,'continuousWinSameSideNum',continuousWinSameSideNum)
-            console.log('ratioChangeNum',ratioChangeNum)
-          }
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
 
           isCurrentSideShort = !isCurrentSideShort;
           if(
-            currentSide == 'short'
-            &&
-            lastWinDirection == 'long'
+            (currentSide == 'short' && lastWinDirection == 'long')
+            || (currentSide == 'long' && lastWinDirection == 'short')
+            && continuousWinSameSideNum < 1
           ){
-            continuousLossSameSideNum++;
-            if(
-              continuousLossSameSideNum < 2
-            ){
-              isCurrentSideShort = !isCurrentSideShort;
-            }else{
-              // console.log(currentSide)
-              // console.log(lastWinDirection)
-              // console.log('lastLossDirection',lastLossDirection)
-              // console.log(lastLastLossDirection)
-              // console.log(lastLastWinDirection)
-            }
-          }else if(
-            currentSide == 'long'
-            &&
-            lastWinDirection == 'short'
-            &&
-            continuousWinSameSideNum < 1
-          ) {
             continuousLossSameSideNum++;
             if(continuousLossSameSideNum < 2){
               isCurrentSideShort = !isCurrentSideShort;
@@ -430,14 +337,6 @@ export default props => {
               }
             }
           }
-
-          // if(
-          //   continuousObj.continuousLossNum == 2
-          //   &&
-          //   (lastLossDirection != lastLastLossDirection && lastLastLossDirection == lastLastWinDirection)
-          // ){
-          //   isCurrentSideShort = !isCurrentSideShort
-          // }
 
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
@@ -508,6 +407,7 @@ export default props => {
 
       if(Array.isArray(data)){
         // data = data.reverse()
+        console.log(lastPrice)
         const result = await testOrder(data,lastPrice);
         t += result.totalPnl;
         tRatio += result.totalRatio;
@@ -525,12 +425,10 @@ export default props => {
       }
     }
 
-    // console.log('maxContinousLossObj',maxContinousLossObj)
-    // console.log('maxLossRatio',maxLossRatio)
+    console.log('maxContinousLossObj',maxContinousLossObj)
+    console.log('maxLossRatio',maxLossRatio)
     console.log('lossMap',lossMap)
     console.log('winMap',winMap)
-    console.log('loss2Maps',loss2Maps)
-    // console.log('maxLossRatioT',maxLossRatioT)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
     return { pnl: t, ratio: tRatio, dList, };
@@ -697,39 +595,39 @@ export default props => {
       return ++index
     }
   },
-    //   {
-    //   dataIndex: 'order_id',
-    //   title: '订单ID'
-    // },
-    //   {
-    //   dataIndex: 'instrument_id',
-    //   title: '合约ID'
-    // },
+  //   {
+  //   dataIndex: 'order_id',
+  //   title: '订单ID'
+  // },
+  //   {
+  //   dataIndex: 'instrument_id',
+  //   title: '合约ID'
+  // },
     {
-      dataIndex: 'type',
-      title: '交易类型',
-      render: text=>tradeTypeEnum[text]
-    },{
-      dataIndex: 'size',
-      title: '数量（张）'
-    },{
-      dataIndex: 'price_avg',
-      title: '成交均价'
-    },{
-      dataIndex: 'timestamp',
-      title: '成交时间',
-      render: (text,record,index)=> {
-        if(index+1==ps) return '';
-        return moment(text).format('YYYY-MM-DD HH:mm:ss')
-      }
-    },{
-      dataIndex: 'leverage',
-      title: '杠杆倍数'
-    },
-    //   {
-    //   dataIndex: 'fee',
-    //   title: '手续费'
-    // },
+    dataIndex: 'type',
+    title: '交易类型',
+    render: text=>tradeTypeEnum[text]
+  },{
+    dataIndex: 'size',
+    title: '数量（张）'
+  },{
+    dataIndex: 'price_avg',
+    title: '成交均价'
+  },{
+    dataIndex: 'timestamp',
+    title: '成交时间',
+    render: (text,record,index)=> {
+      if(index+1==ps) return '';
+      return moment(text).format('YYYY-MM-DD HH:mm:ss')
+    }
+  },{
+    dataIndex: 'leverage',
+    title: '杠杆倍数'
+  },
+  //   {
+  //   dataIndex: 'fee',
+  //   title: '手续费'
+  // },
     {
       dataIndex: 'bzj-usd',
       title: '保证金（美元）',
@@ -753,7 +651,7 @@ export default props => {
         if(index+1==ps) return text ? text.toFixed(2) : '';
         return ( Number(fee) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage) ).toFixed(2)
       }
-    },
+  },
     {
       dataIndex: 'value',
       title: '合约价值',
@@ -762,26 +660,26 @@ export default props => {
         return (type == 1 || type == 2) ? ( Number(size) * Number(price_avg) ) : ( - Number(size) * Number(price_avg))
       }
     }
-    //   {
-    //   dataIndex: 'pnl',
-    //   title: '盈亏'
-    // },
-    //   {
-    //   dataIndex: 'pnlUsd',
-    //   title: '盈亏（美元）',
-    //   render: (text,record,index) => {
-    //     if(index+1==ps) return text ? text.toFixed(2) : '';
-    //     return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
-    //   }
-    // },{
-    //     dataIndex: 'ratio',
-    //     title: '盈亏占比',
-    //     render: (text,{ fee, size, contract_val, price_avg, leverage, pnl },index) => {
-    //       if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
-    //       return ( (Number(fee) * Number(price_avg) + Number(pnl) * Number(price_avg)) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
-    //     }
-    //   }
-  ]);
+  //   {
+  //   dataIndex: 'pnl',
+  //   title: '盈亏'
+  // },
+  //   {
+  //   dataIndex: 'pnlUsd',
+  //   title: '盈亏（美元）',
+  //   render: (text,record,index) => {
+  //     if(index+1==ps) return text ? text.toFixed(2) : '';
+  //     return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
+  //   }
+  // },{
+  //     dataIndex: 'ratio',
+  //     title: '盈亏占比',
+  //     render: (text,{ fee, size, contract_val, price_avg, leverage, pnl },index) => {
+  //       if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
+  //       return ( (Number(fee) * Number(price_avg) + Number(pnl) * Number(price_avg)) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
+  //     }
+  //   }
+    ]);
 
   const responseHandler = (data, cr, ps)=>{
     if(Array.isArray(data)) data = { order_info: data };
