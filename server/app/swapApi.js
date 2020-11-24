@@ -267,9 +267,53 @@ const getOrderState = async (payload) => {
     return await authClient.swap().getOrder(instrument_id,order_id)
 }
 
+const autoOpenOtherOrderSingle = async (params = {}) => {
+    const { openSide = 'long', } = params;
+    const position = initPosition * 2
+
+    const type = openSide == 'long' ? 1 : 2;
+    console.log('openOtherOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
+
+    const instrument_id = 'BTC-USD-SWAP';
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+
+    const payload = {
+        size: position,
+        type,
+        // order_type: 0, //1：只做Maker 4：市价委托
+        instrument_id,
+        price: mark_price,
+        match_price: 0
+    }
+
+    const result = await authClient.swap().postOrder(payload);
+    console.log('otherOrderResult',result)
+
+    // let hasOrderInterval = setInterval(async ()=>{
+    //     const { result } = await validateAndCancelOrder(instrument_id);
+    //     if(result == false) {
+    //         clearInterval(hasOrderInterval)
+    //         hasOrderInterval = null;
+    //         return;
+    //     }
+    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+    //     const payload = {
+    //         size: position,
+    //         type,
+    //         // order_type: 0, //1：只做Maker 4：市价委托
+    //         instrument_id,
+    //         price: mark_price,
+    //         match_price: 0
+    //     }
+    //     await authClient.swap().postOrder(payload);
+    // },2000)
+
+    return result;
+}
+
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { openSide = 'long', lossNum = 0 } = params;
+    const { openSide = 'long', lossNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
     if(lossNum == 2 || lossNum == 4) {
         changeRatio = 1;
@@ -280,11 +324,15 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
         changeRatio = 1.5;
     }
     if(
-      (!continuousWinSameSideNum
-      &&
-      lossNum == 2)
+        (!continuousWinSameSideNum
+            &&
+            lossNum == 2)
+        ||
+        (continuousLossSameSideNum == 2
+            &&
+            lossNum == 2)
     ){
-      changeRatio = 0.1;
+      changeRatio = 0.05;
     }
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
@@ -470,6 +518,29 @@ let lastLastWinDirection = null;
 let lastLastLossDirection = null;
 let ratioChangeNum = 0;
 let lastMostWinRatio = 0;
+let isOpenOtherOrder = false;
+const autoOtherOrder = async holding => {
+    const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
+
+    const size = Number(position) * 100 / Number(last);
+    let unrealized_pnl = size * (Number(last) - Number(avg_cost)) / Number(last);
+    if(side=='short') unrealized_pnl = - unrealized_pnl;
+
+    const ratio = Number(unrealized_pnl) / Number(margin);
+    const condition = Number(leverage) / 100;
+
+    const newWinRatio = Number(winRatio) / 1.8
+    const newLossRatio = Number(lossRatio) * 1.78
+
+    if(ratio > condition * newWinRatio * frequency) {
+        await autoCloseOrderByMarketPriceByHolding(holding);
+        isOpenOtherOrder = false
+    }
+    if(ratio < - condition * newLossRatio * frequency){
+        await autoCloseOrderByMarketPriceByHolding(holding);
+        isOpenOtherOrder = false
+    }
+}
 const autoOperateSwap = async (holding) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
@@ -541,7 +612,13 @@ const autoOperateSwap = async (holding) => {
                 lastMostWinRatio = 0;
 
                 const openSide = side == 'long' ? 'short' : 'long';
-                await autoOpenOrderSingle(holding, { openSide, lossNum: continuousObj.continuousLossNum });
+                const payload = {
+                    openSide,
+                    lossNum: continuousObj.continuousLossNum,
+                    continuousWinSameSideNum,
+                    continuousLossSameSideNum
+                }
+                await autoOpenOrderSingle(holding, payload);
             }
         }
     }
@@ -571,7 +648,13 @@ const autoOperateSwap = async (holding) => {
             lastMostWinRatio = 0;
 
             const openSide = isOpenShort ? 'short' : 'long';
-            await autoOpenOrderSingle(holding, { openSide, lossNum: continuousObj.continuousLossNum });
+            const payload = {
+                openSide,
+                lossNum: continuousObj.continuousLossNum,
+                continuousWinSameSideNum,
+                continuousLossSameSideNum
+            }
+            await autoOpenOrderSingle(holding, payload);
         }
         return;
     }
@@ -624,7 +707,27 @@ const autoOperateSwap = async (holding) => {
             lastMostWinRatio = 0;
 
             const openSide = isOpenShort ? 'short' : 'long';
-            await autoOpenOrderSingle(holding, { openSide, lossNum: continuousObj.continuousLossNum });
+            const payload = {
+                openSide,
+                lossNum: continuousObj.continuousLossNum,
+                continuousWinSameSideNum,
+                continuousLossSameSideNum
+            }
+            await autoOpenOrderSingle(holding, payload);
+
+            if(
+                (!continuousWinSameSideNum
+                    &&
+                    continuousObj.continuousLossNum == 2)
+                ||
+                (continuousLossSameSideNum == 2
+                    &&
+                    continuousObj.continuousLossNum == 2)
+            ){
+                isOpenOtherOrder = true;
+                const otherOpenSide = isOpenShort ? 'long' : 'short';
+                await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+            }
         }
         return;
     }
@@ -646,6 +749,7 @@ function startInterval() {
             return;
         }
         if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
+        if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) autoOtherOrder(btcHolding[1])
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
     },1000 * 5)
 }

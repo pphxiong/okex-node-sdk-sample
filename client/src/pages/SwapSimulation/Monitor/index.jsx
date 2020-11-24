@@ -104,7 +104,7 @@ export default props => {
   let lastLastWinDirection = null;
   let lastLastLossDirection = null;
   let reboundNum = 0;
-  let isReverse = false;
+  let isUpDown = false;
   let isFirstWin = false;
   let lastMostWinRatio = 0;
   let maxContinousLossObj = { time: null, continuousLossNum: 0 }
@@ -139,6 +139,35 @@ export default props => {
     lastLastWinDirection: {}
   }
   const initPosition = 20;
+  let isOpenOtherOrder = false;
+  let otherPositionPrimaryPrice = 0;
+  let otherPositionSide = null
+  let otherTotalPnl = 0;
+  const testOtherOrder = async (price) => {
+    // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
+    const otherPosition = 2 * initPosition
+    const size = Number(otherPosition) * 100 / Number(price);
+    let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
+    if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
+
+    const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
+    const otherFee = Number(otherMargin) * 5 * 2 / 10000;
+
+    let condition = leverage / 100;
+    const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
+
+    const newWinRatio = Number(winRatio.current) / 1.8
+    const newLossRatio = Number(lossRatio.current) * 1.78
+
+    if(ratio > condition * newWinRatio * frequency) {
+      otherTotalPnl += other_unrealized_pnl - otherFee;
+      isOpenOtherOrder = false
+    }
+    if(ratio < - condition * newLossRatio * frequency){
+      otherTotalPnl += other_unrealized_pnl - otherFee;
+      isOpenOtherOrder = false
+    }
+  }
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
@@ -147,6 +176,9 @@ export default props => {
     let totalPnl = 0;
     let totalRatio = 0;
     let totalMargin = 0;
+
+    otherTotalPnl = 0;
+    isOpenOtherOrder = false
 
     let primaryPrice = endPrice || historyList[0][1];
     let passNum = 0;
@@ -158,6 +190,8 @@ export default props => {
 
     let lastTotalRatio = 0;
     historyList.map(item=>{
+      if(isOpenOtherOrder) testOtherOrder(item[1])
+
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
@@ -171,19 +205,15 @@ export default props => {
         changeRatio = 1.5;
       }
       if(
-        // lastLossDirection == 'short'
-        // &&
-        // lastWinDirection == 'long'
-        // &&
-        // continuousLossSameSideNum == 1
-        // // &&
-        // // currentSide == 'short'
-        // &&
         (!continuousWinSameSideNum
         &&
         continuousObj.continuousLossNum == 2)
+        ||
+        (continuousLossSameSideNum == 2
+          &&
+          continuousObj.continuousLossNum == 2)
       ){
-        changeRatio = 0.1;
+        changeRatio = 0.05;
       }
       changeRatio = changeRatio > 0 ? changeRatio : 1
       let positionRatio = changeRatio
@@ -264,11 +294,9 @@ export default props => {
         if(ratio > 0){
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
           // if(
-          //   continuousObj.continuousLossNum == 2
+          //   ratio < condition * newWinRatio * frequency * 1.2 / 2
           //   &&
-          //   ratio < condition * newWinRatio * frequency / 2
-          //   &&
-          //   lastMostWinRatio > condition * newWinRatio * frequency * 2.5 / 4
+          //   lastMostWinRatio > condition * newWinRatio * frequency * 1.75 / 2
           // ) {
           //   totalFee += fee;
           //   totalPnl += unrealized_pnl - fee;
@@ -277,6 +305,8 @@ export default props => {
           //
           //   lastMostWinRatio = 0;
           //   primaryPrice = item[1];
+          //
+          //   isUpDown = true;
           // }
           if(
             ratio < condition * newWinRatio * frequency / 10
@@ -295,6 +325,7 @@ export default props => {
 
               lastMostWinRatio = 0;
               primaryPrice = item[1];
+              isUpDown = false;
             }
           }
         }
@@ -328,7 +359,6 @@ export default props => {
           continuousLossSameSideNum = 0;
           lastLastWinDirection = lastWinDirection;
           lastWinDirection = currentSide;
-          isReverse = false;
 
           ratioChangeNum = 0
           isLatestWin = true
@@ -340,6 +370,7 @@ export default props => {
           // winMap[continuousObj.continuousWinNum] = winMap[continuousObj.continuousWinNum] + 1
 
           primaryPrice = item[1];
+          isUpDown = false;
 
         }
         if(ratio < - condition * newLossRatio * frequency){
@@ -349,26 +380,23 @@ export default props => {
           totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
 
           lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
-          if(
-            // lastWinDirection == 'long'
-            // && lastLossDirection == 'short'
-            // && currentSide == 'short'
-            continuousObj.continuousLossNum == 1
-          ) {
-            loss2Maps["currentSide"][currentSide] += 1
-            loss2Maps["lastLossDirection"][lastLossDirection] += 1
-            loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
-            loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
-            loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
-            loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
-            loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
-            loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
-            console.log('currentSide',currentSide)
-            console.log('lastWinDirection',lastWinDirection,'lastLossDirection',lastLossDirection)
-            console.log('lastLastLossDirection',lastLastLossDirection,'lastLastWinDirection',lastLastWinDirection)
-            console.log('continuousLossSameSideNum',continuousLossSameSideNum,'continuousWinSameSideNum',continuousWinSameSideNum)
-            console.log('ratioChangeNum',ratioChangeNum)
-          }
+          // if(
+          //   continuousObj.continuousLossNum == 2
+          // ) {
+          //   loss2Maps["currentSide"][currentSide] += 1
+          //   loss2Maps["lastLossDirection"][lastLossDirection] += 1
+          //   loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
+          //   loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
+          //   loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
+          //   loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
+          //   loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
+          //   loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
+          //   console.log('currentSide',currentSide)
+          //   console.log('lastWinDirection',lastWinDirection,'lastLossDirection',lastLossDirection)
+          //   console.log('lastLastLossDirection',lastLastLossDirection,'lastLastWinDirection',lastLastWinDirection)
+          //   console.log('continuousLossSameSideNum',continuousLossSameSideNum,'continuousWinSameSideNum',continuousWinSameSideNum)
+          //   console.log('ratioChangeNum',ratioChangeNum)
+          // }
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
@@ -431,13 +459,19 @@ export default props => {
             }
           }
 
-          // if(
-          //   continuousObj.continuousLossNum == 2
-          //   &&
-          //   (lastLossDirection != lastLastLossDirection && lastLastLossDirection == lastLastWinDirection)
-          // ){
-          //   isCurrentSideShort = !isCurrentSideShort
-          // }
+          if(
+            (!continuousWinSameSideNum
+              &&
+              continuousObj.continuousLossNum == 2)
+            ||
+            (continuousLossSameSideNum == 2
+              &&
+              continuousObj.continuousLossNum == 2)
+          ){
+            isOpenOtherOrder = true;
+            otherPositionPrimaryPrice = item[1]
+            otherPositionSide = isCurrentSideShort ? 'long' : 'short'
+          }
 
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
@@ -447,6 +481,7 @@ export default props => {
           // winMap[0] = winMap[0] + 1
 
           primaryPrice = item[1];
+          isUpDown = false;
 
         }
       }
@@ -477,8 +512,10 @@ export default props => {
     // setTpnlRatio(totalPnl * 100 / Number(margin))
 
     // console.log('totalPnl',totalPnl, totalFee, margin, totalRatio,  )
-    return { time: historyList[0][0], totalPnl, totalRatio, totalFee, endPrice: primaryPrice, dayRatioList }
+    return { time: historyList[0][0], totalPnl: totalPnl + otherTotalPnl, totalRatio, totalFee, endPrice: primaryPrice, dayRatioList }
   }
+
+
 
   const getMonthPnl = async (day,month) => {
     setPageLoading(true);
