@@ -519,11 +519,11 @@ let lastLastLossDirection = null;
 let ratioChangeNum = 0;
 let lastMostWinRatio = 0;
 let isOpenOtherOrder = false;
-const autoOtherOrder = async holding => {
+const autoOtherOrder = async (holding,mark_price) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
-    const size = Number(position) * 100 / Number(last);
-    let unrealized_pnl = size * (Number(last) - Number(avg_cost)) / Number(last);
+    const size = Number(position) * 100 / Number(mark_price);
+    let unrealized_pnl = size * (Number(mark_price) - Number(avg_cost)) / Number(mark_price);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
 
     const ratio = Number(unrealized_pnl) / Number(margin);
@@ -541,11 +541,11 @@ const autoOtherOrder = async holding => {
         isOpenOtherOrder = false
     }
 }
-const autoOperateSwap = async (holding) => {
+const autoOperateSwap = async (holding,mark_price) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
-    const size = Number(position) * 100 / Number(last);
-    let unrealized_pnl = size * (Number(last) - Number(avg_cost)) / Number(last);
+    const size = Number(position) * 100 / Number(mark_price);
+    let unrealized_pnl = size * (Number(mark_price) - Number(avg_cost)) / Number(mark_price);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
     let isOpenShort = side == 'short';
 
@@ -725,7 +725,7 @@ const autoOperateSwap = async (holding) => {
                     continuousObj.continuousLossNum == 2)
             ){
                 isOpenOtherOrder = true;
-                const otherOpenSide = isOpenShort ? 'long' : 'short';
+                const otherOpenSide = openSide == 'short' ? 'long' : 'short';
                 await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
             }
         }
@@ -739,6 +739,7 @@ function startInterval() {
         console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
 
         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
         // const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
 
         const btcQty = Number(btcHolding[0].position);
@@ -748,8 +749,9 @@ function startInterval() {
         if(!qty) {
             return;
         }
-        if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
-        if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) autoOtherOrder(btcHolding[1])
+        // if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
+        if(btcQty) await autoOperateSwap(btcHolding[0],mark_price);
+        if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
         // if(eosQty) getOrderModeSingle(mode,  eosHolding[0]);
     },1000 * 5)
 }

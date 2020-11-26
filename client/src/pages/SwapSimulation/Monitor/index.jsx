@@ -267,25 +267,6 @@ export default props => {
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
-      // if(
-      //   lastTotalRatio != totalRatio
-      //   && continuousObj.continuousLossNum == 2
-      //   && continuousLossSameSideNum == 1
-      // ) {
-      //   lastTotalRatio = totalRatio
-      //   console.log('------------continuousLossNum start---------------')
-      //   console.info(item[0],item[1],'ratio', ratio)
-      //   console.log('newWinRatio', newWinRatio, 'newLossRatio', newLossRatio)
-      //   console.info('totalPnl', totalPnl, 'totalMargin', totalMargin, 'totalRatio', totalRatio)
-      //   console.info('continuousLossNum', continuousObj.continuousLossNum)
-      //   console.info('continuousWinNum', continuousObj.continuousWinNum)
-      //   console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection,)
-      //   console.log('currentSide', currentSide, 'lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-      //   console.log('continuousWinSameSideNum', continuousWinSameSideNum)
-      //   console.log('continuousLossSameSideNum', continuousLossSameSideNum)
-      //   console.log('------------continuousLossNum end---------------')
-      // }
-
       if(delayTimes) {
         delayTimes = delayTimes - 1;
         primaryPrice = item[1];
@@ -319,7 +300,7 @@ export default props => {
               totalFee += fee;
               totalPnl += unrealized_pnl - fee;
               totalMargin += margin
-              totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
+              totalRatio =  totalPnl * 100 / totalMargin
 
               isCurrentSideShort = !isCurrentSideShort;
 
@@ -337,7 +318,7 @@ export default props => {
           totalFee += fee;
           totalPnl += unrealized_pnl - fee;
           totalMargin += margin
-          totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
+          totalRatio =  totalPnl * 100 / totalMargin
 
           winMap[continuousObj.continuousLossNum] = winMap[continuousObj.continuousLossNum] + 1
 
@@ -377,20 +358,20 @@ export default props => {
           totalFee += fee;
           totalPnl += unrealized_pnl - fee;
           totalMargin += margin
-          totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
+          totalRatio =  totalPnl * 100 / totalMargin
 
           lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
           // if(
           //   continuousObj.continuousLossNum == 2
           // ) {
-          //   loss2Maps["currentSide"][currentSide] += 1
-          //   loss2Maps["lastLossDirection"][lastLossDirection] += 1
-          //   loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
-          //   loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
-          //   loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
-          //   loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
-          //   loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
-          //   loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
+            loss2Maps["currentSide"][currentSide] += 1
+            loss2Maps["lastLossDirection"][lastLossDirection] += 1
+            loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
+            loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
+            loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
+            loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
+            loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
+            loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
           //   console.log('currentSide',currentSide)
           //   console.log('lastWinDirection',lastWinDirection,'lastLossDirection',lastLossDirection)
           //   console.log('lastLastLossDirection',lastLastLossDirection,'lastLastWinDirection',lastLastWinDirection)
@@ -564,9 +545,6 @@ export default props => {
 
     // console.log('maxContinousLossObj',maxContinousLossObj)
     // console.log('maxLossRatio',maxLossRatio)
-    console.log('lossMap',lossMap)
-    console.log('winMap',winMap)
-    console.log('loss2Maps',loss2Maps)
     // console.log('maxLossRatioT',maxLossRatioT)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
@@ -594,6 +572,10 @@ export default props => {
       })
       i++;
     }
+
+    console.log('lossMap',lossMap)
+    console.log('winMap',winMap)
+    console.log('loss2Maps',loss2Maps)
 
     setTPnlList(mList);
     setTPnl(t);
@@ -650,6 +632,9 @@ export default props => {
     setTPnlRatio(ratio);
     setPageLoading(false);
 
+    console.log('lossMap',lossMap)
+    console.log('winMap',winMap)
+    console.log('loss2Maps',loss2Maps)
     console.log(dList)
     const newDList = dList.map(item=>({
       ...item,
