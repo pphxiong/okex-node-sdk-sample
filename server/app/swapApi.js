@@ -254,8 +254,8 @@ const validateAndCancelOrder = async (instrument_id) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
     console.log('cancelorder', instrument_id, order_info.length)
     if( order_info && order_info.length ){
-        const { order_id } = order_info[0];
-        return await authClient.swap().postCancelOrder(instrument_id,order_id)
+        const { order_id, size } = order_info[0];
+        if(Number(size) != 2 * initPosition) return await authClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -272,7 +272,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const position = initPosition * 2
 
     const type = openSide == 'long' ? 1 : 2;
-    console.log('openOtherOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
 
     const instrument_id = 'BTC-USD-SWAP';
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
@@ -655,6 +655,15 @@ const autoOperateSwap = async (holding,mark_price) => {
                 continuousLossSameSideNum
             }
             await autoOpenOrderSingle(holding, payload);
+
+            if(
+                continuousObj.continuousWinNum == 2
+            ){
+                isOpenOtherOrder = true;
+                const otherOpenSide = openSide == 'short' ? 'long' : 'short';
+                await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+            }
+
         }
         return;
     }
