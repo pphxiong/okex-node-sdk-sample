@@ -104,7 +104,7 @@ export default props => {
   let lastLastWinDirection = null;
   let lastLastLossDirection = null;
   let reboundNum = 0;
-  let isUpDown = false;
+  let isUpDownNum = 0;
   let isFirstWin = false;
   let lastMostWinRatio = 0;
   let maxContinousLossObj = { time: null, continuousLossNum: 0 }
@@ -215,8 +215,6 @@ export default props => {
         (continuousLossSameSideNum == 2
           &&
           continuousObj.continuousLossNum == 2)
-        // ||
-        // continuousObj.continuousWinNum == 2
       ){
         changeRatio = 0.05;
       }
@@ -242,6 +240,8 @@ export default props => {
         lastLastLossDirection != lastLossDirection
         &&
         lastLossDirection != currentSide
+        // &&
+        // !isUpDownNum
       ){
         if(continuousObj.continuousLossNum > 7){
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
@@ -301,6 +301,8 @@ export default props => {
               (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
                 &&
                 continuousLossSameSideNum == 1)
+              // &&
+              // continuousWinSameSideNum < 2
             ){
               totalFee += fee;
               totalPnl += unrealized_pnl - fee;
@@ -311,7 +313,7 @@ export default props => {
 
               lastMostWinRatio = 0;
               primaryPrice = item[1];
-              isUpDown = false;
+              isUpDownNum += 1;
             }
           }
         }
@@ -364,7 +366,7 @@ export default props => {
           // winMap[continuousObj.continuousWinNum] = winMap[continuousObj.continuousWinNum] + 1
 
           primaryPrice = item[1];
-          isUpDown = false;
+          isUpDownNum = 0;
 
           if(
             continuousObj.continuousWinNum == 2
@@ -482,11 +484,12 @@ export default props => {
           lastLossDirection = currentSide;
 
           lastMostWinRatio = 0;
+          isUpDownNum = 0
           // lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
           // winMap[0] = winMap[0] + 1
 
           primaryPrice = item[1];
-          isUpDown = false;
+
 
         }
       }
