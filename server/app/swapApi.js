@@ -645,8 +645,14 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const ratio = Number(unrealized_pnl) / Number(margin);
     const condition = Number(leverage) / 100;
 
-    const newWinRatio = Number(winRatio) / 1.8
-    const newLossRatio = Number(lossRatio) * 1.78
+    let newWinRatio = Number(winRatio) / 1.8
+    let newLossRatio = Number(lossRatio) * 1.78
+
+    const continuousObj = continuousMap[instrument_id];
+    if(continuousObj.continuousWinNum == 2){
+        newWinRatio = Number(winRatio) / 2
+        newLossRatio = Number(lossRatio) * 1.5
+    }
 
     if(ratio > condition * newWinRatio * frequency) {
         await autoCloseOrderByMarketPriceByHolding(holding);
