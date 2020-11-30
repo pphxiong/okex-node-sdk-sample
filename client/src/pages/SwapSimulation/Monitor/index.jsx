@@ -166,8 +166,13 @@ export default props => {
     let newLossRatio = Number(lossRatio.current) * 1.78
 
     if(continuousObj.continuousWinNum == 2){
-      newWinRatio = Number(winRatio.current) / 2
+      newWinRatio = Number(winRatio.current) / 2.8
       newLossRatio = Number(lossRatio.current) * 1.5
+    }
+
+    if(continuousWinSameSideNum && lastWinDirection == 'long'){
+      newWinRatio = Number(winRatio.current) / 2.8
+      newLossRatio = Number(lossRatio.current) * 5
     }
 
     if(ratio > condition * newWinRatio * frequency) {
@@ -215,7 +220,8 @@ export default props => {
       }else if(continuousObj.continuousLossNum == 1) {
         changeRatio = 1.5;
       }
-      // if(continuousObj.continuousWinNum == 2) changeRatio = 0.5;
+      // if(continuousLossSameSideNum == 2) changeRatio = 0.5;
+      // if (continuousObj.continuousLossNum>2) changeRatio = 2
       if(
         (!continuousWinSameSideNum
         &&
@@ -279,6 +285,13 @@ export default props => {
         }
       }
 
+      if(
+       continuousWinSameSideNum && currentSide == 'long'
+      ){
+        newWinRatio = Number(winRatio.current) / 10
+        newLossRatio = Number(lossRatio.current) * 1.2
+      }
+
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
       if(delayTimes) {
@@ -310,8 +323,6 @@ export default props => {
               (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
                 &&
                 continuousLossSameSideNum == 1)
-              // &&
-              // continuousWinSameSideNum < 2
             ){
               totalFee += fee;
               totalPnl += unrealized_pnl - fee;
@@ -338,9 +349,9 @@ export default props => {
 
           winMap[continuousObj.continuousLossNum] = winMap[continuousObj.continuousLossNum] + 1
 
-          if(
-            continuousObj.continuousWinNum == 2
-          ) {
+          // if(
+          //   continuousObj.continuousLossNum == 1
+          // ) {
             winMaps["currentSide"][currentSide] += 1
             winMaps["lastLossDirection"][lastLossDirection] = winMaps["lastLossDirection"][lastLossDirection] ? winMaps["lastLossDirection"][lastLossDirection] + 1 : 1
             winMaps["lastLastLossDirection"][lastLastLossDirection] = winMaps["lastLastLossDirection"][lastLastLossDirection] ? winMaps["lastLastLossDirection"][lastLastLossDirection] + 1 : 1
@@ -351,7 +362,7 @@ export default props => {
             winMaps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
             winMaps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
             winMaps['ratioChangeNum'][ratioChangeNum] += 1;
-          }
+          // }
 
           continuousObj.continuousLossNum = 0;
           continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
@@ -386,8 +397,8 @@ export default props => {
 
           if(
             continuousObj.continuousWinNum == 2
-            // ||
-            // continuousWinSameSideNum == 2
+            ||
+            (continuousWinSameSideNum && currentSide == 'long')
           ){
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
@@ -402,9 +413,10 @@ export default props => {
           totalRatio =  totalPnl * 100 / totalMargin
 
           lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
-          if(
-            continuousObj.continuousWinNum == 2
-          ) {
+
+          // if(
+          //   continuousObj.continuousLossNum == 1
+          // ) {
             loss2Maps["currentSide"][currentSide] += 1
             loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
             loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
@@ -415,7 +427,7 @@ export default props => {
             loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
             loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
             loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
-          }
+          // }
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
@@ -486,7 +498,13 @@ export default props => {
             ||
             (continuousLossSameSideNum == 2
               &&
-              continuousObj.continuousLossNum == 2)
+              continuousObj.continuousLossNum == 2
+            )
+            // ||
+            // (continuousObj.continuousLossNum == 1
+            //   &&
+            //     currentSide == 'short'
+            // )
           ){
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
@@ -583,9 +601,9 @@ export default props => {
       }
     }
 
-    // console.log('maxContinousLossObj',maxContinousLossObj)
-    // console.log('maxLossRatio',maxLossRatio)
-    // console.log('maxLossRatioT',maxLossRatioT)
+    console.log('maxContinousLossObj',maxContinousLossObj)
+    console.log('maxLossRatio',maxLossRatio)
+    console.log('maxLossRatioT',maxLossRatioT)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
     return { pnl: t, ratio: tRatio, dList, };
