@@ -559,10 +559,12 @@ const afterWin = async (holding) => {
 
     if(
         continuousObj.continuousWinNum == 2
-        ||
-        (continuousWinSameSideNum
-            // && side == 'long'
-        )
+        &&
+        !isOpenOtherOrder
+        // ||
+        // (continuousWinSameSideNum
+        //     && side == 'long'
+        // )
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
@@ -636,6 +638,8 @@ const afterLoss = async (holding,newLossRatio) =>{
         (continuousLossSameSideNum == 2
             &&
             continuousObj.continuousLossNum == 2)
+        &&
+        !isOpenOtherOrder
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
@@ -661,12 +665,12 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
         newLossRatio = Number(lossRatio) * 1.5
     }
 
-    if(continuousWinSameSideNum
-        // && lastWinDirection == 'long'
-    ){
-        newWinRatio = Number(winRatio) / 2.8
-        newLossRatio = Number(lossRatio) * 5
-    }
+    // if(continuousWinSameSideNum
+    //     && lastWinDirection == 'long'
+    // ){
+    //     newWinRatio = Number(winRatio) / 2.8
+    //     newLossRatio = Number(lossRatio) * 1.2
+    // }
 
     if(ratio > condition * newWinRatio * frequency) {
         await autoCloseOrderByMarketPriceByHolding(holding);
@@ -727,13 +731,13 @@ const autoOperateSwap = async (holding,mark_price) => {
         newLossRatio = Number(lossRatio)
     }
 
-    if(
-        continuousWinSameSideNum
-        // && side == 'long'
-    ){
-        newWinRatio = Number(winRatio) / 10
-        newLossRatio = Number(lossRatio) * 1.2
-    }
+    // if(
+    //     continuousWinSameSideNum
+    //     && side == 'long'
+    // ){
+    //     newWinRatio = Number(winRatio) / 10
+    //     newLossRatio = Number(lossRatio) * 1.2
+    // }
 
     console.log('------------continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
