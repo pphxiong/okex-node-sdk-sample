@@ -560,7 +560,9 @@ const afterWin = async (holding) => {
     if(
         continuousObj.continuousWinNum == 2
         ||
-        (continuousWinSameSideNum && side == 'long')
+        (continuousWinSameSideNum
+            // && side == 'long'
+        )
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
@@ -659,7 +661,9 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
         newLossRatio = Number(lossRatio) * 1.5
     }
 
-    if(continuousWinSameSideNum && lastWinDirection == 'long'){
+    if(continuousWinSameSideNum
+        // && lastWinDirection == 'long'
+    ){
         newWinRatio = Number(winRatio) / 2.8
         newLossRatio = Number(lossRatio) * 5
     }
@@ -724,7 +728,8 @@ const autoOperateSwap = async (holding,mark_price) => {
     }
 
     if(
-        continuousWinSameSideNum && side == 'long'
+        continuousWinSameSideNum
+        // && side == 'long'
     ){
         newWinRatio = Number(winRatio) / 10
         newLossRatio = Number(lossRatio) * 1.2

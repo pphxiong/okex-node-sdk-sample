@@ -170,7 +170,9 @@ export default props => {
       newLossRatio = Number(lossRatio.current) * 1.5
     }
 
-    if(continuousWinSameSideNum && lastWinDirection == 'long'){
+    if(continuousWinSameSideNum
+      // && lastWinDirection == 'long'
+    ){
       newWinRatio = Number(winRatio.current) / 2.8
       newLossRatio = Number(lossRatio.current) * 5
     }
@@ -286,7 +288,8 @@ export default props => {
       }
 
       if(
-       continuousWinSameSideNum && currentSide == 'long'
+       continuousWinSameSideNum
+        // && currentSide == 'long'
       ){
         newWinRatio = Number(winRatio.current) / 10
         newLossRatio = Number(lossRatio.current) * 1.2
@@ -398,7 +401,9 @@ export default props => {
           if(
             continuousObj.continuousWinNum == 2
             ||
-            (continuousWinSameSideNum && currentSide == 'long')
+            (continuousWinSameSideNum
+              // && currentSide == 'long'
+            )
           ){
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
@@ -553,8 +558,6 @@ export default props => {
     // console.log('totalPnl',totalPnl, totalFee, margin, totalRatio,  )
     return { time: historyList[0][0], totalPnl: totalPnl + otherTotalPnl, totalRatio, totalFee, endPrice: primaryPrice, dayRatioList }
   }
-
-
 
   const getMonthPnl = async (day,month) => {
     setPageLoading(true);
