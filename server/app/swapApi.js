@@ -558,8 +558,8 @@ const afterWin = async (holding) => {
     await autoOpenOrderSingle(holding, payload);
 
     if(
-        continuousObj.continuousWinNum == 2
-        &&
+        // continuousObj.continuousWinNum == 2
+        // &&
         !isOpenOtherOrder
         // ||
         // (continuousWinSameSideNum
@@ -568,7 +568,7 @@ const afterWin = async (holding) => {
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+        await autoOpenOtherOrderSingle({ openSide: openSide })
     }
 }
 const afterLoss = async (holding,newLossRatio) =>{
@@ -633,17 +633,14 @@ const afterLoss = async (holding,newLossRatio) =>{
     if(
         (!continuousWinSameSideNum
             &&
-            continuousObj.continuousLossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-            &&
-            continuousObj.continuousLossNum == 2)
+            continuousObj.continuousLossNum == 2
+        )
         &&
         !isOpenOtherOrder
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+        await autoOpenOtherOrderSingle({ openSide: openSide })
     }
 }
 const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
@@ -660,10 +657,16 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     let newLossRatio = Number(lossRatio) * 1.78
 
     const continuousObj = continuousMap[instrument_id];
-    if(continuousObj.continuousWinNum == 2){
-        newWinRatio = Number(winRatio) / 2.8
-        newLossRatio = Number(lossRatio) * 1.5
+
+    if(continuousObj.continuousWinNum){
+        newWinRatio = Number(winRatio) / 1.5
+        newLossRatio = Number(lossRatio) * 1.6
     }
+
+    // if(continuousObj.continuousWinNum == 2){
+    //     newWinRatio = Number(winRatio) / 2.8
+    //     newLossRatio = Number(lossRatio) * 1.5
+    // }
 
     // if(continuousWinSameSideNum
     //     && lastWinDirection == 'long'
