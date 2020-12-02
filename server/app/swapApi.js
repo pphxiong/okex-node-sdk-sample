@@ -640,7 +640,7 @@ const afterLoss = async (holding,newLossRatio) =>{
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: openSide })
+        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 }
 const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
