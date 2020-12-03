@@ -510,8 +510,8 @@ export default props => {
           // if(isOpenOtherOrder) testOtherOrder(item[1],true)
           if(
             (!continuousWinSameSideNum
-              &&
-              continuousObj.continuousLossNum == 2
+              // &&
+              // continuousObj.continuousLossNum == 2
             )
             &&
             !isOpenOtherOrder

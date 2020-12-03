@@ -637,8 +637,8 @@ const afterLoss = async (holding,type) =>{
 
     if(
         (!continuousWinSameSideNum
-            &&
-            continuousObj.continuousLossNum == 2
+            // &&
+            // continuousObj.continuousLossNum == 2
         )
         &&
         !isOpenOtherOrder
@@ -660,10 +660,10 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const ratio = Number(unrealized_pnl) / Number(margin);
     const condition = Number(leverage) / 100;
 
-    let newWinRatio = Number(winRatio) / 1.8
-    let newLossRatio = Number(lossRatio) * 1.78
-
     const continuousObj = continuousMap[instrument_id];
+
+    let newWinRatio = Number(winRatio) / 4.0
+    let newLossRatio = Number(lossRatio) * 2
 
     if(continuousObj.continuousWinNum){
         newWinRatio = Number(winRatio) / 5.0
