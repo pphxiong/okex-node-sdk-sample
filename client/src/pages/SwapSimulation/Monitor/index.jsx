@@ -162,8 +162,8 @@ export default props => {
     let condition = leverage / 100;
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
 
-    let newWinRatio = Number(winRatio.current) / 1.8
-    let newLossRatio = Number(lossRatio.current) * 1.78
+    let newWinRatio = Number(winRatio.current) / 4.0
+    let newLossRatio = Number(lossRatio.current) * 2
 
     if(continuousObj.continuousWinNum){
       newWinRatio = Number(winRatio.current) / 5.0
@@ -318,9 +318,9 @@ export default props => {
         if(ratio > 0){
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
           // if(
-          //   ratio < condition * newWinRatio * frequency * 1.2 / 2
+          //   ratio < condition * newWinRatio * frequency * 1.35 / 2
           //   &&
-          //   lastMostWinRatio > condition * newWinRatio * frequency * 1.75 / 2
+          //   lastMostWinRatio > condition * newWinRatio * frequency * 1.5 / 2
           // ) {
           //   totalFee += fee;
           //   totalPnl += unrealized_pnl - fee;
@@ -329,8 +329,6 @@ export default props => {
           //
           //   lastMostWinRatio = 0;
           //   primaryPrice = item[1];
-          //
-          //   isUpDown = true;
           // }
           if(
             ratio < condition * newWinRatio * frequency / 10
