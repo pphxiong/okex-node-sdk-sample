@@ -576,7 +576,7 @@ const afterWin = async (holding, type = 0) => {
         await autoOpenOtherOrderSingle({ openSide: openSide })
     }
 }
-const afterLoss = async (holding,newLossRatio) =>{
+const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
     const continuousObj = continuousMap[instrument_id];
 
@@ -642,6 +642,8 @@ const afterLoss = async (holding,newLossRatio) =>{
         )
         &&
         !isOpenOtherOrder
+        &&
+        !type
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
@@ -698,7 +700,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     if(ratio < - condition * newLossRatio * frequency){
         await autoCloseOrderByMarketPriceByHolding(holding,1);
         isOpenOtherOrder = false
-        if(isOpen) await afterLoss(holding)
+        if(isOpen) await afterLoss(holding, 1)
     }
 }
 const autoOperateSwap = async (holding,mark_price) => {
