@@ -659,8 +659,8 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const continuousObj = continuousMap[instrument_id];
 
     if(continuousObj.continuousWinNum){
-        newWinRatio = Number(winRatio) / 1.5
-        newLossRatio = Number(lossRatio) * 1.6
+        newWinRatio = Number(winRatio) / 5.0
+        newLossRatio = Number(lossRatio) * 1.7
     }
 
     // if(continuousObj.continuousWinNum == 2){
