@@ -454,7 +454,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastLastLossDirection: llld,
         lastLastWinDirection: llwd,
         initPosition: ip,
-        lastMostWinRatio: lmwr
+        lastMostWinRatio: lmwr,
+        isOpenOtherOrder: iooo
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -467,6 +468,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     lastLastWinDirection = llwd
     initPosition = Number(ip)
     lastMostWinRatio = Number(lmwr)
+    isOpenOtherOrder = iooo == 'true' || iooo == true
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
         instrument_id,
@@ -478,7 +480,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastLastLossDirection: llld,
         lastLastWinDirection: llwd,
         initPosition: Number(ip),
-        lastMostWinRatio: Number(lmwr)
+        lastMostWinRatio: Number(lmwr),
+        isOpenOtherOrder: iooo
     } });
 });
 
@@ -674,6 +677,16 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     //     newWinRatio = Number(winRatio) / 2.8
     //     newLossRatio = Number(lossRatio) * 1.2
     // }
+
+    console.log('------------other continuousLossNum start---------------')
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
+    console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
+    console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
+    console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
+    console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+    console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
+    console.log('lastMostWinRatio',lastMostWinRatio)
+    console.log('------------other continuousLossNum end---------------')
 
     if(ratio > condition * newWinRatio * frequency) {
         await autoCloseOrderByMarketPriceByHolding(holding);
