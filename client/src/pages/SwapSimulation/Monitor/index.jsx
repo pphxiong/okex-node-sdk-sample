@@ -38,7 +38,7 @@ export default props => {
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('11');
-  const [leverage,setLeverage] = useState(10);
+  const [leverage,setLeverage] = useState(20);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0)
 
@@ -144,15 +144,18 @@ export default props => {
     continuousWinSameSideNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
     ratioChangeNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
   }
-  const initPosition = 20;
+  let initPosition = 20;
   let isOpenOtherOrder = false;
   let otherPositionPrimaryPrice = 0;
   let otherPositionSide = null
   let otherTotalPnl = 0;
+  let last50PnlList = [];
+  let max50Pnl = 0
+  let min50Pnl = 0;
   const testOtherOrder = async (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     const otherPosition = 2 * initPosition
-    const size = Number(otherPosition) * 100 / Number(price);
+    const size = Number(otherPosition) * 100 / Number(otherPositionPrimaryPrice);
     let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
 
@@ -167,7 +170,7 @@ export default props => {
 
     if(continuousObj.continuousWinNum){
       newWinRatio = Number(winRatio.current) / 5.0
-      newLossRatio = Number(lossRatio.current) * 1.7
+      newLossRatio = Number(lossRatio.current) * 1.2
     }
 
     // if(continuousObj.continuousWinNum == 2
@@ -187,6 +190,12 @@ export default props => {
 
     if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
+      if(last50PnlList.length >= 6){
+        last50PnlList.splice(last50PnlList.length-1,1,(other_unrealized_pnl - otherFee) * 100 / otherMargin)
+      }else{
+        last50PnlList.push((other_unrealized_pnl - otherFee) * 100 / otherMargin)
+      }
+
       isOpenOtherOrder = false
     }
     // if(ratio < - condition * newLossRatio * frequency){
@@ -216,6 +225,26 @@ export default props => {
 
     let lastTotalRatio = 0;
     historyList.map(item=>{
+      if(last50PnlList.length==6){
+        const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
+        if(
+          sum50 > 160
+        ) {
+          initPosition = 10
+        }else
+          if(
+          sum50 > 180
+        ) {
+          initPosition = 5
+        }else if(sum50 < -55){
+          initPosition = 30
+        }else if(sum50 < -70){
+          initPosition = 40
+        }
+        max50Pnl = Math.max(max50Pnl,sum50)
+        min50Pnl = Math.min(min50Pnl,sum50)
+      }
+
       if(isOpenOtherOrder) {
         testOtherOrder(item[1])
       }
@@ -252,15 +281,28 @@ export default props => {
 
       const position = Math.ceil(initPosition * positionRatio)
 
-      const margin = position * 100 / historyList[0][1] / leverage;
+      const margin = position * 100 / Number(primaryPrice) / leverage;
       let condition = leverage / 100;
 
-      const size = Number(position) * 100 / Number(item[1]);
+      const size = Number(position) * 100 / Number(primaryPrice);
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
       const ratio = Number(unrealized_pnl) / Number(margin);
       const fee = Number(margin) * 5 * 2 / 10000;
+
+      const dealPnl = () => {
+        totalFee += fee;
+        totalPnl += (unrealized_pnl - fee);
+        totalMargin += margin
+        totalRatio =  totalPnl * 100 / totalMargin
+
+        if(last50PnlList.length >= 6){
+          last50PnlList.splice(last50PnlList.length-1,1,(unrealized_pnl - fee) * 100 / margin)
+        }else{
+          last50PnlList.push((unrealized_pnl - fee) * 100 / margin)
+        }
+      }
 
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
@@ -299,15 +341,6 @@ export default props => {
         }
       }
 
-      // if(
-      //  continuousWinSameSideNum
-      //  &&
-      //   isOpenOtherOrder
-      // ){
-      //   newWinRatio = Number(winRatio.current) / 8
-      //   newLossRatio = Number(lossRatio.current) * 1.2
-      // }
-
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
       if(delayTimes) {
@@ -338,10 +371,7 @@ export default props => {
                 &&
                 continuousLossSameSideNum == 1)
             ){
-              totalFee += fee;
-              totalPnl += unrealized_pnl - fee;
-              totalMargin += margin
-              totalRatio =  totalPnl * 100 / totalMargin
+              dealPnl()
 
               isCurrentSideShort = !isCurrentSideShort;
 
@@ -356,10 +386,7 @@ export default props => {
         // console.log(continuousWinSameSideNum)
 
         if(ratio > condition * newWinRatio * frequency){
-          totalFee += fee;
-          totalPnl += unrealized_pnl - fee;
-          totalMargin += margin
-          totalRatio =  totalPnl * 100 / totalMargin
+          dealPnl()
 
           winMap[continuousObj.continuousLossNum] = winMap[continuousObj.continuousLossNum] + 1
 
@@ -424,10 +451,7 @@ export default props => {
 
         }
         if(ratio < - condition * newLossRatio * frequency){
-          totalFee += fee;
-          totalPnl += unrealized_pnl - fee;
-          totalMargin += margin
-          totalRatio =  totalPnl * 100 / totalMargin
+          dealPnl()
 
           lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
 
@@ -574,6 +598,7 @@ export default props => {
     let mockObj = {}
 
     const monthData = mockData[month]
+    if(month=='04') lastPrice = 0
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
       // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
@@ -624,16 +649,23 @@ export default props => {
     let i = 0;
     while(i<duration) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
-      const { pnl , ratio, dList } = await getMonthPnl(firstDay,monthMap[i]);
-
-      console.log(`2020-${monthMap[i]}-01 00:00:00`,'pnl,ratio,dList',monthMap[i],pnl,ratio,dList)
-      t += pnl;
-      tRatio += ratio;
-      mList.push({
-        month: monthMap[i],
-        totalPnl: pnl,
-        totalRatio: ratio
-      })
+      if(i!=2){
+        const { pnl , ratio, dList } = await getMonthPnl(firstDay,monthMap[i]);
+        t += pnl;
+        tRatio += ratio;
+        mList.push({
+          month: monthMap[i],
+          totalPnl: pnl,
+          totalRatio: ratio
+        })
+        console.log(`2020-${monthMap[i]}-01 00:00:00`,'pnl,ratio,dList',monthMap[i],pnl,ratio,dList)
+      }else{
+        mList.push({
+          month: monthMap[i],
+          totalPnl: 0,
+          totalRatio: 0
+        })
+      }
       i++;
     }
 
@@ -641,6 +673,9 @@ export default props => {
     console.log('winMap',winMap)
     console.log('loss2Maps',loss2Maps)
     console.log('winMaps',winMaps)
+    console.log('max50Pnl',max50Pnl)
+    console.log('min50Pnl',min50Pnl)
+    console.log('last50PnlList',last50PnlList)
 
     setTPnlList(mList);
     setTPnl(t);

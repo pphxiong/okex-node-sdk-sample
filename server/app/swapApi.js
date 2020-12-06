@@ -525,6 +525,9 @@ let lastLastLossDirection = null;
 let ratioChangeNum = 0;
 let lastMostWinRatio = 0;
 let isOpenOtherOrder = false;
+let last50PnlList = [];
+let max50Pnl = 0
+let min50Pnl = 0;
 const afterWin = async (holding, type = 0) => {
     const { instrument_id, side } = holding;
     const continuousObj = continuousMap[instrument_id];
@@ -653,7 +656,7 @@ const afterLoss = async (holding,type) =>{
 const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
-    const size = Number(position) * 100 / Number(mark_price);
+    const size = Number(position) * 100 / Number(avg_cost);
     let unrealized_pnl = size * (Number(mark_price) - Number(avg_cost)) / Number(mark_price);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
 
@@ -667,7 +670,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
 
     if(continuousObj.continuousWinNum){
         newWinRatio = Number(winRatio) / 5.0
-        newLossRatio = Number(lossRatio) * 1.7
+        newLossRatio = Number(lossRatio) * 1.2
     }
 
     // if(continuousObj.continuousWinNum == 2){
@@ -706,18 +709,27 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
 const autoOperateSwap = async (holding,mark_price) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
-    const size = Number(position) * 100 / Number(mark_price);
+    const size = Number(position) * 100 / Number(avg_cost);
     let unrealized_pnl = size * (Number(mark_price) - Number(avg_cost)) / Number(mark_price);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
     let isOpenShort = side == 'short';
 
     const ratio = Number(unrealized_pnl) / Number(margin);
     const condition = Number(leverage) / 100;
+    const fee = Number(margin) * 5 * 2 / 10000;
 
     const continuousObj = continuousMap[instrument_id];
 
     let newWinRatio = Number(winRatio);
     let newLossRatio = Number(lossRatio);
+
+    const dealPnl = () => {
+        if(last50PnlList.length >= 6){
+            last50PnlList.splice(last50PnlList.length-1,1,(unrealized_pnl - fee) * 100 / margin)
+        }else{
+            last50PnlList.push((unrealized_pnl - fee) * 100 / margin)
+        }
+    }
 
     if(
         lastLastLossDirection != lastLossDirection
@@ -767,6 +779,7 @@ const autoOperateSwap = async (holding,mark_price) => {
     console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
     console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
     console.log('lastMostWinRatio',lastMostWinRatio)
+    console.log('isOpenOtherOrder',isOpenOtherOrder)
     console.log('------------continuousLossNum end---------------')
 
     if(ratio > 0){
@@ -781,6 +794,7 @@ const autoOperateSwap = async (holding,mark_price) => {
         ){
             const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
             if(result) {
+                dealPnl()
                 lastMostWinRatio = 0;
 
                 const openSide = side == 'long' ? 'short' : 'long';
@@ -799,6 +813,7 @@ const autoOperateSwap = async (holding,mark_price) => {
         // const { result } = await autoCloseOrderSingle(holding)
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
+            dealPnl()
             await afterWin(holding)
         }
         return;
@@ -806,6 +821,7 @@ const autoOperateSwap = async (holding,mark_price) => {
     if(ratio < - condition * newLossRatio * frequency){
         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
         if(result) {
+            dealPnl()
             if(newLossRatio != Number(lossRatio)) ratioChangeNum++;
             await afterLoss(holding)
         }
@@ -830,6 +846,31 @@ function startInterval() {
             return;
         }
         // if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
+
+        if(last50PnlList.length==6){
+            const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
+            if(
+                sum50 > 160
+            ) {
+                initPosition = 10
+            }else
+            if(
+                sum50 > 180
+            ) {
+                initPosition = 5
+            }else if(sum50 < -55){
+                initPosition = 30
+            }else if(sum50 < -70){
+                initPosition = 40
+            }
+            max50Pnl = Math.max(max50Pnl,sum50)
+            min50Pnl = Math.min(min50Pnl,sum50)
+        }
+
+        console.log('max50Pnl',max50Pnl)
+        console.log('min50Pnl',min50Pnl)
+        console.log('last50PnlList',last50PnlList)
+
         if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
             if(Number(btcHolding[0].position) == 2 * initPosition){
                 await autoOperateSwap(btcHolding[1],mark_price)
