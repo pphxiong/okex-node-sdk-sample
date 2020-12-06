@@ -780,6 +780,7 @@ const autoOperateSwap = async (holding,mark_price) => {
     console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
     console.log('lastMostWinRatio',lastMostWinRatio)
     console.log('isOpenOtherOrder',isOpenOtherOrder)
+    console.log('pnl',unrealized_pnl - fee)
     console.log('------------continuousLossNum end---------------')
 
     if(ratio > 0){
