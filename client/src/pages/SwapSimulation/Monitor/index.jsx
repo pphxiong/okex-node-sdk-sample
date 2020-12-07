@@ -30,10 +30,10 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const winRatio = useRef(2);
-  const lossRatio = useRef(0.6);
-  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
-  const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
+  const winRatio = useRef(0.5);
+  const lossRatio = useRef(2.5);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(0.5);
+  const [changebleLossRatio, setChangebleLossRatio] = useState(2.5);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
@@ -173,6 +173,9 @@ export default props => {
       newLossRatio = Number(lossRatio.current) * 1.2
     }
 
+    newWinRatio = Number(winRatio.current)
+    newLossRatio = Number(lossRatio.current)
+
     // if(continuousObj.continuousWinNum == 2
     //   // &&
     //   // continuousWinSameSideNum
@@ -225,25 +228,25 @@ export default props => {
 
     let lastTotalRatio = 0;
     historyList.map(item=>{
-      if(last50PnlList.length==6){
-        const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
-        if(
-          sum50 > 160
-        ) {
-          initPosition = 10
-        }else
-          if(
-          sum50 > 180
-        ) {
-          initPosition = 5
-        }else if(sum50 < -55){
-          initPosition = 30
-        }else if(sum50 < -70){
-          initPosition = 40
-        }
-        max50Pnl = Math.max(max50Pnl,sum50)
-        min50Pnl = Math.min(min50Pnl,sum50)
-      }
+      // if(last50PnlList.length==6){
+      //   const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
+      //   if(
+      //     sum50 > 160
+      //   ) {
+      //     initPosition = 10
+      //   }else
+      //     if(
+      //     sum50 > 180
+      //   ) {
+      //     initPosition = 5
+      //   }else if(sum50 < -65){
+      //     initPosition = 30
+      //   }else if(sum50 < -80){
+      //     initPosition = 40
+      //   }
+      //   max50Pnl = Math.max(max50Pnl,sum50)
+      //   min50Pnl = Math.min(min50Pnl,sum50)
+      // }
 
       if(isOpenOtherOrder) {
         testOtherOrder(item[1])
@@ -261,8 +264,7 @@ export default props => {
       }else if(continuousObj.continuousLossNum == 1) {
         changeRatio = 1.5;
       }
-      // if(continuousLossSameSideNum == 2) changeRatio = 0.5;
-      // if (continuousObj.continuousLossNum>2) changeRatio = 2
+
       if(
         (!continuousWinSameSideNum
         &&
@@ -297,40 +299,44 @@ export default props => {
         totalMargin += margin
         totalRatio =  totalPnl * 100 / totalMargin
 
-        if(last50PnlList.length >= 6){
-          last50PnlList.splice(last50PnlList.length-1,1,(unrealized_pnl - fee) * 100 / margin)
-        }else{
-          last50PnlList.push((unrealized_pnl - fee) * 100 / margin)
-        }
+        // if(last50PnlList.length >= 6){
+        //   last50PnlList.splice(last50PnlList.length-1,1,(unrealized_pnl - fee) * 100 / margin)
+        // }else{
+        //   last50PnlList.push((unrealized_pnl - fee) * 100 / margin)
+        // }
+        // const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
+        // max50Pnl = Math.max(max50Pnl,sum50)
+        // min50Pnl = Math.min(min50Pnl,sum50)
+        // console.log(last50PnlList,max50Pnl,min50Pnl)
       }
 
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
 
-      if(
-        lastLastLossDirection != lastLossDirection
-        &&
-        lastLossDirection != currentSide
-        // &&
-        // !isUpDownNum
-      ){
-        if(continuousObj.continuousLossNum > 7){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-          newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
-        }
-        if(continuousObj.continuousLossNum > 4){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
-        }
-        if(continuousObj.continuousLossNum > 2){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
-        }
-        if(continuousObj.continuousLossNum > 1){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
-          newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
-        }
-      }
+      // if(
+      //   lastLastLossDirection != lastLossDirection
+      //   &&
+      //   lastLossDirection != currentSide
+      //   // &&
+      //   // !isUpDownNum
+      // ){
+      //   if(continuousObj.continuousLossNum > 7){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
+      //     newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
+      //   }
+      //   if(continuousObj.continuousLossNum > 4){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
+      //     newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+      //   }
+      //   if(continuousObj.continuousLossNum > 2){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
+      //     newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+      //   }
+      //   if(continuousObj.continuousLossNum > 1){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+      //     newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
+      //   }
+      // }
 
       if(
         continuousWinSameSideNum > 1
@@ -350,19 +356,6 @@ export default props => {
       }else{
         if(ratio > 0){
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
-          // if(
-          //   ratio < condition * newWinRatio * frequency * 1.35 / 2
-          //   &&
-          //   lastMostWinRatio > condition * newWinRatio * frequency * 1.5 / 2
-          // ) {
-          //   totalFee += fee;
-          //   totalPnl += unrealized_pnl - fee;
-          //   totalMargin += margin
-          //   totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
-          //
-          //   lastMostWinRatio = 0;
-          //   primaryPrice = item[1];
-          // }
           if(
             ratio < condition * newWinRatio * frequency / 10
           ){
@@ -408,14 +401,14 @@ export default props => {
           continuousObj.continuousLossNum = 0;
           continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-          isCurrentSideShort = !isCurrentSideShort;
+          // isCurrentSideShort = !isCurrentSideShort;
           if(
             (currentSide == 'short' && lastWinDirection == 'short')
             ||
             (currentSide == 'long' && lastWinDirection == 'long')
           ){
             continuousWinSameSideNum = continuousWinSameSideNum + 1;
-            isCurrentSideShort = !isCurrentSideShort;
+            // isCurrentSideShort = !isCurrentSideShort;
           }else{
             continuousWinSameSideNum = 0;
           }
@@ -555,6 +548,11 @@ export default props => {
 
           primaryPrice = item[1];
         }
+        if(ratio < - condition * newLossRatio * frequency * 1 / 4 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+          isOpenOtherOrder = true;
+          otherPositionPrimaryPrice = item[1]
+          otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
+        }
       }
 
       maxLossRatio = {
@@ -598,7 +596,7 @@ export default props => {
     let mockObj = {}
 
     const monthData = mockData[month]
-    if(month=='04') lastPrice = 0
+    // if(month=='04') lastPrice = 0
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
       // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
@@ -649,7 +647,7 @@ export default props => {
     let i = 0;
     while(i<duration) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
-      if(i!=2){
+      // if(i!=2){
         const { pnl , ratio, dList } = await getMonthPnl(firstDay,monthMap[i]);
         t += pnl;
         tRatio += ratio;
@@ -659,13 +657,13 @@ export default props => {
           totalRatio: ratio
         })
         console.log(`2020-${monthMap[i]}-01 00:00:00`,'pnl,ratio,dList',monthMap[i],pnl,ratio,dList)
-      }else{
-        mList.push({
-          month: monthMap[i],
-          totalPnl: 0,
-          totalRatio: 0
-        })
-      }
+      // }else{
+      //   mList.push({
+      //     month: monthMap[i],
+      //     totalPnl: 0,
+      //     totalRatio: 0
+      //   })
+      // }
       i++;
     }
 
