@@ -269,7 +269,7 @@ const getOrderState = async (payload) => {
 
 const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', } = params;
-    const position = initPosition * 2
+    const position = initPosition * 1
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))

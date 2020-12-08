@@ -154,7 +154,7 @@ export default props => {
   let min50Pnl = 0;
   const testOtherOrder = async (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    const otherPosition = 2 * initPosition
+    const otherPosition = 1 * initPosition
     const size = Number(otherPosition) * 100 / Number(otherPositionPrimaryPrice);
     let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
@@ -500,6 +500,11 @@ export default props => {
 
           primaryPrice = item[1];
         }
+        // if(ratio < - condition * newLossRatio * frequency * 4 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+        //   isOpenOtherOrder = true;
+        //   otherPositionPrimaryPrice = item[1]
+        //   otherPositionSide = isCurrentSideShort ? 'short' : 'long'
+        // }
         if(ratio < - condition * newLossRatio * frequency * 1 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
           isOpenOtherOrder = true;
           otherPositionPrimaryPrice = item[1]
