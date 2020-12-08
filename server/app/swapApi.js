@@ -563,15 +563,15 @@ const afterWin = async (holding, type = 0) => {
     }
     await autoOpenOrderSingle(holding, payload);
 
-    if(
-        !isOpenOtherOrder
-        &&
-        !type
-    ){
-        isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: openSide })
-    }
+    // if(
+    //     !isOpenOtherOrder
+    //     &&
+    //     !type
+    // ){
+    //     isOpenOtherOrder = true;
+    //     const otherOpenSide = openSide == 'short' ? 'long' : 'short';
+    //     await autoOpenOtherOrderSingle({ openSide: openSide })
+    // }
 }
 const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
@@ -616,17 +616,17 @@ const afterLoss = async (holding,type) =>{
     }
     await autoOpenOrderSingle(holding, payload);
 
-    if(
-        (!continuousWinSameSideNum)
-        &&
-        !isOpenOtherOrder
-        &&
-        !type
-    ){
-        isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
-    }
+    // if(
+    //     (!continuousWinSameSideNum)
+    //     &&
+    //     !isOpenOtherOrder
+    //     &&
+    //     !type
+    // ){
+    //     isOpenOtherOrder = true;
+    //     const otherOpenSide = openSide == 'short' ? 'long' : 'short';
+    //     await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+    // }
 }
 const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;

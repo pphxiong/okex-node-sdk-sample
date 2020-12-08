@@ -428,13 +428,13 @@ export default props => {
           primaryPrice = item[1];
           isUpDownNum = 0;
 
-          if(
-            !isOpenOtherOrder
-          ){
-            isOpenOtherOrder = true;
-            otherPositionPrimaryPrice = item[1]
-            otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-          }
+          // if(
+          //   !isOpenOtherOrder
+          // ){
+          //   isOpenOtherOrder = true;
+          //   otherPositionPrimaryPrice = item[1]
+          //   otherPositionSide = isCurrentSideShort ? 'short' : 'long'
+          // }
 
         }
         if(ratio < - condition * newLossRatio * frequency){
@@ -480,15 +480,15 @@ export default props => {
             }
           }
 
-          if(
-            (!continuousWinSameSideNum)
-            &&
-            !isOpenOtherOrder
-          ){
-            isOpenOtherOrder = true;
-            otherPositionPrimaryPrice = item[1]
-            otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
-          }
+          // if(
+          //   (!continuousWinSameSideNum)
+          //   &&
+          //   !isOpenOtherOrder
+          // ){
+          //   isOpenOtherOrder = true;
+          //   otherPositionPrimaryPrice = item[1]
+          //   otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
+          // }
 
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
