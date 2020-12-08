@@ -256,28 +256,26 @@ export default props => {
       if(isCurrentSideShort) currentSide = 'short';
 
       let changeRatio = 1;
-      if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
-        changeRatio = 1;
-      }else if(continuousObj.continuousLossNum > 2) {
-        const temp = continuousObj.continuousLossNum - 3
-        changeRatio = temp * (1 - temp / 5 ) + 1
-      }else if(continuousObj.continuousLossNum == 1) {
-        changeRatio = 1.5;
-      }
+      // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
+      //   changeRatio = 1;
+      // }else if(continuousObj.continuousLossNum > 2) {
+      //   const temp = continuousObj.continuousLossNum - 3
+      //   changeRatio = temp * (1 - temp / 5 ) + 1
+      // }else if(continuousObj.continuousLossNum == 1) {
+      //   changeRatio = 1.5;
+      // }
 
-      if(
-        (!continuousWinSameSideNum
-        &&
-        continuousObj.continuousLossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-          &&
-          continuousObj.continuousLossNum == 2)
-        // ||
-        // continuousObj.continuousWinNum == 2
-      ){
-        changeRatio = 0.05;
-      }
+      // if(
+      //   (!continuousWinSameSideNum
+      //   &&
+      //   continuousObj.continuousLossNum == 2)
+      //   ||
+      //   (continuousLossSameSideNum == 2
+      //     &&
+      //     continuousObj.continuousLossNum == 2)
+      // ){
+      //   changeRatio = 0.05;
+      // }
       changeRatio = changeRatio > 0 ? changeRatio : 1
       let positionRatio = changeRatio
 
@@ -362,7 +360,8 @@ export default props => {
             if(
               (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
                 &&
-                continuousLossSameSideNum == 1)
+                continuousLossSameSideNum == 1
+              )
             ){
               dealPnl()
 
@@ -429,12 +428,7 @@ export default props => {
           primaryPrice = item[1];
           isUpDownNum = 0;
 
-          // if(isOpenOtherOrder) testOtherOrder(item[1],true)
           if(
-            // continuousObj.continuousWinNum == 2
-            // &&
-            // continuousWinSameSideNum
-            // &&
             !isOpenOtherOrder
           ){
             isOpenOtherOrder = true;
@@ -473,17 +467,6 @@ export default props => {
             lastWinDirection == 'long'
           ){
             continuousLossSameSideNum++;
-            if(
-              continuousLossSameSideNum < 2
-            ){
-              isCurrentSideShort = !isCurrentSideShort;
-            }else{
-              // console.log(currentSide)
-              // console.log(lastWinDirection)
-              // console.log('lastLossDirection',lastLossDirection)
-              // console.log(lastLastLossDirection)
-              // console.log(lastLastWinDirection)
-            }
           }else if(
             currentSide == 'long'
             &&
@@ -498,38 +481,7 @@ export default props => {
           }
 
           if(
-            newLossRatio != Number(lossRatio.current)
-          ){
-            ratioChangeNum++;
-            if(!continuousWinSameSideNum){
-              isCurrentSideShort = currentSide != 'short'
-            }
-
-            if(
-              continuousWinSameSideNum
-            ){
-              if(
-                lastWinDirection == 'short'
-                &&
-                ratioChangeNum > 1
-                &&
-                ratioChangeNum < 3
-              ){
-                isCurrentSideShort = !isCurrentSideShort
-              }
-
-              if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
-                isCurrentSideShort = !isCurrentSideShort
-              }
-            }
-          }
-
-          // if(isOpenOtherOrder) testOtherOrder(item[1],true)
-          if(
-            (!continuousWinSameSideNum
-              // &&
-              // continuousObj.continuousLossNum == 2
-            )
+            (!continuousWinSameSideNum)
             &&
             !isOpenOtherOrder
           ){
@@ -548,7 +500,7 @@ export default props => {
 
           primaryPrice = item[1];
         }
-        if(ratio < - condition * newLossRatio * frequency * 1 / 4 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+        if(ratio < - condition * newLossRatio * frequency * 1 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
           isOpenOtherOrder = true;
           otherPositionPrimaryPrice = item[1]
           otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
