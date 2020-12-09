@@ -31,9 +31,9 @@ export default props => {
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
   const winRatio = useRef(0.5);
-  const lossRatio = useRef(2.5);
+  const lossRatio = useRef(4.5);
   const [changebleWinRatio, setChangebleWinRatio] = useState(0.5);
-  const [changebleLossRatio, setChangebleLossRatio] = useState(2.5);
+  const [changebleLossRatio, setChangebleLossRatio] = useState(4.5);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
@@ -163,18 +163,10 @@ export default props => {
     const otherFee = Number(otherMargin) * 5 * 2 / 10000;
 
     let condition = leverage / 100;
-    const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
+    const ratio = (Number(other_unrealized_pnl) - otherFee) / Number(otherMargin);
 
-    let newWinRatio = Number(winRatio.current) / 4.0
-    let newLossRatio = Number(lossRatio.current) * 2
-
-    if(continuousObj.continuousWinNum){
-      newWinRatio = Number(winRatio.current) / 5.0
-      newLossRatio = Number(lossRatio.current) * 1.2
-    }
-
-    newWinRatio = Number(winRatio.current)
-    newLossRatio = Number(lossRatio.current)
+    const newWinRatio = Number(winRatio.current)
+    const newLossRatio = Number(lossRatio.current)
 
     // if(continuousObj.continuousWinNum == 2
     //   // &&
@@ -288,8 +280,8 @@ export default props => {
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
-      const ratio = Number(unrealized_pnl) / Number(margin);
       const fee = Number(margin) * 5 * 2 / 10000;
+      const ratio = (Number(unrealized_pnl) - fee) / Number(margin);
 
       const dealPnl = () => {
         totalFee += fee;
@@ -500,12 +492,12 @@ export default props => {
 
           primaryPrice = item[1];
         }
-        // if(ratio < - condition * newLossRatio * frequency * 4 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+        // if(ratio < - condition * newLossRatio * frequency * 2.5 / 5 && !continuousObj.continuousLossNum){
         //   isOpenOtherOrder = true;
         //   otherPositionPrimaryPrice = item[1]
         //   otherPositionSide = isCurrentSideShort ? 'short' : 'long'
         // }
-        if(ratio < - condition * newLossRatio * frequency * 1 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+        if(ratio < - condition * newLossRatio * frequency * 1 / 5 / 2 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
           isOpenOtherOrder = true;
           otherPositionPrimaryPrice = item[1]
           otherPositionSide = !isCurrentSideShort ? 'short' : 'long'

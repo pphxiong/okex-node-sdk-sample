@@ -12,7 +12,7 @@ let mode = 4; //下单模式
 
 let frequency = 1;
 const winRatio = 0.5;
-const lossRatio = 2.5;
+const lossRatio = 4.5;
 let initPosition = 20;
 
 const continuousMap = {
@@ -315,25 +315,25 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
-    if(lossNum == 2 || lossNum == 4) {
-        changeRatio = 1;
-    }else if(lossNum > 2) {
-        const temp = lossNum - 3
-        changeRatio = temp * (1 - temp / 5 ) + 1
-    }else if(lossNum) {
-        changeRatio = 1.5;
-    }
-    if(
-        (!continuousWinSameSideNum
-            &&
-            lossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-            &&
-            lossNum == 2)
-    ){
-      changeRatio = 0.05;
-    }
+    // if(lossNum == 2 || lossNum == 4) {
+    //     changeRatio = 1;
+    // }else if(lossNum > 2) {
+    //     const temp = lossNum - 3
+    //     changeRatio = temp * (1 - temp / 5 ) + 1
+    // }else if(lossNum) {
+    //     changeRatio = 1.5;
+    // }
+    // if(
+    //     (!continuousWinSameSideNum
+    //         &&
+    //         lossNum == 2)
+    //     ||
+    //     (continuousLossSameSideNum == 2
+    //         &&
+    //         lossNum == 2)
+    // ){
+    //   changeRatio = 0.05;
+    // }
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
 
@@ -341,17 +341,6 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     const { instrument_id, position: holdingPosition } = holding;
     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-
-    // // 可开张数
-    // let availNo;
-    // let avail = 0;
-    //
-    // if(instrument_id.includes('BTC')){
-    //     availNo = await getAvailNo({ mark_price });
-    // }else{
-    //     availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
-    // }
-    // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -524,7 +513,7 @@ let lastLastWinDirection = null;
 let lastLastLossDirection = null;
 let ratioChangeNum = 0;
 let lastMostWinRatio = 0;
-let isOpenOtherOrder = false;
+let isOpenOtherOrder = true;
 let last50PnlList = [];
 let max50Pnl = 0
 let min50Pnl = 0;
@@ -635,11 +624,10 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     let unrealized_pnl = size * (Number(mark_price) - Number(avg_cost)) / Number(mark_price);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
 
-    const ratio = Number(unrealized_pnl) / Number(margin);
     const condition = Number(leverage) / 100;
-
     const otherMargin = Number(position) * 100 / Number(avg_cost) / leverage;
     const otherFee = Number(otherMargin) * 5 * 2 / 10000;
+    const ratio = (Number(unrealized_pnl) - otherFee) / Number(margin);
 
     const continuousObj = continuousMap[instrument_id];
 
@@ -677,9 +665,9 @@ const autoOperateSwap = async (holding,mark_price) => {
     if(side=='short') unrealized_pnl = - unrealized_pnl;
     let isOpenShort = side == 'short';
 
-    const ratio = Number(unrealized_pnl) / Number(margin);
     const condition = Number(leverage) / 100;
     const fee = Number(margin) * 5 * 2 / 10000;
+    const ratio = (Number(unrealized_pnl) - fee) / Number(margin);
 
     const continuousObj = continuousMap[instrument_id];
 
@@ -751,7 +739,12 @@ const autoOperateSwap = async (holding,mark_price) => {
         }
         return;
     }
-    if(ratio < - condition * newLossRatio * frequency * 1 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+    // if(ratio < - condition * newLossRatio * frequency * 2.5 / 5 && !continuousObj.continuousLossNum){
+    //     isOpenOtherOrder = true;
+    //     const otherOpenSide = side == 'short' ? 'short' : 'long';
+    //     await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+    // }
+    if(ratio < - condition * newLossRatio * frequency * 1 / 5 / 2 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
         isOpenOtherOrder = true;
         const otherOpenSide = side == 'short' ? 'long' : 'short';
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
