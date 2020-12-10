@@ -567,34 +567,34 @@ const afterLoss = async (holding,type) =>{
     const continuousObj = continuousMap[instrument_id];
 
     let isOpenShort = side == 'short';
-    isOpenShort = !isOpenShort;
-
-    if(
-        side == 'short'
-        &&
-        lastWinDirection == 'long'
-    ){
-        continuousLossSameSideNum++;
-    }else if(
-        side == 'long'
-        &&
-        lastWinDirection == 'short'
-        &&
-        continuousWinSameSideNum < 1
-    ) {
-        continuousLossSameSideNum++;
-        if(continuousLossSameSideNum < 2){
-            isOpenShort = !isOpenShort;
-        }
-    }
-
-    continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-    continuousObj.continuousWinNum = 0;
-
-    lastLastLossDirection = lastLossDirection;
-    lastLossDirection = side;
-
-    lastMostWinRatio = 0;
+    // isOpenShort = !isOpenShort;
+    //
+    // if(
+    //     side == 'short'
+    //     &&
+    //     lastWinDirection == 'long'
+    // ){
+    //     continuousLossSameSideNum++;
+    // }else if(
+    //     side == 'long'
+    //     &&
+    //     lastWinDirection == 'short'
+    //     &&
+    //     continuousWinSameSideNum < 1
+    // ) {
+    //     continuousLossSameSideNum++;
+    //     if(continuousLossSameSideNum < 2){
+    //         isOpenShort = !isOpenShort;
+    //     }
+    // }
+    //
+    // continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+    // continuousObj.continuousWinNum = 0;
+    //
+    // lastLastLossDirection = lastLossDirection;
+    // lastLossDirection = side;
+    //
+    // lastMostWinRatio = 0;
 
     const openSide = isOpenShort ? 'short' : 'long';
     const payload = {
@@ -694,32 +694,32 @@ const autoOperateSwap = async (holding,mark_price) => {
     console.log('pnl',unrealized_pnl - fee)
     console.log('------------continuousLossNum end---------------')
 
-    if(ratio > 0){
-        lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
-        if(
-            ratio < condition * newWinRatio * frequency / 10
-            &&
-            lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-            &&
-            continuousLossSameSideNum == 1
-
-        ){
-            const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
-            if(result) {
-                dealPnl()
-                lastMostWinRatio = 0;
-
-                const openSide = side == 'long' ? 'short' : 'long';
-                const payload = {
-                    openSide,
-                    lossNum: continuousObj.continuousLossNum,
-                    continuousWinSameSideNum,
-                    continuousLossSameSideNum
-                }
-                await autoOpenOrderSingle(holding, payload);
-            }
-        }
-    }
+    // if(ratio > 0){
+    //     lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
+    //     if(
+    //         ratio < condition * newWinRatio * frequency / 10
+    //         &&
+    //         lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
+    //         &&
+    //         continuousLossSameSideNum == 1
+    //
+    //     ){
+    //         const { result } = await autoCloseOrderByMarketPriceByHolding(holding);
+    //         if(result) {
+    //             dealPnl()
+    //             lastMostWinRatio = 0;
+    //
+    //             const openSide = side == 'long' ? 'short' : 'long';
+    //             const payload = {
+    //                 openSide,
+    //                 lossNum: continuousObj.continuousLossNum,
+    //                 continuousWinSameSideNum,
+    //                 continuousLossSameSideNum
+    //             }
+    //             await autoOpenOrderSingle(holding, payload);
+    //         }
+    //     }
+    // }
 
     if(ratio > condition * newWinRatio * frequency){
         // const { result } = await autoCloseOrderSingle(holding)

@@ -328,14 +328,14 @@ export default props => {
       //   }
       // }
 
-      if(
-        continuousWinSameSideNum > 1
-      ){
-        if(lastWinDirection == 'short'){
-          newWinRatio = Number(winRatio.current)
-          newLossRatio = Number(lossRatio.current)
-        }
-      }
+      // if(
+      //   continuousWinSameSideNum > 1
+      // ){
+      //   if(lastWinDirection == 'short'){
+      //     newWinRatio = Number(winRatio.current)
+      //     newLossRatio = Number(lossRatio.current)
+      //   }
+      // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
@@ -346,24 +346,24 @@ export default props => {
       }else{
         if(ratio > 0){
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
-          if(
-            ratio < condition * newWinRatio * frequency / 10
-          ){
-            if(
-              (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-                &&
-                continuousLossSameSideNum == 1
-              )
-            ){
-              dealPnl()
-
-              isCurrentSideShort = !isCurrentSideShort;
-
-              lastMostWinRatio = 0;
-              primaryPrice = item[1];
-              isUpDownNum += 1;
-            }
-          }
+          // if(
+          //   ratio < condition * newWinRatio * frequency / 10
+          // ){
+          //   if(
+          //     (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
+          //       &&
+          //       continuousLossSameSideNum == 1
+          //     )
+          //   ){
+          //     dealPnl()
+          //
+          //     isCurrentSideShort = !isCurrentSideShort;
+          //
+          //     lastMostWinRatio = 0;
+          //     primaryPrice = item[1];
+          //     isUpDownNum += 1;
+          //   }
+          // }
         }
 
         // console.log(item[0],newWinRatio,ratio,condition * newWinRatio * frequency,currentSide,lastWinDirection)
@@ -452,25 +452,25 @@ export default props => {
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
 
-          isCurrentSideShort = !isCurrentSideShort;
-          if(
-            currentSide == 'short'
-            &&
-            lastWinDirection == 'long'
-          ){
-            continuousLossSameSideNum++;
-          }else if(
-            currentSide == 'long'
-            &&
-            lastWinDirection == 'short'
-            &&
-            continuousWinSameSideNum < 1
-          ) {
-            continuousLossSameSideNum++;
-            if(continuousLossSameSideNum < 2){
-              isCurrentSideShort = !isCurrentSideShort;
-            }
-          }
+          // isCurrentSideShort = !isCurrentSideShort;
+          // if(
+          //   currentSide == 'short'
+          //   &&
+          //   lastWinDirection == 'long'
+          // ){
+          //   continuousLossSameSideNum++;
+          // }else if(
+          //   currentSide == 'long'
+          //   &&
+          //   lastWinDirection == 'short'
+          //   &&
+          //   continuousWinSameSideNum < 1
+          // ) {
+          //   continuousLossSameSideNum++;
+          //   if(continuousLossSameSideNum < 2){
+          //     isCurrentSideShort = !isCurrentSideShort;
+          //   }
+          // }
 
           // if(
           //   (!continuousWinSameSideNum)
@@ -491,13 +491,15 @@ export default props => {
           // winMap[0] = winMap[0] + 1
 
           primaryPrice = item[1];
+
+          // primaryPrice = 0;
         }
         // if(ratio < - condition * newLossRatio * frequency * 2.5 / 5 && !continuousObj.continuousLossNum){
         //   isOpenOtherOrder = true;
         //   otherPositionPrimaryPrice = item[1]
         //   otherPositionSide = isCurrentSideShort ? 'short' : 'long'
         // }
-        if(ratio < - condition * newLossRatio * frequency * 1 / 5 / 2 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+        if(ratio < - condition * newLossRatio * frequency * 1 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
           isOpenOtherOrder = true;
           otherPositionPrimaryPrice = item[1]
           otherPositionSide = !isCurrentSideShort ? 'short' : 'long'

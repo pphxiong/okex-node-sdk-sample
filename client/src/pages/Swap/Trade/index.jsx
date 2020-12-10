@@ -45,14 +45,14 @@ export default props => {
       continuousWinNum: 3,
       continuousLossNum: 0,
       lastWinDirection : 'long',
-      lastLastWinDirection: 'long',
-      lastLossDirection: 'short',
+      lastLastWinDirection: 'short',
+      lastLossDirection: 'long',
       lastLastLossDirection: 'long',
-      continuousWinSameSideNum: 1,
+      continuousWinSameSideNum: 0,
       continuousLossSameSideNum: 0,
-      lastMostWinRatio: -0.002222,
+      lastMostWinRatio: 0.05908,
       initPosition: 20,
-      isOpenOtherOrder: false
+      isOpenOtherOrder: true
     }
     const { errcode, errmsg } = await setContinousWinAndLoss(payload)
     if(errcode == 0)  message.success(errmsg);
