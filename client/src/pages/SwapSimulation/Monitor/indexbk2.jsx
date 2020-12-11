@@ -30,15 +30,15 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const winRatio = useRef(2);
-  const lossRatio = useRef(0.6);
-  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
-  const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
+  const winRatio = useRef(0.5);
+  const lossRatio = useRef(4.5);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(0.5);
+  const [changebleLossRatio, setChangebleLossRatio] = useState(4.5);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('11');
-  const [leverage,setLeverage] = useState(10);
+  const [leverage,setLeverage] = useState(20);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0)
 
@@ -144,15 +144,18 @@ export default props => {
     continuousWinSameSideNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
     ratioChangeNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
   }
-  const initPosition = 20;
+  let initPosition = 20;
   let isOpenOtherOrder = false;
   let otherPositionPrimaryPrice = 0;
   let otherPositionSide = null
   let otherTotalPnl = 0;
+  let last50PnlList = [];
+  let max50Pnl = 0
+  let min50Pnl = 0;
   const testOtherOrder = async (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    const otherPosition = 2 * initPosition
-    const size = Number(otherPosition) * 100 / Number(price);
+    const otherPosition = 1 * initPosition
+    const size = Number(otherPosition) * 100 / Number(otherPositionPrimaryPrice);
     let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
 
@@ -160,15 +163,10 @@ export default props => {
     const otherFee = Number(otherMargin) * 5 * 2 / 10000;
 
     let condition = leverage / 100;
-    const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
+    const ratio = (Number(other_unrealized_pnl) - otherFee) / Number(otherMargin);
 
-    let newWinRatio = Number(winRatio.current) / 4.0
-    let newLossRatio = Number(lossRatio.current) * 2
-
-    if(continuousObj.continuousWinNum){
-      newWinRatio = Number(winRatio.current) / 5.0
-      newLossRatio = Number(lossRatio.current) * 1.7
-    }
+    const newWinRatio = Number(winRatio.current)
+    const newLossRatio = Number(lossRatio.current)
 
     // if(continuousObj.continuousWinNum == 2
     //   // &&
@@ -187,6 +185,12 @@ export default props => {
 
     if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
+      if(last50PnlList.length >= 6){
+        last50PnlList.splice(last50PnlList.length-1,1,(other_unrealized_pnl - otherFee) * 100 / otherMargin)
+      }else{
+        last50PnlList.push((other_unrealized_pnl - otherFee) * 100 / otherMargin)
+      }
+
       isOpenOtherOrder = false
     }
     // if(ratio < - condition * newLossRatio * frequency){
@@ -216,6 +220,26 @@ export default props => {
 
     let lastTotalRatio = 0;
     historyList.map((item,index)=>{
+      // if(last50PnlList.length==6){
+      //   const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
+      //   if(
+      //     sum50 > 160
+      //   ) {
+      //     initPosition = 10
+      //   }else
+      //     if(
+      //     sum50 > 180
+      //   ) {
+      //     initPosition = 5
+      //   }else if(sum50 < -65){
+      //     initPosition = 30
+      //   }else if(sum50 < -80){
+      //     initPosition = 40
+      //   }
+      //   max50Pnl = Math.max(max50Pnl,sum50)
+      //   min50Pnl = Math.min(min50Pnl,sum50)
+      // }
+
       if(isOpenOtherOrder) {
         let isLast = index == historyList.length - 1
         testOtherOrder(item[1],isLast)
@@ -225,95 +249,93 @@ export default props => {
       if(isCurrentSideShort) currentSide = 'short';
 
       let changeRatio = 1;
-      if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
-        changeRatio = 1;
-      }else if(continuousObj.continuousLossNum > 2) {
-        const temp = continuousObj.continuousLossNum - 3
-        changeRatio = temp * (1 - temp / 5 ) + 1
-      }else if(continuousObj.continuousLossNum == 1) {
-        changeRatio = 1.5;
-      }
-      // if(continuousLossSameSideNum == 2) changeRatio = 0.5;
-      // if (continuousObj.continuousLossNum>2) changeRatio = 2
-      if(
-        (!continuousWinSameSideNum
-          &&
-          continuousObj.continuousLossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-          &&
-          continuousObj.continuousLossNum == 2)
-        // ||
-        // continuousObj.continuousWinNum == 2
-      ){
-        changeRatio = 0.05;
-      }
+      // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
+      //   changeRatio = 1;
+      // }else if(continuousObj.continuousLossNum > 2) {
+      //   const temp = continuousObj.continuousLossNum - 3
+      //   changeRatio = temp * (1 - temp / 5 ) + 1
+      // }else if(continuousObj.continuousLossNum == 1) {
+      //   changeRatio = 1.5;
+      // }
+
+      // if(
+      //   (!continuousWinSameSideNum
+      //   &&
+      //   continuousObj.continuousLossNum == 2)
+      //   ||
+      //   (continuousLossSameSideNum == 2
+      //     &&
+      //     continuousObj.continuousLossNum == 2)
+      // ){
+      //   changeRatio = 0.05;
+      // }
       changeRatio = changeRatio > 0 ? changeRatio : 1
       let positionRatio = changeRatio
 
       const position = Math.ceil(initPosition * positionRatio)
 
-      const margin = position * 100 / historyList[0][1] / leverage;
+      const margin = position * 100 / Number(primaryPrice) / leverage;
       let condition = leverage / 100;
 
-      const size = Number(position) * 100 / Number(item[1]);
+      const size = Number(position) * 100 / Number(primaryPrice);
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
-      const ratio = Number(unrealized_pnl) / Number(margin);
       const fee = Number(margin) * 5 * 2 / 10000;
+      const ratio = (Number(unrealized_pnl) - fee) / Number(margin);
 
       const dealPnl = () => {
         totalFee += fee;
         totalPnl += (unrealized_pnl - fee);
         totalMargin += margin
         totalRatio =  totalPnl * 100 / totalMargin
+
+        // if(last50PnlList.length >= 6){
+        //   last50PnlList.splice(last50PnlList.length-1,1,(unrealized_pnl - fee) * 100 / margin)
+        // }else{
+        //   last50PnlList.push((unrealized_pnl - fee) * 100 / margin)
+        // }
+        // const sum50 = last50PnlList.reduce((prev,next)=>prev+next)
+        // max50Pnl = Math.max(max50Pnl,sum50)
+        // min50Pnl = Math.min(min50Pnl,sum50)
+        // console.log(last50PnlList,max50Pnl,min50Pnl)
       }
 
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
 
-      if(
-        lastLastLossDirection != lastLossDirection
-        &&
-        lastLossDirection != currentSide
-        // &&
-        // !isUpDownNum
-      ){
-        if(continuousObj.continuousLossNum > 7){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-          newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
-        }
-        if(continuousObj.continuousLossNum > 4){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
-        }
-        if(continuousObj.continuousLossNum > 2){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
-        }
-        if(continuousObj.continuousLossNum > 1){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
-          newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
-        }
-      }
-
-      if(
-        continuousWinSameSideNum > 1
-      ){
-        if(lastWinDirection == 'short'){
-          newWinRatio = Number(winRatio.current)
-          newLossRatio = Number(lossRatio.current)
-        }
-      }
+      // if(
+      //   lastLastLossDirection != lastLossDirection
+      //   &&
+      //   lastLossDirection != currentSide
+      //   // &&
+      //   // !isUpDownNum
+      // ){
+      //   if(continuousObj.continuousLossNum > 7){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
+      //     newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
+      //   }
+      //   if(continuousObj.continuousLossNum > 4){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
+      //     newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+      //   }
+      //   if(continuousObj.continuousLossNum > 2){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
+      //     newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+      //   }
+      //   if(continuousObj.continuousLossNum > 1){
+      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+      //     newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
+      //   }
+      // }
 
       // if(
-      //  continuousWinSameSideNum
-      //  &&
-      //   isOpenOtherOrder
+      //   continuousWinSameSideNum > 1
       // ){
-      //   newWinRatio = Number(winRatio.current) / 8
-      //   newLossRatio = Number(lossRatio.current) * 1.2
+      //   if(lastWinDirection == 'short'){
+      //     newWinRatio = Number(winRatio.current)
+      //     newLossRatio = Number(lossRatio.current)
+      //   }
       // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
@@ -326,35 +348,23 @@ export default props => {
         if(ratio > 0){
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
           // if(
-          //   ratio < condition * newWinRatio * frequency * 1.35 / 2
-          //   &&
-          //   lastMostWinRatio > condition * newWinRatio * frequency * 1.5 / 2
-          // ) {
-          //   totalFee += fee;
-          //   totalPnl += unrealized_pnl - fee;
-          //   totalMargin += margin
-          //   totalRatio =  totalRatio + (unrealized_pnl - fee) * 100 / margin
+          //   ratio < condition * newWinRatio * frequency / 10
+          // ){
+          //   if(
+          //     (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
+          //       &&
+          //       continuousLossSameSideNum == 1
+          //     )
+          //   ){
+          //     dealPnl()
           //
-          //   lastMostWinRatio = 0;
-          //   primaryPrice = item[1];
+          //     isCurrentSideShort = !isCurrentSideShort;
+          //
+          //     lastMostWinRatio = 0;
+          //     primaryPrice = item[1];
+          //     isUpDownNum += 1;
+          //   }
           // }
-          if(
-            ratio < condition * newWinRatio * frequency / 10
-          ){
-            if(
-              (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-                &&
-                continuousLossSameSideNum == 1)
-            ){
-              dealPnl()
-
-              isCurrentSideShort = !isCurrentSideShort;
-
-              lastMostWinRatio = 0;
-              primaryPrice = item[1];
-              isUpDownNum += 1;
-            }
-          }
         }
 
         // console.log(item[0],newWinRatio,ratio,condition * newWinRatio * frequency,currentSide,lastWinDirection)
@@ -383,14 +393,14 @@ export default props => {
           continuousObj.continuousLossNum = 0;
           continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-          isCurrentSideShort = !isCurrentSideShort;
+          // isCurrentSideShort = !isCurrentSideShort;
           if(
             (currentSide == 'short' && lastWinDirection == 'short')
             ||
             (currentSide == 'long' && lastWinDirection == 'long')
           ){
             continuousWinSameSideNum = continuousWinSameSideNum + 1;
-            isCurrentSideShort = !isCurrentSideShort;
+            // isCurrentSideShort = !isCurrentSideShort;
           }else{
             continuousWinSameSideNum = 0;
           }
@@ -411,18 +421,13 @@ export default props => {
           primaryPrice = item[1];
           isUpDownNum = 0;
 
-          // if(isOpenOtherOrder) testOtherOrder(item[1],true)
-          if(
-            // continuousObj.continuousWinNum == 2
-            // &&
-            // continuousWinSameSideNum
-            // &&
-            !isOpenOtherOrder
-          ){
-            isOpenOtherOrder = true;
-            otherPositionPrimaryPrice = item[1]
-            otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-          }
+          // if(
+          //   !isOpenOtherOrder
+          // ){
+          //   isOpenOtherOrder = true;
+          //   otherPositionPrimaryPrice = item[1]
+          //   otherPositionSide = isCurrentSideShort ? 'short' : 'long'
+          // }
 
         }
         if(ratio < - condition * newLossRatio * frequency){
@@ -448,77 +453,35 @@ export default props => {
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
 
-          isCurrentSideShort = !isCurrentSideShort;
-          if(
-            currentSide == 'short'
-            &&
-            lastWinDirection == 'long'
-          ){
-            continuousLossSameSideNum++;
-            if(
-              continuousLossSameSideNum < 2
-            ){
-              isCurrentSideShort = !isCurrentSideShort;
-            }else{
-              // console.log(currentSide)
-              // console.log(lastWinDirection)
-              // console.log('lastLossDirection',lastLossDirection)
-              // console.log(lastLastLossDirection)
-              // console.log(lastLastWinDirection)
-            }
-          }else if(
-            currentSide == 'long'
-            &&
-            lastWinDirection == 'short'
-            &&
-            continuousWinSameSideNum < 1
-          ) {
-            continuousLossSameSideNum++;
-            if(continuousLossSameSideNum < 2){
-              isCurrentSideShort = !isCurrentSideShort;
-            }
-          }
+          // isCurrentSideShort = !isCurrentSideShort;
+          // if(
+          //   currentSide == 'short'
+          //   &&
+          //   lastWinDirection == 'long'
+          // ){
+          //   continuousLossSameSideNum++;
+          // }else if(
+          //   currentSide == 'long'
+          //   &&
+          //   lastWinDirection == 'short'
+          //   &&
+          //   continuousWinSameSideNum < 1
+          // ) {
+          //   continuousLossSameSideNum++;
+          //   if(continuousLossSameSideNum < 2){
+          //     isCurrentSideShort = !isCurrentSideShort;
+          //   }
+          // }
 
-          if(
-            newLossRatio != Number(lossRatio.current)
-          ){
-            ratioChangeNum++;
-            if(!continuousWinSameSideNum){
-              isCurrentSideShort = currentSide != 'short'
-            }
-
-            if(
-              continuousWinSameSideNum
-            ){
-              if(
-                lastWinDirection == 'short'
-                &&
-                ratioChangeNum > 1
-                &&
-                ratioChangeNum < 3
-              ){
-                isCurrentSideShort = !isCurrentSideShort
-              }
-
-              if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
-                isCurrentSideShort = !isCurrentSideShort
-              }
-            }
-          }
-
-          // if(isOpenOtherOrder) testOtherOrder(item[1],true)
-          if(
-            (!continuousWinSameSideNum
-              // &&
-              // continuousObj.continuousLossNum == 2
-            )
-            &&
-            !isOpenOtherOrder
-          ){
-            isOpenOtherOrder = true;
-            otherPositionPrimaryPrice = item[1]
-            otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
-          }
+          // if(
+          //   (!continuousWinSameSideNum)
+          //   &&
+          //   !isOpenOtherOrder
+          // ){
+          //   isOpenOtherOrder = true;
+          //   otherPositionPrimaryPrice = item[1]
+          //   otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
+          // }
 
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
@@ -529,13 +492,23 @@ export default props => {
           // winMap[0] = winMap[0] + 1
 
           primaryPrice = item[1];
+
+          // primaryPrice = 0;
+        }
+        // if(ratio < - condition * newLossRatio * frequency * 2.5 / 5 && !continuousObj.continuousLossNum){
+        //   isOpenOtherOrder = true;
+        //   otherPositionPrimaryPrice = item[1]
+        //   otherPositionSide = isCurrentSideShort ? 'short' : 'long'
+        // }
+        if(ratio < - condition * newLossRatio * frequency * 1 / 5 && !continuousObj.continuousLossNum && !isOpenOtherOrder){
+          isOpenOtherOrder = true;
+          otherPositionPrimaryPrice = item[1]
+          otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
         }
 
-        // if(index == historyList.length - 1){
-        //   dealPnl()
-        //   primaryPrice = item[1]
-        // }
-
+        if(index == historyList.length - 1){
+          dealPnl()
+        }
       }
 
       maxLossRatio = {
@@ -579,6 +552,7 @@ export default props => {
     let mockObj = {}
 
     const monthData = mockData[month]
+    // if(month=='04') lastPrice = 0
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
       // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
@@ -629,9 +603,8 @@ export default props => {
     let i = 0;
     while(i<duration) {
       const firstDay = `2020-${monthMap[i]}-01 00:00:00`;
+      // if(i!=2){
       const { pnl , ratio, dList } = await getMonthPnl(firstDay,monthMap[i]);
-
-      console.log(`2020-${monthMap[i]}-01 00:00:00`,'pnl,ratio,dList',monthMap[i],pnl,ratio,dList)
       t += pnl;
       tRatio += ratio;
       mList.push({
@@ -639,6 +612,14 @@ export default props => {
         totalPnl: pnl,
         totalRatio: ratio
       })
+      console.log(`2020-${monthMap[i]}-01 00:00:00`,'pnl,ratio,dList',monthMap[i],pnl,ratio,dList)
+      // }else{
+      //   mList.push({
+      //     month: monthMap[i],
+      //     totalPnl: 0,
+      //     totalRatio: 0
+      //   })
+      // }
       i++;
     }
 
@@ -646,6 +627,9 @@ export default props => {
     console.log('winMap',winMap)
     console.log('loss2Maps',loss2Maps)
     console.log('winMaps',winMaps)
+    console.log('max50Pnl',max50Pnl)
+    console.log('min50Pnl',min50Pnl)
+    console.log('last50PnlList',last50PnlList)
 
     setTPnlList(mList);
     setTPnl(t);
