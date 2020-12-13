@@ -11,8 +11,8 @@ let myInterval;
 let mode = 4; //下单模式
 
 let frequency = 1;
-const winRatio = 2;
-const lossRatio = 0.6;
+const winRatio = 1;
+const lossRatio = 1.5;
 let initPosition = 20;
 
 const continuousMap = {
@@ -530,13 +530,13 @@ const afterWin = async (holding, type = 0) => {
     const continuousObj = continuousMap[instrument_id];
 
     let isOpenShort = side == 'short';
-    isOpenShort = !isOpenShort;
+    // isOpenShort = !isOpenShort;
 
     if((side == 'short' && lastWinDirection == 'short')
         || (side == 'long' && lastWinDirection == 'long')
     ){
         continuousWinSameSideNum++;
-        isOpenShort = !isOpenShort;
+        // isOpenShort = !isOpenShort;
     }else{
         continuousWinSameSideNum = 0;
     }
@@ -665,21 +665,9 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     let newWinRatio = Number(winRatio) / 4.0
     let newLossRatio = Number(lossRatio) * 2
 
-    if(continuousObj.continuousWinNum){
-        newWinRatio = Number(winRatio) / 5.0
-        newLossRatio = Number(lossRatio) * 1.7
-    }
-
-    // if(continuousObj.continuousWinNum == 2){
-    //     newWinRatio = Number(winRatio) / 2.8
-    //     newLossRatio = Number(lossRatio) * 1.5
-    // }
-
-    // if(continuousWinSameSideNum
-    //     && lastWinDirection == 'long'
-    // ){
-    //     newWinRatio = Number(winRatio) / 2.8
-    //     newLossRatio = Number(lossRatio) * 1.2
+    // if(continuousObj.continuousWinNum){
+    //     newWinRatio = Number(winRatio) / 5.0
+    //     newLossRatio = Number(lossRatio) * 1.7
     // }
 
     console.log('------------other continuousLossNum start---------------')
@@ -751,13 +739,9 @@ const autoOperateSwap = async (holding,mark_price) => {
         newLossRatio = Number(lossRatio)
     }
 
-    // if(
-    //     continuousWinSameSideNum
-    //     && side == 'long'
-    // ){
-    //     newWinRatio = Number(winRatio) / 10
-    //     newLossRatio = Number(lossRatio) * 1.2
-    // }
+    if(continuousObj.continuousWinNum){
+        newWinRatio = Number(winRatio) / 4
+    }
 
     console.log('------------continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
