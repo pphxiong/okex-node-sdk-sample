@@ -30,10 +30,10 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const winRatio = useRef(1);
-  const lossRatio = useRef(1.5);
-  const [changebleWinRatio, setChangebleWinRatio] = useState(1);
-  const [changebleLossRatio, setChangebleLossRatio] = useState(1.5);
+  const winRatio = useRef(2);
+  const lossRatio = useRef(0.6);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
+  const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
@@ -162,12 +162,12 @@ export default props => {
     let condition = leverage / 100;
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
 
-    let newWinRatio = Number(winRatio.current) / 4.0
+    let newWinRatio = Number(winRatio.current) / 5.0
     let newLossRatio = Number(lossRatio.current) * 2
 
-    if(continuousObj.continuousWinNum){
-      newWinRatio = Number(winRatio.current) / 4.0
-    }
+    // if(continuousObj.continuousWinNum){
+    //   newLossRatio = Number(lossRatio.current) * 2
+    // }
 
     if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
@@ -224,6 +224,8 @@ export default props => {
       ){
         changeRatio = 0.05;
       }
+
+      if(continuousObj.continuousWinNum) changeRatio = 2
       changeRatio = changeRatio > 0 ? changeRatio : 1
       let positionRatio = changeRatio
 
@@ -244,6 +246,8 @@ export default props => {
         totalPnl += (unrealized_pnl - fee);
         totalMargin += margin
         totalRatio =  totalPnl * 100 / totalMargin
+
+        // console.log(margin,unrealized_pnl - fee,(unrealized_pnl - fee)*100 / margin, ratio)
       }
 
       let newWinRatio = Number(winRatio.current);
@@ -282,7 +286,7 @@ export default props => {
       }
 
       if(continuousObj.continuousWinNum){
-        newWinRatio = Number(winRatio.current) / 4
+        newWinRatio = Number(winRatio.current) / 5
       }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
@@ -339,14 +343,14 @@ export default props => {
           continuousObj.continuousLossNum = 0;
           continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-          // isCurrentSideShort = !isCurrentSideShort;
+          isCurrentSideShort = !isCurrentSideShort;
           if(
             (currentSide == 'short' && lastWinDirection == 'short')
             ||
             (currentSide == 'long' && lastWinDirection == 'long')
           ){
             continuousWinSameSideNum = continuousWinSameSideNum + 1;
-            // isCurrentSideShort = !isCurrentSideShort;
+            isCurrentSideShort = !isCurrentSideShort;
           }else{
             continuousWinSameSideNum = 0;
           }
@@ -460,6 +464,8 @@ export default props => {
           // if(isOpenOtherOrder) testOtherOrder(item[1],true)
           if(
             (!continuousWinSameSideNum
+              // &&
+              // continuousObj.continuousLossNum == 2
             )
             &&
             !isOpenOtherOrder

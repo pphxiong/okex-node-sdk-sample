@@ -11,8 +11,8 @@ let myInterval;
 let mode = 4; //下单模式
 
 let frequency = 1;
-const winRatio = 1;
-const lossRatio = 1.5;
+const winRatio = 2;
+const lossRatio = 0.6;
 let initPosition = 20;
 
 const continuousMap = {
@@ -313,7 +313,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
-    const { openSide = 'long', lossNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
+    const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
     if(lossNum == 2 || lossNum == 4) {
         changeRatio = 1;
@@ -334,6 +334,8 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     ){
         changeRatio = 0.05;
     }
+
+    if(winNum) changeRatio = 2
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
 
@@ -391,7 +393,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
         return result;
     }
-    return new Promise(resolve=>{ resolve({ result: avail && !result }) })
+    return new Promise(resolve=>{ resolve({ result: !result }) })
 }
 
 // 平仓，closeRatio平仓比例
@@ -530,13 +532,13 @@ const afterWin = async (holding, type = 0) => {
     const continuousObj = continuousMap[instrument_id];
 
     let isOpenShort = side == 'short';
-    // isOpenShort = !isOpenShort;
+    isOpenShort = !isOpenShort;
 
     if((side == 'short' && lastWinDirection == 'short')
         || (side == 'long' && lastWinDirection == 'long')
     ){
         continuousWinSameSideNum++;
-        // isOpenShort = !isOpenShort;
+        isOpenShort = !isOpenShort;
     }else{
         continuousWinSameSideNum = 0;
     }
@@ -555,6 +557,7 @@ const afterWin = async (holding, type = 0) => {
     const payload = {
         openSide,
         lossNum: continuousObj.continuousLossNum,
+        winNum: continuousObj.continuousWinNum,
         continuousWinSameSideNum,
         continuousLossSameSideNum
     }
@@ -630,6 +633,7 @@ const afterLoss = async (holding,type) =>{
     const payload = {
         openSide,
         lossNum: continuousObj.continuousLossNum,
+        winNum: continuousObj.continuousWinNum,
         continuousWinSameSideNum,
         continuousLossSameSideNum
     }
@@ -662,12 +666,24 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 4.0
+    let newWinRatio = Number(winRatio) / 5.0
     let newLossRatio = Number(lossRatio) * 2
 
     // if(continuousObj.continuousWinNum){
     //     newWinRatio = Number(winRatio) / 5.0
     //     newLossRatio = Number(lossRatio) * 1.7
+    // }
+
+    // if(continuousObj.continuousWinNum == 2){
+    //     newWinRatio = Number(winRatio) / 2.8
+    //     newLossRatio = Number(lossRatio) * 1.5
+    // }
+
+    // if(continuousWinSameSideNum
+    //     && lastWinDirection == 'long'
+    // ){
+    //     newWinRatio = Number(winRatio) / 2.8
+    //     newLossRatio = Number(lossRatio) * 1.2
     // }
 
     console.log('------------other continuousLossNum start---------------')
@@ -740,8 +756,16 @@ const autoOperateSwap = async (holding,mark_price) => {
     }
 
     if(continuousObj.continuousWinNum){
-        newWinRatio = Number(winRatio) / 4
+        newWinRatio = Number(winRatio) / 5
     }
+
+    // if(
+    //     continuousWinSameSideNum
+    //     && side == 'long'
+    // ){
+    //     newWinRatio = Number(winRatio) / 10
+    //     newLossRatio = Number(lossRatio) * 1.2
+    // }
 
     console.log('------------continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
