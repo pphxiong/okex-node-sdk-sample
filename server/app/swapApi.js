@@ -255,7 +255,7 @@ const validateAndCancelOrder = async (instrument_id, type = 0) => {
     console.log('cancelorder', instrument_id, order_info.length)
     if( order_info && order_info.length ){
         const { order_id, size, filled_qty } = order_info[0];
-        if((Number(size) != 2 * initPosition || type) && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
+        if(( (Number(size) != 2 * initPosition || !isOpenOtherOrder) || type) && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -667,7 +667,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const continuousObj = continuousMap[instrument_id];
 
     let newWinRatio = Number(winRatio) / 5.0
-    let newLossRatio = Number(lossRatio) * 2
+    let newLossRatio = Number(lossRatio) * 3
 
     // if(continuousObj.continuousWinNum){
     //     newWinRatio = Number(winRatio) / 5.0

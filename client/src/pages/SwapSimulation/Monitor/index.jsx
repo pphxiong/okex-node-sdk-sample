@@ -163,7 +163,7 @@ export default props => {
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
 
     let newWinRatio = Number(winRatio.current) / 5.0
-    let newLossRatio = Number(lossRatio.current) * 2
+    let newLossRatio = Number(lossRatio.current) * 3
 
     // if(continuousObj.continuousWinNum){
     //   newLossRatio = Number(lossRatio.current) * 2
