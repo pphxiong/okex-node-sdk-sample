@@ -260,28 +260,19 @@ export default props => {
       ){
         if(continuousObj.continuousLossNum > 7){
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-          newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
+          // newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
         }
         if(continuousObj.continuousLossNum > 4){
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+          // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
         }
         if(continuousObj.continuousLossNum > 2){
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+          // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
         }
         if(continuousObj.continuousLossNum > 1){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
-          newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
-        }
-      }
-
-      if(
-        continuousWinSameSideNum > 1
-      ){
-        if(lastWinDirection == 'short'){
-          newWinRatio = Number(winRatio.current)
-          newLossRatio = Number(lossRatio.current)
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 2 : (lastWinDirection == 'long' ? newWinRatio / 1.3 : newWinRatio);
+          // newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
         }
       }
 
@@ -414,12 +405,6 @@ export default props => {
               continuousLossSameSideNum < 2
             ){
               isCurrentSideShort = !isCurrentSideShort;
-            }else{
-              // console.log(currentSide)
-              // console.log(lastWinDirection)
-              // console.log('lastLossDirection',lastLossDirection)
-              // console.log(lastLastLossDirection)
-              // console.log(lastLastWinDirection)
             }
           }else if(
             currentSide == 'long'
@@ -434,32 +419,32 @@ export default props => {
             }
           }
 
-          if(
-            newLossRatio != Number(lossRatio.current)
-          ){
-            ratioChangeNum++;
-            if(!continuousWinSameSideNum){
-              isCurrentSideShort = currentSide != 'short'
-            }
-
-            if(
-              continuousWinSameSideNum
-            ){
-              if(
-                lastWinDirection == 'short'
-                &&
-                ratioChangeNum > 1
-                &&
-                ratioChangeNum < 3
-              ){
-                isCurrentSideShort = !isCurrentSideShort
-              }
-
-              if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
-                isCurrentSideShort = !isCurrentSideShort
-              }
-            }
-          }
+          // if(
+          //   newLossRatio != Number(lossRatio.current)
+          // ){
+          //   ratioChangeNum++;
+          //   if(!continuousWinSameSideNum){
+          //     isCurrentSideShort = currentSide != 'short'
+          //   }
+          //
+          //   if(
+          //     continuousWinSameSideNum
+          //   ){
+          //     if(
+          //       lastWinDirection == 'short'
+          //       &&
+          //       ratioChangeNum > 1
+          //       &&
+          //       ratioChangeNum < 3
+          //     ){
+          //       isCurrentSideShort = !isCurrentSideShort
+          //     }
+          //
+          //     if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
+          //       isCurrentSideShort = !isCurrentSideShort
+          //     }
+          //   }
+          // }
 
           // if(isOpenOtherOrder) testOtherOrder(item[1],true)
           if(

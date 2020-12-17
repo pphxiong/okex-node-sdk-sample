@@ -586,38 +586,27 @@ const afterLoss = async (holding,type) =>{
     let isOpenShort = side == 'short';
     isOpenShort = !isOpenShort;
 
-    if((side == 'short' && lastWinDirection == 'long')
-        || (side == 'long' && lastWinDirection == 'short')
-        && continuousWinSameSideNum < 1){
+    if(
+        side == 'short'
+        &&
+        lastWinDirection == 'long'
+    ){
+        continuousLossSameSideNum++;
+        if(
+            continuousLossSameSideNum < 2
+        ){
+            isOpenShort = !isOpenShort;
+        }
+    }else if(
+        side == 'long'
+        &&
+        lastWinDirection == 'short'
+        &&
+        continuousWinSameSideNum < 1
+    ) {
         continuousLossSameSideNum++;
         if(continuousLossSameSideNum < 2){
             isOpenShort = !isOpenShort;
-        }
-    }
-
-    if(
-        ratioChangeNum
-    ){
-        if(!continuousWinSameSideNum){
-            isOpenShort = side != 'short'
-        }
-
-        if(
-            continuousWinSameSideNum
-        ){
-            if(
-                lastWinDirection == 'short'
-                &&
-                ratioChangeNum > 1
-                &&
-                ratioChangeNum < 3
-            ){
-                isOpenShort = !isOpenShort
-            }
-
-            if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
-                isOpenShort = !isOpenShort
-            }
         }
     }
 
@@ -669,23 +658,6 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     let newWinRatio = Number(winRatio) / 5.0
     let newLossRatio = Number(lossRatio) * 1.2
 
-    // if(continuousObj.continuousWinNum){
-    //     newWinRatio = Number(winRatio) / 5.0
-    //     newLossRatio = Number(lossRatio) * 1.7
-    // }
-
-    // if(continuousObj.continuousWinNum == 2){
-    //     newWinRatio = Number(winRatio) / 2.8
-    //     newLossRatio = Number(lossRatio) * 1.5
-    // }
-
-    // if(continuousWinSameSideNum
-    //     && lastWinDirection == 'long'
-    // ){
-    //     newWinRatio = Number(winRatio) / 2.8
-    //     newLossRatio = Number(lossRatio) * 1.2
-    // }
-
     console.log('------------other continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
     console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
@@ -730,42 +702,25 @@ const autoOperateSwap = async (holding,mark_price) => {
     ){
         if(continuousObj.continuousLossNum > 7){
             newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-            newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
+            // newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
         }
         if(continuousObj.continuousLossNum > 4){
             newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-            newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+            // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
         }
         if(continuousObj.continuousLossNum > 2){
             newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-            newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+            // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
         }
         if(continuousObj.continuousLossNum > 1){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
-            newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5): newLossRatio;
+            newWinRatio = continuousWinSameSideNum ? newWinRatio / 2 : (lastWinDirection == 'long' ? newWinRatio / 1.3 : newWinRatio);
+            // newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
         }
-    }
-
-    if(
-        continuousWinSameSideNum > 1
-        &&
-        lastWinDirection == 'short'
-    ){
-        newWinRatio = Number(winRatio)
-        newLossRatio = Number(lossRatio)
     }
 
     if(continuousObj.continuousWinNum){
         newWinRatio = Number(winRatio) / 5
     }
-
-    // if(
-    //     continuousWinSameSideNum
-    //     && side == 'long'
-    // ){
-    //     newWinRatio = Number(winRatio) / 10
-    //     newLossRatio = Number(lossRatio) * 1.2
-    // }
 
     console.log('------------continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)

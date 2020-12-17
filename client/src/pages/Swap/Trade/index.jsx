@@ -45,12 +45,12 @@ export default props => {
       continuousWinNum: 0,
       continuousLossNum: 1,
       lastWinDirection : 'long',
-      lastLastWinDirection: 'long',
-      lastLossDirection: 'long',
+      lastLastWinDirection: 'short',
+      lastLossDirection: 'short',
       lastLastLossDirection: 'short',
-      continuousWinSameSideNum: 1,
-      continuousLossSameSideNum: 0,
-      lastMostWinRatio: 0,
+      continuousWinSameSideNum: 0,
+      continuousLossSameSideNum: 1,
+      lastMostWinRatio: 0.039,
       initPosition: 20,
       isOpenOtherOrder: false
     }
