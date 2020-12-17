@@ -315,27 +315,27 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
-    if(lossNum == 2 || lossNum == 4) {
-        changeRatio = 1;
-    }else if(lossNum > 2) {
-        const temp = lossNum - 3
-        changeRatio = temp * (1 - temp / 5 ) + 1
-    }else if(lossNum) {
-        changeRatio = 1.5;
-    }
-    if(
-        (!continuousWinSameSideNum
-            &&
-            lossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-            &&
-            lossNum == 2)
-    ){
-        changeRatio = 0.05;
-    }
-
-    if(winNum) changeRatio = 2
+    // if(lossNum == 2 || lossNum == 4) {
+    //     changeRatio = 1;
+    // }else if(lossNum > 2) {
+    //     const temp = lossNum - 3
+    //     changeRatio = temp * (1 - temp / 5 ) + 1
+    // }else if(lossNum) {
+    //     changeRatio = 1.5;
+    // }
+    // if(
+    //     (!continuousWinSameSideNum
+    //         &&
+    //         lossNum == 2)
+    //     ||
+    //     (continuousLossSameSideNum == 2
+    //         &&
+    //         lossNum == 2)
+    // ){
+    //     changeRatio = 0.05;
+    // }
+    //
+    // if(winNum) changeRatio = 2
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
 
