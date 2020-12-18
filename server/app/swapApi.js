@@ -268,8 +268,9 @@ const getOrderState = async (payload) => {
 }
 
 const autoOpenOtherOrderSingle = async (params = {}) => {
-    const { openSide = 'long', } = params;
-    const position = initPosition * 2
+    const { openSide = 'long', winNum } = params;
+    let position = 1 * initPosition
+    if(winNum) position = 2 * initPosition
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -315,25 +316,25 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
-    if(lossNum == 2 || lossNum == 4) {
-        changeRatio = 1;
-    }else if(lossNum > 2) {
-        const temp = lossNum - 3
-        changeRatio = temp * (1 - temp / 5 ) + 1
-    }else if(lossNum) {
-        changeRatio = 1.5;
-    }
-    if(
-        (!continuousWinSameSideNum
-            &&
-            lossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-            &&
-            lossNum == 2)
-    ){
-        changeRatio = 0.05;
-    }
+    // if(lossNum == 2 || lossNum == 4) {
+    //     changeRatio = 1;
+    // }else if(lossNum > 2) {
+    //     const temp = lossNum - 3
+    //     changeRatio = temp * (1 - temp / 5 ) + 1
+    // }else if(lossNum) {
+    //     changeRatio = 1.5;
+    // }
+    // if(
+    //     (!continuousWinSameSideNum
+    //         &&
+    //         lossNum == 2)
+    //     ||
+    //     (continuousLossSameSideNum == 2
+    //         &&
+    //         lossNum == 2)
+    // ){
+    //     changeRatio = 0.05;
+    // }
 
     if(winNum) changeRatio = 2
     changeRatio = changeRatio > 0 ? changeRatio : 1
@@ -575,8 +576,8 @@ const afterWin = async (holding, type = 0) => {
         // )
     ){
         isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: openSide })
+        const otherOpenSide = side;
+        await autoOpenOtherOrderSingle({ openSide: otherOpenSide, winNum: continuousObj.continuousWinNum })
     }
 }
 const afterLoss = async (holding,type) =>{
@@ -640,7 +641,7 @@ const afterLoss = async (holding,type) =>{
     ){
         isOpenOtherOrder = true;
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
+        await autoOpenOtherOrderSingle({ openSide: otherOpenSide, winNum: continuousObj.continuousWinNum })
     }
 }
 const autoOtherOrder = async (holding,mark_price,isOpen = false) => {

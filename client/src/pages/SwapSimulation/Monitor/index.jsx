@@ -151,7 +151,8 @@ export default props => {
   let otherTotalPnl = 0;
   const testOtherOrder = async (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    const otherPosition = 2 * initPosition
+    let otherPosition = 1 * initPosition
+    if(continuousObj.continuousWinNum) otherPosition = 2 * initPosition
     const size = Number(otherPosition) * 100 / Number(price);
     let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
@@ -205,25 +206,25 @@ export default props => {
       if(isCurrentSideShort) currentSide = 'short';
 
       let changeRatio = 1;
-      if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
-        changeRatio = 1;
-      }else if(continuousObj.continuousLossNum > 2) {
-        const temp = continuousObj.continuousLossNum - 3
-        changeRatio = temp * (1 - temp / 5 ) + 1
-      }else if(continuousObj.continuousLossNum == 1) {
-        changeRatio = 1.5;
-      }
-      if(
-        (!continuousWinSameSideNum
-          &&
-          continuousObj.continuousLossNum == 2)
-        ||
-        (continuousLossSameSideNum == 2
-          &&
-          continuousObj.continuousLossNum == 2)
-      ){
-        changeRatio = 0.05;
-      }
+      // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
+      //   changeRatio = 1;
+      // }else if(continuousObj.continuousLossNum > 2) {
+      //   const temp = continuousObj.continuousLossNum - 3
+      //   changeRatio = temp * (1 - temp / 5 ) + 1
+      // }else if(continuousObj.continuousLossNum == 1) {
+      //   changeRatio = 1.5;
+      // }
+      // if(
+      //   (!continuousWinSameSideNum
+      //     &&
+      //     continuousObj.continuousLossNum == 2)
+      //   ||
+      //   (continuousLossSameSideNum == 2
+      //     &&
+      //     continuousObj.continuousLossNum == 2)
+      // ){
+      //   changeRatio = 0.05;
+      // }
 
       if(continuousObj.continuousWinNum) changeRatio = 2
       changeRatio = changeRatio > 0 ? changeRatio : 1
@@ -367,7 +368,7 @@ export default props => {
           ){
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
-            otherPositionSide = isCurrentSideShort ? 'short' : 'long'
+            otherPositionSide = currentSide
           }
 
         }
