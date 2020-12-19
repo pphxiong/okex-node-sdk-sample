@@ -658,6 +658,8 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     let newWinRatio = Number(winRatio) / 3.5
     let newLossRatio = Number(lossRatio) / 1.5
 
+    if(continuousObj.continuousWinNum) newWinRatio = Number(winRatio) / 5
+
     console.log('------------other continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
     console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
