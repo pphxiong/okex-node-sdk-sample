@@ -655,8 +655,8 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 5.0
-    let newLossRatio = Number(lossRatio) * 1.2
+    let newWinRatio = Number(winRatio) / 3.5
+    let newLossRatio = Number(lossRatio) / 1.5
 
     console.log('------------other continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
@@ -695,27 +695,31 @@ const autoOperateSwap = async (holding,mark_price) => {
     let newWinRatio = Number(winRatio);
     let newLossRatio = Number(lossRatio);
 
-    if(
-        lastLastLossDirection != lastLossDirection
-        &&
-        lastLossDirection != side
-    ){
-        if(continuousObj.continuousLossNum > 7){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-            // newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
-        }
-        if(continuousObj.continuousLossNum > 4){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-            // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
-        }
-        if(continuousObj.continuousLossNum > 2){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-            // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
-        }
-        if(continuousObj.continuousLossNum > 1){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 2 : (lastWinDirection == 'long' ? newWinRatio / 1.3 : newWinRatio);
-            // newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
-        }
+    // if(
+    //     lastLastLossDirection != lastLossDirection
+    //     &&
+    //     lastLossDirection != side
+    // ){
+    //     if(continuousObj.continuousLossNum > 7){
+    //         newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
+    //         // newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
+    //     }
+    //     if(continuousObj.continuousLossNum > 4){
+    //         newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
+    //         // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+    //     }
+    //     if(continuousObj.continuousLossNum > 2){
+    //         newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
+    //         // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+    //     }
+    //     if(continuousObj.continuousLossNum > 1){
+    //         newWinRatio = continuousWinSameSideNum ? newWinRatio / 2 : (lastWinDirection == 'long' ? newWinRatio / 1.3 : newWinRatio);
+    //         // newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
+    //     }
+    // }
+
+    if(continuousObj.continuousLossNum){
+        newWinRatio = Number(winRatio) / 2
     }
 
     if(continuousObj.continuousWinNum){
