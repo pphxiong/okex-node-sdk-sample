@@ -151,8 +151,7 @@ export default props => {
   let otherTotalPnl = 0;
   const testOtherOrder = async (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    let otherPosition = 1 * initPosition
-    if(continuousObj.continuousWinNum) otherPosition = 2 * initPosition
+    const otherPosition = 2 * initPosition
     const size = Number(otherPosition) * 100 / Number(price);
     let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
@@ -163,10 +162,12 @@ export default props => {
     let condition = leverage / 100;
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
 
-    let newWinRatio = Number(winRatio.current) / 3.5
-    let newLossRatio = Number(lossRatio.current) / 1.5
+    let newWinRatio = Number(winRatio.current) / 5.0
+    let newLossRatio = Number(lossRatio.current) * 1.2
 
-    if(continuousObj.continuousWinNum) newWinRatio = Number(winRatio.current) / 5
+    // if(continuousObj.continuousWinNum){
+    //   newLossRatio = Number(lossRatio.current) * 2
+    // }
 
     if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
@@ -204,25 +205,25 @@ export default props => {
       if(isCurrentSideShort) currentSide = 'short';
 
       let changeRatio = 1;
-      // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
-      //   changeRatio = 1;
-      // }else if(continuousObj.continuousLossNum > 2) {
-      //   const temp = continuousObj.continuousLossNum - 3
-      //   changeRatio = temp * (1 - temp / 5 ) + 1
-      // }else if(continuousObj.continuousLossNum == 1) {
-      //   changeRatio = 1.5;
-      // }
-      // if(
-      //   (!continuousWinSameSideNum
-      //     &&
-      //     continuousObj.continuousLossNum == 2)
-      //   ||
-      //   (continuousLossSameSideNum == 2
-      //     &&
-      //     continuousObj.continuousLossNum == 2)
-      // ){
-      //   changeRatio = 0.05;
-      // }
+      if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
+        changeRatio = 1;
+      }else if(continuousObj.continuousLossNum > 2) {
+        const temp = continuousObj.continuousLossNum - 3
+        changeRatio = temp * (1 - temp / 5 ) + 1
+      }else if(continuousObj.continuousLossNum == 1) {
+        changeRatio = 1.5;
+      }
+      if(
+        (!continuousWinSameSideNum
+          &&
+          continuousObj.continuousLossNum == 2)
+        ||
+        (continuousLossSameSideNum == 2
+          &&
+          continuousObj.continuousLossNum == 2)
+      ){
+        changeRatio = 0.05;
+      }
 
       if(continuousObj.continuousWinNum) changeRatio = 2
       changeRatio = changeRatio > 0 ? changeRatio : 1
@@ -252,32 +253,37 @@ export default props => {
       let newWinRatio = Number(winRatio.current);
       let newLossRatio = Number(lossRatio.current);
 
+      if(
+        lastLastLossDirection != lastLossDirection
+        &&
+        lastLossDirection != currentSide
+      ){
+        if(continuousObj.continuousLossNum > 7){
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
+          newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
+        }
+        if(continuousObj.continuousLossNum > 4){
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
+          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
+        }
+        if(continuousObj.continuousLossNum > 2){
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
+          newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
+        }
+        if(continuousObj.continuousLossNum > 1){
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+          newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
+        }
+      }
+
       // if(
-      //   lastLastLossDirection != lastLossDirection
-      //   &&
-      //   lastLossDirection != currentSide
+      //   continuousWinSameSideNum > 1
       // ){
-      //   if(continuousObj.continuousLossNum > 7){
-      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-      //     // newLossRatio = continuousWinSameSideNum ?  newLossRatio * 2.8 : newLossRatio * 2.8;
-      //   }
-      //   if(continuousObj.continuousLossNum > 4){
-      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-      //     // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio * 2.5;
-      //   }
-      //   if(continuousObj.continuousLossNum > 2){
-      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-      //     // newLossRatio = continuousWinSameSideNum ? newLossRatio * 2 : newLossRatio;
-      //   }
-      //   if(continuousObj.continuousLossNum > 1){
-      //     newWinRatio = continuousWinSameSideNum ? newWinRatio / 2 : (lastWinDirection == 'long' ? newWinRatio / 1.3 : newWinRatio);
-      //     // newLossRatio = continuousWinSameSideNum ? Math.min(newLossRatio * continuousWinSameSideNum * 1.2, 3.5 ): newLossRatio;
+      //   if(lastWinDirection == 'short'){
+      //     newWinRatio = Number(winRatio.current)
+      //     newLossRatio = Number(lossRatio.current)
       //   }
       // }
-
-      if(continuousObj.continuousLossNum){
-        newWinRatio = Number(winRatio.current) / 2
-      }
 
       if(continuousObj.continuousWinNum){
         newWinRatio = Number(winRatio.current) / 5
@@ -370,7 +376,7 @@ export default props => {
           ){
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
-            otherPositionSide = currentSide
+            otherPositionSide = isCurrentSideShort ? 'short' : 'long'
           }
 
         }
@@ -408,6 +414,12 @@ export default props => {
               continuousLossSameSideNum < 2
             ){
               isCurrentSideShort = !isCurrentSideShort;
+            }else{
+              // console.log(currentSide)
+              // console.log(lastWinDirection)
+              // console.log('lastLossDirection',lastLossDirection)
+              // console.log(lastLastLossDirection)
+              // console.log(lastLastWinDirection)
             }
           }else if(
             currentSide == 'long'
