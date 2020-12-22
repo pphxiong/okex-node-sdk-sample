@@ -675,6 +675,7 @@ const afterLoss = async (holding,type) =>{
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 }
+let otherPositionLoss = false
 const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
@@ -701,13 +702,42 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     console.log('------------other continuousLossNum end---------------')
 
     if(ratio > condition * newWinRatio * frequency) {
-        await autoCloseOrderByMarketPriceByHolding(holding,1);
+        // await autoCloseOrderByMarketPriceByHolding(holding,1);
+        const payload = {
+            size: otherPositionLoss ? Number(position) / 2 : Number(position),
+            type: side == 'long' ? 3 : 4,
+            instrument_id,
+            price: mark_price,
+            match_price: 0
+        }
+
+        const result = await authClient.swap().postOrder(payload);
+        console.log('otherOrderResult',result)
+
+        let hasOrderInterval = setInterval(async ()=>{
+            const { result } = await validateAndCancelOrder(instrument_id, 1);
+            if(result == false) {
+                clearInterval(hasOrderInterval)
+                hasOrderInterval = null;
+                return;
+            }
+            const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+            const payload = {
+                size: otherPositionLoss ? Number(position) / 2 : Number(position),
+                type: side == 'long' ? 3 : 4,
+                instrument_id,
+                price: mark_price,
+                match_price: 0
+            }
+            await authClient.swap().postOrder(payload);
+        },1500)
+
         isOpenOtherOrder = false
+        otherPositionLoss = false
         if(isOpen) await afterWin(holding, 1)
     }
     if(ratio < - condition * newLossRatio * frequency){
         await autoCloseOrderByMarketPriceByHolding(holding,1);
-        if(isOpen) await afterLoss(holding, 1)
         if(continuousObj.continuousLossNum){
             const openSide = side == 'short' ? 'long' : 'short';
             const payload = {
@@ -719,8 +749,10 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
             }
             await autoOpenOrderSingle(holding, payload);
             isOpenOtherOrder = true
+            otherPositionLoss = true
             return
         }
+        if(isOpen) await afterLoss(holding, 1)
         isOpenOtherOrder = false
     }
 }
@@ -843,11 +875,11 @@ function startInterval() {
         }
         // if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
         if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
-            if(Number(btcHolding[0].position) == 2 * initPosition){
-                await autoOperateSwap(btcHolding[1],mark_price)
-                await autoOtherOrder(btcHolding[0],mark_price)
-                return
-            }
+            // if(Number(btcHolding[0].position) == 2 * initPosition){
+            //     await autoOperateSwap(btcHolding[1],mark_price)
+            //     await autoOtherOrder(btcHolding[0],mark_price)
+            //     return
+            // }
             await autoOperateSwap(btcHolding[0],mark_price)
             await autoOtherOrder(btcHolding[1],mark_price)
             return

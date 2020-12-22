@@ -149,6 +149,7 @@ export default props => {
   let otherPositionPrimaryPrice = 0;
   let otherPositionSide = null
   let otherTotalPnl = 0;
+  let otherPositionLoss = false
   const testOtherOrder = async (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1.5 * initPosition
@@ -166,13 +167,27 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 5
     let newLossRatio = Number(lossRatio.current) * 1
 
-    // if(continuousObj.continuousLossNum) {
-    //   newLossRatio = Number(lossRatio.current) * 1
+    // if(otherPositionLoss){
+    //   newWinRatio = Number(winRatio.current) / 2
     // }
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
+
+      otherPositionLoss = false
+
+      // continuousObj.continuousLossNum = 0
+      // continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+      // if(otherPositionSide == lastWinDirection){
+      //   continuousWinSameSideNum = continuousWinSameSideNum + 1
+      // }else{
+      //   continuousWinSameSideNum = 0
+      // }
+      //
+      // lastLastWinDirection = lastWinDirection
+      // lastWinDirection = otherPositionSide
+
     }
 
     if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
@@ -181,6 +196,7 @@ export default props => {
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
         isOpenOtherOrder = true
+        otherPositionLoss = true
         return
       }
       isOpenOtherOrder = false
@@ -300,6 +316,10 @@ export default props => {
       if(continuousObj.continuousWinNum){
         newWinRatio = Number(winRatio.current) / 5
       }
+
+      // if(otherPositionLoss){
+      //   newWinRatio = Number(winRatio.current) / 2
+      // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
