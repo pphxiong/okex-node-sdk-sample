@@ -165,7 +165,7 @@ export default props => {
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
 
     let newWinRatio = Number(winRatio.current) / 5
-    let newLossRatio = Number(lossRatio.current) * 1
+    let newLossRatio = Number(lossRatio.current) * 1.5
 
     // if(otherPositionLoss){
     //   newWinRatio = Number(winRatio.current) / 2

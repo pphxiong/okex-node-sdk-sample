@@ -689,7 +689,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     const continuousObj = continuousMap[instrument_id];
 
     let newWinRatio = Number(winRatio) / 5.0
-    let newLossRatio = Number(lossRatio) * 1.0
+    let newLossRatio = Number(lossRatio) * 1.5
 
     console.log('------------other continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
