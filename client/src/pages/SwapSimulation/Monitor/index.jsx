@@ -38,7 +38,7 @@ export default props => {
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('11');
-  const [leverage,setLeverage] = useState(10);
+  const [leverage,setLeverage] = useState(20);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0)
 
@@ -166,8 +166,23 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 5
     let newLossRatio = Number(lossRatio.current) * 1
 
-    if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
+    // if(continuousObj.continuousLossNum) {
+    //   newLossRatio = Number(lossRatio.current) * 1
+    // }
+
+    if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
+      isOpenOtherOrder = false
+    }
+
+    if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
+      otherTotalPnl += other_unrealized_pnl - otherFee;
+      if(continuousObj.continuousLossNum){
+        otherPositionPrimaryPrice = price
+        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        isOpenOtherOrder = true
+        return
+      }
       isOpenOtherOrder = false
     }
   }
@@ -414,12 +429,6 @@ export default props => {
               continuousLossSameSideNum < 2
             ){
               isCurrentSideShort = !isCurrentSideShort;
-            }else{
-              // console.log(currentSide)
-              // console.log(lastWinDirection)
-              // console.log('lastLossDirection',lastLossDirection)
-              // console.log(lastLastLossDirection)
-              // console.log(lastLastWinDirection)
             }
           }else if(
             currentSide == 'long'
