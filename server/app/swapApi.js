@@ -389,7 +389,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
                 match_price: 0
             }
             await authClient.swap().postOrder(payload);
-        },1500)
+        },1000)
 
         return result;
     }
@@ -702,26 +702,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     console.log('------------other continuousLossNum end---------------')
 
     if(ratio > condition * newWinRatio * frequency) {
-        // await autoCloseOrderByMarketPriceByHolding(holding,1);
-        const payload = {
-            size: otherPositionLoss ? Number(position) / 2 : Number(position),
-            type: side == 'long' ? 3 : 4,
-            instrument_id,
-            price: mark_price,
-            match_price: 0
-        }
-
-        const result = await authClient.swap().postOrder(payload);
-        console.log('otherOrderResult',result)
-
-        let hasOrderInterval = setInterval(async ()=>{
-            const { result } = await validateAndCancelOrder(instrument_id, 1);
-            if(result == false) {
-                clearInterval(hasOrderInterval)
-                hasOrderInterval = null;
-                return;
-            }
-            const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+        if(otherPositionLoss){
             const payload = {
                 size: otherPositionLoss ? Number(position) / 2 : Number(position),
                 type: side == 'long' ? 3 : 4,
@@ -729,8 +710,30 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
                 price: mark_price,
                 match_price: 0
             }
-            await authClient.swap().postOrder(payload);
-        },1500)
+
+            const result = await authClient.swap().postOrder(payload);
+            console.log('otherOrderResult',result)
+
+            let hasOrderInterval = setInterval(async ()=>{
+                const { result } = await validateAndCancelOrder(instrument_id, 1);
+                if(result == false) {
+                    clearInterval(hasOrderInterval)
+                    hasOrderInterval = null;
+                    return;
+                }
+                const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+                const payload = {
+                    size: otherPositionLoss ? Number(position) / 2 : Number(position),
+                    type: side == 'long' ? 3 : 4,
+                    instrument_id,
+                    price: mark_price,
+                    match_price: 0
+                }
+                await authClient.swap().postOrder(payload);
+            },1500)
+        }else{
+            await autoCloseOrderByMarketPriceByHolding(holding,1);
+        }
 
         isOpenOtherOrder = false
         otherPositionLoss = false
