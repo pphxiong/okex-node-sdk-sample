@@ -244,7 +244,7 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 
 // 市价全平By holding
 const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, type = 0) => {
-    await validateAndCancelOrder(instrument_id,type);
+    await validateAndCancelOrder({instrument_id, type});
     return await cAuthClient.swap.closePosition({instrument_id, direction: side })
 }
 
@@ -308,7 +308,6 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         order_id = (await authClient.swap().postOrder(payload)).order_id;
     },1500)
 
-    return result;
 }
 
 // 开仓，availRatio开仓比例
@@ -397,25 +396,25 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 }
 
 // 平仓，closeRatio平仓比例
-const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, last, side }, params = {}) => {
-    const { closeRatio = 1 } = params;
-    const { result } = await validateAndCancelOrder(instrument_id);
-    const qty = Number(avail_position)
-    let size = Math.floor(qty * closeRatio)
-    if(qty == 1) size = 1;
-    if(size){
-        const payload = {
-            size,
-            type: side == 'long' ? 3 : 4,
-            // order_type: 0,
-            instrument_id: instrument_id,
-            price: last,
-            match_price: 0
-        }
-        return await authClient.swap().postOrder(payload);
-    }
-    return new Promise(resolve=>{ resolve({ result: !result }) })
-}
+// const autoCloseOrderSingle = async ({ avail_position, position, instrument_id, last, side }, params = {}) => {
+//     const { closeRatio = 1 } = params;
+//     const { result } = await validateAndCancelOrder({instrument_id});
+//     const qty = Number(avail_position)
+//     let size = Math.floor(qty * closeRatio)
+//     if(qty == 1) size = 1;
+//     if(size){
+//         const payload = {
+//             size,
+//             type: side == 'long' ? 3 : 4,
+//             // order_type: 0,
+//             instrument_id: instrument_id,
+//             price: last,
+//             match_price: 0
+//         }
+//         return await authClient.swap().postOrder(payload);
+//     }
+//     return new Promise(resolve=>{ resolve({ result: !result }) })
+// }
 
 // 获取可开张数
 const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
@@ -714,11 +713,11 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
                 match_price: 0
             }
 
-            const result = await authClient.swap().postOrder(payload);
+            let order_id = (await authClient.swap().postOrder(payload)).order_id;
             console.log('otherOrderResult',result)
 
             let hasOrderInterval = setInterval(async ()=>{
-                const { result } = await validateAndCancelOrder(instrument_id, 1);
+                const { result } = await validateAndCancelOrder({instrument_id, order_id});
                 if(result == false) {
                     clearInterval(hasOrderInterval)
                     hasOrderInterval = null;
@@ -732,7 +731,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
                     price: mark_price,
                     match_price: 0
                 }
-                await authClient.swap().postOrder(payload);
+                order_id = (await authClient.swap().postOrder(payload)).order_id;
             },1500)
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding,1);
