@@ -166,9 +166,10 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
-    // if(otherPositionLoss){
-    //   newWinRatio = Number(winRatio.current) / 2
-    // }
+    if(otherPositionLoss){
+      newWinRatio = Number(winRatio.current) / 10
+      newLossRatio = Number(lossRatio.current) / 1
+    }
 
     if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
@@ -498,7 +499,7 @@ export default props => {
           if(
             (!continuousWinSameSideNum
               ||
-              continuousObj.continuousLossNum > 3
+              continuousObj.continuousLossNum > 2
             )
             &&
             !isOpenOtherOrder

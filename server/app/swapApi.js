@@ -657,8 +657,8 @@ const afterLoss = async (holding,type) =>{
 
     if(
         (!continuousWinSameSideNum
-            // &&
-            // continuousObj.continuousLossNum == 2
+            ||
+            continuousObj.continuousLossNum > 2
         )
         &&
         !isOpenOtherOrder
@@ -685,6 +685,11 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
 
     let newWinRatio = Number(winRatio) / 5.0
     let newLossRatio = Number(lossRatio) * 1.5
+
+    if(otherPositionLoss){
+        newWinRatio = Number(winRatio) / 10
+        newLossRatio = Number(lossRatio) / 1
+    }
 
     console.log('------------other continuousLossNum start---------------')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
