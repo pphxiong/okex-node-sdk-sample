@@ -269,7 +269,7 @@ const getOrderState = async (payload) => {
 
 const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', } = params;
-    const position = initPosition * 1.5 / 1.5
+    const position = initPosition * 1.5
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -314,7 +314,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (holding, params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
-    let changeRatio = 1.5 / 1.5;
+    let changeRatio = 1.5;
     // if(lossNum == 2 || lossNum == 4) {
     //     changeRatio = 1;
     // }else if(lossNum > 2) {
