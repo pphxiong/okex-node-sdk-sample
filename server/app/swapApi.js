@@ -702,7 +702,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
 
         if(continuousObj.continuousWinNum){
             const payload = {
-                size: Number(position) / 2,
+                size: Math.ceil(Number(position) / 2),
                 type: side == 'long' ? 3 : 4,
                 instrument_id,
                 price: mark_price,
@@ -721,7 +721,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
                 }
                 const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
                 const payload = {
-                    size: Number(position) / 2,
+                    size: Math.ceil(Number(position) / 2),
                     type: side == 'long' ? 3 : 4,
                     instrument_id,
                     price: mark_price,
@@ -763,8 +763,9 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
             await autoOpenOrderSingle(holding, payload);
             isOpenOtherOrder = true
             otherPositionLoss = true
+            return
         }
-        // if(isOpen) await afterLoss(holding, 1)
+        if(isOpen) await afterLoss(holding, 1)
     }
 }
 const autoOperateSwap = async (holding,mark_price) => {
