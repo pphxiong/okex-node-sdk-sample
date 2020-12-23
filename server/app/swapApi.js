@@ -575,8 +575,9 @@ const afterWin = async (holding, type = 0) => {
         // )
     ){
         isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: openSide })
+        let otherOpenSide = openSide;
+        if(continuousObj.continuousWinNum > 6) otherOpenSide = openSide == 'short' ? 'long' : 'short'
+        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 }
 const afterLoss = async (holding,type) =>{
@@ -596,12 +597,6 @@ const afterLoss = async (holding,type) =>{
             continuousLossSameSideNum < 2
         ){
             isOpenShort = !isOpenShort;
-        }else{
-            // console.log(currentSide)
-            // console.log(lastWinDirection)
-            // console.log('lastLossDirection',lastLossDirection)
-            // console.log(lastLastLossDirection)
-            // console.log(lastLastWinDirection)
         }
     }else if(
         side == 'long'
@@ -776,8 +771,8 @@ const autoOperateSwap = async (holding,mark_price) => {
     let newLossRatio = Number(lossRatio);
 
     if(
-        lastLastLossDirection != lastLossDirection
-        &&
+        // lastLastLossDirection != lastLossDirection
+        // &&
         lastLossDirection != side
     ){
         if(continuousObj.continuousLossNum > 7){
