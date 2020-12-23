@@ -250,12 +250,12 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
-const validateAndCancelOrder = async (instrument_id, type = 0) => {
+const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id, type = 0}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 1})
     console.log('cancelorder', instrument_id, order_info.length)
     if( order_info && order_info.length ){
         const { order_id, size, filled_qty } = order_info[0];
-        if(( (Number(size) != 2 * initPosition || !isOpenOtherOrder) || type) && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
+        if(((origin_order_id == order_id) || type) && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -286,11 +286,11 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         match_price: 0
     }
 
-    const result = await authClient.swap().postOrder(payload);
+    let order_id = (await authClient.swap().postOrder(payload)).order_id;
     console.log('otherOrderResult',result)
 
     let hasOrderInterval = setInterval(async ()=>{
-        const { result } = await validateAndCancelOrder(instrument_id, 1);
+        const { result } = await validateAndCancelOrder({instrument_id, order_id});
         if(result == false) {
             clearInterval(hasOrderInterval)
             hasOrderInterval = null;
@@ -305,7 +305,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             price: mark_price,
             match_price: 0
         }
-        await authClient.swap().postOrder(payload);
+        order_id = (await authClient.swap().postOrder(payload)).order_id;
     },1500)
 
     return result;
@@ -359,7 +359,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type)
 
-    const { result } = await validateAndCancelOrder(instrument_id);
+    const { result } = await validateAndCancelOrder({instrument_id, type: 1});
     if(position) {
         const payload = {
             size: position,
@@ -370,10 +370,10 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             match_price: 0
         }
 
-        const result = await authClient.swap().postOrder(payload);
+        let order_id = (await authClient.swap().postOrder(payload)).order_id;
 
         let hasOrderInterval = setInterval(async ()=>{
-            const { result } = await validateAndCancelOrder(instrument_id);
+            const { result } = await validateAndCancelOrder({instrument_id, order_id});
             if(result == false) {
                 clearInterval(hasOrderInterval)
                 hasOrderInterval = null;
@@ -388,7 +388,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
                 price: mark_price,
                 match_price: 0
             }
-            await authClient.swap().postOrder(payload);
+            order_id = (await authClient.swap().postOrder(payload)).order_id;
         },1000)
 
         return result;
