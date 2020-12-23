@@ -170,27 +170,11 @@ export default props => {
     //   newWinRatio = Number(winRatio.current) / 2
     // }
 
-    if(ratio > condition * newWinRatio * frequency || isForceDeal) {
+    if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
-
       otherPositionLoss = false
 
-      // continuousObj.continuousLossNum = 0
-      // continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-      // if(otherPositionSide == lastWinDirection){
-      //   continuousWinSameSideNum = continuousWinSameSideNum + 1
-      // }else{
-      //   continuousWinSameSideNum = 0
-      // }
-      //
-      // lastLastWinDirection = lastWinDirection
-      // lastWinDirection = otherPositionSide
-
-    }
-
-    if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
-      otherTotalPnl += other_unrealized_pnl - otherFee;
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
@@ -198,8 +182,20 @@ export default props => {
         otherPositionLoss = true
         return
       }
-      isOpenOtherOrder = false
     }
+
+    // if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
+    //   otherTotalPnl += other_unrealized_pnl - otherFee;
+    //   isOpenOtherOrder = false
+    //   otherPositionLoss = false
+    //   if(continuousObj.continuousLossNum){
+    //     otherPositionPrimaryPrice = price
+    //     otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+    //     isOpenOtherOrder = true
+    //     otherPositionLoss = true
+    //     return
+    //   }
+    // }
   }
   const testOrder = async (historyList,endPrice) => {
     if(!historyList.length) {
@@ -501,8 +497,8 @@ export default props => {
           // if(isOpenOtherOrder) testOtherOrder(item[1],true)
           if(
             (!continuousWinSameSideNum
-              // &&
-              // continuousObj.continuousLossNum == 2
+              ||
+              continuousObj.continuousLossNum > 3
             )
             &&
             !isOpenOtherOrder
