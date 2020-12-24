@@ -733,6 +733,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
                 }
                 order_id = (await authClient.swap().postOrder(payload)).order_id;
             },1500)
+            return;
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding,1);
             if(continuousObj.continuousLossNum){
