@@ -749,7 +749,7 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
                 otherPositionLoss = true
             }
         }
-        // if(isOpen) await afterWin(holding, 1)
+        if(isOpen) await afterWin(holding, 1)
     }
     if(ratio < - condition * newLossRatio * frequency){
         await autoCloseOrderByMarketPriceByHolding(holding,1);
