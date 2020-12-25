@@ -390,7 +390,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
                 match_price: 0
             }
             order_id = (await authClient.swap().postOrder(payload)).order_id;
-        },1000)
+        },1500)
 
         return result;
     }
