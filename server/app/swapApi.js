@@ -252,7 +252,7 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 // 如果有就撤销, type: 1 撤销other单
 const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id, type = 0}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3})
-    console.log('cancelorder', instrument_id, order_info.length)
+    console.log('cancelorder', instrument_id, order_info.length, origin_order_id)
     if( order_info && order_info.length ){
         let curOrder = order_info.find(item=>item.order_id == origin_order_id)
         curOrder = curOrder || {}
