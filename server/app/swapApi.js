@@ -289,7 +289,6 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     }
 
     let order_id = (await authClient.swap().postOrder(payload)).order_id;
-    console.log('otherOrderResult',result)
 
     let hasOrderInterval = setInterval(async ()=>{
         const { result } = await validateAndCancelOrder({instrument_id, order_id});
@@ -716,7 +715,6 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
             }
 
             let order_id = (await authClient.swap().postOrder(payload)).order_id;
-            console.log('otherOrderResult',result)
 
             let hasOrderInterval = setInterval(async ()=>{
                 const { result } = await validateAndCancelOrder({instrument_id, order_id});
