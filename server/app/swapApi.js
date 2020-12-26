@@ -704,7 +704,7 @@ const closeHalfPosition = async (holding, mark_price) => {
     },1500)
 }
 let otherPositionLoss = false
-const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
+const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
 
     const size = Number(position) * 100 / Number(mark_price);
@@ -737,7 +737,12 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
     console.log('------------other continuousLossNum end---------------')
 
     if(ratio > condition * newWinRatio * frequency) {
-        await autoCloseOrderByMarketPriceByHolding(holding,1);
+        if(isHalf){
+            await closeHalfPosition(holding)
+        }else{
+            await autoCloseOrderByMarketPriceByHolding(holding);
+        }
+
         isOpenOtherOrder = false
         otherPositionLoss = false
 
@@ -756,7 +761,12 @@ const autoOtherOrder = async (holding,mark_price,isOpen = false) => {
         }
     }
     if(ratio < - condition * newLossRatio * frequency){
-        await autoCloseOrderByMarketPriceByHolding(holding,1);
+        if(isHalf){
+            await closeHalfPosition(holding)
+        }else{
+            await autoCloseOrderByMarketPriceByHolding(holding);
+        }
+
         isOpenOtherOrder = false
         otherPositionLoss = false
 
