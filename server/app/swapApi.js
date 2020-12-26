@@ -282,32 +282,32 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const payload = {
         size: position,
         type,
-        // order_type: 0, //1：只做Maker 4：市价委托
+        order_type: 4, //1：只做Maker 4：市价委托
         instrument_id,
-        price: mark_price,
-        match_price: 0
+        // price: mark_price,
+        // match_price: 0
     }
 
-    let order_id = (await authClient.swap().postOrder(payload)).order_id;
+    await authClient.swap().postOrder(payload)
 
-    let hasOrderInterval = setInterval(async ()=>{
-        const { result } = await validateAndCancelOrder({instrument_id, order_id});
-        if(result == false) {
-            clearInterval(hasOrderInterval)
-            hasOrderInterval = null;
-            return;
-        }
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-        const payload = {
-            size: position,
-            type,
-            // order_type: 0, //1：只做Maker 4：市价委托
-            instrument_id,
-            price: mark_price,
-            match_price: 0
-        }
-        order_id = (await authClient.swap().postOrder(payload)).order_id;
-    },1500)
+    // let hasOrderInterval = setInterval(async ()=>{
+    //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
+    //     if(result == false) {
+    //         clearInterval(hasOrderInterval)
+    //         hasOrderInterval = null;
+    //         return;
+    //     }
+    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+    //     const payload = {
+    //         size: position,
+    //         type,
+    //         // order_type: 0, //1：只做Maker 4：市价委托
+    //         instrument_id,
+    //         price: mark_price,
+    //         match_price: 0
+    //     }
+    //     order_id = (await authClient.swap().postOrder(payload)).order_id;
+    // },1500)
 
 }
 
@@ -342,7 +342,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     const position = Math.ceil(initPosition * positionRatio)
 
     const { instrument_id, position: holdingPosition } = holding;
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
 
     // // 可开张数
     // let availNo;
@@ -359,7 +359,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type)
 
-    const { result } = await validateAndCancelOrder({instrument_id, type: 1});
+    // const { result } = await validateAndCancelOrder({instrument_id, type: 1});
     if(position) {
         const payload = {
             size: position,
@@ -370,30 +370,32 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             // match_price: 0
         }
 
-        let order_id = (await authClient.swap().postOrder(payload)).order_id;
+        await authClient.swap().postOrder(payload)
 
-        let hasOrderInterval = setInterval(async ()=>{
-            const { result } = await validateAndCancelOrder({instrument_id, order_id});
-            if(result == false) {
-                clearInterval(hasOrderInterval)
-                hasOrderInterval = null;
-                return;
-            }
-            const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-            const payload = {
-                size: position,
-                type,
-                order_type: 4, //1：只做Maker 4：市价委托
-                instrument_id: instrument_id,
-                // price: mark_price,
-                // match_price: 0
-            }
-            order_id = (await authClient.swap().postOrder(payload)).order_id;
-        },1500)
+        // let order_id = (await authClient.swap().postOrder(payload)).order_id;
 
-        return result;
+        // let hasOrderInterval = setInterval(async ()=>{
+        //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
+        //     if(result == false) {
+        //         clearInterval(hasOrderInterval)
+        //         hasOrderInterval = null;
+        //         return;
+        //     }
+        //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+        //     const payload = {
+        //         size: position,
+        //         type,
+        //         order_type: 4, //1：只做Maker 4：市价委托
+        //         instrument_id: instrument_id,
+        //         // price: mark_price,
+        //         // match_price: 0
+        //     }
+        //     order_id = (await authClient.swap().postOrder(payload)).order_id;
+        // },1500)
+
+        return true;
     }
-    return new Promise(resolve=>{ resolve({ result: !result }) })
+    // return new Promise(resolve=>{ resolve({ result: true }) })
 }
 
 // 平仓，closeRatio平仓比例
