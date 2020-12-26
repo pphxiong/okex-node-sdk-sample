@@ -257,7 +257,7 @@ const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id,
         let curOrder = order_info.find(item=>item.order_id == origin_order_id)
         curOrder = curOrder || {}
         const { order_id, size, filled_qty } = curOrder;
-        if(((origin_order_id == order_id) || type) && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
+        if(origin_order_id == order_id && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
