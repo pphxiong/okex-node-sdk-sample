@@ -323,10 +323,6 @@ export default props => {
         newWinRatio = Number(winRatio.current) / 5
       }
 
-      // if(otherPositionLoss){
-      //   newWinRatio = Number(winRatio.current) / 2
-      // }
-
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
       if(delayTimes) {

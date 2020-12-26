@@ -364,10 +364,10 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
         const payload = {
             size: position,
             type,
-            // order_type: 0, //1：只做Maker 4：市价委托
+            order_type: 4, //1：只做Maker 4：市价委托
             instrument_id: instrument_id,
-            price: mark_price,
-            match_price: 0
+            // price: mark_price,
+            // match_price: 0
         }
 
         let order_id = (await authClient.swap().postOrder(payload)).order_id;
@@ -383,10 +383,10 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             const payload = {
                 size: position,
                 type,
-                // order_type: 0, //1：只做Maker 4：市价委托
+                order_type: 4, //1：只做Maker 4：市价委托
                 instrument_id: instrument_id,
-                price: mark_price,
-                match_price: 0
+                // price: mark_price,
+                // match_price: 0
             }
             order_id = (await authClient.swap().postOrder(payload)).order_id;
         },1500)
@@ -679,8 +679,9 @@ const closeHalfPosition = async (holding, mark_price) => {
         size: Math.ceil(Number(position) / 2),
         type: side == 'long' ? 3 : 4,
         instrument_id,
-        price: mark_price,
-        match_price: 0
+        order_type: 4,
+        // price: mark_price,
+        // match_price: 0
     }
 
     let order_id = (await authClient.swap().postOrder(payload)).order_id;
@@ -697,8 +698,9 @@ const closeHalfPosition = async (holding, mark_price) => {
             size: Math.ceil(Number(position) / 2),
             type: side == 'long' ? 3 : 4,
             instrument_id,
-            price: mark_price,
-            match_price: 0
+            order_type: 4,
+            // price: mark_price,
+            // match_price: 0
         }
         order_id = (await authClient.swap().postOrder(payload)).order_id;
     },1500)
