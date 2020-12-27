@@ -244,7 +244,7 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 
 // 市价全平By holding
 const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, type = 0) => {
-    await validateAndCancelOrder({instrument_id, type});
+    // await validateAndCancelOrder({instrument_id, type});
     return await cAuthClient.swap.closePosition({instrument_id, direction: side })
 }
 
@@ -686,26 +686,26 @@ const closeHalfPosition = async (holding, mark_price) => {
         // match_price: 0
     }
 
-    let order_id = (await authClient.swap().postOrder(payload)).order_id;
+    await authClient.swap().postOrder(payload)
 
-    let hasOrderInterval = setInterval(async ()=>{
-        const { result } = await validateAndCancelOrder({instrument_id, order_id});
-        if(result == false) {
-            clearInterval(hasOrderInterval)
-            hasOrderInterval = null;
-            return;
-        }
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-        const payload = {
-            size: Math.ceil(Number(position) / 2),
-            type: side == 'long' ? 3 : 4,
-            instrument_id,
-            order_type: 4,
-            // price: mark_price,
-            // match_price: 0
-        }
-        order_id = (await authClient.swap().postOrder(payload)).order_id;
-    },1500)
+    // let hasOrderInterval = setInterval(async ()=>{
+    //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
+    //     if(result == false) {
+    //         clearInterval(hasOrderInterval)
+    //         hasOrderInterval = null;
+    //         return;
+    //     }
+    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+    //     const payload = {
+    //         size: Math.ceil(Number(position) / 2),
+    //         type: side == 'long' ? 3 : 4,
+    //         instrument_id,
+    //         order_type: 4,
+    //         // price: mark_price,
+    //         // match_price: 0
+    //     }
+    //     order_id = (await authClient.swap().postOrder(payload)).order_id;
+    // },1500)
 }
 let otherPositionLoss = false
 const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
@@ -931,7 +931,7 @@ function startInterval() {
             }
         }
         // if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
-    },1000 * 5)
+    },1000 * 2)
 }
 
 function stopInterval() {
