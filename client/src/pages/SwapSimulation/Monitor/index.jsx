@@ -173,18 +173,32 @@ export default props => {
       newLossRatio = Number(lossRatio.current) / 1
     }
 
-    if(ratio > condition * newWinRatio * frequency || ratio < - condition * newLossRatio * frequency || isForceDeal) {
+    if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
       otherPositionLoss = false
 
-      if(ratio > condition * newWinRatio * frequency){
-        if(continuousObj.continuousLossNum){
-          otherPositionPrimaryPrice = price
-          otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
-          isOpenOtherOrder = true
-          otherPositionLoss = true
-        }
+      if(continuousObj.continuousLossNum
+        // && otherPositionSide == 'short'
+      ){
+        otherPositionPrimaryPrice = price
+        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        isOpenOtherOrder = true
+        otherPositionLoss = true
+      }
+      return
+    }
+
+    if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
+      otherTotalPnl += other_unrealized_pnl - otherFee;
+      isOpenOtherOrder = false
+      otherPositionLoss = false
+
+      if(continuousObj.continuousLossNum){
+        otherPositionPrimaryPrice = price
+        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        isOpenOtherOrder = true
+        otherPositionLoss = true
       }
       return
     }
