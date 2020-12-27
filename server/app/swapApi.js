@@ -775,7 +775,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         }
 
         if(continuousObj.continuousLossNum){
-            const openSide = side == 'short' ? 'long' : 'short';
+            const openSide = side == 'long' ? 'long' : 'short';
             const payload = {
                 openSide,
                 lossNum: continuousObj.continuousLossNum,

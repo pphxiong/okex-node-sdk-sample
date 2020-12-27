@@ -196,7 +196,7 @@ export default props => {
 
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
-        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
