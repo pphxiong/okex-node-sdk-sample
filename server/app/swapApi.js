@@ -741,14 +741,14 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     console.log('------------other continuousLossNum end---------------')
 
     if(ratio > condition * newWinRatio * frequency) {
+        isOpenOtherOrder = false
+        otherPositionLoss = false
+
         if(isHalf && Number(position) == initPosition * 3){
             await closeHalfPosition(holding)
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
-
-        isOpenOtherOrder = false
-        otherPositionLoss = false
 
         if(continuousObj.continuousLossNum){
             const openSide = side == 'short' ? 'long' : 'short';
@@ -765,14 +765,14 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         }
     }
     if(ratio < - condition * newLossRatio * frequency){
+        isOpenOtherOrder = false
+        otherPositionLoss = false
+
         if(isHalf && Number(position) == initPosition * 3){
             await closeHalfPosition(holding)
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
-
-        isOpenOtherOrder = false
-        otherPositionLoss = false
 
         // if(continuousObj.continuousLossNum){
         //     const openSide = side == 'short' ? 'long' : 'short';
@@ -926,8 +926,11 @@ function startInterval() {
         if(btcQty) {
             await autoOperateSwap(btcHolding[0],mark_price)
             if(isOpenOtherOrder){
-                await autoOtherOrder(btcHolding[0],mark_price, true)
-                return
+                setTimeout(async () => {
+                    const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+                    const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+                    await autoOtherOrder(btcHolding[0],mark_price, true)
+                }, 1000)
             }
         }
         // if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
