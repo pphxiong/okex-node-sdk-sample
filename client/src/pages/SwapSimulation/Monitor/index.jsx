@@ -334,21 +334,18 @@ export default props => {
           lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
           if(
             ratio < condition * newWinRatio * frequency / 10
+            &&
+            lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
+            &&
+            continuousLossSameSideNum == 1
           ){
-            if(
-              (lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-                &&
-                continuousLossSameSideNum == 1
-              )
-            ){
-              dealPnl()
+            dealPnl()
 
-              isCurrentSideShort = !isCurrentSideShort;
+            isCurrentSideShort = !isCurrentSideShort;
 
-              lastMostWinRatio = 0;
-              primaryPrice = item[1];
-              isUpDownNum += 1;
-            }
+            lastMostWinRatio = 0;
+            primaryPrice = item[1];
+            isUpDownNum += 1;
           }
         }
 
@@ -414,7 +411,7 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-            if(continuousObj.continuousWinNum > 4) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
+            if(continuousObj.continuousWinNum > 2) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
             // otherPositionSide = currentSide == 'short' ? 'short' : (isCurrentSideShort ? 'short' : 'long')
           }
 
