@@ -738,8 +738,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(otherPositionLoss){
-        newWinRatio = Number(winRatio) / 5
-        newLossRatio = Number(lossRatio) / 1
+        newWinRatio = Number(winRatio) / 8
+        newLossRatio = Number(lossRatio) / 1.2
     }
 
     console.log('------------other continuousLossNum start---------------')
@@ -797,7 +797,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
                 continuousWinSameSideNum,
                 continuousLossSameSideNum
             }
-            await autoOpenOrderSingle(holding, payload);
+            await autoOpenOtherOrderSingle(holding, payload);
             isOpenOtherOrder = true
             otherPositionLoss = true
 
