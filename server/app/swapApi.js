@@ -756,7 +756,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         isOpenOtherOrder = false
         otherPositionLoss = false
 
-        if(isHalf && Number(position) == initPosition * 3){
+        if(isHalf && Number(position) == initPosition * 2){
             await closeHalfPosition(holding)
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
@@ -967,14 +967,19 @@ function startInterval() {
             curOtherPositionIndex = 0
             if(isOpenOtherOrder){
                 await autoOtherOrder(btcHolding[0],mark_price, true)
-            }
-            setTimeout(async () => {
-                const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-                const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-                await autoOperateSwap(btcHolding[0],mark_price)
 
-                console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-            }, 1000)
+                if(btcQty == initPosition * 2){
+                    setTimeout(async () => {
+                        const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+                        const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+                        await autoOperateSwap(btcHolding[0],mark_price)
+
+                        console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
+                    }, 1000)
+                }
+            }else{
+                await autoOperateSwap(btcHolding[0],mark_price)
+            }
         }
         // if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
     },1000 * 2)

@@ -43,7 +43,7 @@ export default props => {
     const payload = {
       instrument_id: BTC_INSTRUMENT_ID,
       continuousWinNum: 0,
-      continuousLossNum: 0,
+      continuousLossNum: 3,
       lastWinDirection : 'long',
       lastLastWinDirection: 'short',
       lastLossDirection: 'short',
