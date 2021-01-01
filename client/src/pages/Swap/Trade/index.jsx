@@ -51,7 +51,7 @@ export default props => {
       continuousWinSameSideNum: 0,
       continuousLossSameSideNum: 1,
       lastMostWinRatio: 0,
-      initPosition: 20,
+      initPosition: 15,
       isOpenOtherOrder: true
     }
     const { errcode, errmsg } = await setContinousWinAndLoss(payload)
