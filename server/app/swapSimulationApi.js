@@ -5,14 +5,14 @@ import moment from 'moment'
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customSimulationAuthClient');
 
+var config = require('./simulationConfig');
+
 const authClient = new AuthenticatedClient(
     config.httpkey,
     config.httpsecret,
     config.passphrase,
     config.urlHost
 );
-
-var config = require('./simulationConfig');
 // const pClient = new PublicClient(config.urlHost);
 const cAuthClient = new customAuthClient(
     config.httpkey,
