@@ -986,7 +986,6 @@ const startInterval = async () => {
     console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
 
     const { holding: btcHolding } = await cAuthClient.swap.getPosition(BTC_INSTRUMENT_ID);
-    console.log('btcHolding', btcHolding[0])
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
     const btcQty = Number(btcHolding[0].position);
@@ -1041,11 +1040,9 @@ const waitTime = (time = 1000 * 2) => {
 };
 
 // 定时获取交割合约账户信息
-// myInterval = startInterval()
-// myInterval = setTimeout(startInterval,1000 * 2)
-(async ()=>{
-    await startInterval()
-})()
+// (async ()=>{
+//     await startInterval()
+// })()
 app.listen(8092);
 
 console.log('8092 server start');
