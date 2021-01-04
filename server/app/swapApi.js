@@ -1020,7 +1020,8 @@ const startInterval = async () => {
             }
         }
 
-        setTimeout(startInterval,1000 * 2)
+        await waitTime()
+        await startInterval()
     }
 }
 
@@ -1031,9 +1032,20 @@ function stopInterval() {
     }
 }
 
+const waitTime = (time = 1000 * 2) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    });
+};
+
 // 定时获取交割合约账户信息
 // myInterval = startInterval()
-myInterval = setTimeout(startInterval,1000 * 2)
+// myInterval = setTimeout(startInterval,1000 * 2)
+(async ()=>{
+    await startInterval()
+})()
 app.listen(8091);
 
 console.log('8091 server start');
