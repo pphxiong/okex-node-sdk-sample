@@ -150,7 +150,7 @@ export default props => {
   let otherPositionSide = null
   let otherTotalPnl = 0;
   let otherPositionLoss = false
-  const testOtherOrder = async (price, isForceDeal = false) => {
+  const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 2 * initPosition
     const size = Number(otherPosition) * 100 / Number(price);
@@ -184,7 +184,6 @@ export default props => {
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
-      return
     }
 
     if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
@@ -198,7 +197,6 @@ export default props => {
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
-      return
     }
 
     // if(ratio < - condition * newLossRatio * frequency / 2){
@@ -220,7 +218,7 @@ export default props => {
     //   }
     // }
   }
-  const testOrder = async (historyList,endPrice) => {
+  const testOrder = (historyList,endPrice) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
     }
@@ -244,8 +242,12 @@ export default props => {
     historyList.map((item,index)=>{
       if(isOpenOtherOrder) {
         // let isLast = index == historyList.length - 1
-        testOtherOrder(item[1])
+        (async ()=>{
+          await testOtherOrder(item[1])
+        })()
       }
+
+      // console.log(item[0],item[1],'otherPositionSide',otherPositionSide,'otherPositionPrimaryPrice',otherPositionPrimaryPrice)
 
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';

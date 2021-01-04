@@ -916,76 +916,112 @@ const autoOperateSwap = async (holding,mark_price) => {
     }
 }
 
-function startInterval() {
-    if(myInterval) return myInterval;
-    return setInterval(async ()=>{
-        console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
+// function startInterval() {
+//     if(myInterval) return myInterval;
+//     return setInterval(async ()=>{
+//         console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
+//
+//         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+//         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+//         // const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+//
+//         const btcQty = Number(btcHolding[0].position);
+//         // const eosQty = Number(eosHolding[0].position);
+//
+//         const qty = btcQty;
+//         if(!qty) {
+//             return;
+//         }
+//         // if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
+//         if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
+//             let mainHolding = btcHolding[0]
+//             let otherHolding = btcHolding[1]
+//
+//             if(!curOtherPositionIndex){
+//                 mainHolding = btcHolding[1]
+//                 otherHolding = btcHolding[0]
+//             }
+//             console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
+//
+//             await autoOtherOrder(otherHolding,mark_price)
+//             await autoOperateSwap(mainHolding,mark_price)
+//
+//             // setTimeout(async () => {
+//             //     const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+//             //     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+//             //
+//             //     let mainHolding = btcHolding[0]
+//             //     // let otherHolding = btcHolding[1]
+//             //
+//             //     if(!curOtherPositionIndex){
+//             //         mainHolding = btcHolding[1]
+//             //         // otherHolding = btcHolding[0]
+//             //     }
+//             //
+//             //     await autoOperateSwap(mainHolding,mark_price)
+//             //
+//             //     console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
+//             // }, 1000)
+//             return
+//         }
+//         if(btcQty) {
+//             console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
+//             curOtherPositionIndex = 0
+//             if(isOpenOtherOrder){
+//                 await autoOtherOrder(btcHolding[0],mark_price, true)
+//                 await autoOperateSwap(btcHolding[0],mark_price)
+//
+//                 // if(btcQty == initPosition * 2){
+//                 //     setTimeout(async () => {
+//                 //         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+//                 //         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+//                 //         await autoOperateSwap(btcHolding[0],mark_price)
+//                 //
+//                 //         console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
+//                 //     }, 1000)
+//                 // }
+//             }else{
+//                 await autoOperateSwap(btcHolding[0],mark_price)
+//             }
+//         }
+//         // if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
+//     },1000 * 2)
+// }
 
-        const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-        // const { holding: eosHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+const startInterval = async () => {
+    console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
 
-        const btcQty = Number(btcHolding[0].position);
-        // const eosQty = Number(eosHolding[0].position);
+    const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
-        const qty = btcQty;
-        if(!qty) {
-            return;
+    const btcQty = Number(btcHolding[0].position);
+
+    if(!btcQty) return
+
+    if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
+        let mainHolding = btcHolding[0]
+        let otherHolding = btcHolding[1]
+
+        if(!curOtherPositionIndex){
+            mainHolding = btcHolding[1]
+            otherHolding = btcHolding[0]
         }
-        // if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
-        if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
-            let mainHolding = btcHolding[0]
-            let otherHolding = btcHolding[1]
+        console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
 
-            if(!curOtherPositionIndex){
-                mainHolding = btcHolding[1]
-                otherHolding = btcHolding[0]
-            }
-            console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
-
-            autoOtherOrder(otherHolding,mark_price)
-            autoOperateSwap(mainHolding,mark_price)
-
-            // setTimeout(async () => {
-            //     const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-            //     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-            //
-            //     let mainHolding = btcHolding[0]
-            //     // let otherHolding = btcHolding[1]
-            //
-            //     if(!curOtherPositionIndex){
-            //         mainHolding = btcHolding[1]
-            //         // otherHolding = btcHolding[0]
-            //     }
-            //
-            //     await autoOperateSwap(mainHolding,mark_price)
-            //
-            //     console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
-            // }, 1000)
-            return
+        await autoOtherOrder(otherHolding,mark_price)
+        await autoOperateSwap(mainHolding,mark_price)
+    }else{
+        console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
+        curOtherPositionIndex = 0
+        if(isOpenOtherOrder && btcQty == initPosition * 2){
+            await autoOtherOrder(btcHolding[0],mark_price, true)
+            await autoOperateSwap(btcHolding[0],mark_price)
+        }else{
+            await autoOperateSwap(btcHolding[0],mark_price)
         }
-        if(btcQty) {
-            console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-            curOtherPositionIndex = 0
-            if(isOpenOtherOrder){
-                autoOtherOrder(btcHolding[0],mark_price, true)
-                autoOperateSwap(btcHolding[0],mark_price)
+    }
 
-                // if(btcQty == initPosition * 2){
-                //     setTimeout(async () => {
-                //         const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-                //         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-                //         await autoOperateSwap(btcHolding[0],mark_price)
-                //
-                //         console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-                //     }, 1000)
-                // }
-            }else{
-                await autoOperateSwap(btcHolding[0],mark_price)
-            }
-        }
-        // if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
-    },1000 * 2)
+    setTimeout(startInterval,1000 * 2)
 }
 
 function stopInterval() {
@@ -996,7 +1032,8 @@ function stopInterval() {
 }
 
 // 定时获取交割合约账户信息
-myInterval = startInterval()
+// myInterval = startInterval()
+myInterval = setTimeout(startInterval,1000 * 2)
 app.listen(8091);
 
 console.log('8091 server start');
