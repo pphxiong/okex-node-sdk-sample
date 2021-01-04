@@ -1019,9 +1019,9 @@ const startInterval = async () => {
                 await autoOperateSwap(btcHolding[0],mark_price)
             }
         }
-    }
 
-    setTimeout(startInterval,1000 * 2)
+        setTimeout(startInterval,1000 * 2)
+    }
 }
 
 function stopInterval() {
