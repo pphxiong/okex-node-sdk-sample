@@ -996,28 +996,28 @@ const startInterval = async () => {
 
     const btcQty = Number(btcHolding[0].position);
 
-    if(!btcQty) return
+    if(btcQty) {
+        if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
+            let mainHolding = btcHolding[0]
+            let otherHolding = btcHolding[1]
 
-    if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
-        let mainHolding = btcHolding[0]
-        let otherHolding = btcHolding[1]
+            if(!curOtherPositionIndex){
+                mainHolding = btcHolding[1]
+                otherHolding = btcHolding[0]
+            }
+            console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
 
-        if(!curOtherPositionIndex){
-            mainHolding = btcHolding[1]
-            otherHolding = btcHolding[0]
-        }
-        console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
-
-        await autoOtherOrder(otherHolding,mark_price)
-        await autoOperateSwap(mainHolding,mark_price)
-    }else{
-        console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-        curOtherPositionIndex = 0
-        if(isOpenOtherOrder && btcQty == initPosition * 2){
-            await autoOtherOrder(btcHolding[0],mark_price, true)
-            await autoOperateSwap(btcHolding[0],mark_price)
+            await autoOtherOrder(otherHolding,mark_price)
+            await autoOperateSwap(mainHolding,mark_price)
         }else{
-            await autoOperateSwap(btcHolding[0],mark_price)
+            console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
+            curOtherPositionIndex = 0
+            if(isOpenOtherOrder && btcQty == initPosition * 2){
+                await autoOtherOrder(btcHolding[0],mark_price, true)
+                await autoOperateSwap(btcHolding[0],mark_price)
+            }else{
+                await autoOperateSwap(btcHolding[0],mark_price)
+            }
         }
     }
 
