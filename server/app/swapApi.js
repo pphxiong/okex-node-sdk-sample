@@ -910,7 +910,6 @@ const autoOperateSwap = async (holding,mark_price) => {
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
-        primaryPrice = Number(avg_cost)
         await afterLoss(holding)
         return;
     }
@@ -1005,7 +1004,8 @@ const startInterval = async () => {
                 mainHolding = btcHolding[1]
                 otherHolding = btcHolding[0]
             }
-            console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
+            console.log('timestamp','mainHolding',mainHolding.timestamp,primaryPrice)
+            console.log('timestamp','otherHolding',otherHolding.timestamp,otherPositionPrimaryPrice)
 
             await autoOtherOrder(otherHolding,mark_price)
             await autoOperateSwap(mainHolding,mark_price)
