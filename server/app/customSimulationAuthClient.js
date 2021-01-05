@@ -64,7 +64,7 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         },
         swap: {
             getMarkPrice: function (instrument_id){
-                return get(`/api/swap/v5/instruments/${instrument_id}/mark_price`)
+                return get(`/api/swap/v5/public/mark-price?instType='SWAP'&instId=${instrument_id}`)
             },
             closePosition: function (params) {
                 return post('/api/swap/v5/close_position', params)
