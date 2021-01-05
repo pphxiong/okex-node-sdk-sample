@@ -1006,7 +1006,7 @@ const startInterval = async () => {
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
     const btcQty = Number(btcHolding[0].position);
-
+    console.log('btcQty',btcQty, initPosition)
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
             let mainHolding = btcHolding[0]
