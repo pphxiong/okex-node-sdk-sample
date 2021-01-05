@@ -23,13 +23,14 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             'OK-ACCESS-PASSPHRASE': sig.passphrase,
             'OK-ACCESS-SIGN': sig.signature,
             'OK-ACCESS-TIMESTAMP': sig.timestamp,
-            'x-simulated-trading': 1
+            'x-simulated-trading': 1,
+            'content-type': 'application/json; charset=utf-8'
         };
     };
 
     const get = function(url, params) {
         return request(apiUri + url,{
-            method: 'get',
+            method: 'GET',
             headers: getSignature('get', url)
         })
     }
@@ -39,7 +40,7 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         const signObj = getSignature('post', url, { body: bodyJson });
         signObj['content-type'] = 'application/json; charset=utf-8';
         return request(apiUri + url,{
-            method: 'post',
+            method: 'POST',
             headers: signObj,
             data: body
         })
