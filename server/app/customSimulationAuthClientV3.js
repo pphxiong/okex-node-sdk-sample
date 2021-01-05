@@ -48,60 +48,60 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
     return {
         account: {
             getAssetValuation: function (type = 3) {
-                return get(`/api/account/v5/asset-valuation?account_type=${type}&valuation_currency=btc`)
+                return get(`/api/account/v3/asset-valuation?account_type=${type}&valuation_currency=btc`)
             }
         },
         futures: {
             getMarkPrice: function (instrument_id){
-                return get(`/api/futures/v5/instruments/${instrument_id}/mark_price`)
+                return get(`/api/futures/v3/instruments/${instrument_id}/mark_price`)
             },
             closePosition: function (params) {
-                return post('/api/futures/v5/close_position', params)
+                return post('/api/futures/v3/close_position', params)
             },
             getTradeFee: function (){
-                return get(`/api/futures/v5/trade_fee`)
+                return get(`/api/futures/v3/trade_fee`)
             },
         },
         swap: {
             getMarkPrice: function (instrument_id){
-                return get(`/api/swap/v5/instruments/${instrument_id}/mark_price`)
+                return get(`/api/swap/v3/instruments/${instrument_id}/mark_price`)
             },
             closePosition: function (params) {
-                return post('/api/swap/v5/close_position', params)
+                return post('/api/swap/v3/close_position', params)
             },
             getTradeFee: function (params){
-                return get(`/api/swap/v5/trade_fee?` + querystring.stringify(params))
+                return get(`/api/swap/v3/trade_fee?` + querystring.stringify(params))
             },
             getPosition: function (instrument_id) {
-                return get(`/api/swap/v5/${instrument_id}/position`);
+                return get(`/api/swap/v3/${instrument_id}/position`);
             },
             getAccount: function (instrument_id) {
-                return get(`/api/swap/v5${instrument_id ? `/${instrument_id}` : ''}/accounts`);
+                return get(`/api/swap/v3${instrument_id ? `/${instrument_id}` : ''}/accounts`);
             },
             getSettings: function (instrument_id) {
-                return get(`/api/swap/v5/accounts/${instrument_id}/settings`);
+                return get(`/api/swap/v3/accounts/${instrument_id}/settings`);
             },
             postLeverage: function (instrument_id, params) {
-                return post(`/api/swap/v5/accounts/${instrument_id}/leverage`, params);
+                return post(`/api/swap/v3/accounts/${instrument_id}/leverage`, params);
             },
             postOrder: function (params) {
-                return post('/api/swap/v5/order', params);
+                return post('/api/swap/v3/order', params);
             },
             postCancelOrder: function (instrument_id, order_id) {
-                return post(`/api/swap/v5/cancel_order/${instrument_id}/${order_id}`);
+                return post(`/api/swap/v3/cancel_order/${instrument_id}/${order_id}`);
             },
             getOrders: function (instrument_id, params) {
-                return get(`/api/swap/v5/orders/${instrument_id}?` +
+                return get(`/api/swap/v3/orders/${instrument_id}?` +
                     querystring.stringify(params));
             },
             getOrder: function (instrument_id, order_id) {
-                return get(`/api/swap/v5/orders/${instrument_id}/${order_id}`);
+                return get(`/api/swap/v3/orders/${instrument_id}/${order_id}`);
             },
             getHistory: function (instrument_id, params) {
-                return get(`/api/swap/v5/instruments/${instrument_id}/history/candles?` + querystring.stringify(params));
+                return get(`/api/swap/v3/instruments/${instrument_id}/history/candles?` + querystring.stringify(params));
             },
             getKData: function (instrument_id, params) {
-                return get(`/api/swap/v5/instruments/${instrument_id}/candles?` + querystring.stringify(params));
+                return get(`/api/swap/v3/instruments/${instrument_id}/candles?` + querystring.stringify(params));
             },
         }
     }

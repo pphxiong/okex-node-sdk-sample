@@ -750,6 +750,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     console.log('@@@@@@@@@other continuousLossNum end@@@@@@@@@@@@@')
 
     if(ratio > condition * newWinRatio * frequency) {
+        positionChange = true
         isOpenOtherOrder = false
         otherPositionLoss = false
 
@@ -776,6 +777,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         }
     }
     if(ratio < - condition * newLossRatio * frequency){
+        positionChange = true
         isOpenOtherOrder = false
         otherPositionLoss = false
 
@@ -876,6 +878,7 @@ const autoOperateSwap = async (holding,mark_price) => {
             // }else{
             //     await autoCloseOrderByMarketPriceByHolding(holding);
             // }
+            positionChange = true
             await autoCloseOrderByMarketPriceByHolding(holding);
 
             lastMostWinRatio = 0;
@@ -898,6 +901,7 @@ const autoOperateSwap = async (holding,mark_price) => {
         // }else{
         //     await autoCloseOrderByMarketPriceByHolding(holding);
         // }
+        positionChange = true
         await autoCloseOrderByMarketPriceByHolding(holding);
         await afterWin(holding)
         return;
@@ -908,6 +912,7 @@ const autoOperateSwap = async (holding,mark_price) => {
         // }else{
         //     await autoCloseOrderByMarketPriceByHolding(holding);
         // }
+        positionChange = true
         await autoCloseOrderByMarketPriceByHolding(holding);
         await afterLoss(holding)
         return;
@@ -986,10 +991,18 @@ const autoOperateSwap = async (holding,mark_price) => {
 //     },1000 * 2)
 // }
 
+let positionChange = true;
+let globalBtcHolding = null;
 const startInterval = async () => {
-    console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
 
-    const { holding: btcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    let btcHolding = globalBtcHolding
+    if(positionChange){
+        const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+        globalBtcHolding = tempBtcHolding
+        btcHolding = globalBtcHolding
+        positionChange = false
+    }
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
     const btcQty = Number(btcHolding[0].position);
@@ -1014,6 +1027,9 @@ const startInterval = async () => {
             console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
             console.log('primaryPrice', primaryPrice)
             console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice)
+            console.log('otherPositionSide',otherPositionSide)
+            console.log('isOpenOtherOrder', isOpenOtherOrder)
+            console.log(btcQty == initPosition * 2)
             if(isOpenOtherOrder && btcQty == initPosition * 2){
                 const halfHolding = btcHolding[0]
                 halfHolding.position = Number(halfHolding.position) / 2
