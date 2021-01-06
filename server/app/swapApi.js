@@ -591,7 +591,7 @@ const afterWin = async (holding, type = 0) => {
     ){
         isOpenOtherOrder = true;
         let otherOpenSide = openSide;
-        if(continuousObj.continuousWinNum > 2) otherOpenSide = openSide == 'short' ? 'long' : 'short'
+        if(continuousObj.continuousWinNum > 3) otherOpenSide = openSide == 'short' ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
 
     }
@@ -674,7 +674,7 @@ const afterLoss = async (holding,type) =>{
     if(
         (!continuousWinSameSideNum
             ||
-            continuousObj.continuousLossNum > 2
+            continuousObj.continuousLossNum > 3
         )
         &&
         !isOpenOtherOrder
@@ -742,7 +742,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(otherPositionLoss){
-        newWinRatio = Number(winRatio) / 8
+        newWinRatio = Number(winRatio) / 10
         newLossRatio = Number(lossRatio) / 1.2
     }
 
@@ -767,7 +767,6 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
-        // await autoCloseOrderByMarketPriceByHolding(holding);
 
         if(continuousObj.continuousLossNum){
             const openSide = side == 'short' ? 'long' : 'short';
@@ -781,7 +780,6 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
             await autoOpenOtherOrderSingle(holding, payload);
             isOpenOtherOrder = true
             otherPositionLoss = true
-
         }
     }
     if(ratio < - condition * newLossRatio * frequency){
@@ -797,7 +795,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         // await autoCloseOrderByMarketPriceByHolding(holding);
 
         if(continuousObj.continuousLossNum){
-            const openSide = side == 'long' ? 'long' : 'short';
+            const openSide = side == 'short' ? 'long' : 'short';
             const payload = {
                 openSide,
                 lossNum: continuousObj.continuousLossNum,
@@ -912,7 +910,6 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
         positionChange = true
-        // await autoCloseOrderByMarketPriceByHolding(holding);
         await afterWin(holding)
         return;
     }
@@ -923,7 +920,6 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
         positionChange = true
-        // await autoCloseOrderByMarketPriceByHolding(holding);
         await afterLoss(holding)
         return;
     }

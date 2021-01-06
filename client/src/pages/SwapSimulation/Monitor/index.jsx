@@ -166,10 +166,8 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
-    // if(continuousObj.continuousWinNum) newLossRatio = Number(lossRatio.current) / 1
-
     if(otherPositionLoss){
-      newWinRatio = Number(winRatio.current) / 8
+      newWinRatio = Number(winRatio.current) / 10
       newLossRatio = Number(lossRatio.current) / 1.2
     }
 
@@ -193,30 +191,11 @@ export default props => {
 
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
-        otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
+        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
     }
-
-    // if(ratio < - condition * newLossRatio * frequency / 2){
-    //   if(continuousObj.continuousWinNum){
-    //
-    //   }
-    // }
-
-    // if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
-    //   otherTotalPnl += other_unrealized_pnl - otherFee;
-    //   isOpenOtherOrder = false
-    //   otherPositionLoss = false
-    //   if(continuousObj.continuousLossNum){
-    //     otherPositionPrimaryPrice = price
-    //     otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
-    //     isOpenOtherOrder = true
-    //     otherPositionLoss = true
-    //     return
-    //   }
-    // }
   }
   const testOrder = (historyList,endPrice) => {
     if(!historyList.length) {
@@ -424,7 +403,7 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-            if(continuousObj.continuousWinNum > 2) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
+            if(continuousObj.continuousWinNum > 3) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
           }
 
         }
@@ -512,9 +491,10 @@ export default props => {
 
           // if(isOpenOtherOrder) testOtherOrder(item[1],true)
           if(
-            (!continuousWinSameSideNum
+            (
+              !continuousWinSameSideNum
               ||
-              continuousObj.continuousLossNum > 2
+              continuousObj.continuousLossNum > 3
             )
             &&
             !isOpenOtherOrder
