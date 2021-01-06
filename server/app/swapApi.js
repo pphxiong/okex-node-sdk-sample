@@ -481,7 +481,7 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     lastMostWinRatio = Number(lmwr)
     isOpenOtherOrder = iooo == 'true' || iooo == true
     otherPositionSide = otps
-    otherPositionLoss = otpl
+    otherPositionLoss = otpl == 'true' || otpl == true
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
             instrument_id,
