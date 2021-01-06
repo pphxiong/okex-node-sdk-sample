@@ -627,31 +627,9 @@ const afterLoss = async (holding,type) =>{
         }
     }
 
-    // if(
-    //     ratioChangeNum
-    // ){
-    //     if(!continuousWinSameSideNum){
-    //         isOpenShort = side != 'short'
-    //     }
-    //
-    //     if(
-    //         continuousWinSameSideNum
-    //     ){
-    //         if(
-    //             lastWinDirection == 'short'
-    //             &&
-    //             ratioChangeNum > 1
-    //             &&
-    //             ratioChangeNum < 3
-    //         ){
-    //             isOpenShort = !isOpenShort
-    //         }
-    //
-    //         if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
-    //             isOpenShort = !isOpenShort
-    //         }
-    //     }
-    // }
+    if(isOpenOtherOrder && !continuousWinSameSideNum) {
+        isOpenShort = otherPositionSide == 'long'
+    }
 
     continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
     continuousObj.continuousWinNum = 0;
@@ -887,7 +865,6 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
                 await autoCloseOrderByMarketPriceByHolding(holding);
             }
             positionChange = true
-            // await autoCloseOrderByMarketPriceByHolding(holding);
 
             lastMostWinRatio = 0;
 

@@ -311,10 +311,6 @@ export default props => {
         newLossRatio = Number(lossRatio.current)
       }
 
-      // if(continuousObj.continuousLossNum){
-      //   newWinRatio = Number(winRatio.current) / 2
-      // }
-
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
       if(delayTimes) {
@@ -489,7 +485,10 @@ export default props => {
           //   }
           // }
 
-          // if(isOpenOtherOrder) testOtherOrder(item[1],true)
+          if(isOpenOtherOrder && !continuousWinSameSideNum) {
+            isCurrentSideShort = otherPositionSide == 'long'
+          }
+
           if(
             (
               !continuousWinSameSideNum
