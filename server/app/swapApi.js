@@ -278,7 +278,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
 
-    const instrument_id = 'BTC-USD-SWAP';
+    const instrument_id = BTC_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
@@ -315,7 +315,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 }
 
 // 开仓，availRatio开仓比例
-const autoOpenOrderSingle = async (holding, params = {}) => {
+const autoOpenOrderSingle = async (params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
     // if(lossNum == 2 || lossNum == 4) {
@@ -344,8 +344,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 
     const position = Math.ceil(initPosition * positionRatio)
 
-    const { instrument_id, position: holdingPosition } = holding;
-
+    // const { instrument_id, position: holdingPosition } = holding;
     // // 可开张数
     // let availNo;
     // let avail = 0;
@@ -358,6 +357,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
+    const instrument_id = BTC_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type)
 
@@ -367,7 +367,7 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             size: position,
             type,
             order_type: 4, //1：只做Maker 4：市价委托
-            instrument_id: instrument_id,
+            instrument_id,
             // price: mark_price,
             // match_price: 0
         }
@@ -576,7 +576,7 @@ const afterWin = async (holding, type = 0) => {
         continuousWinSameSideNum,
         continuousLossSameSideNum
     }
-    await autoOpenOrderSingle(holding, payload);
+    await autoOpenOrderSingle(payload);
 
     if(
         // continuousObj.continuousWinNum == 1
@@ -647,7 +647,7 @@ const afterLoss = async (holding,type) =>{
         continuousWinSameSideNum,
         continuousLossSameSideNum
     }
-    await autoOpenOrderSingle(holding, payload);
+    await autoOpenOrderSingle(payload);
 
     if(
         (!continuousWinSameSideNum
@@ -755,7 +755,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
                 continuousWinSameSideNum,
                 continuousLossSameSideNum
             }
-            await autoOpenOtherOrderSingle(holding, payload);
+            await autoOpenOtherOrderSingle(payload);
             isOpenOtherOrder = true
             otherPositionLoss = true
         }
@@ -781,7 +781,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
                 continuousWinSameSideNum,
                 continuousLossSameSideNum
             }
-            await autoOpenOtherOrderSingle(holding, payload);
+            await autoOpenOtherOrderSingle(payload);
             isOpenOtherOrder = true
             otherPositionLoss = true
 
@@ -875,7 +875,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
                 continuousWinSameSideNum,
                 continuousLossSameSideNum
             }
-            await autoOpenOrderSingle(holding, payload);
+            await autoOpenOrderSingle(payload);
 
         }
     }
