@@ -316,6 +316,11 @@ export default props => {
         newLossRatio = Number(lossRatio.current)
       }
 
+      // if(continuousObj.continuousWinNum > 1){
+      //   newWinRatio = Number(winRatio.current) / 6
+      //   newLossRatio = Number(lossRatio.current) / 1.5
+      // }
+
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
       if(delayTimes) {

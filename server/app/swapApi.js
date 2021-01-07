@@ -1019,7 +1019,7 @@ const startInterval = async () => {
             console.log('otherPositionSide',otherPositionSide)
             console.log('isOpenOtherOrder', isOpenOtherOrder)
             console.log(btcQty == Number(initPosition) * 2)
-            if(isOpenOtherOrder && (btcQty == Number(initPosition) * 2)){
+            if(isOpenOtherOrder){
                 await autoOtherOrder(btcHolding[0],mark_price, true)
                 await autoOperateSwap(btcHolding[0],mark_price, true)
             }else{
