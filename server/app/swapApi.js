@@ -627,9 +627,9 @@ const afterLoss = async (holding,type) =>{
         }
     }
 
-    if(isOpenOtherOrder && !continuousWinSameSideNum) {
-        isOpenShort = otherPositionSide == 'long'
-    }
+    // if(isOpenOtherOrder && !continuousWinSameSideNum) {
+    //     isOpenShort = otherPositionSide == 'long'
+    // }
 
     continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
     continuousObj.continuousWinNum = 0;

@@ -485,9 +485,9 @@ export default props => {
           //   }
           // }
 
-          if(isOpenOtherOrder && !continuousWinSameSideNum) {
-            isCurrentSideShort = otherPositionSide == 'long'
-          }
+          // if(isOpenOtherOrder && !continuousWinSameSideNum) {
+          //   isCurrentSideShort = otherPositionSide == 'long'
+          // }
 
           if(
             (
