@@ -719,6 +719,11 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     let newWinRatio = Number(winRatio) / 5.0
     let newLossRatio = Number(lossRatio) * 1.5
 
+    if(continuousObj.continuousWinNum > 1){
+        newWinRatio = Number(winRatio) / 6
+        newLossRatio = Number(lossRatio) / 1.5
+    }
+
     if(otherPositionLoss){
         newWinRatio = Number(winRatio) / 10
         newLossRatio = Number(lossRatio) / 1.2

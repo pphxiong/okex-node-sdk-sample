@@ -166,6 +166,11 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
+    if(continuousObj.continuousWinNum > 1){
+      newWinRatio = Number(winRatio.current) / 6
+      newLossRatio = Number(lossRatio.current) / 1.5
+    }
+
     if(otherPositionLoss){
       newWinRatio = Number(winRatio.current) / 10
       newLossRatio = Number(lossRatio.current) / 1.2
