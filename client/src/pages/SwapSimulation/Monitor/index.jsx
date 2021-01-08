@@ -166,15 +166,15 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
-    if(continuousObj.continuousWinNum > 1){
-      newWinRatio = Number(winRatio.current) / 6
-      newLossRatio = Number(lossRatio.current) / 1.5
-    }
-
-    if(otherPositionLoss){
-      newWinRatio = Number(winRatio.current) / 10
-      newLossRatio = Number(lossRatio.current) / 1.2
-    }
+    // if(continuousObj.continuousWinNum > 1){
+    //   newWinRatio = Number(winRatio.current) / 6
+    //   newLossRatio = Number(lossRatio.current) / 1.5
+    // }
+    //
+    // if(otherPositionLoss){
+    //   newWinRatio = Number(winRatio.current) / 10
+    //   newLossRatio = Number(lossRatio.current) / 1.2
+    // }
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
@@ -302,24 +302,10 @@ export default props => {
         }
       }
 
-      // if(
-      //   continuousWinSameSideNum > 1
-      // ){
-      //   if(lastWinDirection == 'short'){
-      //     newWinRatio = Number(winRatio.current)
-      //     newLossRatio = Number(lossRatio.current)
-      //   }
-      // }
-
       if(continuousObj.continuousWinNum){
         newWinRatio = Number(winRatio.current) / 5
         newLossRatio = Number(lossRatio.current)
       }
-
-      // if(continuousObj.continuousWinNum > 1){
-      //   newWinRatio = Number(winRatio.current) / 6
-      //   newLossRatio = Number(lossRatio.current) / 1.5
-      // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
