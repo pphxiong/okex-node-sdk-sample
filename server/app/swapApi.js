@@ -13,7 +13,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
-let initPosition = 10;
+let initPosition = 20;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
