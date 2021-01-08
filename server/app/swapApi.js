@@ -1024,7 +1024,11 @@ const startInterval = async () => {
                     await autoOtherOrder(btcHolding[0],mark_price)
                 }
             }else{
-                await autoOperateSwap(btcHolding[0],mark_price)
+                if(btcQty == Number(initPosition) * 2){
+                    await autoOperateSwap(btcHolding[0],mark_price, true)
+                }else{
+                    await autoOperateSwap(btcHolding[0],mark_price)
+                }
             }
         }
 
