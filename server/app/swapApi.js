@@ -703,11 +703,13 @@ const closeHalfPosition = async (holding, mark_price) => {
 let otherPositionLoss = false
 let otherPositionSide = null
 const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
-    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin, side } = holding;
+    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin: originMargin, side } = holding;
 
     otherPositionPrimaryPrice = otherPositionPrimaryPrice || Number(avg_cost)
 
     const position = isHalf ? Number(originPosition) / 2 : Number(originPosition)
+    const margin = isHalf ? Number(originMargin) / 2 : Number(originMargin)
+
     const size = Number(position) * 100 / Number(mark_price);
     let unrealized_pnl = size * (Number(mark_price) - otherPositionPrimaryPrice) / Number(mark_price);
     if(side=='short') unrealized_pnl = - unrealized_pnl;
@@ -796,11 +798,12 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     }
 }
 const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
-    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin, side } = holding;
+    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin: originMargin, side } = holding;
 
     primaryPrice = primaryPrice || Number(avg_cost)
 
     const position = isHalf ? Number(originPosition) / 2 : Number(originPosition)
+    const margin = isHalf ? Number(originMargin) / 2 : Number(originMargin)
 
     const size = Number(position) * 100 / Number(mark_price);
     let unrealized_pnl = size * (Number(mark_price) - primaryPrice) / Number(mark_price);
