@@ -13,7 +13,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
-let initPosition = 20;
+let initPosition = 10;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -719,18 +719,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 5.0
+    let newWinRatio = Number(winRatio) / 4.5
     let newLossRatio = Number(lossRatio) * 1.5
-
-    // if(continuousObj.continuousWinNum > 1){
-    //     newWinRatio = Number(winRatio) / 6
-    //     newLossRatio = Number(lossRatio) / 1.5
-    // }
-    //
-    // if(otherPositionLoss){
-    //     newWinRatio = Number(winRatio) / 10
-    //     newLossRatio = Number(lossRatio) / 1.2
-    // }
 
     console.log('@@@@@@@@@other continuousLossNum start@@@@@@@@@')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)

@@ -51,7 +51,7 @@ export default props => {
       continuousWinSameSideNum: 0,
       continuousLossSameSideNum: 0,
       lastMostWinRatio: 0.026,
-      initPosition: 20,
+      initPosition: 10,
       isOpenOtherOrder: true,
       otherPositionSide: 'short',
       otherPositionLoss: false

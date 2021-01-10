@@ -163,7 +163,7 @@ export default props => {
     let condition = leverage / 100;
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
 
-    let newWinRatio = Number(winRatio.current) / 5
+    let newWinRatio = Number(winRatio.current) / 4.5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
     // if(continuousObj.continuousWinNum > 1){
@@ -171,10 +171,9 @@ export default props => {
     //   newLossRatio = Number(lossRatio.current) / 1.5
     // }
     //
-    // if(otherPositionLoss){
-    //   newWinRatio = Number(winRatio.current) / 10
-    //   newLossRatio = Number(lossRatio.current) / 1.2
-    // }
+    if(continuousObj.continuousLossNum){
+      newLossRatio = Number(lossRatio.current) * 2.5
+    }
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
@@ -225,7 +224,6 @@ export default props => {
     let lastTotalRatio = 0;
     historyList.map((item,index)=>{
       if(isOpenOtherOrder) {
-        // let isLast = index == historyList.length - 1
         (async ()=>{
           await testOtherOrder(item[1])
         })()
@@ -270,16 +268,16 @@ export default props => {
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
-      const fee = Number(margin) * 5 * 2 / 10000;
+      const fee = Number(margin) * 5 * 2 * 1.5 / 10000;
       const ratio = Number(unrealized_pnl) / Number(margin);
 
       const dealPnl = () => {
         totalFee += fee;
         totalPnl += (unrealized_pnl - fee);
         totalMargin += margin
-        totalRatio =  totalPnl * 100 / totalMargin
+        totalRatio = totalMargin ? totalPnl * 100 / totalMargin : 0
 
-        // console.log(margin,unrealized_pnl - fee,(unrealized_pnl - fee)*100 / margin, ratio)
+        // console.log(isCurrentSideShort, unrealized_pnl - fee, totalPnl, totalPnl * 100 / totalMargin)
       }
 
       let newWinRatio = Number(winRatio.current);
@@ -306,6 +304,10 @@ export default props => {
         newWinRatio = Number(winRatio.current) / 5
         newLossRatio = Number(lossRatio.current)
       }
+
+      // if(isOpenOtherOrder && continuousObj.continuousLossNum){
+      //   newWinRatio = Number(lossRatio.current) * 2.5
+      // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
 
@@ -546,8 +548,16 @@ export default props => {
     // setTPnl(totalPnl)
     // setTpnlRatio(totalPnl * 100 / Number(margin))
 
-    // console.log('totalPnl',totalPnl, totalFee, margin, totalRatio,  )
-    return { time: historyList[0][0], totalPnl: totalPnl + otherTotalPnl, totalRatio, totalFee, endPrice: primaryPrice, dayRatioList }
+    // console.log('totalPnl',totalPnl, totalFee, totalMargin  )
+    return {
+      time: historyList[0][0],
+      totalPnl: totalPnl + otherTotalPnl,
+      totalMargin,
+      totalRatio: totalMargin ? totalPnl * 100 / totalMargin : 0,
+      totalFee,
+      endPrice: primaryPrice,
+      dayRatioList
+    }
   }
 
   const getMonthPnl = async (day,month) => {
@@ -556,6 +566,7 @@ export default props => {
     let loopNum = 0;
     let list = [];
     let t = 0;
+    let tMargin = 0;
     let tRatio = 0;
     let dList = [];
 
@@ -579,7 +590,9 @@ export default props => {
       if(Array.isArray(data)){
         // data = data.reverse()
         const result = await testOrder(data,lastPrice);
+        // console.log(result)
         t += result.totalPnl;
+        tMargin += result.totalMargin;
         tRatio += result.totalRatio;
         list.push(result);
         loopNum++;
@@ -598,9 +611,12 @@ export default props => {
     console.log('maxContinousLossObj',maxContinousLossObj)
     console.log('maxLossRatio',maxLossRatio)
     console.log('maxLossRatioT',maxLossRatioT)
+    console.log('tPnl',t)
+    console.log('totalMargin',tMargin)
+    console.log('tRatio',t * 100 / tMargin)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
-    return { pnl: t, ratio: tRatio, dList, };
+    return { pnl: t, ratio: t * 100 / tMargin, dList, };
   }
 
   const fnGetHistory = async () => {
