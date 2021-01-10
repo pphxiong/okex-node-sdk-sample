@@ -722,6 +722,11 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     let newWinRatio = Number(winRatio) / 4.5
     let newLossRatio = Number(lossRatio) * 1.5
 
+    if(continuousObj.continuousLossNum){
+        newWinRatio = Number(lossRatio) * 0.5
+        newLossRatio = Number(lossRatio) * 2.5
+    }
+
     console.log('@@@@@@@@@other continuousLossNum start@@@@@@@@@')
     console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
     console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
@@ -746,7 +751,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         }
 
         if(continuousObj.continuousLossNum){
-            const openSide = side == 'short' ? 'long' : 'short';
+            const openSide = side == 'long' ? 'long' : 'short';
             const payload = {
                 openSide,
                 lossNum: continuousObj.continuousLossNum,

@@ -166,12 +166,8 @@ export default props => {
     let newWinRatio = Number(winRatio.current) / 4.5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
-    // if(continuousObj.continuousWinNum > 1){
-    //   newWinRatio = Number(winRatio.current) / 6
-    //   newLossRatio = Number(lossRatio.current) / 1.5
-    // }
-    //
     if(continuousObj.continuousLossNum){
+      newWinRatio = Number(lossRatio.current) * 0.5
       newLossRatio = Number(lossRatio.current) * 2.5
     }
 
@@ -182,7 +178,7 @@ export default props => {
 
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
-        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
@@ -268,7 +264,7 @@ export default props => {
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
-      const fee = Number(margin) * 5 * 2 * 1.5 / 10000;
+      const fee = Number(margin) * 5 * 2 * 1.0 / 10000;
       const ratio = Number(unrealized_pnl) / Number(margin);
 
       const dealPnl = () => {
@@ -306,7 +302,7 @@ export default props => {
       }
 
       // if(isOpenOtherOrder && continuousObj.continuousLossNum){
-      //   newWinRatio = Number(lossRatio.current) * 2.5
+      //   newWinRatio = Number(winRatio.current) / 5
       // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
