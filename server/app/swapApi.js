@@ -666,12 +666,12 @@ const afterLoss = async (holding,type) =>{
     }
 }
 // 平半仓
-const closeHalfPosition = async (holding, mark_price) => {
-    const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
+const closeHalfPosition = async (holding, position = initPosition) => {
+    const { instrument_id, last, leverage, avg_cost, margin, side } = holding;
     // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
 
     const payload = {
-        size: Math.ceil(Number(position) / 2),
+        size: Math.ceil(Number(position)),
         type: side == 'long' ? 3 : 4,
         instrument_id,
         order_type: 4,
@@ -744,8 +744,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         isOpenOtherOrder = false
         otherPositionLoss = false
 
-        if(isHalf || (Number(holding.position) == Number(initPosition) * 2)){
-            await closeHalfPosition(holding)
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
+            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -769,8 +769,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         isOpenOtherOrder = false
         otherPositionLoss = false
 
-        if(isHalf || (Number(holding.position) == Number(initPosition) * 2)){
-            await closeHalfPosition(holding)
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
+            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -855,8 +855,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             continuousLossSameSideNum == 1
 
         ){
-            if(isHalf || (Number(holding.position) == Number(initPosition) * 2)){
-                await closeHalfPosition(holding, mark_price)
+            if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
+                await closeHalfPosition(holding, Number(initPosition))
             }else{
                 await autoCloseOrderByMarketPriceByHolding(holding);
             }
@@ -876,8 +876,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     }
 
     if(ratio > condition * newWinRatio * frequency){
-        if(isHalf || (Number(holding.position) == Number(initPosition) * 2)){
-            await closeHalfPosition(holding, mark_price)
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
+            await closeHalfPosition(holding, Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -886,8 +886,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         return;
     }
     if(ratio < - condition * newLossRatio * frequency){
-        if(isHalf || (Number(holding.position) == Number(initPosition) * 2)){
-            await closeHalfPosition(holding, mark_price)
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
+            await closeHalfPosition(holding, Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
