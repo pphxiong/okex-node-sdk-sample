@@ -144,7 +144,7 @@ export default props => {
     continuousWinSameSideNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
     ratioChangeNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
   }
-  const initPosition = 20;
+  const initPosition = 10;
   let isOpenOtherOrder = false;
   let otherPositionPrimaryPrice = 0;
   let otherPositionSide = null
@@ -152,7 +152,7 @@ export default props => {
   let otherPositionLoss = false
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    let otherPosition = 2 * initPosition
+    let otherPosition = 1 * initPosition + 2
     const size = Number(otherPosition) * 100 / Number(price);
     let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
@@ -230,7 +230,7 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
-      let changeRatio = 2;
+      let changeRatio = 1;
       // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
       //   changeRatio = 1;
       // }else if(continuousObj.continuousLossNum > 2) {

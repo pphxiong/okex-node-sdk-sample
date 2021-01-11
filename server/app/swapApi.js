@@ -273,7 +273,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', } = params;
     otherPositionSide = openSide
 
-    const position = initPosition * 1
+    const position = initPosition * 1 + 2
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -987,11 +987,11 @@ const startInterval = async () => {
     console.log('btcQty',btcQty, initPosition)
     // console.log(btcHolding[0])
     if(btcQty) {
-        if(btcHolding.length > 1 && Number(btcHolding[1].position)){
+        if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            if(otherPositionSide == btcHolding[0].side){
+            if(initPosition * 1 != Number(btcHolding[0].position)){
                 mainHolding = btcHolding[1]
                 otherHolding = btcHolding[0]
             }
@@ -1008,17 +1008,14 @@ const startInterval = async () => {
             console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice)
             console.log('otherPositionSide',otherPositionSide)
             console.log('isOpenOtherOrder', isOpenOtherOrder)
-            console.log(btcQty == Number(initPosition) * 2)
-            if(isOpenOtherOrder){
-                if(btcQty == Number(initPosition) * 2){
-                    await autoOtherOrder(btcHolding[0],mark_price, true)
-                    await autoOperateSwap(btcHolding[0],mark_price, true)
-                }else{
-                    await autoOtherOrder(btcHolding[0],mark_price)
-                }
+            console.log(Number(btcHolding[0].position) > Number(initPosition) * 2)
+
+            if(Number(btcHolding[0].position) > Number(initPosition) * 2){
+                await autoOtherOrder(btcHolding[0],mark_price, true)
+                await autoOperateSwap(btcHolding[0],mark_price, true)
             }else{
-                if(btcQty == Number(initPosition) * 2){
-                    await autoOperateSwap(btcHolding[0],mark_price, true)
+                if(Number(btcHolding[0].position) > Number(initPosition)){
+                    await autoOtherOrder(btcHolding[0],mark_price)
                 }else{
                     await autoOperateSwap(btcHolding[0],mark_price)
                 }
