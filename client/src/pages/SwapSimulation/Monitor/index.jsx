@@ -158,7 +158,7 @@ export default props => {
     if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
-    const otherFee = Number(otherMargin) * 5 * 2 / 10000;
+    const otherFee = Number(otherMargin) * 5 * 2 * 2 / 10000;
 
     let condition = leverage / 100;
     const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
@@ -178,7 +178,7 @@ export default props => {
 
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
-        otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
+        otherPositionSide = (otherPositionSide == 'long' && continuousObj.continuousLossNum < 3) ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
@@ -191,7 +191,7 @@ export default props => {
 
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
-        otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        otherPositionSide = (otherPositionSide == 'short') ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
@@ -257,14 +257,14 @@ export default props => {
 
       const position = Math.ceil(initPosition * positionRatio)
 
-      const margin = position * 100 / historyList[0][1] / leverage;
+      const margin = position * 100 / Number(primaryPrice) / leverage;
       let condition = leverage / 100;
 
       const size = Number(position) * 100 / Number(item[1]);
       let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
-      const fee = Number(margin) * 5 * 2 * 1.0 / 10000;
+      const fee = Number(margin) * 5 * 2 * 2 / 10000;
       const ratio = Number(unrealized_pnl) / Number(margin);
 
       const dealPnl = () => {
@@ -393,7 +393,7 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-            if(continuousObj.continuousWinNum > 3) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
+            // if(continuousObj.continuousWinNum > 3) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
           }
 
         }
