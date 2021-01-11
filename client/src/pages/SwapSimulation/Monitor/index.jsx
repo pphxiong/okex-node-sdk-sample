@@ -176,12 +176,12 @@ export default props => {
       isOpenOtherOrder = false
       otherPositionLoss = false
 
-      // if(continuousObj.continuousLossNum){
+      if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = (otherPositionSide == 'long' && continuousObj.continuousLossNum < 3) ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
-      // }
+      }
     }
 
     if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
