@@ -168,7 +168,7 @@ export default props => {
 
     if(continuousObj.continuousLossNum){
       newWinRatio = Number(lossRatio.current) * 0.5
-      newLossRatio = Number(lossRatio.current) * 2.5
+      newLossRatio = Number(lossRatio.current) * 3
     }
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
@@ -176,12 +176,12 @@ export default props => {
       isOpenOtherOrder = false
       otherPositionLoss = false
 
-      if(continuousObj.continuousLossNum){
+      // if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = (otherPositionSide == 'long' && continuousObj.continuousLossNum < 3) ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
-      }
+      // }
     }
 
     if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
@@ -189,12 +189,12 @@ export default props => {
       isOpenOtherOrder = false
       otherPositionLoss = false
 
-      if(continuousObj.continuousLossNum){
+      // if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = (otherPositionSide == 'short') ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
-      }
+      // }
     }
   }
   const testOrder = (historyList,endPrice) => {
