@@ -1031,6 +1031,9 @@ const startInterval = async () => {
 
         await waitTime()
         await startInterval()
+    }else{
+        await waitTime()
+        await startInterval()
     }
 }
 
