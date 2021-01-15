@@ -987,15 +987,18 @@ const startInterval = async () => {
         const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
         globalBtcHolding = tempBtcHolding
         btcHolding = globalBtcHolding
-        positionChange = false
+        if(btcHolding && btcHolding[0] && Number(btcHolding[0].position)){
+            // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+            positionChange = false
+        }
+
     }
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
-    const btcQty = Number(btcHolding[0].position);
+    const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
     // console.log('btcQty',btcQty, initPosition)
     // console.log(btcHolding[0])
     if(btcQty) {
-        // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
