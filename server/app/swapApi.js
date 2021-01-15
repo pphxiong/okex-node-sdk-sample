@@ -585,7 +585,7 @@ const afterWin = async (holding, ratio) => {
         !isOpenOtherOrder
     ){
         isOpenOtherOrder = true;
-        let otherOpenSide = openSide;
+        let otherOpenSide = openSide == 'short' ? 'long' : 'short';
         // if(continuousObj.continuousWinNum > 3) otherOpenSide = openSide == 'short' ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
 
