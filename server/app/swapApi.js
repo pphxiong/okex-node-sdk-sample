@@ -751,19 +751,19 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
 
-        // if(continuousObj.continuousLossNum){
-        //     const openSide = (side == 'long' && continuousObj.continuousLossNum < 3) ? 'long' : 'short'
-        //     const payload = {
-        //         openSide,
-        //         lossNum: continuousObj.continuousLossNum,
-        //         winNum: continuousObj.continuousWinNum,
-        //         continuousWinSameSideNum,
-        //         continuousLossSameSideNum
-        //     }
-        //     await autoOpenOtherOrderSingle(payload);
-        //     isOpenOtherOrder = true
-        //     otherPositionLoss = true
-        // }
+        if(continuousObj.continuousWinNum){
+            const openSide = side == 'short' ? 'long' : 'short'
+            const payload = {
+                openSide,
+                lossNum: continuousObj.continuousLossNum,
+                winNum: continuousObj.continuousWinNum,
+                continuousWinSameSideNum,
+                continuousLossSameSideNum
+            }
+            await autoOpenOtherOrderSingle(payload);
+            isOpenOtherOrder = true
+            otherPositionLoss = true
+        }
     }
     if(ratio < - condition * newLossRatio * frequency){
         consoleOtherFn()
