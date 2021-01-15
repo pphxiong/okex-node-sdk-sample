@@ -727,19 +727,21 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         newLossRatio = Number(lossRatio) * 2.5
     }
 
-    console.log('@@@@@@@@@other continuousLossNum start@@@@@@@@@')
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
-    console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
-    console.log('otherPositionLoss',otherPositionLoss)
-    console.log('isHalf',isHalf)
-    // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
-    // console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
-    // console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-    // console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
-    // console.log('lastMostWinRatio',lastMostWinRatio)
-    console.log('@@@@@@@@@other continuousLossNum end@@@@@@@@@@@@@')
+    const consoleOtherFn = () => {
+        console.log('@@@@@@@@@other other start@@@@@@@@@')
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
+        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side, 'otherPositionPrimaryPrice', otherPositionPrimaryPrice)
+        console.log('otherPositionLoss',otherPositionLoss,'isHalf',isHalf)
+        console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
+        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
+        console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+        console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
+        console.log('lastMostWinRatio',lastMostWinRatio)
+        console.log('@@@@@@@@@other other end@@@@@@@@@@@@@')
+    }
 
     if(ratio > condition * newWinRatio * frequency) {
+        consoleOtherFn()
         positionChange = true
         isOpenOtherOrder = false
         otherPositionLoss = false
@@ -765,6 +767,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         }
     }
     if(ratio < - condition * newLossRatio * frequency){
+        consoleOtherFn()
         positionChange = true
         isOpenOtherOrder = false
         otherPositionLoss = false
@@ -835,15 +838,17 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         newWinRatio = Number(winRatio) / 5
     }
 
-    console.log('------------continuousLossNum start---------------')
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
-    console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
-    console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
-    console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
-    console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-    console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
-    console.log('lastMostWinRatio',lastMostWinRatio)
-    console.log('------------continuousLossNum end---------------')
+    const consoleFn = () => {
+        console.log('------------origin start---------------')
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
+        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side, 'primaryPrice', primaryPrice)
+        console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
+        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
+        console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+        console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
+        console.log('lastMostWinRatio',lastMostWinRatio)
+        console.log('------------origin end---------------')
+    }
 
     if(ratio > 0){
         lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
@@ -855,6 +860,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             continuousLossSameSideNum == 1
 
         ){
+            consoleFn()
             if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
                 await closeHalfPosition(holding, Number(initPosition))
             }else{
@@ -876,6 +882,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     }
 
     if(ratio > condition * newWinRatio * frequency){
+        consoleFn()
         if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
             await closeHalfPosition(holding, Number(initPosition))
         }else{
@@ -886,6 +893,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         return;
     }
     if(ratio < - condition * newLossRatio * frequency){
+        consoleFn()
         if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
             await closeHalfPosition(holding, Number(initPosition))
         }else{
@@ -972,7 +980,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 let positionChange = true;
 let globalBtcHolding = null;
 const startInterval = async () => {
-    console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+    // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
 
     let btcHolding = globalBtcHolding
     if(positionChange){
@@ -984,7 +992,7 @@ const startInterval = async () => {
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
     const btcQty = Number(btcHolding[0].position);
-    console.log('btcQty',btcQty, initPosition)
+    // console.log('btcQty',btcQty, initPosition)
     // console.log(btcHolding[0])
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
@@ -995,20 +1003,20 @@ const startInterval = async () => {
                 mainHolding = btcHolding[1]
                 otherHolding = btcHolding[0]
             }
-            console.log('timestamp','mainHolding',mainHolding.timestamp,primaryPrice, mainHolding.side)
-            console.log('timestamp','otherHolding',otherHolding.timestamp,otherPositionPrimaryPrice, otherHolding.side)
-            console.log('otherPositionSide',otherPositionSide)
-            console.log('isOpenOtherOrder', isOpenOtherOrder)
+            // console.log('timestamp','mainHolding',mainHolding.timestamp,primaryPrice, mainHolding.side)
+            // console.log('timestamp','otherHolding',otherHolding.timestamp,otherPositionPrimaryPrice, otherHolding.side)
+            // console.log('otherPositionSide',otherPositionSide)
+            // console.log('isOpenOtherOrder', isOpenOtherOrder)
 
             await autoOtherOrder(otherHolding,mark_price)
             await autoOperateSwap(mainHolding,mark_price)
         }else{
-            console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-            console.log('primaryPrice', primaryPrice)
-            console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice)
-            console.log('otherPositionSide',otherPositionSide)
-            console.log('isOpenOtherOrder', isOpenOtherOrder)
-            console.log(Number(btcHolding[0].position) > Number(initPosition) * 2)
+            // console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
+            // console.log('primaryPrice', primaryPrice)
+            // console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice)
+            // console.log('otherPositionSide',otherPositionSide)
+            // console.log('isOpenOtherOrder', isOpenOtherOrder)
+            // console.log(Number(btcHolding[0].position) > Number(initPosition) * 2)
 
             if(Number(btcHolding[0].position) > Number(initPosition) * 2){
                 await autoOtherOrder(btcHolding[0],mark_price, true)
