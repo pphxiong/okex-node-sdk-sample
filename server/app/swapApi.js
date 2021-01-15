@@ -988,7 +988,7 @@ const startInterval = async () => {
         globalBtcHolding = tempBtcHolding
         btcHolding = globalBtcHolding
         if(btcHolding && btcHolding[0] && Number(btcHolding[0].position)){
-            // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+            console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
             positionChange = false
         }
 
