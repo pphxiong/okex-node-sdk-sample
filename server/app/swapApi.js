@@ -739,6 +739,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         console.log('@@@@@@@@@other other end@@@@@@@@@@@@@')
     }
 
+    isOpenOtherOrder = true
+
     if(ratio > condition * newWinRatio * frequency) {
         consoleOtherFn()
         positionChange = true
@@ -846,6 +848,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
         console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
         console.log('lastMostWinRatio',lastMostWinRatio)
+        console.log('isOpenOtherOrder',isOpenOtherOrder)
         console.log('------------origin end---------------')
     }
 
@@ -992,7 +995,7 @@ const startInterval = async () => {
     // console.log('btcQty',btcQty, initPosition)
     // console.log(btcHolding[0])
     if(btcQty) {
-        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
