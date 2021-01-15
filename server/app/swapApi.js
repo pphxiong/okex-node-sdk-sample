@@ -979,8 +979,6 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 let positionChange = true;
 let globalBtcHolding = null;
 const startInterval = async () => {
-    // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-
     let btcHolding = globalBtcHolding
     if(positionChange){
         const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
@@ -994,6 +992,7 @@ const startInterval = async () => {
     // console.log('btcQty',btcQty, initPosition)
     // console.log(btcHolding[0])
     if(btcQty) {
+        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
