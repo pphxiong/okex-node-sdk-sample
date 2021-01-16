@@ -1007,8 +1007,9 @@ const startInterval = async () => {
             // console.log('otherPositionSide',otherPositionSide)
             // console.log('isOpenOtherOrder', isOpenOtherOrder)
 
-            await autoOtherOrder(otherHolding,mark_price)
-            await autoOperateSwap(mainHolding,mark_price)
+            // await autoOtherOrder(otherHolding,mark_price)
+            // await autoOperateSwap(mainHolding,mark_price)
+            await Promise.all([await autoOtherOrder(otherHolding,mark_price), await autoOperateSwap(mainHolding,mark_price)])
         }else{
             // console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
             // console.log('primaryPrice', primaryPrice)
@@ -1018,8 +1019,9 @@ const startInterval = async () => {
             // console.log(Number(btcHolding[0].position) > Number(initPosition) * 2)
 
             if(Number(btcHolding[0].position) > Number(initPosition) * 2){
-                await autoOtherOrder(btcHolding[0],mark_price, true)
-                await autoOperateSwap(btcHolding[0],mark_price, true)
+                // await autoOtherOrder(btcHolding[0],mark_price, true)
+                // await autoOperateSwap(btcHolding[0],mark_price, true)
+                await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
             }else{
                 if(Number(btcHolding[0].position) > Number(initPosition)){
                     await autoOtherOrder(btcHolding[0],mark_price)

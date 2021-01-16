@@ -90,6 +90,8 @@ export default props => {
   const initContinuousObj = {
     continuousLossNum: 0,
     continuousWinNum: 0,
+    otherContinuousWinNum: 0,
+    otherContinuousLossNum: 0
   }
 
   let continuousObj = initContinuousObj;
@@ -171,14 +173,25 @@ export default props => {
       newLossRatio = Number(lossRatio.current) * 2.5
     }
 
+    if(continuousObj.otherContinuousWinNum > 3){
+      newLossRatio = Number(lossRatio.current)
+    }
+
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
       otherPositionLoss = false
 
+      continuousObj.otherContinuousWinNum = continuousObj.otherContinuousWinNum + 1
+      continuousObj.otherContinuousLossNum = 0;
+
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
+        // if(continuousObj.otherContinuousWinNum > 4) {
+        //   otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+        //   continuousObj.otherContinuousWinNum = 0
+        // }
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
