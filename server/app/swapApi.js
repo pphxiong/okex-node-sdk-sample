@@ -13,7 +13,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 0.6;
-let initPosition = 10;
+let initPosition = 2;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -273,7 +273,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', } = params;
     otherPositionSide = openSide
 
-    const position = initPosition * 1 + 2
+    const position = initPosition * 1 + 1
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -559,9 +559,6 @@ const afterWin = async (holding, ratio) => {
         continuousWinSameSideNum = 0;
     }
 
-    continuousObj.continuousLossNum = 0;
-    continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-
     continuousLossSameSideNum = 0;
     if(ratio == Number(winRatio)){
         lastLastWinDirection = lastWinDirection;
@@ -585,11 +582,14 @@ const afterWin = async (holding, ratio) => {
         !isOpenOtherOrder
     ){
         isOpenOtherOrder = true;
-        let otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        // if(continuousObj.continuousWinNum > 3) otherOpenSide = openSide == 'short' ? 'long' : 'short'
+        let otherOpenSide = isOpenShort ? 'short' : 'long';
+        if(continuousObj.continuousWinNum > 3) otherOpenSide = isOpenShort ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
-
     }
+
+
+    continuousObj.continuousLossNum = 0;
+    continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 }
 const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
@@ -626,9 +626,6 @@ const afterLoss = async (holding,type) =>{
     //     isOpenShort = otherPositionSide == 'long'
     // }
 
-    continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-    continuousObj.continuousWinNum = 0;
-
     lastLastLossDirection = lastLossDirection;
     lastLossDirection = side;
 
@@ -658,6 +655,9 @@ const afterLoss = async (holding,type) =>{
         const otherOpenSide = openSide == 'short' ? 'long' : 'short';
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
+
+    continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+    continuousObj.continuousWinNum = 0;
 }
 // 平半仓
 const closeHalfPosition = async (holding, position = initPosition) => {
@@ -713,22 +713,17 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio)
-    let newLossRatio = Number(lossRatio)
-
-    if(continuousObj.continuousWinNum){
-        newWinRatio = Number(winRatio) / 5.5
-        newLossRatio = Number(lossRatio) * 0.8
-    }
+    let newWinRatio = Number(winRatio) / 4.5
+    let newLossRatio = Number(lossRatio) * 1.5
 
     if(continuousObj.continuousLossNum){
-        newWinRatio = Number(lossRatio) / 1.2
-        newLossRatio = Number(winRatio) * 1.8 / 4
+        newWinRatio = Number(lossRatio) * 0.5
+        newLossRatio = Number(lossRatio) * 2.5
     }
 
     const consoleOtherFn = () => {
         console.log('@@@@@@@@@other other start@@@@@@@@@')
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
+        console.log(instrument_id, ratio, position,moment().format('YYYY-MM-DD HH:mm:ss'))
         console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side, 'otherPositionPrimaryPrice', otherPositionPrimaryPrice)
         console.log('otherPositionLoss',otherPositionLoss,'isHalf',isHalf)
         console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
@@ -753,8 +748,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
 
-        if(continuousObj.continuousWinNum){
-            const openSide = side == 'short' ? 'long' : 'short'
+        if(continuousObj.continuousLossNum){
+            const openSide = side == 'long' ? 'long' : 'short'
             const payload = {
                 openSide,
                 lossNum: continuousObj.continuousLossNum,
