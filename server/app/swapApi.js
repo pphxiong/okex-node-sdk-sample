@@ -1013,7 +1013,8 @@ const writeData = async () => {
 }
 
 const readData = async () => {
-    let dataConfig = fs.readFileSync('./app/config.json');
+    let dataConfig = fs.readFileSync('./app/config.json','utf-8');
+    dataConfig = JSON.parse(dataConfig)
 
     const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
     continuousObj.continuousWinNum = dataConfig.continuousWinNum
