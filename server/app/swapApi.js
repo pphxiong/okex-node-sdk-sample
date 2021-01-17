@@ -1002,7 +1002,7 @@ const writeData = async () => {
     }
     let jsonStr = JSON.stringify(dataConfig);
     //将修改后的内容写入文件
-    fs.writeFile('/config.json', jsonStr, function(err) {
+    fs.writeFile('./app/config.json', jsonStr, function(err) {
         if (err) {
             console.error(err);
         }else{
@@ -1013,7 +1013,7 @@ const writeData = async () => {
 }
 
 const readData = async () => {
-    let dataConfig = fs.readFileSync('/config.json');
+    let dataConfig = fs.readFileSync('./app/config.json');
 
     const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
     continuousObj.continuousWinNum = dataConfig.continuousWinNum
