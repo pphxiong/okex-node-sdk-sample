@@ -1004,14 +1004,20 @@ const writeData = async () => {
     }
     let jsonStr = JSON.stringify(dataConfig);
     console.log(jsonStr)
-    //将修改后的内容写入文件
-    fs.writeFile('./app/config.json', jsonStr, function(err) {
-        if (err) {
-            console.error(err);
-        }else{
-            console.log('----------修改成功-------------');
-        }
-    });
+
+    const result = await new Promise(resolve=>{
+        //将修改后的内容写入文件
+        fs.writeFile('./app/config.json', jsonStr, function(err) {
+            if (err) {
+                console.error(err);
+            }else{
+                console.log('----------修改成功-------------');
+                resolve(true)
+            }
+        });
+    })
+
+    return result
 }
 
 const readData = async () => {
@@ -1096,11 +1102,10 @@ const startInterval = async () => {
             }
         }
         await waitTime()
-        await writeData()
-        await startInterval()
+        const result = await writeData()
+        if(result) await startInterval()
     }else{
         await waitTime()
-        await writeData()
         await startInterval()
     }
 }

@@ -56,4 +56,4 @@ build
 
 .vscode
 
-# app/config.json
+app/config.json
