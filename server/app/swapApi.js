@@ -1030,7 +1030,7 @@ const readData = async () => {
     otherPositionSide = dataConfig.otherPositionSide
     otherPositionLoss = dataConfig.otherPositionLoss
 
-    console.log('dataConfig',dataConfig)
+    console.log('dataConfig',dataConfig.isOpenOtherOrder)
 
 }
 
