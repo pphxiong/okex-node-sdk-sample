@@ -1048,10 +1048,9 @@ const readData = async () => {
 let positionChange = true;
 let globalBtcHolding = null;
 const startInterval = async () => {
-    await readData()
-
     let btcHolding = globalBtcHolding
     if(positionChange){
+        await readData()
         const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
         globalBtcHolding = tempBtcHolding
         btcHolding = globalBtcHolding
