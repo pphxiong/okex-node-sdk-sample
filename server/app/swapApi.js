@@ -5,6 +5,12 @@ import moment from 'moment'
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
+let fs = require('fs');
+
+//读取配置文件，变量config的类型是Object类型
+// let dataConfig = require('./config.json');
+
+
 let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
@@ -560,10 +566,10 @@ const afterWin = async (holding, ratio) => {
     }
 
     continuousLossSameSideNum = 0;
-    if(ratio == Number(winRatio)){
+    // if(ratio == Number(winRatio)){
         lastLastWinDirection = lastWinDirection;
         lastWinDirection = side;
-    }
+    // }
 
     ratioChangeNum = 0
     lastMostWinRatio = 0;
@@ -583,7 +589,7 @@ const afterWin = async (holding, ratio) => {
     ){
         isOpenOtherOrder = true;
         let otherOpenSide = isOpenShort ? 'short' : 'long';
-        if(continuousObj.continuousWinNum > 3) otherOpenSide = isOpenShort ? 'long' : 'short'
+        if(continuousObj.continuousWinNum > 2) otherOpenSide = isOpenShort ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 
@@ -724,7 +730,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     const consoleOtherFn = () => {
         console.log('@@@@@@@@@other other start@@@@@@@@@')
         console.log(instrument_id, ratio, position,moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side, 'otherPositionPrimaryPrice', otherPositionPrimaryPrice)
+        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side,)
+        console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice, 'mark_price', mark_price)
         console.log('otherPositionLoss',otherPositionLoss,'isHalf',isHalf)
         console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
         console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
@@ -837,7 +844,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     const consoleFn = () => {
         console.log('------------origin start---------------')
         console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
-        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side, 'primaryPrice', primaryPrice)
+        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
+        console.log('primaryPrice', primaryPrice, 'mark_price', mark_price)
         console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
         console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
         console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
@@ -974,9 +982,62 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 //     },1000 * 2)
 // }
 
+const writeData = async () => {
+    //将修改后的配置写入文件前需要先转成json字符串格式
+    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+
+    let dataConfig = {
+        "continuousWinNum": continuousObj.continuousWinNum,
+        "continuousLossNum": continuousObj.continuousLossNum,
+        "lastWinDirection" : lastWinDirection,
+        "lastLastWinDirection": lastLastWinDirection,
+        "lastLossDirection": lastLossDirection,
+        "lastLastLossDirection": lastLastLossDirection,
+        "continuousWinSameSideNum": continuousWinSameSideNum,
+        "continuousLossSameSideNum": continuousLossSameSideNum,
+        "lastMostWinRatio": lastMostWinRatio,
+        "isOpenOtherOrder": isOpenOtherOrder,
+        "otherPositionSide": otherPositionSide,
+        "otherPositionLoss": otherPositionLoss
+    }
+    let jsonStr = JSON.stringify(dataConfig);
+    //将修改后的内容写入文件
+    fs.writeFile('./config.json', jsonStr, function(err) {
+        if (err) {
+            console.error(err);
+        }else{
+            console.log('----------修改成功-------------');
+        }
+
+    });
+}
+
+const readData = async () => {
+    let dataConfig = fs.readFileSync('./config.json');
+    dataConfig = JSON.parse(dataConfig);
+
+    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    continuousObj.continuousWinNum = dataConfig.continuousWinNum
+    continuousObj.continuousLossNum = dataConfig.continuousLossNum
+    lastWinDirection = dataConfig.lastWinDirection
+    lastLastWinDirection = dataConfig.lastLastWinDirection
+    lastLossDirection = dataConfig.lastLossDirection
+    lastLastLossDirection = dataConfig.lastLastLossDirection
+    continuousWinSameSideNum = dataConfig.continuousWinSameSideNum
+    continuousLossSameSideNum = dataConfig.continuousLossSameSideNum
+    lastMostWinRatio = dataConfig.lastMostWinRatio
+    isOpenOtherOrder = dataConfig.isOpenOtherOrder
+    otherPositionSide = dataConfig.otherPositionSide
+    otherPositionLoss = dataConfig.otherPositionLoss
+
+    console.log('dataConfig',dataConfig)
+}
+
 let positionChange = true;
 let globalBtcHolding = null;
 const startInterval = async () => {
+    await readData()
+
     let btcHolding = globalBtcHolding
     if(positionChange){
         const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
@@ -986,7 +1047,6 @@ const startInterval = async () => {
             console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
             positionChange = false
         }
-
     }
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
@@ -1030,11 +1090,12 @@ const startInterval = async () => {
                 }
             }
         }
-
         await waitTime()
+        await writeData()
         await startInterval()
     }else{
         await waitTime()
+        await writeData()
         await startInterval()
     }
 }
