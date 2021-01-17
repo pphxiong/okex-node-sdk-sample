@@ -996,9 +996,11 @@ const writeData = async () => {
         "continuousWinSameSideNum": continuousWinSameSideNum.toString(),
         "continuousLossSameSideNum": continuousLossSameSideNum.toString(),
         "lastMostWinRatio": lastMostWinRatio.toString(),
-        "isOpenOtherOrder": isOpenOtherOrder,
+        "isOpenOtherOrder": isOpenOtherOrder.toString(),
         "otherPositionSide": otherPositionSide,
-        "otherPositionLoss": otherPositionLoss
+        "otherPositionLoss": otherPositionLoss.toString(),
+        "primaryPrice": primaryPrice.toString(),
+        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString()
     }
     let jsonStr = JSON.stringify(dataConfig);
     console.log(jsonStr)
@@ -1029,6 +1031,8 @@ const readData = async () => {
     isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
     otherPositionSide = dataConfig.otherPositionSide
     otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
+    primaryPrice = Number(dataConfig.primaryPrice)
+    otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
 
     console.log('dataConfig',dataConfig.isOpenOtherOrder,moment().format('YYYY-MM-DD HH:mm:ss'))
 

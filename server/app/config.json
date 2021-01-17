@@ -10,5 +10,7 @@
   "lastMostWinRatio": "0",
   "isOpenOtherOrder": false,
   "otherPositionSide": "",
-  "otherPositionLoss": false
+  "otherPositionLoss": false,
+  "primaryPrice": "0",
+  "otherPositionPrimaryPrice": "0"
 }
