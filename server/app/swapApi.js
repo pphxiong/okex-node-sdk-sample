@@ -1013,24 +1013,34 @@ const writeData = async () => {
 }
 
 const readData = async () => {
-    let dataConfig = fs.readFileSync('./config.json');
-    dataConfig = JSON.parse(dataConfig);
+    console.log(fs)
+    fs.readFile('./config.json', function(err, data) {
+        // 读取文件失败/错误
+        if (err) {
+            throw err;
+        }
+        // 读取文件成功
+        let dataConfig = data;
+        console.log(data)
 
-    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
-    continuousObj.continuousWinNum = dataConfig.continuousWinNum
-    continuousObj.continuousLossNum = dataConfig.continuousLossNum
-    lastWinDirection = dataConfig.lastWinDirection
-    lastLastWinDirection = dataConfig.lastLastWinDirection
-    lastLossDirection = dataConfig.lastLossDirection
-    lastLastLossDirection = dataConfig.lastLastLossDirection
-    continuousWinSameSideNum = dataConfig.continuousWinSameSideNum
-    continuousLossSameSideNum = dataConfig.continuousLossSameSideNum
-    lastMostWinRatio = dataConfig.lastMostWinRatio
-    isOpenOtherOrder = dataConfig.isOpenOtherOrder
-    otherPositionSide = dataConfig.otherPositionSide
-    otherPositionLoss = dataConfig.otherPositionLoss
+        const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+        continuousObj.continuousWinNum = dataConfig.continuousWinNum
+        continuousObj.continuousLossNum = dataConfig.continuousLossNum
+        lastWinDirection = dataConfig.lastWinDirection
+        lastLastWinDirection = dataConfig.lastLastWinDirection
+        lastLossDirection = dataConfig.lastLossDirection
+        lastLastLossDirection = dataConfig.lastLastLossDirection
+        continuousWinSameSideNum = dataConfig.continuousWinSameSideNum
+        continuousLossSameSideNum = dataConfig.continuousLossSameSideNum
+        lastMostWinRatio = dataConfig.lastMostWinRatio
+        isOpenOtherOrder = dataConfig.isOpenOtherOrder
+        otherPositionSide = dataConfig.otherPositionSide
+        otherPositionLoss = dataConfig.otherPositionLoss
 
-    console.log('dataConfig',dataConfig)
+        console.log('dataConfig',dataConfig)
+    });
+
+
 }
 
 let positionChange = true;
