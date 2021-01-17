@@ -8,7 +8,7 @@
   "continuousWinSameSideNum": "0",
   "continuousLossSameSideNum": "0",
   "lastMostWinRatio": "0",
-  "isOpenOtherOrder": "false",
+  "isOpenOtherOrder": false,
   "otherPositionSide": "",
   "otherPositionLoss": "false"
 }
