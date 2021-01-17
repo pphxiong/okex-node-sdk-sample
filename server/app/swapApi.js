@@ -987,15 +987,15 @@ const writeData = async () => {
     const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
 
     let dataConfig = {
-        "continuousWinNum": continuousObj.continuousWinNum,
-        "continuousLossNum": continuousObj.continuousLossNum,
+        "continuousWinNum": continuousObj.continuousWinNum.toString(),
+        "continuousLossNum": continuousObj.continuousLossNum.toString(),
         "lastWinDirection" : lastWinDirection,
         "lastLastWinDirection": lastLastWinDirection,
         "lastLossDirection": lastLossDirection,
         "lastLastLossDirection": lastLastLossDirection,
-        "continuousWinSameSideNum": continuousWinSameSideNum,
-        "continuousLossSameSideNum": continuousLossSameSideNum,
-        "lastMostWinRatio": lastMostWinRatio,
+        "continuousWinSameSideNum": continuousWinSameSideNum.toString(),
+        "continuousLossSameSideNum": continuousLossSameSideNum.toString(),
+        "lastMostWinRatio": lastMostWinRatio.toString(),
         "isOpenOtherOrder": isOpenOtherOrder,
         "otherPositionSide": otherPositionSide,
         "otherPositionLoss": otherPositionLoss
@@ -1009,7 +1009,6 @@ const writeData = async () => {
         }else{
             console.log('----------修改成功-------------');
         }
-
     });
 }
 
