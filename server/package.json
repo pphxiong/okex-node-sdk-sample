@@ -14,7 +14,7 @@
     "start": "pm2 start start.js --env=production",
     "start:product": "pm2 start startProduct.js --env=production",
     "restart": "pm2 restart 1",
-    "restart:product": "pm2 restart 2",
+    "restart:product": "pm2 restart 2 --env=manul",
     "restart:all": "pm2 restart all",
     "stop": "pm2 delete 1",
     "stop:all": "pm2 delete all",

@@ -1021,28 +1021,30 @@ const writeData = async () => {
     return result
 }
 
+let isInit = true
 const readData = async () => {
-    let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
-    // dataConfig = JSON.parse(dataConfig)
+    if(!isInit || process.env != 'manul'){
+        let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
+        // dataConfig = JSON.parse(dataConfig)
 
-    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
-    continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
-    continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
-    lastWinDirection = dataConfig.lastWinDirection
-    lastLastWinDirection = dataConfig.lastLastWinDirection
-    lastLossDirection = dataConfig.lastLossDirection
-    lastLastLossDirection = dataConfig.lastLastLossDirection
-    continuousWinSameSideNum = Number(dataConfig.continuousWinSameSideNum)
-    continuousLossSameSideNum = Number(dataConfig.continuousLossSameSideNum)
-    lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
-    isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
-    otherPositionSide = dataConfig.otherPositionSide
-    otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
-    primaryPrice = Number(dataConfig.primaryPrice)
-    otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
+        const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+        continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
+        continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
+        lastWinDirection = dataConfig.lastWinDirection
+        lastLastWinDirection = dataConfig.lastLastWinDirection
+        lastLossDirection = dataConfig.lastLossDirection
+        lastLastLossDirection = dataConfig.lastLastLossDirection
+        continuousWinSameSideNum = Number(dataConfig.continuousWinSameSideNum)
+        continuousLossSameSideNum = Number(dataConfig.continuousLossSameSideNum)
+        lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
+        isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
+        otherPositionSide = dataConfig.otherPositionSide
+        otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
+        primaryPrice = Number(dataConfig.primaryPrice)
+        otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
 
-    console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
-
+        console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
+    }
 }
 
 let positionChange = true;
@@ -1130,6 +1132,7 @@ const waitTime = (time = 1000 * 4) => {
 // myInterval = setTimeout(startInterval,1000 * 2)
 (async ()=>{
     await startInterval()
+    isInit = false
 })()
 app.listen(8091);
 
