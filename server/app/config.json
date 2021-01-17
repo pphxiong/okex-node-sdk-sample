@@ -1,14 +1,14 @@
 {
-  "continuousWinNum": 0,
-  "continuousLossNum": 0,
+  "continuousWinNum": "0",
+  "continuousLossNum": "0",
   "lastWinDirection" : "",
   "lastLastWinDirection": "",
   "lastLossDirection": "",
   "lastLastLossDirection": "",
-  "continuousWinSameSideNum": 0,
-  "continuousLossSameSideNum": 0,
-  "lastMostWinRatio": 0,
-  "isOpenOtherOrder": false,
+  "continuousWinSameSideNum": "0",
+  "continuousLossSameSideNum": "0",
+  "lastMostWinRatio": "0",
+  "isOpenOtherOrder": "false",
   "otherPositionSide": "",
-  "otherPositionLoss": false
+  "otherPositionLoss": "false"
 }
