@@ -1001,6 +1001,7 @@ const writeData = async () => {
         "otherPositionLoss": otherPositionLoss
     }
     let jsonStr = JSON.stringify(dataConfig);
+    console.log(jsonStr)
     //将修改后的内容写入文件
     fs.writeFile('./app/config.json', jsonStr, function(err) {
         if (err) {
@@ -1017,20 +1018,20 @@ const readData = async () => {
     // dataConfig = JSON.parse(dataConfig)
 
     const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
-    continuousObj.continuousWinNum = dataConfig.continuousWinNum
-    continuousObj.continuousLossNum = dataConfig.continuousLossNum
+    continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
+    continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
     lastWinDirection = dataConfig.lastWinDirection
     lastLastWinDirection = dataConfig.lastLastWinDirection
     lastLossDirection = dataConfig.lastLossDirection
     lastLastLossDirection = dataConfig.lastLastLossDirection
-    continuousWinSameSideNum = dataConfig.continuousWinSameSideNum
-    continuousLossSameSideNum = dataConfig.continuousLossSameSideNum
-    lastMostWinRatio = dataConfig.lastMostWinRatio
-    isOpenOtherOrder = dataConfig.isOpenOtherOrder
+    continuousWinSameSideNum = Number(dataConfig.continuousWinSameSideNum)
+    continuousLossSameSideNum = Number(dataConfig.continuousLossSameSideNum)
+    lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
+    isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
     otherPositionSide = dataConfig.otherPositionSide
-    otherPositionLoss = dataConfig.otherPositionLoss
+    otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
 
-    console.log('dataConfig',dataConfig.isOpenOtherOrder)
+    console.log('dataConfig',dataConfig.isOpenOtherOrder,moment().format('YYYY-MM-DD HH:mm:ss'))
 
 }
 
