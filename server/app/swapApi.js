@@ -1000,7 +1000,8 @@ const writeData = async () => {
         "otherPositionSide": otherPositionSide,
         "otherPositionLoss": otherPositionLoss.toString(),
         "primaryPrice": primaryPrice.toString(),
-        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString()
+        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString(),
+        "time": moment().format('YYYY-MM-DD HH:mm:ss').toString()
     }
     let jsonStr = JSON.stringify(dataConfig);
     console.log(jsonStr)
@@ -1040,7 +1041,7 @@ const readData = async () => {
     primaryPrice = Number(dataConfig.primaryPrice)
     otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
 
-    console.log('dataConfig',dataConfig.isOpenOtherOrder,moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
 
 }
 

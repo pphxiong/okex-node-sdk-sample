@@ -12,5 +12,6 @@
   "otherPositionSide": "",
   "otherPositionLoss": false,
   "primaryPrice": "0",
-  "otherPositionPrimaryPrice": "0"
+  "otherPositionPrimaryPrice": "0",
+  "time": ""
 }
