@@ -5,7 +5,7 @@ import moment from 'moment'
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
 
-let fs = require('fs');
+const fs = require('fs');
 
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./config.json');
@@ -1002,7 +1002,7 @@ const writeData = async () => {
     }
     let jsonStr = JSON.stringify(dataConfig);
     //将修改后的内容写入文件
-    fs.writeFile('./app/config.json', jsonStr, function(err) {
+    fs.writeFile('config.json', jsonStr, function(err) {
         if (err) {
             console.error(err);
         }else{
@@ -1013,7 +1013,7 @@ const writeData = async () => {
 }
 
 const readData = async () => {
-    let dataConfig = fs.readFileSync('./app/config.json','utf-8');
+    let dataConfig =  JSON.parse(fs.readFileSync('config.json','utf-8'));
     // dataConfig = JSON.parse(dataConfig)
 
     const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
