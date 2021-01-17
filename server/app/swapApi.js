@@ -1002,7 +1002,7 @@ const writeData = async () => {
     }
     let jsonStr = JSON.stringify(dataConfig);
     //将修改后的内容写入文件
-    fs.writeFile('./config.json', jsonStr, function(err) {
+    fs.writeFile('/config.json', jsonStr, function(err) {
         if (err) {
             console.error(err);
         }else{
@@ -1013,33 +1013,23 @@ const writeData = async () => {
 }
 
 const readData = async () => {
-    console.log(fs)
-    fs.readFile('./config.json', function(err, data) {
-        // 读取文件失败/错误
-        if (err) {
-            throw err;
-        }
-        // 读取文件成功
-        let dataConfig = data;
-        console.log(data)
+    let dataConfig = fs.readFileSync('/config.json');
 
-        const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
-        continuousObj.continuousWinNum = dataConfig.continuousWinNum
-        continuousObj.continuousLossNum = dataConfig.continuousLossNum
-        lastWinDirection = dataConfig.lastWinDirection
-        lastLastWinDirection = dataConfig.lastLastWinDirection
-        lastLossDirection = dataConfig.lastLossDirection
-        lastLastLossDirection = dataConfig.lastLastLossDirection
-        continuousWinSameSideNum = dataConfig.continuousWinSameSideNum
-        continuousLossSameSideNum = dataConfig.continuousLossSameSideNum
-        lastMostWinRatio = dataConfig.lastMostWinRatio
-        isOpenOtherOrder = dataConfig.isOpenOtherOrder
-        otherPositionSide = dataConfig.otherPositionSide
-        otherPositionLoss = dataConfig.otherPositionLoss
+    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    continuousObj.continuousWinNum = dataConfig.continuousWinNum
+    continuousObj.continuousLossNum = dataConfig.continuousLossNum
+    lastWinDirection = dataConfig.lastWinDirection
+    lastLastWinDirection = dataConfig.lastLastWinDirection
+    lastLossDirection = dataConfig.lastLossDirection
+    lastLastLossDirection = dataConfig.lastLastLossDirection
+    continuousWinSameSideNum = dataConfig.continuousWinSameSideNum
+    continuousLossSameSideNum = dataConfig.continuousLossSameSideNum
+    lastMostWinRatio = dataConfig.lastMostWinRatio
+    isOpenOtherOrder = dataConfig.isOpenOtherOrder
+    otherPositionSide = dataConfig.otherPositionSide
+    otherPositionLoss = dataConfig.otherPositionLoss
 
-        console.log('dataConfig',dataConfig)
-    });
-
+    console.log('dataConfig',dataConfig)
 
 }
 
