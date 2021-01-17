@@ -1058,7 +1058,6 @@ const startInterval = async () => {
             console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
             positionChange = false
         }
-        await writeData()
     }
     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
@@ -1103,6 +1102,7 @@ const startInterval = async () => {
             }
         }
         await waitTime()
+        if(positionChange) await writeData()
         await startInterval()
     }else{
         await waitTime()
