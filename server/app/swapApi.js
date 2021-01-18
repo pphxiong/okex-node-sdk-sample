@@ -1023,9 +1023,7 @@ const writeData = async () => {
 
 let isInit = true
 const readData = async () => {
-    console.log(process.env)
-    console.log('env',process.env.NODE_ENV)
-    if(!isInit || process.env.NODE_ENV != 'manul'){
+    // if(!isInit){
         let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
         // dataConfig = JSON.parse(dataConfig)
 
@@ -1046,7 +1044,7 @@ const readData = async () => {
         otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
 
         console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
-    }
+    // }
 }
 
 let positionChange = true;
