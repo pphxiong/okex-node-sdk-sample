@@ -1065,8 +1065,9 @@ const startInterval = async () => {
 
     const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
     // console.log('btcQty',btcQty, initPosition)
-    // console.log(btcHolding[0])
+
     if(btcQty) {
+        console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
@@ -1089,7 +1090,6 @@ const startInterval = async () => {
             // console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice)
             // console.log('otherPositionSide',otherPositionSide)
             // console.log('isOpenOtherOrder', isOpenOtherOrder)
-            // console.log(Number(btcHolding[0].position) > Number(initPosition) * 2)
 
             if(Number(btcHolding[0].position) > Number(initPosition) * 2){
                 // await autoOtherOrder(btcHolding[0],mark_price, true)

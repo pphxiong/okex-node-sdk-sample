@@ -1,0 +1,18 @@
+{
+  "continuousWinNum": "0",
+  "continuousLossNum": "0",
+  "lastWinDirection" : "",
+  "lastLastWinDirection": "",
+  "lastLossDirection": "",
+  "lastLastLossDirection": "",
+  "continuousWinSameSideNum": "0",
+  "continuousLossSameSideNum": "0",
+  "lastMostWinRatio": "0",
+  "isOpenOtherOrder": false,
+  "otherPositionSide": "",
+  "otherPositionLoss": false,
+  "primaryPrice": "0",
+  "otherPositionPrimaryPrice": "0",
+  "time": ""
+}
+
