@@ -1023,6 +1023,7 @@ const writeData = async () => {
 
 let isInit = true
 const readData = async () => {
+    console.log(process.env)
     console.log('env',process.env.NODE_ENV)
     if(!isInit || process.env.NODE_ENV != 'manul'){
         let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
