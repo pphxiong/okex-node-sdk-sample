@@ -12,7 +12,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2 start start.js --env=production",
-    "start:product": "pm2 start ecosystem.config.js NODE_ENV=manul --only STARTPRODUCT --watch",
+    "start:product": "NODE_ENV=manul pm2 start ecosystem.config.js --only STARTPRODUCT --watch",
     "restart": "pm2 restart 1",
     "restart:product": "export NODE_ENV=manul && pm2 restart 2",
     "restart:all": "pm2 restart all",
