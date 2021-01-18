@@ -22,6 +22,24 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production'
       }
+    },
+    {
+      name: 'STARTPRODUCT',
+      script: 'startProduct.js',
+      cwd: "./",
+      log_date_format: "YYYY-MM-DD HH:mm:ss",
+      out_file: "./logs/out-0.log",
+      error_file: "./logs/err-0.log",
+      watch: true,
+      // exec_interpreter:"babel-node",
+      exec_mode: "fork",
+      env: {
+        COMMON_VARIABLE: 'true',
+        NODE_ENV: 'production'
+      },
+      env_production: {
+        NODE_ENV: 'production'
+      }
     }
   ]
 }
