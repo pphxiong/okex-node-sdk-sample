@@ -8,9 +8,9 @@
   "continuousWinSameSideNum": "0",
   "continuousLossSameSideNum": "0",
   "lastMostWinRatio": "0",
-  "isOpenOtherOrder": false,
+  "isOpenOtherOrder": "false",
   "otherPositionSide": "",
-  "otherPositionLoss": false,
+  "otherPositionLoss": "false",
   "primaryPrice": "0",
   "otherPositionPrimaryPrice": "0",
   "time": ""

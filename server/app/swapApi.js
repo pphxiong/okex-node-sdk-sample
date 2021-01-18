@@ -707,8 +707,9 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     otherPositionPrimaryPrice = otherPositionPrimaryPrice || Number(avg_cost)
 
-    const position = isHalf ? Number(originPosition) / 2 : Number(originPosition)
-    const margin = isHalf ? Number(originMargin) / 2 : Number(originMargin)
+    const position = isHalf ? Math.floor(Number(originPosition) * (initPosition + 1) / ( 2 * initPosition + 1 ) ) : Number(originPosition)
+    // const margin = isHalf ? Number(originMargin) * (initPosition + 1) / ( 2 * initPosition + 1 )  : Number(originMargin)
+    const margin = position * 100 / otherPositionPrimaryPrice / Number(leverage);
 
     const size = Number(position) * 100 / Number(mark_price);
     let unrealized_pnl = size * (Number(mark_price) - otherPositionPrimaryPrice) / Number(mark_price);
@@ -802,8 +803,9 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     primaryPrice = primaryPrice || Number(avg_cost)
 
-    const position = isHalf ? Number(originPosition) / 2 : Number(originPosition)
-    const margin = isHalf ? Number(originMargin) / 2 : Number(originMargin)
+    const position = isHalf ? Math.floor(Number(originPosition) * initPosition / ( 2 * initPosition + 1 ) ) : Number(originPosition)
+    // const margin = isHalf ? Number(originMargin) * initPosition / ( 2 * initPosition + 1 ) : Number(originMargin)
+    const margin = position * 100 / primaryPrice / Number(leverage);
 
     const size = Number(position) * 100 / Number(mark_price);
     let unrealized_pnl = size * (Number(mark_price) - primaryPrice) / Number(mark_price);
@@ -1004,7 +1006,7 @@ const writeData = async () => {
         "time": moment().format('YYYY-MM-DD HH:mm:ss').toString()
     }
     let jsonStr = JSON.stringify(dataConfig);
-    console.log(jsonStr)
+    // console.log(jsonStr)
 
     const result = await new Promise(resolve=>{
         //将修改后的内容写入文件

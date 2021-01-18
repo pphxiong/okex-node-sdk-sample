@@ -1,1 +1,18 @@
-{"continuousWinNum":"0","continuousLossNum":"2","lastWinDirection":"long","lastLastWinDirection":"short","lastLossDirection":"long","lastLastLossDirection":"short","continuousWinSameSideNum":"0","continuousLossSameSideNum":"1","lastMostWinRatio":"0.08448168316982199","isOpenOtherOrder":"true","otherPositionSide":"short","otherPositionLoss":"true","primaryPrice":"35608.7","otherPositionPrimaryPrice":"35555.3","time":"2021-01-18 03:57:43"}
+{
+  "continuousWinNum": "0",
+  "continuousLossNum": "0",
+  "lastWinDirection" : "",
+  "lastLastWinDirection": "",
+  "lastLossDirection": "",
+  "lastLastLossDirection": "",
+  "continuousWinSameSideNum": "0",
+  "continuousLossSameSideNum": "0",
+  "lastMostWinRatio": "0",
+  "isOpenOtherOrder": "false",
+  "otherPositionSide": "",
+  "otherPositionLoss": "false",
+  "primaryPrice": "0",
+  "otherPositionPrimaryPrice": "0",
+  "time": ""
+}
+
