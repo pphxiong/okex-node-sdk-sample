@@ -749,6 +749,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         positionChange = true
         isOpenOtherOrder = false
         otherPositionLoss = false
+        otherPositionPrimaryPrice = 0
 
         if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
             await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
@@ -775,6 +776,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         positionChange = true
         isOpenOtherOrder = false
         otherPositionLoss = false
+        otherPositionPrimaryPrice = 0
 
         if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
             await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
@@ -873,8 +875,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
                 await autoCloseOrderByMarketPriceByHolding(holding);
             }
             positionChange = true
-
             lastMostWinRatio = 0;
+            primaryPrice = 0
 
             const openSide = side == 'long' ? 'short' : 'long';
             const payload = {
@@ -895,6 +897,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
         positionChange = true
+        primaryPrice = 0
         await afterWin(holding,newWinRatio)
         return;
     }
@@ -906,6 +909,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
         positionChange = true
+        primaryPrice = 0
         await afterLoss(holding)
         return;
     }
