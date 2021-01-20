@@ -184,9 +184,9 @@ export default props => {
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
-        // if(continuousObj.otherContinuousWinNum > 4) {
+        // if(continuousObj.otherContinuousWinNum > 3) {
         //   otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
-        //   continuousObj.otherContinuousWinNum = 0
+          // continuousObj.otherContinuousWinNum = 0
         // }
         isOpenOtherOrder = true
         otherPositionLoss = true
@@ -198,12 +198,12 @@ export default props => {
       isOpenOtherOrder = false
       otherPositionLoss = false
 
-      if(continuousObj.continuousLossNum){
+      // if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
         isOpenOtherOrder = true
         otherPositionLoss = true
-      }
+      // }
     }
   }
   const testOrder = (historyList,endPrice) => {
