@@ -297,8 +297,8 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 
     await authClient.swap().postOrder(payload)
 
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-    // otherPositionPrimaryPrice = Number(mark_price)
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+    otherPositionPrimaryPrice = Number(mark_price)
 
     // let hasOrderInterval = setInterval(async ()=>{
     //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
@@ -381,8 +381,8 @@ const autoOpenOrderSingle = async (params = {}) => {
 
         await authClient.swap().postOrder(payload)
 
-        // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-        // primaryPrice = Number(mark_price)
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+        primaryPrice = Number(mark_price)
 
         // let order_id = (await authClient.swap().postOrder(payload)).order_id;
 
