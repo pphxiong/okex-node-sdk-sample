@@ -17,9 +17,9 @@ let myInterval;
 let mode = 4; //下单模式
 
 let frequency = 1;
-const winRatio = 2;
+const winRatio = 3;
 const lossRatio = 0.6;
-let initPosition = 5;
+let initPosition = 10;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -279,7 +279,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', } = params;
     otherPositionSide = openSide
 
-    const position = initPosition * 1 + 1
+    const position = initPosition
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -324,7 +324,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
-    let changeRatio = 1;
+    let changeRatio = 1 / 10;
     // if(lossNum == 2 || lossNum == 4) {
     //     changeRatio = 1;
     // }else if(lossNum > 2) {
@@ -708,14 +708,9 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     otherPositionPrimaryPrice = otherPositionPrimaryPrice || Number(avg_cost)
 
     const position = isHalf ? Math.floor(Number(originPosition) * (initPosition + 1) / ( 2 * initPosition + 1 ) ) : Number(originPosition)
-    // const margin = isHalf ? Number(originMargin) * (initPosition + 1) / ( 2 * initPosition + 1 )  : Number(originMargin)
-    const margin = position * 100 / otherPositionPrimaryPrice / Number(leverage);
 
-    const size = Number(position) * 100 / Number(mark_price);
-    let unrealized_pnl = size * (Number(mark_price) - otherPositionPrimaryPrice) / Number(mark_price);
-    if(side=='short') unrealized_pnl = - unrealized_pnl;
-
-    const ratio = Number(unrealized_pnl) / Number(margin);
+    let ratio = (Number(mark_price) - Number(otherPositionPrimaryPrice)) * Number(leverage) / Number(mark_price);
+    ratio = isNaN(ratio) ? 0 : ratio
     const condition = Number(leverage) / 100;
 
     const continuousObj = continuousMap[instrument_id];
@@ -724,7 +719,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(continuousObj.continuousLossNum){
-        newWinRatio = Number(lossRatio) * 0.5
+        newWinRatio = Number(lossRatio) * 0.8
         newLossRatio = Number(lossRatio) * 2.5
     }
 
@@ -751,8 +746,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         otherPositionLoss = false
         otherPositionPrimaryPrice = 0
 
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
-            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -778,8 +773,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         otherPositionLoss = false
         otherPositionPrimaryPrice = 0
 
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
-            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -805,15 +800,13 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     primaryPrice = primaryPrice || Number(avg_cost)
 
     const position = isHalf ? Math.floor(Number(originPosition) * initPosition / ( 2 * initPosition + 1 ) ) : Number(originPosition)
-    // const margin = isHalf ? Number(originMargin) * initPosition / ( 2 * initPosition + 1 ) : Number(originMargin)
-    const margin = position * 100 / primaryPrice / Number(leverage);
+    // const margin = position * 100 / primaryPrice / Number(leverage);
+    // let unrealized_pnl = Number(margin) * Number(leverage) * (Number(mark_price) - Number(primaryPrice)) / Number(mark_price)
+    // if(side=='short') unrealized_pnl = - unrealized_pnl;
+    // unrealized_pnl = isNaN(unrealized_pnl) ? 0 : unrealized_pnl
 
-    const size = Number(position) * 100 / Number(mark_price);
-    let unrealized_pnl = size * (Number(mark_price) - primaryPrice) / Number(mark_price);
-    if(side=='short') unrealized_pnl = - unrealized_pnl;
-    let isOpenShort = side == 'short';
-
-    const ratio = Number(unrealized_pnl) / Number(margin);
+    let ratio = (Number(mark_price) - Number(primaryPrice)) * Number(leverage) / Number(mark_price);
+    ratio = isNaN(ratio) ? 0 : ratio
     const condition = Number(leverage) / 100;
 
     const continuousObj = continuousMap[instrument_id];
@@ -869,8 +862,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
         ){
             consoleFn()
-            if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
-                await closeHalfPosition(holding, Number(initPosition))
+            if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+                await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
             }else{
                 await autoCloseOrderByMarketPriceByHolding(holding);
             }
@@ -891,8 +884,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     if(ratio > condition * newWinRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
-            await closeHalfPosition(holding, Number(initPosition))
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -903,8 +896,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     }
     if(ratio < - condition * newLossRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 2)){
-            await closeHalfPosition(holding, Number(initPosition))
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -1077,11 +1070,11 @@ const startInterval = async () => {
     // console.log('btcQty',btcQty, initPosition)
 
     if(btcQty) {
-        if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
+        if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 1) ){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            if(initPosition * 1 != Number(btcHolding[0].position)){
+            if(initPosition * 1 == Number(btcHolding[0].position)){
                 mainHolding = btcHolding[1]
                 otherHolding = btcHolding[0]
             }
@@ -1100,12 +1093,12 @@ const startInterval = async () => {
             // console.log('otherPositionSide',otherPositionSide)
             // console.log('isOpenOtherOrder', isOpenOtherOrder)
 
-            if(Number(btcHolding[0].position) > Number(initPosition) * 2){
+            if(Number(btcHolding[0].position) > Number(initPosition) * 1){
                 // await autoOtherOrder(btcHolding[0],mark_price, true)
                 // await autoOperateSwap(btcHolding[0],mark_price, true)
                 await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
             }else{
-                if(Number(btcHolding[0].position) > Number(initPosition)){
+                if(Number(btcHolding[0].position) == Number(initPosition)){
                     await autoOtherOrder(btcHolding[0],mark_price)
                 }else{
                     await autoOperateSwap(btcHolding[0],mark_price)

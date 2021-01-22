@@ -30,9 +30,9 @@ export default props => {
   const [eosCurrent,setEosCurrent] = useState(1);
   const [eosPageSize,setEosPageSize] = useState(10);
   const [frequency, setFrequency] = useState(1);
-  const winRatio = useRef(2);
+  const winRatio = useRef(3);
   const lossRatio = useRef(0.6);
-  const [changebleWinRatio, setChangebleWinRatio] = useState(2);
+  const [changebleWinRatio, setChangebleWinRatio] = useState(3);
   const [changebleLossRatio, setChangebleLossRatio] = useState(0.6);
   const [tPnlList,setTPnlList] = useState([{}]);
   const [tPnl, setTPnl] = useState(0);
@@ -154,24 +154,29 @@ export default props => {
   let otherPositionLoss = false
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    let otherPosition = 1 * initPosition + 2
-    const size = Number(otherPosition) * 100 / Number(price);
-    let other_unrealized_pnl = size * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
-    if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
+    let otherPosition = 1 * initPosition + 0.9 * initPosition
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
-    const otherFee = Number(otherMargin) * 5 * 2 * 4 / 10000;
+    // const size = Number(otherPosition) * 100 / Number(price);
+    let other_unrealized_pnl = Number(otherMargin) * leverage * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
+    if(otherPositionSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
+    other_unrealized_pnl = isNaN(other_unrealized_pnl) ? 0 : other_unrealized_pnl
+
+    const otherFee = Number(otherMargin) * 5 * 2 / 1000;
 
     let condition = leverage / 100;
-    const ratio = Number(other_unrealized_pnl) / Number(otherMargin);
+    let ratio = ((Number(price) - Number(otherPositionPrimaryPrice)) * leverage / Number(price));
+    ratio = isNaN(ratio) ? 0 : ratio
+    if(otherPositionSide == 'short') ratio = -ratio;
 
     let newWinRatio = Number(winRatio.current) / 4.5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
     if(continuousObj.continuousLossNum){
-      newWinRatio = Number(lossRatio.current) * 0.5
+      newWinRatio = Number(lossRatio.current) * 0.8
       newLossRatio = Number(lossRatio.current) * 2.5
     }
+    // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
       otherTotalPnl += other_unrealized_pnl - otherFee;
@@ -239,7 +244,7 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
-      let changeRatio = 1;
+      let changeRatio = 1 / 10;
       // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
       //   changeRatio = 1;
       // }else if(continuousObj.continuousLossNum > 2) {
@@ -269,18 +274,21 @@ export default props => {
       const margin = position * 100 / historyList[0][1] / leverage;
       let condition = leverage / 100;
 
-      const size = Number(position) * 100 / Number(item[1]);
-      let unrealized_pnl = size * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
+      // const size = Number(position) * 100 / Number(item[1]);
+      let unrealized_pnl = Number(margin) * leverage * (Number(item[1]) - Number(primaryPrice)) / Number(item[1])
+      unrealized_pnl = isNaN(unrealized_pnl) ? 0 : unrealized_pnl
       if(isCurrentSideShort) unrealized_pnl = -unrealized_pnl;
 
-      const fee = Number(margin) * 5 * 2 * 4.0 / 10000;
-      const ratio = Number(unrealized_pnl) / Number(margin);
+      const fee = Number(margin) * 5 * 2 / 1000;
+      let ratio = (Number(item[1]) - Number(primaryPrice)) * leverage / Number(item[1]);
+      if(isCurrentSideShort) ratio = -ratio;
+      ratio = isNaN(ratio) ? 0 : ratio
 
       const dealPnl = () => {
         totalFee += fee;
         totalPnl += (unrealized_pnl - fee);
         totalMargin += margin
-        totalRatio = totalMargin ? totalPnl * 100 / totalMargin : 0
+        totalRatio += (isNaN(ratio) ? 0 : ratio * 100)
 
         // console.log(isCurrentSideShort, unrealized_pnl - fee, totalPnl, totalPnl * 100 / totalMargin)
       }
@@ -544,7 +552,7 @@ export default props => {
       dayRatioList.push({
         time: item[0],
         ratio: ratio * 100,
-        totalRatio
+        totalRatio: totalRatio || 0
       })
 
     })
@@ -558,7 +566,7 @@ export default props => {
       time: historyList[0][0],
       totalPnl: totalPnl + otherTotalPnl,
       totalMargin,
-      totalRatio: totalMargin ? totalPnl * 100 / totalMargin : 0,
+      totalRatio: isNaN(totalRatio) ? 0 : totalRatio,
       totalFee,
       endPrice: primaryPrice,
       dayRatioList
@@ -598,7 +606,7 @@ export default props => {
         // console.log(result)
         t += result.totalPnl;
         tMargin += result.totalMargin;
-        tRatio += result.totalRatio;
+        tRatio += result.totalRatio || 0;
         list.push(result);
         loopNum++;
         lastPrice = result.endPrice;
@@ -606,7 +614,7 @@ export default props => {
           time: start,
           dList: result.dayRatioList,
           pnl: result.totalPnl,
-          ratio: result.totalRatio
+          ratio: result.totalRatio || 0
         })
 
         mockObj[start] = data;
@@ -621,7 +629,7 @@ export default props => {
     console.log('tRatio',t * 100 / tMargin)
     setPageLoading(false);
     // console.log(JSON.stringify(mockObj))
-    return { pnl: t, ratio: t * 100 / tMargin, dList, };
+    return { pnl: t, ratio: tRatio, dList, };
   }
 
   const fnGetHistory = async () => {
@@ -736,7 +744,7 @@ export default props => {
       // data = data.reverse()
       const result = await testOrder(data,lastDayPrice.current);
       t += result.totalPnl;
-      tRatio += result.totalRatio;
+      tRatio += result.totalRatio || 0;
       list.push(result);
       loopNum++;
       lastDayPrice.current = result.endPrice;
