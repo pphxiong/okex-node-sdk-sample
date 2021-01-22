@@ -707,9 +707,10 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     otherPositionPrimaryPrice = otherPositionPrimaryPrice || Number(avg_cost)
 
-    const position = isHalf ? Math.floor(Number(originPosition) * (initPosition + 1) / ( 2 * initPosition + 1 ) ) : Number(originPosition)
+    // const position = isHalf ? Math.floor(Number(originPosition) * (initPosition + 1) / ( 2 * initPosition + 1 ) ) : Number(originPosition)
 
     let ratio = (Number(mark_price) - Number(otherPositionPrimaryPrice)) * Number(leverage) / Number(mark_price);
+    if(side=='short') ratio = -ratio;
     ratio = isNaN(ratio) ? 0 : ratio
     const condition = Number(leverage) / 100;
 
@@ -725,7 +726,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const consoleOtherFn = () => {
         console.log('@@@@@@@@@other other start@@@@@@@@@')
-        console.log(instrument_id, ratio, position,moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log(instrument_id, ratio, originPosition, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side,)
         console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice, 'mark_price', mark_price)
         console.log('otherPositionLoss',otherPositionLoss,'isHalf',isHalf)
@@ -799,13 +800,14 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     primaryPrice = primaryPrice || Number(avg_cost)
 
-    const position = isHalf ? Math.floor(Number(originPosition) * initPosition / ( 2 * initPosition + 1 ) ) : Number(originPosition)
+    // const position = isHalf ? Math.floor(Number(originPosition) * initPosition / ( 2 * initPosition + 1 ) ) : Number(originPosition)
     // const margin = position * 100 / primaryPrice / Number(leverage);
     // let unrealized_pnl = Number(margin) * Number(leverage) * (Number(mark_price) - Number(primaryPrice)) / Number(mark_price)
     // if(side=='short') unrealized_pnl = - unrealized_pnl;
     // unrealized_pnl = isNaN(unrealized_pnl) ? 0 : unrealized_pnl
 
     let ratio = (Number(mark_price) - Number(primaryPrice)) * Number(leverage) / Number(mark_price);
+    if(side=='short') ratio = -ratio;
     ratio = isNaN(ratio) ? 0 : ratio
     const condition = Number(leverage) / 100;
 
@@ -839,7 +841,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     const consoleFn = () => {
         console.log('------------origin start---------------')
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, originPosition)
         console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
         console.log('primaryPrice', primaryPrice, 'mark_price', mark_price)
         console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
@@ -862,8 +864,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
         ){
             consoleFn()
-            if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
-                await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
+            if(isHalf || (Number(originPosition) > Number(initPosition) * 1)){
+                await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
             }else{
                 await autoCloseOrderByMarketPriceByHolding(holding);
             }
@@ -884,8 +886,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     if(ratio > condition * newWinRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
-            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
+        if(isHalf || (Number(originPosition) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
@@ -896,8 +898,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     }
     if(ratio < - condition * newLossRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
-            await closeHalfPosition(holding, Number(holding.position) - Number(initPosition))
+        if(isHalf || (Number(originPosition) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
         }
