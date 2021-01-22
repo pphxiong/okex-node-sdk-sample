@@ -593,7 +593,6 @@ const afterWin = async (holding, ratio) => {
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 
-
     continuousObj.continuousLossNum = 0;
     continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 }
@@ -774,7 +773,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         otherPositionLoss = false
         otherPositionPrimaryPrice = 0
 
-        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+        if(isHalf || (Number(holding.position) > Number(initPosition))){
             await closeHalfPosition(holding, Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
@@ -864,7 +863,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
         ){
             consoleFn()
-            if(isHalf || (Number(originPosition) > Number(initPosition) * 1)){
+            if(isHalf || (Number(originPosition) > Number(initPosition))){
                 await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
             }else{
                 await autoCloseOrderByMarketPriceByHolding(holding);
@@ -886,7 +885,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     if(ratio > condition * newWinRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(originPosition) > Number(initPosition) * 1)){
+        if(isHalf || (Number(originPosition) > Number(initPosition))){
             await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
@@ -898,7 +897,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     }
     if(ratio < - condition * newLossRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(originPosition) > Number(initPosition) * 1)){
+        if(isHalf || (Number(originPosition) > Number(initPosition))){
             await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
         }else{
             await autoCloseOrderByMarketPriceByHolding(holding);
@@ -1076,7 +1075,7 @@ const startInterval = async () => {
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            if(initPosition * 1 == Number(btcHolding[0].position)){
+            if(Number(btcHolding[0].position) >= initPosition * 1){
                 mainHolding = btcHolding[1]
                 otherHolding = btcHolding[0]
             }
@@ -1095,7 +1094,7 @@ const startInterval = async () => {
             // console.log('otherPositionSide',otherPositionSide)
             // console.log('isOpenOtherOrder', isOpenOtherOrder)
 
-            if(Number(btcHolding[0].position) > Number(initPosition) * 1){
+            if(Number(btcHolding[0].position) > Number(initPosition)){
                 // await autoOtherOrder(btcHolding[0],mark_price, true)
                 // await autoOperateSwap(btcHolding[0],mark_price, true)
                 await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
