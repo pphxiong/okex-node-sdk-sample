@@ -319,7 +319,7 @@ export default props => {
       }
 
       // if(isOpenOtherOrder && continuousObj.continuousLossNum){
-      //   newWinRatio = Number(winRatio.current) / 5
+      //   newLossRatio = Number(lossRatio.current) * 0.6
       // }
 
       maxLossRatioT = Math.max(maxLossRatioT, newLossRatio)
