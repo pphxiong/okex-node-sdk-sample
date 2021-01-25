@@ -146,7 +146,7 @@ export default props => {
     continuousWinSameSideNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
     ratioChangeNum: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12:0, 13:0, 14:0, 15: 0 },
   }
-  const initPosition = 20;
+  const initPosition = 10;
   let isOpenOtherOrder = false;
   let otherPositionPrimaryPrice = 0;
   let otherPositionSide = null
@@ -154,7 +154,7 @@ export default props => {
   let otherPositionLoss = false
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
-    let otherPosition = 1 * initPosition + 0.9 * initPosition
+    let otherPosition = 1 * initPosition
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
     // const size = Number(otherPosition) * 100 / Number(price);
