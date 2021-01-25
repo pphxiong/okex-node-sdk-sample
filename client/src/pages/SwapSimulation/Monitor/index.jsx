@@ -174,7 +174,7 @@ export default props => {
 
     if(continuousObj.continuousLossNum){
       newWinRatio = Number(lossRatio.current) * 0.8
-      newLossRatio = Number(lossRatio.current) * 2.5
+      newLossRatio = Number(lossRatio.current) * 2.5 * 1.2
     }
     // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
 
