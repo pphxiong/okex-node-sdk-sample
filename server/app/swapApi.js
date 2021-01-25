@@ -757,7 +757,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
             await closeHalfPosition(holding, Number(initPosition))
         }else{
-            await autoCloseOrderByMarketPriceByHolding(holding);
+            // await autoCloseOrderByMarketPriceByHolding(holding);
+            await closeHalfPosition(holding, Number(originPosition))
         }
 
         if(continuousObj.continuousLossNum){
@@ -784,7 +785,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         if(isHalf || (Number(holding.position) > Number(initPosition))){
             await closeHalfPosition(holding, Number(initPosition))
         }else{
-            await autoCloseOrderByMarketPriceByHolding(holding);
+            // await autoCloseOrderByMarketPriceByHolding(holding);
+            await closeHalfPosition(holding, Number(originPosition))
         }
 
         // if(continuousObj.continuousLossNum){
@@ -874,7 +876,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             if(isHalf || (Number(originPosition) > Number(initPosition))){
                 await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
             }else{
-                await autoCloseOrderByMarketPriceByHolding(holding);
+                // await autoCloseOrderByMarketPriceByHolding(holding);
+                await closeHalfPosition(holding, Number(originPosition))
             }
             positionChange = true
             lastMostWinRatio = 0;
@@ -897,7 +900,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         if(isHalf || (Number(originPosition) > Number(initPosition))){
             await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
         }else{
-            await autoCloseOrderByMarketPriceByHolding(holding);
+            // await autoCloseOrderByMarketPriceByHolding(holding);
+            await closeHalfPosition(holding, Number(originPosition))
         }
         positionChange = true
         primaryPrice = 0
@@ -909,7 +913,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         if(isHalf || (Number(originPosition) > Number(initPosition))){
             await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
         }else{
-            await autoCloseOrderByMarketPriceByHolding(holding);
+            // await autoCloseOrderByMarketPriceByHolding(holding);
+            await closeHalfPosition(holding, Number(originPosition))
         }
         positionChange = true
         primaryPrice = 0
@@ -1093,9 +1098,9 @@ const startInterval = async () => {
             // console.log('otherPositionSide',otherPositionSide)
             // console.log('isOpenOtherOrder', isOpenOtherOrder)
 
-            await autoOtherOrder(otherHolding,mark_price)
-            await autoOperateSwap(mainHolding,mark_price)
-            // await Promise.all([await autoOtherOrder(otherHolding,mark_price), await autoOperateSwap(mainHolding,mark_price)])
+            // await autoOtherOrder(otherHolding,mark_price)
+            // await autoOperateSwap(mainHolding,mark_price)
+            await Promise.all([await autoOtherOrder(otherHolding,mark_price), await autoOperateSwap(mainHolding,mark_price)])
         }else{
             // console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
             // console.log('primaryPrice', primaryPrice)
@@ -1104,9 +1109,9 @@ const startInterval = async () => {
             // console.log('isOpenOtherOrder', isOpenOtherOrder)
 
             if(Number(btcHolding[0].position) > Number(initPosition)){
-                await autoOtherOrder(btcHolding[0],mark_price, true)
-                await autoOperateSwap(btcHolding[0],mark_price, true)
-                // await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
+                // await autoOtherOrder(btcHolding[0],mark_price, true)
+                // await autoOperateSwap(btcHolding[0],mark_price, true)
+                await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
             }else{
                 if(Number(btcHolding[0].position) == Number(initPosition)){
                     await autoOtherOrder(btcHolding[0],mark_price)
