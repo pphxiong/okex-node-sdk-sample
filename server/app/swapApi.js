@@ -728,7 +728,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     if(continuousObj.continuousLossNum){
         newWinRatio = Number(lossRatio) * 0.8
-        newLossRatio = Number(lossRatio) * 2.5 * 1.2
+        newLossRatio = Number(lossRatio) * 2.5 * 1.2 * 1.2
     }
 
     const consoleOtherFn = () => {
