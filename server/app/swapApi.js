@@ -770,7 +770,9 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
                 continuousWinSameSideNum,
                 continuousLossSameSideNum
             }
-            await autoOpenOtherOrderSingle(payload);
+            setTimeout(async ()=>{
+                await autoOpenOtherOrderSingle(payload);
+            }, 500)
             isOpenOtherOrder = true
             otherPositionLoss = true
         }
@@ -798,7 +800,9 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
                 continuousWinSameSideNum,
                 continuousLossSameSideNum
             }
-            await autoOpenOtherOrderSingle(payload);
+            setTimeout(async ()=>{
+                await autoOpenOtherOrderSingle(payload);
+            }, 500)
             isOpenOtherOrder = true
             otherPositionLoss = true
         // }
