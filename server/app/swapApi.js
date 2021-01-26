@@ -665,7 +665,7 @@ const afterLoss = async (holding,type) =>{
         !type
     ){
         isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'short' ? 'long' : 'short';
+        const otherOpenSide = openSide == 'long' ? 'long' : 'short';
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 
