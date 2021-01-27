@@ -170,17 +170,17 @@ export default props => {
     ratio = isNaN(ratio) ? 0 : ratio
     if(otherPositionSide == 'short') ratio = -ratio;
 
-    let newWinRatio = Number(winRatio.current) / 4.5
+    let newWinRatio = Number(winRatio.current) / 3.5
     let newLossRatio = Number(lossRatio.current) * 1.5
 
     if(continuousObj.continuousLossNum){
-      newWinRatio = Number(lossRatio.current) * 0.8 / 0.8
-      // newLossRatio = Number(lossRatio.current) * 2.5 * 1.2 * 1.2
+      newWinRatio = Number(lossRatio.current) * 0.8 * 1.5
+      newLossRatio = Number(lossRatio.current) * 2.5 * 1.2 * 1.2
     }
 
-    // if(continuousObj.otherContinuousWinNum > 3){
-    //   newLossRatio = Number(lossRatio.current) * 1.0
-    // }
+    if(continuousObj.otherContinuousWinNum > 3){
+      newLossRatio = Number(lossRatio.current) * 1.0
+    }
     // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
@@ -201,10 +201,10 @@ export default props => {
       if(continuousObj.continuousLossNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
-        // if(continuousObj.otherContinuousWinNum > 3) {
-        //   otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
-        //   continuousObj.otherContinuousWinNum = 0
-        // }
+        if(continuousObj.otherContinuousWinNum > 3) {
+          otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+          continuousObj.otherContinuousWinNum = 0
+        }
         isOpenOtherOrder = true
         otherPositionLoss = true
       }
@@ -214,6 +214,7 @@ export default props => {
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
       otherPositionLoss = false
+      continuousObj.otherContinuousWinNum = 0
 
       // if(otherTotalPnl <= -otherMargin){
       //   console.log(otherTotalPnl,otherMargin)
