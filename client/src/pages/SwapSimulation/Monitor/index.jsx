@@ -175,7 +175,7 @@ export default props => {
 
     if(continuousObj.continuousLossNum){
       newWinRatio = Number(lossRatio.current) * 0.8 * 1.5
-      newLossRatio = Number(lossRatio.current) * 2.5 * 1.2 * 1.2
+      newLossRatio = Number(lossRatio.current) * 2.5 * 1.2
     }
 
     if(continuousObj.otherContinuousWinNum > 3){

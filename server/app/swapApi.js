@@ -385,10 +385,11 @@ const autoOpenOrderSingle = async (params = {}) => {
         }
 
         try{
-            await authClient.swap().postOrder(payload)
+            // await authClient.swap().postOrder(payload)
 
             const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
             primaryPrice = Number(mark_price)
+            primarySide = openSide
         }catch (e) {
             console.log(e)
         }
@@ -483,6 +484,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         isOpenOtherOrder: iooo,
         otherPositionSide: otps,
         otherPositionLoss: otpl,
+        primarySide: pside,
+        primaryPrice: pp,
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
@@ -498,6 +501,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     isOpenOtherOrder = iooo == 'true' || iooo == true
     otherPositionSide = otps
     otherPositionLoss = otpl == 'true' || otpl == true
+    primarySide = pside
+    primaryPrice = pp
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
             instrument_id,
@@ -512,7 +517,9 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
             lastMostWinRatio: Number(lmwr),
             isOpenOtherOrder: iooo,
             otherPositionSide: otps,
-            otherPositionLoss: otpl
+            otherPositionLoss: otpl,
+            primarySide: pside,
+            primaryPrice: pp
         } });
 });
 
@@ -557,6 +564,7 @@ let ratioChangeNum = 0;
 let lastMostWinRatio = 0;
 let isOpenOtherOrder = false;
 let primaryPrice = 0;
+let primarySide = 'long';
 let otherPositionPrimaryPrice = 0;
 const afterWin = async (holding, ratio) => {
     const { instrument_id, side } = holding;
@@ -729,7 +737,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     if(continuousObj.continuousLossNum){
         newWinRatio = Number(lossRatio) * 0.8 * 1.5
-        newLossRatio = Number(lossRatio) * 2.5 * 1.2 * 1.2
+        newLossRatio = Number(lossRatio) * 2.5 * 1.2
     }
 
     if(continuousObj.otherContinuousWinNum > 3){
@@ -821,10 +829,10 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     }
 }
 const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
-    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin: originMargin, side } = holding;
+    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin: originMargin, } = holding;
 
-    primaryPrice = primaryPrice || Number(avg_cost)
-
+    primaryPrice = primaryPrice || Number(avg_cost) || Number(mark_price)
+    const side = primarySide
     // const position = isHalf ? Math.floor(Number(originPosition) * initPosition / ( 2 * initPosition + 1 ) ) : Number(originPosition)
     // const margin = position * 100 / primaryPrice / Number(leverage);
     // let unrealized_pnl = Number(margin) * Number(leverage) * (Number(mark_price) - Number(primaryPrice)) / Number(mark_price)
@@ -1027,9 +1035,10 @@ const writeData = async () => {
         "lastMostWinRatio": lastMostWinRatio.toString(),
         "isOpenOtherOrder": isOpenOtherOrder.toString(),
         "otherPositionSide": otherPositionSide,
+        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString(),
         "otherPositionLoss": otherPositionLoss.toString(),
         "primaryPrice": primaryPrice.toString(),
-        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString(),
+        "primarySide": primarySide.toString(),
         "time": moment().format('YYYY-MM-DD HH:mm:ss').toString()
     }
     let jsonStr = JSON.stringify(dataConfig);
@@ -1068,9 +1077,10 @@ const readData = async () => {
         lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
         isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
         otherPositionSide = dataConfig.otherPositionSide
+        otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
         otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
         primaryPrice = Number(dataConfig.primaryPrice)
-        otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
+        primarySide = dataConfig.primarySide
 
         console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
     // }
@@ -1089,8 +1099,31 @@ const startInterval = async () => {
                 console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 await readData()
                 positionChange = false
-                console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
+                if(isOpenOtherOrder){
+                    if(primarySide == otherPositionSide){
+                        btcHolding[0].position += initPosition * 1 / 10
+                    }else{
+                        const primaryHolding = {
+                            side: primarySide,
+                            avg_cost: primaryPrice,
+                            instrument_id: BTC_INSTRUMENT_ID,
+                            position: initPosition * 1 / 10,
+                            leverage: btcHolding[0].leverage
+                        }
+                        btcHolding.push(primaryHolding)
+                    }
+                }
+            }else{
+                btcHolding = []
+                const primaryHolding = {
+                    side: primarySide,
+                    instrument_id: BTC_INSTRUMENT_ID,
+                    position: initPosition * 1 / 10,
+                    leverage: 15
+                }
+                btcHolding.push(primaryHolding)
             }
+            console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
         }catch (e){
             console.log(e)
         }
