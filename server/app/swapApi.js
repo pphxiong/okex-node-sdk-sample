@@ -1101,7 +1101,7 @@ const startInterval = async () => {
                 positionChange = false
                 if(isOpenOtherOrder){
                     if(primarySide == otherPositionSide){
-                        btcHolding[0].position += initPosition * 1 / 10
+                        btcHolding[0].position = Number(btcHolding[0].position) + initPosition * 1 / 10
                     }else{
                         const primaryHolding = {
                             side: primarySide,
