@@ -872,6 +872,11 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         newWinRatio = Number(winRatio) / 5
     }
 
+    const closePrimaryPosition = () => {
+        positionChange = true
+        primaryPrice = 0
+    }
+
     const consoleFn = () => {
         console.log('------------origin start---------------')
         console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, originPosition, isHalf)
@@ -884,6 +889,8 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         console.log('lastMostWinRatio',lastMostWinRatio)
         console.log('isOpenOtherOrder',isOpenOtherOrder)
         console.log('------------origin end---------------')
+
+        closePrimaryPosition()
     }
 
     if(ratio > 0){
@@ -897,15 +904,13 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
         ){
             consoleFn()
-            if(isHalf || (Number(originPosition) > Number(initPosition))){
-                await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
-            }else{
-                // await autoCloseOrderByMarketPriceByHolding(holding);
-                await closeHalfPosition(holding, Number(originPosition))
-            }
-            positionChange = true
+            // if(isHalf || (Number(originPosition) > Number(initPosition))){
+            //     await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
+            // }else{
+            //     // await autoCloseOrderByMarketPriceByHolding(holding);
+            //     await closeHalfPosition(holding, Number(originPosition))
+            // }
             lastMostWinRatio = 0;
-            primaryPrice = 0
 
             const openSide = side == 'long' ? 'short' : 'long';
             const payload = {
@@ -921,27 +926,23 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     if(ratio > condition * newWinRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(originPosition) > Number(initPosition))){
-            await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
-        }else{
-            // await autoCloseOrderByMarketPriceByHolding(holding);
-            await closeHalfPosition(holding, Number(originPosition))
-        }
-        positionChange = true
-        primaryPrice = 0
+        // if(isHalf || (Number(originPosition) > Number(initPosition))){
+        //     await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
+        // }else{
+        //     // await autoCloseOrderByMarketPriceByHolding(holding);
+        //     await closeHalfPosition(holding, Number(originPosition))
+        // }
         await afterWin(holding,newWinRatio)
         return;
     }
     if(ratio < - condition * newLossRatio * frequency){
         consoleFn()
-        if(isHalf || (Number(originPosition) > Number(initPosition))){
-            await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
-        }else{
-            // await autoCloseOrderByMarketPriceByHolding(holding);
-            await closeHalfPosition(holding, Number(originPosition))
-        }
-        positionChange = true
-        primaryPrice = 0
+        // if(isHalf || (Number(originPosition) > Number(initPosition))){
+        //     await closeHalfPosition(holding, Number(originPosition) - Number(initPosition))
+        // }else{
+        //     // await autoCloseOrderByMarketPriceByHolding(holding);
+        //     await closeHalfPosition(holding, Number(originPosition))
+        // }
         await afterLoss(holding)
         return;
     }
