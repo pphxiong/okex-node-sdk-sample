@@ -157,6 +157,8 @@ export default props => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1 * initPosition
 
+    if(continuousLossSameSideNum == 2 && isCurrentSideShort) otherPosition = otherPosition / 10
+
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
     // const size = Number(otherPosition) * 100 / Number(price);
     let other_unrealized_pnl = Number(otherMargin) * leverage * (Number(price) - Number(otherPositionPrimaryPrice)) / Number(price)
@@ -207,6 +209,7 @@ export default props => {
         }
         isOpenOtherOrder = true
         otherPositionLoss = true
+
       }
     }
 
@@ -229,6 +232,21 @@ export default props => {
         isOpenOtherOrder = true
         otherPositionLoss = true
       // }
+      if(continuousLossSameSideNum == 2 && isCurrentSideShort) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+
+      lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
+
+      loss2Maps["currentSide"][otherPositionSide] += 1
+      loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
+      loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
+      loss2Maps["lastLossDirection"][lastLossDirection] += 1
+      loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
+      loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
+      loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
+      loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
+      loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
+      loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
+
     }
 
   }
@@ -450,22 +468,18 @@ export default props => {
         if(ratio < - condition * newLossRatio * frequency){
           dealPnl()
 
-          lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
-
-          // if(
-          //   continuousObj.continuousLossNum == 1
-          // ) {
-          loss2Maps["currentSide"][currentSide] += 1
-          loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
-          loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
-          loss2Maps["lastLossDirection"][lastLossDirection] += 1
-          loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
-          loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
-          loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
-          loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
-          loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
-          loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
-          // }
+          // lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
+          //
+          // loss2Maps["currentSide"][currentSide] += 1
+          // loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
+          // loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
+          // loss2Maps["lastLossDirection"][lastLossDirection] += 1
+          // loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
+          // loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
+          // loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
+          // loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
+          // loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
+          // loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
 
           isCurrentSideShort = !isCurrentSideShort;
           if(
@@ -535,6 +549,7 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = !!isCurrentSideShort ? 'short' : 'long'
+            if(continuousLossSameSideNum == 2) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
           }
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
