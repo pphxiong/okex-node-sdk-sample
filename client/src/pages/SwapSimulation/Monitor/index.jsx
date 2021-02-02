@@ -554,7 +554,7 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = !!isCurrentSideShort ? 'short' : 'long'
-            if(continuousLossSameSideNum == 2) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+            if(continuousLossSameSideNum >= 2 && isCurrentSideShort) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
           }
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;

@@ -297,7 +297,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     }
 
     try{
-        if(!(continuousLossSameSideNum == 2 && primarySide == 'short')){
+        if(!(continuousLossSameSideNum >= 2 && primarySide == 'short')){
             await authClient.swap().postOrder(payload)
         }
 
@@ -681,7 +681,7 @@ const afterLoss = async (holding,type) =>{
     ){
         isOpenOtherOrder = true;
         let otherOpenSide = openSide == 'long' ? 'long' : 'short';
-        if(continuousLossSameSideNum == 2) otherOpenSide = otherOpenSide == 'short' ? 'long' : 'short'
+        if(continuousLossSameSideNum >= 2 && isOpenShort) otherOpenSide = otherOpenSide == 'short' ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 
