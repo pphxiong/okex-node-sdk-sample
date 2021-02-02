@@ -660,7 +660,6 @@ const afterLoss = async (holding,type) =>{
     lastMostWinRatio = 0;
 
     let openSide = isOpenShort ? 'short' : 'long';
-    if(continuousLossSameSideNum == 2) openSide = openSide == 'short' ? 'long' : 'short'
     const payload = {
         openSide,
         lossNum: continuousObj.continuousLossNum,
@@ -681,7 +680,8 @@ const afterLoss = async (holding,type) =>{
         !type
     ){
         isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'long' ? 'long' : 'short';
+        let otherOpenSide = openSide == 'long' ? 'long' : 'short';
+        if(continuousLossSameSideNum == 2) otherOpenSide = otherOpenSide == 'short' ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
 

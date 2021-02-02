@@ -157,7 +157,7 @@ export default props => {
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1 * initPosition
-    if(continuousLossSameSideNum == 2 && isCurrentSideShort) otherPosition = otherPosition / 10
+    if(continuousLossSameSideNum >= 2 && isCurrentSideShort) otherPosition = otherPosition / 10
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
     // const size = Number(otherPosition) * 100 / Number(price);
