@@ -297,7 +297,9 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     }
 
     try{
-        await authClient.swap().postOrder(payload)
+        if(!(continuousLossSameSideNum == 2 && primarySide == 'short')){
+            await authClient.swap().postOrder(payload)
+        }
 
         const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
         otherPositionPrimaryPrice = Number(mark_price)
@@ -473,6 +475,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         instrument_id,
         continuousWinNum,
         continuousLossNum,
+        otherContinuousWinNum,
+        otherContinuousLossNum,
         lastWinDirection : lsd,
         lastLossDirection: lld,
         continuousLossSameSideNum: clss,
@@ -490,6 +494,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
     continuousObj.continuousWinNum = Number(continuousWinNum);
+    continuousObj.otherContinuousWinNum = Number(otherContinuousWinNum);
+    continuousObj.otherContinuousLossNum = Number(otherContinuousLossNum);
     lastWinDirection = lsd;
     lastLossDirection = lld;
     continuousLossSameSideNum = Number(clss)
@@ -814,7 +820,6 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
         // if(continuousObj.continuousLossNum){
             let openSide = side == 'short' ? 'long' : 'short';
-            if(continuousLossSameSideNum == 2 && primarySide == 'short') openSide = openSide == 'short' ? 'long' : 'short'
 
             const payload = {
                 openSide,
@@ -1030,6 +1035,8 @@ const writeData = async () => {
     let dataConfig = {
         "continuousWinNum": continuousObj.continuousWinNum.toString(),
         "continuousLossNum": continuousObj.continuousLossNum.toString(),
+        "otherContinuousWinNum": continuousObj.otherContinuousWinNum.toString(),
+        "otherContinuousLossNum": continuousObj.otherContinuousLossNum.toString(),
         "lastWinDirection" : lastWinDirection,
         "lastLastWinDirection": lastLastWinDirection,
         "lastLossDirection": lastLossDirection,
@@ -1072,6 +1079,8 @@ const readData = async () => {
         const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
         continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
         continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
+        continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
+        continuousObj.otherContinuousLossNum = Number(dataConfig.otherContinuousLossNum)
         lastWinDirection = dataConfig.lastWinDirection
         lastLastWinDirection = dataConfig.lastLastWinDirection
         lastLossDirection = dataConfig.lastLossDirection
@@ -1119,6 +1128,15 @@ const startInterval = async () => {
                 }
             }else{
                 btcHolding = []
+                if(isOpenOtherOrder){
+                    const otherHolding = {
+                        side: otherPositionSide,
+                        instrument_id: BTC_INSTRUMENT_ID,
+                        position: initPosition,
+                        leverage: 15
+                    }
+                    btcHolding.push(otherHolding)
+                }
                 const primaryHolding = {
                     side: primarySide,
                     instrument_id: BTC_INSTRUMENT_ID,

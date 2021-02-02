@@ -91,7 +91,8 @@ export default props => {
     continuousLossNum: 0,
     continuousWinNum: 0,
     otherContinuousWinNum: 0,
-    otherContinuousLossNum: 0
+    otherContinuousLossNum: 0,
+    otherContinuousRealWinNum: 0,
   }
 
   let continuousObj = initContinuousObj;
@@ -156,7 +157,6 @@ export default props => {
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1 * initPosition
-
     if(continuousLossSameSideNum == 2 && isCurrentSideShort) otherPosition = otherPosition / 10
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
@@ -183,6 +183,7 @@ export default props => {
     if(continuousObj.otherContinuousWinNum > 3){
       newLossRatio = Number(lossRatio.current) * 1.0
     }
+
     // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
@@ -192,6 +193,7 @@ export default props => {
 
       continuousObj.otherContinuousWinNum = continuousObj.otherContinuousWinNum + 1
       continuousObj.otherContinuousLossNum = 0;
+      continuousObj.otherContinuousRealWinNum = continuousObj.otherContinuousRealWinNum + 1
 
       // if(otherTotalPnl <= -otherMargin){
       //   console.log(otherTotalPnl,otherMargin)
@@ -209,7 +211,6 @@ export default props => {
         }
         isOpenOtherOrder = true
         otherPositionLoss = true
-
       }
     }
 
@@ -218,6 +219,8 @@ export default props => {
       isOpenOtherOrder = false
       otherPositionLoss = false
       continuousObj.otherContinuousWinNum = 0
+      continuousObj.otherContinuousLossNum = continuousObj.otherContinuousLossNum + 1
+      continuousObj.otherContinuousRealWinNum = 0
 
       // if(otherTotalPnl <= -otherMargin){
       //   console.log(otherTotalPnl,otherMargin)
@@ -232,20 +235,22 @@ export default props => {
         isOpenOtherOrder = true
         otherPositionLoss = true
       // }
-      if(continuousLossSameSideNum == 2 && isCurrentSideShort) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+      // if(continuousLossSameSideNum == 2 && isCurrentSideShort) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
 
       lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
 
-      loss2Maps["currentSide"][otherPositionSide] += 1
-      loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
-      loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
-      loss2Maps["lastLossDirection"][lastLossDirection] += 1
-      loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
-      loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
-      loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
-      loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
-      loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
-      loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
+      // if(continuousObj.otherContinuousLossNum > 1){
+        loss2Maps["currentSide"][otherPositionSide] += 1
+        loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
+        loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
+        loss2Maps["lastLossDirection"][lastLossDirection] += 1
+        loss2Maps["lastLastLossDirection"][lastLastLossDirection] = 1
+        loss2Maps["lastWinDirection"][lastWinDirection] = loss2Maps["lastWinDirection"][lastWinDirection] ? loss2Maps["lastWinDirection"][lastWinDirection] + 1 : 1
+        loss2Maps["lastLastWinDirection"][lastLastWinDirection] = loss2Maps["lastLastWinDirection"][lastLastWinDirection] ? loss2Maps["lastLastWinDirection"][lastLastWinDirection] + 1 : loss2Maps["lastLastWinDirection"][lastLastWinDirection]
+        loss2Maps['continuousLossSameSideNum'][continuousLossSameSideNum] += 1;
+        loss2Maps['continuousWinSameSideNum'][continuousWinSameSideNum] += 1;
+        loss2Maps['ratioChangeNum'][ratioChangeNum] += 1;
+      // }
 
     }
 
