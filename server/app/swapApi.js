@@ -690,38 +690,41 @@ const afterLoss = async (holding,type) =>{
 }
 // 平半仓
 const closeHalfPosition = async (holding, position = initPosition) => {
-    const { instrument_id, last, leverage, avg_cost, margin, side } = holding;
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+    const { holding: realBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
+        const { instrument_id, last, leverage, avg_cost, margin, side } = holding;
+        // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
 
-    const payload = {
-        size: Math.ceil(Number(position)),
-        type: side == 'long' ? 3 : 4,
-        instrument_id,
-        order_type: 4,
-        // price: mark_price,
-        // match_price: 0
+        const payload = {
+            size: Math.ceil(Number(position)),
+            type: side == 'long' ? 3 : 4,
+            instrument_id,
+            order_type: 4,
+            // price: mark_price,
+            // match_price: 0
+        }
+
+        await authClient.swap().postOrder(payload)
+
+        // let hasOrderInterval = setInterval(async ()=>{
+        //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
+        //     if(result == false) {
+        //         clearInterval(hasOrderInterval)
+        //         hasOrderInterval = null;
+        //         return;
+        //     }
+        //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+        //     const payload = {
+        //         size: Math.ceil(Number(position) / 2),
+        //         type: side == 'long' ? 3 : 4,
+        //         instrument_id,
+        //         order_type: 4,
+        //         // price: mark_price,
+        //         // match_price: 0
+        //     }
+        //     order_id = (await authClient.swap().postOrder(payload)).order_id;
+        // },1500)
     }
-
-    await authClient.swap().postOrder(payload)
-
-    // let hasOrderInterval = setInterval(async ()=>{
-    //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
-    //     if(result == false) {
-    //         clearInterval(hasOrderInterval)
-    //         hasOrderInterval = null;
-    //         return;
-    //     }
-    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-    //     const payload = {
-    //         size: Math.ceil(Number(position) / 2),
-    //         type: side == 'long' ? 3 : 4,
-    //         instrument_id,
-    //         order_type: 4,
-    //         // price: mark_price,
-    //         // match_price: 0
-    //     }
-    //     order_id = (await authClient.swap().postOrder(payload)).order_id;
-    // },1500)
 }
 let otherPositionLoss = false
 let otherPositionSide = null
