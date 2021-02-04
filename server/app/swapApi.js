@@ -1120,8 +1120,8 @@ const startInterval = async () => {
                         btcHolding[0].position = Number(btcHolding[0].position) + initPosition * 1 / 10
                     }else{
                         const primaryHolding = {
-                            side: primarySide,
-                            avg_cost: primaryPrice,
+                            side: primarySide || 'long',
+                            // avg_cost: primaryPrice,
                             instrument_id: BTC_INSTRUMENT_ID,
                             position: initPosition * 1 / 10,
                             leverage: btcHolding[0].leverage

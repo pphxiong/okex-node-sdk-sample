@@ -154,10 +154,18 @@ export default props => {
   let otherPositionSide = null
   let otherTotalPnl = 0;
   let otherPositionLoss = false
+  let otherLatestWinRatioList = []
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1 * initPosition
     if(continuousLossSameSideNum >= 2 && isCurrentSideShort) otherPosition = otherPosition / 10
+
+    if(otherLatestWinRatioList.length == 3){
+      const lastRatioTotal = otherLatestWinRatioList.reduce((pre,cur)=>{ return pre + cur })
+      if(lastRatioTotal < - leverage * 2 / 100) {
+        otherPosition = otherPosition * 1.3
+      }
+    }
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
     // const size = Number(otherPosition) * 100 / Number(price);
@@ -186,7 +194,17 @@ export default props => {
 
     // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
 
+    const deal = () => {
+      if(otherLatestWinRatioList.length < 3) {
+        otherLatestWinRatioList.push(ratio)
+        return
+      }
+      otherLatestWinRatioList.splice(0,1)
+      otherLatestWinRatioList.push(ratio)
+    }
+
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
+      deal()
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
       otherPositionLoss = false
@@ -215,6 +233,7 @@ export default props => {
     }
 
     if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
+      deal()
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
       otherPositionLoss = false
