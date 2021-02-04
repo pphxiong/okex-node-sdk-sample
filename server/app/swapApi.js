@@ -742,16 +742,16 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 3.5
+    let newWinRatio = Number(winRatio) / 4
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(continuousObj.continuousLossNum){
-        newWinRatio = Number(lossRatio) * 0.8 * 1.5
+        newWinRatio = Number(lossRatio) * 0.8 * 1.2
         newLossRatio = Number(lossRatio) * 2.5 * 1.2
     }
 
     if(continuousObj.otherContinuousWinNum > 3){
-        newLossRatio = Number(lossRatio) * 1.0
+        newLossRatio = Number(lossRatio) * 1.2
     }
     const consoleOtherFn = () => {
         console.log('@@@@@@@@@other other start@@@@@@@@@')
