@@ -1139,6 +1139,7 @@ const startInterval = async () => {
                         leverage: 15
                     }
                     btcHolding.push(otherHolding)
+                    await autoOpenOtherOrderSingle({ openSide: otherPositionSide })
                 }
                 const primaryHolding = {
                     side: primarySide,
