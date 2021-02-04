@@ -172,16 +172,16 @@ export default props => {
     ratio = isNaN(ratio) ? 0 : ratio
     if(otherPositionSide == 'short') ratio = -ratio;
 
-    let newWinRatio = Number(winRatio.current) / 3.5
+    let newWinRatio = Number(winRatio.current) / 4
     let newLossRatio = Number(lossRatio.current) * 1.5
 
     if(continuousObj.continuousLossNum){
-      newWinRatio = Number(lossRatio.current) * 0.8 * 1.5
+      newWinRatio = Number(lossRatio.current) * 0.8 * 1.2
       newLossRatio = Number(lossRatio.current) * 2.5 * 1.2
     }
 
     if(continuousObj.otherContinuousWinNum > 3){
-      newLossRatio = Number(lossRatio.current) * 1.0
+      newLossRatio = Number(lossRatio.current) * 1.2
     }
 
     // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
