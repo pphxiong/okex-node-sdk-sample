@@ -1110,11 +1110,11 @@ const startInterval = async () => {
     let btcHolding = globalBtcHolding
     if(positionChange){
         try{
+            console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+            await readData()
             const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             if(btcHolding && btcHolding[0] && Number(btcHolding[0].position)){
-                console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-                await readData()
                 if(isOpenOtherOrder){
                     if(primarySide == otherPositionSide){
                         btcHolding[0].position = Number(btcHolding[0].position) + initPosition * 1 / 10
@@ -1158,7 +1158,7 @@ const startInterval = async () => {
     }
 
     const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
-    console.log('btcQty',btcQty, initPosition)
+    // console.log('btcQty',btcQty, initPosition)
 
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 1) ){
@@ -1196,8 +1196,8 @@ const startInterval = async () => {
                 }
             }
         }
-        await waitTime()
         if(positionChange) await writeData()
+        await waitTime()
         await startInterval()
     }else{
         await waitTime()
