@@ -220,7 +220,7 @@ export default props => {
       //   return;
       // }
 
-      if(continuousObj.continuousLossNum){
+      if(continuousObj.continuousLossNum || !continuousObj.continuousWinNum){
         otherPositionPrimaryPrice = price
         otherPositionSide = otherPositionSide == 'long' ? 'long' : 'short'
         if(continuousObj.otherContinuousWinNum > 3) {
