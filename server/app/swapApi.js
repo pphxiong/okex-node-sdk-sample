@@ -1158,7 +1158,7 @@ const startInterval = async () => {
     }
 
     const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
-    // console.log('btcQty',btcQty, initPosition)
+    console.log('btcQty',btcQty, initPosition)
 
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 1) ){
