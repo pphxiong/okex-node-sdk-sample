@@ -1111,8 +1111,7 @@ const startInterval = async () => {
     if(positionChange){
         try{
             const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-            globalBtcHolding = tempBtcHolding
-            btcHolding = globalBtcHolding
+            btcHolding = tempBtcHolding
             if(btcHolding && btcHolding[0] && Number(btcHolding[0].position)){
                 console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 await readData()
@@ -1151,6 +1150,7 @@ const startInterval = async () => {
                 btcHolding.push(primaryHolding)
             }
             positionChange = false
+            globalBtcHolding = btcHolding
             console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
         }catch (e){
             console.log(e)
