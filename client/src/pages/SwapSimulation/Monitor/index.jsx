@@ -160,12 +160,12 @@ export default props => {
     let otherPosition = 1 * initPosition
     if(continuousLossSameSideNum >= 2 && isCurrentSideShort) otherPosition = otherPosition / 10
 
-    if(otherLatestWinRatioList.length == 3){
-      const lastRatioTotal = otherLatestWinRatioList.reduce((pre,cur)=>{ return pre + cur })
-      if(lastRatioTotal < - leverage * 2 / 100) {
-        otherPosition = otherPosition * 1.3
-      }
-    }
+    // if(otherLatestWinRatioList.length == 3){
+    //   const lastRatioTotal = otherLatestWinRatioList.reduce((pre,cur)=>{ return pre + cur })
+    //   if(lastRatioTotal < - leverage * 2 / 100) {
+    //     otherPosition = otherPosition * 1.3
+    //   }
+    // }
 
     const otherMargin = otherPosition * 100 / otherPositionPrimaryPrice / leverage;
     // const size = Number(otherPosition) * 100 / Number(price);
@@ -184,7 +184,7 @@ export default props => {
     let newLossRatio = Number(lossRatio.current) * 1.5
 
     if(continuousObj.continuousLossNum){
-      newWinRatio = Number(lossRatio.current) * 0.8 * 1.2
+      newWinRatio = Number(lossRatio.current) * 0.8 * 1.5
       newLossRatio = Number(lossRatio.current) * 2.5 * 1.2
     }
 
