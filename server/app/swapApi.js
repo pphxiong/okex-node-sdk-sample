@@ -767,8 +767,6 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         console.log('@@@@@@@@@other other end@@@@@@@@@@@@@')
     }
 
-    isOpenOtherOrder = true
-
     if(ratio > condition * newWinRatio * frequency) {
         consoleOtherFn()
         positionChange = true
@@ -801,9 +799,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
             }
             isOpenOtherOrder = true
             otherPositionLoss = true
-            setTimeout(async ()=>{
-                await autoOpenOtherOrderSingle(payload);
-            }, 300)
+            await autoOpenOtherOrderSingle(payload);
         }
     }
     if(ratio < - condition * newLossRatio * frequency){
@@ -833,9 +829,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
             }
             isOpenOtherOrder = true
             otherPositionLoss = true
-            setTimeout(async ()=>{
-                await autoOpenOtherOrderSingle(payload);
-            }, 300)
+            await autoOpenOtherOrderSingle(payload);
         // }
     }
 }
@@ -1196,8 +1190,8 @@ const startInterval = async () => {
                 }
             }
         }
-        if(positionChange) await writeData()
         await waitTime()
+        if(positionChange) await writeData()
         await startInterval()
     }else{
         await waitTime()
