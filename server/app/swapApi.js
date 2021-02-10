@@ -1125,6 +1125,7 @@ const startInterval = async () => {
                 }
             }else{
                 btcHolding = []
+                console.log('isInit',isInit)
                 if(isOpenOtherOrder && !isInit){
                     const otherHolding = {
                         side: otherPositionSide,
@@ -1146,6 +1147,7 @@ const startInterval = async () => {
             positionChange = false
             globalBtcHolding = btcHolding
             console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
+            return function () {}
         }catch (e){
             console.log(e)
         }
@@ -1197,6 +1199,7 @@ const startInterval = async () => {
         await waitTime()
         await startInterval()
     }
+    isInit = false
 }
 
 function stopInterval() {
@@ -1219,7 +1222,6 @@ const waitTime = (time = 1000 * 4) => {
 // myInterval = setTimeout(startInterval,1000 * 2)
 (async ()=>{
     await startInterval()
-    isInit = false
 })()
 app.listen(8091);
 
