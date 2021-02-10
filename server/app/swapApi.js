@@ -746,7 +746,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(continuousObj.continuousLossNum){
-        newWinRatio = Number(lossRatio) * 0.8 * 1.5
+        newWinRatio = Number(lossRatio) * 0.8 * 1.2
         newLossRatio = Number(lossRatio) * 2.5 * 1.2
     }
 
@@ -1147,7 +1147,6 @@ const startInterval = async () => {
             positionChange = false
             globalBtcHolding = btcHolding
             console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
-            return function () {}
         }catch (e){
             console.log(e)
         }

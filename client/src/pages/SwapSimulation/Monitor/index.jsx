@@ -184,7 +184,7 @@ export default props => {
     let newLossRatio = Number(lossRatio.current) * 1.5
 
     if(continuousObj.continuousLossNum){
-      newWinRatio = Number(lossRatio.current) * 0.8 * 1.5
+      newWinRatio = Number(lossRatio.current) * 0.8 * 1.2
       newLossRatio = Number(lossRatio.current) * 2.5 * 1.2
     }
 
