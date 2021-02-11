@@ -1150,6 +1150,7 @@ const startInterval = async () => {
         }catch (e){
             console.log(e)
         }
+        isInit = false
     }
 
     const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
@@ -1198,7 +1199,6 @@ const startInterval = async () => {
         await waitTime()
         await startInterval()
     }
-    isInit = false
 }
 
 function stopInterval() {
