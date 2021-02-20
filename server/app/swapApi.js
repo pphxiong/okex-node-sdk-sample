@@ -1131,7 +1131,7 @@ const startInterval = async () => {
                         side: otherPositionSide,
                         instrument_id: BTC_INSTRUMENT_ID,
                         position: initPosition,
-                        leverage: 25
+                        leverage: 20
                     }
                     btcHolding.push(otherHolding)
                     await autoOpenOtherOrderSingle({ openSide: otherPositionSide })
@@ -1140,7 +1140,7 @@ const startInterval = async () => {
                     side: primarySide,
                     instrument_id: BTC_INSTRUMENT_ID,
                     position: initPosition * 1 / 10,
-                    leverage: 25
+                    leverage: 20
                 }
                 btcHolding.push(primaryHolding)
             }
