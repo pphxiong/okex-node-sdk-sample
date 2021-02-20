@@ -680,7 +680,7 @@ const afterLoss = async (holding,type) =>{
         !type
     ){
         isOpenOtherOrder = true;
-        let otherOpenSide = openSide == 'long' ? 'long' : 'short';
+        let otherOpenSide = isOpenShort ? 'short' : 'long';
         if(continuousLossSameSideNum >= 2 && isOpenShort) otherOpenSide = otherOpenSide == 'short' ? 'long' : 'short'
         await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
     }
@@ -742,15 +742,15 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 4
+    let newWinRatio = Number(winRatio) / 3
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(continuousObj.continuousLossNum){
-        newWinRatio = Number(lossRatio) * 0.8 * 1.2
+        newWinRatio = Number(lossRatio) * 0.8 * 1.2 * 1.2
         newLossRatio = Number(lossRatio) * 2.5 * 1.2
     }
 
-    if(continuousObj.otherContinuousWinNum > 3){
+    if(continuousObj.otherContinuousWinNum > 3 || continuousObj.otherContinuousLossNum > 1){
         newLossRatio = Number(lossRatio) * 1.2
     }
     const consoleOtherFn = () => {
@@ -784,7 +784,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
             await closeHalfPosition(holding, Number(originPosition))
         }
 
-        if(continuousObj.continuousLossNum){
+        if(continuousObj.continuousLossNum || !continuousObj.continuousWinNum){
             let openSide = side == 'long' ? 'long' : 'short'
             if(continuousObj.otherContinuousWinNum > 3) {
                 openSide = side == 'short' ? 'long' : 'short'
