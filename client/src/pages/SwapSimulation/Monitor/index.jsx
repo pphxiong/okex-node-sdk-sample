@@ -192,8 +192,12 @@ export default props => {
       newLossRatio = Number(lossRatio.current) * 2.5 * 1.2
     }
 
-    if(continuousObj.otherContinuousWinNum >= 3
-      || continuousObj.otherContinuousLossNum > 1
+    if(
+      (continuousObj.otherContinuousWinNum == 3 && otherPositionSide == 'short' && isCurrentSideShort)
+      ||
+      continuousObj.otherContinuousWinNum > 3
+      ||
+      continuousObj.otherContinuousLossNum > 1
       // || continuousObj.otherContinuousRealWinNum > 7
      ){
       newLossRatio = Number(lossRatio.current) * 1.2

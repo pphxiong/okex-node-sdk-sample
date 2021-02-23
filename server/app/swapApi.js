@@ -810,6 +810,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         otherPositionLoss = false
         otherPositionPrimaryPrice = 0
         continuousObj.otherContinuousWinNum = 0
+        continuousObj.otherContinuousLossNum = continuousObj.otherContinuousLossNum + 1
 
         if(isHalf || (Number(holding.position) > Number(initPosition))){
             await closeHalfPosition(holding, Number(initPosition))
