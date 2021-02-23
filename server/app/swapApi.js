@@ -20,6 +20,7 @@ let frequency = 1;
 const winRatio = 3;
 const lossRatio = 0.6;
 let initPosition = 1;
+let LEVERAGE = 20
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -742,7 +743,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 3
+    let newWinRatio = Number(winRatio) / 4
     let newLossRatio = Number(lossRatio) * 1.5
 
     if(continuousObj.continuousLossNum){
@@ -750,7 +751,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         newLossRatio = Number(lossRatio) * 2.5 * 1.2
     }
 
-    if(continuousObj.otherContinuousWinNum > 3 || continuousObj.otherContinuousLossNum > 1){
+    if(continuousObj.otherContinuousWinNum >= 3 || continuousObj.otherContinuousLossNum > 1){
         newLossRatio = Number(lossRatio) * 1.2
     }
     const consoleOtherFn = () => {
@@ -1131,7 +1132,7 @@ const startInterval = async () => {
                         side: otherPositionSide,
                         instrument_id: BTC_INSTRUMENT_ID,
                         position: initPosition,
-                        leverage: 20
+                        leverage: LEVERAGE
                     }
                     btcHolding.push(otherHolding)
                     await autoOpenOtherOrderSingle({ openSide: otherPositionSide })
@@ -1140,7 +1141,7 @@ const startInterval = async () => {
                     side: primarySide,
                     instrument_id: BTC_INSTRUMENT_ID,
                     position: initPosition * 1 / 10,
-                    leverage: 20
+                    leverage: LEVERAGE
                 }
                 btcHolding.push(primaryHolding)
             }
