@@ -870,7 +870,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
             newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
         }
         if(continuousObj.continuousLossNum > 1){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : newWinRatio / 1.2;
         }
     }
 

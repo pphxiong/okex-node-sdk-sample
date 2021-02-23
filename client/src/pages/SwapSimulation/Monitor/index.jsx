@@ -287,7 +287,7 @@ export default props => {
 
       lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
 
-      if(continuousObj.otherContinuousLossNum > 1){
+      if(newLossRatio == Number(lossRatio.current) * 2.5 * 1.2){
         loss2Maps["currentSide"][otherPositionSide] += 1
         loss2Maps["continuousLossNum"][continuousObj.continuousLossNum] += 1
         loss2Maps["continuousWinNum"][continuousObj.continuousWinNum] += 1
@@ -403,7 +403,7 @@ export default props => {
           newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
         }
         if(continuousObj.continuousLossNum > 1){
-          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
+          newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : newWinRatio / 1.2;
         }
       }
 
