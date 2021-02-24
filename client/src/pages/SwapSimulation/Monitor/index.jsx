@@ -159,6 +159,8 @@ export default props => {
   let otherPositionLoss = false
   let otherLatestWinRatioList = []
   let otherMaxLossNum = 0
+  let lastLossRatio = 0
+  let otherFromPrimary = false
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1 * initPosition
@@ -198,10 +200,16 @@ export default props => {
       continuousObj.otherContinuousWinNum > 3
       ||
       continuousObj.otherContinuousLossNum > 1
+      // ||
+      // (continuousObj.otherContinuousLossNum == 1 && lastLossRatio == Number(lossRatio.current) * 2.5 * 1.2)
       // || continuousObj.otherContinuousRealWinNum > 7
      ){
       newLossRatio = Number(lossRatio.current) * 1.2
     }
+
+    // if(otherFromPrimary){
+    //   newLossRatio = Number(lossRatio.current) / 1.2
+    // }
 
     // console.log(ratio,other_unrealized_pnl,otherFee,otherTotalPnl)
 
@@ -212,6 +220,8 @@ export default props => {
       }
       otherLatestWinRatioList.splice(0,1)
       otherLatestWinRatioList.push(ratio)
+
+      otherFromPrimary = false
     }
 
     if(ratio > condition * newWinRatio * frequency || isForceDeal) {
@@ -252,6 +262,8 @@ export default props => {
       otherTotalPnl += other_unrealized_pnl - otherFee;
       isOpenOtherOrder = false
       otherPositionLoss = false
+
+      lastLossRatio = newLossRatio
 
       // if(otherTotalPnl <= -otherMargin){
       //   console.log(otherTotalPnl,otherMargin)
@@ -505,7 +517,13 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-            if(continuousObj.continuousWinNum > 3) otherPositionSide = isCurrentSideShort ? 'long' : 'short'
+            if(continuousObj.continuousWinNum > 3) {
+              otherPositionSide = isCurrentSideShort ? 'long' : 'short'
+            }
+            if(continuousObj.otherContinuousWinNum > 3){
+              continuousObj.otherContinuousWinNum = 0
+            }
+            otherFromPrimary = true
           }
 
           continuousObj.continuousLossNum = 0;
@@ -606,7 +624,13 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = !!isCurrentSideShort ? 'short' : 'long'
-            if(continuousLossSameSideNum >= 2 && isCurrentSideShort) otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+            if(continuousLossSameSideNum >= 2 && isCurrentSideShort) {
+              otherPositionSide = otherPositionSide == 'short' ? 'long' : 'short'
+            }
+            if(continuousObj.otherContinuousWinNum > 3){
+              continuousObj.otherContinuousWinNum = 0
+            }
+            otherFromPrimary = true
           }
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
