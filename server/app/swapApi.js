@@ -769,8 +769,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         continuousObj.otherContinuousWinNum > 3
         ||
         continuousObj.otherContinuousLossNum > 1
-        ||
-        otherFromPrimary
+        // ||
+        // otherFromPrimary
     ){
         newLossRatio = Number(lossRatio) * 1.2
     }
@@ -909,7 +909,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
     }
 
     const consoleFn = () => {
-        console.log('------------origin start---------------')
+        console.log('------------origin close start---------------')
         console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, originPosition, isHalf)
         console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
         console.log('primaryPrice', primaryPrice, 'mark_price', mark_price)
@@ -919,7 +919,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
         console.log('lastMostWinRatio',lastMostWinRatio)
         console.log('isOpenOtherOrder',isOpenOtherOrder)
-        console.log('------------origin end---------------')
+        console.log('------------origin close end---------------')
 
         closePrimaryPosition()
     }
@@ -1160,7 +1160,7 @@ const startInterval = async () => {
                         leverage: LEVERAGE
                     }
                     btcHolding.push(otherHolding)
-                    await autoOpenOtherOrderSingle({ openSide: otherPositionSide })
+                    // await autoOpenOtherOrderSingle({ openSide: otherPositionSide })
                 }
                 const primaryHolding = {
                     side: primarySide,
