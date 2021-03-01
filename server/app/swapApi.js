@@ -389,7 +389,7 @@ const autoOpenOrderSingle = async (params = {}) => {
         }
 
         try{
-            // await authClient.swap().postOrder(payload)
+            await authClient.swap().postOrder(payload)
 
             const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
             primaryPrice = Number(mark_price)
