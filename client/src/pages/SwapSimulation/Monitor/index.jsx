@@ -186,7 +186,7 @@ export default props => {
     ratio = isNaN(ratio) ? 0 : ratio
     if(otherPositionSide == 'short') ratio = -ratio;
 
-    let newWinRatio = leverage / 10 * 0.6
+    let newWinRatio = leverage / 10 * 0.8
     let newLossRatio = Number(lossRatio.current)
 
     // newLossRatio = newLossRatio / 2
@@ -360,7 +360,7 @@ export default props => {
       let currentSide = 'long';
       if(isCurrentSideShort) currentSide = 'short';
 
-      let changeRatio = 1 / 10;
+      let changeRatio = 1 ;
       // if(continuousObj.continuousLossNum == 2 || continuousObj.continuousLossNum == 4) {
       //   changeRatio = 1;
       // }else if(continuousObj.continuousLossNum > 2) {
@@ -648,6 +648,13 @@ export default props => {
 
           continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
           continuousObj.continuousWinNum = 0;
+
+          // if(continuousObj.continuousLossNum > 1
+          //   &&
+          //   !continuousObj.otherContinuousWinNum
+          // ){
+          //   isCurrentSideShort = !isCurrentSideShort
+          // }
 
           lastLastLossDirection = lastLossDirection;
           lastLossDirection = currentSide;
