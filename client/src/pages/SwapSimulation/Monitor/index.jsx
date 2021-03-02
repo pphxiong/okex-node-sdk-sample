@@ -354,6 +354,7 @@ export default props => {
 
           if(continuousObj.continuousWinNum >= 4){
             isCurrentSideShort = !isCurrentSideShort
+            continuousObj.continuousWinNum = 0;
           }
 
         }

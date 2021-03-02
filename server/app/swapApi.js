@@ -586,6 +586,7 @@ const afterWin = async (holding, ratio) => {
 
     if(continuousObj.continuousWinNum >= 4){
         isOpenShort = !isOpenShort
+        continuousObj.continuousWinNum = 0;
     }
 
     const openSide = isOpenShort ? 'short' : 'long';
