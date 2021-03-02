@@ -1,5 +1,5 @@
 {
-  "continuousWinNum": "0",
+  "continuousWinNum": "4",
   "continuousLossNum": "0",
   "otherContinuousWinNum": "0",
   "otherContinuousLossNum": "0",
@@ -14,7 +14,7 @@
   "otherPositionSide": "long",
   "otherPositionPrimaryPrice": "0",
   "otherPositionLoss": "false",
-  "primaryPrice": "0",
+  "primaryPrice": "50260",
   "primarySide": "long",
   "time": ""
 }

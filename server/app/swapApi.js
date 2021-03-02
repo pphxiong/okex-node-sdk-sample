@@ -579,26 +579,14 @@ const afterWin = async (holding, ratio) => {
     const { instrument_id, side } = holding;
     const continuousObj = continuousMap[instrument_id];
 
+    continuousObj.continuousLossNum = 0;
+    continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
+
     let isOpenShort = side == 'short';
-    // isOpenShort = !isOpenShort;
-    //
-    // if((side == 'short' && lastWinDirection == 'short')
-    //     || (side == 'long' && lastWinDirection == 'long')
-    // ){
-    //     continuousWinSameSideNum++;
-    //     isOpenShort = !isOpenShort;
-    // }else{
-    //     continuousWinSameSideNum = 0;
-    // }
-    //
-    // continuousLossSameSideNum = 0;
-    // // if(ratio == Number(winRatio)){
-    //     lastLastWinDirection = lastWinDirection;
-    //     lastWinDirection = side;
-    // // }
-    //
-    // ratioChangeNum = 0
-    // lastMostWinRatio = 0;
+
+    if(continuousObj.continuousWinNum >= 4){
+        isOpenShort = !isOpenShort
+    }
 
     const openSide = isOpenShort ? 'short' : 'long';
     const payload = {
@@ -611,21 +599,7 @@ const afterWin = async (holding, ratio) => {
     primarySide = openSide
     await autoOpenOrderSingle(payload);
 
-    // if(
-    //     !isOpenOtherOrder
-    // ){
-    //     isOpenOtherOrder = true;
-    //     let otherOpenSide = isOpenShort ? 'short' : 'long';
-    //     if(continuousObj.continuousWinNum > 3) otherOpenSide = isOpenShort ? 'long' : 'short'
-    //     if(continuousObj.otherContinuousWinNum > 3){
-    //         continuousObj.otherContinuousWinNum = 0
-    //     }
-    //     otherFromPrimary = true
-    //     await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
-    // }
 
-    continuousObj.continuousLossNum = 0;
-    continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 }
 const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
@@ -755,7 +729,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = LEVERAGE / 10 * 0.8
+    let newWinRatio = LEVERAGE / 10 * 0.6
     let newLossRatio = Number(lossRatio)
 
     // if(continuousObj.continuousLossNum){
@@ -977,7 +951,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         await afterLoss(holding)
         return;
     }
-    if(ratio < - condition * newLossRatio * frequency / 2){
+    if(ratio < - condition * newLossRatio * frequency / 2 / 2){
         if(!isOpenOtherOrder){
             positionChange = true
             isOpenOtherOrder = true;
