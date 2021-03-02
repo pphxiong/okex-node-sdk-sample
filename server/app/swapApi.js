@@ -19,7 +19,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 8;
-let initPosition = 10;
+let initPosition = 15;
 let LEVERAGE = 10
 
 const continuousMap = {
@@ -1121,7 +1121,10 @@ const startInterval = async () => {
             const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             if(btcHolding && btcHolding[0] && Number(btcHolding[0].position)){
-                if(isOpenOtherOrder){
+                // if(isInit) {
+                //     initPosition = Number(btcHolding[0].position)
+                // }
+                // if(isOpenOtherOrder){
                     // if(primarySide == otherPositionSide){
                     //     btcHolding[0].position = Number(btcHolding[0].position) + initPosition * 1 + 1
                     // }else{
@@ -1134,7 +1137,7 @@ const startInterval = async () => {
                     //     }
                     //     btcHolding.push(primaryHolding)
                     // }
-                }
+                // }
             }else{
                 // btcHolding = []
                 // console.log('isInit',isInit)
