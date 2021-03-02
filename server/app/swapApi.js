@@ -729,7 +729,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = LEVERAGE / 10 * 0.6
+    let newWinRatio = LEVERAGE / 10 * 0.4
     let newLossRatio = Number(lossRatio)
 
     // if(continuousObj.continuousLossNum){

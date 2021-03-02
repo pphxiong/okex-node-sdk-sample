@@ -186,7 +186,7 @@ export default props => {
     ratio = isNaN(ratio) ? 0 : ratio
     if(otherPositionSide == 'short') ratio = -ratio;
 
-    let newWinRatio = leverage / 10 * 0.6
+    let newWinRatio = leverage / 10 * 0.4
     let newLossRatio = Number(lossRatio.current)
 
     const deal = () => {
@@ -357,13 +357,6 @@ export default props => {
           }
 
         }
-        if(ratio < - condition * newLossRatio * frequency / 2 / 2 ){
-          if(!isOpenOtherOrder){
-              isOpenOtherOrder = true;
-              otherPositionPrimaryPrice = item[1]
-              otherPositionSide = isCurrentSideShort ? 'short' : 'long'
-          }
-        }
         if(ratio < - condition * newLossRatio * frequency){
           dealPnl()
 
@@ -380,8 +373,13 @@ export default props => {
           // winMap[0] = winMap[0] + 1
 
           primaryPrice = item[1];
+        }else if(ratio < - condition * newLossRatio * frequency / 2 / 2 ){
+          if(!isOpenOtherOrder){
+            isOpenOtherOrder = true;
+            otherPositionPrimaryPrice = item[1]
+            otherPositionSide = isCurrentSideShort ? 'short' : 'long'
+          }
         }
-
       }
 
       maxLossRatio = {
