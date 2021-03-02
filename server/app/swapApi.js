@@ -606,36 +606,14 @@ const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
     const continuousObj = continuousMap[instrument_id];
 
-    let isOpenShort = side == 'short';
-    // isOpenShort = !isOpenShort;
-    //
-    // if(
-    //     side == 'short'
-    //     &&
-    //     lastWinDirection == 'long'
-    // ){
-    //     continuousLossSameSideNum++;
-    //     if(
-    //         continuousLossSameSideNum < 2
-    //     ){
-    //         isOpenShort = !isOpenShort;
-    //     }
-    // }else if(
-    //     side == 'long'
-    //     &&
-    //     lastWinDirection == 'short'
-    //     &&
-    //     continuousWinSameSideNum < 1
-    // ) {
-    //     continuousLossSameSideNum++;
-    //     if(continuousLossSameSideNum < 2){
-    //         isOpenShort = !isOpenShort;
-    //     }
-    // }
+    continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
+    continuousObj.continuousWinNum = 0;
 
-    // if(isOpenOtherOrder && !continuousWinSameSideNum) {
-    //     isOpenShort = otherPositionSide == 'long'
-    // }
+    let isOpenShort = side == 'short';
+
+    if(continuousObj.continuousLossNum >= 2){
+        isOpenShort = !isOpenShort
+    }
 
     lastLastLossDirection = lastLossDirection;
     lastLossDirection = side;
@@ -653,28 +631,6 @@ const afterLoss = async (holding,type) =>{
     primarySide = openSide
     await autoOpenOrderSingle(payload);
 
-    // if(
-    //     (!continuousWinSameSideNum
-    //         ||
-    //         continuousObj.continuousLossNum > 3
-    //     )
-    //     &&
-    //     !isOpenOtherOrder
-    //     &&
-    //     !type
-    // ){
-    //     isOpenOtherOrder = true;
-    //     let otherOpenSide = isOpenShort ? 'short' : 'long';
-    //     if(continuousLossSameSideNum >= 2 && isOpenShort) otherOpenSide = otherOpenSide == 'short' ? 'long' : 'short'
-    //     if(continuousObj.otherContinuousWinNum > 3){
-    //         continuousObj.otherContinuousWinNum = 0
-    //     }
-    //     otherFromPrimary = true
-    //     await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
-    // }
-
-    continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-    continuousObj.continuousWinNum = 0;
 }
 // 平半仓
 const closeHalfPosition = async (holding, position = initPosition) => {

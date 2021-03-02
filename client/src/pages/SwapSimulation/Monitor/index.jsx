@@ -370,10 +370,12 @@ export default props => {
           lastMostWinRatio = 0;
           isUpDownNum = 0
 
-          // lossMap[continuousObj.continuousLossNum] = lossMap[continuousObj.continuousLossNum] + 1
-          // winMap[0] = winMap[0] + 1
-
           primaryPrice = item[1];
+
+          if(continuousObj.continuousLossNum >= 2){
+            isCurrentSideShort = !isCurrentSideShort
+          }
+
         }else if(ratio < - condition * newLossRatio * frequency / 2 / 2 ){
           if(!isOpenOtherOrder){
             isOpenOtherOrder = true;
