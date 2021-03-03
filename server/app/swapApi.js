@@ -282,7 +282,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', } = params;
     otherPositionSide = openSide
 
-    const position = initPosition + 1
+    const position = Number(initPosition) + 1
 
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -358,7 +358,7 @@ const autoOpenOrderSingle = async (params = {}) => {
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
 
-    const position = Math.ceil(initPosition * positionRatio)
+    const position = Math.ceil(Number(initPosition) * positionRatio)
 
     // const { instrument_id, position: holdingPosition } = holding;
     // // 可开张数
@@ -1132,7 +1132,7 @@ const startInterval = async () => {
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            if(Number(btcHolding[0].position) >= Number(initPosition)){
+            if(Number(btcHolding[0].position) > Number(initPosition)){
                 mainHolding = btcHolding[1]
                 otherHolding = btcHolding[0]
             }
@@ -1156,7 +1156,7 @@ const startInterval = async () => {
                 // await autoOperateSwap(btcHolding[0],mark_price, true)
                 await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
             }else{
-                if(Number(btcHolding[0].position) == Number(initPosition) + 1){
+                if(Number(btcHolding[0].position) > Number(initPosition)){
                     await autoOtherOrder(btcHolding[0],mark_price)
                 }else{
                     await autoOperateSwap(btcHolding[0],mark_price)

@@ -10,11 +10,11 @@
   "continuousWinSameSideNum": "0",
   "continuousLossSameSideNum": "0",
   "lastMostWinRatio": "0",
-  "isOpenOtherOrder": "false",
+  "isOpenOtherOrder": "true",
   "otherPositionSide": "short",
-  "otherPositionPrimaryPrice": "0",
+  "otherPositionPrimaryPrice": "51124",
   "otherPositionLoss": "false",
-  "primaryPrice": "0",
+  "primaryPrice": "51507",
   "primarySide": "long",
   "time": ""
 }
