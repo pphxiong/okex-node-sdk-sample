@@ -18,7 +18,7 @@ let mode = 4; //下单模式
 
 let frequency = 1;
 const winRatio = 2;
-const lossRatio = 8;
+const lossRatio = 9;
 let initPosition = 15;
 let LEVERAGE = 10
 
@@ -584,10 +584,10 @@ const afterWin = async (holding, ratio) => {
 
     let isOpenShort = side == 'short';
 
-    if(continuousObj.continuousWinNum >= 4){
-        isOpenShort = !isOpenShort
-        continuousObj.continuousWinNum = 0;
-    }
+    // if(continuousObj.continuousWinNum >= 4){
+    //     isOpenShort = !isOpenShort
+    //     continuousObj.continuousWinNum = 0;
+    // }
 
     const openSide = isOpenShort ? 'short' : 'long';
     const payload = {
@@ -600,7 +600,6 @@ const afterWin = async (holding, ratio) => {
     primarySide = openSide
     await autoOpenOrderSingle(payload);
 
-
 }
 const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
@@ -611,9 +610,9 @@ const afterLoss = async (holding,type) =>{
 
     let isOpenShort = side == 'short';
 
-    if(continuousObj.continuousLossNum >= 2){
-        isOpenShort = !isOpenShort
-    }
+    // if(continuousObj.continuousLossNum >= 2){
+    //     isOpenShort = !isOpenShort
+    // }
 
     lastLastLossDirection = lastLossDirection;
     lastLossDirection = side;
@@ -808,7 +807,7 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio);
+    let newWinRatio = LEVERAGE / 10 * 0.8
     let newLossRatio = Number(lossRatio);
 
     // if(
@@ -908,14 +907,14 @@ const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
         await afterLoss(holding)
         return;
     }
-    if(ratio < - condition * newLossRatio * frequency / 2 / 2){
+    if(ratio < - condition * newLossRatio * frequency / 2 / 2 / 2 / 2 / 2){
         if(!isOpenOtherOrder){
             positionChange = true
             isOpenOtherOrder = true;
-            otherPositionSide = side
+            otherPositionSide = side == 'long' ? 'short' : 'long'
 
             const payload = {
-                openSide: side,
+                openSide: otherPositionSide,
             }
             await autoOpenOtherOrderSingle(payload);
         }
