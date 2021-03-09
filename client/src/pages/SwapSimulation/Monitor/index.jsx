@@ -155,12 +155,44 @@ export default props => {
   let isOpenOtherOrder = false;
   let otherPositionPrimaryPrice = 0;
   let otherPositionSide = null
+  let isOpenOtherOtherOrder = false
+  let otherOtherPrice = 0
+  let otherOtherSide = null
   let otherTotalPnl = 0;
+  let otherOtherTotalPnl = 0
   let otherPositionLoss = false
   let otherLatestWinRatioList = []
   let otherMaxLossNum = 0
   let lastLossRatio = 0
   let otherFromPrimary = false
+  const testOtherOtherOrder = (price, isForceDeal = false) => {
+    let otherOtherPosition = 1 * initPosition
+
+    const otherMargin = otherOtherPosition * 100 / otherOtherPrice / leverage;
+    let other_unrealized_pnl = Number(otherMargin) * leverage * (Number(price) - Number(otherOtherPrice)) / Number(price)
+    if(otherOtherSide == 'short') other_unrealized_pnl = -other_unrealized_pnl;
+    other_unrealized_pnl = isNaN(other_unrealized_pnl) ? 0 : other_unrealized_pnl
+
+    const otherFee = Number(otherMargin) * 5 * 2 / 1000;
+
+    let condition = leverage / 100;
+    let ratio = ((Number(price) - Number(otherOtherPrice)) * leverage / Number(price));
+    ratio = isNaN(ratio) ? 0 : ratio
+    if(otherOtherSide == 'short') ratio = -ratio;
+
+    let newWinRatio = leverage / 10 * 1
+    let newLossRatio = Number(lossRatio.current) / 4
+
+    if(ratio > condition * newWinRatio * frequency || isForceDeal) {
+      otherOtherTotalPnl += other_unrealized_pnl - otherFee;
+      isOpenOtherOtherOrder = false
+    }
+
+    if(ratio < - condition * newLossRatio * frequency || isForceDeal) {
+      otherOtherTotalPnl += other_unrealized_pnl - otherFee;
+      isOpenOtherOtherOrder = false
+    }
+  }
   const testOtherOrder = (price, isForceDeal = false) => {
     // console.log(otherPositionPrimaryPrice, price, otherTotalPnl)
     let otherPosition = 1 * initPosition
@@ -188,6 +220,17 @@ export default props => {
 
     let newWinRatio = leverage / 10 * 0.4
     let newLossRatio = Number(lossRatio.current)
+
+    if(batchSameSideNum){
+      newWinRatio = newWinRatio * 2
+    }
+    // if(
+    //   (isCurrentSideShort && otherPositionSide == 'short')
+    //   ||
+    //   (!isCurrentSideShort && otherPositionSide == 'long')
+    // ) {
+    //   newWinRatio = newWinRatio * 4
+    // }
 
     const deal = () => {
       if(otherLatestWinRatioList.length < 3) {
@@ -249,7 +292,8 @@ export default props => {
   }
   let batchNum = 0
   let lossAllNum = 0
-  const testOrder = (historyList,endPrice) => {
+  let batchSameSideNum = 0
+  const testOrder = (historyList,endPrice, isForceDeal = false) => {
     if(!historyList.length) {
       return { time: 0, totalPnl: 0, totalRatio: 0, totalFee: 0, endPrice }
     }
@@ -259,6 +303,7 @@ export default props => {
     let totalMargin = 0;
 
     otherTotalPnl = 0;
+    otherOtherTotalPnl = 0
     isOpenOtherOrder = false
     isPositionEnd = false
 
@@ -276,6 +321,12 @@ export default props => {
       if(isOpenOtherOrder && !isPositionEnd) {
         (async ()=>{
           await testOtherOrder(item[1])
+        })()
+      }
+
+      if(isOpenOtherOtherOrder && !isPositionEnd) {
+        (async ()=>{
+          await testOtherOtherOrder(item[1])
         })()
       }
 
@@ -326,6 +377,12 @@ export default props => {
         // console.log(item[0],newWinRatio,ratio,condition * newWinRatio * frequency,currentSide,lastWinDirection)
         // console.log(continuousWinSameSideNum)
 
+        // if(isForceDeal){
+        //   dealPnl()
+        //   primaryPrice = item[1];
+        //   return
+        // }
+
         if(ratio > condition * newWinRatio * frequency){
           dealPnl()
 
@@ -358,9 +415,11 @@ export default props => {
 
           // if(continuousObj.continuousWinNum >= 4){
           //   isCurrentSideShort = !isCurrentSideShort
-          //   continuousObj.continuousWinNum = 0;
+          //   continuousObj.continuousWinNum = 0
           // }
+
           batchNum = 0
+          batchSameSideNum = 0
         }
         if(ratio < - condition * newLossRatio * frequency){
           dealPnl()
@@ -391,20 +450,16 @@ export default props => {
           //   isCurrentSideShort = !isCurrentSideShort
           // }
           batchNum = 0
+          batchSameSideNum = 0
           lossAllNum++;
         }
-        // else if(ratio < - condition * newLossRatio * frequency / 2 ){
-        //   if(isOpenOtherOrder){
-        //     dealPnl()
-        //     continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-        //     continuousObj.continuousWinNum = 0;
+        // else if(ratio < - condition * newLossRatio * frequency / 1.5 ){
+        //   if(!isOpenOtherOrder && !batchSameSideNum){
+        //     isOpenOtherOrder = true;
+        //     otherPositionPrimaryPrice = item[1]
+        //     otherPositionSide = isCurrentSideShort ? 'short' : 'long'
         //
-        //     lastLastLossDirection = lastLossDirection;
-        //     lastLossDirection = currentSide;
-        //
-        //     isCurrentSideShort = !isCurrentSideShort
-        //
-        //     primaryPrice = item[1];
+        //     batchSameSideNum += 1
         //   }
         // }
         else if(ratio < - condition * newLossRatio * frequency / 2 / 2 / 2 / 2 / 2){
@@ -412,8 +467,23 @@ export default props => {
             isOpenOtherOrder = true;
             otherPositionPrimaryPrice = item[1]
             otherPositionSide = !isCurrentSideShort ? 'short' : 'long'
+            // if(ratio < - condition * newLossRatio * frequency / 2 ){
+            //   otherPositionSide = otherPositionSide == 'long' ? 'short' : 'long'
+            // }
+            // if(continuousObj.otherContinuousWinNum >= 4){
+            //   otherPositionSide = otherPositionSide == 'long' ? 'short' : 'long'
+            //   continuousObj.otherContinuousWinNum = 0
+            // }
             batchNum += 1
           }
+          // if(ratio < - condition * newLossRatio * frequency / 2){
+          //   if(!isOpenOtherOtherOrder){
+          //     isOpenOtherOtherOrder = true;
+          //     otherOtherPrice = item[1]
+          //     otherOtherSide = isCurrentSideShort ? 'short' : 'long'
+          //
+          //   }
+          // }
         }
       }
 
@@ -442,7 +512,7 @@ export default props => {
     // console.log('totalPnl',totalPnl, totalFee, totalMargin  )
     return {
       time: historyList[0][0],
-      totalPnl: totalPnl + otherTotalPnl,
+      totalPnl: totalPnl + otherTotalPnl + otherOtherTotalPnl,
       totalMargin,
       totalRatio: isNaN(totalRatio) ? 0 : totalRatio,
       totalFee,
@@ -480,7 +550,7 @@ export default props => {
 
       if(Array.isArray(data)){
         // data = data.reverse()
-        const result = await testOrder(data,lastPrice);
+        const result = await testOrder(data,lastPrice, loopNum == 133);
         // console.log(result)
         t += result.totalPnl;
         tMargin += result.totalMargin;
