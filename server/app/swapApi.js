@@ -716,14 +716,14 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     if(side2=='short') ratio2 = -ratio1;
     ratio2 = isNaN(ratio2) ? 0 : ratio2
 
-    let closeRatio = 0.05
+    let closeRatio = 0.06
     const condition = 10 / 100;
 
     let lossHolding = holding1
-    let LossRatio = ratio1
-    if(ratio2 < condition * closeRatio * frequency){
+    let lossRatio = ratio1
+    if(ratio2 < - condition * closeRatio * frequency){
         lossHolding = holding2
-        LossRatio = ratio2
+        lossRatio = ratio2
     }
 
     const { position, side,  } = lossHolding
@@ -734,8 +734,8 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // let newWinRatio = LEVERAGE / 10 * 0.8
     let newLossRatio = bactchRatioList[batchIndex] / 10 * 2
 
-    if(LossRatio < - condition * newLossRatio * frequency){
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", LossRatio, batchIndex, bactchRatioList[batchIndex])
+    if(lossRatio < - condition * newLossRatio * frequency){
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
         const payload = {
             openSide: side,
             position: Number(position) * 1
@@ -744,10 +744,15 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         return;
     }
     if(
+        ratio1
+        &&
+        ratio2
+        &&
         ratio1 > condition * closeRatio * frequency
-        && ratio2 > condition * closeRatio * frequency
+        &&
+        ratio2 > condition * closeRatio * frequency
     ){
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "close", LossRatio, batchIndex, bactchRatioList[batchIndex])
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "close", lossRatio, batchIndex, bactchRatioList[batchIndex])
         await closeHalfPosition(holding1);
         await closeHalfPosition(holding2);
         return
