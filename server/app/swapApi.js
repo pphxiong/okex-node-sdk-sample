@@ -716,7 +716,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     if(side2=='short') ratio2 = -ratio2;
     ratio2 = isNaN(ratio2) ? 0 : ratio2
 
-    let closeRatio = 0.06
+    let closeRatio = 0.1
     const condition = 10 / 100;
 
     let lossHolding = holding1
