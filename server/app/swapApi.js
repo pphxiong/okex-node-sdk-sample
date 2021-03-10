@@ -19,7 +19,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let initPosition = 2;
+let initPosition = 4;
 let LEVERAGE = 10
 
 const continuousMap = {
@@ -719,15 +719,15 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     if(side=='short') ratio = -ratio;
     ratio = isNaN(ratio) ? 0 : ratio
-    const condition = Number(leverage) / 100;
+    const condition = 10 / 100;
 
     const bactchRatioList = [3, 5, 8, 12, 17, 23]
     const batchIndex = Math.floor(Math.sqrt(Number(position)) - 1)
     const batchNum = getPowByNum(Number(position), Number(initPosition))
 
     // let newWinRatio = LEVERAGE / 10 * 0.8
-    let newLossRatio = LEVERAGE / 10 * bactchRatioList[batchIndex] / 10 * 2
-    let closeRatio = LEVERAGE / 10 * 0.02
+    let newLossRatio = bactchRatioList[batchIndex] / 10 * 2
+    let closeRatio = 0.02
 
     if(ratio < - condition * newLossRatio * frequency){
         const payload = {
