@@ -745,15 +745,16 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         return;
     }
     if(
-        ratio1
+        ratio1 > 0
         &&
-        ratio2
+        ratio2 > 0
         &&
         ratio1 > condition * closeRatio * frequency
         &&
         ratio2 > condition * closeRatio * frequency
     ){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "close", lossRatio, batchIndex, bactchRatioList[batchIndex])
+        console.log('ratio1',ratio1,'ratio2',ratio2)
         await closeHalfPosition(holding1);
         await closeHalfPosition(holding2);
         return
