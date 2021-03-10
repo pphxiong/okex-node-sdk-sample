@@ -3,44 +3,50 @@ import moment from 'moment'
 
 // const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
-const customAuthClient = require('./customSimulationAuthClient');
+const customAuthClient = require('./customAuthClient');
 
-var config = require('./simulationConfig');
+const fs = require('fs');
+
+//读取配置文件，变量config的类型是Object类型
+// let dataConfig = require('./config.json');
+
+
+let ETH_INSTRUMENT_ID = "ETH-USD-SWAP";
+
+let myInterval;
+let mode = 4; //下单模式
+
+let frequency = 1;
+const winRatio = 2;
+const lossRatio = 9;
+let initPosition = 5;
+let LEVERAGE = 20
+
+const continuousMap = {
+    [ETH_INSTRUMENT_ID]: {
+        continuousLossNum: 0,
+        continuousWinNum: 0,
+        continuousBatchNum: 0,
+        continuousProfitNum: 0,
+        continuousTripleLossNum: 0,
+        otherContinuousWinNum: 0
+    },
+};
+
+var config = require('./config');
 // const pClient = new PublicClient(config.urlHost);
+const authClient = new AuthenticatedClient(
+    config.httpkey,
+    config.httpsecret,
+    config.passphrase,
+    config.urlHost
+);
 const cAuthClient = new customAuthClient(
     config.httpkey,
     config.httpsecret,
     config.passphrase,
     config.urlHost
 )
-
-let BTC_INSTRUMENT_ID = "MNBTC-USD-SWAP";
-let EOS_INSTRUMENT_ID = "MNEOS-USD-SWAP";
-let myInterval;
-let mode = 4; //下单模式
-
-let frequency = 1;
-const winRatio = 2;
-const lossRatio = 0.6;
-let initPosition = 15;
-
-const continuousMap = {
-    [BTC_INSTRUMENT_ID]: {
-        continuousLossNum: 0,
-        continuousWinNum: 0,
-        continuousBatchNum: 0,
-        continuousProfitNum: 0,
-        continuousTripleLossNum: 0,
-    },
-    [EOS_INSTRUMENT_ID]: {
-        continuousLossNum: 0,
-        continuousWinNum: 0,
-        continuousBatchNum: 0,
-        continuousProfitNum: 0,
-        continuousTripleLossNum: 0,
-    },
-};
-
 
 var express = require('express');
 // var http = require('../utils/http');
@@ -66,7 +72,7 @@ app.get('/test', function(req, res) {
 });
 
 app.get('/account/getCurrencies', function(req, response) {
-    cAuthClient
+    authClient
         .account()
         .getCurrencies()
         .then(res => {
@@ -77,7 +83,7 @@ app.get('/account/getCurrencies', function(req, response) {
 app.get('/account/getWallet', function(req, response) {
     const {query = {}} = req;
     const {currency} = query.params || query;
-    cAuthClient
+    authClient
         .account()
         .getWallet(currency)
         .then(res => {
@@ -98,8 +104,8 @@ app.get('/account/getAssetValuation', function(req, response) {
 app.get('/swap/getOrders', function(req, response) {
     const {query = {}} = req;
     const {instrument_id, limit, state = 2} = query; // "BTC-USD-200821"
-    cAuthClient
-        .swap
+    authClient
+        .swap()
         .getOrders(instrument_id, {state, limit})
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
@@ -109,8 +115,8 @@ app.get('/swap/getOrders', function(req, response) {
 app.get('/swap/getAccounts', function(req, response) {
     const {query = {}} = req;
     const {instrument_id} = query;
-    cAuthClient
-        .swap
+    authClient
+        .swap()
         .getAccount(instrument_id)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
@@ -151,8 +157,8 @@ app.get('/swap/information/sentiment', function(req, response) {
 app.get('/swap/postLeverage', function(req, response) {
     const {query = {}} = req;
     const { leverage, side, instrument_id } = query;
-    cAuthClient
-        .swap
+    authClient
+        .swap()
         .postLeverage(instrument_id, { leverage, side })
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
@@ -162,8 +168,8 @@ app.get('/swap/postLeverage', function(req, response) {
 app.get('/swap/getLeverage', function(req, response) {
     const {query = {}} = req;
     const { instrument_id } = query;
-    cAuthClient
-        .swap
+    authClient
+        .swap()
         .getSettings(instrument_id)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
@@ -172,8 +178,8 @@ app.get('/swap/getLeverage', function(req, response) {
 
 app.get('/swap/postOrder', function(req, response) {
     const {query = {}} = req;
-    cAuthClient
-        .swap
+    authClient
+        .swap()
         .postOrder(query)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
@@ -184,8 +190,8 @@ app.get('/swap/postOrder', function(req, response) {
 app.get('/swap/getPosition', function(req, response) {
     const {query = {}} = req;
     const { instrument_id } = query;
-    cAuthClient
-        .swap
+    authClient
+        .swap()
         .getPosition(instrument_id)
         .then(res => {
             send(response, {errcode: 0, errmsg: 'ok', data: res});
@@ -228,7 +234,7 @@ app.get('/swap/autoCloseOrderByInstrumentId', function(req, response) {
 // 市价全平By instrument_id
 const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
     if(!direction){
-        const { holding } = await cAuthClient.swap.getPosition(instrument_id);
+        const { holding } = await authClient.swap().getPosition(instrument_id);
         direction = holding[0].side;
     }
     const result = await cAuthClient
@@ -246,13 +252,13 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
 const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id, type = 0}) => {
-    const { order_info } = await cAuthClient.swap.getOrders(instrument_id, {state: 6, limit: 3})
+    const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3})
     console.log('cancelorder', instrument_id, order_info.length, origin_order_id)
     if( order_info && order_info.length ){
         let curOrder = order_info.find(item=>item.order_id == origin_order_id)
         curOrder = curOrder || {}
         const { order_id, size, filled_qty } = curOrder;
-        if(origin_order_id == order_id && Number(size) > Number(filled_qty) * 2) return await cAuthClient.swap.postCancelOrder(instrument_id,order_id)
+        if(origin_order_id == order_id && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
     }
     return new Promise(resolve=>{ resolve({ result: false }) })
 }
@@ -260,18 +266,28 @@ const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id,
 // 下单，并返回订单信息
 const getOrderState = async (payload) => {
     const { instrument_id } = payload;
-    const { order_id } = await cAuthClient.swap.postOrder(payload);
-    return await cAuthClient.swap.getOrder(instrument_id,order_id)
+    const { order_id } = await authClient.swap().postOrder(payload);
+    return await authClient.swap().getOrder(instrument_id,order_id)
 }
 
-const autoOpenOtherOrderSingle = async (params = {}) => {
-    const { openSide = 'long', } = params;
-    const position = initPosition * 1
-
+const autoOpenOtherOrderSingle = async (params = {}, mark_price) => {
+    const { openSide = 'long', position = Number(initPosition), } = params;
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('position', position, 'type', type, 'side', openSide)
 
-    const instrument_id = 'BTC-USD-SWAP';
+    // 可开张数
+    let availNo;
+    let avail = 0;
+
+    if(instrument_id.includes('BTC')){
+        availNo = await getAvailNo({ mark_price });
+    }else{
+        availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
+    }
+    avail = Math.min(Math.floor(Number(availNo)), Number(position));
+
+    const instrument_id = ETH_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
@@ -281,64 +297,24 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         // match_price: 0
     }
 
-    await cAuthClient.swap.postOrder(payload)
-
-    const { markPx: mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-    otherPositionPrimaryPrice = Number(mark_price)
-
-    // let hasOrderInterval = setInterval(async ()=>{
-    //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
-    //     if(result == false) {
-    //         clearInterval(hasOrderInterval)
-    //         hasOrderInterval = null;
-    //         return;
-    //     }
-    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-    //     const payload = {
-    //         size: position,
-    //         type,
-    //         // order_type: 0, //1：只做Maker 4：市价委托
-    //         instrument_id,
-    //         price: mark_price,
-    //         match_price: 0
-    //     }
-    //     order_id = (await cAuthClient.swap.postOrder(payload)).order_id;
-    // },1500)
-
+    try{
+        await authClient.swap().postOrder(payload)
+    }catch (e) {
+        console.log(e)
+    }
 }
 
 // 开仓，availRatio开仓比例
-const autoOpenOrderSingle = async (holding, params = {}) => {
+const autoOpenOrderSingle = async (params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
     let changeRatio = 1;
-    // if(lossNum == 2 || lossNum == 4) {
-    //     changeRatio = 1;
-    // }else if(lossNum > 2) {
-    //     const temp = lossNum - 3
-    //     changeRatio = temp * (1 - temp / 5 ) + 1
-    // }else if(lossNum) {
-    //     changeRatio = 1.5;
-    // }
-    // if(
-    //     (!continuousWinSameSideNum
-    //         &&
-    //         lossNum == 2)
-    //     ||
-    //     (continuousLossSameSideNum == 2
-    //         &&
-    //         lossNum == 2)
-    // ){
-    //     changeRatio = 0.05;
-    // }
-    //
-    // if(winNum) changeRatio = 2
+
     changeRatio = changeRatio > 0 ? changeRatio : 1
     let positionRatio = changeRatio
 
-    const position = Math.ceil(initPosition * positionRatio)
+    const position = Math.ceil(Number(initPosition) * positionRatio)
 
-    const { instrument_id, position: holdingPosition } = holding;
-
+    // const { instrument_id, position: holdingPosition } = holding;
     // // 可开张数
     // let availNo;
     // let avail = 0;
@@ -351,8 +327,9 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
+    const instrument_id = ETH_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
-    console.log('position', position, 'type', type)
+    console.log('position', position, 'type', type, 'side', openSide)
 
     // const { result } = await validateAndCancelOrder({instrument_id, type: 1});
     if(position) {
@@ -360,40 +337,23 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
             size: position,
             type,
             order_type: 4, //1：只做Maker 4：市价委托
-            instrument_id: instrument_id,
+            instrument_id,
             // price: mark_price,
             // match_price: 0
         }
 
-        await cAuthClient.swap.postOrder(payload)
+        try{
+            await authClient.swap().postOrder(payload)
 
-        const { markPx: mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-        primaryPrice = Number(mark_price)
-
-        // let order_id = (await cAuthClient.swap.postOrder(payload)).order_id;
-
-        // let hasOrderInterval = setInterval(async ()=>{
-        //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
-        //     if(result == false) {
-        //         clearInterval(hasOrderInterval)
-        //         hasOrderInterval = null;
-        //         return;
-        //     }
-        //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-        //     const payload = {
-        //         size: position,
-        //         type,
-        //         order_type: 4, //1：只做Maker 4：市价委托
-        //         instrument_id: instrument_id,
-        //         // price: mark_price,
-        //         // match_price: 0
-        //     }
-        //     order_id = (await cAuthClient.swap.postOrder(payload)).order_id;
-        // },1500)
+            const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+            primaryPrice = Number(mark_price)
+            primarySide = openSide
+        }catch (e) {
+            console.log(e)
+        }
 
         return true;
     }
-    // return new Promise(resolve=>{ resolve({ result: true }) })
 }
 
 // 平仓，closeRatio平仓比例
@@ -412,14 +372,14 @@ const autoOpenOrderSingle = async (holding, params = {}) => {
 //             price: last,
 //             match_price: 0
 //         }
-//         return await cAuthClient.swap.postOrder(payload);
+//         return await authClient.swap().postOrder(payload);
 //     }
 //     return new Promise(resolve=>{ resolve({ result: !result }) })
 // }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
-    const result = await cAuthClient.swap.getAccount(instrument_id);
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = ETH_INSTRUMENT_ID, mark_price}) => {
+    const result = await authClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
     console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin', margin)
@@ -427,9 +387,9 @@ const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_
     console.log('total_avail_balance', total_avail_balance)
     if(!mark_price) {
         const result = await cAuthClient.swap.getMarkPrice(instrument_id);
-        mark_price = result.markPx;
+        mark_price = result.mark_price;
     }
-    const leverageResult = await cAuthClient.swap.getSettings(instrument_id);
+    const leverageResult = await authClient.swap().getSettings(instrument_id);
     const { long_leverage } = leverageResult;
 
     return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.98 / val) || 0;
@@ -449,6 +409,8 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         instrument_id,
         continuousWinNum,
         continuousLossNum,
+        otherContinuousWinNum,
+        otherContinuousLossNum,
         lastWinDirection : lsd,
         lastLossDirection: lld,
         continuousLossSameSideNum: clss,
@@ -457,11 +419,17 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
         lastLastWinDirection: llwd,
         initPosition: ip,
         lastMostWinRatio: lmwr,
-        isOpenOtherOrder: iooo
+        isOpenOtherOrder: iooo,
+        otherPositionSide: otps,
+        otherPositionLoss: otpl,
+        primarySide: pside,
+        primaryPrice: pp,
     } = query;
     const continuousObj = continuousMap[instrument_id];
     continuousObj.continuousLossNum = Number(continuousLossNum);
     continuousObj.continuousWinNum = Number(continuousWinNum);
+    continuousObj.otherContinuousWinNum = Number(otherContinuousWinNum);
+    continuousObj.otherContinuousLossNum = Number(otherContinuousLossNum);
     lastWinDirection = lsd;
     lastLossDirection = lld;
     continuousLossSameSideNum = Number(clss)
@@ -471,6 +439,10 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
     initPosition = Number(ip)
     lastMostWinRatio = Number(lmwr)
     isOpenOtherOrder = iooo == 'true' || iooo == true
+    otherPositionSide = otps
+    otherPositionLoss = otpl == 'true' || otpl == true
+    primarySide = pside
+    primaryPrice = pp
 
     send(response, {errcode: 0, errmsg: 'ok', data: {
             instrument_id,
@@ -483,7 +455,11 @@ app.get('/swap/setContinousWinAndLoss', function(req, response) {
             lastLastWinDirection: llwd,
             initPosition: Number(ip),
             lastMostWinRatio: Number(lmwr),
-            isOpenOtherOrder: iooo
+            isOpenOtherOrder: iooo,
+            otherPositionSide: otps,
+            otherPositionLoss: otpl,
+            primarySide: pside,
+            primaryPrice: pp
         } });
 });
 
@@ -528,32 +504,22 @@ let ratioChangeNum = 0;
 let lastMostWinRatio = 0;
 let isOpenOtherOrder = false;
 let primaryPrice = 0;
+let primarySide = 'long';
 let otherPositionPrimaryPrice = 0;
-const afterWin = async (holding, type = 0) => {
+let otherFromPrimary = false
+const afterWin = async (holding, ratio) => {
     const { instrument_id, side } = holding;
     const continuousObj = continuousMap[instrument_id];
-
-    let isOpenShort = side == 'short';
-    isOpenShort = !isOpenShort;
-
-    if((side == 'short' && lastWinDirection == 'short')
-        || (side == 'long' && lastWinDirection == 'long')
-    ){
-        continuousWinSameSideNum++;
-        isOpenShort = !isOpenShort;
-    }else{
-        continuousWinSameSideNum = 0;
-    }
 
     continuousObj.continuousLossNum = 0;
     continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
 
-    continuousLossSameSideNum = 0;
-    lastLastWinDirection = lastWinDirection;
-    lastWinDirection = side;
+    let isOpenShort = side == 'short';
 
-    ratioChangeNum = 0
-    lastMostWinRatio = 0;
+    // if(continuousObj.continuousWinNum >= 4){
+    //     isOpenShort = !isOpenShort
+    //     continuousObj.continuousWinNum = 0;
+    // }
 
     const openSide = isOpenShort ? 'short' : 'long';
     const payload = {
@@ -563,92 +529,29 @@ const afterWin = async (holding, type = 0) => {
         continuousWinSameSideNum,
         continuousLossSameSideNum
     }
-    await autoOpenOrderSingle(holding, payload);
+    primarySide = openSide
+    await autoOpenOrderSingle(payload);
 
-    if(
-        // continuousObj.continuousWinNum == 1
-        // &&
-        !isOpenOtherOrder
-        &&
-        !type
-        // ||
-        // (continuousWinSameSideNum
-        //     && side == 'long'
-        // )
-    ){
-        isOpenOtherOrder = true;
-        let otherOpenSide = openSide;
-        if(continuousObj.continuousWinNum > 2) otherOpenSide = openSide == 'short' ? 'long' : 'short'
-        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
-
-    }
 }
 const afterLoss = async (holding,type) =>{
     const { instrument_id, side } = holding;
     const continuousObj = continuousMap[instrument_id];
 
-    let isOpenShort = side == 'short';
-    isOpenShort = !isOpenShort;
-
-    if(
-        side == 'short'
-        &&
-        lastWinDirection == 'long'
-    ){
-        continuousLossSameSideNum++;
-        if(
-            continuousLossSameSideNum < 2
-        ){
-            isOpenShort = !isOpenShort;
-        }
-    }else if(
-        side == 'long'
-        &&
-        lastWinDirection == 'short'
-        &&
-        continuousWinSameSideNum < 1
-    ) {
-        continuousLossSameSideNum++;
-        if(continuousLossSameSideNum < 2){
-            isOpenShort = !isOpenShort;
-        }
-    }
-
-    // if(
-    //     ratioChangeNum
-    // ){
-    //     if(!continuousWinSameSideNum){
-    //         isOpenShort = side != 'short'
-    //     }
-    //
-    //     if(
-    //         continuousWinSameSideNum
-    //     ){
-    //         if(
-    //             lastWinDirection == 'short'
-    //             &&
-    //             ratioChangeNum > 1
-    //             &&
-    //             ratioChangeNum < 3
-    //         ){
-    //             isOpenShort = !isOpenShort
-    //         }
-    //
-    //         if(lastWinDirection == 'long' && continuousWinSameSideNum > 1){
-    //             isOpenShort = !isOpenShort
-    //         }
-    //     }
-    // }
-
     continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
     continuousObj.continuousWinNum = 0;
+
+    let isOpenShort = side == 'short';
+
+    // if(continuousObj.continuousLossNum >= 2){
+    //     isOpenShort = !isOpenShort
+    // }
 
     lastLastLossDirection = lastLossDirection;
     lastLossDirection = side;
 
     lastMostWinRatio = 0;
 
-    const openSide = isOpenShort ? 'short' : 'long';
+    let openSide = isOpenShort ? 'short' : 'long';
     const payload = {
         openSide,
         lossNum: continuousObj.continuousLossNum,
@@ -656,30 +559,18 @@ const afterLoss = async (holding,type) =>{
         continuousWinSameSideNum,
         continuousLossSameSideNum
     }
-    await autoOpenOrderSingle(holding, payload);
+    primarySide = openSide
+    await autoOpenOrderSingle(payload);
 
-    if(
-        (!continuousWinSameSideNum
-            ||
-            continuousObj.continuousLossNum > 2
-        )
-        &&
-        !isOpenOtherOrder
-        &&
-        !type
-    ){
-        isOpenOtherOrder = true;
-        const otherOpenSide = openSide == 'short' ? 'long' : 'short';
-        await autoOpenOtherOrderSingle({ openSide: otherOpenSide })
-    }
 }
 // 平半仓
-const closeHalfPosition = async (holding, mark_price) => {
-    const { instrument_id, last, leverage, position, avg_cost, margin, side } = holding;
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+const closeHalfPosition = async (holding, oldPosition = initPosition) => {
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
+    const { instrument_id, position, side } = holding;
 
     const payload = {
-        size: Math.ceil(Number(position) / 2),
+        size: Math.ceil(Number(position)),
         type: side == 'long' ? 3 : 4,
         instrument_id,
         order_type: 4,
@@ -687,358 +578,328 @@ const closeHalfPosition = async (holding, mark_price) => {
         // match_price: 0
     }
 
-    await cAuthClient.swap.postOrder(payload)
+    await authClient.swap().postOrder(payload)
 
-    // let hasOrderInterval = setInterval(async ()=>{
-    //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
-    //     if(result == false) {
-    //         clearInterval(hasOrderInterval)
-    //         hasOrderInterval = null;
-    //         return;
-    //     }
-    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-    //     const payload = {
-    //         size: Math.ceil(Number(position) / 2),
-    //         type: side == 'long' ? 3 : 4,
-    //         instrument_id,
-    //         order_type: 4,
-    //         // price: mark_price,
-    //         // match_price: 0
-    //     }
-    //     order_id = (await cAuthClient.swap.postOrder(payload)).order_id;
-    // },1500)
+    // }
 }
 let otherPositionLoss = false
 let otherPositionSide = null
 const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
-    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin, side } = holding;
+    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin: originMargin, side } = holding;
 
     otherPositionPrimaryPrice = otherPositionPrimaryPrice || Number(avg_cost)
 
-    const position = isHalf ? Number(originPosition) / 2 : Number(originPosition)
-    const size = Number(position) * 100 / Number(mark_price);
-    let unrealized_pnl = size * (Number(mark_price) - otherPositionPrimaryPrice) / Number(mark_price);
-    if(side=='short') unrealized_pnl = - unrealized_pnl;
+    // const position = isHalf ? Math.floor(Number(originPosition) * (initPosition + 1) / ( 2 * initPosition + 1 ) ) : Number(originPosition)
 
-    const ratio = Number(unrealized_pnl) / Number(margin);
+    let ratio = (Number(mark_price) - Number(otherPositionPrimaryPrice)) * Number(leverage) / Number(mark_price);
+    if(side=='short') ratio = -ratio;
+    ratio = isNaN(ratio) ? 0 : ratio
     const condition = Number(leverage) / 100;
 
     const continuousObj = continuousMap[instrument_id];
 
-    let newWinRatio = Number(winRatio) / 5.0
-    let newLossRatio = Number(lossRatio) * 1.5
+    let newWinRatio = LEVERAGE / 10 * 0.4
+    let newLossRatio = Number(lossRatio)
 
-    if(otherPositionLoss){
-        newWinRatio = Number(winRatio) / 8
-        newLossRatio = Number(lossRatio) / 1.2
-    }
-
-    console.log('@@@@@@@@@other continuousLossNum start@@@@@@@@@')
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
-    console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
-    // console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
-    // console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
-    // console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-    // console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
-    // console.log('lastMostWinRatio',lastMostWinRatio)
-    console.log('@@@@@@@@@other continuousLossNum end@@@@@@@@@@@@@')
-
-    if(ratio > condition * newWinRatio * frequency) {
-        positionChange = true
-        isOpenOtherOrder = false
-        otherPositionLoss = false
-
-        // if(isHalf && Number(position) == initPosition * 2){
-        //     await closeHalfPosition(holding)
-        // }else{
-        //     await autoCloseOrderByMarketPriceByHolding(holding);
-        // }
-        await autoCloseOrderByMarketPriceByHolding(holding);
-
-        if(continuousObj.continuousLossNum){
-            const openSide = side == 'short' ? 'long' : 'short';
-            const payload = {
-                openSide,
-                lossNum: continuousObj.continuousLossNum,
-                winNum: continuousObj.continuousWinNum,
-                continuousWinSameSideNum,
-                continuousLossSameSideNum
-            }
-            await autoOpenOtherOrderSingle(holding, payload);
-            isOpenOtherOrder = true
-            otherPositionLoss = true
-
-        }
-    }
-    if(ratio < - condition * newLossRatio * frequency){
-        positionChange = true
-        isOpenOtherOrder = false
-        otherPositionLoss = false
-
-        // if(isHalf && Number(position) == initPosition * 2){
-        //     await closeHalfPosition(holding)
-        // }else{
-        //     await autoCloseOrderByMarketPriceByHolding(holding);
-        // }
-        await autoCloseOrderByMarketPriceByHolding(holding);
-
-        if(continuousObj.continuousLossNum){
-            const openSide = side == 'long' ? 'long' : 'short';
-            const payload = {
-                openSide,
-                lossNum: continuousObj.continuousLossNum,
-                winNum: continuousObj.continuousWinNum,
-                continuousWinSameSideNum,
-                continuousLossSameSideNum
-            }
-            await autoOpenOtherOrderSingle(holding, payload);
-            isOpenOtherOrder = true
-            otherPositionLoss = true
-
-        }
-    }
-}
-const autoOperateSwap = async (holding,mark_price,isHalf=false) => {
-    const { instrument_id, last, leverage, position: originPosition, avg_cost, margin, side } = holding;
-
-    primaryPrice = primaryPrice || Number(avg_cost)
-
-    const position = isHalf ? Number(originPosition) / 2 : Number(originPosition)
-
-    const size = Number(position) * 100 / Number(mark_price);
-    let unrealized_pnl = size * (Number(mark_price) - primaryPrice) / Number(mark_price);
-    if(side=='short') unrealized_pnl = - unrealized_pnl;
-    let isOpenShort = side == 'short';
-
-    const ratio = Number(unrealized_pnl) / Number(margin);
-    const condition = Number(leverage) / 100;
-
-    const continuousObj = continuousMap[instrument_id];
-
-    let newWinRatio = Number(winRatio);
-    let newLossRatio = Number(lossRatio);
-
-    if(
-        // lastLastLossDirection != lastLossDirection
-        // &&
-        lastLossDirection != side
-    ){
-        if(continuousObj.continuousLossNum > 7){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.4 : newWinRatio / 2;
-        }
-        if(continuousObj.continuousLossNum > 4){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.43 : newWinRatio / 2;
-        }
-        if(continuousObj.continuousLossNum > 2){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.32 : newWinRatio;
-        }
-        if(continuousObj.continuousLossNum > 1){
-            newWinRatio = continuousWinSameSideNum ? newWinRatio / 1.2 : (lastWinDirection == 'long' ? newWinRatio / 1.18 : newWinRatio);
-        }
-    }
-
-    if(continuousObj.continuousWinNum){
-        newWinRatio = Number(winRatio) / 5
-    }
-
+    // if(continuousObj.continuousLossNum){
+    //     newWinRatio = Number(lossRatio) * 0.8 * 1.2 * 1.2
+    //     newLossRatio = Number(lossRatio) * 2.5 * 1.2
+    // }
+    //
     // if(
-    //     continuousWinSameSideNum
-    //     && side == 'long'
+    //     (continuousObj.otherContinuousWinNum == 3 && otherPositionSide == 'short' && primarySide == 'short')
+    //     ||
+    //     continuousObj.otherContinuousWinNum > 3
+    //     ||
+    //     continuousObj.otherContinuousLossNum > 1
+    //     // ||
+    //     // otherFromPrimary
     // ){
-    //     newWinRatio = Number(winRatio) / 10
     //     newLossRatio = Number(lossRatio) * 1.2
     // }
-
-    console.log('------------continuousLossNum start---------------')
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss'), instrument_id, ratio, position)
-    console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side)
-    console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
-    console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
-    console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
-    console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
-    console.log('lastMostWinRatio',lastMostWinRatio)
-    console.log('------------continuousLossNum end---------------')
-
-    if(ratio > 0){
-        lastMostWinRatio = Math.max(lastMostWinRatio,ratio)
-        if(
-            ratio < condition * newWinRatio * frequency / 10
-            &&
-            lastMostWinRatio > condition * newWinRatio * frequency * 1.8 / 4
-            &&
-            continuousLossSameSideNum == 1
-
-        ){
-            // if(isOpenOtherOrder){
-            //     await closeHalfPosition(holding, mark_price)
-            // }else{
-            //     await autoCloseOrderByMarketPriceByHolding(holding);
-            // }
-            positionChange = true
-            await autoCloseOrderByMarketPriceByHolding(holding);
-
-            lastMostWinRatio = 0;
-
-            const openSide = side == 'long' ? 'short' : 'long';
-            const payload = {
-                openSide,
-                lossNum: continuousObj.continuousLossNum,
-                continuousWinSameSideNum,
-                continuousLossSameSideNum
-            }
-            await autoOpenOrderSingle(holding, payload);
-
-        }
+    const consoleOtherFn = () => {
+        console.log('@@@@@@@@@other other close start@@@@@@@@@')
+        console.log(instrument_id, ratio, originPosition, moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.info('frequency', frequency, 'newWinRatio', newWinRatio, 'newLossRatio', newLossRatio, 'leverage', leverage, 'side', side,)
+        console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice, 'mark_price', mark_price)
+        console.log('otherPositionLoss',otherPositionLoss,'isHalf',isHalf)
+        console.log('continuousWinNum',continuousObj.continuousWinNum, 'continuousLossNum',continuousObj.continuousLossNum)
+        console.log('lastWinDirection', lastWinDirection, 'lastLastWinDirection', lastLastWinDirection)
+        console.log('lastLossDirection', lastLossDirection, 'lastLastLossDirection', lastLastLossDirection)
+        console.log('continuousWinSameSideNum',continuousWinSameSideNum,'continuousLossSameSideNum',continuousLossSameSideNum)
+        console.log('lastMostWinRatio',lastMostWinRatio)
+        console.log('@@@@@@@@@other other close end@@@@@@@@@@@@@')
     }
 
-    if(ratio > condition * newWinRatio * frequency){
-        // if(isOpenOtherOrder && Number(position) == initPosition * 2){
-        //     await closeHalfPosition(holding, mark_price)
-        // }else{
-        //     await autoCloseOrderByMarketPriceByHolding(holding);
-        // }
+    if(ratio > condition * newWinRatio * frequency) {
+        consoleOtherFn()
         positionChange = true
-        await autoCloseOrderByMarketPriceByHolding(holding);
-        await afterWin(holding)
-        return;
+        isOpenOtherOrder = false
+        otherPositionLoss = false
+        otherPositionPrimaryPrice = 0
+
+        continuousObj.otherContinuousWinNum = continuousObj.otherContinuousWinNum + 1
+        continuousObj.otherContinuousLossNum = 0;
+
+        if(isHalf || (Number(holding.position) > Number(initPosition) * 1)){
+            await closeHalfPosition(holding, Number(initPosition) + 1)
+        }else{
+            // await autoCloseOrderByMarketPriceByHolding(holding);
+            await closeHalfPosition(holding, Number(originPosition))
+        }
+
+        // if(continuousObj.continuousLossNum || !continuousObj.continuousWinNum){
+        //     let openSide = side == 'long' ? 'long' : 'short'
+        //     if(continuousObj.otherContinuousWinNum > 3) {
+        //         openSide = side == 'short' ? 'long' : 'short'
+        //         continuousObj.otherContinuousWinNum = 0
+        //     }
+        //     const payload = {
+        //         openSide,
+        //         lossNum: continuousObj.continuousLossNum,
+        //         winNum: continuousObj.continuousWinNum,
+        //         continuousWinSameSideNum,
+        //         continuousLossSameSideNum
+        //     }
+        //     isOpenOtherOrder = true
+        //     otherPositionLoss = true
+        //     otherFromPrimary = false
+        //     await autoOpenOtherOrderSingle(payload);
+        // }
     }
     if(ratio < - condition * newLossRatio * frequency){
-        // if(isOpenOtherOrder && Number(position) == initPosition * 2){
-        //     await closeHalfPosition(holding, mark_price)
-        // }else{
-        //     await autoCloseOrderByMarketPriceByHolding(holding);
-        // }
+        consoleOtherFn()
         positionChange = true
-        await autoCloseOrderByMarketPriceByHolding(holding);
-        await afterLoss(holding)
-        return;
+        isOpenOtherOrder = false
+        otherPositionLoss = false
+        otherPositionPrimaryPrice = 0
+        continuousObj.otherContinuousWinNum = 0
+        continuousObj.otherContinuousLossNum = continuousObj.otherContinuousLossNum + 1
+
+        if(isHalf || (Number(holding.position) > Number(initPosition))){
+            await closeHalfPosition(holding, Number(initPosition) + 1)
+        }else{
+            // await autoCloseOrderByMarketPriceByHolding(holding);
+            await closeHalfPosition(holding, Number(originPosition))
+        }
+
+        // if(continuousObj.continuousLossNum){
+        //     let openSide = side == 'short' ? 'long' : 'short';
+        //
+        //     const payload = {
+        //         openSide,
+        //         lossNum: continuousObj.continuousLossNum,
+        //         winNum: continuousObj.continuousWinNum,
+        //         continuousWinSameSideNum,
+        //         continuousLossSameSideNum
+        //     }
+        //     isOpenOtherOrder = true
+        //     otherPositionLoss = true
+        //     otherFromPrimary = false
+        //     await autoOpenOtherOrderSingle(payload);
+        // }
     }
 }
+const getPowByNum = (total, n) => {
+    let index = 1;
+    while(Math.pow(n,index) != total){
+        index++;
+    }
+    return index
+}
+const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
+    let lossHolding = holding1
+    if(holding2.unrealized_pnl < 0){
+        lossHolding = holding2
+    }
+    const { instrument_id, side, leverage, position, avg_cost, margin: originMargin, } = lossHolding;
 
-// function startInterval() {
-//     if(myInterval) return myInterval;
-//     return setInterval(async ()=>{
-//         console.log('moment', moment().format('YYYY-MM-DD HH:mm:ss'))
-//
-//         const { holding: btcHolding } = await cAuthClient.swap.getPosition(BTC_INSTRUMENT_ID);
-//         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-//         // const { holding: eosHolding } = await cAuthClient.swap.getPosition(EOS_INSTRUMENT_ID);
-//
-//         const btcQty = Number(btcHolding[0].position);
-//         // const eosQty = Number(eosHolding[0].position);
-//
-//         const qty = btcQty;
-//         if(!qty) {
-//             return;
-//         }
-//         // if(btcQty) getOrderModeSingle(mode,  btcHolding[0]);
-//         if(btcHolding.length > 1 && isOpenOtherOrder && Number(btcHolding[1].position)){
-//             let mainHolding = btcHolding[0]
-//             let otherHolding = btcHolding[1]
-//
-//             if(!curOtherPositionIndex){
-//                 mainHolding = btcHolding[1]
-//                 otherHolding = btcHolding[0]
-//             }
-//             console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
-//
-//             await autoOtherOrder(otherHolding,mark_price)
-//             await autoOperateSwap(mainHolding,mark_price)
-//
-//             // setTimeout(async () => {
-//             //     const { holding: btcHolding } = await cAuthClient.swap.getPosition(BTC_INSTRUMENT_ID);
-//             //     const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-//             //
-//             //     let mainHolding = btcHolding[0]
-//             //     // let otherHolding = btcHolding[1]
-//             //
-//             //     if(!curOtherPositionIndex){
-//             //         mainHolding = btcHolding[1]
-//             //         // otherHolding = btcHolding[0]
-//             //     }
-//             //
-//             //     await autoOperateSwap(mainHolding,mark_price)
-//             //
-//             //     console.log('timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[1].timestamp)
-//             // }, 1000)
-//             return
-//         }
-//         if(btcQty) {
-//             console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-//             curOtherPositionIndex = 0
-//             if(isOpenOtherOrder){
-//                 await autoOtherOrder(btcHolding[0],mark_price, true)
-//                 await autoOperateSwap(btcHolding[0],mark_price)
-//
-//                 // if(btcQty == initPosition * 2){
-//                 //     setTimeout(async () => {
-//                 //         const { holding: btcHolding } = await cAuthClient.swap.getPosition(BTC_INSTRUMENT_ID);
-//                 //         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-//                 //         await autoOperateSwap(btcHolding[0],mark_price)
-//                 //
-//                 //         console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-//                 //     }, 1000)
-//                 // }
-//             }else{
-//                 await autoOperateSwap(btcHolding[0],mark_price)
-//             }
-//         }
-//         // if(isOpenOtherOrder && btcHolding[1] && Number(btcHolding[1].position)) await autoOtherOrder(btcHolding[1],mark_price)
-//     },1000 * 2)
-// }
+    let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+
+    const { avg_cost : avg_cost1 } = holding1
+    const { avg_cost : avg_cost2 } = holding2
+    const ratio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage) / Number(mark_price);
+    const ratio2 = (Number(mark_price) - Number(avg_cost2)) * Number(leverage) / Number(mark_price);
+
+    if(side=='short') ratio = -ratio;
+    ratio = isNaN(ratio) ? 0 : ratio
+    const condition = 10 / 100;
+
+    const bactchRatioList = [3, 5, 8, 12, 17, 23]
+    const batchIndex = Math.floor(Math.sqrt(Number(position)) - 1)
+    const batchNum = getPowByNum(Number(position), Number(initPosition))
+
+    // let newWinRatio = LEVERAGE / 10 * 0.8
+    let newLossRatio = bactchRatioList[batchIndex] / 10 * 2
+    let closeRatio = 0.02
+
+    if(ratio < - condition * newLossRatio * frequency){
+        const payload = {
+            openSide: side,
+            position: Number(position) * 2
+        }
+        await autoOpenOtherOrderSingle(payload, mark_price);
+        return;
+    }
+    if(
+        holding1.unrealized_pnl > 0
+        && holding2.unrealized_pnl > 0
+        && ratio1 > condition * closeRatio * frequency
+        && ratio2 > condition * closeRatio * frequency
+    ){
+        await closeHalfPosition(holding1);
+        await closeHalfPosition(holding2);
+        return
+    }
+    // if(ratio < - condition * newLossRatio * frequency / 2 / 2 / 2 / 2 / 2){
+    //     if(!isOpenOtherOrder){
+    //         positionChange = true
+    //         isOpenOtherOrder = true;
+    //         otherPositionSide = side == 'long' ? 'short' : 'long'
+    //
+    //         const payload = {
+    //             openSide: otherPositionSide,
+    //         }
+    //         await autoOpenOtherOrderSingle(payload);
+    //     }
+    // }
+}
+
+const writeData = async () => {
+    //将修改后的配置写入文件前需要先转成json字符串格式
+    const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
+
+    let dataConfig = {
+        "continuousWinNum": continuousObj.continuousWinNum.toString(),
+        "continuousLossNum": continuousObj.continuousLossNum.toString(),
+        "otherContinuousWinNum": continuousObj.otherContinuousWinNum.toString(),
+        "otherContinuousLossNum": continuousObj.otherContinuousLossNum.toString(),
+        "lastWinDirection" : lastWinDirection,
+        "lastLastWinDirection": lastLastWinDirection,
+        "lastLossDirection": lastLossDirection,
+        "lastLastLossDirection": lastLastLossDirection,
+        "continuousWinSameSideNum": continuousWinSameSideNum.toString(),
+        "continuousLossSameSideNum": continuousLossSameSideNum.toString(),
+        "lastMostWinRatio": lastMostWinRatio.toString(),
+        "isOpenOtherOrder": isOpenOtherOrder.toString(),
+        "otherPositionSide": otherPositionSide,
+        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString(),
+        "otherPositionLoss": otherPositionLoss.toString(),
+        "primaryPrice": primaryPrice.toString(),
+        "primarySide": primarySide.toString(),
+        "time": moment().format('YYYY-MM-DD HH:mm:ss').toString()
+    }
+    let jsonStr = JSON.stringify(dataConfig);
+    // console.log(jsonStr)
+
+    const result = await new Promise(resolve=>{
+        //将修改后的内容写入文件
+        fs.writeFile('./app/config.json', jsonStr, function(err) {
+            if (err) {
+                console.error(err);
+            }else{
+                console.log('----------修改成功-------------');
+                resolve(true)
+            }
+        });
+    })
+
+    return result
+}
+
+// let isInit = true
+const readData = async () => {
+    // if(!isInit){
+    let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
+    // dataConfig = JSON.parse(dataConfig)
+
+    const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
+    continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
+    continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
+    continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
+    continuousObj.otherContinuousLossNum = Number(dataConfig.otherContinuousLossNum)
+    lastWinDirection = dataConfig.lastWinDirection
+    lastLastWinDirection = dataConfig.lastLastWinDirection
+    lastLossDirection = dataConfig.lastLossDirection
+    lastLastLossDirection = dataConfig.lastLastLossDirection
+    continuousWinSameSideNum = Number(dataConfig.continuousWinSameSideNum)
+    continuousLossSameSideNum = Number(dataConfig.continuousLossSameSideNum)
+    lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
+    isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
+    otherPositionSide = dataConfig.otherPositionSide
+    otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
+    otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
+    primaryPrice = Number(dataConfig.primaryPrice)
+    primarySide = dataConfig.primarySide
+
+    console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
+    // }
+}
 
 let positionChange = true;
 let globalBtcHolding = null;
 const startInterval = async () => {
-    console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
-    // let btcHolding = globalBtcHolding
-    // if(positionChange){
-    //     const { holding: tempBtcHolding } = await cAuthClient.swap.getPosition(BTC_INSTRUMENT_ID);
-    //     globalBtcHolding = tempBtcHolding
-    //     btcHolding = globalBtcHolding
-    //     positionChange = false
-    // }
-    const { markPx: mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
-    console.log('mark_price',mark_price)
+    let btcHolding = globalBtcHolding
+    if(positionChange){
+        try{
+            console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+            // await readData()
+            const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+            btcHolding = tempBtcHolding
+            if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
+                await autoOpenOtherOrderSingle({ openSide: "long" }, mark_price)
+                await autoOpenOtherOrderSingle({ openSide: "short" }, mark_price)
+                positionChange = false
+            }
+            globalBtcHolding = btcHolding
+            console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
+        }catch (e){
+            console.log(e)
+        }
+        // isInit = false
+    }else{
+        if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
+            const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+            btcHolding = tempBtcHolding
+            globalBtcHolding = btcHolding
+        }
+    }
 
-    // const btcQty = Number(btcHolding[0].position);
+    const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
     // console.log('btcQty',btcQty, initPosition)
-    // console.log(btcHolding[0])
-    // if(btcQty) {
-    //     if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-    //         let mainHolding = btcHolding[0]
-    //         let otherHolding = btcHolding[1]
-    //
-    //         if(otherPositionSide == btcHolding[0].side){
-    //             mainHolding = btcHolding[1]
-    //             otherHolding = btcHolding[0]
-    //         }
-    //         console.log('timestamp','mainHolding',mainHolding.timestamp,primaryPrice, mainHolding.side)
-    //         console.log('timestamp','otherHolding',otherHolding.timestamp,otherPositionPrimaryPrice, otherHolding.side)
-    //         console.log('otherPositionSide',otherPositionSide)
-    //         console.log('isOpenOtherOrder', isOpenOtherOrder)
-    //
-    //         await autoOtherOrder(otherHolding,mark_price)
-    //         await autoOperateSwap(mainHolding,mark_price)
-    //     }else{
-    //         console.log('one-timestamp',btcHolding[0].timestamp,'timestamp',btcHolding[0].timestamp)
-    //         console.log('primaryPrice', primaryPrice)
-    //         console.log('otherPositionPrimaryPrice', otherPositionPrimaryPrice)
-    //         console.log('otherPositionSide',otherPositionSide)
-    //         console.log('isOpenOtherOrder', isOpenOtherOrder)
-    //         console.log(btcQty == Number(initPosition) * 2)
-    //         if(isOpenOtherOrder && (btcQty == Number(initPosition) * 2)){
-    //             await autoOtherOrder(btcHolding[0],mark_price, true)
-    //             await autoOperateSwap(btcHolding[0],mark_price, true)
-    //         }else{
-    //             await autoOperateSwap(btcHolding[0],mark_price)
-    //         }
-    //     }
-    //
-    //     await waitTime()
-    //     await startInterval()
-    // }
+
+    if(btcQty) {
+        if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
+            let mainHolding = btcHolding[0]
+            let otherHolding = btcHolding[1]
+            await autoOperateSwap([mainHolding,otherHolding],mark_price)
+            // await Promise.all([await autoOperateSwap(mainHolding,mark_price),await autoOtherOrder(otherHolding,mark_price)])
+
+            // if(Number(btcHolding[0].position) > Number(initPosition)){
+            //     mainHolding = btcHolding[1]
+            //     otherHolding = btcHolding[0]
+            // }
+            // await Promise.all([await autoOtherOrder(otherHolding,mark_price), await autoOperateSwap(mainHolding,mark_price)])
+        }else{
+            // if(Number(btcHolding[0].position) > Number(initPosition)){
+            //     await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
+            // }else{
+            //     if(Number(btcHolding[0].position) > Number(initPosition)){
+            //         await autoOtherOrder(btcHolding[0],mark_price)
+            //     }else{
+            //         await autoOperateSwap(btcHolding[0],mark_price)
+            //     }
+            // }
+        }
+        await waitTime()
+        // if(positionChange) await writeData()
+        await startInterval()
+    }else{
+        await waitTime()
+        await startInterval()
+    }
 }
 
 function stopInterval() {
@@ -1062,6 +923,6 @@ const waitTime = (time = 1000 * 4) => {
 (async ()=>{
     await startInterval()
 })()
-app.listen(8092);
+app.listen(8091);
 
-console.log('8092 server start');
+console.log('8091 server start');
