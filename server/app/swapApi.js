@@ -705,9 +705,9 @@ const getPowByNum = (total, n) => {
     return index
 }
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
-    const { side1, leverage1, position1, avg_cost1, } = lossHolding;
+    const { side: side1, leverage: leverage1, avg_cost: avg_cost1, } = holding1;
     let ratio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage1) / Number(mark_price);
-    const { side2, leverage2, position2, avg_cost2, } = lossHolding;
+    const { side: side2, leverage: leverage2, avg_cost: avg_cost2, } = holding1;
     let ratio2 = (Number(mark_price) - Number(avg_cost2)) * Number(leverage2) / Number(mark_price);
 
     if(side1=='short') ratio1 = -ratio1;
