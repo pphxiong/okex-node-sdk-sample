@@ -295,6 +295,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 
     try{
         await authClient.swap().postOrder(payload)
+        positionChange = true
     }catch (e) {
         console.log(e)
     }
@@ -575,7 +576,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         }
 
         await authClient.swap().postOrder(payload)
-
+        positionChange = true
     // }
 }
 let otherPositionLoss = false
@@ -847,9 +848,9 @@ const startInterval = async () => {
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
                 await autoOpenOtherOrderSingle({ openSide: "long" })
                 await autoOpenOtherOrderSingle({ openSide: "short" })
-                positionChange = false
             }
             globalBtcHolding = btcHolding
+            positionChange = false
             console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
         }catch (e){
             console.log(e)

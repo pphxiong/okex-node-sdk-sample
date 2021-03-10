@@ -276,17 +276,6 @@ const autoOpenOtherOrderSingle = async (params = {}, mark_price) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    // 可开张数
-    let availNo;
-    let avail = 0;
-
-    if(instrument_id.includes('BTC')){
-        availNo = await getAvailNo({ mark_price });
-    }else{
-        availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
-    }
-    avail = Math.min(Math.floor(Number(availNo)), Number(position));
-
     const instrument_id = ETH_INSTRUMENT_ID;
     const payload = {
         size: position,
@@ -849,9 +838,12 @@ const startInterval = async () => {
             const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-                await autoOpenOtherOrderSingle({ openSide: "long" }, mark_price)
-                await autoOpenOtherOrderSingle({ openSide: "short" }, mark_price)
-                positionChange = false
+                const availNo = await getAvailNo({ val: 10, currency: 'ETH-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
+                if(availNo && Number(availNo) > 0){
+                    await autoOpenOtherOrderSingle({ openSide: "long" }, mark_price)
+                    await autoOpenOtherOrderSingle({ openSide: "short" }, mark_price)
+                    positionChange = false
+                }
             }
             globalBtcHolding = btcHolding
             console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
@@ -871,7 +863,7 @@ const startInterval = async () => {
     // console.log('btcQty',btcQty, initPosition)
 
     if(btcQty) {
-        if(btcHolding.length > 1 && Number(btcHolding[1].position) && (Number(btcHolding[0].position) + Number(btcHolding[1].position) > Number(initPosition) * 2) ){
+        if(btcHolding.length > 1 && Number(btcHolding[1].position)){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
