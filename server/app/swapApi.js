@@ -732,7 +732,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     // let newWinRatio = LEVERAGE / 10 * 0.8
-    let newLossRatio = bactchRatioList[batchIndex] / 10 * 2
+    let newLossRatio = bactchRatioList[batchIndex] / 10 * 2 * 2
 
     if(lossRatio < - condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
