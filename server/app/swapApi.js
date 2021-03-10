@@ -852,7 +852,6 @@ const startInterval = async () => {
             }
             globalBtcHolding = btcHolding
             positionChange = false
-            console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
         }catch (e){
             console.log(e)
         }
@@ -869,6 +868,8 @@ const startInterval = async () => {
     // console.log('btcQty',btcQty, initPosition)
 
     if(btcQty) {
+        console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
+
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
