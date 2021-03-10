@@ -19,7 +19,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let initPosition = 15;
+let initPosition = 2;
 let LEVERAGE = 10
 
 const continuousMap = {
@@ -560,11 +560,10 @@ const afterLoss = async (holding,type) =>{
 
 }
 // 平半仓
-const closeHalfPosition = async (holding, position = initPosition) => {
-    const { holding: realBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-    if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
-        const { instrument_id, last, leverage, avg_cost, margin, side } = holding;
-        // const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
+const closeHalfPosition = async (holding, oldPosition = initPosition) => {
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
+        const { instrument_id, position, side } = holding;
 
         const payload = {
             size: Math.ceil(Number(position)),
@@ -577,25 +576,7 @@ const closeHalfPosition = async (holding, position = initPosition) => {
 
         await authClient.swap().postOrder(payload)
 
-        // let hasOrderInterval = setInterval(async ()=>{
-        //     const { result } = await validateAndCancelOrder({instrument_id, order_id});
-        //     if(result == false) {
-        //         clearInterval(hasOrderInterval)
-        //         hasOrderInterval = null;
-        //         return;
-        //     }
-        //     const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-        //     const payload = {
-        //         size: Math.ceil(Number(position) / 2),
-        //         type: side == 'long' ? 3 : 4,
-        //         instrument_id,
-        //         order_type: 4,
-        //         // price: mark_price,
-        //         // match_price: 0
-        //     }
-        //     order_id = (await authClient.swap().postOrder(payload)).order_id;
-        // },1500)
-    }
+    // }
 }
 let otherPositionLoss = false
 let otherPositionSide = null
@@ -715,6 +696,13 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
         // }
     }
 }
+const getPowByNum = (total, n) => {
+    let index = 1;
+    while(Math.pow(n,index) != total){
+        index++;
+    }
+    return index
+}
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     let lossHolding = holding1
     if(holding2.unrealized_pnl < 0){
@@ -733,9 +721,12 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     ratio = isNaN(ratio) ? 0 : ratio
     const condition = Number(leverage) / 100;
 
-    let newWinRatio = LEVERAGE / 10 * 0.8
-    let newLossRatio = LEVERAGE / 10 * 0.2
+    const bactchRatioList = [3, 5, 8, 12, 17, 23]
+    const batchIndex = Math.floor(Math.sqrt(Number(position)) - 1)
+    const batchNum = getPowByNum(Number(position), Number(initPosition))
 
+    // let newWinRatio = LEVERAGE / 10 * 0.8
+    let newLossRatio = LEVERAGE / 10 * bactchRatioList[batchIndex] / 10 * 2
     let closeRatio = LEVERAGE / 10 * 0.02
 
     if(ratio < - condition * newLossRatio * frequency){
@@ -752,8 +743,9 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         && ratio1 > condition * closeRatio * frequency
         && ratio2 > condition * closeRatio * frequency
     ){
-        await autoCloseOrderByMarketPriceByHolding(holding1);
-        await autoCloseOrderByMarketPriceByHolding(holding2);
+        await closeHalfPosition(holding1);
+        await closeHalfPosition(holding2);
+        return
     }
     // if(ratio < - condition * newLossRatio * frequency / 2 / 2 / 2 / 2 / 2){
     //     if(!isOpenOtherOrder){
