@@ -19,8 +19,8 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let initPosition = 5;
 let LEVERAGE = 20
+let initPosition = LEVERAGE / 2;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -705,32 +705,37 @@ const getPowByNum = (total, n) => {
     return index
 }
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
-    let lossHolding = holding1
-    if(holding2.unrealized_pnl < 0){
-        lossHolding = holding2
-    }
-    const { instrument_id, side, leverage, position, avg_cost, margin: originMargin, } = lossHolding;
+    const { side1, leverage1, position1, avg_cost1, } = lossHolding;
+    let ratio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage1) / Number(mark_price);
+    const { side2, leverage2, position2, avg_cost2, } = lossHolding;
+    let ratio2 = (Number(mark_price) - Number(avg_cost2)) * Number(leverage2) / Number(mark_price);
 
-    let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+    if(side1=='short') ratio1 = -ratio1;
+    ratio1 = isNaN(ratio1) ? 0 : ratio1
 
-    const { avg_cost : avg_cost1 } = holding1
-    const { avg_cost : avg_cost2 } = holding2
-    const ratio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage) / Number(mark_price);
-    const ratio2 = (Number(mark_price) - Number(avg_cost2)) * Number(leverage) / Number(mark_price);
+    if(side2=='short') ratio2 = -ratio1;
+    ratio2 = isNaN(ratio2) ? 0 : ratio2
 
-    if(side=='short') ratio = -ratio;
-    ratio = isNaN(ratio) ? 0 : ratio
+    let closeRatio = 0.05
     const condition = 10 / 100;
+
+    let lossHolding = holding1
+    let LossRatio = ratio1
+    if(ratio2 < condition * closeRatio * frequency){
+        lossHolding = holding2
+        LossRatio = ratio2
+    }
+
+    const { position, side,  } = lossHolding
 
     const bactchRatioList = [3, 5, 8, 12, 17, 23]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     // let newWinRatio = LEVERAGE / 10 * 0.8
     let newLossRatio = bactchRatioList[batchIndex] / 10 * 2
-    let closeRatio = 0.02
 
-    if(ratio < - condition * newLossRatio * frequency){
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", ratio, batchIndex, bactchRatioList[batchIndex])
+    if(LossRatio < - condition * newLossRatio * frequency){
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", LossRatio, batchIndex, bactchRatioList[batchIndex])
         const payload = {
             openSide: side,
             position: Number(position) * 1
@@ -739,9 +744,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         return;
     }
     if(
-        holding1.unrealized_pnl > 0
-        && holding2.unrealized_pnl > 0
-        && ratio1 > condition * closeRatio * frequency
+        ratio1 > condition * closeRatio * frequency
         && ratio2 > condition * closeRatio * frequency
     ){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "close", ratio, batchIndex, bactchRatioList[batchIndex])
@@ -868,7 +871,7 @@ const startInterval = async () => {
     // console.log('btcQty',btcQty, initPosition)
 
     if(btcQty) {
-        console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
+        // console.log(btcHolding[0].position, btcHolding[1] ? btcHolding[1].position : 0)
 
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
             let mainHolding = btcHolding[0]
