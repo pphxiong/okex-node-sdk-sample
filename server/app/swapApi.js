@@ -278,7 +278,7 @@ const getOrderState = async (payload) => {
 }
 
 const autoOpenOtherOrderSingle = async (params = {}) => {
-    const { openSide = 'long', position = 1} = params;
+    const { openSide = 'long', position = Number(initPosition)} = params;
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
@@ -845,7 +845,7 @@ const startInterval = async () => {
             const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-                await autoOpenOrderSingle({ openSide: "long" })
+                await autoOpenOtherOrderSingle({ openSide: "long" })
                 await autoOpenOtherOrderSingle({ openSide: "short" })
                 positionChange = false
             }
