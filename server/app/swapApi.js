@@ -736,7 +736,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     if(lossRatio < - condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
-        console.log(lossHolding)
+        // console.log(lossHolding)
         const payload = {
             openSide: side,
             position: Number(position) * 1
@@ -878,7 +878,7 @@ const startInterval = async () => {
 
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-            console.log(btcHolding[0], btcHolding[1])
+            // console.log(btcHolding[0], btcHolding[1])
 
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
