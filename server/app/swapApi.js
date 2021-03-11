@@ -699,7 +699,8 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 }
 const getPowByNum = (total, n) => {
     let index = 0;
-    while(Math.pow(2,index) != total / n){
+    // while(Math.pow(2,index) != total / n){
+    while(Math.pow(3,index) != total / n){
         index++;
     }
     return index
@@ -726,20 +727,21 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         lossRatio = ratio2
     }
 
-    const { position, side } = lossHolding
+    const { position, side, leverage } = lossHolding
 
-    const bactchRatioList = [3, 5, 8, 12, 17, 23]
+    const bactchRatioList = [3, 6, 10, 15]
+    // [10,30,90,270]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     // let newWinRatio = LEVERAGE / 10 * 0.8
-    let newLossRatio = bactchRatioList[batchIndex] * Number(leverage1) / 100 * 2 * 2
+    let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
 
     if(lossRatio < - condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
         // console.log(lossHolding)
         const payload = {
             openSide: side,
-            position: Number(position) * 1
+            position: Number(position) * 2
         }
         await autoOpenOtherOrderSingle(payload);
         return;
