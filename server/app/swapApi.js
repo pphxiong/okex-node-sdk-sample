@@ -705,6 +705,9 @@ const getPowByNum = (total, n) => {
     }
     return index
 }
+const autoOneSideSwap = async (holding,mark_price) => {
+    const { position, side, leverage } = holding
+}
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const { side: side1, leverage: leverage1, avg_cost: avg_cost1, } = holding1;
     let ratio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage1) / Number(mark_price);
@@ -729,7 +732,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage } = lossHolding
 
-    const bactchRatioList = [3, 6, 10, 15]
+    const bactchRatioList = [3.5, 7.5, 11.5]
     // [10,30,90,270]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
@@ -894,15 +897,7 @@ const startInterval = async () => {
             // }
             // await Promise.all([await autoOtherOrder(otherHolding,mark_price), await autoOperateSwap(mainHolding,mark_price)])
         }else{
-            // if(Number(btcHolding[0].position) > Number(initPosition)){
-            //     await Promise.all([await autoOtherOrder(btcHolding[0],mark_price, true),await autoOperateSwap(btcHolding[0],mark_price, true)])
-            // }else{
-            //     if(Number(btcHolding[0].position) > Number(initPosition)){
-            //         await autoOtherOrder(btcHolding[0],mark_price)
-            //     }else{
-            //         await autoOperateSwap(btcHolding[0],mark_price)
-            //     }
-            // }
+            await autoOneSideSwap(btcHolding[0],mark_price)
         }
         await waitTime()
         // if(positionChange) await writeData()
