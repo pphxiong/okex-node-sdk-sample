@@ -10,7 +10,6 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./config.json');
 
-
 let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
 let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
@@ -700,7 +699,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 const getPowByNum = (total, n) => {
     let index = 0;
     // while(Math.pow(2,index) != total / n){
-    while(Math.pow(4,index) != total / n){
+    while(Math.pow(2,index) != total / n){
         index++;
     }
     return index
@@ -715,7 +714,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
         (side=='short' && ratio < 1)
         
     ){
-        holding.position = Number(holding.position) - Number(initPosition)
+        holding.position = Number(holding.position) / 2
         await closeHalfPosition(holding);
 
         const payload = {
@@ -752,10 +751,10 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         winHolidng = holding2
     }
 
-    const { position, side, leverage } = lossHolding
+    const { position, side, leverage, last } = lossHolding
 
-    const bactchRatioList = [3, 5.5, 9, 12]
-    // [10,30,90,270]
+    const bactchRatioList = [3, 6, 9, 11.5]
+    // [10,20,40,80] [20,40,80,160]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     // let newWinRatio = LEVERAGE / 10 * 0.8
@@ -763,15 +762,16 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     if(winRatio > condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
-        await closeHalfPosition(winHolidng);
+        // await closeHalfPosition(winHolidng);
 
         const payload = {
             openSide: side,
-            position: Number(position) * 3
+            position: Number(position)
         }
         await autoOpenOtherOrderSingle(payload);
         return;
     }
+
     if(
         ratio1 > 0
         &&
@@ -787,18 +787,16 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         await closeHalfPosition(holding2);
         return
     }
-    // if(ratio < - condition * newLossRatio * frequency / 2 / 2 / 2 / 2 / 2){
-    //     if(!isOpenOtherOrder){
-    //         positionChange = true
-    //         isOpenOtherOrder = true;
-    //         otherPositionSide = side == 'long' ? 'short' : 'long'
-    //
-    //         const payload = {
-    //             openSide: otherPositionSide,
-    //         }
-    //         await autoOpenOtherOrderSingle(payload);
-    //     }
-    // }
+
+    let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+    if(
+        (side=='long' && ratio > 1)
+        ||
+        (side=='short' && ratio < 1)
+    ){
+        lossHolding.position = Number(lossHolding.position) / 2
+        await closeHalfPosition(lossHolding);
+    }
 }
 
 const writeData = async () => {
