@@ -741,26 +741,27 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     let closeRatio = 0.1
     const condition = 10 / 100;
 
-    let lossHolding = holding1
-    let lossRatio = ratio1
-    let winHolidng = holding2
-    if(ratio2 < - condition * closeRatio * frequency){
-        lossHolding = holding2
-        lossRatio = ratio2
+    let lossHolding = holding2
+   
+    let winHolidng = holding1
+    let winRatio = ratio1
+    if(ratio2 > condition * closeRatio * frequency){
+        lossHolding = holding1
 
-        winHolidng = holding1
+        winRatio = ratio2
+        winHolidng = holding2
     }
 
     const { position, side, leverage } = lossHolding
 
-    const bactchRatioList = [3, 5, 9, 12]
+    const bactchRatioList = [3, 5.5, 9, 12]
     // [10,30,90,270]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     // let newWinRatio = LEVERAGE / 10 * 0.8
     let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
 
-    if(lossRatio < - condition * newLossRatio * frequency){
+    if(winRatio > condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
         await closeHalfPosition(winHolidng);
 
