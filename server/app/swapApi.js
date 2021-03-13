@@ -700,7 +700,7 @@ const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
 const getPowByNum = (total, n) => {
     let index = 0;
     // while(Math.pow(2,index) != total / n){
-    while(Math.pow(3,index) != total / n){
+    while(Math.pow(4,index) != total / n){
         index++;
     }
     return index
@@ -715,7 +715,14 @@ const autoOneSideSwap = async (holding,mark_price) => {
         (side=='short' && ratio < 1)
         
     ){
+        holding.position = Number(holding.position) - Number(initPosition)
         await closeHalfPosition(holding);
+
+        const payload = {
+            openSide: side=='long' ? 'short' : 'long',
+            position: Number(initPosition)
+        }
+        await autoOpenOtherOrderSingle(payload);
     }
 
 }
@@ -746,7 +753,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage } = lossHolding
 
-    const bactchRatioList = [3, 6, 11]
+    const bactchRatioList = [3, 5, 9, 12]
     // [10,30,90,270]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
@@ -759,7 +766,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
         const payload = {
             openSide: side,
-            position: Number(position) * 2
+            position: Number(position) * 3
         }
         await autoOpenOtherOrderSingle(payload);
         return;
