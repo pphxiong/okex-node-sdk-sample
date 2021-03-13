@@ -706,7 +706,18 @@ const getPowByNum = (total, n) => {
     return index
 }
 const autoOneSideSwap = async (holding,mark_price) => {
-    const { position, side, leverage } = holding
+    const { last, avg_cost, position, side, leverage } = holding
+    let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+   
+    if(
+        (side=='long' && ratio > 1)
+        ||
+        (side=='short' && ratio < 1)
+        
+    ){
+        await closeHalfPosition(holding);
+    }
+
 }
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const { side: side1, leverage: leverage1, avg_cost: avg_cost1, } = holding1;
@@ -725,9 +736,12 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     let lossHolding = holding1
     let lossRatio = ratio1
+    let winHolidng = holding2
     if(ratio2 < - condition * closeRatio * frequency){
         lossHolding = holding2
         lossRatio = ratio2
+
+        winHolidng = holding1
     }
 
     const { position, side, leverage } = lossHolding
@@ -741,7 +755,8 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     if(lossRatio < - condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
-        // console.log(lossHolding)
+        await closeHalfPosition(winHolidng);
+
         const payload = {
             openSide: side,
             position: Number(position) * 3
