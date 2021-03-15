@@ -725,11 +725,13 @@ const autoOneSideSwap = async (holding,mark_price) => {
         holding.position = Number(holding.position) / 2
         await closeHalfPosition(holding);
 
-        const payload = {
-            openSide: side=='long' ? 'short' : 'long',
-            position: Number(initPosition)
+        if(Number(holding.position) == Number(initPosition)) {
+            const payload = {
+                openSide: side=='long' ? 'short' : 'long',
+                position: Number(initPosition)
+            }
+            await autoOpenOtherOrderSingle(payload);
         }
-        await autoOpenOtherOrderSingle(payload);
         return
     }
 
