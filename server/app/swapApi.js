@@ -751,7 +751,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         winHolidng = holding2
     }
 
-    const { position, side, leverage, last } = lossHolding
+    const { position, side, leverage, last, avg_cost } = lossHolding
 
     const bactchRatioList = [3, 6, 9, 11.5]
     // [10,20,40,80] [20,40,80,160]
