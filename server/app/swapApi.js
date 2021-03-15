@@ -705,12 +705,10 @@ const getPowByNum = (total, n) => {
     return index
 }
 const autoOneSideSwap = async (holding,mark_price) => {
-    const { avg_cost, position, side, leverage, instrument_id } = holding
-    const limit = 1;
-    const state = 2;
+    const { avg_cost, position, side, leverage, instrument_id, last } = holding
 
-    const { order_info } = await authClient.swap().getOrders(instrument_id, {state, limit})
-    const { price_avg: last } = order_info[0]
+    // const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 2, limit: 1})
+    // const { price_avg: last } = order_info[0]
 
     let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
 
@@ -751,6 +749,11 @@ const autoOneSideSwap = async (holding,mark_price) => {
         }
         await autoOpenOtherOrderSingle(payload);
         return;
+    }
+
+    if(lossRatio > 0.01){
+        await closeHalfPosition(holding);
+        return
     }
 
 }
@@ -915,8 +918,9 @@ const startInterval = async () => {
                 await autoOpenOtherOrderSingle({ openSide: "long" })
                 await autoOpenOtherOrderSingle({ openSide: "short" })
             }
+
             globalBtcHolding = btcHolding
-            positionChange = false
+            // positionChange = false
         }catch (e){
             console.log(e)
         }
@@ -934,19 +938,23 @@ const startInterval = async () => {
 
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-            // console.log(btcHolding[0], btcHolding[1])
+            positionChange = false
 
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
-            // await Promise.all([await autoOperateSwap(mainHolding,mark_price),await autoOtherOrder(otherHolding,mark_price)])
-
-            // if(Number(btcHolding[0].position) > Number(initPosition)){
-            //     mainHolding = btcHolding[1]
-            //     otherHolding = btcHolding[0]
-            // }
-            // await Promise.all([await autoOtherOrder(otherHolding,mark_price), await autoOperateSwap(mainHolding,mark_price)])
         }else{
+            if(positionChange){
+                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+                const { price_avg: last, type } = order_info[0]
+                
+                if(Number(type) < 3){
+                    btcHolding[0].last = last
+                }else{
+                    btcHolding[0].last = btcHolding[0].avg_cost
+                }
+            }
+            positionChange = false
             await autoOneSideSwap(btcHolding[0],mark_price)
         }
         await waitTime()
