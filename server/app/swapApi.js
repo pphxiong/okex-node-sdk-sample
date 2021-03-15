@@ -705,7 +705,13 @@ const getPowByNum = (total, n) => {
     return index
 }
 const autoOneSideSwap = async (holding,mark_price) => {
-    const { last, avg_cost, position, side, leverage } = holding
+    const { avg_cost, position, side, leverage, instrument_id } = holding
+    const limit = 1;
+    const state = 2;
+
+    const { order_info } = authClient.swap().getOrders(instrument_id, {state, limit})
+    const { price_avg: last } = order_info[0]
+
     let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
 
     let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
