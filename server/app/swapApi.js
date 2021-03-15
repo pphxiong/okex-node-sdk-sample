@@ -723,7 +723,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const condition = 10 / 100;
 
-    console.log('last',last,'avg_cost',avg_cost,'ratio',ratio, Number(holding.position) / 2)
+    // console.log('last',last,'avg_cost',avg_cost,'ratio',ratio, Number(holding.position) / 2)
     if(
         (side=='long' && ratio > 1)
         ||
@@ -780,7 +780,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         winHolidng = holding2
     }
 
-    const { position, side, leverage, last, avg_cost } = lossHolding
+    const { position, side, leverage, avg_cost } = lossHolding
 
     const bactchRatioList = [3.5, 7.5, 10.5, 12]
     // [10,20,40,80] [20,40,80,160]
