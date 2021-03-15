@@ -716,7 +716,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
 
     let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const condition = 10 / 100;
-    
+
     if(
         (side=='long' && ratio > 1)
         ||
@@ -726,13 +726,13 @@ const autoOneSideSwap = async (holding,mark_price) => {
         holding.position = Number(holding.position) / 2
         await closeHalfPosition(holding);
 
-        // if(Number(holding.position) == Number(initPosition)) {
+        if(Number(holding.position) == Number(initPosition)) {
             const payload = {
                 openSide: side=='long' ? 'short' : 'long',
                 position: Number(initPosition)
             }
             await autoOpenOtherOrderSingle(payload);
-        // }
+        }
         return
     }
 
