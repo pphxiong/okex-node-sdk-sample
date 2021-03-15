@@ -709,7 +709,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     const limit = 1;
     const state = 2;
 
-    const { order_info } = authClient.swap().getOrders(instrument_id, {state, limit})
+    const { order_info } = await authClient.swap().getOrders(instrument_id, {state, limit})
     const { price_avg: last } = order_info[0]
 
     let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
