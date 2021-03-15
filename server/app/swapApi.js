@@ -707,6 +707,14 @@ const getPowByNum = (total, n) => {
 const autoOneSideSwap = async (holding,mark_price) => {
     const { last, avg_cost, position, side, leverage } = holding
     let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+
+    let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+    if(side=='short') lossRatio = -lossRatio;
+
+    const bactchRatioList = [3, 6, 9, 11.5]
+    const batchIndex = getPowByNum(Number(position), Number(initPosition))
+
+    let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
    
     if(
         (side=='long' && ratio > 1)
@@ -722,6 +730,17 @@ const autoOneSideSwap = async (holding,mark_price) => {
             position: Number(initPosition)
         }
         await autoOpenOtherOrderSingle(payload);
+        return
+    }
+
+    if(lossRatio < -condition * newLossRatio * frequency){
+        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "oneside", lossRatio, batchIndex, bactchRatioList[batchIndex])
+        const payload = {
+            openSide: side,
+            position: Number(position)
+        }
+        await autoOpenOtherOrderSingle(payload);
+        return;
     }
 
 }
