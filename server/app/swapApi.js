@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 20
-let initPosition = LEVERAGE / 2;
+let initPosition = LEVERAGE / 1;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -762,7 +762,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     if(winRatio > condition * newLossRatio * frequency){
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
-        // await closeHalfPosition(winHolidng);
+        await closeHalfPosition(winHolidng);
 
         const payload = {
             openSide: side,
@@ -788,15 +788,15 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         return
     }
 
-    let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
-    if(
-        (side=='long' && ratio > 1)
-        ||
-        (side=='short' && ratio < 1)
-    ){
-        lossHolding.position = Number(lossHolding.position) / 2
-        await closeHalfPosition(lossHolding);
-    }
+    // let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+    // if(
+    //     (side=='long' && ratio > 1)
+    //     ||
+    //     (side=='short' && ratio < 1)
+    // ){
+    //     lossHolding.position = Number(lossHolding.position) / 2
+    //     await closeHalfPosition(lossHolding);
+    // }
 }
 
 const writeData = async () => {
