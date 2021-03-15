@@ -717,7 +717,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const condition = 10 / 100;
 
-    console.log('last',last,'avg_cost',avg_cost,'ratio',ratio)
+    console.log('last',last,'avg_cost',avg_cost,'ratio',ratio, Number(holding.position) / 2)
     if(
         (side=='long' && ratio > 1)
         ||
