@@ -715,7 +715,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
     if(side=='short') lossRatio = -lossRatio;
 
-    const bactchRatioList = [3.5, 7.5, 10.5, 12]
+    const bactchRatioList = [4, 8, 11.5]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     let newLossRatio = bactchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
@@ -758,7 +758,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
 
 }
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
-    const { side: side1, leverage: leverage1, avg_cost: avg_cost1, } = holding1;
+    const { side: side1, leverage: leverage1, avg_cost: avg_cost1, position: position1 } = holding1;
     let ratio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage1) / Number(mark_price);
     const { side: side2, leverage: leverage2, avg_cost: avg_cost2, } = holding2;
     let ratio2 = (Number(mark_price) - Number(avg_cost2)) * Number(leverage2) / Number(mark_price);
@@ -776,16 +776,24 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
    
     let winHolidng = holding1
     let winRatio = ratio1
-    if(ratio2 > condition * closeRatio * frequency){
+    let lossRatio = ratio2
+    if(
+        (ratio2 > condition * closeRatio * frequency )
+        ||
+         (Number(position1) > Number(initPosition))
+         ||
+         (ratio2 > ratio1)
+         ){
         lossHolding = holding1
+        lossRatio = ratio1
 
         winRatio = ratio2
         winHolidng = holding2
     }
 
-    const { position, side, leverage, avg_cost } = lossHolding
+    const { position, side, leverage, avg_cost, last } = lossHolding
 
-    const bactchRatioList = [4, 8, 12]
+    const bactchRatioList = [4, 8, 11.5]
     // [10,20,40,80] [20,40,80,160]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
@@ -796,39 +804,57 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, bactchRatioList[batchIndex])
         await closeHalfPosition(winHolidng);
 
-        const payload = {
+        const winPayload = {
+            openSide: winHolidng.side,
+            position: Number(winHolidng.position)
+        }
+        await autoOpenOtherOrderSingle(winPayload);
+
+        // const lossPayload = {
+        //     openSide: side,
+        //     position: Number(position)
+        // }
+        // await autoOpenOtherOrderSingle(lossPayload);
+        // return;
+    }
+
+    if(lossRatio < - condition * newLossRatio * frequency){
+        const lossPayload = {
             openSide: side,
             position: Number(position)
         }
-        await autoOpenOtherOrderSingle(payload);
-        return;
-    }
-
-    if(
-        ratio1 > 0
-        &&
-        ratio2 > 0
-        &&
-        ratio1 > condition * closeRatio * frequency
-        &&
-        ratio2 > condition * closeRatio * frequency
-    ){
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "close", lossRatio, batchIndex, bactchRatioList[batchIndex])
-        console.log('ratio1',ratio1,'ratio2',ratio2)
-        await closeHalfPosition(holding1);
-        await closeHalfPosition(holding2);
+        await autoOpenOtherOrderSingle(lossPayload);
         return
     }
 
-    // let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+    let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+    if(
+        ((side=='long' && ratio > 1)
+        ||
+        (side=='short' && ratio < 1))
+        &&
+        Number(lossHolding.position) > Number(initPosition) 
+    ){
+        lossHolding.position = Number(lossHolding.position) / 2
+        await closeHalfPosition(lossHolding);
+    }
+
     // if(
-    //     (side=='long' && ratio > 1)
-    //     ||
-    //     (side=='short' && ratio < 1)
+    //     ratio1 > 0
+    //     &&
+    //     ratio2 > 0
+    //     &&
+    //     ratio1 > condition * closeRatio * frequency
+    //     &&
+    //     ratio2 > condition * closeRatio * frequency
     // ){
-    //     lossHolding.position = Number(lossHolding.position) / 2
-    //     await closeHalfPosition(lossHolding);
+    //     console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "close", lossRatio, batchIndex, bactchRatioList[batchIndex])
+    //     console.log('ratio1',ratio1,'ratio2',ratio2)
+    //     await closeHalfPosition(holding1);
+    //     await closeHalfPosition(holding2);
+    //     return
     // }
+
 }
 
 const writeData = async () => {
@@ -938,10 +964,31 @@ const startInterval = async () => {
 
     if(btcQty) {
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-            positionChange = false
-
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
+
+            if(positionChange 
+                && 
+                (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
+                ){
+                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+                const { price_avg: last, type } = order_info[0]
+
+                if(Number(type) < 3){
+                    if(Number(mainHolding.position) > Number(initPosition)){
+                        mainHolding.last = last
+                    }else{
+                        otherHolding.last = last
+                    }
+                }else{
+                    if(Number(mainHolding.position) > Number(initPosition)){
+                        mainHolding.last = mainHolding.avg_cost
+                    }else{
+                        otherHolding.last = otherHolding.avg_cost
+                    }
+                }
+            }
+            positionChange = false
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
         }else{
             if(positionChange){
