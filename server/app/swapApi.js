@@ -785,7 +785,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage, avg_cost } = lossHolding
 
-    const bactchRatioList = [3.5, 7.5, 10.5, 12]
+    const bactchRatioList = [4, 8, 12]
     // [10,20,40,80] [20,40,80,160]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
