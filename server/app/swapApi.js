@@ -715,7 +715,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
     if(side=='short') lossRatio = -lossRatio;
 
-    const batchRatioList = [4, 8, 11.5]
+    const batchRatioList = [3.5, 7.5, 11.5]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     let newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
@@ -793,7 +793,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage, avg_cost, last } = lossHolding
 
-    const batchRatioList = [4, 8, 11.5]
+    const batchRatioList = [3.5, 7.5, 11.5]
     // [10,20,40,80] [20,40,80,160]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
