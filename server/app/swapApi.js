@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 20
-let initPosition = LEVERAGE / 1;
+let initPosition = LEVERAGE / 1 * 1.5;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -726,7 +726,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
         (side=='long' && ratio > 1)
         ||
         (side=='short' && ratio < 1)
-        
+
     ){
         holding.position = Number(holding.position) / 2
         await closeHalfPosition(holding);
@@ -773,7 +773,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const condition = 10 / 100;
 
     let lossHolding = holding2
-   
+
     let winHolidng = holding1
     let winRatio = ratio1
     let lossRatio = ratio2
@@ -840,7 +840,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     //     ||
     //     (side=='short' && ratio < 1))
     //     &&
-    //     Number(lossHolding.position) > Number(initPosition) 
+    //     Number(lossHolding.position) > Number(initPosition)
     // ){
     //     lossHolding.position = Number(lossHolding.position) / 2
     //     await closeHalfPosition(lossHolding);
@@ -974,8 +974,8 @@ const startInterval = async () => {
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            if(positionChange 
-                && 
+            if(positionChange
+                &&
                 (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
                 ){
                 const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
@@ -1001,7 +1001,7 @@ const startInterval = async () => {
             if(positionChange){
                 const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
                 const { price_avg: last, type } = order_info[0]
-                
+
                 if(Number(type) < 3){
                     btcHolding[0].last = last
                 }else{
