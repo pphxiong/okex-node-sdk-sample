@@ -813,7 +813,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
         const winPayload = {
             openSide: winHolidng.side,
-            position: Number(winHolidng.position)
+            position: Number(initPosition)
         }
         await autoOpenOtherOrderSingle(winPayload);
 
