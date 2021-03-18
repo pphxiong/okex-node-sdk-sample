@@ -715,10 +715,10 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
     if(side=='short') lossRatio = -lossRatio;
 
-    const batchRatioList = [3.5, 7.5, 11.5]
-    const batchIndex = getPowByNum(Number(position), Number(initPosition))
+    // const batchRatioList = [3.5, 7.5, 11.5]
+    // const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
-    let newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
+    let newLossRatio = 11.5 * Number(leverage) / 100 * 2 * 2
     const condition = 10 / 100;
 
     // console.log('last',last,'avg_cost',avg_cost,'ratio',ratio, Number(holding.position) / 2)
@@ -742,7 +742,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     }
 
     if(lossRatio < -condition * newLossRatio * frequency){
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "oneside", lossRatio, batchIndex, batchRatioList[batchIndex])
+        // console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "oneSide", lossRatio, batchIndex, batchRatioList[batchIndex])
         const payload = {
             openSide: side,
             position: Number(position)
@@ -751,7 +751,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
         return;
     }
 
-    if(lossRatio > 0.01){
+    if(lossRatio > 0.02){
         await closeHalfPosition(holding);
         return
     }
@@ -774,7 +774,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     let lossHolding = holding2
 
-    let winHolidng = holding1
+    let winHolding = holding1
     let winRatio = ratio1
     let lossRatio = ratio2
     if(
@@ -788,31 +788,43 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         lossRatio = ratio1
 
         winRatio = ratio2
-        winHolidng = holding2
+        winHolding = holding2
     }
 
     const { position, side, leverage, avg_cost, last } = lossHolding
 
-    const batchRatioList = [3.5, 7.5, 11.5]
-    // [10,20,40,80] [20,40,80,160]
-    const batchIndex = getPowByNum(Number(position), Number(initPosition))
+    // const batchRatioList = [3.5, 7.5, 11.5]
+    // // [10,20,40,80] [20,40,80,160] [30,60,120]
+    // const batchIndex = getPowByNum(Number(position), Number(initPosition))
+    // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
+    // const newLossRatio = batchRatioList[batchIndex+1] * Number(leverage) / 100 * 2 * 2
 
-    // let newWinRatio = LEVERAGE / 10 * 0.8
-    const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
-    const newLossRatio = batchRatioList[batchIndex+1] * Number(leverage) / 100 * 2 * 2
+    const newWinRatio = 4 * Number(leverage) / 100 * 2 * 2
+    const newLossRatio = 11.5 * Number(leverage) / 100 * 2 * 2
+
+    if(lossRatio < - condition * newLossRatio * frequency){
+        await closeHalfPosition(winHolding);
+
+        const lossPayload = {
+            openSide: side,
+            position: Number(position)
+        }
+        await autoOpenOtherOrderSingle(lossPayload);
+        // return
+    }
 
     if(
         winRatio > condition * newWinRatio * frequency
         ||
         (
-            winRatio > 0.02 && Number(winHolidng.position) > Number(initPosition)
+            winRatio > 0.02 && Number(winHolding.position) > Number(initPosition)
         )
         ){
-        console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, batchRatioList[batchIndex])
-        await closeHalfPosition(winHolidng);
+        // console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, batchRatioList[batchIndex])
+        await closeHalfPosition(winHolding);
 
         const winPayload = {
-            openSide: winHolidng.side,
+            openSide: winHolding.side,
             position: Number(initPosition)
         }
         await autoOpenOtherOrderSingle(winPayload);
@@ -823,15 +835,6 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         // }
         // await autoOpenOtherOrderSingle(lossPayload);
         // return;
-    }
-
-    if(lossRatio < - condition * newLossRatio * frequency){
-        const lossPayload = {
-            openSide: side,
-            position: Number(position)
-        }
-        await autoOpenOtherOrderSingle(lossPayload);
-        return
     }
 
     // let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
@@ -974,27 +977,27 @@ const startInterval = async () => {
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            if(positionChange
-                &&
-                (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
-                ){
-                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-                const { price_avg: last, type } = order_info[0]
-
-                // if(Number(type) < 3){
-                //     if(Number(mainHolding.position) > Number(initPosition)){
-                //         mainHolding.last = last
-                //     }else{
-                //         otherHolding.last = last
-                //     }
-                // }else{
-                //     if(Number(mainHolding.position) > Number(initPosition)){
-                //         mainHolding.last = mainHolding.avg_cost
-                //     }else{
-                //         otherHolding.last = otherHolding.avg_cost
-                //     }
-                // }
-            }
+            // if(positionChange
+            //     &&
+            //     (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
+            //     ){
+            //     const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+            //     const { price_avg: last, type } = order_info[0]
+            //
+            //     if(Number(type) < 3){
+            //         if(Number(mainHolding.position) > Number(initPosition)){
+            //             mainHolding.last = last
+            //         }else{
+            //             otherHolding.last = last
+            //         }
+            //     }else{
+            //         if(Number(mainHolding.position) > Number(initPosition)){
+            //             mainHolding.last = mainHolding.avg_cost
+            //         }else{
+            //             otherHolding.last = otherHolding.avg_cost
+            //         }
+            //     }
+            // }
             positionChange = false
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
         }else{
