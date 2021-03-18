@@ -840,17 +840,17 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         // return;
     }
 
-    // let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
-    // if(
-    //     ((side=='long' && ratio > 1)
-    //     ||
-    //     (side=='short' && ratio < 1))
-    //     &&
-    //     Number(lossHolding.position) > Number(initPosition)
-    // ){
-    //     lossHolding.position = Number(lossHolding.position) / 2
-    //     await closeHalfPosition(lossHolding);
-    // }
+    let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+    if(
+        ((side=='long' && ratio > 1)
+        ||
+        (side=='short' && ratio < 1))
+        &&
+        Number(lossHolding.position) > Number(initPosition)
+    ){
+        lossHolding.position = Number(lossHolding.position) / 2
+        await closeHalfPosition(lossHolding);
+    }
 
     // if(
     //     ratio1 > 0
@@ -980,27 +980,27 @@ const startInterval = async () => {
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
 
-            // if(positionChange
-            //     &&
-            //     (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
-            //     ){
-            //     const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-            //     const { price_avg: last, type } = order_info[0]
-            //
-            //     if(Number(type) < 3){
-            //         if(Number(mainHolding.position) > Number(initPosition)){
-            //             mainHolding.last = last
-            //         }else{
-            //             otherHolding.last = last
-            //         }
-            //     }else{
-            //         if(Number(mainHolding.position) > Number(initPosition)){
-            //             mainHolding.last = mainHolding.avg_cost
-            //         }else{
-            //             otherHolding.last = otherHolding.avg_cost
-            //         }
-            //     }
-            // }
+            if(positionChange
+                &&
+                (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
+                ){
+                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+                const { price_avg: last, type } = order_info[0]
+
+                if(Number(type) < 3){
+                    if(Number(mainHolding.position) > Number(initPosition)){
+                        mainHolding.last = last
+                    }else{
+                        otherHolding.last = last
+                    }
+                }else{
+                    if(Number(mainHolding.position) > Number(initPosition)){
+                        mainHolding.last = mainHolding.avg_cost
+                    }else{
+                        otherHolding.last = otherHolding.avg_cost
+                    }
+                }
+            }
             positionChange = false
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
         }else{
