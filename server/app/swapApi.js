@@ -803,14 +803,17 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const newLossRatio = 11.5 * Number(leverage) / 100 * 2 * 2
 
     if(lossRatio < - condition * newLossRatio * frequency){
-        await closeHalfPosition(winHolding);
-
-        const lossPayload = {
-            openSide: side,
-            position: Number(position)
+        if(Number(position) > Number(initPosition)){
+            await closeHalfPosition(winHolding);
+            await closeHalfPosition(lossHolding);
+            return
+        }else{
+            const lossPayload = {
+                openSide: side,
+                position: Number(position)
+            }
+            await autoOpenOtherOrderSingle(lossPayload);
         }
-        await autoOpenOtherOrderSingle(lossPayload);
-        // return
     }
 
     if(
