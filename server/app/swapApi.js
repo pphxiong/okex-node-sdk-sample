@@ -719,8 +719,8 @@ const autoOneSideSwap = async (holding,mark_price) => {
     // const batchIndex = getPowByNum(Number(position), Number(initPosition))
     //
     // let newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
-    let newLossRatio = Number(leverage) * 2
-    let newWinRatio = Number(leverage) * 1.5
+    let newLossRatio = Number(leverage) * 2 / 10
+    let newWinRatio = Number(leverage) * 1.5 / 10
     const condition = 10 / 100;
 
     if(lossRatio > condition * newWinRatio * frequency){
@@ -832,6 +832,12 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         }
         await autoOpenOtherOrderSingle(lossPayload);
         // }
+    }
+
+    if(winRatio > 0.02 && Number(winHolding.position) > Number(initPosition)){
+        // winHolding.position = Number(winHolding.position) - Number(initPosition)
+        await closeHalfPosition(winHolding);
+        return
     }
 
     // let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
