@@ -716,11 +716,11 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
     if(side=='short') lossRatio = -lossRatio;
 
-    // const batchRatioList = [4.375, 8.5, 8.5]
-    // const batchIndex = getPowByNum(Number(position), Number(initPosition))
-    //
-    // let newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
-    let newLossRatio = Number(leverage) * 1.75 / 10
+    const batchRatioList = [3.75, 5.625, 7.5]
+    const batchIndex = getPowByNum(Number(position), Number(initPosition))
+
+    let newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
+    // let newLossRatio = Number(leverage) * 1.75 / 10
     let newWinRatio = Number(leverage) * 1.25 / 10
     const condition = 10 / 100;
 
@@ -763,7 +763,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
             return
         }
 
-        if(lossRatio < - condition * newLossRatio * frequency * 1.5){
+        if(lossRatio < - condition * newLossRatio * frequency){
             const payload = {
                 openSide: side == 'long' ? 'short' : 'long',
                 position: Number(position)
@@ -817,11 +817,13 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage, avg_cost, last } = lossHolding
 
+    const lockRatioList = [3.75, 5.625, 7.5]
     const batchRatioList = [7.5, 10.5, 10.5]
     // [10,20,40,80] [20,40,80,160] [30,60,120]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
+    const lockRatio = lockRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
 
     // const newWinRatio = 4 * Number(leverage) / 100 * 2 * 2
     // const newLossRatio = 8 * Number(leverage) / 100 * 2 * 2
@@ -837,7 +839,11 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     //     await closeHalfPosition(winHolding);
     // }
 
-    if(winRatio > 0.02 && lockDirection == winHolding.side){
+    if(
+        (winRatio > 0.02 && lockDirection == winHolding.side)
+        ||
+        lossRatio > - lockRatio / 2
+    ){
         await closeHalfPosition(lossHolding);
         return;
     }
