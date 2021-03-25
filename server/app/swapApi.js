@@ -843,7 +843,13 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // }
 
     if(
-        (winRatio > 0.03 && lockDirection == winHolding.side)
+        (
+            winRatio > 0.03
+            &&
+            lockDirection == winHolding.side
+            &&
+            Number(winHolding.position) == Number(initPosition)
+        )
         // ||
         // lossRatio > - condition * lockRatio / 2
     ){
