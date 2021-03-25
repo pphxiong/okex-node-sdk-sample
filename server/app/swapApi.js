@@ -724,7 +724,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     const lockRatio = lockRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
 
     // let newLossRatio = Number(leverage) * 1.75 / 10
-    let newWinRatio = Number(leverage) * 1.25 / 10
+    let newWinRatio = Number(leverage) * 1.75 / 10
     const condition = 10 / 100;
 
     if(lossRatio > condition * newWinRatio * frequency){
@@ -843,11 +843,11 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // }
 
     if(
-        (winRatio > 0.02 && lockDirection == winHolding.side)
+        (winRatio > 0.03 && lockDirection == winHolding.side)
         // ||
         // lossRatio > - condition * lockRatio / 2
     ){
-        // await closeHalfPosition(lossHolding);
+        await closeHalfPosition(lossHolding);
         const winPayload = {
             openSide: side,
             position: Number(position)
