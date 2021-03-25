@@ -725,10 +725,9 @@ const autoOneSideSwap = async (holding,mark_price) => {
 
     // console.log('last',last,'avg_cost',avg_cost,'ratio',ratio, Number(holding.position) / 2)
     if(
-        (side=='long' && ratio > 1)
-        ||
-        (side=='short' && ratio < 1)
-
+        ((side=='long' && ratio > 1) || (side=='short' && ratio < 1))
+        &&
+        Number(position) > Number(initPosition)
     ){
         holding.position = Number(holding.position) / 2
         await closeHalfPosition(holding);
@@ -751,7 +750,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
         await autoOpenOtherOrderSingle(lockPayload);
     }
 
-    if(lossRatio < -condition * newLossRatio * frequency){
+    if(lossRatio < - condition * newLossRatio * frequency){
         // console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "oneSide", lossRatio, batchIndex, batchRatioList[batchIndex])
         const payload = {
             openSide: side,
@@ -761,7 +760,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
         return;
     }
 
-    if(lossRatio > 0.02){
+    if(lossRatio > condition * lockRatio * frequency){
         await closeHalfPosition(holding);
         return
     }
