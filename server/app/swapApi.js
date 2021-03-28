@@ -809,33 +809,33 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
 
-    const newWinRatio = batchRatioList[0] * Number(leverage) / 100 * 2 * 2
+    // const newWinRatio = batchRatioList[0] * Number(leverage) / 100 * 2 * 2
     // const newLossRatio = 11.5 * Number(leverage) / 100 * 2 * 2
     console.log(ratio1,ratio2)
     console.log(lossRatio, -condition * newLossRatio * frequency)
-    if(
-        winRatio > condition * newWinRatio * frequency
-        ||
-        (
-            winRatio > 0.02 && Number(winHolding.position) > Number(initPosition)
-        )
-    ){
-        // console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, batchRatioList[batchIndex])
-        await closeHalfPosition(winHolding);
-
-        // const winPayload = {
-        //     openSide: winHolding.side,
-        //     position: Number(initPosition)
-        // }
-        // await autoOpenOtherOrderSingle(winPayload);
-
-        // const lossPayload = {
-        //     openSide: side,
-        //     position: Number(position)
-        // }
-        // await autoOpenOtherOrderSingle(lossPayload);
-        // return;
-    }
+    // if(
+    //     winRatio > condition * newWinRatio * frequency
+    //     // ||
+    //     // (
+    //     //     winRatio > 0.02 && Number(winHolding.position) > Number(initPosition)
+    //     // )
+    // ){
+    //     // console.log(moment().format('YYYY-MM-DD HH:mm:ss').toString(), "batch", lossRatio, batchIndex, batchRatioList[batchIndex])
+    //     await closeHalfPosition(winHolding);
+    //
+    //     // const winPayload = {
+    //     //     openSide: winHolding.side,
+    //     //     position: Number(initPosition)
+    //     // }
+    //     // await autoOpenOtherOrderSingle(winPayload);
+    //
+    //     // const lossPayload = {
+    //     //     openSide: side,
+    //     //     position: Number(position)
+    //     // }
+    //     // await autoOpenOtherOrderSingle(lossPayload);
+    //     // return;
+    // }
 
     if(lossRatio < - condition * newLossRatio * frequency){
         if(Number(position) > Number(initPosition)){
