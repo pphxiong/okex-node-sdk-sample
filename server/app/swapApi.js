@@ -811,8 +811,8 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     // const newWinRatio = batchRatioList[0] * Number(leverage) / 100 * 2 * 2
     // const newLossRatio = 11.5 * Number(leverage) / 100 * 2 * 2
-    console.log(ratio1,ratio2)
-    console.log(lossRatio, -condition * newLossRatio * frequency)
+    // console.log(ratio1,ratio2)
+    // console.log(lossRatio, -condition * newLossRatio * frequency)
     // if(
     //     winRatio > condition * newWinRatio * frequency
     //     // ||
