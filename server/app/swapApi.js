@@ -710,35 +710,43 @@ const autoOneSideSwap = async (holding,mark_price) => {
     // const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 2, limit: 1})
     // const { price_avg: last } = order_info[0]
 
-    let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
+    // let ratio = Number(mark_price) * 2 / (Number(avg_cost) + Number(last));
 
     let lossRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
     if(side=='short') lossRatio = -lossRatio;
 
-    const batchRatioList = [6.5, 9.5, 10.5]
+    let reverseWinRatio = (Number(mark_price) - Number(last)) * Number(leverage) / Number(mark_price);
+    if(side=='short') reverseWinRatio = -reverseWinRatio;
+
+    const reverseRatioList = [1.5, 1.5, 1.5]
+
+    const batchRatioList = [6, 8, 10]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
 
     const newLossRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const lockRatio = batchRatioList[0] * Number(leverage) / 100 * 2 * 2
+    const reverseRatio = reverseRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
 
     const condition = 10 / 100;
 
     // console.log('last',last,'avg_cost',avg_cost,'ratio',ratio, Number(holding.position) / 2)
     if(
-        ((side=='long' && ratio > 1) || (side=='short' && ratio < 1))
+        // ((side=='long' && ratio > 1) || (side=='short' && ratio < 1))
+        // &&
+        reverseWinRatio > condition * reverseRatio * frequency
         &&
         Number(position) > Number(initPosition)
     ){
         holding.position = Number(holding.position) / 2
         await closeHalfPosition(holding);
 
-        if(Number(holding.position) == Number(initPosition)) {
-            const payload = {
-                openSide: side=='long' ? 'short' : 'long',
-                position: Number(initPosition)
-            }
-            await autoOpenOtherOrderSingle(payload);
-        }
+        // if(Number(holding.position) == Number(initPosition)) {
+        //     const payload = {
+        //         openSide: side=='long' ? 'short' : 'long',
+        //         position: Number(initPosition)
+        //     }
+        //     await autoOpenOtherOrderSingle(payload);
+        // }
         return
     }
 
@@ -803,7 +811,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage, avg_cost, last } = lossHolding
 
-    const batchRatioList = [6.5, 9.5, 10.5]
+    const batchRatioList = [6, 8, 10]
     // [10,20,40,80] [20,40,80,160] [30,60,120]
     const batchIndex = getPowByNum(Number(position), Number(initPosition))
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
