@@ -951,7 +951,6 @@ const startInterval = async () => {
         if(btcHolding.length > 1 && Number(btcHolding[1].position)){
             let mainHolding = btcHolding[0]
             let otherHolding = btcHolding[1]
-
             // if(positionChange
             //     &&
             //     (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
