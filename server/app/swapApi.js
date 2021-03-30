@@ -575,7 +575,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
     }
 
     await authClient.swap().postOrder(payload)
-    // positionChange = true
+    positionChange = true
     // }
 }
 let otherPositionLoss = false
@@ -908,6 +908,7 @@ const readData = async () => {
 }
 
 let positionChange = true;
+let isOpenMarketPriceChange = true
 let globalBtcHolding = null;
 let openMarketPrice = 0
 const startInterval = async () => {
@@ -925,13 +926,16 @@ const startInterval = async () => {
                 await autoOpenOtherOrderSingle({ openSide: "long" })
                 await autoOpenOtherOrderSingle({ openSide: "short" })
             }else {
-                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-                const { avg_cost } = order_info[0]
-                openMarketPrice = avg_cost
+                if(isOpenMarketPriceChange){
+                    const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+                    const { price_avg } = order_info[0]
+                    openMarketPrice = price_avg
+                }
             }
 
             globalBtcHolding = btcHolding
-            // positionChange = false
+            positionChange = false
+            isOpenMarketPriceChange = false
         }catch (e){
             console.log(e)
         }
@@ -972,20 +976,20 @@ const startInterval = async () => {
             //         }
             //     }
             // }
-            positionChange = false
+            // positionChange = false
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
         }else{
-            if(positionChange){
-                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-                const { price_avg: last, type } = order_info[0]
+            // if(positionChange){
+            //     const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+            //     const { price_avg: last, type } = order_info[0]
 
-                if(Number(type) < 3){
-                    btcHolding[0].last = last
-                }else{
-                    btcHolding[0].last = btcHolding[0].avg_cost
-                }
-            }
-            positionChange = false
+            //     if(Number(type) < 3){
+            //         btcHolding[0].last = last
+            //     }else{
+            //         btcHolding[0].last = btcHolding[0].avg_cost
+            //     }
+            // }
+            // positionChange = false
             await autoOneSideSwap(btcHolding[0],mark_price)
         }
         await waitTime()
