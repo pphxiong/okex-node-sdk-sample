@@ -813,13 +813,14 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
     const curIndex = batchRatioList.findIndex(item=>item == Number(winHolding.position) / Number(initPosition))
-    const newWinRatio = 2 * Number(leverage) / 100 / 10 * 2 * 2
+    const newWinRatio = 1.5 * Number(leverage) / 100 / 10 * 2 * 2
     // let closeRatio = 0.1
 
-    // console.log(winRatio,newWinRatio,winHolding.position,lossHolding.position)
+    console.log(openMarketPrice)
+    console.log(winRatio,newWinRatio,winHolding.position,lossHolding.position)
     if(Number(winHolding.position) > Number(lossHolding.position)
         &&
-        winRatio > newWinRatio * 2
+        winRatio > newWinRatio * 2.5
     ){
         await closeHalfPosition(winHolding);
         await closeHalfPosition(lossHolding);
