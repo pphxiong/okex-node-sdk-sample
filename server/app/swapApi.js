@@ -816,6 +816,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const newWinRatio = 2 * Number(leverage) / 100 / 10 * 2 * 2
     // let closeRatio = 0.1
 
+    console.log(winRatio,newWinRatio,winHolding.position,lossHolding.position)
     if(Number(winHolding.position) > Number(lossHolding.position)
         &&
         winRatio > newWinRatio * 2
