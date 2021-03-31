@@ -843,24 +843,7 @@ const writeData = async () => {
     const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
 
     let dataConfig = {
-        "continuousWinNum": continuousObj.continuousWinNum.toString(),
-        "continuousLossNum": continuousObj.continuousLossNum.toString(),
-        "otherContinuousWinNum": continuousObj.otherContinuousWinNum.toString(),
-        "otherContinuousLossNum": continuousObj.otherContinuousLossNum.toString(),
-        "lastWinDirection" : lastWinDirection,
-        "lastLastWinDirection": lastLastWinDirection,
-        "lastLossDirection": lastLossDirection,
-        "lastLastLossDirection": lastLastLossDirection,
-        "continuousWinSameSideNum": continuousWinSameSideNum.toString(),
-        "continuousLossSameSideNum": continuousLossSameSideNum.toString(),
-        "lastMostWinRatio": lastMostWinRatio.toString(),
-        "isOpenOtherOrder": isOpenOtherOrder.toString(),
-        "otherPositionSide": otherPositionSide,
-        "otherPositionPrimaryPrice": otherPositionPrimaryPrice.toString(),
-        "otherPositionLoss": otherPositionLoss.toString(),
-        "primaryPrice": primaryPrice.toString(),
-        "primarySide": primarySide.toString(),
-        "time": moment().format('YYYY-MM-DD HH:mm:ss').toString()
+        "openMarketPrice": openMarketPrice.toString(),
     }
     let jsonStr = JSON.stringify(dataConfig);
     // console.log(jsonStr)
@@ -884,26 +867,27 @@ const writeData = async () => {
 const readData = async () => {
     // if(!isInit){
     let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
-    // dataConfig = JSON.parse(dataConfig)
 
-    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
-    continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
-    continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
-    continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
-    continuousObj.otherContinuousLossNum = Number(dataConfig.otherContinuousLossNum)
-    lastWinDirection = dataConfig.lastWinDirection
-    lastLastWinDirection = dataConfig.lastLastWinDirection
-    lastLossDirection = dataConfig.lastLossDirection
-    lastLastLossDirection = dataConfig.lastLastLossDirection
-    continuousWinSameSideNum = Number(dataConfig.continuousWinSameSideNum)
-    continuousLossSameSideNum = Number(dataConfig.continuousLossSameSideNum)
-    lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
-    isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
-    otherPositionSide = dataConfig.otherPositionSide
-    otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
-    otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
-    primaryPrice = Number(dataConfig.primaryPrice)
-    primarySide = dataConfig.primarySide
+    // const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
+    // continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
+    // continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
+    // continuousObj.otherContinuousLossNum = Number(dataConfig.otherContinuousLossNum)
+    // lastWinDirection = dataConfig.lastWinDirection
+    // lastLastWinDirection = dataConfig.lastLastWinDirection
+    // lastLossDirection = dataConfig.lastLossDirection
+    // lastLastLossDirection = dataConfig.lastLastLossDirection
+    // continuousWinSameSideNum = Number(dataConfig.continuousWinSameSideNum)
+    // continuousLossSameSideNum = Number(dataConfig.continuousLossSameSideNum)
+    // lastMostWinRatio = Number(dataConfig.lastMostWinRatio)
+    // isOpenOtherOrder = dataConfig.isOpenOtherOrder == true || dataConfig.isOpenOtherOrder == 'true' ? true : false
+    // otherPositionSide = dataConfig.otherPositionSide
+    // otherPositionPrimaryPrice = Number(dataConfig.otherPositionPrimaryPrice)
+    // otherPositionLoss = dataConfig.otherPositionLoss == true || dataConfig.otherPositionLoss == 'true' ? true : false
+    // primaryPrice = Number(dataConfig.primaryPrice)
+    // primarySide = dataConfig.primarySide
+
+    openMarketPrice = dataConfig.openMarketPrice
 
     console.log('read::dataConfig',dataConfig,moment().format('YYYY-MM-DD HH:mm:ss'))
     // }
@@ -920,18 +904,19 @@ const startInterval = async () => {
     if(positionChange){
         try{
             console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-            // await readData()
             const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
                 openMarketPrice = mark_price
                 await autoOpenOtherOrderSingle({ openSide: "long" })
                 await autoOpenOtherOrderSingle({ openSide: "short" })
+                await writeData()
             }else {
                 if(isOpenMarketPriceChange){
-                    const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-                    const { price_avg } = order_info[0]
-                    openMarketPrice = price_avg
+                    // const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+                    // const { price_avg } = order_info[0]
+                    // openMarketPrice = price_avg
+                    await readData()
                 }
             }
 
@@ -995,7 +980,6 @@ const startInterval = async () => {
             await autoOneSideSwap(btcHolding[0],mark_price)
         }
         await waitTime()
-        // if(positionChange) await writeData()
         await startInterval()
     }else{
         await waitTime()

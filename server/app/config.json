@@ -1,22 +1,5 @@
 {
-  "continuousWinNum": "0",
-  "continuousLossNum": "0",
-  "otherContinuousWinNum": "0",
-  "otherContinuousLossNum": "0",
-  "lastWinDirection" : "",
-  "lastLastWinDirection": "",
-  "lastLossDirection": "",
-  "lastLastLossDirection": "",
-  "continuousWinSameSideNum": "0",
-  "continuousLossSameSideNum": "0",
-  "lastMostWinRatio": "0",
-  "isOpenOtherOrder": "true",
-  "otherPositionSide": "short",
-  "otherPositionPrimaryPrice": "51124",
-  "otherPositionLoss": "false",
-  "primaryPrice": "51507",
-  "primarySide": "long",
-  "time": ""
+  "openMarketPrice": "57744.2"
 }
 
 
