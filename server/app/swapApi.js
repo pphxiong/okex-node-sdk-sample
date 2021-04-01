@@ -710,7 +710,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     let ratio = (Number(mark_price) - Number(openMarketPrice)) * Number(leverage) / Number(mark_price);
     if(side=='short') ratio = -ratio;
 
-    const newLossRatio = 1.25 * Number(leverage) / 100 / 10 * 2 * 2
+    const newLossRatio = 1.25 * 6 / 10 * Number(leverage) / 100 / 10 * 2 * 2
 
     if(ratio > newLossRatio * 2){
         const payload = {
@@ -770,7 +770,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
     const curIndex = batchRatioList.findIndex(item=>item == Number(winHolding.position) / Number(initPosition))
-    const newWinRatio = 1.25 * Number(leverage) / 100 / 10 * 2 * 2
+    const newWinRatio = 1.25 * 6 / 10 * Number(leverage) / 100 / 10 * 2 * 2
     // let closeRatio = 0.1
 
     // console.log(openMarketPrice)
