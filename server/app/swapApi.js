@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 20
-let initPosition = LEVERAGE / 2 ;
+let initPosition = LEVERAGE;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -770,7 +770,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
     const curIndex = batchRatioList.findIndex(item=>item == Number(winHolding.position) / Number(initPosition))
-    const newWinRatio = 1.25 * 6 / 10 * Number(leverage) / 100 / 10 * 2 * 2
+    const newWinRatio = 2.5 * Number(leverage) / 100 / 10 * 2 * 2
     // let closeRatio = 0.1
 
     // console.log(openMarketPrice)
@@ -866,7 +866,7 @@ const startInterval = async () => {
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
                 openMarketPrice = mark_price
                 await autoOpenOtherOrderSingle({ openSide: "long" })
-                // await autoOpenOtherOrderSingle({ openSide: "short" })
+                await autoOpenOtherOrderSingle({ openSide: "short" })
                 await writeData()
             }else {
                 if(isOpenMarketPriceChange){
