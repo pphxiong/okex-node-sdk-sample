@@ -784,7 +784,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         return
     }
 
-    if(winRatio > newWinRatio && Number(winHolding.position) < Number(lossHolding.position)){
+    if(winRatio > newWinRatio && Number(winHolding.position) <= Number(lossHolding.position)){
         const winPayload = {
             openSide: winHolding.side,
             position: Number(lossHolding.position)
