@@ -792,7 +792,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
     const curIndex = batchRatioList.findIndex(item=>item == Number(winHolding.position) / Number(initPosition))
-    const newWinRatio = 2.5 * Number(leverage) / 100 / 10 * 2 * 2
+    const newWinRatio = 1.5 * Number(leverage) / 100 / 10 * 2 * 2
     const newLossRatio = 10.5 * Number(leverage) / 100 / 10 * 2 * 2
     // let closeRatio = 0.1
 
@@ -804,7 +804,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         ||
         (Number(winHolding.position) > Number(lossHolding.position)
         &&
-        winRatio > newWinRatio * 3)
+        winRatio > newWinRatio * 5)
     ){
         await closeHalfPosition(winHolding);
         // await closeHalfPosition(lossHolding);
@@ -819,10 +819,20 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     if(winRatio > newWinRatio && Number(winHolding.position) <= Number(lossHolding.position)){
         const winPayload = {
             openSide: winHolding.side,
-            position: Number(lossHolding.position)
+            position: Number(winHolding.position) == Number(lossHolding.position)
+                ? Number(lossHolding.position) : (Number(lossHolding.position) - Number(initPosition) / 2)
             // position: batchRatioList[curIndex+2] * Number(initPosition) - Number(winHolding.position)
         }
         await autoOpenOtherOrderSingle(winPayload);
+        const lossPayload = {
+            openSide: lossHolding.side,
+            position: Number(initPosition) / 2
+        }
+        await autoOpenOtherOrderSingle(lossPayload);
+        if(Number(winHolding.position) > Number(initPosition)){
+            winHolding.position = Number(initPosition) / 2
+            await closeHalfPosition(winHolding);
+        }
     }
 
 }
