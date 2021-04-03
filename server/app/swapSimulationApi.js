@@ -713,7 +713,7 @@ const autoOneSideSwap = async (holding,mark_price) => {
     if(side=='short') lossRatio = -lossRatio;
 
     // let newWinRatio = Number(leverage) * 1.25 / 10 / 10
-    const newLossRatio = 10.5 * Number(leverage) / 100 / 10 * 2 * 2
+    const newLossRatio = 0.85
 
     if(lossRatio < - newLossRatio){
         const lossPayload = {
