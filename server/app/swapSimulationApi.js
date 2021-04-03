@@ -804,7 +804,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         ||
         (Number(winHolding.position) > Number(lossHolding.position)
             &&
-            winRatio > newWinRatio * 5)
+            winRatio > newWinRatio * 4)
     ){
         await closeHalfPosition(winHolding);
         await closeHalfPosition(lossHolding);
@@ -1002,11 +1002,9 @@ const waitTime = (time = 1000 * 4) => {
 };
 
 // 定时获取交割合约账户信息
-// myInterval = startInterval()
-// myInterval = setTimeout(startInterval,1000 * 2)
-(async ()=>{
-    await startInterval()
-})()
+// (async ()=>{
+//     await startInterval()
+// })()
 app.listen(8092);
 
 console.log('8092 server start');
