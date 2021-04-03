@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 10 / 2;
+let initPosition = LEVERAGE * 10 * 10 / 2;
 
 const continuousMap = {
     [ETH_INSTRUMENT_ID]: {
@@ -792,7 +792,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
     const curIndex = batchRatioList.findIndex(item=>item == Number(winHolding.position) / Number(initPosition))
-    const newWinRatio = 2.0 * Number(leverage) / 100 / 10 * 2 * 2
+    const newWinRatio = 0.08
     const newLossRatio = 0.85
     // let closeRatio = 0.1
 
