@@ -756,13 +756,21 @@ const autoOneSideSwap = async (holding,mark_price) => {
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const { side: side1, leverage: leverage1, avg_cost: avg_cost1, position: position1 } = holding1;
     let ratio1 = (Number(mark_price) - Number(openMarketPrice)) * Number(leverage1) / Number(mark_price);
+    let realRatio1 = (Number(mark_price) - Number(avg_cost1)) * Number(leverage1) / Number(mark_price);
     const { side: side2, leverage: leverage2, avg_cost: avg_cost2, } = holding2;
     let ratio2 = (Number(mark_price) - Number(openMarketPrice)) * Number(leverage2) / Number(mark_price);
+    let realRatio2 = (Number(mark_price) - Number(avg_cost2)) * Number(leverage2) / Number(mark_price);
 
-    if(side1=='short') ratio1 = -ratio1;
+    if(side1=='short') {
+        ratio1 = -ratio1;
+        realRatio1 = -realRatio1
+    }
     ratio1 = isNaN(ratio1) ? 0 : ratio1
 
-    if(side2=='short') ratio2 = -ratio2;
+    if(side2=='short') {
+        ratio2 = -ratio2;
+        realRatio2 = -realRatio2
+    }
     ratio2 = isNaN(ratio2) ? 0 : ratio2
 
     let winHolding = holding1
@@ -802,12 +810,12 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const newLossRatio = ratioList[curIndex]
 
     // console.log(openMarketPrice)
-    // console.log(winRatio,newWinRatio,winHolding.position,lossHolding.position)
+    console.log(winRatio,lossRatio,winHolding.position,lossHolding.position)
 
     if(
-        lossRatio > minWinRatio
+        realRatio1 > minWinRatio
         &&
-        winRatio > minWinRatio
+        realRatio2 > minWinRatio
     ){
         await closeHalfPosition(winHolding);
         await closeHalfPosition(lossHolding);
