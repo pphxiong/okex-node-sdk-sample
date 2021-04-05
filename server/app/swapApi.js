@@ -795,7 +795,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = 2.0 * Number(leverage) / 100 / 10 * 2 * 2
     // const newLossRatio = 2.0 * Number(leverage) / 100 / 10 * 2 * 2
     const maxLossRatio = 0.85
-    const minWinRatio = 0.015
+    const minWinRatio = 0.005
 
     const ratioList = [0.191,0.382,0.5,0.618,0.809]
     // const index = Number(lossHolding.position) / Number(initPosition) - 1
@@ -811,6 +811,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     ){
         await closeHalfPosition(winHolding);
         await closeHalfPosition(lossHolding);
+        return;
     }
 
     if(
