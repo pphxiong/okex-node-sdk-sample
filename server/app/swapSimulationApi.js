@@ -10,7 +10,6 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
-let ETH_INSTRUMENT_ID = "ETH-USD-SWAP";
 let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
 let myInterval;
 let mode = 4; //下单模式
@@ -22,20 +21,13 @@ let LEVERAGE = 10
 let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
-    [ETH_INSTRUMENT_ID]: {
-        continuousLossNum: 0,
-        continuousWinNum: 0,
-        continuousBatchNum: 0,
-        continuousProfitNum: 0,
-        continuousTripleLossNum: 0,
-        otherContinuousWinNum: 0
-    },
     [EOS_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
         continuousProfitNum: 0,
         continuousTripleLossNum: 0,
+        otherContinuousWinNum: 0
     },
 };
 
@@ -282,7 +274,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    const instrument_id = ETH_INSTRUMENT_ID;
+    const instrument_id = EOS_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
@@ -323,7 +315,7 @@ const autoOpenOrderSingle = async (params = {}) => {
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
-    const instrument_id = ETH_INSTRUMENT_ID;
+    const instrument_id = EOS_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
@@ -374,7 +366,7 @@ const autoOpenOrderSingle = async (params = {}) => {
 // }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = ETH_INSTRUMENT_ID, mark_price}) => {
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = EOS_INSTRUMENT_ID, mark_price}) => {
     const result = await authClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
@@ -561,7 +553,7 @@ const afterLoss = async (holding,type) =>{
 }
 // 平半仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
-    // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
     const { instrument_id, position, side } = holding;
 
@@ -713,7 +705,17 @@ const autoOneSideSwap = async (holding,mark_price) => {
     if(side=='short') lossRatio = -lossRatio;
 
     // let newWinRatio = Number(leverage) * 1.25 / 10 / 10
-    const newLossRatio = 0.85
+    const newWinRatio = 0.382
+    const newLossRatio = 0.809
+
+    if(
+        lossRatio > newWinRatio
+        ||
+        (lossRatio > 0.01 && Number(position) > Number(initPosition))
+    ){
+        await closeHalfPosition(holding);
+        return
+    }
 
     if(lossRatio < - newLossRatio){
         const lossPayload = {
@@ -724,33 +726,32 @@ const autoOneSideSwap = async (holding,mark_price) => {
         return
     }
 
-    if(lossRatio > 0.01){
-        if(Number(position) > Number(initPosition)){
-            await closeHalfPosition(holding);
-        }else{
-            const lossPayload = {
-                openSide: side == 'long' ? "short" : 'long',
-                position: Number(position)
-            }
-            await autoOpenOtherOrderSingle(lossPayload);
-            openMarketPrice = mark_price
-            await writeData()
-        }
-        return;
-    }
-
-    if(Number(position) > Number(initPosition)){
-        if(
-            (side=='long' && ratio > 1)
-            ||
-            (side=='short' && ratio < 1)
-
-        ){
-            holding.position = Number(holding.position) / 2
-            await closeHalfPosition(holding);
-            return
-        }
-    }
+    // if(lossRatio > 0.01){
+    //     if(Number(position) > Number(initPosition)){
+    //         await closeHalfPosition(holding);
+    //     }else{
+    //         const lossPayload = {
+    //             openSide: side == 'long' ? "short" : 'long',
+    //             position: Number(position)
+    //         }
+    //         await autoOpenOtherOrderSingle(lossPayload);
+    //         openMarketPrice = mark_price
+    //         await writeData()
+    //     }
+    //     return;
+    // }
+    //
+    // if(Number(position) > Number(initPosition)){
+    //     if(
+    //         (side=='long' && ratio > 1)
+    //         ||
+    //         (side=='short' && ratio < 1)
+    //     ){
+    //         holding.position = Number(holding.position) / 2
+    //         await closeHalfPosition(holding);
+    //         return
+    //     }
+    // }
 
 }
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
@@ -771,10 +772,6 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     let lossHolding = holding2
     let lossRatio = ratio2
     if(
-        // (ratio2 > condition * closeRatio * frequency )
-        // ||
-        // (Number(position1) > Number(initPosition))
-        // ||
         (ratio2 > ratio1)
     ){
         lossHolding = holding1
@@ -792,54 +789,51 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
     const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
     const curIndex = batchRatioList.findIndex(item=>item == Number(winHolding.position) / Number(initPosition))
-    const newWinRatio = 0.08
-    const newLossRatio = 0.85
+    const batchRatio = 0.382
+    const newWinRatio = 0.809
+    const maxLossRatio = 0.85
     // let closeRatio = 0.1
 
     // console.log(openMarketPrice)
     // console.log(winRatio,newWinRatio,winHolding.position,lossHolding.position)
 
     if(
-        lossRatio < - newLossRatio
+        lossRatio < - maxLossRatio
         ||
         (Number(winHolding.position) > Number(lossHolding.position)
             &&
-            winRatio > newWinRatio * 4)
+            winRatio > newWinRatio)
     ){
         await closeHalfPosition(winHolding);
         await closeHalfPosition(lossHolding);
-        // const lossPayload = {
-        //     openSide: lossHolding.side,
-        //     position: Number(lossHolding.position)
-        // }
-        // await autoOpenOtherOrderSingle(lossPayload);
         return
     }
 
-    if(winRatio > newWinRatio && Number(winHolding.position) <= Number(lossHolding.position)){
+    if(winRatio > batchRatio
+        && Number(winHolding.position) <= Number(lossHolding.position)
+    ){
+        // await closeHalfPosition(winHolding);
         const winPayload = {
             openSide: winHolding.side,
-            position: Number(winHolding.position) == Number(lossHolding.position)
-                ? Number(lossHolding.position) : (Number(lossHolding.position) - Number(initPosition) / 2)
-            // position: batchRatioList[curIndex+2] * Number(initPosition) - Number(winHolding.position)
+            position: Number(lossHolding.position)
         }
         await autoOpenOtherOrderSingle(winPayload);
-        const lossPayload = {
-            openSide: lossHolding.side,
-            position: Number(initPosition) / 2
-        }
-        await autoOpenOtherOrderSingle(lossPayload);
-        if(Number(winHolding.position) > Number(initPosition)){
-            winHolding.position = Number(initPosition) / 2
-            await closeHalfPosition(winHolding);
-        }
+        // const lossPayload = {
+        //     openSide: lossHolding.side,
+        //     position: Number(initPosition) / 2
+        // }
+        // await autoOpenOtherOrderSingle(lossPayload);
+        // if(Number(winHolding.position) > Number(initPosition)){
+        //     winHolding.position = Number(initPosition) / 2
+        //     await closeHalfPosition(winHolding);
+        // }
     }
 
 }
 
 const writeData = async () => {
     //将修改后的配置写入文件前需要先转成json字符串格式
-    const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
+    const continuousObj = continuousMap[EOS_INSTRUMENT_ID];
 
     let dataConfig = {
         "openMarketPrice": openMarketPrice.toString(),
@@ -867,7 +861,7 @@ const readData = async () => {
     // if(!isInit){
     let dataConfig =  JSON.parse(fs.readFileSync('./app/configETH.json','utf-8'));
 
-    // const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
+    // const continuousObj = continuousMap[EOS_INSTRUMENT_ID];
     // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
     // continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
     // continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
@@ -897,13 +891,13 @@ let isOpenMarketPriceChange = true
 let globalBtcHolding = null;
 let openMarketPrice = 0
 const startInterval = async () => {
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
     let btcHolding = globalBtcHolding
     if(positionChange){
         try{
             console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-            const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+            const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
                 openMarketPrice = mark_price
@@ -912,7 +906,7 @@ const startInterval = async () => {
                 await writeData()
             }else {
                 if(isOpenMarketPriceChange){
-                    // const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+                    // const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
                     // const { price_avg } = order_info[0]
                     // openMarketPrice = price_avg
                     await readData()
@@ -928,7 +922,7 @@ const startInterval = async () => {
         // isInit = false
     }else{
         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-            const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+            const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
             btcHolding = tempBtcHolding
             globalBtcHolding = btcHolding
         }
@@ -945,7 +939,7 @@ const startInterval = async () => {
             //     &&
             //     (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
             //     ){
-            //     const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+            //     const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
             //     const { price_avg: last, type } = order_info[0]
             //
             //     if(Number(type) < 3){
@@ -966,7 +960,7 @@ const startInterval = async () => {
             await autoOperateSwap([mainHolding,otherHolding],mark_price)
         }else{
             if(positionChange){
-                const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+                const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
                 const { price_avg: last, type } = order_info[0]
 
                 if(Number(type) < 3){
@@ -1002,9 +996,9 @@ const waitTime = (time = 1000 * 4) => {
 };
 
 // 定时获取交割合约账户信息
-// (async ()=>{
-//     await startInterval()
-// })()
+(async ()=>{
+    await startInterval()
+})()
 app.listen(8092);
 
 console.log('8092 server start');
