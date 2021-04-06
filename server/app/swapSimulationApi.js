@@ -908,7 +908,7 @@ const startInterval = async () => {
             if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
                 openMarketPrice = mark_price
                 await autoOpenOtherOrderSingle({ openSide: "long" })
-                // await autoOpenOtherOrderSingle({ openSide: "short" })
+                await autoOpenOtherOrderSingle({ openSide: "short" })
                 await writeData()
             }else {
                 if(isOpenMarketPriceChange){
