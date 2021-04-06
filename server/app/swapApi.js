@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 2;
+let initPosition = LEVERAGE * 3;
 
 const continuousMap = {
     [BTC_INSTRUMENT_ID]: {
@@ -805,7 +805,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const maxLossRatio = 0.85
     const minWinRatio = 0.005
 
-    const ratioList = [0.191,0.382,0.5,0.618,0.809]
+    const ratioList = [0.191,0.382,0.618,0.9]
     // const index = Number(lossHolding.position) / Number(initPosition) - 1
     const newLossRatio = ratioList[curIndex]
 

@@ -707,8 +707,6 @@ const autoOneSideSwap = async (holding,mark_price) => {
 
     // let newWinRatio = Number(leverage) * 1.25 / 10 / 10
     const newMaxRatio = 0.85
-    const newWinRatio = 0.382
-    const ratioList = [0.382,0.618,0.809]
 
     if(lossRatio < - newMaxRatio){
         const lossPayload = {
@@ -723,32 +721,29 @@ const autoOneSideSwap = async (holding,mark_price) => {
         if(Number(position) > Number(initPosition)){
             await closeHalfPosition(holding);
         }else{
-            if(lossRatio > newWinRatio){
-                await closeHalfPosition(holding);
+            const lossPayload = {
+                openSide: side == 'long' ? "short" : 'long',
+                position: Number(position)
             }
-            // const lossPayload = {
-            //     openSide: side == 'long' ? "short" : 'long',
-            //     position: Number(position)
-            // }
-            // await autoOpenOtherOrderSingle(lossPayload);
-            // openMarketPrice = mark_price
-            // await writeData()
+            await autoOpenOtherOrderSingle(lossPayload);
+            openMarketPrice = mark_price
+            await writeData()
         }
         return;
     }
 
-    // if(Number(position) > Number(initPosition)){
-    //     if(
-    //         (side=='long' && ratio > 1)
-    //         ||
-    //         (side=='short' && ratio < 1)
-    //
-    //     ){
-    //         holding.position = Number(holding.position) / 2
-    //         await closeHalfPosition(holding);
-    //         return
-    //     }
-    // }
+    if(Number(position) > Number(initPosition)){
+        if(
+            (side=='long' && ratio > 1)
+            ||
+            (side=='short' && ratio < 1)
+
+        ){
+            holding.position = Number(holding.position) / 2
+            await closeHalfPosition(holding);
+            return
+        }
+    }
 
 }
 const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
