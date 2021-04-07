@@ -806,7 +806,9 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     }
 
     if(
-        lossRatio < - maxLossRatio
+        realRatio1 < - maxLossRatio
+        ||
+        realRatio2 < - maxLossRatio
     ){
         await closeHalfPosition(winHolding);
         // await closeHalfPosition(lossHolding);
