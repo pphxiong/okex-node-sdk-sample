@@ -843,7 +843,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         if(Number(lossHolding.position) < batchRatioList[curIndex+1] * Number(initPosition)){
             const lossPayload = {
                 openSide: lossHolding.side,
-                position: (batchRatioList[curIndex+1] - 1) * Number(initPosition)
+                position: batchRatioList[curIndex+1] * Number(initPosition) - Number(lossHolding.position)
             }
             await autoOpenOtherOrderSingle(lossPayload);
             return
