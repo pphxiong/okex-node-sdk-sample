@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 5 * 3;
+let initPosition = LEVERAGE * 5 * 3 * 1.2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -784,12 +784,12 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     const { position, side, leverage, avg_cost, last } = lossHolding
 
     // const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
-    const batchRatioList = [1,3,5,8,13,21]
+    const batchRatioList = [1,3,5,8,13]
     const curIndex = batchRatioList.findIndex(item=>item == Math.ceil(Number(lossHolding.position) / Number(initPosition)))
     const maxLossRatio = 0.85
     const minWinRatio = 0.005
 
-    const ratioList = [0.382,0.5,0.618,0.809]
+    const ratioList = [0.382,0.5,0.618,0.809,0.1]
     // const index = Number(lossHolding.position) / Number(initPosition) - 1
     const newLossRatio = ratioList[curIndex]
 
@@ -822,6 +822,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     }
 
     if(lossRatio < - newLossRatio){
+        if(curIndex == ratioList.length - 1) return
         if(Number(lossHolding.position) < batchRatioList[curIndex+1] * Number(initPosition)){
             const lossPayload = {
                 openSide: lossHolding.side,
@@ -830,7 +831,6 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
             await autoOpenOtherOrderSingle(lossPayload);
             return
         }
-
     }
 
 }
