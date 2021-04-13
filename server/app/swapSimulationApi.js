@@ -783,8 +783,8 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage, avg_cost, last } = lossHolding
 
-    // const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
-    const batchRatioList = [1,3*1.2,5*1.2,8*1.2,13*1.2,21*1.2]
+    const batchRatioList = [1,2,3,5,8,13,21,34]
+    // const batchRatioList = [1,3*1.2,5*1.2,8*1.2,13*1.2,21*1.2]
     const curIndex = batchRatioList.findIndex(item=>Math.floor(item) == Math.floor(Number(lossHolding.position) / Number(initPosition)))
     const maxLossRatio = 0.85
     const minWinRatio = 0.01
@@ -819,7 +819,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     if(curIndex == batchRatioList.length - 1) return
 
-    const ratioList = [0.382,0.5,0.618,0.809,0.1]
+    const ratioList = [0.191,0.382,0.5,0.618,0.809,0.1]
     const newLossRatio = ratioList[curIndex]
 
     if(lossRatio < - newLossRatio){
