@@ -906,7 +906,7 @@ const startInterval = async () => {
     const data  =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
 
     if(Array.isArray(data)){
-        const newData = data.reverse().map(item=>Number(item.close))
+        const newData = data.reverse().map(item=>Number(item[4]))
         console.log(newData)
 
         /*
