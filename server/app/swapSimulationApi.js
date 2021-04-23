@@ -934,9 +934,9 @@ const startInterval = async () => {
             let result = {}
             if(index==0) {
                 result = {
-                    ema12: 0,
-                    ema26: 0,
-                    dea: item,
+                    ema12: item,
+                    ema26: item,
+                    dea: 0,
                     column: 0
                 }
             }else{
