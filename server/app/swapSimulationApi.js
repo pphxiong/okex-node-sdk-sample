@@ -956,6 +956,8 @@ const startInterval = async () => {
         console.log(columnsList.map(item=>item.column))
         console.log(columnsList[columnsList.length-1])
         console.log(newData[newData.length-1])
+        const tempList = data.reverse()
+        console.log(tempList[tempList.length-1])
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
@@ -975,8 +977,8 @@ const startInterval = async () => {
          */
     }
 
-    // await waitTime(1000 * 60)
-    // await startInterval()
+    await waitTime(1000 * 60)
+    await startInterval()
 
     // let btcHolding = globalBtcHolding
     // if(positionChange){
