@@ -907,7 +907,7 @@ const startInterval = async () => {
 
     if(Array.isArray(data)){
         const newData = data.reverse().map(item=>Number(item[4]))
-        console.log(newData)
+        console.log(newData[newData.length-1])
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
