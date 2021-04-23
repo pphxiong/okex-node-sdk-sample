@@ -899,11 +899,11 @@ const startInterval = async () => {
 
     const payload = {
         granularity: 60, // 单位为秒
-        // limit: 100,
+        limit: 100,
         // start,
         // end
     }
-    const data  =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
+    const data  =  await cAuthClient.swap.getHistory('ETH-USD-SWAP', payload)
 
     function getMacd(params) {
         const {price,lastEma12,lastEma26,lastDea} = params
