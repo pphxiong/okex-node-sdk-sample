@@ -899,7 +899,7 @@ const startInterval = async () => {
 
     const payload = {
         granularity: 60, // 单位为秒
-        limit: 100,
+        // limit: 100,
         // start,
         // end
     }
@@ -954,6 +954,7 @@ const startInterval = async () => {
         })
 
         console.log(columnsList.map(item=>item.column))
+        console.log(columnsList[columnsList.length-1])
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
@@ -972,19 +973,19 @@ const startInterval = async () => {
         MACD柱线 = 2 * (DIFF-DEA)
          */
 
-        const todayPrice = 0
-        const lastEma12 = 0;
-        const lastEma26 = 0
-        const lastDea = 0
-
-        const ema12 = 2/(12+1) * todayPrice + 11/(12+1) * lastEma12
-        const ema26 = 2/(26+1) * todayPrice + 25/(26+1) * lastEma26
-
-        const diff = ema12 - ema26
-        const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
-
-        const macdColumn = 2 * (diff - dea)
-        console.log(macdColumn)
+        // const todayPrice = 0
+        // const lastEma12 = 0;
+        // const lastEma26 = 0
+        // const lastDea = 0
+        //
+        // const ema12 = 2/(12+1) * todayPrice + 11/(12+1) * lastEma12
+        // const ema26 = 2/(26+1) * todayPrice + 25/(26+1) * lastEma26
+        //
+        // const diff = ema12 - ema26
+        // const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
+        //
+        // const macdColumn = 2 * (diff - dea)
+        // console.log(macdColumn)
     }
 
     await waitTime(1000 * 60)
