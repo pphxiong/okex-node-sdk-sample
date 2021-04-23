@@ -898,16 +898,62 @@ const startInterval = async () => {
     // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
     const payload = {
-        granularity: 60 * 30, // 单位为秒
-        // limit: 20,
+        granularity: 60, // 单位为秒
+        limit: 100,
         // start,
         // end
     }
     const data  =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
 
+    function getMacd(params) {
+        const {price,lastEma12,lastEma26,lastDea} = params
+
+        const ema12 = 2/(12+1) * price + 11/(12+1) * lastEma12
+        const ema26 = 2/(26+1) * price + 25/(26+1) * lastEma26
+
+        const diff = ema12 - ema26
+        const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
+
+        const column = 2 * (diff - dea)
+
+        const result = {
+            ema12,
+            ema26,
+            dea,
+            column
+        }
+
+        return result
+    }
+
     if(Array.isArray(data)){
         const newData = data.reverse().map(item=>Number(item[4]))
-        console.log(newData[newData.length-1])
+        const columnsList = []
+
+        newData.map((item,index)=>{
+            let result = {}
+            if(index==0) {
+                result = {
+                    ema12: 0,
+                    ema26: 0,
+                    dea: item,
+                    column: 0
+                }
+            }else{
+                const lastResult = columnsList[columnsList.length-1]
+                const payload = {
+                    price: item,
+                    lastEma12: lastResult.ema12,
+                    lastEma26: lastResult.ema26,
+                    lastDea: lastResult.dea
+                }
+                result = getMacd(payload)
+            }
+
+            columnsList.push(result)
+        })
+
+        console.log(columnsList.map(item=>item.column))
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
