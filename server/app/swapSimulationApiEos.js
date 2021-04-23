@@ -897,116 +897,91 @@ let openMarketPrice = 0
 const startInterval = async () => {
     const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
-    const payload = {
-        granularity: 60 * 30, // 单位为秒
-        // limit: 20,
-        // start,
-        // end
-    }
-    const data  =  await cAuthClient.swap.getHistory('BTC-USD-SWAP', payload)
+    let btcHolding = globalBtcHolding
+    if(positionChange){
+        try{
+            console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+            const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+            btcHolding = tempBtcHolding
+            if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
+                openMarketPrice = mark_price
+                await autoOpenOtherOrderSingle({ openSide: "long" })
+                await autoOpenOtherOrderSingle({ openSide: "short" })
+                await writeData()
+            }else {
+                if(isOpenMarketPriceChange){
+                    // const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
+                    // const { price_avg } = order_info[0]
+                    // openMarketPrice = price_avg
+                    await readData()
+                }
+            }
 
-    if(Array.isArray(data)){
-        const newData = data.reverse().map(item=>Number(item.close))
-        console.log(newData)
-
-        /*
-        MACD默认参数为12、26、9，计算过程分为三步，
-
-        第一步计算EMA：
-        12日EMA EMA(12) = 2/(12+1) * 今日收盘价 + 11/(12+1) * 昨日EMA(12)
-        26日EMA EMA(26) = 2/(26+1) * 今日收盘价 + 25/(26+1) * 昨日EMA(26)
-
-        第二步计算DIFF：
-        DIFF = EMA(12) - EMA(26)
-
-        第三步计算DEA：
-        DEA = 2/(9+1) * 今日DIFF + 8/(9+1) * 昨日DEA
-
-        第四步计算MACD柱线：
-        MACD柱线 = 2 * (DIFF-DEA)
-         */
-
-        const todayPrice = 0
-        const lastEma12 = 0;
-        const lastEma26 = 0
-        const lastDea = 0
-
-        const ema12 = 2/(12+1) * todayPrice + 11/(12+1) * lastEma12
-        const ema26 = 2/(26+1) * todayPrice + 25/(26+1) * lastEma26
-
-        const diff = ema12 - ema26
-        const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
-
-        const macdColumn = 2 * (diff - dea)
-        console.log(macdColumn)
+            globalBtcHolding = btcHolding
+            // positionChange = false
+            isOpenMarketPriceChange = false
+        }catch (e){
+            console.log(e)
+        }
+        // isInit = false
+    }else{
+        if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
+            const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+            btcHolding = tempBtcHolding
+            globalBtcHolding = btcHolding
+        }
     }
 
-    await waitTime(1000 * 60)
-    await startInterval()
+    const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
+    // console.log('btcQty',btcQty, initPosition)
 
-    // let btcHolding = globalBtcHolding
-    // if(positionChange){
-    //     try{
-    //         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
-    //         btcHolding = tempBtcHolding
-    //         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //             openMarketPrice = mark_price
-    //             await autoOpenOtherOrderSingle({ openSide: "long" })
-    //             await autoOpenOtherOrderSingle({ openSide: "short" })
-    //             await writeData()
-    //         }else {
-    //             if(isOpenMarketPriceChange){
-    //                 // const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
-    //                 // const { price_avg } = order_info[0]
-    //                 // openMarketPrice = price_avg
-    //                 await readData()
-    //             }
-    //         }
-    //
-    //         globalBtcHolding = btcHolding
-    //         // positionChange = false
-    //         isOpenMarketPriceChange = false
-    //     }catch (e){
-    //         console.log(e)
-    //     }
-    //     // isInit = false
-    // }else{
-    //     if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
-    //         btcHolding = tempBtcHolding
-    //         globalBtcHolding = btcHolding
-    //     }
-    // }
-    //
-    // const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
-    //
-    // if(btcQty) {
-    //     if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-    //         let mainHolding = btcHolding[0]
-    //         let otherHolding = btcHolding[1]
-    //         positionChange = false
-    //         await autoOperateSwap([mainHolding,otherHolding],mark_price)
-    //     }else{
-    //         if(positionChange){
-    //             const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
-    //             const { price_avg: last, type } = order_info[0]
-    //
-    //             if(Number(type) < 3){
-    //                 btcHolding[0].last = last
-    //             }else{
-    //                 btcHolding[0].last = btcHolding[0].avg_cost
-    //             }
-    //         }
-    //         positionChange = false
-    //         await autoOneSideSwap(btcHolding[0],mark_price)
-    //     }
-    //     await waitTime()
-    //     await startInterval()
-    // }else{
-    //     await waitTime()
-    //     await startInterval()
-    // }
+    if(btcQty) {
+        if(btcHolding.length > 1 && Number(btcHolding[1].position)){
+            let mainHolding = btcHolding[0]
+            let otherHolding = btcHolding[1]
+            // if(positionChange
+            //     &&
+            //     (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
+            //     ){
+            //     const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
+            //     const { price_avg: last, type } = order_info[0]
+            //
+            //     if(Number(type) < 3){
+            //         if(Number(mainHolding.position) > Number(initPosition)){
+            //             mainHolding.last = last
+            //         }else{
+            //             otherHolding.last = last
+            //         }
+            //     }else{
+            //         if(Number(mainHolding.position) > Number(initPosition)){
+            //             mainHolding.last = mainHolding.avg_cost
+            //         }else{
+            //             otherHolding.last = otherHolding.avg_cost
+            //         }
+            //     }
+            // }
+            positionChange = false
+            await autoOperateSwap([mainHolding,otherHolding],mark_price)
+        }else{
+            if(positionChange){
+                const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
+                const { price_avg: last, type } = order_info[0]
+
+                if(Number(type) < 3){
+                    btcHolding[0].last = last
+                }else{
+                    btcHolding[0].last = btcHolding[0].avg_cost
+                }
+            }
+            positionChange = false
+            await autoOneSideSwap(btcHolding[0],mark_price)
+        }
+        await waitTime()
+        await startInterval()
+    }else{
+        await waitTime()
+        await startInterval()
+    }
 }
 
 function stopInterval() {
