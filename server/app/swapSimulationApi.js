@@ -899,7 +899,7 @@ const startInterval = async () => {
 
     const payload = {
         granularity: 60, // 单位为秒
-        limit: 100,
+        // limit: 100,
         // start,
         // end
     }
@@ -955,6 +955,7 @@ const startInterval = async () => {
 
         console.log(columnsList.map(item=>item.column))
         console.log(columnsList[columnsList.length-1])
+        console.log(newData[newData.length-1])
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
