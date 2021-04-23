@@ -1,5 +1,6 @@
 import request from '../utils/request';
 import * as crypto from 'crypto';
+import * as querystring from "querystring";
 
 function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.com', timeout = 3000, axiosConfig = {}) {
     const signRequest = (method, path, options = {}) => {
@@ -69,6 +70,12 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             },
             getTradeFee: function (){
                 return get(`/api/swap/v3/trade_fee`)
+            },
+            getHistory: function (instrument_id, params) {
+                return get(`/api/swap/v3/instruments/${instrument_id}/history/candles?` + querystring.stringify(params));
+            },
+            getKData: function (instrument_id, params) {
+                return get(`/api/swap/v3/instruments/${instrument_id}/candles?` + querystring.stringify(params));
             },
         }
     }

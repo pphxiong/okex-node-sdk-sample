@@ -895,7 +895,7 @@ let isOpenMarketPriceChange = true
 let globalBtcHolding = null;
 let openMarketPrice = 0
 const startInterval = async () => {
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
     const payload = {
         granularity: 60 * 30, // 单位为秒
