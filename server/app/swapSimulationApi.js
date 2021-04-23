@@ -973,24 +973,10 @@ const startInterval = async () => {
         第四步计算MACD柱线：
         MACD柱线 = 2 * (DIFF-DEA)
          */
-
-        // const todayPrice = 0
-        // const lastEma12 = 0;
-        // const lastEma26 = 0
-        // const lastDea = 0
-        //
-        // const ema12 = 2/(12+1) * todayPrice + 11/(12+1) * lastEma12
-        // const ema26 = 2/(26+1) * todayPrice + 25/(26+1) * lastEma26
-        //
-        // const diff = ema12 - ema26
-        // const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
-        //
-        // const macdColumn = 2 * (diff - dea)
-        // console.log(macdColumn)
     }
 
-    await waitTime(1000 * 60)
-    await startInterval()
+    // await waitTime(1000 * 60)
+    // await startInterval()
 
     // let btcHolding = globalBtcHolding
     // if(positionChange){
