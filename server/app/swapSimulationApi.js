@@ -960,11 +960,6 @@ const startInterval = async () => {
 
         const lastColumns = columnsList.slice(-3)
 
-        const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-        if(!holding || !holding[0] || !Number(holding[0].position)){
-            await autoOpenOtherOrderSingle({ openSide: "long" })
-        }
-
         //开仓条件
         if(lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0] && lastColumns[0] < 0){
             try {
