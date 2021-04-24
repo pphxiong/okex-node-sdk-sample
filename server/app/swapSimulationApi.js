@@ -982,7 +982,7 @@ const startInterval = async () => {
         }
 
         //平仓条件
-        if(lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]){
+        if(lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
