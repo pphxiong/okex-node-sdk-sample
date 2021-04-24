@@ -976,6 +976,8 @@ const startInterval = async () => {
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(!holding || !holding[0] || !Number(holding[0].position)){
+                    await autoOpenOtherOrderSingle({ openSide: "long" })
+                }else{
                     const longHolding = holding.find(item=>item.side=="long")
                     if(!longHolding){
                         await autoOpenOtherOrderSingle({ openSide: "long" })
@@ -1015,6 +1017,8 @@ const startInterval = async () => {
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(!holding || !holding[0] || !Number(holding[0].position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }else{
                     const shortHolding = holding.find(item=>item.side=="short")
                     if(!shortHolding){
                         await autoOpenOtherOrderSingle({ openSide: "short" })
