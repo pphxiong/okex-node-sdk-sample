@@ -894,16 +894,21 @@ let positionChange = true;
 let isOpenMarketPriceChange = true
 let globalBtcHolding = null;
 let openMarketPrice = 0
+let globalColumnsObjList;
 const startInterval = async () => {
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
     const payload = {
         granularity: 60 * 3, // 单位为秒
-        // limit: 100,
+        limit: 100,
         // start,
         // end
     }
-    const data  =  await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+
+    // if(!globalColumnsObjList){
+        const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+        globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
+    // }
 
     function getMacd(params) {
         const {price,lastEma12,lastEma26,lastDea} = params
@@ -926,11 +931,11 @@ const startInterval = async () => {
         return result
     }
 
-    if(Array.isArray(data)){
-        const newData = data.reverse().map(item=>Number(item[4]))
+    if(Array.isArray(globalColumnsObjList)){
+        // const newData = data.reverse().map(item=>Number(item[4]))
         const columnsObjList = []
 
-        newData.map((item,index)=>{
+        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
@@ -954,11 +959,9 @@ const startInterval = async () => {
         })
 
         const columnsList = columnsObjList.map(item=>item.column)
-        console.log(columnsList[columnsList.length-1])
-        console.log(newData[newData.length-1])
-        console.log(data[data.length-1])
-
         const lastColumns = columnsList.slice(-3)
+
+        console.log(lastColumns)
 
         //开仓条件
         if(lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0] && lastColumns[0] < 0){
