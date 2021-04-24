@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 2;
+let initPosition = LEVERAGE * 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -899,7 +899,7 @@ const startInterval = async () => {
     const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
     const payload = {
-        granularity: 60 * 1, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -935,8 +935,8 @@ const startInterval = async () => {
         // const newData = data.reverse().map(item=>Number(item[4]))
         const columnsObjList = []
 
-        // globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
-        globalColumnsObjList.map((item,index)=>{
+        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
+        // globalColumnsObjList.map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
@@ -981,7 +981,7 @@ const startInterval = async () => {
         }
 
         //平仓条件
-        if(lastColumns[2] < lastColumns[1]){
+        if(lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
