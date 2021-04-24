@@ -974,10 +974,12 @@ const startInterval = async () => {
             )
         ){
             try {
-                // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(!holding || !holding[0] || !Number(holding[0].position)){
-                    await autoOpenOtherOrderSingle({ openSide: "long" })
+                    const longHolding = holding.find(item=>item.side=="long")
+                    if(!longHolding){
+                        await autoOpenOtherOrderSingle({ openSide: "long" })
+                    }
                 }
             }catch (e){
                 console.log(e)
@@ -987,13 +989,51 @@ const startInterval = async () => {
         //平多仓条件
         if(lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]){
             try {
-                // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const holding = {
                         instrument_id: ETH_INSTRUMENT_ID,
                         position: Number(tempHolding[0].position),
                         side: 'long'
+                    }
+                    await closeHalfPosition(holding);
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
+            &&
+            (lastColumns[1] < lastColumns[0]
+                &&
+                (lastColumns[0] > - 0.25 || lastColumns[2] < lastColumns[1])
+            )
+        ){
+            try {
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(!holding || !holding[0] || !Number(holding[0].position)){
+                    const shortHolding = holding.find(item=>item.side=="short")
+                    if(!shortHolding){
+                        await autoOpenOtherOrderSingle({ openSide: "short" })
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]){
+            try {
+                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
+                    const holding = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(tempHolding[0].position),
+                        side: 'short'
                     }
                     await closeHalfPosition(holding);
                 }
