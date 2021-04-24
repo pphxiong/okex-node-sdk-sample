@@ -960,14 +960,15 @@ const startInterval = async () => {
         })
 
         const columnsList = columnsObjList.map(item=>item.column)
-        const lastColumns = columnsList.slice(-3)
+        const lastColumns = columnsList.slice(-5)
 
         console.log(lastColumns)
 
         //开仓条件
         if(
-            lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
-            && (lastColumns[1] < 0 || lastColumns[2] < 0.25)
+            lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
+            &&
+            (lastColumns[1] > lastColumns[0] || lastColumns[4] < 0.25)
         ){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
