@@ -935,7 +935,8 @@ const startInterval = async () => {
         // const newData = data.reverse().map(item=>Number(item[4]))
         const columnsObjList = []
 
-        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
+        // globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
+        globalColumnsObjList.map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
@@ -966,7 +967,7 @@ const startInterval = async () => {
         //开仓条件
         if(lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0] && lastColumns[1] < 0 && lastColumns[2] > 0){
             try {
-                console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+                // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(!holding || !holding[0] || !Number(holding[0].position)){
                     await autoOpenOtherOrderSingle({ openSide: "long" })
@@ -979,7 +980,7 @@ const startInterval = async () => {
         //平仓条件
         if(lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]){
             try {
-                console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+                // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const holding = {
