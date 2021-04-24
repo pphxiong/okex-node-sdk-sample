@@ -993,12 +993,15 @@ const startInterval = async () => {
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-                    const holding = {
-                        instrument_id: ETH_INSTRUMENT_ID,
-                        position: Number(tempHolding[0].position),
-                        side: 'long'
+                    const longHolding = tempHolding.find(item=>item.side=="long")
+                    if(longHolding){
+                        const holding = {
+                            instrument_id: ETH_INSTRUMENT_ID,
+                            position: Number(longHolding.position),
+                            side: 'long'
+                        }
+                        await closeHalfPosition(holding);
                     }
-                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
@@ -1034,12 +1037,15 @@ const startInterval = async () => {
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-                    const holding = {
-                        instrument_id: ETH_INSTRUMENT_ID,
-                        position: Number(tempHolding[0].position),
-                        side: 'short'
+                    const shortHolding = tempHolding.find(item=>item.side=="short")
+                    if(shortHolding){
+                        const holding = {
+                            instrument_id: ETH_INSTRUMENT_ID,
+                            position: Number(shortHolding.position),
+                            side: 'short'
+                        }
+                        await closeHalfPosition(holding);
                     }
-                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
