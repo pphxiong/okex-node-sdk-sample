@@ -981,7 +981,7 @@ const startInterval = async () => {
             try {
                 console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(!tempHolding || !tempHolding[0] || !Number(tempHolding[0].position)){
+                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const holding = {
                         instrument_id: ETH_INSTRUMENT_ID,
                         position: initPosition,
