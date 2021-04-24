@@ -899,7 +899,7 @@ const startInterval = async () => {
     const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 1, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -964,7 +964,7 @@ const startInterval = async () => {
         console.log(lastColumns)
 
         //开仓条件
-        if(lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0] && lastColumns[0] < 0){
+        if(lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0] && lastColumns[1] < 0 && lastColumns[2] > 0){
             try {
                 console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
