@@ -965,7 +965,10 @@ const startInterval = async () => {
         console.log(lastColumns)
 
         //开仓条件
-        if(lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0] && lastColumns[1] < 0){
+        if(
+            lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
+            && (lastColumns[1] < 0 || lastColumns[2] < 0.25)
+        ){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -978,7 +981,7 @@ const startInterval = async () => {
         }
 
         //平仓条件
-        if(lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]){
+        if(lastColumns[2] < lastColumns[1]){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
