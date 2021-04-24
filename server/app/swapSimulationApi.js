@@ -928,7 +928,7 @@ const startInterval = async () => {
 
     if(Array.isArray(data)){
         const newData = data.reverse().map(item=>Number(item[4]))
-        const columnsList = []
+        const columnsObjList = []
 
         newData.map((item,index)=>{
             let result = {}
@@ -940,7 +940,7 @@ const startInterval = async () => {
                     column: 0
                 }
             }else{
-                const lastResult = columnsList[columnsList.length-1]
+                const lastResult = columnsObjList[columnsObjList.length-1]
                 const payload = {
                     price: item,
                     lastEma12: lastResult.ema12,
@@ -950,10 +950,10 @@ const startInterval = async () => {
                 result = getMacd(payload)
             }
 
-            columnsList.push(result.column)
+            columnsObjList.push(result)
         })
 
-        // console.log(columnsList.map(item=>item.column))
+        const columnsList = columnsObjList.map(item=>item.column)
         console.log(columnsList[columnsList.length-1])
         console.log(newData[newData.length-1])
         console.log(data[data.length-1])
