@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 2;
+let initPosition = LEVERAGE * 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -984,7 +984,7 @@ const startInterval = async () => {
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const holding = {
                         instrument_id: ETH_INSTRUMENT_ID,
-                        position: initPosition,
+                        position: Number(tempHolding[0].position),
                         side: 'long'
                     }
                     await closeHalfPosition(holding);
