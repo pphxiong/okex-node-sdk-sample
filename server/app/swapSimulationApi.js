@@ -964,11 +964,14 @@ const startInterval = async () => {
 
         console.log(lastColumns)
 
-        //开仓条件
+        //开多仓条件
         if(
             lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
             &&
-            (lastColumns[1] > lastColumns[0] || lastColumns[4] < 0.25)
+            (lastColumns[1] > lastColumns[0]
+                &&
+                (lastColumns[0] < 0.25 || lastColumns[2] > lastColumns[1])
+            )
         ){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -981,7 +984,7 @@ const startInterval = async () => {
             }
         }
 
-        //平仓条件
+        //平多仓条件
         if(lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]){
             try {
                 // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
