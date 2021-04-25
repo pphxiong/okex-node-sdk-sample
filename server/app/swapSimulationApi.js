@@ -935,8 +935,8 @@ const startInterval = async () => {
         // const newData = data.reverse().map(item=>Number(item[4]))
         const columnsObjList = []
 
-        // globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
-        globalColumnsObjList.map((item,index)=>{
+        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
+        // globalColumnsObjList.map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
