@@ -935,8 +935,8 @@ const startInterval = async () => {
         // const newData = data.reverse().map(item=>Number(item[4]))
         const columnsObjList = []
 
-        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
-        // globalColumnsObjList.map((item,index)=>{
+        // globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
+        globalColumnsObjList.map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
@@ -969,10 +969,9 @@ const startInterval = async () => {
             (lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
             &&
             lastColumns[1] < lastColumns[0] && lastColumns[2] < lastColumns[1]
+            &&
+            lastColumns[0] < 0
             )
-            ||
-            (lastColumns[4] > lastColumns[3] && lastColumns[3] < lastColumns[2]
-                && lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0])
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1014,9 +1013,9 @@ const startInterval = async () => {
             (lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
                 &&
                 lastColumns[1] > lastColumns[0] && lastColumns[2] > lastColumns[1]
+                &&
+                lastColumns[0] > 0
             )
-            ||
-            (lastColumns[4] < lastColumns[3] && lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0])
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
