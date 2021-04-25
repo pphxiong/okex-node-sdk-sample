@@ -966,12 +966,13 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
+            (lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
             &&
-            (lastColumns[1] > lastColumns[0]
-                &&
-                (lastColumns[0] < 0.25 || lastColumns[2] > lastColumns[1])
+            lastColumns[1] < lastColumns[0] && lastColumns[2] < lastColumns[1]
             )
+            ||
+            (lastColumns[4] > lastColumns[3] && lastColumns[3] < lastColumns[2]
+                && lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0])
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1010,12 +1011,12 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
-            &&
-            (lastColumns[1] < lastColumns[0]
+            (lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
                 &&
-                (lastColumns[0] > - 0.25 || lastColumns[2] < lastColumns[1])
+                lastColumns[1] > lastColumns[0] && lastColumns[2] > lastColumns[1]
             )
+            ||
+            (lastColumns[4] < lastColumns[3] && lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0])
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
