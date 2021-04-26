@@ -990,20 +990,25 @@ const startInterval = async () => {
         //平多仓条件
         if(
             lastColumns[4] < lastColumns[3]
-            &&
-            lastColumns[3] < lastColumns[2]
+            // &&
+            // lastColumns[3] < lastColumns[2]
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const longHolding = tempHolding.find(item=>item.side=="long")
                     if(longHolding){
-                        const holding = {
-                            instrument_id: XRP_INSTRUMENT_ID,
-                            position: Number(longHolding.position),
-                            side: 'long'
+                        const { side, leverage, avg_cost, } = longHolding;
+                        let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+
+                        if(ratio > 0.001 * leverage || lastColumns[3] < lastColumns[2]){
+                            const holding = {
+                                instrument_id: XRP_INSTRUMENT_ID,
+                                position: Number(longHolding.position),
+                                side: 'long'
+                            }
+                            await closeHalfPosition(holding);
                         }
-                        await closeHalfPosition(holding);
                     }
                 }
             }catch (e){
@@ -1036,21 +1041,27 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            (lastColumns[4] > lastColumns[3]
-            &&
-            lastColumns[3] > lastColumns[2])
+            lastColumns[4] > lastColumns[3]
+            // &&
+            // lastColumns[3] > lastColumns[2]
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const shortHolding = tempHolding.find(item=>item.side=="short")
                     if(shortHolding){
-                        const holding = {
-                            instrument_id: XRP_INSTRUMENT_ID,
-                            position: Number(shortHolding.position),
-                            side: 'short'
+                        const { side, leverage, avg_cost, } = shortHolding;
+                        let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+                        ratio = -ratio
+
+                        if(ratio > 0.001 * leverage || lastColumns[3] < lastColumns[2]){
+                            const holding = {
+                                instrument_id: XRP_INSTRUMENT_ID,
+                                position: Number(shortHolding.position),
+                                side: 'short'
+                            }
+                            await closeHalfPosition(holding);
                         }
-                        await closeHalfPosition(holding);
                     }
                 }
             }catch (e){
