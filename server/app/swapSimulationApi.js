@@ -990,8 +990,8 @@ const startInterval = async () => {
         //平多仓条件
         if(
             lastColumns[4] < lastColumns[3]
-            // &&
-            // lastColumns[3] < lastColumns[2]
+            &&
+            lastColumns[3] < lastColumns[2]
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1036,9 +1036,9 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            lastColumns[4] > lastColumns[3]
-            // &&
-            // lastColumns[3] > lastColumns[2]
+            (lastColumns[4] > lastColumns[3]
+            &&
+            lastColumns[3] > lastColumns[2])
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
