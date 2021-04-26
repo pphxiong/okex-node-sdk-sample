@@ -8,10 +8,9 @@ const customAuthClient = require('./customAuthClient');
 const fs = require('fs');
 
 //读取配置文件，变量config的类型是Object类型
-// let dataConfig = require('./config.json');
+// let dataConfig = require('./configETH.json');
 
-let BTC_INSTRUMENT_ID = "BTC-USD-SWAP";
-let EOS_INSTRUMENT_ID = "EOS-USD-SWAP";
+let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 
@@ -19,23 +18,17 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 3;
+let initPosition = LEVERAGE * 1;
+// let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
-    [BTC_INSTRUMENT_ID]: {
+    [ETH_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
         continuousProfitNum: 0,
         continuousTripleLossNum: 0,
         otherContinuousWinNum: 0
-    },
-    [EOS_INSTRUMENT_ID]: {
-        continuousLossNum: 0,
-        continuousWinNum: 0,
-        continuousBatchNum: 0,
-        continuousProfitNum: 0,
-        continuousTripleLossNum: 0,
     },
 };
 
@@ -282,7 +275,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    const instrument_id = BTC_INSTRUMENT_ID;
+    const instrument_id = ETH_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
@@ -318,12 +311,12 @@ const autoOpenOrderSingle = async (params = {}) => {
     // if(instrument_id.includes('BTC')){
     //     availNo = await getAvailNo({ mark_price });
     // }else{
-    //     availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
+    //     availNo = await getAvailNo({ val: 10, currency: 'ETH-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
     // }
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
-    const instrument_id = BTC_INSTRUMENT_ID;
+    const instrument_id = ETH_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
@@ -374,7 +367,7 @@ const autoOpenOrderSingle = async (params = {}) => {
 // }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = ETH_INSTRUMENT_ID, mark_price}) => {
     const result = await authClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
@@ -561,7 +554,7 @@ const afterLoss = async (holding,type) =>{
 }
 // 平半仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
-    // const { holding: realBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
     const { instrument_id, position, side } = holding;
 
@@ -779,10 +772,6 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
     let lossHolding = holding2
     let lossRatio = ratio2
     if(
-        // (ratio2 > condition * closeRatio * frequency )
-        // ||
-        // (Number(position1) > Number(initPosition))
-        // ||
         (ratio2 > ratio1)
     ){
         lossHolding = holding1
@@ -794,20 +783,11 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
     const { position, side, leverage, avg_cost, last } = lossHolding
 
-    // const batchRatioList = [6, 8, 10]
-    // [10,20,40,80] [20,40,80,160] [30,60,120]
-    // const batchIndex = getPowByNum(Number(position), Number(initPosition))
-    // const newWinRatio = batchRatioList[batchIndex] * Number(leverage) / 100 * 2 * 2
-    const batchRatioList = [1,2,3,5,8,13,21,34,55,89]
-    const curIndex = batchRatioList.findIndex(item=>item == Number(lossHolding.position) / Number(initPosition))
-    // const newWinRatio = 2.0 * Number(leverage) / 100 / 10 * 2 * 2
-    // const newLossRatio = 2.0 * Number(leverage) / 100 / 10 * 2 * 2
+    const batchRatioList = [1,2,3,5,8,13,21,34]
+    // const batchRatioList = [1,3*1.2,5*1.2,8*1.2,13*1.2,21*1.2]
+    const curIndex = batchRatioList.findIndex(item=>Math.floor(item) == Math.floor(Number(lossHolding.position) / Number(initPosition)))
     const maxLossRatio = 0.85
-    const minWinRatio = 0.005
-
-    const ratioList = [0.191,0.382,0.5,0.618,0.809]
-    // const index = Number(lossHolding.position) / Number(initPosition) - 1
-    const newLossRatio = ratioList[curIndex]
+    const minWinRatio = 0.01
 
     // console.log(openMarketPrice)
     // console.log(winRatio,lossRatio,winHolding.position,lossHolding.position)
@@ -831,11 +811,16 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
         // await closeHalfPosition(lossHolding);
         const lossPayload = {
             openSide: lossHolding.side,
-            position: Number(lossHolding.position)
+            position: Number(winHolding.position)
         }
         await autoOpenOtherOrderSingle(lossPayload);
         return
     }
+
+    if(curIndex == batchRatioList.length - 1) return
+
+    const ratioList = [0.191,0.382,0.5,0.618,0.809,0.1]
+    const newLossRatio = ratioList[curIndex]
 
     if(lossRatio < - newLossRatio){
         if(Number(lossHolding.position) < batchRatioList[curIndex+1] * Number(initPosition)){
@@ -846,32 +831,13 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
             await autoOpenOtherOrderSingle(lossPayload);
             return
         }
-
-        // if(Number(lossHolding.position) > Number(winHolding.position)){
-        //     const winPayload = {
-        //         openSide: winHolding.side,
-        //         position: Number(initPosition)
-        //     }
-        //     await autoOpenOtherOrderSingle(winPayload);
-        //     return
-        // }
-
-        // const lossPayload = {
-        //     openSide: lossHolding.side,
-        //     position: Number(initPosition) / 2
-        // }
-        // await autoOpenOtherOrderSingle(lossPayload);
-        // if(Number(winHolding.position) > Number(initPosition)){
-        //     winHolding.position = Number(initPosition) / 2
-        //     await closeHalfPosition(winHolding);
-        // }
     }
 
 }
 
 const writeData = async () => {
     //将修改后的配置写入文件前需要先转成json字符串格式
-    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
 
     let dataConfig = {
         "openMarketPrice": openMarketPrice.toString(),
@@ -881,7 +847,7 @@ const writeData = async () => {
 
     const result = await new Promise(resolve=>{
         //将修改后的内容写入文件
-        fs.writeFile('./app/config.json', jsonStr, function(err) {
+        fs.writeFile('./app/configETH.json', jsonStr, function(err) {
             if (err) {
                 console.error(err);
             }else{
@@ -897,9 +863,9 @@ const writeData = async () => {
 // let isInit = true
 const readData = async () => {
     // if(!isInit){
-    let dataConfig =  JSON.parse(fs.readFileSync('./app/config.json','utf-8'));
+    let dataConfig =  JSON.parse(fs.readFileSync('./app/configETH.json','utf-8'));
 
-    // const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    // const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
     // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
     // continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
     // continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
@@ -928,94 +894,246 @@ let positionChange = true;
 let isOpenMarketPriceChange = true
 let globalBtcHolding = null;
 let openMarketPrice = 0
+let globalColumnsObjList;
 const startInterval = async () => {
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
-    let btcHolding = globalBtcHolding
-    if(positionChange){
-        try{
-            console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-            const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-            btcHolding = tempBtcHolding
-            if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-                openMarketPrice = mark_price
-                await autoOpenOtherOrderSingle({ openSide: "long" })
-                await autoOpenOtherOrderSingle({ openSide: "short" })
-                await writeData()
-            }else {
-                if(isOpenMarketPriceChange){
-                    // const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-                    // const { price_avg } = order_info[0]
-                    // openMarketPrice = price_avg
-                    await readData()
-                }
-            }
-
-            globalBtcHolding = btcHolding
-            // positionChange = false
-            isOpenMarketPriceChange = false
-        }catch (e){
-            console.log(e)
-        }
-        // isInit = false
-    }else{
-        if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-            const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
-            btcHolding = tempBtcHolding
-            globalBtcHolding = btcHolding
-        }
+    const payload = {
+        granularity: 60 * 5, // 单位为秒
+        limit: 100,
+        // start,
+        // end
     }
 
-    const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
-    // console.log('btcQty',btcQty, initPosition)
+    // if(!globalColumnsObjList){
+    const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+    globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
+    // }
 
-    if(btcQty) {
-        if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-            let mainHolding = btcHolding[0]
-            let otherHolding = btcHolding[1]
-            // if(positionChange
-            //     &&
-            //     (Number(btcHolding[0].position) > Number(initPosition) || Number(btcHolding[1].position) > Number(initPosition))
-            //     ){
-            //     const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-            //     const { price_avg: last, type } = order_info[0]
-            //
-            //     if(Number(type) < 3){
-            //         if(Number(mainHolding.position) > Number(initPosition)){
-            //             mainHolding.last = last
-            //         }else{
-            //             otherHolding.last = last
-            //         }
-            //     }else{
-            //         if(Number(mainHolding.position) > Number(initPosition)){
-            //             mainHolding.last = mainHolding.avg_cost
-            //         }else{
-            //             otherHolding.last = otherHolding.avg_cost
-            //         }
-            //     }
-            // }
-            positionChange = false
-            await autoOperateSwap([mainHolding,otherHolding],mark_price)
-        }else{
-            if(positionChange){
-                const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
-                const { price_avg: last, type } = order_info[0]
+    function getMacd(params) {
+        const {price,lastEma12,lastEma26,lastDea} = params
 
-                if(Number(type) < 3){
-                    btcHolding[0].last = last
+        const ema12 = 2/(12+1) * price + 11/(12+1) * lastEma12
+        const ema26 = 2/(26+1) * price + 25/(26+1) * lastEma26
+
+        const diff = ema12 - ema26
+        const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
+
+        const column = 2 * (diff - dea)
+
+        const result = {
+            ema12,
+            ema26,
+            dea,
+            column
+        }
+
+        return result
+    }
+
+    if(Array.isArray(globalColumnsObjList)){
+        // const newData = data.reverse().map(item=>Number(item[4]))
+        const columnsObjList = []
+
+        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
+            // globalColumnsObjList.map((item,index)=>{
+            let result = {}
+            if(index==0) {
+                result = {
+                    ema12: item,
+                    ema26: item,
+                    dea: 0,
+                    column: 0
+                }
+            }else{
+                const lastResult = columnsObjList[columnsObjList.length-1]
+                const payload = {
+                    price: item,
+                    lastEma12: lastResult.ema12,
+                    lastEma26: lastResult.ema26,
+                    lastDea: lastResult.dea
+                }
+                result = getMacd(payload)
+            }
+
+            columnsObjList.push(result)
+        })
+
+        const columnsList = columnsObjList.map(item=>item.column)
+        const lastColumns = columnsList.slice(-5)
+
+        console.log(lastColumns)
+
+        //开多仓条件
+        if(
+            (lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
+                &&
+                lastColumns[1] < lastColumns[0]
+                // && lastColumns[2] < lastColumns[1] && lastColumns[0] < 0
+            )
+        ){
+            try {
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(!holding || !holding[0] || !Number(holding[0].position)){
+                    await autoOpenOtherOrderSingle({ openSide: "long" })
                 }else{
-                    btcHolding[0].last = btcHolding[0].avg_cost
+                    const longHolding = holding.find(item=>item.side=="long")
+                    if(!longHolding){
+                        await autoOpenOtherOrderSingle({ openSide: "long" })
+                    }
                 }
+            }catch (e){
+                console.log(e)
             }
-            positionChange = false
-            await autoOneSideSwap(btcHolding[0],mark_price)
         }
-        await waitTime()
-        await startInterval()
-    }else{
-        await waitTime()
-        await startInterval()
+
+        //平多仓条件
+        if(lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]){
+            try {
+                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
+                    const longHolding = tempHolding.find(item=>item.side=="long")
+                    if(longHolding){
+                        const holding = {
+                            instrument_id: ETH_INSTRUMENT_ID,
+                            position: Number(longHolding.position),
+                            side: 'long'
+                        }
+                        await closeHalfPosition(holding);
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            (lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
+                &&
+                lastColumns[1] > lastColumns[0]
+                // && lastColumns[2] > lastColumns[1] && lastColumns[0] > 0
+            )
+        ){
+            try {
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(!holding || !holding[0] || !Number(holding[0].position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }else{
+                    const shortHolding = holding.find(item=>item.side=="short")
+                    if(!shortHolding){
+                        await autoOpenOtherOrderSingle({ openSide: "short" })
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]){
+            try {
+                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
+                    const shortHolding = tempHolding.find(item=>item.side=="short")
+                    if(shortHolding){
+                        const holding = {
+                            instrument_id: ETH_INSTRUMENT_ID,
+                            position: Number(shortHolding.position),
+                            side: 'short'
+                        }
+                        await closeHalfPosition(holding);
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        /*
+        MACD默认参数为12、26、9，计算过程分为三步，
+
+        第一步计算EMA：
+        12日EMA EMA(12) = 2/(12+1) * 今日收盘价 + 11/(12+1) * 昨日EMA(12)
+        26日EMA EMA(26) = 2/(26+1) * 今日收盘价 + 25/(26+1) * 昨日EMA(26)
+
+        第二步计算DIFF：
+        DIFF = EMA(12) - EMA(26)
+
+        第三步计算DEA：
+        DEA = 2/(9+1) * 今日DIFF + 8/(9+1) * 昨日DEA
+
+        第四步计算MACD柱线：
+        MACD柱线 = 2 * (DIFF-DEA)
+         */
     }
+
+    await waitTime(1000 * 5 * 2)
+    await startInterval()
+
+    // let btcHolding = globalBtcHolding
+    // if(positionChange){
+    //     try{
+    //         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    //         btcHolding = tempBtcHolding
+    //         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
+    //             openMarketPrice = mark_price
+    //             await autoOpenOtherOrderSingle({ openSide: "long" })
+    //             await autoOpenOtherOrderSingle({ openSide: "short" })
+    //             await writeData()
+    //         }else {
+    //             if(isOpenMarketPriceChange){
+    //                 // const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+    //                 // const { price_avg } = order_info[0]
+    //                 // openMarketPrice = price_avg
+    //                 await readData()
+    //             }
+    //         }
+    //
+    //         globalBtcHolding = btcHolding
+    //         // positionChange = false
+    //         isOpenMarketPriceChange = false
+    //     }catch (e){
+    //         console.log(e)
+    //     }
+    //     // isInit = false
+    // }else{
+    //     if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    //         btcHolding = tempBtcHolding
+    //         globalBtcHolding = btcHolding
+    //     }
+    // }
+    //
+    // const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
+    //
+    // if(btcQty) {
+    //     if(btcHolding.length > 1 && Number(btcHolding[1].position)){
+    //         let mainHolding = btcHolding[0]
+    //         let otherHolding = btcHolding[1]
+    //         positionChange = false
+    //         await autoOperateSwap([mainHolding,otherHolding],mark_price)
+    //     }else{
+    //         if(positionChange){
+    //             const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+    //             const { price_avg: last, type } = order_info[0]
+    //
+    //             if(Number(type) < 3){
+    //                 btcHolding[0].last = last
+    //             }else{
+    //                 btcHolding[0].last = btcHolding[0].avg_cost
+    //             }
+    //         }
+    //         positionChange = false
+    //         await autoOneSideSwap(btcHolding[0],mark_price)
+    //     }
+    //     await waitTime()
+    //     await startInterval()
+    // }else{
+    //     await waitTime()
+    //     await startInterval()
+    // }
 }
 
 function stopInterval() {
@@ -1034,8 +1152,6 @@ const waitTime = (time = 1000 * 4) => {
 };
 
 // 定时获取交割合约账户信息
-// myInterval = startInterval()
-// myInterval = setTimeout(startInterval,1000 * 2)
 (async ()=>{
     await startInterval()
 })()
