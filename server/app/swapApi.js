@@ -896,10 +896,8 @@ let globalBtcHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -932,7 +930,8 @@ const startInterval = async () => {
     }
 
     if(Array.isArray(globalColumnsObjList)){
-        // const newData = data.reverse().map(item=>Number(item[4]))
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+
         const columnsObjList = []
 
         globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
@@ -969,7 +968,7 @@ const startInterval = async () => {
             (lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
                 &&
                 lastColumns[1] < lastColumns[0]
-                && lastColumns[2] < lastColumns[1]
+                && lastColumns[0] < 0
             )
         ){
             try {
@@ -1021,7 +1020,7 @@ const startInterval = async () => {
             (lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
                 &&
                 lastColumns[1] > lastColumns[0]
-                && lastColumns[2] > lastColumns[1]
+                && lastColumns[0] > 0
             )
         ){
             try {
@@ -1054,7 +1053,7 @@ const startInterval = async () => {
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         ratio = -ratio
 
-                        if(ratio > 0.001 * leverage || lastColumns[3] < lastColumns[2]){
+                        if(ratio > 0.001 * leverage || lastColumns[3] > lastColumns[2]){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(shortHolding.position),
