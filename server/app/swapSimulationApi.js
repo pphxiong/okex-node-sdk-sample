@@ -989,9 +989,10 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            // lastColumns[4] < lastColumns[3]
+            lastColumns[4] < lastColumns[3]
             // &&
-            lastColumns[3] < lastColumns[2]){
+            // lastColumns[3] < lastColumns[2]
+        ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
@@ -1035,9 +1036,10 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            // lastColumns[4] > lastColumns[3]
+            lastColumns[4] > lastColumns[3]
             // &&
-            lastColumns[3] > lastColumns[2]){
+            // lastColumns[3] > lastColumns[2]
+        ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
@@ -1074,7 +1076,7 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 5 * 1)
+    await waitTime(1000 * 4 * 1)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
