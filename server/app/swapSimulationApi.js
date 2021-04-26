@@ -969,7 +969,7 @@ const startInterval = async () => {
             (lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
             &&
             lastColumns[1] < lastColumns[0]
-            // && lastColumns[2] < lastColumns[1] && lastColumns[0] < 0
+            && lastColumns[2] < lastColumns[1] 
             )
         ){
             try {
@@ -1016,7 +1016,7 @@ const startInterval = async () => {
             (lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
                 &&
                 lastColumns[1] > lastColumns[0]
-                // && lastColumns[2] > lastColumns[1] && lastColumns[0] > 0
+                && lastColumns[2] > lastColumns[1]
             )
         ){
             try {
