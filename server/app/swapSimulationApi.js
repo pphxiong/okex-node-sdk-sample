@@ -899,7 +899,7 @@ const startInterval = async () => {
     const { mark_price } = await cAuthClient.swap.getMarkPrice(XRP_INSTRUMENT_ID);
 
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -1076,7 +1076,7 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 4 * 1)
+    await waitTime(1000 * 5 * 1)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
