@@ -1000,7 +1000,7 @@ const startInterval = async () => {
                         const { side, leverage, avg_cost, } = longHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         console.log(ratio)
-                        if(ratio > 0.01 * leverage || (lastColumns[3] < lastColumns[2] && lastColumns[2] < lastColumns[1])){
+                        if(ratio > 0.012 * leverage || (lastColumns[3] < lastColumns[2] && lastColumns[2] < lastColumns[1])){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(longHolding.position),
@@ -1053,7 +1053,7 @@ const startInterval = async () => {
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         ratio = -ratio
 
-                        if(ratio > 0.01 * leverage || (lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1])){
+                        if(ratio > 0.012 * leverage || (lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1])){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(shortHolding.position),
