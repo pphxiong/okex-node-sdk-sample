@@ -897,7 +897,7 @@ let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 1, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -968,11 +968,7 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            lastDiffDeaList[4].diff >= lastDiffDeaList[4].dea
-            &&
-            lastDiffDeaList[3].diff < lastDiffDeaList[3].dea
-            &&
-            lastColumns[4] < 0
+            lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -991,26 +987,24 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            lastDiffDeaList[4].diff <= lastDiffDeaList[4].dea
-            &&
-            lastDiffDeaList[3].diff > lastDiffDeaList[3].dea
+            lastColumns[4] < lastColumns[3]
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const longHolding = tempHolding.find(item=>item.side=="long")
                     if(longHolding){
-                        // const { side, leverage, avg_cost, } = longHolding;
-                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // console.log(ratio)
-                        // if(ratio > 0.012 * leverage || (lastColumns[3] < lastColumns[2] && lastColumns[2] < lastColumns[1])){
-                        const holding = {
-                            instrument_id: XRP_INSTRUMENT_ID,
-                            position: Number(longHolding.position),
-                            side: 'long'
+                        const { side, leverage, avg_cost, } = longHolding;
+                        let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+                        console.log(ratio)
+                        if(ratio > 0.006 * leverage || lastColumns[3] < lastColumns[2]){
+                            const holding = {
+                                instrument_id: XRP_INSTRUMENT_ID,
+                                position: Number(longHolding.position),
+                                side: 'long'
+                            }
+                            await closeHalfPosition(holding);
                         }
-                        await closeHalfPosition(holding);
-                        // }
                     }
                 }
             }catch (e){
@@ -1020,11 +1014,7 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            lastDiffDeaList[4].diff <= lastDiffDeaList[4].dea
-            &&
-            lastDiffDeaList[3].diff > lastDiffDeaList[3].dea
-            &&
-            lastColumns[4] > 0
+            lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1043,27 +1033,25 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            lastDiffDeaList[4].diff >= lastDiffDeaList[4].dea
-            &&
-            lastDiffDeaList[3].diff < lastDiffDeaList[3].dea
+            lastColumns[4] > lastColumns[3]
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const shortHolding = tempHolding.find(item=>item.side=="short")
                     if(shortHolding){
-                        // const { side, leverage, avg_cost, } = shortHolding;
-                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // ratio = -ratio
-                        //
-                        // if(ratio > 0.012 * leverage || (lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1])){
-                        const holding = {
-                            instrument_id: XRP_INSTRUMENT_ID,
-                            position: Number(shortHolding.position),
-                            side: 'short'
+                        const { side, leverage, avg_cost, } = shortHolding;
+                        let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+                        ratio = -ratio
+
+                        if(ratio > 0.006 * leverage || lastColumns[3] > lastColumns[2]){
+                            const holding = {
+                                instrument_id: XRP_INSTRUMENT_ID,
+                                position: Number(shortHolding.position),
+                                side: 'short'
+                            }
+                            await closeHalfPosition(holding);
                         }
-                        await closeHalfPosition(holding);
-                        // }
                     }
                 }
             }catch (e){
@@ -1089,7 +1077,7 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 5 * 1)
+    await waitTime(1000 * 5 * 2)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
