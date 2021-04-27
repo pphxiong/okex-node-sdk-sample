@@ -1067,7 +1067,7 @@ const startInterval = async () => {
                         if(
                             ratio > 0.0191 * leverage
                             ||
-                            priceMaxIndex > columnMaxIndex
+                            priceMaxIndex != columnMaxIndex
                         ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
@@ -1128,7 +1128,10 @@ const startInterval = async () => {
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         ratio = -ratio
 
-                        if(ratio > 0.0191 * leverage){
+                        if(ratio > 0.0191 * leverage
+                            ||
+                            priceMinIndex != columnMinIndex
+                        ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
                                 position: Number(shortHolding.position),
