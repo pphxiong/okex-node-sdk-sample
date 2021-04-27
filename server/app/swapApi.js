@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 1;
+let initPosition = LEVERAGE * 1 / 2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -971,7 +971,7 @@ const startInterval = async () => {
             lastColumns[5] > lastColumns[4] && lastColumns[4] > lastColumns[3]
             &&
             lastColumns[3] < lastColumns[2] && lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]
-            // && lastColumns[0] < 0
+            && lastColumns[0] < 0
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1025,7 +1025,7 @@ const startInterval = async () => {
             lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
             &&
             lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
-            // && lastColumns[0] > 0
+            && lastColumns[0] > 0
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
