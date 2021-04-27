@@ -897,7 +897,7 @@ let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 1, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         limit: 100,
         // start,
         // end
