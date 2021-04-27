@@ -896,6 +896,7 @@ function getMaxIndex(arr, key) {
     //声明了个变量 保存下标值
     let index = 0;
     if(key){
+        max = arr[0][key]
         for (let i = 0; i < arr.length; i++) {
             if (max < arr[i][key]) {
                 max = arr[i][key];
@@ -920,6 +921,7 @@ function getMinIndex(arr,key) {
     //声明了个变量 保存下标值
     let index = 0;
     if(key){
+        min = arr[0][key]
         for (let i = 0; i < arr.length; i++) {
             if (min > arr[i][key]) {
                 min = arr[i][key];
