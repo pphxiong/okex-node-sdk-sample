@@ -1014,9 +1014,7 @@ const startInterval = async () => {
 
         const columnsList = columnsObjList.map(item=>item.column)
         const lastColumns = columnsList.slice(-6)
-        const lastDiffDeaList = columnsObjList.slice(-6)
-
-        console.log(lastDiffDeaList)
+        const lasColumnsObjList = columnsObjList.slice(-6)
 
         //开多仓条件
         if(
@@ -1072,8 +1070,8 @@ const startInterval = async () => {
             }
         }
 
-        const priceMaxIndex = getMaxIndex(columnsObjList,"price")
-        const columnMaxIndex = getMaxIndex(columnsList)
+        const priceMaxIndex = getMaxIndex(lasColumnsObjList,"price")
+        const columnMaxIndex = getMaxIndex(lastColumns)
         console.log("index",priceMaxIndex,columnMaxIndex)
         //开空仓条件
         if(
