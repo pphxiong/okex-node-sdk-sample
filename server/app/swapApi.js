@@ -890,6 +890,54 @@ const readData = async () => {
     // }
 }
 
+//获取最大值的下标
+function getMaxIndex(arr, key) {
+    let max = arr[0];
+    //声明了个变量 保存下标值
+    let index = 0;
+    if(key){
+        for (let i = 0; i < arr.length; i++) {
+            if (max < arr[i][key]) {
+                max = arr[i][key];
+                index = i;
+            }
+        }
+    }else{
+        for (let i = 0; i < arr.length; i++) {
+            if (max < arr[i]) {
+                max = arr[i];
+                index = i;
+            }
+        }
+    }
+
+    return index;
+}
+
+//获取最小值的下标
+function getMinIndex(arr,key) {
+    let min = arr[0];
+    //声明了个变量 保存下标值
+    let index = 0;
+    if(key){
+        for (let i = 0; i < arr.length; i++) {
+            if (min > arr[i][key]) {
+                min = arr[i][key];
+                index = i;
+            }
+        }
+    }else{
+        for (let i = 0; i < arr.length; i++) {
+            if (min > arr[i]) {
+                min = arr[i];
+                index = i;
+            }
+        }
+    }
+
+    return index;
+}
+
 let positionChange = true;
 let isOpenMarketPriceChange = true
 let globalBtcHolding = null;
@@ -1020,12 +1068,17 @@ const startInterval = async () => {
             }
         }
 
+        const priceMaxIndex = getMaxIndex(columnsObjList,"price")
+        const columnMaxIndex = getMaxIndex(columnsList)
+        console.log("index",priceMaxIndex,columnMaxIndex)
         //开空仓条件
         if(
-            lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
+            (lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
             &&
             lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
-            && lastColumns[0] > 0
+            && lastColumns[0] > 0)
+            &&
+            priceMaxIndex != columnMaxIndex
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
