@@ -897,7 +897,7 @@ let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 30, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -971,6 +971,8 @@ const startInterval = async () => {
             lastDiffDeaList[4].diff >= lastDiffDeaList[4].dea
             &&
             lastDiffDeaList[3].diff < lastDiffDeaList[3].dea
+            &&
+            lastColumns[4] < 0
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1021,6 +1023,8 @@ const startInterval = async () => {
             lastDiffDeaList[4].diff <= lastDiffDeaList[4].dea
             &&
             lastDiffDeaList[3].diff > lastDiffDeaList[3].dea
+            &&
+            lastColumns[4] > 0
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
