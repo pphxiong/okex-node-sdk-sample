@@ -970,6 +970,7 @@ const startInterval = async () => {
         const column = 2 * (diff - dea)
 
         const result = {
+            price,
             ema12,
             ema26,
             diff,
@@ -990,6 +991,7 @@ const startInterval = async () => {
             let result = {}
             if(index==0) {
                 result = {
+                    price: item,
                     ema12: item,
                     ema26: item,
                     diff: 0,
