@@ -1095,7 +1095,7 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 5)
+    await waitTime(1000 * 4)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
