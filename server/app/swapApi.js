@@ -1020,6 +1020,7 @@ const startInterval = async () => {
         const columnMaxIndex = getMaxIndex(lastColumns)
         const priceMinIndex = getMinIndex(lasColumnsObjList, "price")
         const columnMinIndex = getMinIndex(lasColumnsObjList)
+        console.log(lasColumnsObjList)
         console.log("index",priceMaxIndex,columnMaxIndex)
 
         //开多仓条件
