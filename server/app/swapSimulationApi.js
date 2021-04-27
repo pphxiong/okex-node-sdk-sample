@@ -10,7 +10,7 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
-let XRP_INSTRUMENT_ID = "XRP-USDT-SWAP";
+let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 
@@ -22,7 +22,7 @@ let initPosition = LEVERAGE * 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
-    [XRP_INSTRUMENT_ID]: {
+    [ETH_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
@@ -275,7 +275,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    const instrument_id = XRP_INSTRUMENT_ID;
+    const instrument_id = ETH_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
@@ -311,12 +311,12 @@ const autoOpenOrderSingle = async (params = {}) => {
     // if(instrument_id.includes('BTC')){
     //     availNo = await getAvailNo({ mark_price });
     // }else{
-    //     availNo = await getAvailNo({ val: 10, currency: 'ETH-USD', instrument_id: XRP_INSTRUMENT_ID, mark_price });
+    //     availNo = await getAvailNo({ val: 10, currency: 'ETH-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
     // }
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
-    const instrument_id = XRP_INSTRUMENT_ID;
+    const instrument_id = ETH_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
@@ -367,7 +367,7 @@ const autoOpenOrderSingle = async (params = {}) => {
 // }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = XRP_INSTRUMENT_ID, mark_price}) => {
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = ETH_INSTRUMENT_ID, mark_price}) => {
     const result = await authClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
@@ -554,7 +554,7 @@ const afterLoss = async (holding,type) =>{
 }
 // 平半仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
-    // const { holding: realBtcHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
     const { instrument_id, position, side } = holding;
 
@@ -837,7 +837,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
 const writeData = async () => {
     //将修改后的配置写入文件前需要先转成json字符串格式
-    const continuousObj = continuousMap[XRP_INSTRUMENT_ID];
+    const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
 
     let dataConfig = {
         "openMarketPrice": openMarketPrice.toString(),
@@ -865,7 +865,7 @@ const readData = async () => {
     // if(!isInit){
     let dataConfig =  JSON.parse(fs.readFileSync('./app/configETH.json','utf-8'));
 
-    // const continuousObj = continuousMap[XRP_INSTRUMENT_ID];
+    // const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
     // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
     // continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
     // continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
@@ -904,7 +904,7 @@ const startInterval = async () => {
     }
 
     // if(!globalColumnsObjList){
-    const data = await cAuthClient.swap.getHistory('XRP-USDT-SWAP', payload)
+    const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
@@ -931,7 +931,7 @@ const startInterval = async () => {
     }
 
     if(Array.isArray(globalColumnsObjList)){
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(XRP_INSTRUMENT_ID);
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
         const columnsObjList = []
 
@@ -971,7 +971,7 @@ const startInterval = async () => {
             lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
         ){
             try {
-                const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(!holding || !holding[0] || !Number(holding[0].position)){
                     await autoOpenOtherOrderSingle({ openSide: "long" })
                 }else{
@@ -990,7 +990,7 @@ const startInterval = async () => {
             lastColumns[4] < lastColumns[3]
         ){
             try {
-                const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const longHolding = tempHolding.find(item=>item.side=="long")
                     if(longHolding){
@@ -999,7 +999,7 @@ const startInterval = async () => {
                         console.log(ratio)
                         if(ratio > 0.006 * leverage || lastColumns[3] < lastColumns[2]){
                             const holding = {
-                                instrument_id: XRP_INSTRUMENT_ID,
+                                instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(longHolding.position),
                                 side: 'long'
                             }
@@ -1017,7 +1017,7 @@ const startInterval = async () => {
             lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
         ){
             try {
-                const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(!holding || !holding[0] || !Number(holding[0].position)){
                     await autoOpenOtherOrderSingle({ openSide: "short" })
                 }else{
@@ -1036,7 +1036,7 @@ const startInterval = async () => {
             lastColumns[4] > lastColumns[3]
         ){
             try {
-                const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const shortHolding = tempHolding.find(item=>item.side=="short")
                     if(shortHolding){
@@ -1046,7 +1046,7 @@ const startInterval = async () => {
 
                         if(ratio > 0.006 * leverage || lastColumns[3] > lastColumns[2]){
                             const holding = {
-                                instrument_id: XRP_INSTRUMENT_ID,
+                                instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(shortHolding.position),
                                 side: 'short'
                             }
@@ -1084,7 +1084,7 @@ const startInterval = async () => {
     // if(positionChange){
     //     try{
     //         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
     //         btcHolding = tempBtcHolding
     //         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
     //             openMarketPrice = mark_price
@@ -1093,7 +1093,7 @@ const startInterval = async () => {
     //             await writeData()
     //         }else {
     //             if(isOpenMarketPriceChange){
-    //                 // const { order_info } = await authClient.swap().getOrders(XRP_INSTRUMENT_ID, {state: 2, limit: 1})
+    //                 // const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
     //                 // const { price_avg } = order_info[0]
     //                 // openMarketPrice = price_avg
     //                 await readData()
@@ -1109,7 +1109,7 @@ const startInterval = async () => {
     //     // isInit = false
     // }else{
     //     if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
     //         btcHolding = tempBtcHolding
     //         globalBtcHolding = btcHolding
     //     }
@@ -1125,7 +1125,7 @@ const startInterval = async () => {
     //         await autoOperateSwap([mainHolding,otherHolding],mark_price)
     //     }else{
     //         if(positionChange){
-    //             const { order_info } = await authClient.swap().getOrders(XRP_INSTRUMENT_ID, {state: 2, limit: 1})
+    //             const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
     //             const { price_avg: last, type } = order_info[0]
     //
     //             if(Number(type) < 3){
