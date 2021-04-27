@@ -1016,12 +1016,19 @@ const startInterval = async () => {
         const lastColumns = columnsList.slice(-6)
         const lasColumnsObjList = columnsObjList.slice(-6)
 
+        const priceMaxIndex = getMaxIndex(lasColumnsObjList,"price")
+        const columnMaxIndex = getMaxIndex(lastColumns)
+        const priceMinIndex = getMinIndex(lasColumnsObjList, "price")
+        const columnMinIndex = getMinIndex(lasColumnsObjList)
+        console.log("index",priceMaxIndex,columnMaxIndex)
+
         //开多仓条件
         if(
             lastColumns[5] > lastColumns[4] && lastColumns[4] > lastColumns[3]
             &&
-            lastColumns[3] < lastColumns[2] && lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]
-            && lastColumns[0] < 0
+            lastColumns[3] < lastColumns[2]
+            && lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]
+            && (lastColumns[0] < 0 || priceMinIndex != columnMinIndex)
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1046,7 +1053,9 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
+            lastColumns[4] < lastColumns[3]
+            &&
+            (lastColumns[5] < lastColumns[4] || priceMaxIndex != columnMaxIndex)
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1055,7 +1064,11 @@ const startInterval = async () => {
                     if(longHolding){
                         const { side, leverage, avg_cost, } = longHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        if(ratio > 0.0191 * leverage){
+                        if(
+                            ratio > 0.0191 * leverage
+                            ||
+                            priceMaxIndex > columnMaxIndex
+                        ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
                                 position: Number(longHolding.position),
@@ -1070,17 +1083,14 @@ const startInterval = async () => {
             }
         }
 
-        const priceMaxIndex = getMaxIndex(lasColumnsObjList,"price")
-        const columnMaxIndex = getMaxIndex(lastColumns)
-        console.log("index",priceMaxIndex,columnMaxIndex)
         //开空仓条件
         if(
             (lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
             &&
-            lastColumns[3] > lastColumns[2] && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
-            && lastColumns[0] > 0)
-            &&
-            priceMaxIndex != columnMaxIndex
+            lastColumns[3] > lastColumns[2]
+            && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
+            && (lastColumns[0] > 0 || priceMaxIndex != columnMaxIndex)
+            )
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1106,7 +1116,8 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            lastColumns[5] > lastColumns[4] && lastColumns[4] > lastColumns[3]
+            lastColumns[4] > lastColumns[3]
+            && (lastColumns[5] > lastColumns[4] || priceMinIndex != columnMinIndex)
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
