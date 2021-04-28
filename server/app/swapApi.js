@@ -1014,22 +1014,34 @@ const startInterval = async () => {
 
         const columnsList = columnsObjList.map(item=>item.column)
         const lastColumns = columnsList.slice(-6)
-        const lasColumnsObjList = columnsObjList.slice(-6)
+        const lastColumnsObjList = columnsObjList.slice(-6)
 
-        const priceMaxIndex = getMaxIndex(lasColumnsObjList,"price")
-        const columnMaxIndex = getMaxIndex(lastColumns)
-        const priceMinIndex = getMinIndex(lasColumnsObjList, "price")
-        const columnMinIndex = getMinIndex(lasColumnsObjList)
-        console.log(lasColumnsObjList)
-        console.log("index",priceMaxIndex,columnMaxIndex)
+        // const priceMaxIndex = getMaxIndex(lastColumnsObjList,"price")
+        // const columnMaxIndex = getMaxIndex(lastColumns)
+        // const priceMinIndex = getMinIndex(lastColumnsObjList, "price")
+        // const columnMinIndex = getMinIndex(lastColumnsObjList)
+        // console.log("index",priceMaxIndex,columnMaxIndex)
 
+        console.log("3",lastColumnsObjList[3])
+        console.log("5",lastColumnsObjList[5])
+        // macd -0.00141 dif -0.0027
+        // dif 0.00468 dea 0.00366
         //开多仓条件
         if(
             lastColumns[5] > lastColumns[4] && lastColumns[4] > lastColumns[3]
             &&
             lastColumns[3] < lastColumns[2]
             && lastColumns[2] < lastColumns[1] && lastColumns[1] < lastColumns[0]
-            && (lastColumns[0] < 0 || priceMinIndex != columnMinIndex)
+            &&
+            (
+                !(lastColumnsObjList[3].column > 0
+                &&
+                lastColumnsObjList[3].dea / lastColumnsObjList[3].diff < 0.618)
+            )
+            // && (
+            //     lastColumns[0] < 0
+            // // || priceMinIndex != columnMinIndex
+            // )
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1056,7 +1068,9 @@ const startInterval = async () => {
         if(
             lastColumns[4] < lastColumns[3]
             &&
-            (lastColumns[5] < lastColumns[4] || priceMaxIndex != columnMaxIndex)
+            (lastColumns[5] < lastColumns[4]
+                // || priceMaxIndex != columnMaxIndex
+            )
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1067,8 +1081,8 @@ const startInterval = async () => {
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         if(
                             ratio > 0.0191 * leverage
-                            ||
-                            priceMaxIndex != columnMaxIndex
+                            // ||
+                            // priceMaxIndex != columnMaxIndex
                         ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
@@ -1086,11 +1100,15 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            (lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
+            lastColumns[5] < lastColumns[4] && lastColumns[4] < lastColumns[3]
             &&
             lastColumns[3] > lastColumns[2]
             && lastColumns[2] > lastColumns[1] && lastColumns[1] > lastColumns[0]
-            && (lastColumns[0] > 0 || priceMaxIndex != columnMaxIndex)
+            &&
+            (
+                !(lastColumnsObjList[3].column < 0
+                    &&
+                    lastColumnsObjList[3].dea / lastColumnsObjList[3].diff < 0.618)
             )
         ){
             try {
@@ -1118,7 +1136,10 @@ const startInterval = async () => {
         //平空仓条件
         if(
             lastColumns[4] > lastColumns[3]
-            && (lastColumns[5] > lastColumns[4] || priceMinIndex != columnMinIndex)
+            && (
+                lastColumns[5] > lastColumns[4]
+            // || priceMinIndex != columnMinIndex
+            )
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(XRP_INSTRUMENT_ID);
@@ -1130,8 +1151,8 @@ const startInterval = async () => {
                         ratio = -ratio
 
                         if(ratio > 0.0191 * leverage
-                            ||
-                            priceMinIndex != columnMinIndex
+                            // ||
+                            // priceMinIndex != columnMinIndex
                         ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
