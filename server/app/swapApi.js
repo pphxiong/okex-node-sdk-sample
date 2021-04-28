@@ -1023,7 +1023,8 @@ const startInterval = async () => {
         // console.log("index",priceMaxIndex,columnMaxIndex)
 
         console.log("3",lastColumnsObjList[3])
-        console.log("5",lastColumnsObjList[5])
+        console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
+        // console.log("5",lastColumnsObjList[5])
         // macd -0.00141 dif -0.0027
         // dif 0.00468 dea 0.00366
         //开多仓条件
