@@ -1078,12 +1078,12 @@ const startInterval = async () => {
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const longHolding = tempHolding.find(item=>item.side=="long")
                     if(longHolding){
-                        const { side, leverage, avg_cost, } = longHolding;
+                        const { position, leverage, avg_cost, } = longHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         if(
                             ratio > 0.0191 * leverage
-                            // ||
-                            // priceMaxIndex != columnMaxIndex
+                            ||
+                            (ratio > 0.02 && Number(position) > initPosition)
                         ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
@@ -1147,13 +1147,13 @@ const startInterval = async () => {
                 if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
                     const shortHolding = tempHolding.find(item=>item.side=="short")
                     if(shortHolding){
-                        const { side, leverage, avg_cost, } = shortHolding;
+                        const { position, leverage, avg_cost, } = shortHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         ratio = -ratio
 
                         if(ratio > 0.0191 * leverage
-                            // ||
-                            // priceMinIndex != columnMinIndex
+                            ||
+                            (ratio > 0.02 && Number(position) > initPosition)
                         ){
                             const holding = {
                                 instrument_id: XRP_INSTRUMENT_ID,
