@@ -981,7 +981,7 @@ const startInterval = async () => {
 
     // 获取index前的最大值
     function getMax(index,beforeNum,list){
-        const startIndex = (index - beforeNum) || 0
+        const startIndex = (index - beforeNum) > 0 ? (index - beforeNum) : 0
         const endIndex = index
         const newList = list.slice(startIndex,endIndex)
         return Math.max(...newList)
@@ -989,7 +989,7 @@ const startInterval = async () => {
 
     // 获取index前的最小值
     function getMin(index,beforeNum,list){
-        const startIndex = (index - beforeNum) || 0
+        const startIndex = (index - beforeNum) > 0 ? (index - beforeNum) : 0
         const endIndex = index
         const newList = list.slice(startIndex,endIndex)
         return Math.min(...newList)
