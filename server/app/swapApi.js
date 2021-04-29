@@ -1070,6 +1070,7 @@ const startInterval = async () => {
         const lastColumnsObjList = columnsObjList.slice(-6)
         console.log(lastColumnsObjList)
 
+
         // const columnsList = columnsObjList.map(item=>item.column)
         // const lastColumns = columnsList.slice(-6)
         // const lastColumnsObjList = columnsObjList.slice(-6)
