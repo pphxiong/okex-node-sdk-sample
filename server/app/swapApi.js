@@ -1056,7 +1056,7 @@ const startInterval = async () => {
                 const payload = {
                     close: item,
                     high: getMax(index,9,highAllList),
-                    low: getMin(index,9,highAllList),
+                    low: getMin(index,9,lowAllList),
                     lastK: lastResult.K,
                     lastD: lastResult.D,
                     lastJ: lastResult.J,
