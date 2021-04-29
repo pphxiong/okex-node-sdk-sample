@@ -10,7 +10,7 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
-let XRP_INSTRUMENT_ID = "XRP-USDT-SWAP";
+let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 
