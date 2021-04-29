@@ -970,7 +970,7 @@ const startInterval = async () => {
         // J值=3*第9日K值-2*第9日D值
 
         const { close, low, high, lastK, lastD } = params
-        const RSV = (close-low) / (high-close) * 100
+        const RSV = (close-low) / (high-low) * 100
 
         const K = 2/3 * lastK + 1/3 * RSV
         const D = 2/3 * lastD + 1/3 * K
@@ -1069,7 +1069,6 @@ const startInterval = async () => {
 
         const lastColumnsObjList = columnsObjList.slice(-6)
         console.log(lastColumnsObjList)
-        console.log(getMax(9,9,highAllList),)
 
         // const columnsList = columnsObjList.map(item=>item.column)
         // const lastColumns = columnsList.slice(-6)
