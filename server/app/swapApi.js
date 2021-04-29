@@ -1068,8 +1068,9 @@ const startInterval = async () => {
         })
 
         const lastColumnsObjList = columnsObjList.slice(-6)
-        console.log(lastColumnsObjList)
+        // console.log(lastColumnsObjList)
 
+        console.log(getMax(9,9,highAllList),)
 
         // const columnsList = columnsObjList.map(item=>item.column)
         // const lastColumns = columnsList.slice(-6)
