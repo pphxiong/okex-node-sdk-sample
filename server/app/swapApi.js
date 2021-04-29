@@ -982,7 +982,7 @@ const startInterval = async () => {
     // 获取index前的最大值
     function getMax(index,beforeNum,list){
         const startIndex = (index - beforeNum) > 0 ? (index - beforeNum) : 0
-        const endIndex = index
+        const endIndex = index + 1
         const newList = list.slice(startIndex,endIndex)
         return Math.max(...newList)
     }
@@ -1068,8 +1068,7 @@ const startInterval = async () => {
         })
 
         const lastColumnsObjList = columnsObjList.slice(-6)
-        // console.log(lastColumnsObjList)
-
+        console.log(lastColumnsObjList)
         console.log(getMax(9,9,highAllList),)
 
         // const columnsList = columnsObjList.map(item=>item.column)
