@@ -1069,8 +1069,8 @@ const startInterval = async () => {
 
         const lastKdj = columnsObjList[columnsObjList.length-1]
 
-        const lastColumnsObjList = columnsObjList.slice(-2)
-        console.log(lastColumnsObjList)
+        const lastColumnsObjList = columnsObjList.slice(-3)
+        // console.log(lastColumnsObjList)
 
         // const columnsList = columnsObjList.map(item=>item.column)
         // const lastColumns = columnsList.slice(-6)
@@ -1084,17 +1084,17 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            lastKdj.J < 20
+            lastColumnsObjList[1].K < 30
             &&
-            lastKdj.K < 25
+            lastColumnsObjList[1].D < 30
             &&
-            lastKdj.D < 25
+            lastColumnsObjList[1].J < 30
             &&
-            (lastColumnsObjList[0].K < lastColumnsObjList[1].K)
+            (lastColumnsObjList[1].K < lastKdj.K)
             &&
-            (lastColumnsObjList[0].D < lastColumnsObjList[1].D)
+            (lastColumnsObjList[1].D < lastKdj.D)
             &&
-            (lastColumnsObjList[0].J < lastColumnsObjList[1].J)
+            (lastColumnsObjList[1].J < lastKdj.J)
             // && (
             //     lastColumns[0] < 0
             // // || priceMinIndex != columnMinIndex
@@ -1123,11 +1123,11 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (lastColumnsObjList[0].K > lastColumnsObjList[1].K)
+            (lastColumnsObjList[1].K > lastKdj.K)
             &&
-            (lastColumnsObjList[0].D > lastColumnsObjList[1].D)
+            (lastColumnsObjList[1].D > lastKdj.D)
             &&
-            (lastColumnsObjList[0].J > lastColumnsObjList[1].J)
+            (lastColumnsObjList[1].J > lastKdj.J)
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1137,13 +1137,13 @@ const startInterval = async () => {
                         const { position, leverage, avg_cost, } = longHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         if(
-                            (lastKdj.J > 80
+                            (lastColumnsObjList[1].K > 75
                             &&
-                            lastKdj.K > 75
+                            lastColumnsObjList[1].D > 75
                             &&
-                            lastKdj.D > 75)
+                            lastColumnsObjList[1].J > 75)
                             ||
-                            ratio > 0.01 * leverage
+                            ratio > 0.006 * leverage
                             // ||
                             // (ratio > 0.02 && Number(position) > initPosition)
                         ){
@@ -1163,17 +1163,17 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            lastKdj.J > 85
+            lastColumnsObjList[1].K > 75
             &&
-            lastKdj.K > 80
+            lastColumnsObjList[1].D > 75
             &&
-            lastKdj.D > 80
+            lastColumnsObjList[1].J > 75
             &&
-            (lastColumnsObjList[0].K > lastColumnsObjList[1].K)
+            (lastColumnsObjList[1].K > lastKdj.K)
             &&
-            (lastColumnsObjList[0].D > lastColumnsObjList[1].D)
+            (lastColumnsObjList[1].D > lastKdj.D)
             &&
-            (lastColumnsObjList[0].J > lastColumnsObjList[1].J)
+            (lastColumnsObjList[1].J > lastKdj.J)
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1199,11 +1199,11 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            (lastColumnsObjList[0].K < lastColumnsObjList[1].K)
+            (lastColumnsObjList[1].K < lastKdj.K)
             &&
-            (lastColumnsObjList[0].D < lastColumnsObjList[1].D)
+            (lastColumnsObjList[1].D < lastKdj.D)
             &&
-            (lastColumnsObjList[0].J < lastColumnsObjList[1].J)
+            (lastColumnsObjList[1].J < lastKdj.J)
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1215,13 +1215,13 @@ const startInterval = async () => {
                         ratio = -ratio
 
                         if(
-                            (lastKdj.J < 20
+                            (lastColumnsObjList[1].K < 30
                                 &&
-                                lastKdj.K < 25
+                                lastColumnsObjList[1].D < 30
                                 &&
-                                lastKdj.D < 25)
+                                lastColumnsObjList[1].J < 30)
                             ||
-                            ratio > 0.01 * leverage
+                            ratio > 0.006 * leverage
                             // ||
                             // (ratio > 0.02 && Number(position) > initPosition)
                         ){
