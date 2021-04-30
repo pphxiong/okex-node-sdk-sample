@@ -1088,7 +1088,7 @@ const startInterval = async () => {
             &&
             lastColumnsObjList[1].D < 30
             &&
-            lastColumnsObjList[1].J < 30
+            lastColumnsObjList[1].J < 50
             &&
             (lastColumnsObjList[1].K < lastKdj.K)
             &&
@@ -1219,7 +1219,7 @@ const startInterval = async () => {
                                 &&
                                 lastColumnsObjList[1].D < 30
                                 &&
-                                lastColumnsObjList[1].J < 30)
+                                lastColumnsObjList[1].J < 50)
                             ||
                             ratio > 0.006 * leverage
                             // ||
