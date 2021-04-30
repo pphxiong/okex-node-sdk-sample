@@ -948,7 +948,7 @@ let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 3, // 单位为秒
-        // limit: 300,
+        limit: 100,
         // start,
         // end
     }
@@ -1070,7 +1070,7 @@ const startInterval = async () => {
         const lastKdj = columnsObjList[columnsObjList.length-1]
 
         const lastColumnsObjList = columnsObjList.slice(-3)
-        // console.log(lastColumnsObjList)
+        console.log(lastColumnsObjList)
 
         // const columnsList = columnsObjList.map(item=>item.column)
         // const lastColumns = columnsList.slice(-6)
@@ -1257,7 +1257,7 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 4)
+    await waitTime(1000 * 5)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
