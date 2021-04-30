@@ -948,7 +948,7 @@ let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 3, // 单位为秒
-        limit: 100,
+        // limit: 100,
         // start,
         // end
     }
