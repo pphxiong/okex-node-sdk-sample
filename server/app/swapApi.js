@@ -947,7 +947,7 @@ let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1084,11 +1084,17 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            lastColumnsObjList[1].K < 30
+            lastColumnsObjList[1].K < 35
             &&
-            lastColumnsObjList[1].D < 30
+            lastColumnsObjList[1].D < 35
             &&
             lastColumnsObjList[1].J < 50
+            &&
+            (lastColumnsObjList[0].K < lastColumnsObjList[1].K)
+            &&
+            (lastColumnsObjList[0].D < lastColumnsObjList[1].D)
+            &&
+            (lastColumnsObjList[0].J < lastColumnsObjList[1].J)
             &&
             (lastColumnsObjList[1].K < lastKdj.K)
             &&
@@ -1128,6 +1134,12 @@ const startInterval = async () => {
             (lastColumnsObjList[1].D > lastKdj.D)
             &&
             (lastColumnsObjList[1].J > lastKdj.J)
+            &&
+            (lastColumnsObjList[0].K > lastColumnsObjList[1].K)
+            &&
+            (lastColumnsObjList[0].D > lastColumnsObjList[1].D)
+            &&
+            (lastColumnsObjList[0].J > lastColumnsObjList[1].J)
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1136,24 +1148,22 @@ const startInterval = async () => {
                     if(longHolding){
                         const { position, leverage, avg_cost, } = longHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        if(
-                            (lastColumnsObjList[1].K > 75
-                            &&
-                            lastColumnsObjList[1].D > 75
-                            &&
-                            lastColumnsObjList[1].J > 75)
-                            ||
-                            ratio > 0.006 * leverage
-                            // ||
-                            // (ratio > 0.02 && Number(position) > initPosition)
-                        ){
+                        // if(
+                        //     // (lastColumnsObjList[1].K > 75
+                        //     // &&
+                        //     // lastColumnsObjList[1].D > 75
+                        //     // &&
+                        //     // lastColumnsObjList[1].J > 75)
+                        //     // ||
+                        //     ratio > 0.006 * leverage
+                        // ){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(longHolding.position),
                                 side: 'long'
                             }
                             await closeHalfPosition(holding);
-                        }
+                        // }
                     }
                 }
             }catch (e){
@@ -1174,6 +1184,12 @@ const startInterval = async () => {
             (lastColumnsObjList[1].D > lastKdj.D)
             &&
             (lastColumnsObjList[1].J > lastKdj.J)
+            &&
+            (lastColumnsObjList[0].K > lastColumnsObjList[1].K)
+            &&
+            (lastColumnsObjList[0].D > lastColumnsObjList[1].D)
+            &&
+            (lastColumnsObjList[0].J > lastColumnsObjList[1].J)
         ){
             try {
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1204,6 +1220,12 @@ const startInterval = async () => {
             (lastColumnsObjList[1].D < lastKdj.D)
             &&
             (lastColumnsObjList[1].J < lastKdj.J)
+            &&
+            (lastColumnsObjList[0].K < lastColumnsObjList[1].K)
+            &&
+            (lastColumnsObjList[0].D < lastColumnsObjList[1].D)
+            &&
+            (lastColumnsObjList[0].J < lastColumnsObjList[1].J)
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1214,24 +1236,24 @@ const startInterval = async () => {
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         ratio = -ratio
 
-                        if(
-                            (lastColumnsObjList[1].K < 30
-                                &&
-                                lastColumnsObjList[1].D < 30
-                                &&
-                                lastColumnsObjList[1].J < 50)
-                            ||
-                            ratio > 0.006 * leverage
-                            // ||
-                            // (ratio > 0.02 && Number(position) > initPosition)
-                        ){
+                        // if(
+                        //     (lastColumnsObjList[1].K < 30
+                        //         &&
+                        //         lastColumnsObjList[1].D < 30
+                        //         &&
+                        //         lastColumnsObjList[1].J < 50)
+                        //     ||
+                        //     ratio > 0.006 * leverage
+                        //     // ||
+                        //     // (ratio > 0.02 && Number(position) > initPosition)
+                        // ){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(shortHolding.position),
                                 side: 'short'
                             }
                             await closeHalfPosition(holding);
-                        }
+                        // }
                     }
                 }
             }catch (e){
@@ -1257,7 +1279,7 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 5)
+    await waitTime(1000 * 10)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
