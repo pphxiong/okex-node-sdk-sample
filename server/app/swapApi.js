@@ -1148,22 +1148,22 @@ const startInterval = async () => {
                     if(longHolding){
                         const { position, leverage, avg_cost, } = longHolding;
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // if(
+                        if(
                         //     // (lastColumnsObjList[1].K > 75
                         //     // &&
                         //     // lastColumnsObjList[1].D > 75
                         //     // &&
                         //     // lastColumnsObjList[1].J > 75)
                         //     // ||
-                        //     ratio > 0.006 * leverage
-                        // ){
+                            ratio > 0.012 * leverage
+                        ){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(longHolding.position),
                                 side: 'long'
                             }
                             await closeHalfPosition(holding);
-                        // }
+                        }
                     }
                 }
             }catch (e){
@@ -1236,24 +1236,24 @@ const startInterval = async () => {
                         let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
                         ratio = -ratio
 
-                        // if(
+                        if(
                         //     (lastColumnsObjList[1].K < 30
                         //         &&
                         //         lastColumnsObjList[1].D < 30
                         //         &&
                         //         lastColumnsObjList[1].J < 50)
                         //     ||
-                        //     ratio > 0.006 * leverage
+                            ratio > 0.012 * leverage
                         //     // ||
                         //     // (ratio > 0.02 && Number(position) > initPosition)
-                        // ){
+                        ){
                             const holding = {
                                 instrument_id: ETH_INSTRUMENT_ID,
                                 position: Number(shortHolding.position),
                                 side: 'short'
                             }
                             await closeHalfPosition(holding);
-                        // }
+                        }
                     }
                 }
             }catch (e){
