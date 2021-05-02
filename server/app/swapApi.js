@@ -947,7 +947,7 @@ let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1173,11 +1173,11 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            lastColumnsObjList[1].K > 75
+            lastColumnsObjList[1].K > 65
             &&
-            lastColumnsObjList[1].D > 75
+            lastColumnsObjList[1].D > 65
             &&
-            lastColumnsObjList[1].J > 75
+            lastColumnsObjList[1].J > 70
             &&
             (lastColumnsObjList[1].K > lastKdj.K)
             &&
