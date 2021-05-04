@@ -1022,8 +1022,8 @@ const startInterval = async () => {
         // const columnMinIndex = getMinIndex(lastColumnsObjList)
         // console.log("index",priceMaxIndex,columnMaxIndex)
 
-        console.log("3",lastColumnsObjList[3])
-        console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
+        console.log(lastColumnsObjList)
+        // console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
         // console.log("5",lastColumnsObjList[5])
         // macd -0.00141 dif -0.0027
         // dif 0.00468 dea 0.00366
@@ -1085,63 +1085,63 @@ const startInterval = async () => {
         }
 
         //开空仓条件
-        // if(
-        //     lastColumns[5] < 0
-        //     &&
-        //     lastColumns[4] > 0
-        // ){
-        //     try {
-        //         const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-        //         if(!holding || !holding[0] || !Number(holding[0].position)){
-        //             await autoOpenOtherOrderSingle({ openSide: "short" })
-        //         }else{
-        //             const shortHolding = holding.find(item=>item.side=="short")
-        //             if(shortHolding){
-        //                 // const { side, leverage, avg_cost, } = shortHolding;
-        //                 // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-        //                 // ratio = - ratio
-        //                 // if(ratio < - 0.0191 * leverage) {
-        //                 //     await autoOpenOtherOrderSingle({ openSide: "short" })
-        //                 // }
-        //             }else{
-        //                 await autoOpenOtherOrderSingle({ openSide: "short" })
-        //             }
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     lastColumns[5] > 0
-        // ){
-        //     try {
-        //         const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-        //         if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-        //             const shortHolding = tempHolding.find(item=>item.side=="short")
-        //             if(shortHolding){
-        //                 // const { position, leverage, avg_cost, } = shortHolding;
-        //                 // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-        //                 // ratio = -ratio
-        //                 //
-        //                 // if(ratio > 0.0191 * leverage
-        //                 //     ||
-        //                 //     (ratio > 0.02 && Number(position) > initPosition)
-        //                 // ){
-        //                     const holding = {
-        //                         instrument_id: ETH_INSTRUMENT_ID,
-        //                         position: Number(shortHolding.position),
-        //                         side: 'short'
-        //                     }
-        //                     await closeHalfPosition(holding);
-        //                 // }
-        //             }
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        if(
+            lastColumns[5] < 0
+            &&
+            lastColumns[4] > 0
+        ){
+            try {
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(!holding || !holding[0] || !Number(holding[0].position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }else{
+                    const shortHolding = holding.find(item=>item.side=="short")
+                    if(shortHolding){
+                        // const { side, leverage, avg_cost, } = shortHolding;
+                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+                        // ratio = - ratio
+                        // if(ratio < - 0.0191 * leverage) {
+                        //     await autoOpenOtherOrderSingle({ openSide: "short" })
+                        // }
+                    }else{
+                        await autoOpenOtherOrderSingle({ openSide: "short" })
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            lastColumns[5] > 0
+        ){
+            try {
+                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
+                    const shortHolding = tempHolding.find(item=>item.side=="short")
+                    if(shortHolding){
+                        // const { position, leverage, avg_cost, } = shortHolding;
+                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+                        // ratio = -ratio
+                        //
+                        // if(ratio > 0.0191 * leverage
+                        //     ||
+                        //     (ratio > 0.02 && Number(position) > initPosition)
+                        // ){
+                            const holding = {
+                                instrument_id: ETH_INSTRUMENT_ID,
+                                position: Number(shortHolding.position),
+                                side: 'short'
+                            }
+                            await closeHalfPosition(holding);
+                        // }
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
