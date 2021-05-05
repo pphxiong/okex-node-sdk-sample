@@ -1056,6 +1056,7 @@ const startInterval = async () => {
             shortRatio = - shortRatio
         }
 
+        console.log(lastColumnsObjList)
         console.log(longRatio,shortRatio)
         // console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
         // console.log("5",lastColumnsObjList[5])
@@ -1069,6 +1070,14 @@ const startInterval = async () => {
             lastColumns[4] > 0
             &&
             lastColumns[3] < 0
+            &&
+            lastColumnsObjList[4].diff > lastColumnsObjList[3].diff
+            &&
+            lastColumnsObjList[4].dea > lastColumnsObjList[3].dea
+            &&
+            lastColumnsObjList[4].diff < 0
+            &&
+            lastColumnsObjList[4].dea < 0
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1108,6 +1117,14 @@ const startInterval = async () => {
             lastColumns[4] < 0
             &&
             lastColumns[3] > 0
+            &&
+            lastColumnsObjList[4].diff < lastColumnsObjList[3].diff
+            &&
+            lastColumnsObjList[4].dea < lastColumnsObjList[3].dea
+            &&
+            lastColumnsObjList[4].diff > 0
+            &&
+            lastColumnsObjList[4].dea > 0
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
