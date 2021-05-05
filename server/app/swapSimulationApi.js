@@ -275,16 +275,16 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
     const instrument_id = EOS_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
-        order_type: 2, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+        order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
         instrument_id,
-        price: mark_price,
-        match_price: 0
+        // price: mark_price,
+        // match_price: 0
     }
 
     try{
@@ -560,15 +560,15 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
     const { instrument_id = EOS_INSTRUMENT_ID, position, side } = holding;
 
-    const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
     const payload = {
         size: Math.ceil(Number(position)),
         type: side == 'long' ? 3 : 4,
         instrument_id,
-        order_type: 2,
-        price: mark_price,
-        match_price: 0
+        order_type: 4,
+        // price: mark_price,
+        // match_price: 0
     }
 
     await authClient.swap().postOrder(payload)
@@ -1080,6 +1080,8 @@ const startInterval = async () => {
         //平多仓条件
         if(
             lastColumns[5] < 0
+            &&
+            lastColumns[4] < 0
             // ||
             // longRatio > 0.01 * 10
         ){
@@ -1115,6 +1117,8 @@ const startInterval = async () => {
         //平空仓条件
         if(
             lastColumns[5] > 0
+            &&
+            lastColumns[4] > 0
             // ||
             // shortRatio > 0.01 * 10
         ){
