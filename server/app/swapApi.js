@@ -1027,10 +1027,15 @@ const startInterval = async () => {
         // console.log("index",priceMaxIndex,columnMaxIndex)
 
         const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-        const longHolding = holding.find(item=>item.side=="long")
-        const shortHolding = holding.find(item=>item.side=="short")
+        let longHolding;
+        let shortHolding
         let longRatio = 0
         let shortRatio = 0
+
+        if(holding){
+            longHolding = holding.find(item=>item.side=="long")
+            shortHolding = holding.find(item=>item.side=="short")
+        }
 
         if(longHolding){
             const { position, leverage, avg_cost, } = holding;
