@@ -8,9 +8,9 @@ const customAuthClient = require('./customAuthClient');
 const fs = require('fs');
 
 //读取配置文件，变量config的类型是Object类型
-// let dataConfig = require('./configETH.json');
+// let dataConfig = require('./configDOGE.json');
 
-let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
+let DOGE_INSTRUMENT_ID = "DOGE-USDT-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 
@@ -18,11 +18,11 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 1;
+let initPosition = LEVERAGE * 1 / 2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
-    [ETH_INSTRUMENT_ID]: {
+    [DOGE_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
@@ -60,7 +60,7 @@ function send(res, ret) {
 app.all('*', function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-    res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-MDOGEods', 'PUT,POST,GET,DELETE,OPTIONS');
     res.header('X-Powered-By', ' 3.2.1');
     res.header('Content-Type', 'application/json;charset=utf-8');
     next();
@@ -250,7 +250,7 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
-const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id, type = 0}) => {
+const validateAndCancelOrder = async ({instrument_id = DOGE_INSTRUMENT_ID, order_id: origin_order_id, type = 0}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3})
     console.log('cancelorder', instrument_id, order_info.length, origin_order_id)
     if( order_info && order_info.length ){
@@ -275,14 +275,16 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    const instrument_id = ETH_INSTRUMENT_ID;
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(DOGE_INSTRUMENT_ID);
+
+    const instrument_id = DOGE_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
-        order_type: 4, //1：只做Maker 4：市价委托
+        order_type: 2, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
         instrument_id,
-        // price: mark_price,
-        // match_price: 0
+        price: mark_price,
+        match_price: 0
     }
 
     try{
@@ -311,12 +313,12 @@ const autoOpenOrderSingle = async (params = {}) => {
     // if(instrument_id.includes('BTC')){
     //     availNo = await getAvailNo({ mark_price });
     // }else{
-    //     availNo = await getAvailNo({ val: 10, currency: 'ETH-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
+    //     availNo = await getAvailNo({ val: 10, currency: 'DOGE-USD', instrument_id: DOGE_INSTRUMENT_ID, mark_price });
     // }
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
-    const instrument_id = ETH_INSTRUMENT_ID;
+    const instrument_id = DOGE_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
@@ -367,7 +369,7 @@ const autoOpenOrderSingle = async (params = {}) => {
 // }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = ETH_INSTRUMENT_ID, mark_price}) => {
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = DOGE_INSTRUMENT_ID, mark_price}) => {
     const result = await authClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
@@ -552,19 +554,21 @@ const afterLoss = async (holding,type) =>{
     await autoOpenOrderSingle(payload);
 
 }
-// 平半仓
+// 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
-    // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(DOGE_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
-    const { instrument_id, position, side } = holding;
+    const { instrument_id = DOGE_INSTRUMENT_ID, position, side } = holding;
+
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(DOGE_INSTRUMENT_ID);
 
     const payload = {
         size: Math.ceil(Number(position)),
         type: side == 'long' ? 3 : 4,
         instrument_id,
-        order_type: 4,
-        // price: mark_price,
-        // match_price: 0
+        order_type: 2,
+        price: mark_price,
+        match_price: 0
     }
 
     await authClient.swap().postOrder(payload)
@@ -837,7 +841,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
 const writeData = async () => {
     //将修改后的配置写入文件前需要先转成json字符串格式
-    const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
+    const continuousObj = continuousMap[DOGE_INSTRUMENT_ID];
 
     let dataConfig = {
         "openMarketPrice": openMarketPrice.toString(),
@@ -847,7 +851,7 @@ const writeData = async () => {
 
     const result = await new Promise(resolve=>{
         //将修改后的内容写入文件
-        fs.writeFile('./app/configETH.json', jsonStr, function(err) {
+        fs.writeFile('./app/configDOGE.json', jsonStr, function(err) {
             if (err) {
                 console.error(err);
             }else{
@@ -863,9 +867,9 @@ const writeData = async () => {
 // let isInit = true
 const readData = async () => {
     // if(!isInit){
-    let dataConfig =  JSON.parse(fs.readFileSync('./app/configETH.json','utf-8'));
+    let dataConfig =  JSON.parse(fs.readFileSync('./app/configDOGE.json','utf-8'));
 
-    // const continuousObj = continuousMap[ETH_INSTRUMENT_ID];
+    // const continuousObj = continuousMap[DOGE_INSTRUMENT_ID];
     // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
     // continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
     // continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
@@ -890,21 +894,70 @@ const readData = async () => {
     // }
 }
 
+//获取最大值的下标
+function getMaxIndex(arr, key) {
+    let max = arr[0];
+    //声明了个变量 保存下标值
+    let index = 0;
+    if(key){
+        max = arr[0][key]
+        for (let i = 0; i < arr.length; i++) {
+            if (max < arr[i][key]) {
+                max = arr[i][key];
+                index = i;
+            }
+        }
+    }else{
+        for (let i = 0; i < arr.length; i++) {
+            if (max < arr[i]) {
+                max = arr[i];
+                index = i;
+            }
+        }
+    }
+
+    return index;
+}
+
+//获取最小值的下标
+function getMinIndex(arr,key) {
+    let min = arr[0];
+    //声明了个变量 保存下标值
+    let index = 0;
+    if(key){
+        min = arr[0][key]
+        for (let i = 0; i < arr.length; i++) {
+            if (min > arr[i][key]) {
+                min = arr[i][key];
+                index = i;
+            }
+        }
+    }else{
+        for (let i = 0; i < arr.length; i++) {
+            if (min > arr[i]) {
+                min = arr[i];
+                index = i;
+            }
+        }
+    }
+
+    return index;
+}
+
 let positionChange = true;
-let isOpenMarketPriceChange = true
-let globalBtcHolding = null;
+let globalHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         limit: 100,
         // start,
         // end
     }
 
     // if(!globalColumnsObjList){
-    const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+    const data = await cAuthClient.swap.gDOGEistory('DOGE-USDT-SWAP', payload)
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
@@ -920,6 +973,7 @@ const startInterval = async () => {
         const column = 2 * (diff - dea)
 
         const result = {
+            price,
             ema12,
             ema26,
             diff,
@@ -931,15 +985,16 @@ const startInterval = async () => {
     }
 
     if(Array.isArray(globalColumnsObjList)){
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(DOGE_INSTRUMENT_ID);
 
         const columnsObjList = []
 
         globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
-        //     globalColumnsObjList.map((item,index)=>{
+            // globalColumnsObjList.map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
+                    price: item,
                     ema12: item,
                     ema26: item,
                     diff: 0,
@@ -961,24 +1016,61 @@ const startInterval = async () => {
         })
 
         const columnsList = columnsObjList.map(item=>item.column)
-        const lastColumns = columnsList.slice(-5)
-        const lastDiffDeaList = columnsObjList.slice(-5)
+        const lastColumns = columnsList.slice(-6)
+        const lastColumnsObjList = columnsObjList.slice(-6)
 
-        console.log(lastDiffDeaList)
+        // const priceMaxIndex = getMaxIndex(lastColumnsObjList,"price")
+        // const columnMaxIndex = getMaxIndex(lastColumns)
+        // const priceMinIndex = getMinIndex(lastColumnsObjList, "price")
+        // const columnMinIndex = getMinIndex(lastColumnsObjList)
+        // console.log("index",priceMaxIndex,columnMaxIndex)
+
+
+        let holding = globalHolding
+        if(positionChange || !holding){
+            const result = await authClient.swap().getPosition(DOGE_INSTRUMENT_ID);
+            holding = result.holding
+            globalHolding = holding
+
+            positionChange = false
+        }
+
+        let longHolding;
+        let shortHolding
+        let longRatio = 0
+        let shortRatio = 0
+
+        if(holding){
+            longHolding = holding.find(item=>item.side=="long")
+            shortHolding = holding.find(item=>item.side=="short")
+        }
+
+        if(longHolding){
+            const { position, leverage, avg_cost, } = longHolding;
+            longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+        }
+
+        if(shortHolding){
+            const { position, leverage, avg_cost, } = shortHolding;
+            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            shortRatio = - shortRatio
+        }
+
+        console.log(longRatio,shortRatio)
+        // console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
+        // console.log("5",lastColumnsObjList[5])
+        // macd -0.00141 dif -0.0027
+        // dif 0.00468 dea 0.00366
 
         //开多仓条件
         if(
-            lastColumns[4] > lastColumns[3] && lastColumns[3] > lastColumns[2]
+            lastColumns[5] > 0
+            &&
+            lastColumns[4] < 0
         ){
             try {
-                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(!holding || !holding[0] || !Number(holding[0].position)){
+                if(!longHolding || !Number(longHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "long" })
-                }else{
-                    const longHolding = holding.find(item=>item.side=="long")
-                    if(!longHolding){
-                        await autoOpenOtherOrderSingle({ openSide: "long" })
-                    }
                 }
             }catch (e){
                 console.log(e)
@@ -987,25 +1079,18 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            lastColumns[4] < lastColumns[3]
+            lastColumns[5] < 0
+            // ||
+            // longRatio > 0.01 * 10
         ){
             try {
-                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-                    const longHolding = tempHolding.find(item=>item.side=="long")
-                    if(longHolding){
-                        const { side, leverage, avg_cost, } = longHolding;
-                        let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        console.log(ratio)
-                        if(ratio > 0.006 * leverage || lastColumns[3] < lastColumns[2]){
-                            const holding = {
-                                instrument_id: ETH_INSTRUMENT_ID,
-                                position: Number(longHolding.position),
-                                side: 'long'
-                            }
-                            await closeHalfPosition(holding);
-                        }
+                if(longHolding && Number(longHolding.position)){
+                    const holding = {
+                        instrument_id: DOGE_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long'
                     }
+                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
@@ -1014,17 +1099,13 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            lastColumns[4] < lastColumns[3] && lastColumns[3] < lastColumns[2]
+            lastColumns[5] < 0
+            &&
+            lastColumns[4] > 0
         ){
             try {
-                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(!holding || !holding[0] || !Number(holding[0].position)){
+                if(!shortHolding || !Number(shortHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "short" })
-                }else{
-                    const shortHolding = holding.find(item=>item.side=="short")
-                    if(!shortHolding){
-                        await autoOpenOtherOrderSingle({ openSide: "short" })
-                    }
                 }
             }catch (e){
                 console.log(e)
@@ -1033,26 +1114,18 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            lastColumns[4] > lastColumns[3]
+            lastColumns[5] > 0
+            // ||
+            // shortRatio > 0.01 * 10
         ){
             try {
-                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-                    const shortHolding = tempHolding.find(item=>item.side=="short")
-                    if(shortHolding){
-                        const { side, leverage, avg_cost, } = shortHolding;
-                        let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        ratio = -ratio
-
-                        if(ratio > 0.006 * leverage || lastColumns[3] > lastColumns[2]){
-                            const holding = {
-                                instrument_id: ETH_INSTRUMENT_ID,
-                                position: Number(shortHolding.position),
-                                side: 'short'
-                            }
-                            await closeHalfPosition(holding);
-                        }
+                if(shortHolding && Number(shortHolding.position)){
+                    const holding = {
+                        instrument_id: DOGE_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short'
                     }
+                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
@@ -1077,14 +1150,14 @@ const startInterval = async () => {
          */
     }
 
-    await waitTime(1000 * 4)
+    await waitTime(1000 * 5)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
     // if(positionChange){
     //     try{
     //         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(DOGE_INSTRUMENT_ID);
     //         btcHolding = tempBtcHolding
     //         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
     //             openMarketPrice = mark_price
@@ -1093,7 +1166,7 @@ const startInterval = async () => {
     //             await writeData()
     //         }else {
     //             if(isOpenMarketPriceChange){
-    //                 // const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+    //                 // const { order_info } = await authClient.swap().getOrders(DOGE_INSTRUMENT_ID, {state: 2, limit: 1})
     //                 // const { price_avg } = order_info[0]
     //                 // openMarketPrice = price_avg
     //                 await readData()
@@ -1109,7 +1182,7 @@ const startInterval = async () => {
     //     // isInit = false
     // }else{
     //     if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(DOGE_INSTRUMENT_ID);
     //         btcHolding = tempBtcHolding
     //         globalBtcHolding = btcHolding
     //     }
@@ -1125,7 +1198,7 @@ const startInterval = async () => {
     //         await autoOperateSwap([mainHolding,otherHolding],mark_price)
     //     }else{
     //         if(positionChange){
-    //             const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
+    //             const { order_info } = await authClient.swap().getOrders(DOGE_INSTRUMENT_ID, {state: 2, limit: 1})
     //             const { price_avg: last, type } = order_info[0]
     //
     //             if(Number(type) < 3){

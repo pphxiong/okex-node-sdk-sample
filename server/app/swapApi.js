@@ -281,7 +281,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const payload = {
         size: position,
         type,
-        order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+        order_type: 2, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
         instrument_id,
         price: mark_price,
         match_price: 0
