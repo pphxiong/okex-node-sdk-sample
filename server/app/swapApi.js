@@ -1066,7 +1066,9 @@ const startInterval = async () => {
         if(
             lastColumns[5] > 0
             &&
-            lastColumns[4] < 0
+            lastColumns[4] > 0
+            &&
+            lastColumns[3] < 0
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1103,7 +1105,9 @@ const startInterval = async () => {
         if(
             lastColumns[5] < 0
             &&
-            lastColumns[4] > 0
+            lastColumns[4] < 0
+            &&
+            lastColumns[3] > 0
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
