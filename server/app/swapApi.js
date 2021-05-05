@@ -945,8 +945,7 @@ function getMinIndex(arr,key) {
 }
 
 let positionChange = true;
-let isOpenMarketPriceChange = true
-let globalBtcHolding = null;
+let globalHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
@@ -1026,7 +1025,14 @@ const startInterval = async () => {
         // const columnMinIndex = getMinIndex(lastColumnsObjList)
         // console.log("index",priceMaxIndex,columnMaxIndex)
 
-        const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+
+        let holding = globalHolding
+        if(positionChange){
+            const result = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+            holding = result.holding
+            globalHolding = holding
+        }
+
         let longHolding;
         let shortHolding
         let longRatio = 0
@@ -1038,7 +1044,7 @@ const startInterval = async () => {
         }
 
         if(longHolding){
-            const { position, leverage, avg_cost, } = holding;
+            const { position, leverage, avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
         }
 
@@ -1053,6 +1059,7 @@ const startInterval = async () => {
         // console.log("5",lastColumnsObjList[5])
         // macd -0.00141 dif -0.0027
         // dif 0.00468 dea 0.00366
+
         //开多仓条件
         if(
             lastColumns[5] > 0
