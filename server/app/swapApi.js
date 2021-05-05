@@ -947,7 +947,7 @@ let openMarketPrice = 0
 let globalColumnsObjList;
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         limit: 100,
         // start,
         // end
@@ -1022,6 +1022,23 @@ const startInterval = async () => {
         // const columnMinIndex = getMinIndex(lastColumnsObjList)
         // console.log("index",priceMaxIndex,columnMaxIndex)
 
+        const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+        const longHolding = holding.find(item=>item.side=="long")
+        const shortHolding = holding.find(item=>item.side=="short")
+        let longRatio = 0
+        let shortRatio = 0
+
+        if(longHolding){
+            const { position, leverage, avg_cost, } = holding;
+            longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+        }
+
+        if(shortHolding){
+            const { position, leverage, avg_cost, } = shortHolding;
+            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            shortRatio = - shortRatio
+        }
+
         console.log(lastColumnsObjList)
         // console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
         // console.log("5",lastColumnsObjList[5])
@@ -1057,6 +1074,8 @@ const startInterval = async () => {
         //平多仓条件
         if(
             lastColumns[5] < 0
+            ||
+            longRatio > 0.01 * 10
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1115,6 +1134,8 @@ const startInterval = async () => {
         //平空仓条件
         if(
             lastColumns[5] > 0
+            ||
+            shortRatio > 0.01 * 10
         ){
             try {
                 const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
