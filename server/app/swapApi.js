@@ -250,7 +250,7 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
-const validateAndCancelOrder = async ({instrument_id, order_id: origin_order_id, type = 0}) => {
+const validateAndCancelOrder = async ({instrument_id = ETH_INSTRUMENT_ID, order_id: origin_order_id, type = 0}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3})
     console.log('cancelorder', instrument_id, order_info.length, origin_order_id)
     if( order_info && order_info.length ){
@@ -275,14 +275,16 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+
     const instrument_id = ETH_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
-        order_type: 4, //1：只做Maker 4：市价委托
+        order_type: 2, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
         instrument_id,
-        // price: mark_price,
-        // match_price: 0
+        price: mark_price,
+        match_price: 0
     }
 
     try{
@@ -552,19 +554,21 @@ const afterLoss = async (holding,type) =>{
     await autoOpenOrderSingle(payload);
 
 }
-// 平半仓
+// 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
     // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
-    const { instrument_id, position, side } = holding;
+    const { instrument_id = ETH_INSTRUMENT_ID, position, side } = holding;
+
+    const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
 
     const payload = {
         size: Math.ceil(Number(position)),
         type: side == 'long' ? 3 : 4,
         instrument_id,
-        order_type: 4,
-        // price: mark_price,
-        // match_price: 0
+        order_type: 2,
+        price: mark_price,
+        match_price: 0
     }
 
     await authClient.swap().postOrder(payload)
@@ -1039,7 +1043,7 @@ const startInterval = async () => {
             shortRatio = - shortRatio
         }
 
-        console.log(lastColumnsObjList)
+        console.log(longRatio,shortRatio)
         // console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
         // console.log("5",lastColumnsObjList[5])
         // macd -0.00141 dif -0.0027
@@ -1051,20 +1055,8 @@ const startInterval = async () => {
             lastColumns[4] < 0
         ){
             try {
-                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(!holding || !holding[0] || !Number(holding[0].position)){
+                if(!longHolding || !Number(longHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "long" })
-                }else{
-                    const longHolding = holding.find(item=>item.side=="long")
-                    if(longHolding){
-                        // const { side, leverage, avg_cost, } = longHolding;
-                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // if(ratio < - 0.0191 * leverage) {
-                        //     await autoOpenOtherOrderSingle({ openSide: "long" })
-                        // }
-                    }else{
-                        await autoOpenOtherOrderSingle({ openSide: "long" })
-                    }
                 }
             }catch (e){
                 console.log(e)
@@ -1078,25 +1070,13 @@ const startInterval = async () => {
             longRatio > 0.01 * 10
         ){
             try {
-                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-                    const longHolding = tempHolding.find(item=>item.side=="long")
-                    if(longHolding){
-                        // const { position, leverage, avg_cost, } = longHolding;
-                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // if(
-                        //     ratio > 0.0191 * leverage
-                        //     ||
-                        //     (ratio > 0.02 && Number(position) > initPosition)
-                        // ){
-                            const holding = {
-                                instrument_id: ETH_INSTRUMENT_ID,
-                                position: Number(longHolding.position),
-                                side: 'long'
-                            }
-                            await closeHalfPosition(holding);
-                        // }
+                if(longHolding && Number(longHolding.position)){
+                    const holding = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long'
                     }
+                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
@@ -1110,21 +1090,8 @@ const startInterval = async () => {
             lastColumns[4] > 0
         ){
             try {
-                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(!holding || !holding[0] || !Number(holding[0].position)){
+                if(!shortHolding || !Number(shortHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "short" })
-                }else{
-                    const shortHolding = holding.find(item=>item.side=="short")
-                    if(shortHolding){
-                        // const { side, leverage, avg_cost, } = shortHolding;
-                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // ratio = - ratio
-                        // if(ratio < - 0.0191 * leverage) {
-                        //     await autoOpenOtherOrderSingle({ openSide: "short" })
-                        // }
-                    }else{
-                        await autoOpenOtherOrderSingle({ openSide: "short" })
-                    }
                 }
             }catch (e){
                 console.log(e)
@@ -1138,26 +1105,13 @@ const startInterval = async () => {
             shortRatio > 0.01 * 10
         ){
             try {
-                const { holding: tempHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(tempHolding && tempHolding[0] && Number(tempHolding[0].position)){
-                    const shortHolding = tempHolding.find(item=>item.side=="short")
-                    if(shortHolding){
-                        // const { position, leverage, avg_cost, } = shortHolding;
-                        // let ratio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-                        // ratio = -ratio
-                        //
-                        // if(ratio > 0.0191 * leverage
-                        //     ||
-                        //     (ratio > 0.02 && Number(position) > initPosition)
-                        // ){
-                            const holding = {
-                                instrument_id: ETH_INSTRUMENT_ID,
-                                position: Number(shortHolding.position),
-                                side: 'short'
-                            }
-                            await closeHalfPosition(holding);
-                        // }
+                if(shortHolding && Number(shortHolding.position)){
+                    const holding = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short'
                     }
+                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
