@@ -1080,8 +1080,8 @@ const startInterval = async () => {
         //平多仓条件
         if(
             lastColumns[5] < 0
-            ||
-            longRatio > 0.01 * 10
+            // ||
+            // longRatio > 0.01 * 10
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1115,8 +1115,8 @@ const startInterval = async () => {
         //平空仓条件
         if(
             lastColumns[5] > 0
-            ||
-            shortRatio > 0.01 * 10
+            // ||
+            // shortRatio > 0.01 * 10
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
