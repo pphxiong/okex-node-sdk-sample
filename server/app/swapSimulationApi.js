@@ -8,7 +8,7 @@ const customAuthClient = require('./customAuthClient');
 const fs = require('fs');
 
 //读取配置文件，变量config的类型是Object类型
-// let dataConfig = require('./configDOGE.json');
+// let dataConfig = require('./configETH.json');
 
 let DOGE_INSTRUMENT_ID = "DOGE-USDT-SWAP";
 let myInterval;
@@ -60,7 +60,7 @@ function send(res, ret) {
 app.all('*', function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-    res.header('Access-Control-Allow-MDOGEods', 'PUT,POST,GET,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
     res.header('X-Powered-By', ' 3.2.1');
     res.header('Content-Type', 'application/json;charset=utf-8');
     next();
@@ -851,7 +851,7 @@ const writeData = async () => {
 
     const result = await new Promise(resolve=>{
         //将修改后的内容写入文件
-        fs.writeFile('./app/configDOGE.json', jsonStr, function(err) {
+        fs.writeFile('./app/configETH.json', jsonStr, function(err) {
             if (err) {
                 console.error(err);
             }else{
@@ -867,7 +867,7 @@ const writeData = async () => {
 // let isInit = true
 const readData = async () => {
     // if(!isInit){
-    let dataConfig =  JSON.parse(fs.readFileSync('./app/configDOGE.json','utf-8'));
+    let dataConfig =  JSON.parse(fs.readFileSync('./app/configETH.json','utf-8'));
 
     // const continuousObj = continuousMap[DOGE_INSTRUMENT_ID];
     // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
@@ -957,7 +957,7 @@ const startInterval = async () => {
     }
 
     // if(!globalColumnsObjList){
-    const data = await cAuthClient.swap.gDOGEistory('DOGE-USDT-SWAP', payload)
+    const data = await cAuthClient.swap.getHistory('DOGE-USDT-SWAP', payload)
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
