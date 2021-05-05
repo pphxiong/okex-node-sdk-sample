@@ -1027,10 +1027,12 @@ const startInterval = async () => {
 
 
         let holding = globalHolding
-        if(positionChange){
+        if(positionChange || !holding){
             const result = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
             holding = result.holding
             globalHolding = holding
+
+            positionChange = false
         }
 
         let longHolding;
