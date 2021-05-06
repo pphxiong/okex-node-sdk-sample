@@ -1118,10 +1118,15 @@ const startInterval = async () => {
         const latestColumnsObjList = columnsObjList.slice(-60)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
+        const goldList = []
+        const deadList = []
         for(let i = 0; i <= latestColumnsObjList.length - 3; i++){
             const tripleList = latestColumnsObjList.slice(i, i + 3)
             const overlappingObj = isGoldOverLapping(tripleList, i)
-            if(overlappingObj.isOverLapping) goldOverlappingNum++;
+            if(overlappingObj.isOverLapping) {
+                goldOverlappingNum++;
+                goldList.push(overlappingObj.overlappingObj)
+            }
 
             const deadOverlappingObj = isDeadOverLapping(tripleList, i)
             if(deadOverlappingObj.isOverLapping) {
@@ -1132,6 +1137,7 @@ const startInterval = async () => {
         console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
         console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log(goldList)
         console.log('------------------')
 
         let holding = globalHolding
