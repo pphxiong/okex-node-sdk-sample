@@ -1204,9 +1204,9 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.06)
+            (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.1)
             ||
-            longRatio < - 0.191
+            longRatio < - 0.1
             ||
             (deadOverlappingNum >= 2
             &&
