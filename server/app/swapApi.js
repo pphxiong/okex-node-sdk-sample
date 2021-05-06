@@ -1115,7 +1115,7 @@ const startInterval = async () => {
         const lastColumns = columnsList.slice(-6)
         const lastColumnsObjList = columnsObjList.slice(-6)
 
-        const latestColumnsObjList = columnsObjList.slice(-30)
+        const latestColumnsObjList = columnsObjList.slice(-60)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         for(let i = 0; i <= latestColumnsObjList.length - 3; i++){
