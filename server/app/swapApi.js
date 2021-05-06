@@ -970,7 +970,23 @@ function getMacd(params) {
 
     return result
 }
-function isGoldOverLapping(list){
+
+//计算向量叉乘
+function crossMul(v1,v2){
+    return v1.x*v2.y-v1.y*v2.x;
+}
+//判断两条线段是否相交
+function checkCross(p1,p2,p3,p4){
+    let v1={x:p1.x-p3.x,y:p1.y-p3.y},
+        v2={x:p2.x-p3.x,y:p2.y-p3.y},
+        v3={x:p4.x-p3.x,y:p4.y-p3.y},
+        v=crossMul(v1,v3)*crossMul(v2,v3)
+    v1={x:p3.x-p1.x,y:p3.y-p1.y}
+    v2={x:p4.x-p1.x,y:p4.y-p1.y}
+    v3={x:p2.x-p1.x,y:p2.y-p1.y}
+    return (v<=0&&crossMul(v1,v3)*crossMul(v2,v3)<=0)?true:false
+}
+function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
         list[0].diff < list[1].diff && list[1].diff < list[2].diff
@@ -979,7 +995,25 @@ function isGoldOverLapping(list){
         &&
         list[2].diff < 0 && list[2].dea < 0
     ){
-        isOverLapping = true
+        const point1 = {
+            x: index,
+            y: list[0].diff
+        }
+        const point2 = {
+            x: index + 2,
+            y: list[2].diff
+        }
+        const point3 = {
+            x: index,
+            y: list[0].dea,
+        }
+        const point4 = {
+            x: index + 2,
+            y: list[2].dea
+        }
+        if(checkCross(point1,point2,point3,point4)){
+            isOverLapping = true
+        }
     }
     const overlappingObj = {
         isOverLapping,
@@ -987,7 +1021,7 @@ function isGoldOverLapping(list){
     }
     return overlappingObj
 }
-function isDeadOverLapping(list){
+function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
         list[0].diff > list[1].diff && list[1].diff > list[2].diff
@@ -996,7 +1030,25 @@ function isDeadOverLapping(list){
         &&
         list[2].diff > 0 && list[2].dea > 0
     ){
-        isOverLapping = true
+        const point1 = {
+            x: index,
+            y: list[0].diff
+        }
+        const point2 = {
+            x: index + 2,
+            y: list[2].diff
+        }
+        const point3 = {
+            x: index,
+            y: list[0].dea,
+        }
+        const point4 = {
+            x: index + 2,
+            y: list[2].dea
+        }
+        if(checkCross(point1,point2,point3,point4)){
+            isOverLapping = true
+        }
     }
     const overlappingObj = {
         isOverLapping,
@@ -1057,9 +1109,8 @@ const startInterval = async () => {
         })
 
         const columnsList = columnsObjList.map(item=>item.column)
-        console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
-        console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
-        console.log('------------------')
+        // 0.001526
+        // -0.00233
 
         const lastColumns = columnsList.slice(-6)
         const lastColumnsObjList = columnsObjList.slice(-6)
@@ -1069,14 +1120,19 @@ const startInterval = async () => {
         let deadOverlappingNum = 0
         for(let i = 0; i <= latestColumnsObjList.length - 3; i++){
             const tripleList = latestColumnsObjList.slice(i, i + 3)
-            const overlappingObj = isGoldOverLapping(tripleList)
+            const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) goldOverlappingNum++;
 
-            const deadOverlappingObj = isDeadOverLapping(tripleList)
+            const deadOverlappingObj = isDeadOverLapping(tripleList, i)
             if(deadOverlappingObj.isOverLapping) {
                 deadOverlappingNum++
             }
         }
+
+        console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
+        console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
+        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('------------------')
 
         let holding = globalHolding
         if(positionChange || !holding){
