@@ -1126,13 +1126,13 @@ const startInterval = async () => {
             const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) {
                 goldOverlappingNum++;
-                goldList.push(overlappingObj.overlappingObj)
+                goldList.push(overlappingObj)
             }
 
             const deadOverlappingObj = isDeadOverLapping(tripleList, i)
             if(deadOverlappingObj.isOverLapping) {
                 deadOverlappingNum++
-                deadList.push(deadOverlappingObj.overlappingObj)
+                deadList.push(deadOverlappingObj)
             }
         }
 
