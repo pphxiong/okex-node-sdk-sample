@@ -1017,7 +1017,8 @@ function isGoldOverLapping(list, index){
     }
     const overlappingObj = {
         isOverLapping,
-        overlappingObj: list[1]
+        overlappingIndex: index,
+        overlappingObj: list[1],
     }
     return overlappingObj
 }
@@ -1027,8 +1028,8 @@ function isDeadOverLapping(list,index){
         list[0].diff > list[1].diff && list[1].diff > list[2].diff
         &&
         list[0].dea > list[2].dea
-        &&
-        list[2].diff > 0 && list[2].dea > 0
+        // &&
+        // list[2].diff > 0 && list[2].dea > 0
     ){
         const point1 = {
             x: index,
@@ -1052,6 +1053,7 @@ function isDeadOverLapping(list,index){
     }
     const overlappingObj = {
         isOverLapping,
+        overlappingIndex: index,
         overlappingObj: list[1]
     }
     return overlappingObj
@@ -1064,6 +1066,7 @@ function getAverage(list){
     let mean  = sum / list.length;
     return mean
 }
+let lastMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 3, // 单位为秒
@@ -1109,13 +1112,11 @@ const startInterval = async () => {
         })
 
         const columnsList = columnsObjList.map(item=>item.column)
-        // 0.001526
-        // -0.00233
 
         const lastColumns = columnsList.slice(-6)
         const lastColumnsObjList = columnsObjList.slice(-6)
 
-        const latestColumnsObjList = columnsObjList.slice(-60)
+        const latestColumnsObjList = columnsObjList.slice(-30)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         const goldList = []
@@ -1135,10 +1136,13 @@ const startInterval = async () => {
             }
         }
 
-        console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
-        console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
+        // console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
+        // console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
+        // 0.001526
+        // -0.00233
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log(goldList)
+        console.log('goldList',goldList.map(item=>item.overlappingIndex))
+        console.log('deadList',deadList.map(item=>item.overlappingIndex))
         console.log('------------------')
 
         let holding = globalHolding
@@ -1157,19 +1161,20 @@ const startInterval = async () => {
 
         if(holding){
             longHolding = holding.find(item=>item.side=="long")
-            shortHolding = holding.find(item=>item.side=="short")
+            // shortHolding = holding.find(item=>item.side=="short")
         }
 
         if(longHolding){
             const { position, leverage, avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            lastMaxWinRatio = Math.max(longRatio,lastMaxWinRatio)
         }
 
-        if(shortHolding){
-            const { position, leverage, avg_cost, } = shortHolding;
-            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-            shortRatio = - shortRatio
-        }
+        // if(shortHolding){
+        //     const { position, leverage, avg_cost, } = shortHolding;
+        //     shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+        //     shortRatio = - shortRatio
+        // }
 
         // console.log(lastColumnsObjList)
         // console.log(longRatio,shortRatio)
@@ -1180,22 +1185,13 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            // lastColumns[5] > 0
-            // &&
-            // lastColumns[4] > 0
-            // &&
-            // lastColumns[3] < 0
-            // &&
-            // lastColumnsObjList[4].diff > lastColumnsObjList[3].diff
-            // &&
-            // lastColumnsObjList[4].dea > lastColumnsObjList[3].dea
-            // &&
-            // lastColumnsObjList[4].diff < 0
-            // &&
-            // lastColumnsObjList[4].dea < 0
             goldOverlappingNum >= 2
             &&
-            goldList[goldList.length-1].diff > goldList[goldList.length-2].diff
+            (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+            ||
+            goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
+            // &&
+            // goldList[goldList.length-1].diff > goldList[goldList.length-2].diff
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1207,26 +1203,31 @@ const startInterval = async () => {
         }
 
         //平多仓条件
-        // if(
-        //     lastColumns[5] < 0
-        //     &&
-        //     lastColumns[4] < 0
-        //     // ||
-        //     // longRatio > 0.01 * 10
-        // ){
-        //     try {
-        //         if(longHolding && Number(longHolding.position)){
-        //             const holding = {
-        //                 instrument_id: XRP_INSTRUMENT_ID,
-        //                 position: Number(longHolding.position),
-        //                 side: 'long'
-        //             }
-        //             await closeHalfPosition(holding);
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        if(
+            (longRatio < lastMaxWinRatio / 3 && lastMaxWinRatio > 0.06)
+            ||
+            longRatio < - 0.191
+            ||
+            (deadOverlappingNum >= 2
+            &&
+            (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                ||
+                deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
+        ){
+            try {
+                if(longHolding && Number(longHolding.position)){
+                    const holding = {
+                        instrument_id: XRP_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long'
+                    }
+                    await closeHalfPosition(holding);
+                    lastMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
         //
         // //开空仓条件
         // if(
