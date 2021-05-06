@@ -1113,8 +1113,8 @@ const startInterval = async () => {
 
         const columnsList = columnsObjList.map(item=>item.column)
 
-        const lastColumns = columnsList.slice(-6)
-        const lastColumnsObjList = columnsObjList.slice(-6)
+        // const lastColumns = columnsList.slice(-6)
+        // const lastColumnsObjList = columnsObjList.slice(-6)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
         let goldOverlappingNum = 0
@@ -1132,7 +1132,7 @@ const startInterval = async () => {
             const deadOverlappingObj = isDeadOverLapping(tripleList, i)
             if(deadOverlappingObj.isOverLapping) {
                 deadOverlappingNum++
-                deadList.push(overlappingObj.overlappingObj)
+                deadList.push(deadOverlappingObj.overlappingObj)
             }
         }
 
