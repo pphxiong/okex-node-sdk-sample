@@ -1108,8 +1108,8 @@ const startInterval = async () => {
             shortRatio = - shortRatio
         }
 
-        console.log(lastColumnsObjList)
-        console.log(longRatio,shortRatio)
+        // console.log(lastColumnsObjList)
+        // console.log(longRatio,shortRatio)
         // console.log(lastColumnsObjList[3].column > 0, lastColumnsObjList[3].dea / lastColumnsObjList[3].diff)
         // console.log("5",lastColumnsObjList[5])
         // macd -0.00141 dif -0.0027
