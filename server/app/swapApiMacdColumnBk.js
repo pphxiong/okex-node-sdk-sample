@@ -948,70 +948,6 @@ let positionChange = true;
 let globalHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
-function getMacd(params) {
-    const {price,lastEma12,lastEma26,lastDea} = params
-
-    const ema12 = 2/(12+1) * price + 11/(12+1) * lastEma12
-    const ema26 = 2/(26+1) * price + 25/(26+1) * lastEma26
-
-    const diff = ema12 - ema26
-    const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
-
-    const column = 2 * (diff - dea)
-
-    const result = {
-        price,
-        ema12,
-        ema26,
-        diff,
-        dea,
-        column
-    }
-
-    return result
-}
-function isGoldOverLapping(list){
-    let isOverLapping = false
-    if(
-        list[0].diff < list[1].diff && list[1].diff < list[2].diff
-        &&
-        list[0].dea < list[1].dea && list[1].dea < list[2].dea
-        &&
-        list[2].diff < 0 && list[2].dea < 0
-    ){
-        isOverLapping = true
-    }
-    const overlappingObj = {
-        isOverLapping,
-        overlappingObj: list[1]
-    }
-    return overlappingObj
-}
-function isDeadOverLapping(list){
-    let isOverLapping = false
-    if(
-        list[0].diff > list[1].diff && list[1].diff > list[2].diff
-        &&
-        list[0].dea > list[1].dea && list[1].dea > list[2].dea
-        &&
-        list[2].diff > 0 && list[2].dea > 0
-    ){
-        isOverLapping = true
-    }
-    const overlappingObj = {
-        isOverLapping,
-        overlappingObj: list[1]
-    }
-    return overlappingObj
-}
-function getAverage(list){
-    let sum=0;
-    for(let i = 0; i < list.length; i++){
-        sum += list[i];
-    }
-    let mean  = sum / list.length;
-    return mean
-}
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 3, // 单位为秒
@@ -1024,6 +960,29 @@ const startInterval = async () => {
     const data = await cAuthClient.swap.getHistory('XRP-USDT-SWAP', payload)
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
+
+    function getMacd(params) {
+        const {price,lastEma12,lastEma26,lastDea} = params
+
+        const ema12 = 2/(12+1) * price + 11/(12+1) * lastEma12
+        const ema26 = 2/(26+1) * price + 25/(26+1) * lastEma26
+
+        const diff = ema12 - ema26
+        const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
+
+        const column = 2 * (diff - dea)
+
+        const result = {
+            price,
+            ema12,
+            ema26,
+            diff,
+            dea,
+            column
+        }
+
+        return result
+    }
 
     if(Array.isArray(globalColumnsObjList)){
         const { mark_price } = await cAuthClient.swap.getMarkPrice(XRP_INSTRUMENT_ID);
@@ -1057,26 +1016,15 @@ const startInterval = async () => {
         })
 
         const columnsList = columnsObjList.map(item=>item.column)
-        console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
-        console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
-        console.log('------------------')
-
         const lastColumns = columnsList.slice(-6)
         const lastColumnsObjList = columnsObjList.slice(-6)
 
-        const latestColumnsObjList = columnsObjList.slice(-30)
-        let goldOverlappingNum = 0
-        let deadOverlappingNum = 0
-        for(let i = 0; i <= latestColumnsObjList.length - 3; i++){
-            const tripleList = latestColumnsObjList.slice(i, i + 3)
-            const overlappingObj = isGoldOverLapping(tripleList)
-            if(overlappingObj.isOverLapping) goldOverlappingNum++;
+        // const priceMaxIndex = getMaxIndex(lastColumnsObjList,"price")
+        // const columnMaxIndex = getMaxIndex(lastColumns)
+        // const priceMinIndex = getMinIndex(lastColumnsObjList, "price")
+        // const columnMinIndex = getMinIndex(lastColumnsObjList)
+        // console.log("index",priceMaxIndex,columnMaxIndex)
 
-            const deadOverlappingObj = isDeadOverLapping(tripleList)
-            if(deadOverlappingObj.isOverLapping) {
-                deadOverlappingNum++
-            }
-        }
 
         let holding = globalHolding
         if(positionChange || !holding){
@@ -1117,20 +1065,19 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            // lastColumns[5] > 0
-            // &&
-            // lastColumns[4] > 0
-            // &&
-            // lastColumns[3] < 0
-            // &&
-            // lastColumnsObjList[4].diff > lastColumnsObjList[3].diff
-            // &&
-            // lastColumnsObjList[4].dea > lastColumnsObjList[3].dea
-            // &&
-            // lastColumnsObjList[4].diff < 0
-            // &&
-            // lastColumnsObjList[4].dea < 0
-            goldOverlappingNum >= 2
+            lastColumns[5] > 0
+            &&
+            lastColumns[4] > 0
+            &&
+            lastColumns[3] < 0
+            &&
+            lastColumnsObjList[4].diff > lastColumnsObjList[3].diff
+            &&
+            lastColumnsObjList[4].dea > lastColumnsObjList[3].dea
+            &&
+            lastColumnsObjList[4].diff < 0
+            &&
+            lastColumnsObjList[4].dea < 0
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1142,71 +1089,71 @@ const startInterval = async () => {
         }
 
         //平多仓条件
-        // if(
-        //     lastColumns[5] < 0
-        //     &&
-        //     lastColumns[4] < 0
-        //     // ||
-        //     // longRatio > 0.01 * 10
-        // ){
-        //     try {
-        //         if(longHolding && Number(longHolding.position)){
-        //             const holding = {
-        //                 instrument_id: XRP_INSTRUMENT_ID,
-        //                 position: Number(longHolding.position),
-        //                 side: 'long'
-        //             }
-        //             await closeHalfPosition(holding);
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //开空仓条件
-        // if(
-        //     lastColumns[5] < 0
-        //     &&
-        //     lastColumns[4] < 0
-        //     &&
-        //     lastColumns[3] > 0
-        //     &&
-        //     lastColumnsObjList[4].diff < lastColumnsObjList[3].diff
-        //     &&
-        //     lastColumnsObjList[4].dea < lastColumnsObjList[3].dea
-        //     &&
-        //     lastColumnsObjList[4].diff > 0
-        //     &&
-        //     lastColumnsObjList[4].dea > 0
-        // ){
-        //     try {
-        //         if(!shortHolding || !Number(shortHolding.position)){
-        //             await autoOpenOtherOrderSingle({ openSide: "short" })
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     lastColumns[5] > 0
-        //     &&
-        //     lastColumns[4] > 0
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.position)){
-        //             const holding = {
-        //                 instrument_id: XRP_INSTRUMENT_ID,
-        //                 position: Number(shortHolding.position),
-        //                 side: 'short'
-        //             }
-        //             await closeHalfPosition(holding);
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        if(
+            lastColumns[5] < 0
+            &&
+            lastColumns[4] < 0
+            // ||
+            // longRatio > 0.01 * 10
+        ){
+            try {
+                if(longHolding && Number(longHolding.position)){
+                    const holding = {
+                        instrument_id: XRP_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long'
+                    }
+                    await closeHalfPosition(holding);
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            lastColumns[5] < 0
+            &&
+            lastColumns[4] < 0
+            &&
+            lastColumns[3] > 0
+            &&
+            lastColumnsObjList[4].diff < lastColumnsObjList[3].diff
+            &&
+            lastColumnsObjList[4].dea < lastColumnsObjList[3].dea
+            &&
+            lastColumnsObjList[4].diff > 0
+            &&
+            lastColumnsObjList[4].dea > 0
+        ){
+            try {
+                if(!shortHolding || !Number(shortHolding.position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            lastColumns[5] > 0
+            &&
+            lastColumns[4] > 0
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.position)){
+                    const holding = {
+                        instrument_id: XRP_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short'
+                    }
+                    await closeHalfPosition(holding);
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
