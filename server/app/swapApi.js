@@ -991,7 +991,7 @@ function isGoldOverLapping(list, index){
     if(
         list[0].diff < list[1].diff && list[1].diff < list[2].diff
         &&
-        list[0].dea < list[1].dea && list[1].dea < list[2].dea
+        list[0].dea < list[2].dea
         &&
         list[2].diff < 0 && list[2].dea < 0
     ){
@@ -1026,7 +1026,7 @@ function isDeadOverLapping(list,index){
     if(
         list[0].diff > list[1].diff && list[1].diff > list[2].diff
         &&
-        list[0].dea > list[1].dea && list[1].dea > list[2].dea
+        list[0].dea > list[2].dea
         &&
         list[2].diff > 0 && list[2].dea > 0
     ){
@@ -1131,6 +1131,7 @@ const startInterval = async () => {
             const deadOverlappingObj = isDeadOverLapping(tripleList, i)
             if(deadOverlappingObj.isOverLapping) {
                 deadOverlappingNum++
+                deadList.push(overlappingObj.overlappingObj)
             }
         }
 
@@ -1193,6 +1194,8 @@ const startInterval = async () => {
             // &&
             // lastColumnsObjList[4].dea < 0
             goldOverlappingNum >= 2
+            &&
+            goldList[goldList.length-1].diff > goldList[goldList.length-2].diff
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
