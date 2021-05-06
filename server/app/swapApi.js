@@ -1191,7 +1191,7 @@ const startInterval = async () => {
             ||
             goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
             // &&
-            // goldList[goldList.length-1].diff > goldList[goldList.length-2].diff
+            // goldList[goldList.length-1].overlappingObj.diff > goldList[goldList.length-2].overlappingObj.diff
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1204,7 +1204,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (longRatio < lastMaxWinRatio / 3 && lastMaxWinRatio > 0.06)
+            (longRatio < lastMaxWinRatio / 5 && lastMaxWinRatio > 0.06)
             ||
             longRatio < - 0.191
             ||
