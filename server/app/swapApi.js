@@ -1190,7 +1190,7 @@ const startInterval = async () => {
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "long" })
+                    // await autoOpenOtherOrderSingle({ openSide: "long" })
                 }
             }catch (e){
                 console.log(e)
