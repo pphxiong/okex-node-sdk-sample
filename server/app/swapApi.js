@@ -1211,9 +1211,11 @@ const startInterval = async () => {
             // longRatio > 0.22
             ||
             (
-                ((deadOverlappingNum == 1 && longRatio > 0.22)
-                ||
-                deadOverlappingNum >= 2)
+                (
+                //     (deadOverlappingNum == 1 && longRatio > 0.22)
+                // ||
+                deadOverlappingNum >= 2
+                )
             &&
             (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                 ||
