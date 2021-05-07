@@ -1207,8 +1207,8 @@ const startInterval = async () => {
             (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.1)
             ||
             longRatio < - 0.1
-            ||
-            longRatio > 0.22
+            // ||
+            // longRatio > 0.22
             ||
             (deadOverlappingNum >= 2
             &&
