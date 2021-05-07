@@ -1206,7 +1206,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (longRatio < lastLongMaxWinRatio / 4 && lastLongMaxWinRatio > 0.1)
+            (longRatio < 0.02 && lastLongMaxWinRatio > 0.1)
             ||
             longRatio < - 0.1
             // ||
@@ -1257,7 +1257,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            (shortRatio < lastShortMaxWinRatio / 4 && lastShortMaxWinRatio > 0.1)
+            (shortRatio < 0.02 && lastShortMaxWinRatio > 0.1)
             ||
             shortRatio < - 0.1
             ||
@@ -1275,6 +1275,7 @@ const startInterval = async () => {
                         side: 'short'
                     }
                     await closeHalfPosition(holding);
+                    lastShortMaxWinRatio = 0
                 }
             }catch (e){
                 console.log(e)
