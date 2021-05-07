@@ -1028,8 +1028,8 @@ function isDeadOverLapping(list,index){
         list[0].diff > list[1].diff && list[1].diff > list[2].diff
         &&
         list[0].dea > list[2].dea
-        &&
-        list[2].diff > 0 && list[2].dea > 0
+        // &&
+        // list[2].diff > 0 && list[2].dea > 0
     ){
         const point1 = {
             x: index,
@@ -1206,11 +1206,11 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (longRatio < 0.02 && lastLongMaxWinRatio > 0.1)
+            (longRatio < 0.02 && lastLongMaxWinRatio > 0.06)
             ||
-            longRatio < - 0.1
-            // ||
-            // longRatio > 0.382
+            shortRatio < - 0.191
+            ||
+            longRatio > 0.618
             ||
             (
                 (
@@ -1259,7 +1259,9 @@ const startInterval = async () => {
         if(
             (shortRatio < 0.02 && lastShortMaxWinRatio > 0.06)
             ||
-            shortRatio < - 0.1
+            shortRatio < - 0.191
+            ||
+            shortRatio > 0.618
             ||
             (goldOverlappingNum >= 1
                 &&
