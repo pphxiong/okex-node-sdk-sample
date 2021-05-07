@@ -1028,8 +1028,8 @@ function isDeadOverLapping(list,index){
         list[0].diff > list[1].diff && list[1].diff > list[2].diff
         &&
         list[0].dea > list[2].dea
-        // &&
-        // list[2].diff > 0 && list[2].dea > 0
+        &&
+        list[2].diff > 0 && list[2].dea > 0
     ){
         const point1 = {
             x: index,
@@ -1066,7 +1066,8 @@ function getAverage(list){
     let mean  = sum / list.length;
     return mean
 }
-let lastMaxWinRatio = 0
+let lastLongMaxWinRatio = 0
+let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 3, // 单位为秒
@@ -1161,20 +1162,21 @@ const startInterval = async () => {
 
         if(holding){
             longHolding = holding.find(item=>item.side=="long")
-            // shortHolding = holding.find(item=>item.side=="short")
+            shortHolding = holding.find(item=>item.side=="short")
         }
 
         if(longHolding){
             const { position, leverage, avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-            lastMaxWinRatio = Math.max(longRatio,lastMaxWinRatio)
+            lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
         }
 
-        // if(shortHolding){
-        //     const { position, leverage, avg_cost, } = shortHolding;
-        //     shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-        //     shortRatio = - shortRatio
-        // }
+        if(shortHolding){
+            const { position, leverage, avg_cost, } = shortHolding;
+            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            shortRatio = - shortRatio
+            lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
+        }
 
         // console.log(lastColumnsObjList)
         // console.log(longRatio,shortRatio)
@@ -1204,7 +1206,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.1)
+            (longRatio < lastLongMaxWinRatio / 4 && lastLongMaxWinRatio > 0.1)
             ||
             longRatio < - 0.1
             // ||
@@ -1229,57 +1231,55 @@ const startInterval = async () => {
                         side: 'long'
                     }
                     await closeHalfPosition(holding);
-                    lastMaxWinRatio = 0
+                    lastLongMaxWinRatio = 0
                 }
             }catch (e){
                 console.log(e)
             }
         }
-        //
-        // //开空仓条件
-        // if(
-        //     lastColumns[5] < 0
-        //     &&
-        //     lastColumns[4] < 0
-        //     &&
-        //     lastColumns[3] > 0
-        //     &&
-        //     lastColumnsObjList[4].diff < lastColumnsObjList[3].diff
-        //     &&
-        //     lastColumnsObjList[4].dea < lastColumnsObjList[3].dea
-        //     &&
-        //     lastColumnsObjList[4].diff > 0
-        //     &&
-        //     lastColumnsObjList[4].dea > 0
-        // ){
-        //     try {
-        //         if(!shortHolding || !Number(shortHolding.position)){
-        //             await autoOpenOtherOrderSingle({ openSide: "short" })
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     lastColumns[5] > 0
-        //     &&
-        //     lastColumns[4] > 0
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.position)){
-        //             const holding = {
-        //                 instrument_id: EOS_INSTRUMENT_ID,
-        //                 position: Number(shortHolding.position),
-        //                 side: 'short'
-        //             }
-        //             await closeHalfPosition(holding);
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+
+        //开空仓条件
+        if(
+            deadOverlappingNum >= 2
+            &&
+            (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                ||
+                deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
+        ){
+            try {
+                if(!shortHolding || !Number(shortHolding.position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            (shortRatio < lastShortMaxWinRatio / 4 && lastShortMaxWinRatio > 0.1)
+            ||
+            shortRatio < - 0.1
+            ||
+            (goldOverlappingNum >= 1
+                &&
+                (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                    ||
+                    goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.position)){
+                    const holding = {
+                        instrument_id: EOS_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short'
+                    }
+                    await closeHalfPosition(holding);
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，

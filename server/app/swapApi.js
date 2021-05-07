@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 1.2;
+let initPosition = LEVERAGE * 0.5;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1204,7 +1204,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.1)
+            (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.08)
             ||
             longRatio < - 0.1
             // ||
