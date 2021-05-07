@@ -1257,7 +1257,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            (shortRatio < 0.02 && lastShortMaxWinRatio > 0.1)
+            (shortRatio < 0.02 && lastShortMaxWinRatio > 0.06)
             ||
             shortRatio < - 0.1
             ||
