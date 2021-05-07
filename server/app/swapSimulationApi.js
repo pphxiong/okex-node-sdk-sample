@@ -992,8 +992,8 @@ function isGoldOverLapping(list, index){
         list[0].diff < list[1].diff && list[1].diff < list[2].diff
         &&
         list[0].dea < list[2].dea
-        // &&
-        // list[2].diff < 0 && list[2].dea < 0
+        &&
+        list[2].diff < 0 && list[2].dea < 0
     ){
         const point1 = {
             x: index,
@@ -1208,7 +1208,7 @@ const startInterval = async () => {
             ||
             longRatio < - 0.1
             ||
-            longRatio > 0.2
+            longRatio > 0.382
             ||
             (deadOverlappingNum >= 2
                 &&

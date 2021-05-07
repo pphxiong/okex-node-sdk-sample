@@ -1111,7 +1111,7 @@ const startInterval = async () => {
             columnsObjList.push(result)
         })
 
-        const columnsList = columnsObjList.map(item=>item.column)
+        // const columnsList = columnsObjList.map(item=>item.column)
 
         // const lastColumns = columnsList.slice(-6)
         // const lastColumnsObjList = columnsObjList.slice(-6)
@@ -1207,6 +1207,8 @@ const startInterval = async () => {
             (longRatio < lastMaxWinRatio / 4 && lastMaxWinRatio > 0.1)
             ||
             longRatio < - 0.1
+            ||
+            longRatio > 0.22
             ||
             (deadOverlappingNum >= 2
             &&
