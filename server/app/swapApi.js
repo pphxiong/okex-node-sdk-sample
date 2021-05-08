@@ -1210,7 +1210,7 @@ const startInterval = async () => {
             ||
             shortRatio < - 0.191
             ||
-            longRatio > 0.618
+            longRatio > 0.5
             ||
             (
                 (
@@ -1261,7 +1261,7 @@ const startInterval = async () => {
             ||
             shortRatio < - 0.191
             ||
-            shortRatio > 0.618
+            shortRatio > 0.382
             ||
             (goldOverlappingNum >= 1
                 &&
