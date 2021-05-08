@@ -1208,9 +1208,9 @@ const startInterval = async () => {
         if(
             (longRatio < 0.02 && lastLongMaxWinRatio > 0.06)
             ||
-            shortRatio < - 0.191
+            shortRatio < - 0.1
             ||
-            longRatio > 0.5
+            longRatio > 0.52
             ||
             (
                 (
@@ -1259,7 +1259,7 @@ const startInterval = async () => {
         if(
             (shortRatio < 0.02 && lastShortMaxWinRatio > 0.06)
             ||
-            shortRatio < - 0.191
+            shortRatio < - 0.1
             ||
             shortRatio > 0.382
             ||
