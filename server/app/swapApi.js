@@ -1206,7 +1206,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            (goldList[goldList.length-1].overlappingIndex <= latestColumnsObjList.length - 6
+            (goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
             &&
             ((longRatio < 0.02 && lastLongMaxWinRatio > 0.06)
             ||
