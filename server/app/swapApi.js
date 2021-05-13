@@ -1187,7 +1187,10 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            goldOverlappingNum >= 2
+            (goldOverlappingNum >= 2
+                ||
+                (goldOverlappingNum == 1 && deadOverlappingNum == 1)
+            )
             &&
             (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                 ||
