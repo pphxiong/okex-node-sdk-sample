@@ -1247,50 +1247,58 @@ const startInterval = async () => {
         }
 
         //开空仓条件
-        // if(
-        //     deadOverlappingNum >= 2
-        //     &&
-        //     (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
-        //         ||
-        //         deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
-        // ){
-        //     try {
-        //         if(!shortHolding || !Number(shortHolding.position)){
-        //             await autoOpenOtherOrderSingle({ openSide: "short" })
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     (shortRatio < 0.02 && lastShortMaxWinRatio > 0.06)
-        //     ||
-        //     shortRatio < - 0.1
-        //     ||
-        //     shortRatio > 0.382
-        //     ||
-        //     (goldOverlappingNum >= 1
-        //         &&
-        //         (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
-        //             ||
-        //             goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.position)){
-        //             const holding = {
-        //                 instrument_id: TRX_INSTRUMENT_ID,
-        //                 position: Number(shortHolding.position),
-        //                 side: 'short'
-        //             }
-        //             await closeHalfPosition(holding);
-        //             lastShortMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        if(
+            deadOverlappingNum >= 2
+            &&
+            (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                ||
+                deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
+            &&
+            deadList[deadList.length-2].overlappingObj.price < deadList[deadList.length-1].overlappingObj.price
+            &&
+            deadList[deadList.length-2].overlappingObj.diff > deadList[deadList.length-1].overlappingObj.diff
+        ){
+            try {
+                if(!shortHolding || !Number(shortHolding.position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            (shortRatio < 0.025 && lastShortMaxWinRatio > 0.06)
+            ||
+            (shortRatio < - 0.198
+            &&
+            deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6)
+            ||
+            shortRatio > 0.198
+            ||
+            (goldOverlappingNum >= 2
+                &&
+                (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                    ||
+                    goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
+                &&
+                deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.position)){
+                    const holding = {
+                        instrument_id: TRX_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short'
+                    }
+                    await closeHalfPosition(holding);
+                    lastShortMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
 
         /*
         MACD默认参数为12、26、9，计算过程分为三步，
