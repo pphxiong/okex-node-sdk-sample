@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 1.2;
+let initPosition = LEVERAGE * 1.5;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1220,7 +1220,7 @@ const startInterval = async () => {
                 goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
             )
             ||
-            longRatio > 0.52
+            longRatio > 0.618
             ||
             (
                 deadOverlappingNum >= 2
@@ -1228,6 +1228,8 @@ const startInterval = async () => {
                 (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                     ||
                     deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
+                &&
+                goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
