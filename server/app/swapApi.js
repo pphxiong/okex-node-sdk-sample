@@ -1213,20 +1213,17 @@ const startInterval = async () => {
             ||
             !goldList[goldList.length-1]
             ||
-            (goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
-            &&
-            ((longRatio < 0.02 && lastLongMaxWinRatio > 0.06)
+            (longRatio < 0.025 && lastLongMaxWinRatio > 0.06)
             ||
-            longRatio < - 0.1))
+            (longRatio < - 0.1
+                &&
+                goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
+            )
             ||
             longRatio > 0.52
             ||
             (
-                (
-                    //     (deadOverlappingNum == 1 && longRatio > 0.22)
-                    // ||
-                    deadOverlappingNum >= 2
-                )
+                deadOverlappingNum >= 2
                 &&
                 (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                     ||
