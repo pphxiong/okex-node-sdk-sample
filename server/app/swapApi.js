@@ -992,8 +992,8 @@ function isGoldOverLapping(list, index){
         list[0].diff < list[1].diff && list[1].diff < list[2].diff
         &&
         list[0].dea < list[2].dea
-        &&
-        list[2].diff < 0 && list[2].dea < 0
+        // &&
+        // list[2].diff < 0 && list[2].dea < 0
     ){
         const point1 = {
             x: index,
@@ -1187,16 +1187,20 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            (goldOverlappingNum >= 2
+            (
+                (goldOverlappingNum >= 2
+                    &&
+                goldList[goldList.length-2].overlappingObj.diff < 0)
                 ||
-                (goldOverlappingNum == 1 && deadOverlappingNum <= 1)
+                (goldOverlappingNum == 1 && deadOverlappingNum <= 1
+                    &&
+                    goldList[goldList.length-1].overlappingObj.diff < 0
+                )
             )
             &&
             (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                 ||
                 goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
-            // &&
-            // goldList[goldList.length-1].overlappingObj.diff > goldList[goldList.length-2].overlappingObj.diff
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
