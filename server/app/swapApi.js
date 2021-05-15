@@ -1275,11 +1275,11 @@ const startInterval = async () => {
         if(
             (shortRatio < 0.025 && lastShortMaxWinRatio > 0.06)
             ||
-            (shortRatio < - 0.198
+            (shortRatio < - 0.1
                 &&
                 deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6)
             ||
-            shortRatio > 0.198
+            shortRatio > 0.1
             ||
             (goldOverlappingNum >= 2
                 &&
@@ -1287,7 +1287,7 @@ const startInterval = async () => {
                     ||
                     goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
             &&
-            deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6
+            deadOverlappingNum && deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
