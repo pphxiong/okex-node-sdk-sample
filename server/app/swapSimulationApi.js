@@ -1192,7 +1192,7 @@ const startInterval = async () => {
                     &&
                     goldList[goldList.length-2].overlappingObj.diff < 0)
                 ||
-                (goldOverlappingNum == 1 && deadOverlappingNum <= 1
+                (goldOverlappingNum >= 1 && deadOverlappingNum <= 1
                     &&
                     goldList[goldList.length-1].overlappingObj.diff < 0
                 )
