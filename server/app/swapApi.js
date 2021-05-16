@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 1.5;
+let initPosition = LEVERAGE * 2.3;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1213,7 +1213,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            !goldList
+            (!goldList
             ||
             !goldList[goldList.length-1]
             ||
@@ -1224,14 +1224,14 @@ const startInterval = async () => {
                 goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
             )
             ||
-            longRatio > 0.618
-            ||
             (
-                deadOverlappingNum >= 2
+                ((longRatio > 0.618 &&  deadOverlappingNum >= 1)
+                ||
+                deadOverlappingNum >= 2)
                 &&
                 (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                     ||
-                    deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
+                    deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)))
                 &&
                 goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
