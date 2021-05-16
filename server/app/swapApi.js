@@ -1258,9 +1258,9 @@ const startInterval = async () => {
                 ||
                 deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
             &&
-            deadList[deadList.length-2].overlappingObj.price < deadList[deadList.length-1].overlappingObj.price
+            deadList[deadList.length-2].overlappingObj.price <= deadList[deadList.length-1].overlappingObj.price
             &&
-            deadList[deadList.length-2].overlappingObj.diff > deadList[deadList.length-1].overlappingObj.diff
+            deadList[deadList.length-2].overlappingObj.diff >= deadList[deadList.length-1].overlappingObj.diff
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1273,26 +1273,23 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            (shortRatio < 0.025 && lastShortMaxWinRatio > 0.06)
+            ((shortRatio < 0.025 && lastShortMaxWinRatio > 0.06)
             ||
-            (shortRatio < - 0.1
-                &&
-                deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6)
+            shortRatio < - 0.1
             ||
-            shortRatio > 0.1
-            ||
-            (goldOverlappingNum >= 2
+            (
+                (shortRatio > 0.618 && goldOverlappingNum >= 1 || goldOverlappingNum >= 2)
                 &&
                 (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
                     ||
-                    goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4))
+                    goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4)))
             &&
             deadOverlappingNum && deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
                     const holding = {
-                        instrument_id: TRX_INSTRUMENT_ID,
+                        instrument_id: EOS_INSTRUMENT_ID,
                         position: Number(shortHolding.position),
                         side: 'short'
                     }
