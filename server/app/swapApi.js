@@ -1233,7 +1233,7 @@ const startInterval = async () => {
                     ||
                     deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)))
                 &&
-                goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
+                goldOverlappingNum && goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
