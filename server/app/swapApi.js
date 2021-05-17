@@ -1275,7 +1275,7 @@ const startInterval = async () => {
         if(
             ((shortRatio < 0.025 && lastShortMaxWinRatio > 0.06)
             ||
-            shortRatio < - 0.1
+            shortRatio < - 0.198
             ||
             (
                 (shortRatio > 0.618 && goldOverlappingNum >= 1 || goldOverlappingNum >= 2)
