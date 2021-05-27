@@ -1018,27 +1018,27 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[0].RSI5 < list[1].RSI5
+        list[0].RSI5 < list[2].RSI5
         &&
-        list[0].RSI10 < list[1].RSI10
+        list[0].RSI10 < list[2].RSI10
         &&
-        list[1].RSI5 >= list[1].RSI10 + 4.5
+        list[2].RSI5 >= list[2].RSI10 + 4.5
     ){
         const point1 = {
             x: index,
             y: list[0].RSI5
         }
         const point2 = {
-            x: index + 1,
-            y: list[1].RSI5
+            x: index + 2,
+            y: list[2].RSI5
         }
         const point3 = {
             x: index,
             y: list[0].RSI10,
         }
         const point4 = {
-            x: index + 1,
-            y: list[1].RSI10
+            x: index + 2,
+            y: list[2].RSI10
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1054,27 +1054,27 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[0].RSI5 > list[1].RSI5
+        list[0].RSI5 > list[2].RSI5
         &&
-        list[0].RSI10 > list[1].RSI10
+        list[0].RSI10 > list[2].RSI10
         &&
-        list[1].RSI5 <= list[1].RSI10 - 4.5
+        list[2].RSI5 <= list[2].RSI10 - 4.5
     ){
         const point1 = {
             x: index,
             y: list[0].RSI5
         }
         const point2 = {
-            x: index + 1,
-            y: list[1].RSI5
+            x: index + 2,
+            y: list[2].RSI5
         }
         const point3 = {
             x: index,
             y: list[0].RSI10,
         }
         const point4 = {
-            x: index + 1,
-            y: list[1].RSI10
+            x: index + 2,
+            y: list[2].RSI10
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1146,13 +1146,13 @@ const startInterval = async () => {
 
         // const columnsList = columnsObjList.map(item=>item.column)
 
-        const latestColumnsObjList = columnsObjList.slice(-3)
+        const latestColumnsObjList = columnsObjList.slice(-30)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         const goldList = []
         const deadList = []
-        for(let i = 0; i <= latestColumnsObjList.length - 2; i++){
-            const tripleList = latestColumnsObjList.slice(i, i + 2)
+        for(let i = 0; i <= latestColumnsObjList.length - 3; i++){
+            const tripleList = latestColumnsObjList.slice(i, i + 3)
             const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) {
                 goldOverlappingNum++;
@@ -1218,8 +1218,8 @@ const startInterval = async () => {
         //开多仓条件
         if(
             goldOverlappingNum >= 1
-            // &&
-            // goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 2
+            &&
+            goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1234,7 +1234,9 @@ const startInterval = async () => {
         if(
             longRatio < - 0.1
             ||
-            deadOverlappingNum >= 1
+            (deadOverlappingNum >= 1
+            &&
+            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1254,8 +1256,8 @@ const startInterval = async () => {
         //开空仓条件
         if(
             deadOverlappingNum >= 1
-            // &&
-            // deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 2
+            &&
+            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1270,7 +1272,8 @@ const startInterval = async () => {
         if(
             shortRatio < - 0.1
             ||
-            deadOverlappingNum >= 1
+            (goldOverlappingNum >= 1
+            &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
