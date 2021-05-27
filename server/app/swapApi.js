@@ -974,8 +974,9 @@ function getRSIByPeriod(list, period){
     const AList = []
     const BList = []
     // if(list.length < 15) return 50
-    for(let i = list.length - period - 1; i < list.length; i++){
-        const priceDiff = list[i] - list[i-1]
+    const newList = list.slice(list.length - period - 1, list.length)
+    for(let i = 1; i < newList.length; i++){
+        const priceDiff = newList[i] - newList[i-1]
         if(priceDiff > 0) {
             AList.push(priceDiff)
         }else{
@@ -985,7 +986,7 @@ function getRSIByPeriod(list, period){
     const A = AList.reduce((pre,cur)=>pre+cur,0)
     const B = BList.reduce((pre,cur)=>pre+cur,0)
     const RSI = A / (A + B) * 100
-    console.log(list)
+    console.log(newList)
     console.log(BList)
     return RSI;
 }
