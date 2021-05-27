@@ -10,7 +10,7 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
-let BTC_INSTRUMENT_ID = "BTC-USDT-SWAP";
+let EOS_INSTRUMENT_ID = "EOS-USDT-SWAP";
 let myInterval;
 let mode = 4; //下单模式
 
@@ -18,11 +18,11 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 0.02;
+let initPosition = LEVERAGE * 2.3;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
-    [BTC_INSTRUMENT_ID]: {
+    [EOS_INSTRUMENT_ID]: {
         continuousLossNum: 0,
         continuousWinNum: 0,
         continuousBatchNum: 0,
@@ -250,7 +250,7 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
-const validateAndCancelOrder = async ({instrument_id = BTC_INSTRUMENT_ID, order_id: origin_order_id, type = 0}) => {
+const validateAndCancelOrder = async ({instrument_id = EOS_INSTRUMENT_ID, order_id: origin_order_id, type = 0}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3})
     console.log('cancelorder', instrument_id, order_info.length, origin_order_id)
     if( order_info && order_info.length ){
@@ -275,9 +275,9 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
-    const instrument_id = BTC_INSTRUMENT_ID;
+    const instrument_id = EOS_INSTRUMENT_ID;
     const payload = {
         size: position,
         type,
@@ -313,12 +313,12 @@ const autoOpenOrderSingle = async (params = {}) => {
     // if(instrument_id.includes('BTC')){
     //     availNo = await getAvailNo({ mark_price });
     // }else{
-    //     availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: BTC_INSTRUMENT_ID, mark_price });
+    //     availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: EOS_INSTRUMENT_ID, mark_price });
     // }
     // avail = Math.min(Math.floor(Number(availNo)), Number(position));
 
     const type = openSide == 'long' ? 1 : 2;
-    const instrument_id = BTC_INSTRUMENT_ID;
+    const instrument_id = EOS_INSTRUMENT_ID;
     console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
@@ -369,7 +369,7 @@ const autoOpenOrderSingle = async (params = {}) => {
 // }
 
 // 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = BTC_INSTRUMENT_ID, mark_price}) => {
+const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = EOS_INSTRUMENT_ID, mark_price}) => {
     const result = await authClient.swap().getAccount(instrument_id);
     const { equity, margin_frozen, margin, total_avail_balance } = result.info;
     const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
@@ -556,11 +556,11 @@ const afterLoss = async (holding,type) =>{
 }
 // 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
-    // const { holding: realBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
-    const { instrument_id = BTC_INSTRUMENT_ID, position, side } = holding;
+    const { instrument_id = EOS_INSTRUMENT_ID, position, side } = holding;
 
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
     const payload = {
         size: Math.ceil(Number(position)),
@@ -841,7 +841,7 @@ const autoOperateSwap = async ([holding1,holding2],mark_price,isHalf=false) => {
 
 const writeData = async () => {
     //将修改后的配置写入文件前需要先转成json字符串格式
-    const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    const continuousObj = continuousMap[EOS_INSTRUMENT_ID];
 
     let dataConfig = {
         "openMarketPrice": openMarketPrice.toString(),
@@ -869,7 +869,7 @@ const readData = async () => {
     // if(!isInit){
     let dataConfig =  JSON.parse(fs.readFileSync('./app/configETH.json','utf-8'));
 
-    // const continuousObj = continuousMap[BTC_INSTRUMENT_ID];
+    // const continuousObj = continuousMap[EOS_INSTRUMENT_ID];
     // continuousObj.continuousWinNum = Number(dataConfig.continuousWinNum)
     // continuousObj.continuousLossNum = Number(dataConfig.continuousLossNum)
     // continuousObj.otherContinuousWinNum = Number(dataConfig.otherContinuousWinNum)
@@ -970,36 +970,7 @@ function getMacd(params) {
 
     return result
 }
-function getRSIByPeriod(list, period){
-    const AList = []
-    const BList = []
-    if(list.length < 15) return 50
-    for(let i = list.length - period; i < list.length; i++){
-        const priceDiff = list[i].price - list[i-1].price
-        if(priceDiff > 0) {
-            AList.push(priceDiff)
-        }else{
-            BList.push(priceDiff * -1)
-        }
-    }
-    const A = AList.reduce((pre,cur)=>pre+cur)
-    const B = BList.reduce((pre,cur)=>pre+cur)
-    const RSI = A / (A + B) * 100
-    return RSI;
-}
-function getRSI(price,list){
-    const RSI5 = getRSIByPeriod(list,5)
-    const RSI10 = getRSIByPeriod(list,10)
-    const RSI14 = getRSIByPeriod(list,14)
 
-    const result = {
-        price,
-        RSI5,
-        RSI10,
-        RSI14
-    }
-    return result
-}
 //计算向量叉乘
 function crossMul(v1,v2){
     return v1.x*v2.y-v1.y*v2.x;
@@ -1018,27 +989,27 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[0].RSI5 < list[1].RSI5
+        list[0].diff < list[1].diff && list[1].diff < list[2].diff
         &&
-        list[0].RSI10 < list[1].RSI10
-        &&
-        list[0].RSI5 <= list[1] - 4.5
+        list[0].dea < list[2].dea
+        // &&
+        // list[2].diff < 0 && list[2].dea < 0
     ){
         const point1 = {
             x: index,
-            y: list[0].RSI5
+            y: list[0].diff
         }
         const point2 = {
-            x: index + 1,
-            y: list[1].RSI5
+            x: index + 2,
+            y: list[2].diff
         }
         const point3 = {
             x: index,
-            y: list[0].RSI10,
+            y: list[0].dea,
         }
         const point4 = {
-            x: index + 1,
-            y: list[1].RSI10
+            x: index + 2,
+            y: list[2].dea
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1054,27 +1025,27 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[0].RSI5 > list[1].RSI5
+        list[0].diff > list[1].diff && list[1].diff > list[2].diff
         &&
-        list[0].RSI10 > list[1].RSI10
-        &&
-        list[0].RSI5 >= list[1] + 4.5
+        list[0].dea > list[2].dea
+        // &&
+        // list[2].diff > 0 && list[2].dea > 0
     ){
         const point1 = {
             x: index,
-            y: list[0].RSI5
+            y: list[0].diff
         }
         const point2 = {
-            x: index + 1,
-            y: list[1].RSI5
+            x: index + 2,
+            y: list[2].diff
         }
         const point3 = {
             x: index,
-            y: list[0].RSI10,
+            y: list[0].dea,
         }
         const point4 = {
-            x: index + 1,
-            y: list[1].RSI10
+            x: index + 2,
+            y: list[2].dea
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1099,61 +1070,60 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         limit: 100,
         // start,
         // end
     }
 
     // if(!globalColumnsObjList){
-    const data = await cAuthClient.swap.getHistory('BTC-USDT-SWAP', payload)
+    const data = await cAuthClient.swap.getHistory('EOS-USDT-SWAP', payload)
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
     if(Array.isArray(globalColumnsObjList)){
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
 
         const columnsObjList = []
 
-        const allList =  globalColumnsObjList.concat([Number(mark_price)])
-        allList.map((item,index)=>{
+        globalColumnsObjList.concat([Number(mark_price)]).map((item,index)=>{
             // globalColumnsObjList.map((item,index)=>{
-            // let result = {}
-            // if(index==0) {
-            //     result = {
-            //         price: item,
-            //         ema12: item,
-            //         ema26: item,
-            //         diff: 0,
-            //         dea: 0,
-            //         column: 0,
-            //
-            //     }
-            // }else{
-            //     const lastResult = columnsObjList[columnsObjList.length-1]
-            //     const payload = {
-            //         price: item,
-            //         lastEma12: lastResult.ema12,
-            //         lastEma26: lastResult.ema26,
-            //         lastDea: lastResult.dea
-            //     }
-            //     result = getMacd(payload)
-            // }
+            let result = {}
+            if(index==0) {
+                result = {
+                    price: item,
+                    ema12: item,
+                    ema26: item,
+                    diff: 0,
+                    dea: 0,
+                    column: 0
+                }
+            }else{
+                const lastResult = columnsObjList[columnsObjList.length-1]
+                const payload = {
+                    price: item,
+                    lastEma12: lastResult.ema12,
+                    lastEma26: lastResult.ema26,
+                    lastDea: lastResult.dea
+                }
+                result = getMacd(payload)
+            }
 
-            const result = getRSI(item,allList.slice(0,index+1))
             columnsObjList.push(result)
         })
 
-        // const columnsList = columnsObjList.map(item=>item.column)
+        const columnsList = columnsObjList.map(item=>item.column)
 
+        // const lastColumns = columnsList.slice(-6)
+        // const lastColumnsObjList = columnsObjList.slice(-6)
 
-        const latestColumnsObjList = columnsObjList.slice(-3)
+        const latestColumnsObjList = columnsObjList.slice(-30)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         const goldList = []
         const deadList = []
-        for(let i = 0; i <= latestColumnsObjList.length - 2; i++){
-            const tripleList = latestColumnsObjList.slice(i, i + 2)
+        for(let i = 0; i <= latestColumnsObjList.length - 3; i++){
+            const tripleList = latestColumnsObjList.slice(i, i + 3)
             const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) {
                 goldOverlappingNum++;
@@ -1178,7 +1148,7 @@ const startInterval = async () => {
 
         let holding = globalHolding
         if(positionChange || !holding){
-            const result = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+            const result = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
             holding = result.holding
             globalHolding = holding
 
@@ -1217,9 +1187,20 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            goldOverlappingNum >= 1
-            // &&
-            // goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 2
+            (
+                (goldOverlappingNum >= 2
+                    &&
+                goldList[goldList.length-2].overlappingObj.diff < 0)
+                ||
+                (goldOverlappingNum >= 1 && deadOverlappingNum <= 1
+                    &&
+                    goldList[goldList.length-1].overlappingObj.diff < 0
+                )
+            )
+            &&
+            (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                ||
+                goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1232,14 +1213,32 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            longRatio < - 0.1
+            (!goldList
             ||
-            deadOverlappingNum >= 1
+            !goldList[goldList.length-1]
+            ||
+            (longRatio < 0.025 && lastLongMaxWinRatio > 0.06)
+            ||
+            (longRatio < - 0.1
+                &&
+                goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
+            )
+            ||
+            (
+                ((longRatio > 0.618 &&  deadOverlappingNum >= 1)
+                ||
+                deadOverlappingNum >= 2)
+                &&
+                (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                    ||
+                    deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)))
+                &&
+                goldOverlappingNum && goldList[goldList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
                     const holding = {
-                        instrument_id: BTC_INSTRUMENT_ID,
+                        instrument_id: EOS_INSTRUMENT_ID,
                         position: Number(longHolding.position),
                         side: 'long'
                     }
@@ -1253,9 +1252,15 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            deadOverlappingNum >= 1
-            // &&
-            // deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 2
+            deadOverlappingNum >= 2
+            &&
+            (deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                ||
+                deadList[deadList.length-1].overlappingIndex == latestColumnsObjList.length - 4)
+            &&
+            deadList[deadList.length-2].overlappingObj.price <= deadList[deadList.length-1].overlappingObj.price
+            &&
+            deadList[deadList.length-2].overlappingObj.diff >= deadList[deadList.length-1].overlappingObj.diff
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1268,14 +1273,23 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            shortRatio < - 0.1
+            ((shortRatio < 0.025 && lastShortMaxWinRatio > 0.06)
             ||
-            deadOverlappingNum >= 1
+            shortRatio < - 0.198
+            ||
+            (
+                (shortRatio > 0.618 && goldOverlappingNum >= 1 || goldOverlappingNum >= 2)
+                &&
+                (goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 3
+                    ||
+                    goldList[goldList.length-1].overlappingIndex == latestColumnsObjList.length - 4)))
+            &&
+            deadOverlappingNum && deadList[deadList.length-1].overlappingIndex < latestColumnsObjList.length - 6
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
                     const holding = {
-                        instrument_id: BTC_INSTRUMENT_ID,
+                        instrument_id: EOS_INSTRUMENT_ID,
                         position: Number(shortHolding.position),
                         side: 'short'
                     }
@@ -1312,7 +1326,7 @@ const startInterval = async () => {
     // if(positionChange){
     //     try{
     //         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
     //         btcHolding = tempBtcHolding
     //         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
     //             openMarketPrice = mark_price
@@ -1321,7 +1335,7 @@ const startInterval = async () => {
     //             await writeData()
     //         }else {
     //             if(isOpenMarketPriceChange){
-    //                 // const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+    //                 // const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
     //                 // const { price_avg } = order_info[0]
     //                 // openMarketPrice = price_avg
     //                 await readData()
@@ -1337,7 +1351,7 @@ const startInterval = async () => {
     //     // isInit = false
     // }else{
     //     if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
+    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
     //         btcHolding = tempBtcHolding
     //         globalBtcHolding = btcHolding
     //     }
@@ -1353,7 +1367,7 @@ const startInterval = async () => {
     //         await autoOperateSwap([mainHolding,otherHolding],mark_price)
     //     }else{
     //         if(positionChange){
-    //             const { order_info } = await authClient.swap().getOrders(BTC_INSTRUMENT_ID, {state: 2, limit: 1})
+    //             const { order_info } = await authClient.swap().getOrders(EOS_INSTRUMENT_ID, {state: 2, limit: 1})
     //             const { price_avg: last, type } = order_info[0]
     //
     //             if(Number(type) < 3){
