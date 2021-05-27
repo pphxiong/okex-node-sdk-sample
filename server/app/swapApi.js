@@ -984,6 +984,8 @@ function getRSIByPeriod(list, period){
     }
     const A = AList.reduce((pre,cur)=>pre+cur,0)
     const B = BList.reduce((pre,cur)=>pre+cur,0)
+    console.log('BList',BList)
+    console.log('B',B)
     const RSI = A / (A + B) * 100
     return RSI;
 }
@@ -1170,7 +1172,7 @@ const startInterval = async () => {
         // console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
         // 0.001526
         // -0.00233
-        console.log('latestColumnsObjList',latestColumnsObjList)
+        // console.log('latestColumnsObjList',latestColumnsObjList)
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('goldList',goldList.map(item=>item.overlappingIndex))
         console.log('deadList',deadList.map(item=>item.overlappingIndex))
