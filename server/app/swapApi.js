@@ -985,6 +985,8 @@ function getRSIByPeriod(list, period){
     const A = AList.reduce((pre,cur)=>pre+cur,50)
     const B = BList.reduce((pre,cur)=>pre+cur,50)
     const RSI = A / (A + B) * 100
+    console.log('AList',AList)
+    console.log('A',A)
     return RSI;
 }
 function getRSI(price,list){
@@ -1100,7 +1102,7 @@ let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 15, // 单位为秒
-        limit: 100,
+        limit: 30,
         // start,
         // end
     }
@@ -1115,7 +1117,7 @@ const startInterval = async () => {
 
         const columnsObjList = []
 
-        const allList =  globalColumnsObjList.concat([Number(mark_price)])
+        const allList = globalColumnsObjList.concat([Number(mark_price)])
         allList.map((item,index)=>{
             // globalColumnsObjList.map((item,index)=>{
             // let result = {}
@@ -1146,7 +1148,7 @@ const startInterval = async () => {
 
         // const columnsList = columnsObjList.map(item=>item.column)
 
-        const latestColumnsObjList = columnsObjList.slice(-30)
+        const latestColumnsObjList = columnsObjList.slice(-10)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         const goldList = []
@@ -1170,7 +1172,7 @@ const startInterval = async () => {
         // console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
         // 0.001526
         // -0.00233
-        console.log('latestColumnsObjList',latestColumnsObjList)
+        // console.log('latestColumnsObjList',latestColumnsObjList)
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('goldList',goldList.map(item=>item.overlappingIndex))
         console.log('deadList',deadList.map(item=>item.overlappingIndex))
