@@ -1022,7 +1022,7 @@ function isGoldOverLapping(list, index){
         &&
         list[0].RSI10 < list[1].RSI10
         &&
-        list[0].RSI5 <= list[1] - 4.5
+        list[1].RSI5 >= list[1].RSI10 + 4.5
     ){
         const point1 = {
             x: index,
@@ -1058,7 +1058,7 @@ function isDeadOverLapping(list,index){
         &&
         list[0].RSI10 > list[1].RSI10
         &&
-        list[0].RSI5 >= list[1] + 4.5
+        list[1].RSI5 <= list[1].RSI10 - 4.5
     ){
         const point1 = {
             x: index,
