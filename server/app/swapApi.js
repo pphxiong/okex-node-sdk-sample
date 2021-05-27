@@ -982,8 +982,8 @@ function getRSIByPeriod(list, period){
             BList.push(priceDiff * -1)
         }
     }
-    const A = AList.reduce((pre,cur)=>pre+cur)
-    const B = BList.reduce((pre,cur)=>pre+cur)
+    const A = AList.reduce((pre,cur)=>pre+cur,50)
+    const B = BList.reduce((pre,cur)=>pre+cur,50)
     const RSI = A / (A + B) * 100
     return RSI;
 }
