@@ -1139,10 +1139,10 @@ const startInterval = async () => {
             //     }
             //     result = getMacd(payload)
             // }
-            if(index>=15){
+            // if(index>=15){
                 const result = getRSI(item,allList.slice(0,index+1))
                 columnsObjList.push(result)
-            }
+            // }
         })
 
         // const columnsList = columnsObjList.map(item=>item.column)
@@ -1171,7 +1171,7 @@ const startInterval = async () => {
         // console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
         // 0.001526
         // -0.00233
-        // console.log('latestColumnsObjList',latestColumnsObjList)
+        console.log('latestColumnsObjList',latestColumnsObjList)
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('goldList',goldList.map(item=>item.overlappingIndex))
         console.log('deadList',deadList.map(item=>item.overlappingIndex))
