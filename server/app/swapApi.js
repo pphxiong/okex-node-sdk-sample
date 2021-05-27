@@ -984,10 +984,6 @@ function getRSIByPeriod(list, period){
     }
     const A = AList.reduce((pre,cur)=>pre+cur,0)
     const B = BList.reduce((pre,cur)=>pre+cur,0)
-    console.log('BList',BList)
-    console.log('B',B)
-    console.log(AList.length)
-    console.log(BList.length)
     const RSI = A / (A + B) * 100
     return RSI;
 }
@@ -1143,9 +1139,10 @@ const startInterval = async () => {
             //     }
             //     result = getMacd(payload)
             // }
-
-            const result = getRSI(item,allList.slice(0,index+1))
-            columnsObjList.push(result)
+            if(index>=15){
+                const result = getRSI(item,allList.slice(0,index+1))
+                columnsObjList.push(result)
+            }
         })
 
         // const columnsList = columnsObjList.map(item=>item.column)
