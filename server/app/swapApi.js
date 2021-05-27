@@ -1147,7 +1147,7 @@ const startInterval = async () => {
 
         // const columnsList = columnsObjList.map(item=>item.column)
 
-        const latestColumnsObjList = columnsObjList.slice(-10)
+        const latestColumnsObjList = columnsObjList.slice(-30)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         const goldList = []
@@ -1182,7 +1182,6 @@ const startInterval = async () => {
             const result = await authClient.swap().getPosition(BTC_INSTRUMENT_ID);
             holding = result.holding
             globalHolding = holding
-
             positionChange = false
         }
 
