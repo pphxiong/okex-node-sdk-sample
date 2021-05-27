@@ -975,7 +975,7 @@ function getRSIByPeriod(list, period){
     const BList = []
     // if(list.length < 15) return 50
     for(let i = list.length - period; i < list.length; i++){
-        const priceDiff = (list[i].toFixed(2) - list[i-1].toFixed(2)).toFixed(2)
+        const priceDiff = list[i] - list[i-1]
         if(priceDiff > 0) {
             AList.push(priceDiff)
         }else{
