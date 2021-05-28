@@ -994,7 +994,7 @@ function getRSIAverage(list,i,n){
     }else{
         return function(){
             return {
-                gainAverageI : (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n
+                gainAverageI : (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n,
                 lossAverageI : (lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n
             }
         }
