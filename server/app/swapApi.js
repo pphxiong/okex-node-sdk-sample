@@ -970,30 +970,52 @@ function getMacd(params) {
 
     return result
 }
-function getAverage(num,i,n){
-    if(i==0) return num;
-    return (num + (n-1) * getAverage(num,i-1,n)) / n
+function getAverage(list,i,n){
+    let diff;
+    if(i==0) {
+        diff = 0;
+    }else{
+        diff = list[i] - list[i-1]
+    }
+    const gainI = Math.max(0,diff)
+    const lossI = Math.max(0,-diff)
+
+    let gainAverageI;
+    let lossAverageI;
+
+    if(i==0) {
+        gainAverageI = gainI;
+        lossAverageI = lossI;
+    }else{
+        gainAverageI = (gainI + (n-1) * getAverage(list,i-1,n).gainAverageI) / n
+        lossAverageI = (lossI + (n-1) * getAverage(list,i-1,n).lossAverageI) / n
+    }
+
+    const result = {
+        gainAverageI,
+        lossAverageI,
+    }
+
+    return result
 }
 function getRSIByPeriod(list, period){
     const AList = []
     const BList = []
     // if(list.length < 15) return 50
     const newList = list.slice(list.length - period - 1, list.length)
-    for(let i = 1; i < newList.length; i++){
-        const priceDiff = newList[i] - newList[i-1]
-        if(priceDiff > 0) {
-            AList.push(priceDiff)
-        }else{
-            BList.push(priceDiff * -1)
-        }
-    }
+    // for(let i = 1; i < newList.length; i++){
+    //     const priceDiff = newList[i] - newList[i-1]
+    //     if(priceDiff > 0) {
+    //         AList.push(priceDiff)
+    //     }else{
+    //         BList.push(priceDiff * -1)
+    //     }
+    // }
     // const A = AList.reduce((pre,cur)=>pre+cur,0)
     // const B = BList.reduce((pre,cur)=>pre+cur,0)
-    const diff = newList[newList.length-1] - newList[newList.length-2]
-    const gainI = Math.max(0,diff)
-    const lossI = Math.max(0,-diff)
-    const gainAverageI = getAverage(gainI,newList.length-1,period)
-    const lossAverageI = getAverage(lossI,newList.length-1,period)
+
+    const result = getAverage(newList,newList.length-1,period)
+    const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
     console.log(gainAverageI)
     console.log(lossAverageI)
