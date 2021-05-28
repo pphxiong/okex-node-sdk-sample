@@ -1064,7 +1064,7 @@ function isGoldOverLapping(list, index){
         &&
         list[0].RSI10 < list[2].RSI10
         &&
-        list[2].RSI5 >= list[2].RSI10 + 4.5
+        list[2].RSI5 >= list[2].RSI10 + 5
     ){
         const point1 = {
             x: index,
@@ -1100,7 +1100,7 @@ function isDeadOverLapping(list,index){
         &&
         list[0].RSI10 > list[2].RSI10
         &&
-        list[2].RSI5 <= list[2].RSI10 - 4.5
+        list[2].RSI5 <= list[2].RSI10 - 5
     ){
         const point1 = {
             x: index,
@@ -1157,8 +1157,8 @@ const startInterval = async () => {
 
         let columnsObjList = []
 
-        // const allList = globalColumnsObjList.concat([Number(mark_price)])
-        const allList = globalColumnsObjList
+        const allList = globalColumnsObjList.concat([Number(mark_price)])
+        // const allList = globalColumnsObjList
         // allList.map((item,index)=>{
         //         const result = getRSI(item,allList.slice(0,index+1))
         //     columnsObjList.push(result)
@@ -1224,10 +1224,10 @@ const startInterval = async () => {
         }
 
         console.log('latestColumnsObjList',latestColumnsObjList)
-        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        // console.log('goldList',goldList.map(item=>item.overlappingIndex))
-        // console.log('deadList',deadList.map(item=>item.overlappingIndex))
-        // console.log('------------------')
+        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('goldList',goldList.map(item=>item.overlappingIndex))
+        console.log('deadList',deadList.map(item=>item.overlappingIndex))
+        console.log('------------------')
 
         let holding = globalHolding
         if(positionChange || !holding){
@@ -1260,80 +1260,80 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
-        // //开多仓条件
-        // if(
-        //     goldOverlappingNum >= 1
-        //     &&
-        //     goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
-        // ){
-        //     try {
-        //         if(!longHolding || !Number(longHolding.position)){
-        //             await autoOpenOtherOrderSingle({ openSide: "long" })
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平多仓条件
-        // if(
-        //     longRatio < - 0.1
-        //     ||
-        //     (deadOverlappingNum >= 1
-        //     &&
-        //     deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
-        // ){
-        //     try {
-        //         if(longHolding && Number(longHolding.position)){
-        //             const holding = {
-        //                 instrument_id: BTC_INSTRUMENT_ID,
-        //                 position: Number(longHolding.position),
-        //                 side: 'long'
-        //             }
-        //             await closeHalfPosition(holding);
-        //             lastLongMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //开空仓条件
-        // if(
-        //     deadOverlappingNum >= 1
-        //     &&
-        //     deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
-        // ){
-        //     try {
-        //         if(!shortHolding || !Number(shortHolding.position)){
-        //             await autoOpenOtherOrderSingle({ openSide: "short" })
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     shortRatio < - 0.1
-        //     ||
-        //     (goldOverlappingNum >= 1
-        //     &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.position)){
-        //             const holding = {
-        //                 instrument_id: BTC_INSTRUMENT_ID,
-        //                 position: Number(shortHolding.position),
-        //                 side: 'short'
-        //             }
-        //             await closeHalfPosition(holding);
-        //             lastShortMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        //开多仓条件
+        if(
+            goldOverlappingNum >= 1
+            &&
+            goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
+        ){
+            try {
+                if(!longHolding || !Number(longHolding.position)){
+                    await autoOpenOtherOrderSingle({ openSide: "long" })
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平多仓条件
+        if(
+            longRatio < - 0.1
+            ||
+            (deadOverlappingNum >= 1
+            &&
+            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
+        ){
+            try {
+                if(longHolding && Number(longHolding.position)){
+                    const holding = {
+                        instrument_id: BTC_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long'
+                    }
+                    await closeHalfPosition(holding);
+                    lastLongMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            deadOverlappingNum >= 1
+            &&
+            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
+        ){
+            try {
+                if(!shortHolding || !Number(shortHolding.position)){
+                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            shortRatio < - 0.1
+            ||
+            (goldOverlappingNum >= 1
+            &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.position)){
+                    const holding = {
+                        instrument_id: BTC_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short'
+                    }
+                    await closeHalfPosition(holding);
+                    lastShortMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
 
     }
 
