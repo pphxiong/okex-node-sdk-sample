@@ -1160,7 +1160,8 @@ const startInterval = async () => {
         //     columnsObjList.push(result)
         // })
 
-        const result = getRSI(allList[allList.length-1],allList.slice(-15))
+        // const result = getRSI(allList[allList.length-1],allList.slice(-15))
+        const result = getRSIByPeriod(allList,5)
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
