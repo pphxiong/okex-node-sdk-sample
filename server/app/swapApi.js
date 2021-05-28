@@ -1016,10 +1016,10 @@ function getRSIByPeriod(list, period){
     // const A = AList.reduce((pre,cur)=>pre+cur,0)
     // const B = BList.reduce((pre,cur)=>pre+cur,0)
 
-    const result = getAverage(newList,newList.length-1,period)
+    const result = getAverage(list,list.length-1,period)
     const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
-    console.log(newList)
+    console.log(list)
     console.log(gainAverageI)
     console.log(lossAverageI)
     console.log(RSI)
@@ -1161,7 +1161,7 @@ const startInterval = async () => {
         // })
 
         // const result = getRSI(allList[allList.length-1],allList.slice(-15))
-        const result = getRSIByPeriod(allList,5)
+        const result = getRSIByPeriod(allList.slice(-5),5)
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
@@ -1209,15 +1209,11 @@ const startInterval = async () => {
             }
         }
 
-        // console.log(Math.max(...columnsObjList.map(item=>item.diff/item.price)))
-        // console.log(Math.min(...columnsObjList.map(item=>item.diff/item.price)))
-        // 0.001526
-        // -0.00233
-        console.log('latestColumnsObjList',latestColumnsObjList)
-        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('goldList',goldList.map(item=>item.overlappingIndex))
-        console.log('deadList',deadList.map(item=>item.overlappingIndex))
-        console.log('------------------')
+        // console.log('latestColumnsObjList',latestColumnsObjList)
+        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        // console.log('goldList',goldList.map(item=>item.overlappingIndex))
+        // console.log('deadList',deadList.map(item=>item.overlappingIndex))
+        // console.log('------------------')
 
         let holding = globalHolding
         if(positionChange || !holding){
