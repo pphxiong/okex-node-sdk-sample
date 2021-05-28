@@ -970,6 +970,10 @@ function getMacd(params) {
 
     return result
 }
+function getAverage(num,i,n){
+    if(i==0) return num;
+    return (num + (n-1) * getAverage(num,i-1,n)) / n
+}
 function getRSIByPeriod(list, period){
     const AList = []
     const BList = []
@@ -983,13 +987,17 @@ function getRSIByPeriod(list, period){
             BList.push(priceDiff * -1)
         }
     }
-    const A = AList.reduce((pre,cur)=>pre+cur,0)
-    const B = BList.reduce((pre,cur)=>pre+cur,0)
-    const RSI = A / (A + B) * 100
-    console.log(newList)
-    console.log(AList)
-    console.log(BList)
-    console.log(A,B)
+    // const A = AList.reduce((pre,cur)=>pre+cur,0)
+    // const B = BList.reduce((pre,cur)=>pre+cur,0)
+    const diff = newList[newList.length-1] - newList[newList.length-2]
+    const gainI = Math.max(0,diff)
+    const lossI = Math.max(0,-diff)
+    const gainAverageI = getAverage(gainI,newList.length-1,period)
+    const lossAverageI = getAverage(lossI,newList.length-1,period)
+    const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
+    console.log(gainAverageI)
+    console.log(lossAverageI)
+    console.log(RSI)
     return RSI;
 }
 function getRSI(price,list){
