@@ -1022,14 +1022,14 @@ function getRSIByPeriod(list, period){
     return RSI;
 }
 function getRSI(price,list){
-    const RSI5 = getRSIByPeriod(list,5)
-    const RSI10 = getRSIByPeriod(list,10)
+    // const RSI5 = getRSIByPeriod(list,5)
+    // const RSI10 = getRSIByPeriod(list,10)
     const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
-        RSI5,
-        RSI10,
+        // RSI5,
+        // RSI10,
         RSI14
     }
     return result
