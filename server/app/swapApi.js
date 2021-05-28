@@ -1155,7 +1155,7 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
-        const columnsObjList = []
+        let columnsObjList = []
 
         // const allList = globalColumnsObjList.concat([Number(mark_price)])
         const allList = globalColumnsObjList
@@ -1175,9 +1175,9 @@ const startInterval = async () => {
 
         for(let k of gen()){
             if( k > 10 ) break
-            console.log(k)
         }
 
+        columnsObjList = columnsObjList.reverse()
         const latestColumnsObjList = columnsObjList.slice(-15)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
