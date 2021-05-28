@@ -1031,14 +1031,14 @@ function getRSIByPeriod(list, period){
 }
 function getRSI(price,list){
     const RSI5 = getRSIByPeriod(list,5)
-    const RSI10 = getRSIByPeriod(list,10)
-    const RSI14 = getRSIByPeriod(list,14)
+    // const RSI10 = getRSIByPeriod(list,10)
+    // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
         RSI5,
-        RSI10,
-        RSI14
+        // RSI10,
+        // RSI14
     }
     return result
 }
@@ -1164,8 +1164,8 @@ const startInterval = async () => {
         //     columnsObjList.push(result)
         // })
 
-        // const result = getRSI(allList[allList.length-1],allList.slice(-15))
-        const result = getRSI(allList[allList.length-1],allList)
+        const result = getRSI(allList[allList.length-1],allList.slice(-15))
+        // const result = getRSI(allList[allList.length-1],allList)
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
