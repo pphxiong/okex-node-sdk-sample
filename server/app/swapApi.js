@@ -970,7 +970,7 @@ function getMacd(params) {
 
     return result
 }
-function getAverage(list,i,n){
+function getRSIAverage(list,i,n){
     console.log(i,n)
     let diff;
     if(i==0) {
@@ -988,8 +988,8 @@ function getAverage(list,i,n){
         gainAverageI = gainI;
         lossAverageI = lossI;
     }else{
-        gainAverageI = (gainI + (n-1) * getAverage(list,i-1,n).gainAverageI) / n
-        lossAverageI = (lossI + (n-1) * getAverage(list,i-1,n).lossAverageI) / n
+        gainAverageI = (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n
+        lossAverageI = (lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n
     }
 
     const result = {
@@ -1017,7 +1017,7 @@ function getRSIByPeriod(list, period){
     // const A = AList.reduce((pre,cur)=>pre+cur,0)
     // const B = BList.reduce((pre,cur)=>pre+cur,0)
 
-    const result = getAverage(list,list.length-1,period)
+    const result = getRSIAverage(list,list.length-1,period)
     const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
     // console.log(list)
