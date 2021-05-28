@@ -996,6 +996,8 @@ function getAverage(list,i,n){
         lossAverageI,
     }
 
+    console.log('result',result)
+
     return result
 }
 function getRSIByPeriod(list, period){
@@ -1017,6 +1019,7 @@ function getRSIByPeriod(list, period){
     const result = getAverage(newList,newList.length-1,period)
     const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
+    console.log(newList)
     console.log(gainAverageI)
     console.log(lossAverageI)
     console.log(RSI)
