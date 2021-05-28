@@ -1164,17 +1164,18 @@ const startInterval = async () => {
         //     columnsObjList.push(result)
         // })
 
-        function* gen(i) {
-            const result = yield getRSI(allList[allList.length-1-i],allList.slice(-15-i,-i))
+        // function* gen(i) {
+        let i = 0
+            const result = getRSI(allList[allList.length-1-i],allList.slice(-15-i,-i))
             // const result = getRSI(allList[allList.length-1],allList)
             columnsObjList.push(result)
-            return result
-        }
+        //     return result
+        // }
 
-        for(let i = 0; i < 1; i ++){
-            let g = gen(i)
-            g.next()
-        }
+        // for(let i = 0; i < 1; i ++){
+        //     let g = gen(i)
+        //     g.next()
+        // }
 
         const latestColumnsObjList = columnsObjList.slice(-15)
         let goldOverlappingNum = 0
