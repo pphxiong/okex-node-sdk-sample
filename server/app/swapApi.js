@@ -1166,7 +1166,7 @@ const startInterval = async () => {
 
         function* gen() {
             const result = getRSI(allList[allList.length-1],allList.slice(-15))
-            // const result = getRSI(allList[allList.length-1],allList)
+            console.log('result',result)
             yield columnsObjList.push(result)
             return result
         }
