@@ -1164,11 +1164,13 @@ const startInterval = async () => {
         //     columnsObjList.push(result)
         // })
 
-        const result = getRSI(allList[allList.length-1],allList)
-        // const result = getRSI(allList[allList.length-1],allList)
-        columnsObjList.push(result)
+        for(let i = 0; i < 30; i ++){
+            const result = getRSI(allList[allList.length-1-i],allList.slice(-15-i,-i))
+            // const result = getRSI(allList[allList.length-1],allList)
+            columnsObjList.push(result)
+        }
 
-        const latestColumnsObjList = columnsObjList.slice(-30)
+        const latestColumnsObjList = columnsObjList.slice(-15)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
         const goldList = []
