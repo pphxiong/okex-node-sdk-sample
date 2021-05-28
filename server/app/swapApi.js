@@ -992,13 +992,20 @@ function getRSIAverage(list,i,n){
             lossAverageI,
         }
     }else{
-        return function(){
+        // return function(){
             return {
                 gainAverageI : (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n,
                 lossAverageI : (lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n
             }
-        }
+        // }
     }
+}
+function trampoline (func, arg) {
+    let value = func(arg);
+    while(typeof value === "function") {
+        value = value();
+    }
+    return value;
 }
 function getRSIByPeriod(list, period){
     // const AList = []
