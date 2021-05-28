@@ -971,7 +971,6 @@ function getMacd(params) {
     return result
 }
 function getRSIAverage(list,i,n){
-    console.log(i,n)
     let diff;
     if(i==0) {
         diff = 0;
@@ -987,17 +986,19 @@ function getRSIAverage(list,i,n){
     if(i==0) {
         gainAverageI = gainI;
         lossAverageI = lossI;
+
+        return {
+            gainAverageI,
+            lossAverageI,
+        }
     }else{
-        gainAverageI = (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n
-        lossAverageI = (lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n
+        return function(){
+            return {
+                gainAverageI : (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n
+                lossAverageI : (lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n
+            }
+        }
     }
-
-    const result = {
-        gainAverageI,
-        lossAverageI,
-    }
-
-    return result
 }
 function getRSIByPeriod(list, period){
     // const AList = []
@@ -1022,14 +1023,14 @@ function getRSIByPeriod(list, period){
     return RSI;
 }
 function getRSI(price,list){
-    // const RSI5 = getRSIByPeriod(list,5)
-    // const RSI10 = getRSIByPeriod(list,10)
+    const RSI5 = getRSIByPeriod(list,5)
+    const RSI10 = getRSIByPeriod(list,10)
     const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
-        // RSI5,
-        // RSI10,
+        RSI5,
+        RSI10,
         RSI14
     }
     return result
@@ -1157,7 +1158,7 @@ const startInterval = async () => {
         // })
 
         // const result = getRSI(allList[allList.length-1],allList.slice(-15))
-        const result = getRSI(allList[allList.length-1],allList.slice(-50))
+        const result = getRSI(allList[allList.length-1],allList)
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
