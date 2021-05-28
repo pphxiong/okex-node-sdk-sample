@@ -1002,7 +1002,7 @@ function getRSIByPeriod(list, period){
     // const AList = []
     // const BList = []
     // if(list.length < 15) return 50
-    // const newList = list.slice(list.length - period - 1, list.length)
+    const newList = list.slice(-period-1)
     // for(let i = 1; i < newList.length; i++){
     //     const priceDiff = newList[i] - newList[i-1]
     //     if(priceDiff > 0) {
@@ -1014,25 +1014,21 @@ function getRSIByPeriod(list, period){
     // const A = AList.reduce((pre,cur)=>pre+cur,0)
     // const B = BList.reduce((pre,cur)=>pre+cur,0)
 
-    const result = getRSIAverage(list,list.length-1,period)
+    const result = getRSIAverage(newList,newList.length-1,period)
     const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
-    // console.log(list)
-    // console.log(gainAverageI)
-    // console.log(lossAverageI)
-    console.log(RSI)
     return RSI;
 }
 function getRSI(price,list){
     const RSI5 = getRSIByPeriod(list,5)
-    // const RSI10 = getRSIByPeriod(list,10)
-    // const RSI14 = getRSIByPeriod(list,14)
+    const RSI10 = getRSIByPeriod(list,10)
+    const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
         RSI5,
-        // RSI10,
-        // RSI14
+        RSI10,
+        RSI14
     }
     return result
 }
@@ -1159,7 +1155,7 @@ const startInterval = async () => {
         // })
 
         // const result = getRSI(allList[allList.length-1],allList.slice(-15))
-        const result = getRSIByPeriod(allList.slice(-6),5)
+        const result = getRSI(allList[allList.length-1],allList)
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
@@ -1207,7 +1203,7 @@ const startInterval = async () => {
             }
         }
 
-        // console.log('latestColumnsObjList',latestColumnsObjList)
+        console.log('latestColumnsObjList',latestColumnsObjList)
         // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         // console.log('goldList',goldList.map(item=>item.overlappingIndex))
         // console.log('deadList',deadList.map(item=>item.overlappingIndex))
