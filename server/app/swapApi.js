@@ -1165,9 +1165,11 @@ const startInterval = async () => {
         // })
 
         for(let i = 0; i < 30; i ++){
-            const result = getRSI(allList[allList.length-1-i],allList.slice(-15-i,-i))
-            // const result = getRSI(allList[allList.length-1],allList)
-            columnsObjList.push(result)
+            setTimeout(()=>{
+                const result = getRSI(allList[allList.length-1-i],allList.slice(-15-i,-i))
+                // const result = getRSI(allList[allList.length-1],allList)
+                columnsObjList.push(result)
+            },0)
         }
 
         const latestColumnsObjList = columnsObjList.slice(-15)
