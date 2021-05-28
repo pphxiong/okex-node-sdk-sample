@@ -1156,7 +1156,7 @@ const startInterval = async () => {
         // })
 
         // const result = getRSI(allList[allList.length-1],allList.slice(-15))
-        const result = getRSI(allList[allList.length-1],allList)
+        const result = getRSI(allList[allList.length-1],allList.slice(-50))
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
