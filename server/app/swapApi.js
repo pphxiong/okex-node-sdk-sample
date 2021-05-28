@@ -1165,16 +1165,17 @@ const startInterval = async () => {
         // })
 
         function* gen() {
-            const result = getRSI(allList[allList.length-1],allList.slice(-15))
-            console.log('result',result)
-            yield columnsObjList.push(result)
-            return result
+            for(let i = 0; i < 10; i ++){
+                if(i > 0) allList.pop()
+                const result = getRSI(allList[allList.length-1],allList.slice(-15))
+                columnsObjList.push(result)
+                yield i
+            }
         }
 
-        let g = gen()
-        for(let i = 0; i < 10; i ++){
-            if(i > 0) allList.pop()
-            g.next()
+        for(let k of gen()){
+            if( k > 10 ) break
+            console.log(k)
         }
 
         const latestColumnsObjList = columnsObjList.slice(-15)
