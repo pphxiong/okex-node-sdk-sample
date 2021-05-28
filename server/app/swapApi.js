@@ -1166,7 +1166,7 @@ const startInterval = async () => {
 
         // function* gen(i) {
         let i = 0
-            const result = getRSI(allList[allList.length-1-i],allList.slice(-15-i,-i))
+            const result = getRSI(allList[allList.length-1-i],allList.slice(-15-i))
             // const result = getRSI(allList[allList.length-1],allList)
             columnsObjList.push(result)
         //     return result
