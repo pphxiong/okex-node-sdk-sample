@@ -1171,7 +1171,7 @@ const startInterval = async () => {
             return result
         }
 
-        for(let i = 0; i < 10; i ++){
+        for(let i = 0; i < 1; i ++){
             let g = gen(i)
             g.next()
         }
