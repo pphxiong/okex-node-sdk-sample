@@ -1001,10 +1001,10 @@ function getAverage(list,i,n){
     return result
 }
 function getRSIByPeriod(list, period){
-    const AList = []
-    const BList = []
+    // const AList = []
+    // const BList = []
     // if(list.length < 15) return 50
-    const newList = list.slice(list.length - period - 1, list.length)
+    // const newList = list.slice(list.length - period - 1, list.length)
     // for(let i = 1; i < newList.length; i++){
     //     const priceDiff = newList[i] - newList[i-1]
     //     if(priceDiff > 0) {
@@ -1019,10 +1019,10 @@ function getRSIByPeriod(list, period){
     const result = getAverage(list,list.length-1,period)
     const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
-    console.log(list)
-    console.log(gainAverageI)
-    console.log(lossAverageI)
-    console.log(RSI)
+    // console.log(list)
+    // console.log(gainAverageI)
+    // console.log(lossAverageI)
+    // console.log(RSI)
     return RSI;
 }
 function getRSI(price,list){
@@ -1161,7 +1161,7 @@ const startInterval = async () => {
         // })
 
         // const result = getRSI(allList[allList.length-1],allList.slice(-15))
-        const result = getRSIByPeriod(allList.slice(-5),5)
+        const result = getRSIByPeriod(allList.slice(-6),5)
         columnsObjList.push(result)
 
         const latestColumnsObjList = columnsObjList.slice(-30)
