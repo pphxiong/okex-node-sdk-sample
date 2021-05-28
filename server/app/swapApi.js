@@ -971,6 +971,7 @@ function getMacd(params) {
     return result
 }
 function getAverage(list,i,n){
+    console.log(i,n)
     let diff;
     if(i==0) {
         diff = 0;
