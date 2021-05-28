@@ -971,7 +971,6 @@ function getMacd(params) {
     return result
 }
 function getRSIAverage(list,i,n){
-    console.log(i,n)
     let diff;
     if(i==0) {
         diff = 0;
@@ -997,8 +996,6 @@ function getRSIAverage(list,i,n){
         lossAverageI,
     }
 
-    console.log('result',result)
-
     return result
 }
 function getRSIByPeriod(list, period){
@@ -1023,7 +1020,7 @@ function getRSIByPeriod(list, period){
     // console.log(list)
     // console.log(gainAverageI)
     // console.log(lossAverageI)
-    // console.log(RSI)
+    console.log(RSI)
     return RSI;
 }
 function getRSI(price,list){
