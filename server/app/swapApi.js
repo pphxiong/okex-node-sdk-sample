@@ -1225,8 +1225,8 @@ const startInterval = async () => {
 
         console.log('latestColumnsObjList',latestColumnsObjList)
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('goldList',goldList.map(item=>item.overlappingIndex))
-        console.log('deadList',deadList.map(item=>item.overlappingIndex))
+        console.log('goldList',goldList.map(item=>item.overlappingObj))
+        console.log('deadList',deadList.map(item=>item.overlappingObj))
         console.log('------------------')
 
         let holding = globalHolding
