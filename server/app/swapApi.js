@@ -970,6 +970,9 @@ function getMacd(params) {
 
     return result
 }
+function toFixedAndToNumber(n,num=1){
+    return Number(n.toFixed(num))
+}
 function getRSIAverage(list,i,n){
     let diff;
     if(i==0) {
@@ -984,8 +987,8 @@ function getRSIAverage(list,i,n){
     let lossAverageI;
 
     if(i==0) {
-        gainAverageI = gainI;
-        lossAverageI = lossI;
+        gainAverageI = toFixedAndToNumber(gainI);
+        lossAverageI = toFixedAndToNumber(lossI);
 
         return {
             gainAverageI,
@@ -994,8 +997,8 @@ function getRSIAverage(list,i,n){
     }else{
         // return function(){
             return {
-                gainAverageI : (gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n,
-                lossAverageI : (lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n
+                gainAverageI : toFixedAndToNumber((gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n),
+                lossAverageI : toFixedAndToNumber((lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n)
             }
         // }
     }
@@ -1027,7 +1030,7 @@ function getRSIByPeriod(list, period){
     const result = getRSIAverage(newList,newList.length-1,period)
     const { gainAverageI, lossAverageI } = result
     const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
-    return RSI;
+    return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
     const RSI5 = getRSIByPeriod(list,5)
@@ -1142,7 +1145,7 @@ let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 15, // 单位为秒
-        limit: 100,
+        // limit: 100,
         // start,
         // end
     }
