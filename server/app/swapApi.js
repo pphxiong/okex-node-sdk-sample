@@ -975,8 +975,8 @@ function toFixedAndToNumber(n,num=1){
 }
 function getRSIAverage(list,i,n){
     let diff;
-    let gainI;
-    let lossI
+    let gainI = 0;
+    let lossI = 0;
     if(i==0) {
         diff = 0;
     }else{
