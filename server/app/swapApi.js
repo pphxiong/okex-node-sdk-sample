@@ -1183,7 +1183,7 @@ const startInterval = async () => {
         let deadOverlappingNum = 0
         const goldList = []
         const deadList = []
-        for(let i = 0; i < latestColumnsObjList.length - 2; i++){
+        for(let i = 0; i < latestColumnsObjList.length - 1; i++){
             const tripleList = latestColumnsObjList.slice(i, i + 2)
             const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) {
