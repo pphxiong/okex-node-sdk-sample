@@ -975,13 +975,18 @@ function toFixedAndToNumber(n,num=1){
 }
 function getRSIAverage(list,i,n){
     let diff;
+    let gainI;
+    let lossI
     if(i==0) {
         diff = 0;
     }else{
         diff = list[i] - list[i-1]
+        if(diff > 0){
+            gainI = Math.max(0,diff)
+        }else{
+            lossI = Math.max(0,-diff)
+        }
     }
-    const gainI = Math.max(0,diff)
-    const lossI = Math.max(0,-diff)
 
     let gainAverageI;
     let lossAverageI;
