@@ -1072,7 +1072,7 @@ function isGoldOverLapping(list, index){
         &&
         list[0].RSI10 < list[1].RSI10
         &&
-        list[1].RSI5 >= list[1].RSI10 + 5
+        list[1].RSI5 >= list[1].RSI10 + 2
     ){
         const point1 = {
             x: index,
@@ -1108,7 +1108,7 @@ function isDeadOverLapping(list,index){
         &&
         list[0].RSI10 > list[1].RSI10
         &&
-        list[1].RSI5 <= list[1].RSI10 - 5
+        list[1].RSI5 <= list[1].RSI10 - 3
     ){
         const point1 = {
             x: index,
@@ -1272,7 +1272,7 @@ const startInterval = async () => {
         if(
             goldOverlappingNum >= 1
             &&
-            goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
+            goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1289,7 +1289,7 @@ const startInterval = async () => {
             ||
             (deadOverlappingNum >= 1
             &&
-            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
+            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1310,7 +1310,7 @@ const startInterval = async () => {
         if(
             deadOverlappingNum >= 1
             &&
-            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 3
+            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1326,7 +1326,7 @@ const startInterval = async () => {
             shortRatio < - 0.1
             ||
             (goldOverlappingNum >= 1
-            &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 3)
+            &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
