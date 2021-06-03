@@ -970,7 +970,7 @@ function getMacd(params) {
 
     return result
 }
-function toFixedAndToNumber(n,num=1){
+function toFixedAndToNumber(n,num=5){
     return Number(n.toFixed(num))
 }
 function getRSIAverage(list,i,n){
@@ -1177,7 +1177,7 @@ const startInterval = async () => {
         function* gen() {
             for(let i = 0; i < 5; i ++){
                 if(i > 0) allList.pop()
-                const result = getRSI(allList[allList.length-1],allList.slice(-15))
+                const result = getRSI(allList[allList.length-1],allList.slice(-300))
                 columnsObjList.push(result)
                 yield i
             }
