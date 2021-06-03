@@ -1162,19 +1162,19 @@ const startInterval = async () => {
     // }
 
     if(Array.isArray(globalColumnsObjList)){
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+        // const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
         let columnsObjList = []
 
-        const allList = globalColumnsObjList.concat([Number(mark_price)])
-        // const allList = globalColumnsObjList
+        // const allList = globalColumnsObjList.concat([Number(mark_price)])
+        const allList = globalColumnsObjList
         // allList.map((item,index)=>{
         //         const result = getRSI(item,allList.slice(0,index+1))
         //     columnsObjList.push(result)
         // })
 
         function* gen() {
-            for(let i = 0; i < 3; i ++){
+            for(let i = 0; i < 2; i ++){
                 if(i > 0) allList.pop()
                 const result = getRSI(allList[allList.length-1],allList)
                 columnsObjList.push(result)
@@ -1183,7 +1183,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k > 3 ) break
+            if( k >= 2 ) break
         }
 
         // allList.pop()
@@ -1236,11 +1236,13 @@ const startInterval = async () => {
             }
         }
 
-        console.log('latestColumnsObjList',latestColumnsObjList)
-        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('goldList',goldList.map(item=>item.overlappingObj))
-        console.log('deadList',deadList.map(item=>item.overlappingObj))
-        console.log('------------------')
+        if(goldList.length||deadList.length){
+            console.log('latestColumnsObjList',latestColumnsObjList)
+            console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+            console.log('goldList',goldList)
+            console.log('deadList',deadList)
+            console.log('------------------')
+        }
 
         let holding = globalHolding
         if(positionChange || !holding){
@@ -1276,8 +1278,8 @@ const startInterval = async () => {
         //开多仓条件
         if(
             goldOverlappingNum >= 1
-            &&
-            goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
+            // &&
+            // goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1293,8 +1295,9 @@ const startInterval = async () => {
             longRatio < - 0.1
             ||
             (deadOverlappingNum >= 1
-            &&
-            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2)
+            // &&
+            // deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
+            )
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1314,8 +1317,8 @@ const startInterval = async () => {
         //开空仓条件
         if(
             deadOverlappingNum >= 1
-            &&
-            deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
+            // &&
+            // deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1331,7 +1334,8 @@ const startInterval = async () => {
             shortRatio < - 0.1
             ||
             (goldOverlappingNum >= 1
-            &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2)
+            // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
+            )
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
