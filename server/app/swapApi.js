@@ -1236,12 +1236,16 @@ const startInterval = async () => {
             }
         }
 
+        console.log('------------------')
+        console.log('latestColumnsObjList',latestColumnsObjList)
+        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('------------------')
+
         if(goldList.length||deadList.length){
-            console.log('latestColumnsObjList',latestColumnsObjList)
-            console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+            console.log('#####################################')
             console.log('goldList',goldList)
             console.log('deadList',deadList)
-            console.log('------------------')
+            console.log('#####################################')
         }
 
         let holding = globalHolding
