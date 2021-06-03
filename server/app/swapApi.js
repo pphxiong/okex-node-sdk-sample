@@ -970,7 +970,7 @@ function getMacd(params) {
 
     return result
 }
-function toFixedAndToNumber(n,num=5){
+function toFixedAndToNumber(n,num=1){
     return Number(n.toFixed(num))
 }
 function getRSIAverage(list,i,n){
@@ -1038,13 +1038,13 @@ function getRSIByPeriod(newList, period){
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
-    // const RSI5 = getRSIByPeriod(list,5)
+    const RSI5 = getRSIByPeriod(list,5)
     const RSI10 = getRSIByPeriod(list,10)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
-        // RSI5,
+        RSI5,
         RSI10,
         // RSI14
     }
@@ -1172,22 +1172,22 @@ const startInterval = async () => {
         //     columnsObjList.push(result)
         // })
 
-        // function* gen() {
-        //     for(let i = 0; i < 5; i ++){
-        //         if(i > 0) allList.pop()
-        //         const result = getRSI(allList[allList.length-1-i],allList.slice(-15))
-        //         columnsObjList.push(result)
-        //         yield i
-        //     }
-        // }
-        //
-        // for(let k of gen()){
-        //     if( k > 5 ) break
-        // }
+        function* gen() {
+            for(let i = 0; i < 5; i ++){
+                if(i > 0) allList.pop()
+                const result = getRSI(allList[allList.length-1],allList)
+                columnsObjList.push(result)
+                yield i
+            }
+        }
 
-        allList.pop()
-        const result = getRSI(allList[allList.length-1],allList)
-        columnsObjList.push(result)
+        for(let k of gen()){
+            if( k > 5 ) break
+        }
+
+        // allList.pop()
+        // const result = getRSI(allList[allList.length-1],allList)
+        // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
         const latestColumnsObjList = columnsObjList.slice(-15)
