@@ -1175,17 +1175,16 @@ const startInterval = async () => {
         // })
 
         function* gen() {
-            // for(let i = 0; i < 5; i ++){
-            //     if(i > 0) allList.pop()
-                const result = getRSI(allList[allList.length-1],allList.slice(-300))
+            for(let i = 0; i < 5; i ++){
+                if(i > 0) allList.pop()
+                const result = getRSI(allList[allList.length-1],allList.slice(-20))
                 columnsObjList.push(result)
-                yield 1
-            // }
+                yield i
+            }
         }
 
         for(let k of gen()){
-            break
-            // if( k > 5 ) break
+            if( k > 5 ) break
         }
 
         columnsObjList = columnsObjList.reverse()
