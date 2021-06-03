@@ -1177,7 +1177,7 @@ const startInterval = async () => {
         function* gen() {
             for(let i = 0; i < 5; i ++){
                 if(i > 0) allList.pop()
-                const result = getRSI(allList[allList.length-1],allList.slice(-15))
+                const result = getRSI(allList[allList.length-1],allList.slice(-60))
                 columnsObjList.push(result)
                 yield i
             }
