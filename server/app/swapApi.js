@@ -1162,7 +1162,7 @@ const startInterval = async () => {
     // }
 
     if(Array.isArray(globalColumnsObjList)){
-        // const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
         let columnsObjList = []
 
