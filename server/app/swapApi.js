@@ -1000,7 +1000,7 @@ function getRSIAverage(list,i,n){
         lossAverageI = toFixedAndToNumber((lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n);
     }
 
-    // console.log('gain','loss',gainAverageI,lossAverageI)
+    console.log('gain','loss',gainAverageI,lossAverageI)
     return {
         gainAverageI,
         lossAverageI,
