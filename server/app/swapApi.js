@@ -1188,7 +1188,7 @@ const startInterval = async () => {
         // }
 
         allList.pop()
-        const result = getRSI(allList[allList.length-1],allList)
+        const result = getRSI(allList[allList.length-1],allList.slice(-15))
         columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
