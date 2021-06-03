@@ -1000,7 +1000,7 @@ function getRSIAverage(list,i,n){
         lossAverageI = toFixedAndToNumber((lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n);
     }
 
-    console.log('gain','loss',gainAverageI,lossAverageI)
+    // console.log('gain','loss',gainAverageI,lossAverageI)
     return {
         gainAverageI,
         lossAverageI,
@@ -1039,13 +1039,13 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const RSI5 = getRSIByPeriod(list,5)
-    const RSI10 = getRSIByPeriod(list,10)
+    // const RSI10 = getRSIByPeriod(list,10)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
         RSI5,
-        RSI10,
+        // RSI10,
         // RSI14
     }
     return result
@@ -1186,7 +1186,7 @@ const startInterval = async () => {
         // }
 
         allList.pop()
-        const result = getRSI(allList[allList.length-1],allList.slice(-50))
+        const result = getRSI(allList[allList.length-1],allList.slice(-100))
         columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
