@@ -995,17 +995,15 @@ function getRSIAverage(list,i,n){
         gainAverageI = toFixedAndToNumber(gainI);
         lossAverageI = toFixedAndToNumber(lossI);
 
-        return {
-            gainAverageI,
-            lossAverageI,
-        }
     }else{
-        // return function(){
-            return {
-                gainAverageI : toFixedAndToNumber((gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n),
-                lossAverageI : toFixedAndToNumber((lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n)
-            }
-        // }
+        gainAverageI = toFixedAndToNumber((gainI + (n-1) * getRSIAverage(list,i-1,n).gainAverageI) / n);
+        lossAverageI = toFixedAndToNumber((lossI + (n-1) * getRSIAverage(list,i-1,n).lossAverageI) / n);
+    }
+
+    console.log('gain','loss',gainAverageI,lossAverageI)
+    return {
+        gainAverageI,
+        lossAverageI,
     }
 }
 function trampoline (func, arg) {
@@ -1015,12 +1013,12 @@ function trampoline (func, arg) {
     }
     return value;
 }
-function getRSIByPeriod(list, period){
+function getRSIByPeriod(newList, period){
     // const AList = []
     // const BList = []
     // if(list.length < 15) return 50
     // const newList = list.slice(-period-1)
-    const newList = list
+    // const newList = list
     // for(let i = 1; i < newList.length; i++){
     //     const priceDiff = newList[i] - newList[i-1]
     //     if(priceDiff > 0) {
