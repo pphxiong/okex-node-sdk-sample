@@ -1034,7 +1034,9 @@ function getRSIByPeriod(list, period){
 
     const result = getRSIAverage(newList,newList.length-1,period)
     const { gainAverageI, lossAverageI } = result
-    const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
+    // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
+    const RS = gainAverageI / lossAverageI;
+    const RSI = 100 - 100 / (1 + RS);
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
