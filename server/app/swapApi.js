@@ -971,7 +971,8 @@ function getMacd(params) {
     return result
 }
 function toFixedAndToNumber(n,num=1){
-    return Number(n.toFixed(num))
+    // return Number(n.toFixed(num))
+    return Math.round(n * Math.pow(10,num)) / Math.pow(10,num)
 }
 function getRSIAverage(list,i,n){
     let diff;
@@ -1072,7 +1073,7 @@ function isGoldOverLapping(list, index){
         &&
         list[0].RSI10 < list[1].RSI10
         &&
-        list[1].RSI5 >= list[1].RSI10 + 2
+        list[1].RSI5 >= list[1].RSI10 + 5
     ){
         const point1 = {
             x: index,
@@ -1108,7 +1109,7 @@ function isDeadOverLapping(list,index){
         &&
         list[0].RSI10 > list[1].RSI10
         &&
-        list[1].RSI5 <= list[1].RSI10 - 3
+        list[1].RSI5 <= list[1].RSI10 - 5
     ){
         const point1 = {
             x: index,
