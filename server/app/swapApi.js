@@ -1069,27 +1069,27 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[0].RSI5 < list[1].RSI5
+        list[0].RSI5 < list[2].RSI5
         &&
-        list[0].RSI10 < list[1].RSI10
+        list[0].RSI10 < list[2].RSI10
         &&
-        list[1].RSI5 >= list[1].RSI10 + 5
+        list[2].RSI5 >= list[2].RSI10 + 5
     ){
         const point1 = {
             x: index,
             y: list[0].RSI5
         }
         const point2 = {
-            x: index + 1,
-            y: list[1].RSI5
+            x: index + 2,
+            y: list[2].RSI5
         }
         const point3 = {
             x: index,
             y: list[0].RSI10,
         }
         const point4 = {
-            x: index + 1,
-            y: list[1].RSI10
+            x: index + 2,
+            y: list[2].RSI10
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1105,27 +1105,27 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[0].RSI5 > list[1].RSI5
+        list[0].RSI5 > list[2].RSI5
         &&
-        list[0].RSI10 > list[1].RSI10
+        list[0].RSI10 > list[2].RSI10
         &&
-        list[1].RSI5 <= list[1].RSI10 - 5
+        list[2].RSI5 <= list[2].RSI10 - 5
     ){
         const point1 = {
             x: index,
             y: list[0].RSI5
         }
         const point2 = {
-            x: index + 1,
-            y: list[1].RSI5
+            x: index + 2,
+            y: list[2].RSI5
         }
         const point3 = {
             x: index,
             y: list[0].RSI10,
         }
         const point4 = {
-            x: index + 1,
-            y: list[1].RSI10
+            x: index + 2,
+            y: list[2].RSI10
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1174,7 +1174,7 @@ const startInterval = async () => {
         // })
 
         function* gen() {
-            for(let i = 0; i < 2; i ++){
+            for(let i = 0; i < 3; i ++){
                 if(i > 0) allList.pop()
                 const result = getRSI(allList[allList.length-1],allList)
                 columnsObjList.push(result)
@@ -1183,7 +1183,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 2 ) break
+            if( k >= 3 ) break
         }
 
         // allList.pop()
@@ -1196,8 +1196,8 @@ const startInterval = async () => {
         let deadOverlappingNum = 0
         const goldList = []
         const deadList = []
-        for(let i = 0; i < latestColumnsObjList.length - 1; i++){
-            const tripleList = latestColumnsObjList.slice(i, i + 2)
+        for(let i = 0; i < latestColumnsObjList.length - 2; i++){
+            const tripleList = latestColumnsObjList.slice(i, i + 3)
             const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) {
                 goldOverlappingNum++;
