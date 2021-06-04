@@ -1039,14 +1039,14 @@ function getRSIByPeriod(newList, period){
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
-    const RSI5 = getRSIByPeriod(list,5)
-    const RSI10 = getRSIByPeriod(list,10)
+    const RSI1 = getRSIByPeriod(list,6)
+    const RSI2 = getRSIByPeriod(list,48)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
         price,
-        RSI5,
-        RSI10,
+        RSI1,
+        RSI2,
         // RSI14
     }
     return result
@@ -1069,27 +1069,27 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[0].RSI5 < list[2].RSI5
+        list[0].RSI1 < list[0].RSI2
         &&
-        list[0].RSI10 < list[2].RSI10
-        &&
-        list[1].RSI5 >= list[1].RSI10 + 5
+        list[2].RSI1 > list[2].RSI2
+        // &&
+        // list[1].RSI1 >= list[1].RSI2 + 5
     ){
         const point1 = {
             x: index,
-            y: list[0].RSI5
+            y: list[0].RSI1
         }
         const point2 = {
             x: index + 2,
-            y: list[2].RSI5
+            y: list[2].RSI1
         }
         const point3 = {
             x: index,
-            y: list[0].RSI10,
+            y: list[0].RSI2,
         }
         const point4 = {
             x: index + 2,
-            y: list[2].RSI10
+            y: list[2].RSI2
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
@@ -1105,27 +1105,27 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[0].RSI5 > list[2].RSI5
+        list[0].RSI1 > list[0].RSI2
         &&
-        list[0].RSI10 > list[2].RSI10
-        &&
-        list[1].RSI5 <= list[1].RSI10 - 5
+        list[2].RSI2 < list[2].RSI2
+        // &&
+        // list[1].RSI1 <= list[1].RSI2 - 5
     ){
         const point1 = {
             x: index,
-            y: list[0].RSI5
+            y: list[0].RSI1
         }
         const point2 = {
             x: index + 2,
-            y: list[2].RSI5
+            y: list[2].RSI1
         }
         const point3 = {
             x: index,
-            y: list[0].RSI10,
+            y: list[0].RSI2,
         }
         const point4 = {
             x: index + 2,
-            y: list[2].RSI10
+            y: list[2].RSI2
         }
         if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
