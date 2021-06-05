@@ -1069,11 +1069,11 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[0].RSI1 < list[0].RSI2
+        list[1].RSI1 < list[1].RSI2
         &&
         list[2].RSI1 > list[2].RSI2
-        // &&
-        // list[1].RSI1 >= list[1].RSI2 + 5
+        &&
+        list[2].RSI1 >= list[2].RSI2 + 3
     ){
         const point1 = {
             x: index,
@@ -1105,11 +1105,11 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[0].RSI1 > list[0].RSI2
+        list[1].RSI1 > list[1].RSI2
         &&
         list[2].RSI2 < list[2].RSI2
-        // &&
-        // list[1].RSI1 <= list[1].RSI2 - 5
+        &&
+        list[2].RSI1 <= list[2].RSI2 - 3
     ){
         const point1 = {
             x: index,
@@ -1296,7 +1296,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            longRatio < - 0.0618
+            longRatio < - 0.1
             ||
             (deadOverlappingNum >= 1
             // &&
@@ -1335,7 +1335,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            shortRatio < - 0.0618
+            shortRatio < - 0.1
             ||
             (goldOverlappingNum >= 1
             // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
