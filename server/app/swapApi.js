@@ -1069,7 +1069,7 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[1].RSI1 < list[1].RSI2
+        list[0].RSI1 < list[0].RSI2
         &&
         list[2].RSI1 > list[2].RSI2
         &&
@@ -1091,9 +1091,9 @@ function isGoldOverLapping(list, index){
             x: index + 2,
             y: list[2].RSI2
         }
-        if(checkCross(point1,point2,point3,point4)){
+        // if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
-        }
+        // }
     }
     const overlappingObj = {
         isOverLapping,
@@ -1105,7 +1105,7 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[1].RSI1 > list[1].RSI2
+        list[0].RSI1 > list[0].RSI2
         &&
         list[2].RSI2 < list[2].RSI2
         &&
@@ -1127,9 +1127,9 @@ function isDeadOverLapping(list,index){
             x: index + 2,
             y: list[2].RSI2
         }
-        if(checkCross(point1,point2,point3,point4)){
+        // if(checkCross(point1,point2,point3,point4)){
             isOverLapping = true
-        }
+        // }
     }
     const overlappingObj = {
         isOverLapping,
@@ -1236,6 +1236,7 @@ const startInterval = async () => {
             }
         }
 
+        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
         console.log('latestColumnsObjList',latestColumnsObjList)
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
@@ -1296,7 +1297,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            longRatio < - 0.1
+            longRatio < - 0.0618
             ||
             (deadOverlappingNum >= 1
             // &&
@@ -1335,7 +1336,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            shortRatio < - 0.1
+            shortRatio < - 0.0618
             ||
             (goldOverlappingNum >= 1
             // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
