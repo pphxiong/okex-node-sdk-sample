@@ -1107,7 +1107,7 @@ function isDeadOverLapping(list,index){
     if(
         list[0].RSI1 > list[0].RSI2
         &&
-        list[2].RSI2 < list[2].RSI2
+        list[2].RSI1 < list[2].RSI2
         &&
         list[2].RSI1 <= list[2].RSI2 - 3
     ){
