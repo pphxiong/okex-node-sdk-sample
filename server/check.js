@@ -5,10 +5,13 @@ let last;
 function check() {
     last = exec('lsof -i:8091');
     last.on('exit', function (code) {
+        console.log(code)
         if (code != "0") {
+            console.log('restarting');
             console.log('主服务已经关闭，正在重启');
             run();
         }else{
+            console.log('running')
             console.log('主服务正在运行中...');
         }
     })
