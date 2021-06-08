@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = LEVERAGE * 0.1;
+let initPosition = LEVERAGE * 0.1 * 2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1297,7 +1297,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            longRatio < - 0.0618
+            longRatio < - 0.191
             ||
             (deadOverlappingNum >= 1
             // &&
@@ -1336,7 +1336,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            shortRatio < - 0.0618
+            shortRatio < - 0.191
             ||
             (goldOverlappingNum >= 1
             // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
