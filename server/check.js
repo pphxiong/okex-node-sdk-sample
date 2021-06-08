@@ -1,7 +1,6 @@
 let exec = require('child_process').exec;
 
 let last;
-
 function check() {
     // last = exec('lsof -i:8091');
     // last.on('exit', function (code) {
@@ -24,7 +23,9 @@ function check() {
 }
 
 function restart() {
-    last = exec('npm run restart');
+    last = exec('npm run restart',, function(err, stdout , stderr ){
+        console.log(err,stdout,stderr)
+    });
     last.on('exit',function(code){
         if (code == "0") {
             console.log('restarting success')
