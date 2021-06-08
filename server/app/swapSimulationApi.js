@@ -970,7 +970,7 @@ function getMacd(params) {
 
     return result
 }
-function toFixedAndToNumber(n,num=1){
+function toFixedAndToNumber(n,num=4){
     // return Number(n.toFixed(num))
     return Math.round(n * Math.pow(10,num)) / Math.pow(10,num)
 }
