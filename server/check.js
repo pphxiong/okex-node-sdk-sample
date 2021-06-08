@@ -3,29 +3,28 @@ let exec = require('child_process').exec;
 let last;
 
 function check() {
-    last = exec('lsof -i:8091');
-    last.on('exit', function (code) {
-        console.log(code)
-        if (code == "0") {
-            console.log('restarting');
-            // console.log('主服务已经关闭，正在重启');
-            run();
-        }else{
-            console.log('running')
-            // console.log('主服务正在运行中...');
-        }
-    })
+    // last = exec('lsof -i:8091');
+    // last.on('exit', function (code) {
+    //     console.log(code)
+    //     if (code == "0") {
+    //         console.log('restarting');
+    //         // console.log('主服务已经关闭，正在重启');
+    //         restart();
+    //     }else{
+    //         console.log('running')
+    //         // console.log('主服务正在运行中...');
+    //     }
+    // })
     process.on('uncaughtException', function (err) {
         //打印出错误
-        console.log(err);
-        //打印出错误的调用栈方便调试
-        console.log(err.stack);
+        // console.log(err);
+        restart()
     });
     setTimeout(check,5000)
 }
 
-function run() {
-    last = exec('npm run start');
+function restart() {
+    last = exec('npm run restart');
     last.on('exit',function(code){
         if (code == "0") {
             console.log('restarting success')
