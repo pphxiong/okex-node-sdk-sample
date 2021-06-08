@@ -993,12 +993,16 @@ function getRSIAverage(list,i,n){
     let lossAverageI;
 
     if(i==0) {
-        gainAverageI = toFixedAndToNumber(gainI);
-        lossAverageI = toFixedAndToNumber(lossI);
+        // gainAverageI = toFixedAndToNumber(gainI);
+        // lossAverageI = toFixedAndToNumber(lossI);
+        gainAverageI = gainI;
+        lossAverageI = lossI;
     }else{
         const lastRSIAverage = getRSIAverage(list,i-1,n);
-        gainAverageI = toFixedAndToNumber((gainI + (n-1) * lastRSIAverage.gainAverageI) / n);
-        lossAverageI = toFixedAndToNumber((lossI + (n-1) * lastRSIAverage.lossAverageI) / n);
+        // gainAverageI = toFixedAndToNumber((gainI + (n-1) * lastRSIAverage.gainAverageI) / n);
+        // lossAverageI = toFixedAndToNumber((lossI + (n-1) * lastRSIAverage.lossAverageI) / n);
+        gainAverageI = (gainI + (n-1) * lastRSIAverage.gainAverageI) / n;
+        lossAverageI = (lossI + (n-1) * lastRSIAverage.lossAverageI) / n;
     }
 
     // console.log('gain','loss',gainAverageI,lossAverageI)
