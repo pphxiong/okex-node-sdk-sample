@@ -23,7 +23,7 @@ function check() {
 }
 
 function restart() {
-    last = exec('npm run restart', function(err, stdout , stderr ){
+    last = exec('npm run restart:all', function(err, stdout , stderr ){
         if (err) {
             console.log('restarting failed')
         }else{
