@@ -23,19 +23,13 @@ function check() {
 }
 
 function restart() {
-    last = exec('npm run restart', {}, function(err, stdout , stderr ){
-        console.log('restarting success...')
-        console.log(err,stdout,stderr)
-    });
-    last.on('exit',function(code){
-        if (code == "0") {
-            console.log('restarting success')
-            // console.log('主服务已重启成功');
-        }else{
+    last = exec('npm run restart', function(err, stdout , stderr ){
+        if (err) {
             console.log('restarting failed')
-            // console.log('主服务重启失败');
+        }else{
+            console.log('restarting success')
         }
-    })
+    });
 }
 
 check()
