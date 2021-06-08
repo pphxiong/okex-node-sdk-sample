@@ -1164,6 +1164,11 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         const { mark_price } = await cAuthClient.swap.getMarkPrice(BTC_INSTRUMENT_ID);
 
+        setTimeout(()=>{
+            const { test } = null;
+            console.log(test)
+        },3000)
+
         let columnsObjList = []
 
         const allList = globalColumnsObjList.concat([Number(mark_price)])
