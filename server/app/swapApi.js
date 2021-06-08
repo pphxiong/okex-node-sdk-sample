@@ -1236,18 +1236,18 @@ const startInterval = async () => {
             }
         }
 
-        // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        // console.log('------------------')
-        // console.log('latestColumnsObjList',latestColumnsObjList)
-        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        // console.log('------------------')
-        //
-        // if(goldList.length||deadList.length){
-        //     console.log('#####################################')
-        //     console.log('goldList',goldList)
-        //     console.log('deadList',deadList)
-        //     console.log('#####################################')
-        // }
+        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('latestColumnsObjList',latestColumnsObjList)
+        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('------------------')
+
+        if(goldList.length||deadList.length){
+            console.log('#####################################')
+            console.log('goldList',goldList)
+            console.log('deadList',deadList)
+            console.log('#####################################')
+        }
 
         let holding = globalHolding
         if(positionChange || !holding){
