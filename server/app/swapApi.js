@@ -1297,7 +1297,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            longRatio < - 0.191
+            longRatio < - 0.0618
             ||
             (deadOverlappingNum >= 1
             // &&
@@ -1336,7 +1336,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            shortRatio < - 0.191
+            shortRatio < - 0.0618
             ||
             (goldOverlappingNum >= 1
             // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
