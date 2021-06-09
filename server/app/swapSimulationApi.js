@@ -1310,7 +1310,7 @@ const startInterval = async () => {
                 // deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
             )
             ||
-            latestRSI.RSI1 - latestRSI.RSI2 <= 3
+            latestRSI.RSI1 - latestRSI.RSI2 <= -3
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
