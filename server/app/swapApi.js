@@ -1280,6 +1280,8 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
+        const latestRSI = latestColumnsObjList.slice(-1)
+
         //开多仓条件
         if(
             goldOverlappingNum >= 1
@@ -1297,12 +1299,14 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            longRatio < - 0.0618
-            ||
+            // longRatio < - 0.0618
+            // ||
             (deadOverlappingNum >= 1
             // &&
             // deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
             )
+            ||
+            latestRSI.RSI1 - latestRSI.RSI2 <= 3
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1336,11 +1340,13 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            shortRatio < - 0.0618
-            ||
+            // shortRatio < - 0.0618
+            // ||
             (goldOverlappingNum >= 1
             // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
             )
+            ||
+            latestRSI.RSI1 - latestRSI.RSI2 >= 3
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
