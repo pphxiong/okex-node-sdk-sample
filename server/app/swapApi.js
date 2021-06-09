@@ -1280,7 +1280,7 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
-        const latestRSI = latestColumnsObjList.slice(-1)
+        const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
         //开多仓条件
         if(

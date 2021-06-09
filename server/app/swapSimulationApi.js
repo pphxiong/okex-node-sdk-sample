@@ -1284,12 +1284,8 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
-        const latestRSI = latestColumnsObjList.slice(-1)
+        const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
-        console.log(latestRSI)
-        console.log(Number(latestRSI.RSI1) - Number(latestRSI.RSI2))
-        console.log(latestRSI.RSI1 - latestRSI.RSI2 <= -3)
-        console.log(Number(latestRSI.RSI1 - latestRSI.RSI2) <= -3)
         //开多仓条件
         if(
             goldOverlappingNum >= 1
