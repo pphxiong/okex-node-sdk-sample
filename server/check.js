@@ -19,7 +19,10 @@ function check() {
         // console.log(err);
         restart()
     });
-    setTimeout(check,5000)
+    process.on('exit', function (err) {
+        restart()
+    });
+    // setTimeout(check,5000)
 }
 
 function restart() {
