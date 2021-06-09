@@ -1301,10 +1301,7 @@ const startInterval = async () => {
         if(
             // longRatio < - 0.0618
             // ||
-            (deadOverlappingNum >= 1
-            // &&
-            // deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
-            )
+            deadOverlappingNum >= 1
             ||
             latestRSI.RSI1 - latestRSI.RSI2 <= -3
         ){
@@ -1340,11 +1337,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            // shortRatio < - 0.0618
-            // ||
-            (goldOverlappingNum >= 1
-            // &&goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
-            )
+            goldOverlappingNum >= 1
             ||
             latestRSI.RSI1 - latestRSI.RSI2 >= 3
         ){
