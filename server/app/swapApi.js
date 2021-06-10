@@ -1105,9 +1105,9 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        (list[0].RSI1 <= list[0].RSI2
+        (list[0].RSI1 >= list[0].RSI2
         ||
-        list[1].RSI1 <= list[1].RSI2)
+        list[1].RSI1 >= list[1].RSI2)
         &&
         list[2].RSI1 <= list[2].RSI2 - 3
     ){
