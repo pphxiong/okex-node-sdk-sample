@@ -1069,9 +1069,7 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[0].RSI1 < list[0].RSI2
-        &&
-        list[2].RSI1 > list[2].RSI2
+        list[1].RSI1 < list[1].RSI2
         &&
         list[2].RSI1 >= list[2].RSI2 + 3
     ){
@@ -1105,9 +1103,7 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[0].RSI1 > list[0].RSI2
-        &&
-        list[2].RSI1 < list[2].RSI2
+        list[1].RSI1 > list[1].RSI2
         &&
         list[2].RSI1 <= list[2].RSI2 - 3
     ){
@@ -1303,7 +1299,9 @@ const startInterval = async () => {
             // ||
             deadOverlappingNum >= 1
             ||
-            latestRSI.RSI1 - latestRSI.RSI2 <= -3
+            latestRSI.RSI1 <= latestRSI.RSI2
+            ||
+            latestRSI.RSI1 >= 90
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1339,7 +1337,9 @@ const startInterval = async () => {
         if(
             goldOverlappingNum >= 1
             ||
-            latestRSI.RSI1 - latestRSI.RSI2 >= 3
+            latestRSI.RSI1 >= latestRSI.RSI2
+            ||
+            latestRSI.RSI1 <= 10
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
