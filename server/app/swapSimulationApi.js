@@ -1073,7 +1073,9 @@ function checkCross(p1,p2,p3,p4){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        list[1].RSI1 < list[1].RSI2
+        (list[0].RSI1 <= list[0].RSI2
+        ||
+        list[1].RSI1 <= list[1].RSI2)
         &&
         list[2].RSI1 >= list[2].RSI2 + 3
     ){
@@ -1107,7 +1109,9 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        list[1].RSI1 > list[1].RSI2
+        (list[0].RSI1 >= list[0].RSI2
+        ||
+        list[1].RSI1 >= list[1].RSI2)
         &&
         list[2].RSI1 <= list[2].RSI2 - 3
     ){
