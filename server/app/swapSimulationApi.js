@@ -1162,6 +1162,7 @@ const startInterval = async () => {
 
     // if(!globalColumnsObjList){
     const data = await cAuthClient.swap.getHistory('EOS-USDT-SWAP', payload)
+    if(!Array.isArray(data)) throw new Error('Data is not array!');
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
@@ -1256,6 +1257,8 @@ const startInterval = async () => {
         let holding = globalHolding
         if(positionChange || !holding){
             const result = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+            if(result.error_message) throw new Error('Cannot get position!');
+
             holding = result.holding
             globalHolding = holding
             positionChange = false
@@ -1309,7 +1312,8 @@ const startInterval = async () => {
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
             &&
-            latestRSI.RSI1 <= latestRSI.RSI2 - 3)
+            latestRSI.RSI1 <= latestRSI.RSI2 - 3
+            )
             ||
             latestRSI.RSI1 >= 87
         ){

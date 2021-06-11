@@ -16,16 +16,18 @@ function check() {
     // })
     process.on('uncaughtException', function (err) {
         //打印出错误
-        // console.log(err);
+        console.log('uncaughtException',err);
         restart()
     });
     process.on('exit', function (err) {
+        console.log('exit',err);
         restart()
     });
     // setTimeout(check,5000)
 }
 
 function restart() {
+    console.log('restarting......')
     last = exec('npm run restart:all', function(err, stdout , stderr ){
         if (err) {
             console.log('restarting failed')
