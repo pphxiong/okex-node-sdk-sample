@@ -1310,7 +1310,7 @@ const startInterval = async () => {
             &&
             latestRSI.RSI1 <= latestRSI.RSI2 - 3)
             ||
-            latestRSI.RSI1 >= 80
+            (latestRSI.RSI1 >= 80 && longRatio >= 0.168)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1350,7 +1350,7 @@ const startInterval = async () => {
             &&
             latestRSI.RSI1 >= latestRSI.RSI2 + 3)
             ||
-            latestRSI.RSI1 <= 20
+            (latestRSI.RSI1 <= 20 && shortRatio >= 0.168)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
