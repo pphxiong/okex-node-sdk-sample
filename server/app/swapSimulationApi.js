@@ -1309,7 +1309,7 @@ const startInterval = async () => {
             ||
             latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
             ||
-            latestRSI.RSI1 >= 90
+            latestRSI.RSI1 >= 87
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1349,7 +1349,7 @@ const startInterval = async () => {
             ||
             latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
             ||
-            latestRSI.RSI1 <= 10
+            latestRSI.RSI1 <= 13
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
