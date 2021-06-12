@@ -1308,7 +1308,7 @@ const startInterval = async () => {
         if(
             // longRatio < - 0.0809
             // ||
-            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 5)
+            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 3)
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
             &&
@@ -1351,7 +1351,7 @@ const startInterval = async () => {
         if(
             // shortRatio < - 0.0809
             // ||
-            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 5)
+            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 3)
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
             &&
