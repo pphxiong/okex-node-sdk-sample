@@ -1039,8 +1039,8 @@ function getRSIByPeriod(newList, period){
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
-    const RSI1 = getRSIByPeriod(list,6)
-    const RSI2 = getRSIByPeriod(list,48)
+    const RSI1 = getRSIByPeriod(list,15)
+    const RSI2 = getRSIByPeriod(list,60)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
@@ -1150,7 +1150,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
