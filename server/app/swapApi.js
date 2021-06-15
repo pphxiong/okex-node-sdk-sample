@@ -1310,7 +1310,7 @@ const startInterval = async () => {
             &&
             latestRSI.RSI1 <= latestRSI.RSI2)
             ||
-            latestRSI.RSI1 >= 80
+            latestRSI.RSI1 >= 60
             ||
             longRatio >= 0.191
         ){
@@ -1352,7 +1352,7 @@ const startInterval = async () => {
             &&
             latestRSI.RSI1 >= latestRSI.RSI2)
             ||
-            latestRSI.RSI1 <= 20
+            latestRSI.RSI1 <= 40
             ||
             shortRatio >= 0.191
         ){
