@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 38;
+let initPosition = 30;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1043,8 +1043,8 @@ function getRSIByPeriod(newList, period){
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
-    const RSI1 = getRSIByPeriod(list,15)
-    const RSI2 = getRSIByPeriod(list,60)
+    const RSI1 = getRSIByPeriod(list,25)
+    const RSI2 = getRSIByPeriod(list,75)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
@@ -1077,7 +1077,7 @@ function isGoldOverLapping(list, index){
         ||
         list[1].RSI1 <= list[1].RSI2)
         &&
-        list[2].RSI1 >= list[2].RSI2 + 3
+        list[2].RSI1 >= list[2].RSI2
     ){
         const point1 = {
             x: index,
@@ -1113,7 +1113,7 @@ function isDeadOverLapping(list,index){
         ||
         list[1].RSI1 >= list[1].RSI2)
         &&
-        list[2].RSI1 <= list[2].RSI2 - 3
+        list[2].RSI1 <= list[2].RSI2
     ){
         const point1 = {
             x: index,
@@ -1308,14 +1308,16 @@ const startInterval = async () => {
         if(
             // longRatio < - 0.0809
             // ||
-            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 3)
+            deadOverlappingNum >= 1
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
             &&
-            latestRSI.RSI1 <= latestRSI.RSI2 - 3
+            latestRSI.RSI1 <= latestRSI.RSI2
             )
             ||
-            (latestRSI.RSI1 >= 80 && longRatio >= 0.168)
+            latestRSI.RSI1 >= 80
+            ||
+            longRatio >= 0.168
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1355,9 +1357,11 @@ const startInterval = async () => {
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
             &&
-            latestRSI.RSI1 >= latestRSI.RSI2 + 3)
+            latestRSI.RSI1 >= latestRSI.RSI2)
             ||
-            (latestRSI.RSI1 <= 20 && shortRatio >= 0.168)
+            latestRSI.RSI1 <= 20
+            ||
+            shortRatio >= 0.168
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
