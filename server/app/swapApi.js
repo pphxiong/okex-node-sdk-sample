@@ -1039,8 +1039,8 @@ function getRSIByPeriod(newList, period){
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
-    const RSI1 = getRSIByPeriod(list,15)
-    const RSI2 = getRSIByPeriod(list,60)
+    const RSI1 = getRSIByPeriod(list,25)
+    const RSI2 = getRSIByPeriod(list,75)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
@@ -1073,7 +1073,7 @@ function isGoldOverLapping(list, index){
         ||
         list[1].RSI1 <= list[1].RSI2)
         &&
-        list[2].RSI1 >= list[2].RSI2 + 3
+        list[2].RSI1 >= list[2].RSI2
     ){
         const point1 = {
             x: index,
@@ -1109,7 +1109,7 @@ function isDeadOverLapping(list,index){
         ||
         list[1].RSI1 >= list[1].RSI2)
         &&
-        list[2].RSI1 <= list[2].RSI2 - 3
+        list[2].RSI1 <= list[2].RSI2
     ){
         const point1 = {
             x: index,
@@ -1304,13 +1304,15 @@ const startInterval = async () => {
         if(
             // longRatio < - 0.0618
             // ||
-            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 3)
+            deadOverlappingNum >= 1
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
             &&
-            latestRSI.RSI1 <= latestRSI.RSI2 - 3)
+            latestRSI.RSI1 <= latestRSI.RSI2)
             ||
-            (latestRSI.RSI1 >= 80 && longRatio >= 0.168)
+            latestRSI.RSI1 >= 80
+            ||
+            longRatio >= 0.191
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1344,13 +1346,15 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 3)
+            goldOverlappingNum >= 1
             ||
             (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
             &&
-            latestRSI.RSI1 >= latestRSI.RSI2 + 3)
+            latestRSI.RSI1 >= latestRSI.RSI2)
             ||
-            (latestRSI.RSI1 <= 20 && shortRatio >= 0.168)
+            latestRSI.RSI1 <= 20
+            ||
+            shortRatio >= 0.191
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
