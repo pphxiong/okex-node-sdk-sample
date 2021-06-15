@@ -1322,7 +1322,7 @@ const startInterval = async () => {
             ||
             isTripleDown(latestColumnsObjList)
             ||
-            latestRSI.RSI1 >= 60
+            latestRSI.RSI1 >= 65
             ||
             longRatio >= 0.191
         ){
@@ -1364,7 +1364,7 @@ const startInterval = async () => {
             ||
             isTripleUp(latestColumnsObjList)
             ||
-            latestRSI.RSI1 <= 40
+            latestRSI.RSI1 <= 35
             ||
             shortRatio >= 0.191
         ){
