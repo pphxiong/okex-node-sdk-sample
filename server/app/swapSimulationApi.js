@@ -1310,10 +1310,10 @@ const startInterval = async () => {
             // ||
             deadOverlappingNum >= 1
             ||
-            (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
-            &&
-            latestRSI.RSI1 <= latestRSI.RSI2)
-            ||
+            // (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
+            // &&
+            // latestRSI.RSI1 <= latestRSI.RSI2)
+            // ||
             latestRSI.RSI1 >= 60
             ||
             longRatio >= 0.191
@@ -1352,12 +1352,12 @@ const startInterval = async () => {
         if(
             // shortRatio < - 0.0809
             // ||
-            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 3)
+            goldOverlappingNum >= 1
             ||
-            (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
-            &&
-            latestRSI.RSI1 >= latestRSI.RSI2)
-            ||
+            // (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
+            // &&
+            // latestRSI.RSI1 >= latestRSI.RSI2)
+            // ||
             latestRSI.RSI1 <= 40
             ||
             shortRatio >= 0.191
