@@ -1066,6 +1066,12 @@ function checkCross(p1,p2,p3,p4){
     v3={x:p2.x-p1.x,y:p2.y-p1.y}
     return (v<=0&&crossMul(v1,v3)*crossMul(v2,v3)<=0)?true:false
 }
+function isTripleDown(list){
+    return list.every(item=>item.RSI1<item.RSI2);
+}
+function isTripleUp(list){
+    return list.every(item=>item.RSI1>item.RSI2);
+}
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
@@ -1310,10 +1316,8 @@ const startInterval = async () => {
             // ||
             deadOverlappingNum >= 1
             ||
-            // (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 - 3
-            // &&
-            // latestRSI.RSI1 <= latestRSI.RSI2)
-            // ||
+            isTripleDown(latestColumnsObjList)
+            ||
             latestRSI.RSI1 >= 60
             ||
             longRatio >= 0.191
@@ -1352,10 +1356,8 @@ const startInterval = async () => {
         if(
             goldOverlappingNum >= 1
             ||
-            // (latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2 + 3
-            // &&
-            // latestRSI.RSI1 >= latestRSI.RSI2)
-            // ||
+            isTripleUp(latestColumnsObjList)
+            ||
             latestRSI.RSI1 <= 40
             ||
             shortRatio >= 0.191
