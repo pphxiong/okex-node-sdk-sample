@@ -1272,7 +1272,7 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            latestRSI.RSI1 <= 20
+            latestRSI.RSI1 <= 25
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1304,7 +1304,7 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            latestRSI.RSI1 >= 80
+            latestRSI.RSI1 >= 75
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
