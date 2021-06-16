@@ -1019,22 +1019,6 @@ function trampoline (func, arg) {
     return value;
 }
 function getRSIByPeriod(newList, period){
-    // const AList = []
-    // const BList = []
-    // if(list.length < 15) return 50
-    // const newList = list.slice(-period-1)
-    // const newList = list
-    // for(let i = 1; i < newList.length; i++){
-    //     const priceDiff = newList[i] - newList[i-1]
-    //     if(priceDiff > 0) {
-    //         AList.push(priceDiff)
-    //     }else{
-    //         BList.push(priceDiff * -1)
-    //     }
-    // }
-    // const A = AList.reduce((pre,cur)=>pre+cur,0)
-    // const B = BList.reduce((pre,cur)=>pre+cur,0)
-
     const result = getRSIAverage(newList,newList.length-1,period)
     const { gainAverageI, lossAverageI } = result
     // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
