@@ -1043,8 +1043,8 @@ function getRSIByPeriod(newList, period){
     return toFixedAndToNumber(RSI);
 }
 function getRSI(price,list){
-    const RSI1 = getRSIByPeriod(list,25)
-    const RSI2 = getRSIByPeriod(list,75)
+    const RSI1 = getRSIByPeriod(list,9)
+    const RSI2 = getRSIByPeriod(list,45)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
@@ -1164,7 +1164,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 1, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1216,31 +1216,6 @@ const startInterval = async () => {
             const overlappingObj = isGoldOverLapping(tripleList, i)
             if(overlappingObj.isOverLapping) {
                 goldOverlappingNum++;
-                // globalColumnsObjList.map((item,index)=>{
-                // let result = {}
-                // if(index==0) {
-                //     result = {
-                //         price: item,
-                //         ema12: item,
-                //         ema26: item,
-                //         diff: 0,
-                //         dea: 0,
-                //         column: 0,
-                //
-                //     }
-                // }else{
-                //     const lastResult = columnsObjList[columnsObjList.length-1]
-                //     const payload = {
-                //         price: item,
-                //         lastEma12: lastResult.ema12,
-                //         lastEma26: lastResult.ema26,
-                //         lastDea: lastResult.dea
-                //     }
-                //     result = getMacd(payload)
-                // }
-                // if(index>=15){
-                // }
-                // const columnsList = columnsObjList.map(item=>item.column)
                 goldList.push(overlappingObj)
             }
 
@@ -1301,9 +1276,7 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            goldOverlappingNum >= 1
-            // &&
-            // goldList[goldList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
+            latestRSI.RSI1 <= 20
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1316,15 +1289,7 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            // longRatio < - 0.0809
-            // ||
-            deadOverlappingNum >= 1
-            ||
-            isTripleDown(latestColumnsObjList)
-            ||
             latestRSI.RSI1 >= 65
-            ||
-            longRatio >= 0.191
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1343,9 +1308,7 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            deadOverlappingNum >= 1
-            // &&
-            // deadList[deadList.length-1].overlappingIndex >= latestColumnsObjList.length - 2
+            latestRSI.RSI1 >= 80
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1358,15 +1321,7 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            // shortRatio < - 0.0809
-            // ||
-            goldOverlappingNum >= 1
-            ||
-            isTripleUp(latestColumnsObjList)
-            ||
             latestRSI.RSI1 <= 35
-            ||
-            shortRatio >= 0.191
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
