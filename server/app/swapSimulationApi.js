@@ -250,16 +250,17 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
-const validateAndCancelOrder = async ({instrument_id = EOS_INSTRUMENT_ID, order_id: origin_order_id, type = 0}) => {
-    const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3})
-    console.log('cancelorder', instrument_id, order_info.length, origin_order_id)
+const validateAndCancelOrder = async ({instrument_id = EOS_INSTRUMENT_ID, order_id: origin_order_id}) => {
+    const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3});
+    console.log('cancelorder', instrument_id, order_info.length, origin_order_id);
     if( order_info && order_info.length ){
-        let curOrder = order_info.find(item=>item.order_id == origin_order_id)
-        curOrder = curOrder || {}
+        const curOrder = order_info[0];
         const { order_id, size, filled_qty } = curOrder;
-        if(origin_order_id == order_id && Number(size) > Number(filled_qty) * 2) return await authClient.swap().postCancelOrder(instrument_id,order_id)
+        const nextQty = Math.ceil(Number(size) - Number(filled_qty))
+        await authClient.swap().postCancelOrder(instrument_id,order_id);
+        return new Promise(resolve=>{ resolve({ result: false, nextQty }) });
     }
-    return new Promise(resolve=>{ resolve({ result: false }) })
+    return new Promise(resolve=>{ resolve({ result: true }) });
 }
 
 // 下单，并返回订单信息
@@ -269,30 +270,85 @@ const getOrderState = async (payload) => {
     return await authClient.swap().getOrder(instrument_id,order_id)
 }
 
+let cancelInterval;
 const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', position = Number(initPosition), mark_price } = params;
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
 
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
-
     const instrument_id = EOS_INSTRUMENT_ID;
-    const payload = {
-        size: position,
-        type,
-        order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
-        instrument_id,
-        // price: mark_price,
-        // match_price: 0
-    }
 
-    try{
+    async function postOrder(size,price) {
+        const payload = {
+            size,
+            type,
+            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            instrument_id,
+            price,
+            match_price: 0
+        }
+
         await authClient.swap().postOrder(payload)
         positionChange = true
-    }catch (e) {
-        console.log(e)
     }
+    await postOrder(position,mark_price)
+
+    cancelInterval = setInterval(async ()=>{
+        const { result, nextQty } = await validateAndCancelOrder({instrument_id});
+        if(result){
+            clearInterval(cancelInterval)
+            cancelInterval = null;
+            return;
+        }
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
+        await postOrder(nextQty,mark_price)
+    },1000 * 8)
+}
+// 平仓
+const closeHalfPosition = async (holding, oldPosition = initPosition) => {
+    // const { holding: realBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
+    // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
+    const { instrument_id = EOS_INSTRUMENT_ID, position, side, mark_price } = holding;
+
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
+    // const payload = {
+    //     size: Math.ceil(Number(position)),
+    //     type: side == 'long' ? 3 : 4,
+    //     instrument_id,
+    //     order_type: 4,
+    //     // price: mark_price,
+    //     // match_price: 0
+    // }
+    //
+    // await authClient.swap().postOrder(payload)
+    // positionChange = true
+
+    async function postOrder(size,price) {
+        const payload = {
+            size: Math.ceil(Number(size)),
+            type: side == 'long' ? 3 : 4,
+            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            instrument_id,
+            price,
+            match_price: 0
+        }
+
+        await authClient.swap().postOrder(payload)
+        positionChange = true
+    }
+    await postOrder(position,mark_price)
+
+    cancelInterval = setInterval(async ()=>{
+        const { result, nextQty } = await validateAndCancelOrder({instrument_id});
+        if(result){
+            clearInterval(cancelInterval)
+            cancelInterval = null;
+            return;
+        }
+        const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
+        await postOrder(nextQty,mark_price)
+    },1000 * 4)
 }
 
 // 开仓，availRatio开仓比例
@@ -554,27 +610,7 @@ const afterLoss = async (holding,type) =>{
     await autoOpenOrderSingle(payload);
 
 }
-// 平仓
-const closeHalfPosition = async (holding, oldPosition = initPosition) => {
-    // const { holding: realBtcHolding } = await authClient.swap().getPosition(EOS_INSTRUMENT_ID);
-    // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
-    const { instrument_id = EOS_INSTRUMENT_ID, position, side } = holding;
 
-    // const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
-
-    const payload = {
-        size: Math.ceil(Number(position)),
-        type: side == 'long' ? 3 : 4,
-        instrument_id,
-        order_type: 4,
-        // price: mark_price,
-        // match_price: 0
-    }
-
-    await authClient.swap().postOrder(payload)
-    positionChange = true
-    // }
-}
 let otherPositionLoss = false
 let otherPositionSide = null
 const autoOtherOrder = async (holding,mark_price,isHalf = false) => {
@@ -1276,7 +1312,8 @@ const startInterval = async () => {
                     const holding = {
                         instrument_id: EOS_INSTRUMENT_ID,
                         position: Number(longHolding.position),
-                        side: 'long'
+                        side: 'long',
+                        mark_price
                     }
                     await closeHalfPosition(holding);
                     lastLongMaxWinRatio = 0
@@ -1310,7 +1347,8 @@ const startInterval = async () => {
                     const holding = {
                         instrument_id: EOS_INSTRUMENT_ID,
                         position: Number(shortHolding.position),
-                        side: 'short'
+                        side: 'short',
+                        mark_price
                     }
                     await closeHalfPosition(holding);
                     lastShortMaxWinRatio = 0
