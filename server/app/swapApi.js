@@ -306,7 +306,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         }
         const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
         await postOrder(nextQty,mark_price)
-    },1000 * 6)
+    },1000 * 4)
 }
 // 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
@@ -354,7 +354,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         }
         const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
         await postOrder(nextQty,mark_price)
-    },1000 * 4)
+    },1000 * 3)
 }
 
 // 开仓，availRatio开仓比例
@@ -1184,7 +1184,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1366,7 +1366,7 @@ const startInterval = async () => {
 
     }
 
-    await waitTime(1000 * 60)
+    await waitTime(1000 * 12)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
