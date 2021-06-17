@@ -330,10 +330,10 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         const payload = {
             size: Math.floor(Number(size)),
             type: side == 'long' ? 3 : 4,
-            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
-            price,
-            match_price: 0
+            // price,
+            // match_price: 0
         }
         try{
             await authClient.swap().postOrder(payload)
