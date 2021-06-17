@@ -252,11 +252,11 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, t
 // 如果有就撤销, type: 1 撤销other单
 const validateAndCancelOrder = async ({instrument_id = ETH_INSTRUMENT_ID, order_id: origin_order_id}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3});
-    console.log('cancelorder', instrument_id, order_info.length, origin_order_id);
     if( order_info && order_info.length ){
         const curOrder = order_info[0];
         const { order_id, size, filled_qty } = curOrder;
-        const nextQty = Math.ceil(Number(size) - Number(filled_qty))
+        const nextQty = Math.ceil(Number(size) - Number(filled_qty));
+        console.log('cancelorder', instrument_id, nextQty);
         await authClient.swap().postCancelOrder(instrument_id,order_id);
         return new Promise(resolve=>{ resolve({ result: false, nextQty }) });
     }
