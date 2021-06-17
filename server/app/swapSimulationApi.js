@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 23;
+let initPosition = 5;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -270,7 +270,7 @@ const getOrderState = async (payload) => {
 }
 
 const autoOpenOtherOrderSingle = async (params = {}) => {
-    const { openSide = 'long', position = Number(initPosition)} = params;
+    const { openSide = 'long', position = Number(initPosition), mark_price } = params;
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
@@ -970,7 +970,7 @@ function getMacd(params) {
 
     return result
 }
-function toFixedAndToNumber(n,num=4){
+function toFixedAndToNumber(n,num=1){
     // return Number(n.toFixed(num))
     return Math.round(n * Math.pow(10,num)) / Math.pow(10,num)
 }
@@ -993,14 +993,10 @@ function getRSIAverage(list,i,n){
     let lossAverageI;
 
     if(i==0) {
-        // gainAverageI = toFixedAndToNumber(gainI);
-        // lossAverageI = toFixedAndToNumber(lossI);
         gainAverageI = gainI;
         lossAverageI = lossI;
     }else{
         const lastRSIAverage = getRSIAverage(list,i-1,n);
-        // gainAverageI = toFixedAndToNumber((gainI + (n-1) * lastRSIAverage.gainAverageI) / n);
-        // lossAverageI = toFixedAndToNumber((lossI + (n-1) * lastRSIAverage.lossAverageI) / n);
         gainAverageI = (gainI + (n-1) * lastRSIAverage.gainAverageI) / n;
         lossAverageI = (lossI + (n-1) * lastRSIAverage.lossAverageI) / n;
     }
@@ -1011,24 +1007,22 @@ function getRSIAverage(list,i,n){
         lossAverageI,
     }
 }
-function trampoline (func, arg) {
-    let value = func(arg);
-    while(typeof value === "function") {
-        value = value();
-    }
-    return value;
-}
 function getRSIByPeriod(newList, period){
     const result = getRSIAverage(newList,newList.length-1,period)
     const { gainAverageI, lossAverageI } = result
     // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
     const RS = gainAverageI / lossAverageI;
     const RSI = 100 - 100 / (1 + RS);
-    return toFixedAndToNumber(RSI);
+    const newResult = {
+        RSI: toFixedAndToNumber(RSI),
+        gainAverageI,
+        lossAverageI
+    }
+    return newResult;
 }
 function getRSI(price,list){
-    const RSI1 = getRSIByPeriod(list,9)
-    const RSI2 = getRSIByPeriod(list,45)
+    const { RSI: RSI1 } = getRSIByPeriod(list,6)
+    const { RSI: RSI2 } = getRSIByPeriod(list,24)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
@@ -1064,12 +1058,12 @@ function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
         (list[0].RSI1 <= list[0].RSI2
-        ||
-        list[1].RSI1 <= list[1].RSI2)
+            ||
+            list[1].RSI1 <= list[1].RSI2)
         &&
         list[2].RSI1 >= list[2].RSI2
         &&
-        list[1].RSI1 <= 60
+        list[1].RSI1 <= 80
     ){
         const point1 = {
             x: index,
@@ -1102,8 +1096,8 @@ function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
         (list[0].RSI1 >= list[0].RSI2
-        ||
-        list[1].RSI1 >= list[1].RSI2)
+            ||
+            list[1].RSI1 >= list[1].RSI2)
         &&
         list[2].RSI1 <= list[2].RSI2
         &&
@@ -1260,11 +1254,11 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            latestRSI.RSI1 <= 20
+            goldOverlappingNum >= 1
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "long" })
+                    await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
                 }
             }catch (e){
                 console.log(e)
@@ -1273,7 +1267,9 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            latestRSI.RSI1 >= 65
+            latestRSI.RSI1 >= 80
+            ||
+            deadOverlappingNum >= 1
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1292,11 +1288,11 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            latestRSI.RSI1 >= 80
+            deadOverlappingNum >= 1
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                    await autoOpenOtherOrderSingle({ openSide: "short", mark_price })
                 }
             }catch (e){
                 console.log(e)
@@ -1305,7 +1301,9 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            latestRSI.RSI1 <= 35
+            latestRSI.RSI1 <= 20
+            ||
+            goldOverlappingNum >= 1
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
@@ -1321,9 +1319,10 @@ const startInterval = async () => {
                 console.log(e)
             }
         }
+
     }
 
-    await waitTime(1000 * 4)
+    await waitTime(1000 * 60)
     await startInterval()
 
     // let btcHolding = globalBtcHolding

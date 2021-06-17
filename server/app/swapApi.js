@@ -270,7 +270,7 @@ const getOrderState = async (payload) => {
 }
 
 const autoOpenOtherOrderSingle = async (params = {}) => {
-    const { openSide = 'long', position = Number(initPosition)} = params;
+    const { openSide = 'long', position = Number(initPosition), mark_price } = params;
     const type = openSide == 'long' ? 1 : 2;
     console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('position', position, 'type', type, 'side', openSide)
@@ -1021,8 +1021,8 @@ function getRSIByPeriod(newList, period){
     return newResult;
 }
 function getRSI(price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,9)
-    const { RSI: RSI2 } = getRSIByPeriod(list,45)
+    const { RSI: RSI1 } = getRSIByPeriod(list,6)
+    const { RSI: RSI2 } = getRSIByPeriod(list,24)
     // const RSI14 = getRSIByPeriod(list,14)
 
     const result = {
@@ -1063,7 +1063,7 @@ function isGoldOverLapping(list, index){
         &&
         list[2].RSI1 >= list[2].RSI2
         &&
-        list[1].RSI1 <= 60
+        list[1].RSI1 <= 80
     ){
         const point1 = {
             x: index,
@@ -1254,11 +1254,11 @@ const startInterval = async () => {
 
         //开多仓条件
         if(
-            latestRSI.RSI1 <= 25
+            goldOverlappingNum >= 1
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "long" })
+                    await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
                 }
             }catch (e){
                 console.log(e)
@@ -1267,7 +1267,9 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            latestRSI.RSI1 >= 65
+            latestRSI.RSI1 >= 80
+            ||
+            deadOverlappingNum >= 1
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1286,11 +1288,11 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            latestRSI.RSI1 >= 75
+            deadOverlappingNum >= 1
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "short" })
+                    await autoOpenOtherOrderSingle({ openSide: "short", mark_price })
                 }
             }catch (e){
                 console.log(e)
@@ -1299,7 +1301,9 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            latestRSI.RSI1 <= 35
+            latestRSI.RSI1 <= 20
+            ||
+            goldOverlappingNum >= 1
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
@@ -1318,7 +1322,7 @@ const startInterval = async () => {
 
     }
 
-    await waitTime(1000 * 4)
+    await waitTime(1000 * 60)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
