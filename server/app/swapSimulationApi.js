@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 18;
+let initPosition = 35;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -255,7 +255,7 @@ const validateAndCancelOrder = async ({instrument_id = EOS_INSTRUMENT_ID, order_
     if( order_info && order_info.length ){
         const curOrder = order_info[0];
         const { order_id, size, filled_qty } = curOrder;
-        const nextQty = Math.ceil(Number(size) - Number(filled_qty))
+        const nextQty = Math.ceil(Number(size) - Number(filled_qty));
         console.log('cancelorder', instrument_id, nextQty);
         await authClient.swap().postCancelOrder(instrument_id,order_id);
         return new Promise(resolve=>{ resolve({ result: false, nextQty }) });
@@ -283,7 +283,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         const payload = {
             size,
             type,
-            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
             price,
             match_price: 0
@@ -306,7 +306,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         }
         const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
         await postOrder(nextQty,mark_price)
-    },1000 * 8)
+    },1000 * 4)
 }
 // 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
@@ -331,7 +331,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         const payload = {
             size: Math.ceil(Number(size)),
             type: side == 'long' ? 3 : 4,
-            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
             price,
             match_price: 0
@@ -354,7 +354,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         }
         const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
         await postOrder(nextQty,mark_price)
-    },1000 * 6)
+    },1000 * 3)
 }
 
 // 开仓，availRatio开仓比例
@@ -1184,7 +1184,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1311,7 +1311,7 @@ const startInterval = async () => {
         if(
             latestRSI.RSI1 >= 80
             ||
-            deadOverlappingNum >= 1
+            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 5)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1346,7 +1346,7 @@ const startInterval = async () => {
         if(
             latestRSI.RSI1 <= 20
             ||
-            goldOverlappingNum >= 1
+            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 5)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
@@ -1366,7 +1366,7 @@ const startInterval = async () => {
 
     }
 
-    await waitTime(1000 * 60)
+    await waitTime(1000 * 12)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
