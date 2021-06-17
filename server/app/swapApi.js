@@ -288,9 +288,12 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             price,
             match_price: 0
         }
-
-        await authClient.swap().postOrder(payload)
-        positionChange = true
+        try{
+            await authClient.swap().postOrder(payload)
+            positionChange = true
+        }catch (e) {
+            throw new Error('Error');
+        }
     }
     await postOrder(position,mark_price)
 
@@ -333,9 +336,12 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
             price,
             match_price: 0
         }
-
-        await authClient.swap().postOrder(payload)
-        positionChange = true
+        try{
+            await authClient.swap().postOrder(payload)
+            positionChange = true
+        }catch (e) {
+            throw new Error('Error');
+        }
     }
     await postOrder(position,mark_price)
 
