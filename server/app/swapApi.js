@@ -283,7 +283,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         const payload = {
             size,
             type,
-            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
             price,
             match_price: 0
@@ -328,7 +328,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         const payload = {
             size: Math.ceil(Number(size)),
             type: side == 'long' ? 3 : 4,
-            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
             price,
             match_price: 0
@@ -348,7 +348,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         }
         const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
         await postOrder(nextQty,mark_price)
-    },1000 * 4)
+    },1000 * 8)
 }
 
 // 开仓，availRatio开仓比例
