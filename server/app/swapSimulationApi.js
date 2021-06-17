@@ -348,7 +348,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         }
         const { mark_price } = await cAuthClient.swap.getMarkPrice(EOS_INSTRUMENT_ID);
         await postOrder(nextQty,mark_price)
-    },1000 * 8)
+    },1000 * 6)
 }
 
 // 开仓，availRatio开仓比例
