@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 15;
+let initPosition = 20;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1063,14 +1063,14 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,6)
-    const { RSI: RSI2 } = getRSIByPeriod(list,24)
-    // const RSI14 = getRSIByPeriod(list,14)
+    const { RSI: RSI2 } = getRSIByPeriod(list,12)
+    const { RSI: RSI3 } = getRSIByPeriod(list,48)
 
     const result = {
         price,
         RSI1,
         RSI2,
-        // RSI14
+        RSI3
     }
     return result
 }
@@ -1098,13 +1098,17 @@ function isTripleUp(list){
 function isGoldOverLapping(list, index){
     let isOverLapping = false
     if(
-        (list[0].RSI1 <= list[0].RSI2
+        ((list[0].RSI1 <= list[0].RSI3
+        &&
+        list[0].RSI2 <= list[0].RSI3)
         ||
-        list[1].RSI1 <= list[1].RSI2)
+        (list[1].RSI1 <= list[1].RSI3
+        &&
+        list[1].RSI2 <= list[1].RSI3))
         &&
         list[2].RSI1 >= list[2].RSI2
         &&
-        list[1].RSI1 <= 80
+        list[2].RSI2 >= list[2].RSI3
     ){
         const point1 = {
             x: index,
@@ -1136,13 +1140,17 @@ function isGoldOverLapping(list, index){
 function isDeadOverLapping(list,index){
     let isOverLapping = false
     if(
-        (list[0].RSI1 >= list[0].RSI2
+        ((list[0].RSI1 >= list[0].RSI3
+        &&
+        list[0].RSI2 >= list[0].RSI3)
         ||
-        list[1].RSI1 >= list[1].RSI2)
+        (list[1].RSI1 >= list[1].RSI3
+        &&
+        list[1].RSI2 >= list[1].RSI3))
         &&
         list[2].RSI1 <= list[2].RSI2
         &&
-        list[1].RSI1 >= 20
+        list[2].RSI2 <= list[2].RSI3
     ){
         const point1 = {
             x: index,
@@ -1183,7 +1191,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1308,9 +1316,12 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            latestRSI.RSI1 >= 80
-            ||
-            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 5)
+            // latestRSI.RSI1 >= 80
+            // ||
+            (
+                deadOverlappingNum >= 1
+                // && latestRSI.RSI1 <= latestRSI.RSI2 - 5
+            )
             ||
             isTripleDown(latestColumnsObjList)
         ){
@@ -1345,9 +1356,12 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            latestRSI.RSI1 <= 20
-            ||
-            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 5)
+            // latestRSI.RSI1 <= 20
+            // ||
+            (
+                goldOverlappingNum >= 1
+                // && latestRSI.RSI1 >= latestRSI.RSI2 + 5
+            )
             ||
             isTripleUp(latestColumnsObjList)
         ){
