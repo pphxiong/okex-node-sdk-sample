@@ -255,7 +255,7 @@ const validateAndCancelOrder = async ({instrument_id = EOS_INSTRUMENT_ID, order_
     if( order_info && order_info.length ){
         const curOrder = order_info[0];
         const { order_id, size, filled_qty } = curOrder;
-        const nextQty = Math.ceil(Number(size) - Number(filled_qty));
+        const nextQty = Math.floor(Number(size) - Number(filled_qty));
         console.log('cancelorder', instrument_id, nextQty);
         await authClient.swap().postCancelOrder(instrument_id,order_id);
         return new Promise(resolve=>{ resolve({ result: false, nextQty }) });
@@ -273,13 +273,13 @@ const getOrderState = async (payload) => {
 let cancelInterval;
 const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', position = Number(initPosition), mark_price } = params;
-    const type = openSide == 'long' ? 1 : 2;
-    console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
-    console.log('position', position, 'type', type, 'side', openSide)
-
-    const instrument_id = EOS_INSTRUMENT_ID;
 
     async function postOrder(size,price) {
+        const type = openSide == 'long' ? 1 : 2;
+        console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('position', position, 'type', type, 'side', openSide)
+
+        const instrument_id = EOS_INSTRUMENT_ID;
         const payload = {
             size,
             type,
@@ -329,7 +329,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
 
     async function postOrder(size,price) {
         const payload = {
-            size: Math.ceil(Number(size)),
+            size: Math.floor(Number(size)),
             type: side == 'long' ? 3 : 4,
             order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
@@ -1312,6 +1312,8 @@ const startInterval = async () => {
             latestRSI.RSI1 >= 80
             ||
             (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 5)
+            ||
+            isTripleDown(latestColumnsObjList)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1347,6 +1349,8 @@ const startInterval = async () => {
             latestRSI.RSI1 <= 20
             ||
             (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 5)
+            ||
+            isTripleUp(latestColumnsObjList)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
