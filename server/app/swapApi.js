@@ -273,12 +273,12 @@ const getOrderState = async (payload) => {
 let cancelInterval;
 const autoOpenOtherOrderSingle = async (params = {}) => {
     const { openSide = 'long', position = Number(initPosition), mark_price } = params;
+    const instrument_id = ETH_INSTRUMENT_ID;
 
     async function postOrder(size,price) {
         const type = openSide == 'long' ? 1 : 2;
         console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('position', position, 'type', type, 'side', openSide)
-        const instrument_id = ETH_INSTRUMENT_ID;
         const payload = {
             size,
             type,
