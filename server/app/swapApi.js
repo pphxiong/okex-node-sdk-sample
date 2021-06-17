@@ -331,7 +331,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         const payload = {
             size: Math.ceil(Number(size)),
             type: side == 'long' ? 3 : 4,
-            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
             price,
             match_price: 0
@@ -1311,7 +1311,7 @@ const startInterval = async () => {
         if(
             latestRSI.RSI1 >= 80
             ||
-            deadOverlappingNum >= 1
+            (deadOverlappingNum >= 1 && latestRSI.RSI1 <= latestRSI.RSI2 - 5)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1346,7 +1346,7 @@ const startInterval = async () => {
         if(
             latestRSI.RSI1 <= 20
             ||
-            goldOverlappingNum >= 1
+            (goldOverlappingNum >= 1 && latestRSI.RSI1 >= latestRSI.RSI2 + 5)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
