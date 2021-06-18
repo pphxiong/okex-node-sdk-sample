@@ -1374,7 +1374,7 @@ const startInterval = async () => {
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "short", mark_price })
-                    const futurePrice = getFuturePrice(longHolding,0.04,1)
+                    const futurePrice = getFuturePrice(shortHolding,0.04,1)
                     const holding = {
                         instrument_id: ETH_INSTRUMENT_ID,
                         position: Number(shortHolding.position),
