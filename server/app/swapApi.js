@@ -1197,7 +1197,7 @@ const startInterval = async () => {
         const data = { message: ''}
         globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     }catch (e) {
-        throw new Error('Data is not array!');
+        restart()
     }
 
     if(Array.isArray(globalColumnsObjList)){
