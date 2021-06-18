@@ -4,7 +4,6 @@ import moment from 'moment'
 // const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
-require('../check');
 
 const fs = require('fs');
 
@@ -1475,3 +1474,21 @@ const waitTime = (time = 1000 * 4) => {
 app.listen(8091);
 
 console.log('8091 server start');
+
+process.on('uncaughtException', function (err) {
+    //打印出错误
+    console.log('uncaughtException',err);
+    restart()
+});
+
+let exec = require('child_process').exec;
+function restart() {
+    console.log('restarting......')
+    exec('npm run restart:all', function(err, stdout , stderr ){
+        if (err) {
+            console.log('restarting failed')
+        }else{
+            console.log('restarting success')
+        }
+    });
+}
