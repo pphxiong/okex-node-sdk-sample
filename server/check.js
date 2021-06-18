@@ -23,6 +23,7 @@ function check() {
         console.log('exit',err);
         restart()
     });
+    method();
     // setTimeout(check,5000)
 }
 
