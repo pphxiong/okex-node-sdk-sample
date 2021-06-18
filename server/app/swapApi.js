@@ -348,7 +348,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
             restart();
         }
     }
-    await validateAndCancelOrder({instrument_id});
+    // await validateAndCancelOrder({instrument_id});
     await postOrder(position,mark_price)
 
     // cancelInterval = setInterval(async ()=>{
@@ -1282,8 +1282,10 @@ const startInterval = async () => {
         if(positionChange || !holding){
             try{
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                globalHolding = holding
-                positionChange = false
+                if(holding && holding.length){
+                    globalHolding = holding
+                    positionChange = false
+                }
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
                 restart();
@@ -1326,13 +1328,13 @@ const startInterval = async () => {
                         const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                         const fLongHolding = futureHolding.find(item=>item.side=="long")
                         const futurePrice = getFuturePrice(fLongHolding,0.05,1)
-                        const holding = {
+                        const payload = {
                             instrument_id: ETH_INSTRUMENT_ID,
                             position: Number(fLongHolding.position),
                             side: 'long',
                             mark_price: futurePrice
                         }
-                        await closeHalfPosition(holding);
+                        await closeHalfPosition(payload);
                     }catch (e) {
                         restart()
                     }
@@ -1358,14 +1360,14 @@ const startInterval = async () => {
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
-                    const holding = {
+                    const payload = {
                         instrument_id: ETH_INSTRUMENT_ID,
                         position: Number(longHolding.position),
                         side: 'long',
                         mark_price
                     }
                     // await closeHalfPosition(holding);
-                    await autoCloseOrderByMarketPriceByHolding(holding)
+                    await autoCloseOrderByMarketPriceByHolding(payload)
                     lastLongMaxWinRatio = 0
                 }
             }catch (e){
@@ -1384,13 +1386,13 @@ const startInterval = async () => {
                         const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                         const fShortHolding = futureHolding.find(item=>item.side=="short")
                         const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
-                        const holding = {
+                        const payload = {
                             instrument_id: ETH_INSTRUMENT_ID,
                             position: Number(fShortHolding.position),
                             side: 'short',
                             mark_price: futurePrice
                         }
-                        await closeHalfPosition(holding);
+                        await closeHalfPosition(payload);
                     }catch (e) {
                         restart()
                     }
@@ -1416,14 +1418,14 @@ const startInterval = async () => {
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
-                    const holding = {
+                    const payload = {
                         instrument_id: ETH_INSTRUMENT_ID,
                         position: Number(shortHolding.position),
                         side: 'short',
                         mark_price
                     }
                     // await closeHalfPosition(holding);
-                    await autoCloseOrderByMarketPriceByHolding(holding)
+                    await autoCloseOrderByMarketPriceByHolding(payload)
                     lastShortMaxWinRatio = 0
                 }
             }catch (e){
