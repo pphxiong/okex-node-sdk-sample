@@ -1190,8 +1190,9 @@ const startInterval = async () => {
     }
 
     // if(!globalColumnsObjList){
-    const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+    // const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
     // if(!Array.isArray(data)) throw new Error('Data is not array!');
+    const data = { message: ''}
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
@@ -1473,3 +1474,6 @@ const waitTime = (time = 1000 * 4) => {
 app.listen(8091);
 
 console.log('8091 server start');
+
+
+require('../check');
