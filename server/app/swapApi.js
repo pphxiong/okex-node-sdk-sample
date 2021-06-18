@@ -257,7 +257,11 @@ const validateAndCancelOrder = async ({instrument_id = ETH_INSTRUMENT_ID, order_
         const { order_id, size, filled_qty } = curOrder;
         const nextQty = Math.floor(Number(size) - Number(filled_qty));
         console.log('cancelorder', instrument_id, nextQty);
-        await authClient.swap().postCancelOrder(instrument_id,order_id);
+        try{
+            await authClient.swap().postCancelOrder(instrument_id,order_id);
+        }catch (e) {
+            restart();
+        }
         return new Promise(resolve=>{ resolve({ result: false, nextQty }) });
     }
     return new Promise(resolve=>{ resolve({ result: true }) });
@@ -291,7 +295,8 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             await authClient.swap().postOrder(payload)
             positionChange = true
         }catch (e) {
-            throw new Error('Error');
+            // throw new Error('Error');
+            restart();
         }
     }
     await postOrder(position,mark_price)
@@ -339,7 +344,8 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
             await authClient.swap().postOrder(payload)
             positionChange = true
         }catch (e) {
-            throw new Error('Error');
+            // throw new Error('Error');
+            restart();
         }
     }
     await validateAndCancelOrder({instrument_id});
@@ -1274,12 +1280,14 @@ const startInterval = async () => {
 
         let holding = globalHolding
         if(positionChange || !holding){
-            const result = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-            if(result.error_message) throw new Error('Cannot get position!');
-
-            holding = result.holding
-            globalHolding = holding
-            positionChange = false
+            try{
+                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                globalHolding = holding
+                positionChange = false
+            }catch (e) {
+                // if(result.error_message) throw new Error('Cannot get position!');
+                restart();
+            }
         }
 
         let longHolding;
