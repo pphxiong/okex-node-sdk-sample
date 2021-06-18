@@ -1279,13 +1279,11 @@ const startInterval = async () => {
         }
 
         let holding = globalHolding
-        if(positionChange || !holding){
+        if(positionChange || !holding || !holding.length){
             try{
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                if(holding && holding.length){
-                    globalHolding = holding
-                    positionChange = false
-                }
+                globalHolding = holding
+                positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
                 restart();
@@ -1335,6 +1333,7 @@ const startInterval = async () => {
                             mark_price: futurePrice
                         }
                         await closeHalfPosition(payload);
+                        positionChange = true;
                     }catch (e) {
                         restart()
                     }
@@ -1393,6 +1392,7 @@ const startInterval = async () => {
                             mark_price: futurePrice
                         }
                         await closeHalfPosition(payload);
+                        positionChange = true;
                     }catch (e) {
                         restart()
                     }
