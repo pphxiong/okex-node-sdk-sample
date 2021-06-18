@@ -363,6 +363,29 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
     // },1000 * 3)
 }
 
+// 平仓
+const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
+    const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
+    async function postOrder(size,price) {
+        const payload = {
+            size: Math.floor(Number(size)),
+            type: side == 'long' ? 3 : 4,
+            order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            instrument_id,
+            // price,
+            // match_price: 0
+        }
+        try{
+            await authClient.swap().postOrder(payload)
+            positionChange = true
+        }catch (e) {
+            // throw new Error('Error');
+            restart();
+        }
+    }
+    await postOrder(position,mark_price)
+}
+
 // 开仓，availRatio开仓比例
 const autoOpenOrderSingle = async (params = {}) => {
     const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
@@ -1367,7 +1390,7 @@ const startInterval = async () => {
                         mark_price
                     }
                     // await closeHalfPosition(holding);
-                    await autoCloseOrderByMarketPriceByHolding(payload)
+                    await closeHalfPositionByMarket(payload)
                     lastLongMaxWinRatio = 0
                 }
             }catch (e){
@@ -1427,7 +1450,7 @@ const startInterval = async () => {
                         mark_price
                     }
                     // await closeHalfPosition(holding);
-                    await autoCloseOrderByMarketPriceByHolding(payload)
+                    await closeHalfPositionByMarket(payload)
                     lastShortMaxWinRatio = 0
                 }
             }catch (e){
