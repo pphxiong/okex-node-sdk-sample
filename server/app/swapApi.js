@@ -1322,21 +1322,22 @@ const startInterval = async () => {
             try {
                 if(!longHolding || !Number(longHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-                    try{
-                        const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                        const fLongHolding = futureHolding.find(item=>item.side=="long")
-                        const futurePrice = getFuturePrice(fLongHolding,0.05,1)
-                        const payload = {
-                            instrument_id: ETH_INSTRUMENT_ID,
-                            position: Number(fLongHolding.position),
-                            side: 'long',
-                            mark_price: futurePrice
+                    setTimeout(async ()=>{
+                        try{
+                            const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                            const fLongHolding = futureHolding.find(item=>item.side=="long")
+                            const futurePrice = getFuturePrice(fLongHolding,0.05,1)
+                            const payload = {
+                                instrument_id: ETH_INSTRUMENT_ID,
+                                position: Number(fLongHolding.position),
+                                side: 'long',
+                                mark_price: futurePrice
+                            }
+                            await closeHalfPosition(payload);
+                        }catch (e) {
+                            restart()
                         }
-                        await closeHalfPosition(payload);
-                        positionChange = true;
-                    }catch (e) {
-                        restart()
-                    }
+                    },1000 * 3)
                 }
             }catch (e){
                 console.log(e)
@@ -1380,22 +1381,23 @@ const startInterval = async () => {
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "short", mark_price })
-                    try{
-                        const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                        const fShortHolding = futureHolding.find(item=>item.side=="short")
-                        const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
-                        const payload = {
-                            instrument_id: ETH_INSTRUMENT_ID,
-                            position: Number(fShortHolding.position),
-                            side: 'short',
-                            mark_price: futurePrice
+                    await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
+                    setTimeout(async ()=>{
+                        try{
+                            const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                            const fShortHolding = futureHolding.find(item=>item.side=="short")
+                            const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
+                            const payload = {
+                                instrument_id: ETH_INSTRUMENT_ID,
+                                position: Number(fShortHolding.position),
+                                side: 'short',
+                                mark_price: futurePrice
+                            }
+                            await closeHalfPosition(payload);
+                        }catch (e) {
+                            restart()
                         }
-                        await closeHalfPosition(payload);
-                        positionChange = true;
-                    }catch (e) {
-                        restart()
-                    }
+                    }, 1000 * 3)
                 }
             }catch (e){
                 console.log(e)
