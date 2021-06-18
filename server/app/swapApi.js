@@ -1190,14 +1190,15 @@ const startInterval = async () => {
     }
 
     // if(!globalColumnsObjList){
-    const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-    if(!Array.isArray(data)) throw new Error('Data is not array!');
+    // const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+    // if(!Array.isArray(data)) throw new Error('Data is not array!');
+    const data = { message: '' }
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
     if(Array.isArray(globalColumnsObjList)){
         const mark_result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-        if(!mark_result) throw new Error('mark_price is null!');
+        // if(!mark_result) throw new Error('mark_price is null!');
         const { mark_price } = mark_result;
 
         let columnsObjList = []
