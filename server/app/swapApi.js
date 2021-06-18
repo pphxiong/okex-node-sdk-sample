@@ -282,10 +282,10 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         const payload = {
             size,
             type,
-            order_type: 1, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
-            price,
-            match_price: 0
+            // price,
+            // match_price: 0
         }
         try{
             await authClient.swap().postOrder(payload)
@@ -296,16 +296,16 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     }
     await postOrder(position,mark_price)
 
-    cancelInterval = setInterval(async ()=>{
-        const { result, nextQty } = await validateAndCancelOrder({instrument_id});
-        if(result){
-            clearInterval(cancelInterval)
-            cancelInterval = null;
-            return;
-        }
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-        await postOrder(nextQty,mark_price)
-    },1000 * 4)
+    // cancelInterval = setInterval(async ()=>{
+    //     const { result, nextQty } = await validateAndCancelOrder({instrument_id});
+    //     if(result){
+    //         clearInterval(cancelInterval)
+    //         cancelInterval = null;
+    //         return;
+    //     }
+    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    //     await postOrder(nextQty,mark_price)
+    // },1000 * 4)
 }
 // 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
@@ -344,16 +344,16 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
     }
     await postOrder(position,mark_price)
 
-    cancelInterval = setInterval(async ()=>{
-        const { result, nextQty } = await validateAndCancelOrder({instrument_id});
-        if(result){
-            clearInterval(cancelInterval)
-            cancelInterval = null;
-            return;
-        }
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-        await postOrder(nextQty,mark_price)
-    },1000 * 3)
+    // cancelInterval = setInterval(async ()=>{
+    //     const { result, nextQty } = await validateAndCancelOrder({instrument_id});
+    //     if(result){
+    //         clearInterval(cancelInterval)
+    //         cancelInterval = null;
+    //         return;
+    //     }
+    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    //     await postOrder(nextQty,mark_price)
+    // },1000 * 3)
 }
 
 // 开仓，availRatio开仓比例
