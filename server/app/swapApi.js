@@ -1183,7 +1183,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 1, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1318,8 +1318,8 @@ const startInterval = async () => {
             )
             ||
             (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
-            ||
-            longRatio >= 0.11
+            // ||
+            // longRatio >= 0.12
             // isTripleDown(latestColumnsObjList)
         ){
             try {
@@ -1361,8 +1361,8 @@ const startInterval = async () => {
             )
             ||
             (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
-            ||
-            shortRatio >= 0.11
+            // ||
+            // shortRatio >= 0.12
             // isTripleUp(latestColumnsObjList)
         ){
             try {
@@ -1383,7 +1383,7 @@ const startInterval = async () => {
 
     }
 
-    await waitTime(1000 * 12)
+    await waitTime(1000 * 5)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
