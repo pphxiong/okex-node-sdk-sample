@@ -1315,7 +1315,8 @@ const startInterval = async () => {
                 // && latestRSI.RSI1 <= latestRSI.RSI2 - 5
             )
             ||
-            isTripleDown(latestColumnsObjList)
+            (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            // isTripleDown(latestColumnsObjList)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1355,7 +1356,8 @@ const startInterval = async () => {
                 // && latestRSI.RSI1 >= latestRSI.RSI2 + 5
             )
             ||
-            isTripleUp(latestColumnsObjList)
+            (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            // isTripleUp(latestColumnsObjList)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
