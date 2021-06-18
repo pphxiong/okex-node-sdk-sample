@@ -1383,7 +1383,7 @@ const startInterval = async () => {
                     try{
                         const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                         const fShortHolding = futureHolding.find(item=>item.side=="short")
-                        const futurePrice = getFuturePrice(fShortHolding,0.05,1)
+                        const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
                         const holding = {
                             instrument_id: ETH_INSTRUMENT_ID,
                             position: Number(fShortHolding.position),
