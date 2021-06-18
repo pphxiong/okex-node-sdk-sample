@@ -4,6 +4,7 @@ import moment from 'moment'
 // const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClient');
+require('../check');
 
 const fs = require('fs');
 
@@ -1474,6 +1475,3 @@ const waitTime = (time = 1000 * 4) => {
 app.listen(8091);
 
 console.log('8091 server start');
-
-
-require('../check');
