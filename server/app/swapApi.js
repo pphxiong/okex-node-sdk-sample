@@ -1109,8 +1109,8 @@ function isGoldOverLapping(list, index){
         // ||
         // (list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3))
         // &&
-        list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-        &&
+        // list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
+        // &&
         list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
     ){
         const point1 = {
@@ -1147,8 +1147,8 @@ function isDeadOverLapping(list,index){
         // ||
         // (list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3))
         // &&
-        list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
-        &&
+        // list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
+        // &&
         list[2].RSI1 <= list[2].RSI2 && list[2].RSI2 <= list[2].RSI3
     ){
         const point1 = {
@@ -1318,6 +1318,8 @@ const startInterval = async () => {
         //开多仓条件
         if(
             goldOverlappingNum >= 1
+            &&
+            (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1376,6 +1378,8 @@ const startInterval = async () => {
         //开空仓条件
         if(
             deadOverlappingNum >= 1
+            &&
+            (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
