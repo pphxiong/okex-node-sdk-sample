@@ -1192,9 +1192,13 @@ const startInterval = async () => {
     // if(!globalColumnsObjList){
     // const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
     // if(!Array.isArray(data)) throw new Error('Data is not array!');
-    const data = { message: ''}
-    globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
+    try{
+        const data = { message: ''}
+        globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
+    }catch (e) {
+        throw new Error('Data is not array!');
+    }
 
     if(Array.isArray(globalColumnsObjList)){
         const mark_result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
@@ -1477,7 +1481,7 @@ console.log('8091 server start');
 
 process.on('uncaughtException', function (err) {
     //打印出错误
-    console.log('uncaughtException',err);
+    // console.log('uncaughtException',err);
     restart()
 });
 
