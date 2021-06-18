@@ -1109,8 +1109,8 @@ function isGoldOverLapping(list, index){
         // ||
         // (list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3))
         // &&
-        // list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-        // &&
+        list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
+        &&
         list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
     ){
         const point1 = {
@@ -1147,8 +1147,8 @@ function isDeadOverLapping(list,index){
         // ||
         // (list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3))
         // &&
-        // list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
-        // &&
+        list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
+        &&
         list[2].RSI1 <= list[2].RSI2 && list[2].RSI2 <= list[2].RSI3
     ){
         const point1 = {
@@ -1352,8 +1352,8 @@ const startInterval = async () => {
                 deadOverlappingNum >= 1
                 // && latestRSI.RSI1 <= latestRSI.RSI2 - 5
             )
-            ||
-            (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            // ||
+            // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
             // ||
             // longRatio >= 0.06
             // isTripleDown(latestColumnsObjList)
@@ -1412,8 +1412,8 @@ const startInterval = async () => {
                 goldOverlappingNum >= 1
                 // && latestRSI.RSI1 >= latestRSI.RSI2 + 5
             )
-            ||
-            (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            // ||
+            // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
             // ||
             // shortRatio >= 0.06
             // isTripleUp(latestColumnsObjList)
