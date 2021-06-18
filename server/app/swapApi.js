@@ -1278,8 +1278,7 @@ const startInterval = async () => {
             console.log('#####################################')
         }
 
-        let holding = globalHolding
-        if(positionChange || !holding || !holding.length){
+        if(positionChange || !globalHolding || !globalHolding.length){
             try{
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
                 globalHolding = holding
@@ -1295,6 +1294,7 @@ const startInterval = async () => {
         let longRatio = 0
         let shortRatio = 0
 
+        let holding = globalHolding
         if(holding){
             longHolding = holding.find(item=>item.side=="long")
             shortHolding = holding.find(item=>item.side=="short")
@@ -1322,22 +1322,20 @@ const startInterval = async () => {
             try {
                 if(!longHolding || !Number(longHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-                    setTimeout(async ()=>{
-                        try{
-                            const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                            const fLongHolding = futureHolding.find(item=>item.side=="long")
-                            const futurePrice = getFuturePrice(fLongHolding,0.05,1)
-                            const payload = {
-                                instrument_id: ETH_INSTRUMENT_ID,
-                                position: Number(fLongHolding.position),
-                                side: 'long',
-                                mark_price: futurePrice
-                            }
-                            await closeHalfPosition(payload);
-                        }catch (e) {
-                            restart()
+                    try{
+                        const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                        const fLongHolding = futureHolding.find(item=>item.side=="long")
+                        const futurePrice = getFuturePrice(fLongHolding,0.05,1)
+                        const payload = {
+                            instrument_id: ETH_INSTRUMENT_ID,
+                            position: Number(fLongHolding.position),
+                            side: 'long',
+                            mark_price: futurePrice
                         }
-                    },1000 * 3)
+                        await closeHalfPosition(payload);
+                    }catch (e) {
+                        restart()
+                    }
                 }
             }catch (e){
                 console.log(e)
@@ -1382,22 +1380,20 @@ const startInterval = async () => {
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
-                    setTimeout(async ()=>{
-                        try{
-                            const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                            const fShortHolding = futureHolding.find(item=>item.side=="short")
-                            const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
-                            const payload = {
-                                instrument_id: ETH_INSTRUMENT_ID,
-                                position: Number(fShortHolding.position),
-                                side: 'short',
-                                mark_price: futurePrice
-                            }
-                            await closeHalfPosition(payload);
-                        }catch (e) {
-                            restart()
+                    try{
+                        const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                        const fShortHolding = futureHolding.find(item=>item.side=="short")
+                        const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
+                        const payload = {
+                            instrument_id: ETH_INSTRUMENT_ID,
+                            position: Number(fShortHolding.position),
+                            side: 'short',
+                            mark_price: futurePrice
                         }
-                    }, 1000 * 3)
+                        await closeHalfPosition(payload);
+                    }catch (e) {
+                        restart()
+                    }
                 }
             }catch (e){
                 console.log(e)
