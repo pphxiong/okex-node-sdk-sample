@@ -1191,12 +1191,14 @@ const startInterval = async () => {
 
     // if(!globalColumnsObjList){
     const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-    // if(!Array.isArray(data)) throw new Error('Data is not array!');
+    if(!Array.isArray(data)) throw new Error('Data is not array!');
     globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
     // }
 
     if(Array.isArray(globalColumnsObjList)){
-        const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+        const mark_result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+        if(!mark_result) throw new Error('mark_price is null!');
+        const { mark_price } = mark_result;
 
         let columnsObjList = []
 
@@ -1316,6 +1318,8 @@ const startInterval = async () => {
             )
             ||
             (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            ||
+            longRatio >= 0.11
             // isTripleDown(latestColumnsObjList)
         ){
             try {
@@ -1357,6 +1361,8 @@ const startInterval = async () => {
             )
             ||
             (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            ||
+            shortRatio >= 0.11
             // isTripleUp(latestColumnsObjList)
         ){
             try {
