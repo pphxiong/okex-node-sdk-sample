@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 20;
+let initPosition = 10;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1383,7 +1383,7 @@ const startInterval = async () => {
 
     }
 
-    await waitTime(1000 * 5)
+    await waitTime(1000 * 8)
     await startInterval()
 
     // let btcHolding = globalBtcHolding
