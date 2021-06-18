@@ -243,8 +243,8 @@ const autoCloseOrderByInstrumentId =  async ({instrument_id, direction}) => {
 }
 
 // 市价全平By holding
-const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }, type = 0) => {
-    // await validateAndCancelOrder({instrument_id, type});
+const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }) => {
+    await validateAndCancelOrder({instrument_id});
     return await cAuthClient.swap.closePosition({instrument_id, direction: side })
 }
 
@@ -330,10 +330,10 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
         const payload = {
             size: Math.floor(Number(size)),
             type: side == 'long' ? 3 : 4,
-            order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
+            order_type: 0, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
-            // price,
-            // match_price: 0
+            price,
+            match_price: 0
         }
         try{
             await authClient.swap().postOrder(payload)
@@ -342,6 +342,7 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
             throw new Error('Error');
         }
     }
+    await validateAndCancelOrder({instrument_id});
     await postOrder(position,mark_price)
 
     // cancelInterval = setInterval(async ()=>{
@@ -1181,6 +1182,10 @@ function getAverage(list){
 }
 let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
+function getFuturePrice(holding,ratio,direction = 1) {
+    const { leverage, avg_cost } = holding;
+    return Number(avg_cost) * Number(leverage) / (Number(leverage) - ratio * direction) ;
+}
 const startInterval = async () => {
     const payload = {
         granularity: 60 * 5, // 单位为秒
@@ -1287,18 +1292,18 @@ const startInterval = async () => {
             shortHolding = holding.find(item=>item.side=="short")
         }
 
-        if(longHolding){
-            const { position, leverage, avg_cost, } = longHolding;
-            longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-            lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
-        }
-
-        if(shortHolding){
-            const { position, leverage, avg_cost, } = shortHolding;
-            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-            shortRatio = - shortRatio
-            lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
-        }
+        // if(longHolding){
+        //     const { position, leverage, avg_cost, } = longHolding;
+        //     longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+        //     lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
+        // }
+        //
+        // if(shortHolding){
+        //     const { position, leverage, avg_cost, } = shortHolding;
+        //     shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+        //     shortRatio = - shortRatio
+        //     lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
+        // }
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
@@ -1309,6 +1314,14 @@ const startInterval = async () => {
             try {
                 if(!longHolding || !Number(longHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
+                    const futurePrice = getFuturePrice(longHolding,0.06,1)
+                    const holding = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long',
+                        mark_price: futurePrice
+                    }
+                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
@@ -1325,8 +1338,8 @@ const startInterval = async () => {
             )
             ||
             (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
-            ||
-            longRatio >= 0.06
+            // ||
+            // longRatio >= 0.06
             // isTripleDown(latestColumnsObjList)
         ){
             try {
@@ -1337,7 +1350,8 @@ const startInterval = async () => {
                         side: 'long',
                         mark_price
                     }
-                    await closeHalfPosition(holding);
+                    // await closeHalfPosition(holding);
+                    await autoCloseOrderByMarketPriceByHolding(holding)
                     lastLongMaxWinRatio = 0
                 }
             }catch (e){
@@ -1352,6 +1366,14 @@ const startInterval = async () => {
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
                     await autoOpenOtherOrderSingle({ openSide: "short", mark_price })
+                    const futurePrice = getFuturePrice(longHolding,0.04,1)
+                    const holding = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short',
+                        mark_price: futurePrice
+                    }
+                    await closeHalfPosition(holding);
                 }
             }catch (e){
                 console.log(e)
@@ -1368,8 +1390,8 @@ const startInterval = async () => {
             )
             ||
             (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
-            ||
-            shortRatio >= 0.06
+            // ||
+            // shortRatio >= 0.06
             // isTripleUp(latestColumnsObjList)
         ){
             try {
@@ -1380,7 +1402,8 @@ const startInterval = async () => {
                         side: 'short',
                         mark_price
                     }
-                    await closeHalfPosition(holding);
+                    // await closeHalfPosition(holding);
+                    await autoCloseOrderByMarketPriceByHolding(holding)
                     lastShortMaxWinRatio = 0
                 }
             }catch (e){
