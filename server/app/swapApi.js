@@ -377,7 +377,7 @@ const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) =>
             // match_price: 0
         }
         try{
-            await validateAndCancelOrder(payload)
+            // await validateAndCancelOrder(payload)
             await authClient.swap().postOrder(payload)
             positionChange = true
         }catch (e) {
@@ -1095,8 +1095,8 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,6)
-    const { RSI: RSI2 } = getRSIByPeriod(list,12)
-    const { RSI: RSI3 } = getRSIByPeriod(list,24)
+    const { RSI: RSI2 } = getRSIByPeriod(list,18)
+    const { RSI: RSI3 } = getRSIByPeriod(list,48)
 
     const result = {
         price,
@@ -1219,7 +1219,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1320,7 +1320,7 @@ const startInterval = async () => {
         let shortRatio = 0
 
         let holding = globalHolding
-        if(holding){
+        if(holding && holding.length){
             longHolding = holding.find(item=>item.side=="long")
             shortHolding = holding.find(item=>item.side=="short")
         }
@@ -1348,18 +1348,18 @@ const startInterval = async () => {
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
                     try{
-                        const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                        const fLongHolding = futureHolding.find(item=>item.side=="long")
-                        const futurePrice = getFuturePrice(fLongHolding,0.05,1)
-                        const payload = {
-                            instrument_id: ETH_INSTRUMENT_ID,
-                            position: Number(fLongHolding.position),
-                            side: 'long',
-                            mark_price: futurePrice
-                        }
-                        await closeHalfPosition(payload);
+                        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
+                        // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                        // const fLongHolding = futureHolding.find(item=>item.side=="long")
+                        // const futurePrice = getFuturePrice(fLongHolding,0.05,1)
+                        // const payload = {
+                        //     instrument_id: ETH_INSTRUMENT_ID,
+                        //     position: Number(fLongHolding.position),
+                        //     side: 'long',
+                        //     mark_price: futurePrice
+                        // }
+                        // await closeHalfPosition(payload);
                     }catch (e) {
                         restart()
                     }
@@ -1408,18 +1408,18 @@ const startInterval = async () => {
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
-                    await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
                     try{
-                        const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                        const fShortHolding = futureHolding.find(item=>item.side=="short")
-                        const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
-                        const payload = {
-                            instrument_id: ETH_INSTRUMENT_ID,
-                            position: Number(fShortHolding.position),
-                            side: 'short',
-                            mark_price: futurePrice
-                        }
-                        await closeHalfPosition(payload);
+                        await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
+                        // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                        // const fShortHolding = futureHolding.find(item=>item.side=="short")
+                        // const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
+                        // const payload = {
+                        //     instrument_id: ETH_INSTRUMENT_ID,
+                        //     position: Number(fShortHolding.position),
+                        //     side: 'short',
+                        //     mark_price: futurePrice
+                        // }
+                        // await closeHalfPosition(payload);
                     }catch (e) {
                         restart()
                     }
