@@ -250,10 +250,10 @@ const autoCloseOrderByMarketPriceByHolding =  async ({ instrument_id, side  }) =
 
 // 检测是否有未成交的挂单， state：2 完全成交， 6： 未完成， 7： 已完成
 // 如果有就撤销, type: 1 撤销other单
-const validateAndCancelOrder = async ({instrument_id = ETH_INSTRUMENT_ID, order_id: origin_order_id}) => {
+const validateAndCancelOrder = async ({instrument_id = ETH_INSTRUMENT_ID, type = 3}) => {
     const { order_info } = await authClient.swap().getOrders(instrument_id, {state: 6, limit: 3});
     if( order_info && order_info.length ){
-        const curOrder = order_info[0];
+        const curOrder = order_info.find(item=>item.type==type);
         const { order_id, size, filled_qty } = curOrder;
         const nextQty = Math.floor(Number(size) - Number(filled_qty));
         console.log('cancelorder', instrument_id, nextQty);
@@ -367,15 +367,17 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
 const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
     const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
     async function postOrder(size,price) {
+        const type = side == 'long' ? 3 : 4
         const payload = {
             size: Math.floor(Number(size)),
-            type: side == 'long' ? 3 : 4,
+            type,
             order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
             instrument_id,
             // price,
             // match_price: 0
         }
         try{
+            await validateAndCancelOrder(payload)
             await authClient.swap().postOrder(payload)
             positionChange = true
         }catch (e) {
