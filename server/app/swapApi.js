@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 35;
+let initPosition = 30;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1128,74 +1128,76 @@ function isTripleUp(list){
     return list.every(item=>item.RSI1>item.RSI2);
 }
 function isGoldOverLapping(list, index){
-    let isOverLapping = false
-    if(
-        // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
-        // ||
-        list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3
-        &&
-        list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-        &&
-        list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
-    ){
-        const point1 = {
-            x: index,
-            y: list[0].RSI1
-        }
-        const point2 = {
-            x: index + 2,
-            y: list[2].RSI1
-        }
-        const point3 = {
-            x: index,
-            y: list[0].RSI2,
-        }
-        const point4 = {
-            x: index + 2,
-            y: list[2].RSI2
-        }
-        // if(checkCross(point1,point2,point3,point4)){
-            isOverLapping = true
-        // }
-    }
+    // let isOverLapping = false
+    const isOverLapping = list.every(item=>item.RSI1 >= item.RSI2 && item.RSI2 >= item.RSI3)
+    // if(
+    //     // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
+    //     // ||
+    //     list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3
+    //     &&
+    //     list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
+    //     &&
+    //     list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
+    // ){
+    //     const point1 = {
+    //         x: index,
+    //         y: list[0].RSI1
+    //     }
+    //     const point2 = {
+    //         x: index + 2,
+    //         y: list[2].RSI1
+    //     }
+    //     const point3 = {
+    //         x: index,
+    //         y: list[0].RSI2,
+    //     }
+    //     const point4 = {
+    //         x: index + 2,
+    //         y: list[2].RSI2
+    //     }
+    //     // if(checkCross(point1,point2,point3,point4)){
+    //         isOverLapping = true
+    //     // }
+    // }
     const overlappingObj = {
         isOverLapping,
         overlappingIndex: index,
-        overlappingObj: list[1],
+        overlappingObj: list[0],
     }
     return overlappingObj
 }
 function isDeadOverLapping(list,index){
-    let isOverLapping = false
-    if(
-        // ((list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3)
-        // ||
-        list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3
-        &&
-        list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
-        &&
-        list[2].RSI1 <= list[2].RSI2 && list[2].RSI2 <= list[2].RSI3
-    ){
-        const point1 = {
-            x: index,
-            y: list[0].RSI1
-        }
-        const point2 = {
-            x: index + 2,
-            y: list[2].RSI1
-        }
-        const point3 = {
-            x: index,
-            y: list[0].RSI2,
-        }
-        const point4 = {
-            x: index + 2,
-            y: list[2].RSI2
-        }
-        // if(checkCross(point1,point2,point3,point4)){
-            isOverLapping = true
-        // }
-    }
+    // let isOverLapping = false
+    const isOverLapping = list.every(item=>item.RSI1 <= item.RSI2 && item.RSI2 <= item.RSI3)
+    // if(
+    //     // ((list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3)
+    //     // ||
+    //     list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3
+    //     &&
+    //     list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
+    //     &&
+    //     list[2].RSI1 <= list[2].RSI2 && list[2].RSI2 <= list[2].RSI3
+    // ){
+    //     const point1 = {
+    //         x: index,
+    //         y: list[0].RSI1
+    //     }
+    //     const point2 = {
+    //         x: index + 2,
+    //         y: list[2].RSI1
+    //     }
+    //     const point3 = {
+    //         x: index,
+    //         y: list[0].RSI2,
+    //     }
+    //     const point4 = {
+    //         x: index + 2,
+    //         y: list[2].RSI2
+    //     }
+    //     // if(checkCross(point1,point2,point3,point4)){
+    //         isOverLapping = true
+    //     // }
+    // }
     const overlappingObj = {
         isOverLapping,
         overlappingIndex: index,
@@ -1219,7 +1221,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1376,7 +1378,7 @@ const startInterval = async () => {
             (
                 deadOverlappingNum >= 1
                 ||
-                (latestRSI.RSI1 <= 30 && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+                (latestRSI.RSI1 <= 40 && latestRSI.RSI1 <= latestRSI.RSI3)
             )
             // ||
             // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
@@ -1437,7 +1439,7 @@ const startInterval = async () => {
             (
                 goldOverlappingNum >= 1
                 ||
-                (latestRSI.RSI1 >= 70 && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+                (latestRSI.RSI1 >= 60 && latestRSI.RSI1 >= latestRSI.RSI3)
             )
             // ||
             // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
