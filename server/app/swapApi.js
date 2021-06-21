@@ -1219,7 +1219,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 1, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1245,8 +1245,8 @@ const startInterval = async () => {
 
         let columnsObjList = []
 
-        // const allList = globalColumnsObjList.concat([Number(mark_price)])
-        const allList = globalColumnsObjList
+        const allList = globalColumnsObjList.concat([Number(mark_price)])
+        // const allList = globalColumnsObjList
         // allList.map((item,index)=>{
         //         const result = getRSI(item,allList.slice(0,index+1))
         //     columnsObjList.push(result)
