@@ -1221,7 +1221,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1376,9 +1376,11 @@ const startInterval = async () => {
             // latestRSI.RSI1 >= 80
             // ||
             (
-                deadOverlappingNum >= 1
-                ||
-                (latestRSI.RSI1 <= 40 && latestRSI.RSI1 <= latestRSI.RSI3)
+                // deadOverlappingNum >= 1
+                // ||
+                // (latestRSI.RSI1 <= 30 && latestRSI.RSI1 <= latestRSI.RSI3)
+                // ||
+                latestRSI.RSI1 <= latestRSI.RSI3
             )
             // ||
             // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
@@ -1437,9 +1439,10 @@ const startInterval = async () => {
             // latestRSI.RSI1 <= 20
             // ||
             (
-                goldOverlappingNum >= 1
-                ||
-                (latestRSI.RSI1 >= 60 && latestRSI.RSI1 >= latestRSI.RSI3)
+                // goldOverlappingNum >= 1
+                // ||
+                // (latestRSI.RSI1 >= 70 && latestRSI.RSI1 >= latestRSI.RSI3)
+                latestRSI.RSI1 >= latestRSI.RSI3
             )
             // ||
             // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
