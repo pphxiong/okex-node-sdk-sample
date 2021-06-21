@@ -1245,8 +1245,8 @@ const startInterval = async () => {
 
         let columnsObjList = []
 
-        const allList = globalColumnsObjList.concat([Number(mark_price)])
-        // const allList = globalColumnsObjList
+        // const allList = globalColumnsObjList.concat([Number(mark_price)])
+        const allList = globalColumnsObjList
         // allList.map((item,index)=>{
         //         const result = getRSI(item,allList.slice(0,index+1))
         //     columnsObjList.push(result)
