@@ -1376,7 +1376,7 @@ const startInterval = async () => {
             (
                 deadOverlappingNum >= 1
                 ||
-                (latestRSI.RSI1 <= 25 && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+                (latestRSI.RSI1 <= 30 && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
             )
             // ||
             // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
@@ -1437,7 +1437,7 @@ const startInterval = async () => {
             (
                 goldOverlappingNum >= 1
                 ||
-                (latestRSI.RSI1 >= 75 && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+                (latestRSI.RSI1 >= 70 && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
             )
             // ||
             // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
