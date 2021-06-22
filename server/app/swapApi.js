@@ -1437,6 +1437,8 @@ const startInterval = async () => {
         //平多仓条件
         if(
             latestRSI.RSI1 >= 80
+            ||
+            mark_price <= lowestMacd.macd.low
             // &&
             // macdList[macdList.length-1].column < 0
         ){
@@ -1493,6 +1495,8 @@ const startInterval = async () => {
         //平空仓条件
         if(
             latestRSI.RSI1 <= 20
+            ||
+            mark_price >= highestMacd.macd.high
             // &&
             // macdList[macdList.length-1].column < 0
         ){
