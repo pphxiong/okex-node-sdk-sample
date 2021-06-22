@@ -1615,11 +1615,13 @@ process.on('uncaughtException', function (err) {
 let exec = require('child_process').exec;
 function restart() {
     console.log('restarting......')
-    exec('npm run restart:all', function(err, stdout , stderr ){
-        if (err) {
-            console.log('restarting failed')
-        }else{
-            console.log('restarting success')
-        }
-    });
+    setTimeout(()=>{
+        exec('npm run restart:all', function(err, stdout , stderr ){
+            if (err) {
+                console.log('restarting failed')
+            }else{
+                console.log('restarting success')
+            }
+        });
+    }, 1000 * 10)
 }
