@@ -1254,24 +1254,24 @@ const startInterval = async () => {
             let result = {}
             if(index==0) {
                 result = {
-                    price: item[4],
-                    ema12: item[4],
-                    ema26: item[4],
+                    price: Number(item[4]),
+                    ema12: Number(item[4]),
+                    ema26: Number(item[4]),
                     diff: 0,
                     dea: 0,
                     column: 0,
-                    high: item[2],
-                    low: item[3]
+                    high: Number(item[2]),
+                    low: Number(item[3])
                 }
             }else{
                 const lastResult = macdList[macdList.length-1]
                 const payload = {
-                    price: item[4],
+                    price: Number(item[4]),
                     lastEma12: lastResult.ema12,
                     lastEma26: lastResult.ema26,
                     lastDea: lastResult.dea,
-                    high: item[2],
-                    low: item[3]
+                    high: Number(item[2]),
+                    low: Number(item[3]),
                 }
                 result = getMacd(payload)
             }
@@ -1302,7 +1302,7 @@ const startInterval = async () => {
         function* gen() {
             for(let i = 0; i < 3; i ++){
                 if(i > 0) allList.pop()
-                const result = getRSI(allList[allList.length-1][4],allList.map(item=>item[4]))
+                const result = getRSI(Number(allList[allList.length-1][4]),allList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
                 yield i
             }
