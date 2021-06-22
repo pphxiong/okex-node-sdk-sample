@@ -385,6 +385,9 @@ const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) =>
             restart();
         }
     }
+    console.log('###################################')
+    console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('###################################')
     await postOrder(position,mark_price)
 }
 
