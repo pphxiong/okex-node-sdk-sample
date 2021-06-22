@@ -1221,7 +1221,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1280,7 +1280,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-30)
+        macdList = macdList.slice(-20)
 
         let lowestMacd = {};
         let highestMacd = {};
@@ -1349,12 +1349,12 @@ const startInterval = async () => {
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        console.log('latestColumnsObjList',latestColumnsObjList)
-        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('lowestMacd',lowestMacd)
-        console.log('highestMacd',highestMacd)
-        console.log('highestDiff',highestDiff)
-        console.log('lowestDiff',lowestDiff)
+        // console.log('latestColumnsObjList',latestColumnsObjList)
+        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('highestMacd',highestMacd.index,highestMacd.macd.price)
+        console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.price)
+        console.log('highestDiff',highestDiff.index,highestDiff.macd.price)
+        console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.price)
         console.log('------------------')
 
         // if(goldList.length||deadList.length){
