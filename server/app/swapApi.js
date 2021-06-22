@@ -1022,7 +1022,7 @@ let globalHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
 function getMacd(params) {
-    const {price,lastEma12,lastEma26,lastDea} = params
+    const {price,lastEma12,lastEma26,lastDea, ...rest} = params
 
     const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,4)
     const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,4)
@@ -1038,7 +1038,8 @@ function getMacd(params) {
         ema26,
         diff,
         dea,
-        column
+        column,
+        ...rest
     }
 
     return result
@@ -1227,7 +1228,8 @@ const startInterval = async () => {
 
     try{
         const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-        globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
+        // globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
+        globalColumnsObjList = data.reverse()
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
         restart()
@@ -1245,26 +1247,30 @@ const startInterval = async () => {
 
         let columnsObjList = []
 
-        const allList = globalColumnsObjList.concat([Number(mark_price)])
+        const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
         let macdList = []
         allList.map((item,index)=>{
             let result = {}
             if(index==0) {
                 result = {
-                    price: item,
-                    ema12: item,
-                    ema26: item,
+                    price: item[4],
+                    ema12: item[4],
+                    ema26: item[4],
                     diff: 0,
                     dea: 0,
-                    column: 0
+                    column: 0,
+                    high: item[2],
+                    low: item[3]
                 }
             }else{
                 const lastResult = macdList[macdList.length-1]
                 const payload = {
-                    price: item,
+                    price: item[4],
                     lastEma12: lastResult.ema12,
                     lastEma26: lastResult.ema26,
-                    lastDea: lastResult.dea
+                    lastDea: lastResult.dea,
+                    high: item[2],
+                    low: item[3]
                 }
                 result = getMacd(payload)
             }
@@ -1295,7 +1301,7 @@ const startInterval = async () => {
         function* gen() {
             for(let i = 0; i < 3; i ++){
                 if(i > 0) allList.pop()
-                const result = getRSI(allList[allList.length-1],allList)
+                const result = getRSI(allList[allList.length-1][4],allList.map(item=>item[4]))
                 columnsObjList.push(result)
                 yield i
             }
