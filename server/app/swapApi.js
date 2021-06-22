@@ -1408,6 +1408,8 @@ const startInterval = async () => {
             lowestMacd.index == macdList.length - 2
             &&
             lowestMacd.index != lowestDiff.index
+            &&
+            lowestMacd.macd.diff > lowestDiff.macd.diff
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1462,6 +1464,8 @@ const startInterval = async () => {
             highestMacd.index == macdList.length - 2
             &&
             highestMacd.index != highestDiff.index
+            &&
+            highestMacd.macd.diff < highestDiff.macd.diff
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
