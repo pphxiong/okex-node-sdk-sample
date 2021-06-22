@@ -1287,9 +1287,10 @@ const startInterval = async () => {
         let lowestDiffIndex = 0;
         let highestDiffIndex = 0;
         macdList.reduce((pre,cur,index)=>{
-            if(cur.price <= pre.price) {
-                lowestMacd = {index, macd: cur};
-            }else{
+            if(cur.low <= pre.low) {
+                lowestMacd = { index, macd: cur };
+            }
+            if(cur.high >= pre.high){
                 highestMacd = { index, macd: cur };
             }
             if(cur.diff <= pre.diff) {
