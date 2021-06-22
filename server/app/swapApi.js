@@ -1024,8 +1024,8 @@ let globalColumnsObjList;
 function getMacd(params) {
     const {price,lastEma12,lastEma26,lastDea} = params
 
-    const ema12 = 2/(12+1) * price + 11/(12+1) * lastEma12
-    const ema26 = 2/(26+1) * price + 25/(26+1) * lastEma26
+    const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,2)
+    const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,2)
 
     const diff = toFixedAndToNumber(ema12 - ema26,2)
     const dea = toFixedAndToNumber(2/(9+1) * diff + 8/(9+1) * lastDea,2)
