@@ -1280,7 +1280,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-24)
+        macdList = macdList.slice(-20)
 
         let lowestMacd = {};
         let highestMacd = {};
