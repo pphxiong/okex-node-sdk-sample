@@ -1287,6 +1287,7 @@ const startInterval = async () => {
         let lowestDiffIndex = 0;
         let highestDiffIndex = 0;
         macdList.reduce((pre,cur,index)=>{
+            console.log(lowestMacd)
             if(cur.low <= pre.low) {
                 lowestMacd = { index, macd: cur };
             }
@@ -1339,15 +1340,15 @@ const startInterval = async () => {
             }
         }
 
-        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('------------------')
-        console.log('latestColumnsObjList',latestColumnsObjList)
-        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('lowestMacd',lowestMacd)
-        console.log('highestMacd',highestMacd)
-        console.log('highestDiffIndex',highestDiffIndex)
-        console.log('lowestDiffIndex',lowestDiffIndex)
-        console.log('------------------')
+        // console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('------------------')
+        // console.log('latestColumnsObjList',latestColumnsObjList)
+        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        // console.log('lowestMacd',lowestMacd)
+        // console.log('highestMacd',highestMacd)
+        // console.log('highestDiffIndex',highestDiffIndex)
+        // console.log('lowestDiffIndex',lowestDiffIndex)
+        // console.log('------------------')
 
         // if(goldList.length||deadList.length){
         //     console.log('#####################################')
