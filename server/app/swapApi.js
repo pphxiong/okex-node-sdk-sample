@@ -1027,10 +1027,10 @@ function getMacd(params) {
     const ema12 = 2/(12+1) * price + 11/(12+1) * lastEma12
     const ema26 = 2/(26+1) * price + 25/(26+1) * lastEma26
 
-    const diff = ema12 - ema26
-    const dea = 2/(9+1) * diff + 8/(9+1) * lastDea
+    const diff = toFixedAndToNumber(ema12 - ema26,2)
+    const dea = toFixedAndToNumber(2/(9+1) * diff + 8/(9+1) * lastDea,2)
 
-    const column = 2 * (diff - dea)
+    const column = toFixedAndToNumber(2 * (diff - dea),2)
 
     const result = {
         price,
