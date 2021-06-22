@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 15;
+let initPosition = 11;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1412,6 +1412,8 @@ const startInterval = async () => {
             &&
             lowestMacd.index != lowestDiff.index
             &&
+            lowestDiff.index != macdList.length - 1
+            &&
             lowestMacd.macd.diff > lowestDiff.macd.diff
         ){
             try {
@@ -1475,6 +1477,8 @@ const startInterval = async () => {
             highestMacd.index == macdList.length - 2
             &&
             highestMacd.index != highestDiff.index
+            &&
+            highestDiff.index != macdList.length - 1
             &&
             highestMacd.macd.diff < highestDiff.macd.diff
         ){
