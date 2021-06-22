@@ -1024,8 +1024,8 @@ let globalColumnsObjList;
 function getMacd(params) {
     const {price,lastEma12,lastEma26,lastDea} = params
 
-    const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,2)
-    const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,2)
+    const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,4)
+    const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,4)
 
     const diff = toFixedAndToNumber(ema12 - ema26,2)
     const dea = toFixedAndToNumber(2/(9+1) * diff + 8/(9+1) * lastDea,2)
@@ -1095,8 +1095,8 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,6)
-    const { RSI: RSI2 } = getRSIByPeriod(list,18)
-    const { RSI: RSI3 } = getRSIByPeriod(list,48)
+    const { RSI: RSI2 } = getRSIByPeriod(list,12)
+    const { RSI: RSI3 } = getRSIByPeriod(list,24)
 
     const result = {
         price,
@@ -1128,37 +1128,35 @@ function isTripleUp(list){
     return list.every(item=>item.RSI1>item.RSI2);
 }
 function isGoldOverLapping(list, index){
-    // let isOverLapping = false
-    const isOverLapping = list.every(item=>item.RSI1 >= item.RSI2 && item.RSI2 >= item.RSI3)
-    // if(
-    //     // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
-    //     // ||
-    //     list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3
-    //     &&
-    //     list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-    //     &&
-    //     list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
-    // ){
-    //     const point1 = {
-    //         x: index,
-    //         y: list[0].RSI1
-    //     }
-    //     const point2 = {
-    //         x: index + 2,
-    //         y: list[2].RSI1
-    //     }
-    //     const point3 = {
-    //         x: index,
-    //         y: list[0].RSI2,
-    //     }
-    //     const point4 = {
-    //         x: index + 2,
-    //         y: list[2].RSI2
-    //     }
-    //     // if(checkCross(point1,point2,point3,point4)){
-    //         isOverLapping = true
-    //     // }
-    // }
+    let isOverLapping = false
+    // const isOverLapping = list.every(item=>item.RSI1 >= item.RSI2 && item.RSI2 >= item.RSI3)
+    if(
+        // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
+        // ||
+        list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
+        &&
+        list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
+    ){
+        const point1 = {
+            x: index,
+            y: list[0].RSI1
+        }
+        const point2 = {
+            x: index + 2,
+            y: list[2].RSI1
+        }
+        const point3 = {
+            x: index,
+            y: list[0].RSI2,
+        }
+        const point4 = {
+            x: index + 2,
+            y: list[2].RSI2
+        }
+        // if(checkCross(point1,point2,point3,point4)){
+            isOverLapping = true
+        // }
+    }
     const overlappingObj = {
         isOverLapping,
         overlappingIndex: index,
@@ -1274,7 +1272,25 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-3)
+        macdList = macdList.slice(-30)
+
+        let lowestMacd = {};
+        let highestMacd = {};
+        let lowestDiffIndex = 0;
+        let highestDiffIndex = 0;
+        macdList.reduce((pre,cur,index)=>{
+            if(cur.price <= pre.price) {
+                lowestMacd = {index, macd: cur};
+            }else{
+                highestMacd = { index, macd: cur };
+            }
+            if(cur.diff <= pre.diff) {
+                lowestDiffIndex = index;
+            }else{
+                highestDiffIndex = index;
+            }
+            return cur;
+        })
 
         function* gen() {
             for(let i = 0; i < 3; i ++){
@@ -1318,15 +1334,16 @@ const startInterval = async () => {
         console.log('------------------')
         console.log('latestColumnsObjList',latestColumnsObjList)
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('macdList',macdList)
+        console.log('lowestMacd',lowestMacd)
+        console.log('highestMacd',highestMacd)
         console.log('------------------')
 
-        if(goldList.length||deadList.length){
-            console.log('#####################################')
-            console.log('goldList',goldList)
-            console.log('deadList',deadList)
-            console.log('#####################################')
-        }
+        // if(goldList.length||deadList.length){
+        //     console.log('#####################################')
+        //     console.log('goldList',goldList)
+        //     console.log('deadList',deadList)
+        //     console.log('#####################################')
+        // }
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
@@ -1365,134 +1382,113 @@ const startInterval = async () => {
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
-        // //开多仓条件
-        // if(
-        //     goldOverlappingNum >= 1
-        //     &&
-        //     (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
-        // ){
-        //     try {
-        //         if(!longHolding || !Number(longHolding.position)){
-        //             try{
-        //                 await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-        //                 // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-        //                 // const fLongHolding = futureHolding.find(item=>item.side=="long")
-        //                 // const futurePrice = getFuturePrice(fLongHolding,0.05,1)
-        //                 // const payload = {
-        //                 //     instrument_id: ETH_INSTRUMENT_ID,
-        //                 //     position: Number(fLongHolding.position),
-        //                 //     side: 'long',
-        //                 //     mark_price: futurePrice
-        //                 // }
-        //                 // await closeHalfPosition(payload);
-        //             }catch (e) {
-        //                 restart()
-        //             }
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平多仓条件
-        // if(
-        //     // latestRSI.RSI1 >= 80
-        //     // ||
-        //     (
-        //         // deadOverlappingNum >= 1
-        //         // ||
-        //         (latestRSI.RSI1 <= 30 || latestRSI.RSI1 <= latestRSI.RSI2 )
-        //         &&
-        //         latestRSI.RSI1 <= latestRSI.RSI3
-        //         // ||
-        //         // latestRSI.RSI1 <= latestRSI.RSI3
-        //     )
-        //     // ||
-        //     // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
-        //     // ||
-        //     // longRatio >= 0.06
-        //     // isTripleDown(latestColumnsObjList)
-        // ){
-        //     try {
-        //         if(longHolding && Number(longHolding.position)){
-        //             const payload = {
-        //                 instrument_id: ETH_INSTRUMENT_ID,
-        //                 position: Number(longHolding.position),
-        //                 side: 'long',
-        //                 mark_price
-        //             }
-        //             // await closeHalfPosition(holding);
-        //             await closeHalfPositionByMarket(payload)
-        //             lastLongMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //开空仓条件
-        // if(
-        //     deadOverlappingNum >= 1
-        //     &&
-        //     (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
-        // ){
-        //     try {
-        //         if(!shortHolding || !Number(shortHolding.position)){
-        //             try{
-        //                 await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
-        //                 // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-        //                 // const fShortHolding = futureHolding.find(item=>item.side=="short")
-        //                 // const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
-        //                 // const payload = {
-        //                 //     instrument_id: ETH_INSTRUMENT_ID,
-        //                 //     position: Number(fShortHolding.position),
-        //                 //     side: 'short',
-        //                 //     mark_price: futurePrice
-        //                 // }
-        //                 // await closeHalfPosition(payload);
-        //             }catch (e) {
-        //                 restart()
-        //             }
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     // latestRSI.RSI1 <= 20
-        //     // ||
-        //     (
-        //         // goldOverlappingNum >= 1
-        //         // ||
-        //         // (latestRSI.RSI1 >= 70 && latestRSI.RSI1 >= latestRSI.RSI3)
-        //         (latestRSI.RSI1 >= 70 || latestRSI.RSI1 >= latestRSI.RSI2 )
-        //         &&
-        //         latestRSI.RSI1 >= latestRSI.RSI3
-        //     )
-        //     // ||
-        //     // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
-        //     // ||
-        //     // shortRatio >= 0.06
-        //     // isTripleUp(latestColumnsObjList)
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.position)){
-        //             const payload = {
-        //                 instrument_id: ETH_INSTRUMENT_ID,
-        //                 position: Number(shortHolding.position),
-        //                 side: 'short',
-        //                 mark_price
-        //             }
-        //             // await closeHalfPosition(holding);
-        //             await closeHalfPositionByMarket(payload)
-        //             lastShortMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        //开多仓条件
+        if(
+            macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+            &&
+            lowestMacd.index == macdList.length - 2
+            &&
+            lowestMacd.index != lowestDiffIndex
+        ){
+            try {
+                if(!longHolding || !Number(longHolding.position)){
+                    try{
+                        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
+                        // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                        // const fLongHolding = futureHolding.find(item=>item.side=="long")
+                        // const futurePrice = getFuturePrice(fLongHolding,0.05,1)
+                        // const payload = {
+                        //     instrument_id: ETH_INSTRUMENT_ID,
+                        //     position: Number(fLongHolding.position),
+                        //     side: 'long',
+                        //     mark_price: futurePrice
+                        // }
+                        // await closeHalfPosition(payload);
+                    }catch (e) {
+                        restart()
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平多仓条件
+        if(
+            latestRSI.RSI1 >= 70
+            // &&
+            // macdList[macdList.length-1].column < 0
+        ){
+            try {
+                if(longHolding && Number(longHolding.position)){
+                    const payload = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(longHolding.position),
+                        side: 'long',
+                        mark_price
+                    }
+                    // await closeHalfPosition(holding);
+                    await closeHalfPositionByMarket(payload)
+                    lastLongMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+            &&
+            highestMacd.index == macdList.length - 2
+            &&
+            highestMacd.index != highestDiffIndex
+        ){
+            try {
+                if(!shortHolding || !Number(shortHolding.position)){
+                    try{
+                        await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
+                        // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                        // const fShortHolding = futureHolding.find(item=>item.side=="short")
+                        // const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
+                        // const payload = {
+                        //     instrument_id: ETH_INSTRUMENT_ID,
+                        //     position: Number(fShortHolding.position),
+                        //     side: 'short',
+                        //     mark_price: futurePrice
+                        // }
+                        // await closeHalfPosition(payload);
+                    }catch (e) {
+                        restart()
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            latestRSI.RSI1 <= 30
+            // &&
+            // macdList[macdList.length-1].column < 0
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.position)){
+                    const payload = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(shortHolding.position),
+                        side: 'short',
+                        mark_price
+                    }
+                    // await closeHalfPosition(holding);
+                    await closeHalfPositionByMarket(payload)
+                    lastShortMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
 
     }
 
