@@ -1280,7 +1280,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-20)
+        macdList = macdList.slice(-24)
 
         let lowestMacd = {};
         let highestMacd = {};
@@ -1353,8 +1353,8 @@ const startInterval = async () => {
         // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('highestMacd',highestMacd.index,highestMacd.macd.price)
         console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.price)
-        console.log('highestDiff',highestDiff.index,highestDiff.macd.price)
-        console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.price)
+        console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
+        console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
         console.log('------------------')
 
         // if(goldList.length||deadList.length){
