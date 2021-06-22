@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1439,11 +1439,17 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            latestRSI.RSI1 >= 80
+            latestRSI.RSI1 >= 81
             ||
-            mark_price <= lowestMacd.macd.low
-            // &&
-            // macdList[macdList.length-1].column < 0
+            (mark_price <= lowestMacd.macd.low && lowestMacd.index == lowestDiff.index)
+            ||
+            (macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+                &&
+                highestMacd.index == macdList.length - 2
+                &&
+                highestMacd.index != highestDiff.index
+                &&
+                highestMacd.macd.diff < highestDiff.macd.diff)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1497,11 +1503,17 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            latestRSI.RSI1 <= 20
+            latestRSI.RSI1 <= 19
             ||
-            mark_price >= highestMacd.macd.high
-            // &&
-            // macdList[macdList.length-1].column < 0
+            (mark_price >= highestMacd.macd.high && highestMacd.index == highestDiff.index)
+            ||
+            (macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+                &&
+                lowestMacd.index == macdList.length - 2
+                &&
+                lowestMacd.index != lowestDiff.index
+                &&
+                lowestMacd.macd.diff > lowestDiff.macd.diff)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
