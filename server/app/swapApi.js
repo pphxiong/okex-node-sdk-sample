@@ -1022,7 +1022,7 @@ let globalHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
 function getMacd(params) {
-    const {price,lastEma12,lastEma26,lastDea, ...rest} = params
+    const {price,lastEma12,lastEma26,lastDea,high,low} = params
 
     const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,4)
     const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,4)
@@ -1039,7 +1039,8 @@ function getMacd(params) {
         diff,
         dea,
         column,
-        ...rest
+        high,
+        low
     }
 
     return result
