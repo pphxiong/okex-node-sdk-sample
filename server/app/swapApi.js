@@ -1343,6 +1343,8 @@ const startInterval = async () => {
         console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('lowestMacd',lowestMacd)
         console.log('highestMacd',highestMacd)
+        console.log('highestDiffIndex',highestDiffIndex)
+        console.log('lowestDiffIndex',lowestDiffIndex)
         console.log('------------------')
 
         // if(goldList.length||deadList.length){
