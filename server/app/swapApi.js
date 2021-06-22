@@ -1248,7 +1248,8 @@ const startInterval = async () => {
 
         let columnsObjList = []
 
-        const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
+        // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
+        const allList = globalColumnsObjList
         let macdList = []
         allList.map((item,index)=>{
             let result = {}
