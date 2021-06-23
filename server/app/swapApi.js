@@ -1243,7 +1243,7 @@ const startInterval = async () => {
         let mark_price;
         try{
             const mark_result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-            mark_price = mark_result.mark_price;
+            mark_price = Number(mark_result.mark_price);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
             restart()
@@ -1281,7 +1281,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-20)
+        macdList = macdList.slice(-15)
 
         let lowestMacd = {};
         let highestMacd = {};
@@ -1312,7 +1312,7 @@ const startInterval = async () => {
         let columnsObjList = []
         const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
         function* gen() {
-            for(let i = 0; i < 20; i ++){
+            for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1321,7 +1321,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 20 ) break
+            if( k >= 15 ) break
         }
 
         // allList.pop()
@@ -1329,7 +1329,7 @@ const startInterval = async () => {
         // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-20)
+        const latestColumnsObjList = columnsObjList.slice(-15)
         // let goldOverlappingNum = 0
         // let deadOverlappingNum = 0
         // const goldList = []
