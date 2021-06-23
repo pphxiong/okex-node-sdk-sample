@@ -1312,7 +1312,7 @@ const startInterval = async () => {
         let columnsObjList = []
         const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
         function* gen() {
-            for(let i = 0; i < 3; i ++){
+            for(let i = 0; i < 20; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1321,7 +1321,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 3 ) break
+            if( k >= 20 ) break
         }
 
         // allList.pop()
