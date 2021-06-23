@@ -1432,7 +1432,7 @@ const startInterval = async () => {
                 &&
                 lowestMacd.macd.diff > lowestDiff.macd.diff)
                 ||
-                lowestMacd.index != lowestRSI.index))
+                lowestMacd.index != lowestRSI.index + 1))
 
         const openShortPosition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             &&
@@ -1444,7 +1444,7 @@ const startInterval = async () => {
                 &&
                 highestMacd.macd.diff < highestDiff.macd.diff)
                 ||
-                highestMacd.index != highestRSI.index))
+                highestMacd.index != highestRSI.index + 1))
 
         //开多仓条件
         if(
