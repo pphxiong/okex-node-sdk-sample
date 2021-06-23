@@ -1249,8 +1249,6 @@ const startInterval = async () => {
             restart()
         }
 
-        let columnsObjList = []
-
         // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
         const allList = globalColumnsObjList
         let macdList = []
@@ -1311,9 +1309,10 @@ const startInterval = async () => {
             return cur;
         })
 
+        let columnsObjList = []
         const newAllList = allList.concat([0,0,0,0,Number(mark_price)])
         function* gen() {
-            for(let i = 0; i < 3; i ++){
+            for(let i = 0; i < 20; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1322,7 +1321,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 3 ) break
+            if( k >= 20 ) break
         }
 
         // allList.pop()
@@ -1330,29 +1329,29 @@ const startInterval = async () => {
         // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-15)
-        let goldOverlappingNum = 0
-        let deadOverlappingNum = 0
-        const goldList = []
-        const deadList = []
-        for(let i = 0; i < latestColumnsObjList.length - 2; i++){
-            const tripleList = latestColumnsObjList.slice(i, i + 3)
-            const overlappingObj = isGoldOverLapping(tripleList, i)
-            if(overlappingObj.isOverLapping) {
-                goldOverlappingNum++;
-                goldList.push(overlappingObj)
-            }
-
-            const deadOverlappingObj = isDeadOverLapping(tripleList, i)
-            if(deadOverlappingObj.isOverLapping) {
-                deadOverlappingNum++
-                deadList.push(deadOverlappingObj)
-            }
-        }
+        const latestColumnsObjList = columnsObjList.slice(-20)
+        // let goldOverlappingNum = 0
+        // let deadOverlappingNum = 0
+        // const goldList = []
+        // const deadList = []
+        // for(let i = 0; i < latestColumnsObjList.length - 2; i++){
+        //     const tripleList = latestColumnsObjList.slice(i, i + 3)
+        //     const overlappingObj = isGoldOverLapping(tripleList, i)
+        //     if(overlappingObj.isOverLapping) {
+        //         goldOverlappingNum++;
+        //         goldList.push(overlappingObj)
+        //     }
+        //
+        //     const deadOverlappingObj = isDeadOverLapping(tripleList, i)
+        //     if(deadOverlappingObj.isOverLapping) {
+        //         deadOverlappingNum++
+        //         deadList.push(deadOverlappingObj)
+        //     }
+        // }
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        // console.log('latestColumnsObjList',latestColumnsObjList)
+        console.log('latestColumnsObjList',latestColumnsObjList.map(item=>item.RSI1))
         // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
         console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
