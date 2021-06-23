@@ -1369,13 +1369,13 @@ const startInterval = async () => {
         console.log('------------------')
         // console.log('latestColumnsObjList',latestColumnsObjList)
         // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('mark_price',mark_price)
         console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
         console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
         console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
         console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
         console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
         console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
-        console.log('mark_price',mark_price)
         console.log('------------------')
 
         // if(goldList.length||deadList.length){
