@@ -1422,19 +1422,33 @@ const startInterval = async () => {
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
-        //开多仓条件
-        if(
-            macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+        const openLongPosition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
             &&
             lowestMacd.index == macdList.length - 2
             &&
             ((lowestMacd.index != lowestDiff.index
+                &&
+                lowestDiff.index != macdList.length - 1
+                &&
+                lowestMacd.macd.diff > lowestDiff.macd.diff)
+                ||
+                lowestMacd.index != lowestRSI.index))
+
+        const openShortPosition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             &&
-            lowestDiff.index != macdList.length - 1
+            highestMacd.index == macdList.length - 2
             &&
-            lowestMacd.macd.diff > lowestDiff.macd.diff)
-            ||
-            lowestMacd.index != lowestRSI.index)
+            ((highestMacd.index != highestDiff.index
+                &&
+                highestDiff.index != macdList.length - 1
+                &&
+                highestMacd.macd.diff < highestDiff.macd.diff)
+                ||
+                highestMacd.index != highestRSI.index))
+
+        //开多仓条件
+        if(
+            openLongPosition
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1461,21 +1475,11 @@ const startInterval = async () => {
 
         //平多仓条件
         if(
-            latestRSI.RSI1 >= 81
-            ||
+            // latestRSI.RSI1 >= 81
+            // ||
             (mark_price <= lowestMacd.macd.low && lowestMacd.index == lowestDiff.index)
             ||
-            (macdList[macdList.length-1].column <= macdList[macdList.length-2].column
-                &&
-                highestMacd.index == macdList.length - 2
-                &&
-                ((highestMacd.index != highestDiff.index
-                    &&
-                    highestDiff.index != macdList.length - 1
-                    &&
-                    highestMacd.macd.diff < highestDiff.macd.diff)
-                    ||
-                    highestMacd.index != highestRSI.index))
+            openShortPosition
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1496,17 +1500,7 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            macdList[macdList.length-1].column <= macdList[macdList.length-2].column
-            &&
-            highestMacd.index == macdList.length - 2
-            &&
-            ((highestMacd.index != highestDiff.index
-            &&
-            highestDiff.index != macdList.length - 1
-            &&
-            highestMacd.macd.diff < highestDiff.macd.diff)
-            ||
-            highestMacd.index != highestRSI.index)
+            openShortPosition
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1533,21 +1527,11 @@ const startInterval = async () => {
 
         //平空仓条件
         if(
-            latestRSI.RSI1 <= 19
-            ||
+            // latestRSI.RSI1 <= 19
+            // ||
             (mark_price >= highestMacd.macd.high && highestMacd.index == highestDiff.index)
             ||
-            (macdList[macdList.length-1].column >= macdList[macdList.length-2].column
-                &&
-                lowestMacd.index == macdList.length - 2
-                &&
-                ((lowestMacd.index != lowestDiff.index
-                    &&
-                    lowestDiff.index != macdList.length - 1
-                    &&
-                    lowestMacd.macd.diff > lowestDiff.macd.diff)
-                    ||
-                    lowestMacd.index != lowestRSI.index))
+            openLongPosition
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
