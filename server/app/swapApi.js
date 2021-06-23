@@ -1477,7 +1477,9 @@ const startInterval = async () => {
         if(
             // latestRSI.RSI1 >= 81
             // ||
-            (mark_price <= lowestMacd.macd.low && lowestMacd.index == lowestDiff.index)
+            (mark_price <= lowestMacd.macd.low
+                // && lowestMacd.index == lowestDiff.index
+            )
             ||
             openShortPosition
         ){
@@ -1529,7 +1531,9 @@ const startInterval = async () => {
         if(
             // latestRSI.RSI1 <= 19
             // ||
-            (mark_price >= highestMacd.macd.high && highestMacd.index == highestDiff.index)
+            (mark_price >= highestMacd.macd.high
+                // && highestMacd.index == highestDiff.index
+            )
             ||
             openLongPosition
         ){
