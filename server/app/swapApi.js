@@ -1059,7 +1059,7 @@ function getRSIAverage(list,i,n){
     if(i==0) {
         diff = 0;
     }else{
-        diff = list[i] - list[i-1]
+        diff = Number(list[i]) - Number(list[i-1])
         if(diff > 0){
             gainI = Math.max(0,diff)
         }else{
