@@ -1351,7 +1351,7 @@ const startInterval = async () => {
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        console.log('latestColumnsObjList',latestColumnsObjList.map(item=>item.RSI1))
+        console.log('latestColumnsObjList',latestColumnsObjList)
         // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
         console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
