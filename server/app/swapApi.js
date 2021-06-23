@@ -1349,14 +1349,32 @@ const startInterval = async () => {
         //     }
         // }
 
+        let lowestRSI = {}
+        let highestRSI = {}
+        latestColumnsObjList.reduce((pre,cur,index)=>{
+            if(index == 1){
+                lowestRSI = { index, RSI: pre };
+                highestRSI = { index, RSI: pre };
+            }
+            if(cur.RSI1 <= lowestRSI.RSI.RSI1){
+                lowestRSI = { index, RSI: cur }
+            }
+            if(cur.RSI1 >= highestRSI.RSI.RSI1){
+                highestRSI = { index, RSI: cur }
+            }
+            return cur;
+        })
+
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        console.log('latestColumnsObjList',latestColumnsObjList)
+        // console.log('latestColumnsObjList',latestColumnsObjList)
         // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
         console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
         console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
         console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
+        console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
+        console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
         console.log('------------------')
 
         // if(goldList.length||deadList.length){
@@ -1409,11 +1427,13 @@ const startInterval = async () => {
             &&
             lowestMacd.index == macdList.length - 2
             &&
-            lowestMacd.index != lowestDiff.index
+            ((lowestMacd.index != lowestDiff.index
             &&
             lowestDiff.index != macdList.length - 1
             &&
-            lowestMacd.macd.diff > lowestDiff.macd.diff
+            lowestMacd.macd.diff > lowestDiff.macd.diff)
+            ||
+            lowestMacd.index != lowestRSI.index)
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1448,9 +1468,13 @@ const startInterval = async () => {
                 &&
                 highestMacd.index == macdList.length - 2
                 &&
-                highestMacd.index != highestDiff.index
-                &&
-                highestMacd.macd.diff < highestDiff.macd.diff)
+                ((highestMacd.index != highestDiff.index
+                    &&
+                    highestDiff.index != macdList.length - 1
+                    &&
+                    highestMacd.macd.diff < highestDiff.macd.diff)
+                    ||
+                    highestMacd.index != highestRSI.index))
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1475,11 +1499,13 @@ const startInterval = async () => {
             &&
             highestMacd.index == macdList.length - 2
             &&
-            highestMacd.index != highestDiff.index
+            ((highestMacd.index != highestDiff.index
             &&
             highestDiff.index != macdList.length - 1
             &&
-            highestMacd.macd.diff < highestDiff.macd.diff
+            highestMacd.macd.diff < highestDiff.macd.diff)
+            ||
+            highestMacd.index != highestRSI.index)
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1514,9 +1540,13 @@ const startInterval = async () => {
                 &&
                 lowestMacd.index == macdList.length - 2
                 &&
-                lowestMacd.index != lowestDiff.index
-                &&
-                lowestMacd.macd.diff > lowestDiff.macd.diff)
+                ((lowestMacd.index != lowestDiff.index
+                    &&
+                    lowestDiff.index != macdList.length - 1
+                    &&
+                    lowestMacd.macd.diff > lowestDiff.macd.diff)
+                    ||
+                    lowestMacd.index != lowestRSI.index))
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
