@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1477,10 +1477,10 @@ const startInterval = async () => {
         if(
             // latestRSI.RSI1 >= 81
             // ||
-            // (mark_price <= lowestMacd.macd.low
-            //     // && lowestMacd.index == lowestDiff.index
-            // )
-            // ||
+            (mark_price <= lowestMacd.macd.low
+                // && lowestMacd.index == lowestDiff.index
+            )
+            ||
             openShortPosition
         ){
             try {
@@ -1531,10 +1531,10 @@ const startInterval = async () => {
         if(
             // latestRSI.RSI1 <= 19
             // ||
-            // (mark_price >= highestMacd.macd.high
-            //     // && highestMacd.index == highestDiff.index
-            // )
-            // ||
+            (mark_price >= highestMacd.macd.high
+                // && highestMacd.index == highestDiff.index
+            )
+            ||
             openLongPosition
         ){
             try {
