@@ -1099,9 +1099,9 @@ function getRSIByPeriod(newList, period){
     return newResult;
 }
 function getRSI(price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,6)
-    const { RSI: RSI2 } = getRSIByPeriod(list,12)
-    const { RSI: RSI3 } = getRSIByPeriod(list,24)
+    const { RSI: RSI1 } = getRSIByPeriod(list,9)
+    const { RSI: RSI2 } = getRSIByPeriod(list,18)
+    const { RSI: RSI3 } = getRSIByPeriod(list,36)
 
     const result = {
         price,
@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 1, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1310,7 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        const newAllList = allList
         function* gen() {
             for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
@@ -1422,29 +1423,33 @@ const startInterval = async () => {
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
-        const openLongPosition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
-            &&
-            lowestMacd.index == macdList.length - 2
-            &&
-            ((lowestMacd.index != lowestDiff.index
-                &&
-                lowestDiff.index != macdList.length - 1
-                &&
-                lowestMacd.macd.diff > lowestDiff.macd.diff)
-                ||
-                lowestMacd.index != lowestRSI.index + 1))
+        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+            && latestRSI.RSI3 >= 50
+            // !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+            // &&
+            // lowestMacd.index == macdList.length - 2
+            // &&
+            // ((lowestMacd.index != lowestDiff.index
+            //     &&
+            //     lowestDiff.index != macdList.length - 1
+            //     &&
+            //     lowestMacd.macd.diff > lowestDiff.macd.diff)
+            //     ||
+            //     lowestMacd.index != lowestRSI.index + 1))
 
-        const openShortPosition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
-            &&
-            highestMacd.index == macdList.length - 2
-            &&
-            ((highestMacd.index != highestDiff.index
-                &&
-                highestDiff.index != macdList.length - 1
-                &&
-                highestMacd.macd.diff < highestDiff.macd.diff)
-                ||
-                highestMacd.index != highestRSI.index + 1))
+        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            && latestRSI.RSI3 <= 50
+            // !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+            // &&
+            // highestMacd.index == macdList.length - 2
+            // &&
+            // ((highestMacd.index != highestDiff.index
+            //     &&
+            //     highestDiff.index != macdList.length - 1
+            //     &&
+            //     highestMacd.macd.diff < highestDiff.macd.diff)
+            //     ||
+            //     highestMacd.index != highestRSI.index + 1))
 
         //开多仓条件
         if(
@@ -1477,10 +1482,10 @@ const startInterval = async () => {
         if(
             // latestRSI.RSI1 >= 81
             // ||
-            (mark_price <= lowestMacd.macd.low
-                // && lowestMacd.index == lowestDiff.index
-            )
-            ||
+            // (mark_price <= lowestMacd.macd.low
+            //     // && lowestMacd.index == lowestDiff.index
+            // )
+            // ||
             openShortPosition
         ){
             try {
@@ -1531,10 +1536,10 @@ const startInterval = async () => {
         if(
             // latestRSI.RSI1 <= 19
             // ||
-            (mark_price >= highestMacd.macd.high
-                // && highestMacd.index == highestDiff.index
-            )
-            ||
+            // (mark_price >= highestMacd.macd.high
+            //     // && highestMacd.index == highestDiff.index
+            // )
+            // ||
             openLongPosition
         ){
             try {
