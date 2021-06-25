@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1423,9 +1423,6 @@ const startInterval = async () => {
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
-        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
-            && latestRSI.RSI3 >= 50
-
         const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
             &&
             lowestMacd.index == macdList.length - 2
@@ -1438,9 +1435,6 @@ const startInterval = async () => {
                 ||
                 lowestMacd.index != lowestRSI.index + 1))
 
-        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
-            && latestRSI.RSI3 <= 50
-
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             &&
             highestMacd.index == macdList.length - 2
@@ -1452,6 +1446,14 @@ const startInterval = async () => {
                 highestMacd.macd.diff < highestDiff.macd.diff)
                 ||
                 highestMacd.index != highestRSI.index + 1))
+
+        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+            && latestRSI.RSI3 >= 50
+            && !topReverseCondition
+
+        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            && latestRSI.RSI3 <= 50
+            && !bottomReverseCondition
 
         //开多仓条件
         if(
