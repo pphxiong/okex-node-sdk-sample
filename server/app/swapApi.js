@@ -1281,7 +1281,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-15)
+        macdList = macdList.slice(-10)
 
         let lowestMacd = {};
         let highestMacd = {};
@@ -1313,7 +1313,7 @@ const startInterval = async () => {
         // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
         const newAllList = allList
         function* gen() {
-            for(let i = 0; i < 15; i ++){
+            for(let i = 0; i < 10; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1322,7 +1322,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 15 ) break
+            if( k >= 10 ) break
         }
 
         // allList.pop()
@@ -1330,7 +1330,7 @@ const startInterval = async () => {
         // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-15)
+        const latestColumnsObjList = columnsObjList.slice(-10)
         // let goldOverlappingNum = 0
         // let deadOverlappingNum = 0
         // const goldList = []
@@ -1425,37 +1425,39 @@ const startInterval = async () => {
 
         const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
             &&
-            lowestMacd.index == macdList.length - 2
-            &&
-            ((lowestMacd.index != lowestDiff.index
-                &&
-                lowestDiff.index != macdList.length - 1
-                &&
-                lowestMacd.macd.diff > lowestDiff.macd.diff)
-                ||
-                lowestMacd.index != lowestRSI.index + 1))
+            lowestMacd.index != lowestRSI.index)
+            // &&
+            // lowestMacd.index == macdList.length - 2
+            // &&
+            // ((lowestMacd.index != lowestDiff.index
+            //     &&
+            //     lowestDiff.index != macdList.length - 1
+            //     &&
+            //     lowestMacd.macd.diff > lowestDiff.macd.diff)
+            //     ||
+            //     lowestMacd.index != lowestRSI.index))
 
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             &&
-            highestMacd.index == macdList.length - 2
-            &&
-            ((highestMacd.index != highestDiff.index
-                &&
-                highestDiff.index != macdList.length - 1
-                &&
-                highestMacd.macd.diff < highestDiff.macd.diff)
-                ||
-                highestMacd.index != highestRSI.index + 1))
+            highestMacd.index != highestRSI.index)
+            // &&
+            // highestMacd.index == macdList.length - 2
+            // &&
+            // ((highestMacd.index != highestDiff.index
+            //     &&
+            //     highestDiff.index != macdList.length - 1
+            //     &&
+            //     highestMacd.macd.diff < highestDiff.macd.diff)
+            //     ||
+            //     highestMacd.index != highestRSI.index))
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
             && !topReverseCondition
-            && latestColumnsObjList[latestColumnsObjList.length-2].RSI2 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             && latestRSI.RSI3 <= 50
             && !bottomReverseCondition
-            && latestColumnsObjList[latestColumnsObjList.length-2].RSI2 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
 
         //开多仓条件
         if(
