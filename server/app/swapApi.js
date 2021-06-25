@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 1, // 单位为秒
+        granularity: 60 * 5, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1425,31 +1425,33 @@ const startInterval = async () => {
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
-            // !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
-            // &&
-            // lowestMacd.index == macdList.length - 2
-            // &&
-            // ((lowestMacd.index != lowestDiff.index
-            //     &&
-            //     lowestDiff.index != macdList.length - 1
-            //     &&
-            //     lowestMacd.macd.diff > lowestDiff.macd.diff)
-            //     ||
-            //     lowestMacd.index != lowestRSI.index + 1))
+
+        const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+            &&
+            lowestMacd.index == macdList.length - 2
+            &&
+            ((lowestMacd.index != lowestDiff.index
+                &&
+                lowestDiff.index != macdList.length - 1
+                &&
+                lowestMacd.macd.diff > lowestDiff.macd.diff)
+                ||
+                lowestMacd.index != lowestRSI.index + 1))
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             && latestRSI.RSI3 <= 50
-            // !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
-            // &&
-            // highestMacd.index == macdList.length - 2
-            // &&
-            // ((highestMacd.index != highestDiff.index
-            //     &&
-            //     highestDiff.index != macdList.length - 1
-            //     &&
-            //     highestMacd.macd.diff < highestDiff.macd.diff)
-            //     ||
-            //     highestMacd.index != highestRSI.index + 1))
+
+        const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+            &&
+            highestMacd.index == macdList.length - 2
+            &&
+            ((highestMacd.index != highestDiff.index
+                &&
+                highestDiff.index != macdList.length - 1
+                &&
+                highestMacd.macd.diff < highestDiff.macd.diff)
+                ||
+                highestMacd.index != highestRSI.index + 1))
 
         //开多仓条件
         if(
@@ -1487,6 +1489,8 @@ const startInterval = async () => {
             // )
             // ||
             openShortPosition
+            ||
+            topReverseCondition
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1541,6 +1545,8 @@ const startInterval = async () => {
             // )
             // ||
             openLongPosition
+            ||
+            bottomReverseCondition
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
