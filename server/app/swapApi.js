@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 8;
+let initPosition = 5;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1453,13 +1453,13 @@ const startInterval = async () => {
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
-            && !topReverseCondition
-            && lowestMacd.index < macdList.length - 3
+            // && !topReverseCondition
+            // && lowestMacd.index < macdList.length - 3
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             && latestRSI.RSI3 <= 50
-            && !bottomReverseCondition
-            && highestMacd.index < macdList.length - 3
+            // && !bottomReverseCondition
+            // && highestMacd.index < macdList.length - 3
 
         //开多仓条件
         if(
@@ -1498,7 +1498,7 @@ const startInterval = async () => {
             // ||
             openShortPosition
             ||
-            topReverseCondition
+            (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1554,7 +1554,7 @@ const startInterval = async () => {
             // ||
             openLongPosition
             ||
-            bottomReverseCondition
+            (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
