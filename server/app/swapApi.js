@@ -1450,16 +1450,12 @@ const startInterval = async () => {
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
             && !topReverseCondition
-            && !(latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI2
-                && latestColumnsObjList[latestColumnsObjList.length-2].RSI2 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            )
+            && latestColumnsObjList[latestColumnsObjList.length-2].RSI2 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             && latestRSI.RSI3 <= 50
             && !bottomReverseCondition
-            && !(latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI2
-                && latestColumnsObjList[latestColumnsObjList.length-2].RSI2 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            )
+            && latestColumnsObjList[latestColumnsObjList.length-2].RSI2 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
 
         //开多仓条件
         if(
