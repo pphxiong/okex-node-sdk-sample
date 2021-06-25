@@ -1281,7 +1281,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-10)
+        macdList = macdList.slice(-8)
 
         let lowestMacd = {};
         let highestMacd = {};
@@ -1313,7 +1313,7 @@ const startInterval = async () => {
         // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
         const newAllList = allList
         function* gen() {
-            for(let i = 0; i < 10; i ++){
+            for(let i = 0; i < 8; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1322,7 +1322,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 10 ) break
+            if( k >= 8 ) break
         }
 
         // allList.pop()
@@ -1330,7 +1330,7 @@ const startInterval = async () => {
         // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-10)
+        const latestColumnsObjList = columnsObjList.slice(-8)
         // let goldOverlappingNum = 0
         // let deadOverlappingNum = 0
         // const goldList = []
