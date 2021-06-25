@@ -1427,8 +1427,9 @@ const startInterval = async () => {
             // &&
             // lowestMacd.index != lowestRSI.index)
             &&
-            (lowestMacd.index == macdList.length - 2
-                &&(lowestMacd.index != lowestDiff.index
+            lowestMacd.index == macdList.length - 2
+            &&
+            ((lowestMacd.index != lowestDiff.index
                 &&
                 lowestDiff.index != macdList.length - 1
                 &&
@@ -1440,8 +1441,9 @@ const startInterval = async () => {
             // &&
             // highestMacd.index != highestRSI.index)
             &&
-            (highestMacd.index == macdList.length - 2
-                &&(highestMacd.index != highestDiff.index
+            highestMacd.index == macdList.length - 2
+            &&
+            ((highestMacd.index != highestDiff.index
                 &&
                 highestDiff.index != macdList.length - 1
                 &&
@@ -1452,10 +1454,12 @@ const startInterval = async () => {
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
             && !topReverseCondition
+            && highestMacd.index < macdList.length - 4
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             && latestRSI.RSI3 <= 50
             && !bottomReverseCondition
+            && lowestMacd.index < macdList.length - 4
 
         //开多仓条件
         if(
