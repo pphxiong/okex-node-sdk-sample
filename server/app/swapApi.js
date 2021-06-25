@@ -1454,12 +1454,12 @@ const startInterval = async () => {
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
             && !topReverseCondition
-            && highestMacd.index < macdList.length - 3
+            && lowestMacd.index < macdList.length - 3
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             && latestRSI.RSI3 <= 50
             && !bottomReverseCondition
-            && lowestMacd.index < macdList.length - 3
+            && highestMacd.index < macdList.length - 3
 
         //开多仓条件
         if(
