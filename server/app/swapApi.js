@@ -1424,32 +1424,30 @@ const startInterval = async () => {
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
         const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+            // &&
+            // lowestMacd.index != lowestRSI.index)
             &&
+            (lowestMacd.index == macdList.length - 2
+                &&(lowestMacd.index != lowestDiff.index
+                &&
+                lowestDiff.index != macdList.length - 1
+                &&
+                lowestMacd.macd.diff > lowestDiff.macd.diff)
+                )||
             lowestMacd.index != lowestRSI.index)
-            // &&
-            // lowestMacd.index == macdList.length - 2
-            // &&
-            // ((lowestMacd.index != lowestDiff.index
-            //     &&
-            //     lowestDiff.index != macdList.length - 1
-            //     &&
-            //     lowestMacd.macd.diff > lowestDiff.macd.diff)
-            //     ||
-            //     lowestMacd.index != lowestRSI.index))
 
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+            // &&
+            // highestMacd.index != highestRSI.index)
             &&
+            (highestMacd.index == macdList.length - 2
+                &&(highestMacd.index != highestDiff.index
+                &&
+                highestDiff.index != macdList.length - 1
+                &&
+                highestMacd.macd.diff < highestDiff.macd.diff)
+                )||
             highestMacd.index != highestRSI.index)
-            // &&
-            // highestMacd.index == macdList.length - 2
-            // &&
-            // ((highestMacd.index != highestDiff.index
-            //     &&
-            //     highestDiff.index != macdList.length - 1
-            //     &&
-            //     highestMacd.macd.diff < highestDiff.macd.diff)
-            //     ||
-            //     highestMacd.index != highestRSI.index))
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             && latestRSI.RSI3 >= 50
