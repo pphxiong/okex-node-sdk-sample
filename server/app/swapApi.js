@@ -1466,8 +1466,6 @@ const startInterval = async () => {
         //开多仓条件
         if(
             openLongPosition
-            &&
-            !topReverseCondition
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1526,8 +1524,6 @@ const startInterval = async () => {
         //开空仓条件
         if(
             openShortPosition
-            &&
-            !bottomReverseCondition
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
