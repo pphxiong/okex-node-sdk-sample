@@ -1249,8 +1249,8 @@ const startInterval = async () => {
             restart()
         }
 
-        const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
-        // const allList = globalColumnsObjList
+        // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
+        const allList = globalColumnsObjList
         let macdList = []
         allList.map((item,index)=>{
             let result = {}
@@ -1310,8 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        const newAllList = allList
+        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        // const newAllList = allList
         function* gen() {
             for(let i = 0; i < 12; i ++){
                 if(i > 0) newAllList.pop()
