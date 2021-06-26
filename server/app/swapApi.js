@@ -1499,8 +1499,8 @@ const startInterval = async () => {
             // )
             // ||
             openShortPosition
-            ||
-            topReverseCondition
+            // ||
+            // topReverseCondition
             // ||
             // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
         ){
@@ -1557,8 +1557,8 @@ const startInterval = async () => {
             // )
             // ||
             openLongPosition
-            ||
-            bottomReverseCondition
+            // ||
+            // bottomReverseCondition
             // ||
             // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
         ){
