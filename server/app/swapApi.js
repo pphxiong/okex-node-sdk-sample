@@ -1408,18 +1408,18 @@ const startInterval = async () => {
             shortHolding = holding.find(item=>item.side=="short")
         }
 
-        // if(longHolding){
-        //     const { position, leverage, avg_cost, } = longHolding;
-        //     longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-        //     lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
-        // }
-        //
-        // if(shortHolding){
-        //     const { position, leverage, avg_cost, } = shortHolding;
-        //     shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-        //     shortRatio = - shortRatio
-        //     lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
-        // }
+        if(longHolding){
+            const { position, leverage, avg_cost, } = longHolding;
+            longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
+        }
+
+        if(shortHolding){
+            const { position, leverage, avg_cost, } = shortHolding;
+            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            shortRatio = - shortRatio
+            lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
+        }
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
