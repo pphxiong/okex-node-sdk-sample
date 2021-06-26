@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 2;
+let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1451,13 +1451,13 @@ const startInterval = async () => {
                 )||
             highestMacd.index != highestRSI.index)
 
-        const openLongPosition = latestRSI.RSI1 <= 30
+        const openLongPosition = latestRSI.RSI1 <= 28
             // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             // && latestRSI.RSI3 >= 50
             // && !topReverseCondition
             // && lowestMacd.index < macdList.length - 3
 
-        const openShortPosition = latestRSI.RSI1 >= 70
+        const openShortPosition = latestRSI.RSI1 >= 72
             // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             // && latestRSI.RSI3 <= 50
             // && !bottomReverseCondition
@@ -1498,11 +1498,11 @@ const startInterval = async () => {
             //     // && lowestMacd.index == lowestDiff.index
             // )
             // ||
-            openShortPosition
+            // openShortPosition
             // ||
             // topReverseCondition
             // ||
-            // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            (longRatio > 0.05 && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1556,11 +1556,11 @@ const startInterval = async () => {
             //     // && highestMacd.index == highestDiff.index
             // )
             // ||
-            openLongPosition
+            // openLongPosition
             // ||
             // bottomReverseCondition
             // ||
-            // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            (shortRatio > 0.05 && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
