@@ -1281,7 +1281,7 @@ const startInterval = async () => {
             macdList.push(result)
         })
 
-        macdList = macdList.slice(-12)
+        macdList = macdList.slice(-15)
 
         let lowestMacd = {};
         let highestMacd = {};
@@ -1313,7 +1313,7 @@ const startInterval = async () => {
         const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
         // const newAllList = allList
         function* gen() {
-            for(let i = 0; i < 12; i ++){
+            for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1322,7 +1322,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 12 ) break
+            if( k >= 15 ) break
         }
 
         // allList.pop()
@@ -1330,7 +1330,7 @@ const startInterval = async () => {
         // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-12)
+        const latestColumnsObjList = columnsObjList.slice(-15)
         // let goldOverlappingNum = 0
         // let deadOverlappingNum = 0
         // const goldList = []
@@ -1466,6 +1466,8 @@ const startInterval = async () => {
         //开多仓条件
         if(
             openLongPosition
+            &&
+            !topReverseCondition
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1499,6 +1501,8 @@ const startInterval = async () => {
             // )
             // ||
             openShortPosition
+            ||
+            topReverseCondition
             // ||
             // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
         ){
@@ -1522,6 +1526,8 @@ const startInterval = async () => {
         //开空仓条件
         if(
             openShortPosition
+            &&
+            !bottomReverseCondition
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1555,6 +1561,8 @@ const startInterval = async () => {
             // )
             // ||
             openLongPosition
+            ||
+            bottomReverseCondition
             // ||
             // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
         ){
