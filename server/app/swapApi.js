@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 5;
+let initPosition = 2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1451,12 +1451,14 @@ const startInterval = async () => {
                 )||
             highestMacd.index != highestRSI.index)
 
-        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+        const openLongPosition = latestRSI.RSI1 <= 30
+            // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             // && latestRSI.RSI3 >= 50
             // && !topReverseCondition
             // && lowestMacd.index < macdList.length - 3
 
-        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+        const openShortPosition = latestRSI.RSI1 >= 70
+            // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             // && latestRSI.RSI3 <= 50
             // && !bottomReverseCondition
             // && highestMacd.index < macdList.length - 3
@@ -1497,8 +1499,8 @@ const startInterval = async () => {
             // )
             // ||
             openShortPosition
-            ||
-            (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            // ||
+            // (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1553,8 +1555,8 @@ const startInterval = async () => {
             // )
             // ||
             openLongPosition
-            ||
-            (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            // ||
+            // (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
