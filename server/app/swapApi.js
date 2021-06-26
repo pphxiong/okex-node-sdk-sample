@@ -1249,8 +1249,8 @@ const startInterval = async () => {
             restart()
         }
 
-        // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
-        const allList = globalColumnsObjList
+        const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
+        // const allList = globalColumnsObjList
         let macdList = []
         allList.map((item,index)=>{
             let result = {}
@@ -1452,12 +1452,12 @@ const startInterval = async () => {
             highestMacd.index != highestRSI.index)
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
-            && latestRSI.RSI3 >= 50
+            // && latestRSI.RSI3 >= 50
             // && !topReverseCondition
             // && lowestMacd.index < macdList.length - 3
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
-            && latestRSI.RSI3 <= 50
+            // && latestRSI.RSI3 <= 50
             // && !bottomReverseCondition
             // && highestMacd.index < macdList.length - 3
 
