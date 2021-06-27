@@ -1502,7 +1502,11 @@ const startInterval = async () => {
             // ||
             // topReverseCondition
             // ||
-            (longRatio > 0.05 && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            (longRatio > 0.05
+                ||
+                longRatio < 0.05
+                // && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            )
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1560,7 +1564,11 @@ const startInterval = async () => {
             // ||
             // bottomReverseCondition
             // ||
-            (shortRatio > 0.05 && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            (shortRatio > 0.05
+                ||
+                shortRatio < 0.05
+                // && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+            )
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
