@@ -1504,7 +1504,7 @@ const startInterval = async () => {
             // ||
             (longRatio > 0.05
                 ||
-                longRatio < 0.05
+                longRatio < -0.05
                 // && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             )
         ){
@@ -1566,7 +1566,7 @@ const startInterval = async () => {
             // ||
             (shortRatio > 0.05
                 ||
-                shortRatio < 0.05
+                shortRatio < -0.05
                 // && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             )
         ){
