@@ -1100,8 +1100,8 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,9)
-    const { RSI: RSI2 } = getRSIByPeriod(list,18)
-    const { RSI: RSI3 } = getRSIByPeriod(list,36)
+    const { RSI: RSI2 } = getRSIByPeriod(list,27)
+    const { RSI: RSI3 } = getRSIByPeriod(list,81)
 
     const result = {
         price,
@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1310,8 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        // const newAllList = allList
+        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        const newAllList = allList
         function* gen() {
             for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
@@ -1451,14 +1451,14 @@ const startInterval = async () => {
                 )||
             highestMacd.index != highestRSI.index)
 
-        const openLongPosition = latestRSI.RSI1 <= 28
-            // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+            // latestRSI.RSI1 <= 28
             // && latestRSI.RSI3 >= 50
             // && !topReverseCondition
             // && lowestMacd.index < macdList.length - 3
 
-        const openShortPosition = latestRSI.RSI1 >= 72
-            // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            // latestRSI.RSI1 >= 72
             // && latestRSI.RSI3 <= 50
             // && !bottomReverseCondition
             // && highestMacd.index < macdList.length - 3
@@ -1498,15 +1498,15 @@ const startInterval = async () => {
             //     // && lowestMacd.index == lowestDiff.index
             // )
             // ||
-            // openShortPosition
+            openShortPosition
             // ||
             // topReverseCondition
             // ||
-            (latestRSI.RSI1 >= 60
-                ||
-                longRatio < -0.05
-                // && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
-            )
+            // (latestRSI.RSI1 >= 60
+            //     ||
+            //     longRatio < -0.05
+            //     // && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            // )
         ){
             try {
                 if(longHolding && Number(longHolding.position)){
@@ -1560,15 +1560,15 @@ const startInterval = async () => {
             //     // && highestMacd.index == highestDiff.index
             // )
             // ||
-            // openLongPosition
+            openLongPosition
             // ||
             // bottomReverseCondition
             // ||
-            (latestRSI.RSI1 <= 40
-                ||
-                shortRatio < -0.05
-                // && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
-            )
+            // (latestRSI.RSI1 <= 40
+            //     ||
+            //     shortRatio < -0.05
+            //     // && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+            // )
         ){
             try {
                 if(shortHolding && Number(shortHolding.position)){
