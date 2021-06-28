@@ -1100,8 +1100,8 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,9)
-    const { RSI: RSI2 } = getRSIByPeriod(list,27)
-    const { RSI: RSI3 } = getRSIByPeriod(list,81)
+    const { RSI: RSI2 } = getRSIByPeriod(list,12)
+    const { RSI: RSI3 } = getRSIByPeriod(list,72)
 
     const result = {
         price,
@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 1, // 单位为秒
         // limit: 100,
         // start,
         // end
