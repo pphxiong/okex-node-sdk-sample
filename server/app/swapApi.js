@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 1, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1310,8 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        // const newAllList = allList
+        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        const newAllList = allList
         function* gen() {
             for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
