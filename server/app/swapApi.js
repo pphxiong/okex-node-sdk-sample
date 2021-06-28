@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10
-let initPosition = 3;
+let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        granularity: 60 * 1, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1451,13 +1451,13 @@ const startInterval = async () => {
                 )||
             highestMacd.index != highestRSI.index)
 
-        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI3
             // latestRSI.RSI1 <= 28
             // && latestRSI.RSI3 >= 50
             // && !topReverseCondition
             // && lowestMacd.index < macdList.length - 3
 
-        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI3
             // latestRSI.RSI1 >= 72
             // && latestRSI.RSI3 <= 50
             // && !bottomReverseCondition
@@ -1499,8 +1499,6 @@ const startInterval = async () => {
             // )
             // ||
             openShortPosition
-            ||
-            latestRSI.RSI1 < latestRSI.RSI3
             // ||
             // topReverseCondition
             // ||
@@ -1563,8 +1561,6 @@ const startInterval = async () => {
             // )
             // ||
             openLongPosition
-            ||
-            latestRSI.RSI1 > latestRSI.RSI3
             // ||
             // bottomReverseCondition
             // ||
