@@ -1435,7 +1435,7 @@ const startInterval = async () => {
                 &&
                 lowestMacd.macd.diff > lowestDiff.macd.diff)
                 )||
-            lowestMacd.index != lowestRSI.index)
+            lowestMacd.index != lowestRSI.index + 1)
 
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             // &&
@@ -1449,12 +1449,12 @@ const startInterval = async () => {
                 &&
                 highestMacd.macd.diff < highestDiff.macd.diff)
                 )||
-            highestMacd.index != highestRSI.index)
+            highestMacd.index != highestRSI.index + 1)
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <=  latestColumnsObjList[latestColumnsObjList.length-2].RSI2
-            &&
+            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <=  latestColumnsObjList[latestColumnsObjList.length-2].RSI2
+            // &&
             latestColumnsObjList[latestColumnsObjList.length-2].RSI2 <=  latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // latestRSI.RSI1 <= 28
             // && latestRSI.RSI3 >= 50
@@ -1463,8 +1463,8 @@ const startInterval = async () => {
 
         const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >=  latestColumnsObjList[latestColumnsObjList.length-2].RSI2
-            &&
+            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >=  latestColumnsObjList[latestColumnsObjList.length-2].RSI2
+            // &&
             latestColumnsObjList[latestColumnsObjList.length-2].RSI2 >=  latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // latestRSI.RSI1 >= 72
             // && latestRSI.RSI3 <= 50
@@ -1509,6 +1509,8 @@ const startInterval = async () => {
             openShortPosition
             ||
             (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
+            ||
+            topReverseCondition
             // ||
             // topReverseCondition
             // ||
@@ -1573,6 +1575,8 @@ const startInterval = async () => {
             openLongPosition
             ||
             (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
+            ||
+            bottomReverseCondition
             // ||
             // bottomReverseCondition
             // ||
