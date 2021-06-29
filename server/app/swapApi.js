@@ -1133,35 +1133,35 @@ function isTripleUp(list){
     return list.every(item=>item.RSI1>item.RSI2);
 }
 function isGoldOverLapping(list, index){
-    let isOverLapping = false
-    // const isOverLapping = list.every(item=>item.RSI1 >= item.RSI2 && item.RSI2 >= item.RSI3)
-    if(
-        // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
-        // ||
-        list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-        &&
-        list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
-    ){
-        const point1 = {
-            x: index,
-            y: list[0].RSI1
-        }
-        const point2 = {
-            x: index + 2,
-            y: list[2].RSI1
-        }
-        const point3 = {
-            x: index,
-            y: list[0].RSI2,
-        }
-        const point4 = {
-            x: index + 2,
-            y: list[2].RSI2
-        }
+    // let isOverLapping = false
+    const isOverLapping = list.every(item=>/* item.RSI1 >= item.RSI2 && */ item.RSI2 >= item.RSI3)
+    // if(
+    //     // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
+    //     // ||
+    //     list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
+    //     &&
+    //     list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
+    // ){
+    //     const point1 = {
+    //         x: index,
+    //         y: list[0].RSI1
+    //     }
+    //     const point2 = {
+    //         x: index + 2,
+    //         y: list[2].RSI1
+    //     }
+    //     const point3 = {
+    //         x: index,
+    //         y: list[0].RSI2,
+    //     }
+    //     const point4 = {
+    //         x: index + 2,
+    //         y: list[2].RSI2
+    //     }
         // if(checkCross(point1,point2,point3,point4)){
-            isOverLapping = true
+        //     isOverLapping = true
         // }
-    }
+    // }
     const overlappingObj = {
         isOverLapping,
         overlappingIndex: index,
@@ -1171,7 +1171,7 @@ function isGoldOverLapping(list, index){
 }
 function isDeadOverLapping(list,index){
     // let isOverLapping = false
-    const isOverLapping = list.every(item=>item.RSI1 <= item.RSI2 && item.RSI2 <= item.RSI3)
+    const isOverLapping = list.every(item=>/* item.RSI1 <= item.RSI2 && */ item.RSI2 <= item.RSI3)
     // if(
     //     // ((list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3)
     //     // ||
@@ -1204,7 +1204,7 @@ function isDeadOverLapping(list,index){
     const overlappingObj = {
         isOverLapping,
         overlappingIndex: index,
-        overlappingObj: list[1]
+        overlappingObj: list[0]
     }
     return overlappingObj
 }
@@ -1331,23 +1331,23 @@ const startInterval = async () => {
 
         columnsObjList = columnsObjList.reverse()
         const latestColumnsObjList = columnsObjList.slice(-15)
-        // let goldOverlappingNum = 0
-        // let deadOverlappingNum = 0
+        let goldOverlappingNum = 0
+        let deadOverlappingNum = 0
         // const goldList = []
         // const deadList = []
         // for(let i = 0; i < latestColumnsObjList.length - 2; i++){
-        //     const tripleList = latestColumnsObjList.slice(i, i + 3)
-        //     const overlappingObj = isGoldOverLapping(tripleList, i)
-        //     if(overlappingObj.isOverLapping) {
-        //         goldOverlappingNum++;
-        //         goldList.push(overlappingObj)
-        //     }
-        //
-        //     const deadOverlappingObj = isDeadOverLapping(tripleList, i)
-        //     if(deadOverlappingObj.isOverLapping) {
-        //         deadOverlappingNum++
-        //         deadList.push(deadOverlappingObj)
-        //     }
+            const tripleList = latestColumnsObjList.slice(-6, -1)
+            const overlappingObj = isGoldOverLapping(tripleList, 0)
+            if(overlappingObj.isOverLapping) {
+                goldOverlappingNum++;
+                // goldList.push(overlappingObj)
+            }
+
+            const deadOverlappingObj = isDeadOverLapping(tripleList, 0)
+            if(deadOverlappingObj.isOverLapping) {
+                deadOverlappingNum++;
+                // deadList.push(deadOverlappingObj)
+            }
         // }
 
         let lowestRSI = {}
@@ -1474,6 +1474,8 @@ const startInterval = async () => {
         //开多仓条件
         if(
             openLongPosition
+            &&
+            deadOverlappingNum
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1511,6 +1513,8 @@ const startInterval = async () => {
             (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
             ||
             topReverseCondition
+            ||
+            deadOverlappingNum
             // ||
             // topReverseCondition
             // ||
@@ -1540,6 +1544,8 @@ const startInterval = async () => {
         //开空仓条件
         if(
             openShortPosition
+            &&
+            goldOverlappingNum
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1577,6 +1583,8 @@ const startInterval = async () => {
             (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
             ||
             bottomReverseCondition
+            ||
+            goldOverlappingNum
             // ||
             // bottomReverseCondition
             // ||
