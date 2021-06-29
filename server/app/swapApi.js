@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 5, // 单位为秒
+        granularity: 60 * 3, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1310,8 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        // const newAllList = allList
+        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        const newAllList = allList
         function* gen() {
             for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
@@ -1435,7 +1435,7 @@ const startInterval = async () => {
                 &&
                 lowestMacd.macd.diff > lowestDiff.macd.diff)
                 )||
-            (lowestMacd.index != lowestRSI.index && lowestMacd.index != lowestRSI.index +1))
+            (lowestMacd.index != lowestRSI.index && lowestMacd.index != lowestRSI.index - 1))
 
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             // &&
@@ -1449,7 +1449,7 @@ const startInterval = async () => {
                 &&
                 highestMacd.macd.diff < highestDiff.macd.diff)
                 )||
-            (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index + 1))
+            (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index - 1))
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             &&
