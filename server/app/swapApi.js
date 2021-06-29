@@ -1435,7 +1435,7 @@ const startInterval = async () => {
                 &&
                 lowestMacd.macd.diff > lowestDiff.macd.diff)
                 )||
-            lowestMacd.index != lowestRSI.index + 1)
+            (lowestMacd.index != lowestRSI.index && lowestMacd.index != lowestRSI.index +1))
 
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             // &&
@@ -1449,7 +1449,7 @@ const startInterval = async () => {
                 &&
                 highestMacd.macd.diff < highestDiff.macd.diff)
                 )||
-            highestMacd.index != highestRSI.index + 1)
+            (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index + 1))
 
         const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             &&
