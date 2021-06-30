@@ -1368,26 +1368,6 @@ const startInterval = async () => {
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
-        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('------------------')
-        console.log('latestRSI',latestRSI)
-        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('mark_price',mark_price)
-        console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
-        console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
-        console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
-        console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
-        console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
-        console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
-        console.log('------------------')
-
-        // if(goldList.length||deadList.length){
-        //     console.log('#####################################')
-        //     console.log('goldList',goldList)
-        //     console.log('deadList',deadList)
-        //     console.log('#####################################')
-        // }
-
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
                 const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
@@ -1451,31 +1431,47 @@ const startInterval = async () => {
                 )||
             (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index - 1))
 
-        const openLongPosition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+        const openLongCondition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             &&
-            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <=  latestColumnsObjList[latestColumnsObjList.length-2].RSI2
-            // &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI2 <=  latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // latestRSI.RSI1 <= 28
-            // && latestRSI.RSI3 >= 50
-            // && !topReverseCondition
-            // && lowestMacd.index < macdList.length - 3
+            deadOverlappingNum
 
-        const openShortPosition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+        const openShortCondition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             &&
-            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >=  latestColumnsObjList[latestColumnsObjList.length-2].RSI2
-            // &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI2 >=  latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // latestRSI.RSI1 >= 72
-            // && latestRSI.RSI3 <= 50
-            // && !bottomReverseCondition
-            // && highestMacd.index < macdList.length - 3
+            goldOverlappingNum
+
+        const closeLongCondition = openShortCondition
+            ||
+            topReverseCondition
+
+        const closeShortCondition = openLongCondition
+            ||
+            bottomReverseCondition
+
+        console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('latestRSI',latestRSI)
+        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('bottomReverseCondition',bottomReverseCondition)
+        console.log('topReverseCondition',topReverseCondition)
+        console.log('mark_price',mark_price)
+        console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
+        console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
+        console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
+        console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
+        console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
+        console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
+        console.log('------------------')
+
+        // if(goldList.length||deadList.length){
+        //     console.log('#####################################')
+        //     console.log('goldList',goldList)
+        //     console.log('deadList',deadList)
+        //     console.log('#####################################')
+        // }
 
         //开多仓条件
         if(
-            openLongPosition
-            &&
-            deadOverlappingNum
+            openLongCondition
         ){
             try {
                 if(!longHolding || !Number(longHolding.position)){
@@ -1508,11 +1504,7 @@ const startInterval = async () => {
             //     // && lowestMacd.index == lowestDiff.index
             // )
             // ||
-            openShortPosition
-            ||
-            (latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3)
-            ||
-            topReverseCondition
+            closeLongCondition
             // ||
             // deadOverlappingNum
             // ||
@@ -1543,9 +1535,7 @@ const startInterval = async () => {
 
         //开空仓条件
         if(
-            openShortPosition
-            &&
-            goldOverlappingNum
+            openShortCondition
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.position)){
@@ -1578,11 +1568,7 @@ const startInterval = async () => {
             //     // && highestMacd.index == highestDiff.index
             // )
             // ||
-            openLongPosition
-            ||
-            (latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3)
-            ||
-            bottomReverseCondition
+            closeShortCondition
             // ||
             // goldOverlappingNum
             // ||
