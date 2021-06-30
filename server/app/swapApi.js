@@ -1366,10 +1366,12 @@ const startInterval = async () => {
             return cur;
         })
 
+        const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
+
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        // console.log('latestColumnsObjList',latestColumnsObjList)
-        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        console.log('latestRSI',latestRSI)
+        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
         console.log('mark_price',mark_price)
         console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
         console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
@@ -1420,8 +1422,6 @@ const startInterval = async () => {
             shortRatio = - shortRatio
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
-
-        const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
         const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
             // &&
