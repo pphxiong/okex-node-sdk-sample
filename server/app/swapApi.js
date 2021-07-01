@@ -17,7 +17,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let LEVERAGE = 10
+let LEVERAGE = 15
 let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
@@ -1100,7 +1100,7 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,9)
-    const { RSI: RSI2 } = getRSIByPeriod(list,12)
+    const { RSI: RSI2 } = getRSIByPeriod(list,9)
     const { RSI: RSI3 } = getRSIByPeriod(list,72)
 
     const result = {
@@ -1439,13 +1439,17 @@ const startInterval = async () => {
             &&
             goldOverlappingNum
 
-        const closeLongCondition = openShortCondition
+        const closeLongCondition = (openShortCondition
             ||
-            topReverseCondition
+            topReverseCondition)
+            &&
+            longRatio >= 0.0168
 
-        const closeShortCondition = openLongCondition
+        const closeShortCondition = (openLongCondition
             ||
-            bottomReverseCondition
+            bottomReverseCondition)
+            &&
+            shortRatio >= 0.0168
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
