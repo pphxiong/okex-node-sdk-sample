@@ -1289,10 +1289,10 @@ const startInterval = async () => {
         let highestDiff = {};
         macdList.reduce((pre,cur,index)=>{
             if(index == 1) {
-                lowestMacd = { index, macd: pre };
-                highestMacd = { index, macd: pre };
-                lowestDiff = { index, macd: pre };
-                highestDiff = { index, macd: pre };
+                lowestMacd = { index: 0, macd: pre };
+                highestMacd = { index: 0, macd: pre };
+                lowestDiff = { index: 0, macd: pre };
+                highestDiff = { index: 0, macd: pre };
             }
             if(cur.low <= lowestMacd.macd.low) {
                 lowestMacd = { index, macd: cur };
@@ -1354,8 +1354,8 @@ const startInterval = async () => {
         let highestRSI = {}
         latestColumnsObjList.reduce((pre,cur,index)=>{
             if(index == 1){
-                lowestRSI = { index, RSI: pre };
-                highestRSI = { index, RSI: pre };
+                lowestRSI = { index: 0, RSI: pre };
+                highestRSI = { index: 0, RSI: pre };
             }
             if(cur.RSI1 <= lowestRSI.RSI.RSI1){
                 lowestRSI = { index, RSI: cur }
