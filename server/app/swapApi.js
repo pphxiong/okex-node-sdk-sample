@@ -1447,6 +1447,7 @@ const startInterval = async () => {
 
         const closeLongCondition = latestRSI.RSI1 <= latestRSI.RSI3
             && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // (openShortCondition
             // ||
             // topReverseCondition)
@@ -1455,6 +1456,7 @@ const startInterval = async () => {
 
         const closeShortCondition = latestRSI.RSI1 >= latestRSI.RSI3
             && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // (openLongCondition
             // ||
             // bottomReverseCondition)
