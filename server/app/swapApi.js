@@ -1432,11 +1432,15 @@ const startInterval = async () => {
             (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index - 1))
 
         const openLongCondition = latestRSI.RSI1 >= latestRSI.RSI3
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             // &&
             // deadOverlappingNum
 
         const openShortCondition = latestRSI.RSI1 <= latestRSI.RSI3
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
         // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             // &&
             // goldOverlappingNum
