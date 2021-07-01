@@ -1310,8 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        const newAllList = allList
+        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        // const newAllList = allList
         function* gen() {
             for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
@@ -1431,25 +1431,31 @@ const startInterval = async () => {
                 )||
             (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index - 1))
 
-        const openLongCondition = latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
-            &&
-            deadOverlappingNum
+        const openLongCondition = latestRSI.RSI1 >= latestRSI.RSI3
+            // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
+            // &&
+            // deadOverlappingNum
 
-        const openShortCondition = latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
-            &&
-            goldOverlappingNum
+        const openShortCondition = latestRSI.RSI1 <= latestRSI.RSI3
+        // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            // &&
+            // goldOverlappingNum
 
-        const closeLongCondition = (openShortCondition
-            ||
-            topReverseCondition)
-            &&
-            longRatio >= 0.0168
+        const closeLongCondition = latestRSI.RSI1 <= latestRSI.RSI3
+            && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            // (openShortCondition
+            // ||
+            // topReverseCondition)
+            // &&
+            // longRatio >= 0.0168
 
-        const closeShortCondition = (openLongCondition
-            ||
-            bottomReverseCondition)
-            &&
-            shortRatio >= 0.0168
+        const closeShortCondition = latestRSI.RSI1 >= latestRSI.RSI3
+            && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            // (openLongCondition
+            // ||
+            // bottomReverseCondition)
+            // &&
+            // shortRatio >= 0.0168
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
