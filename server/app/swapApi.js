@@ -17,7 +17,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let LEVERAGE = 15
+let LEVERAGE = 25
 let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
