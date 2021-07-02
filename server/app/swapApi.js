@@ -1310,8 +1310,8 @@ const startInterval = async () => {
         })
 
         let columnsObjList = []
-        const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        // const newAllList = allList
+        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+        const newAllList = allList
         function* gen() {
             for(let i = 0; i < 15; i ++){
                 if(i > 0) newAllList.pop()
@@ -1409,13 +1409,16 @@ const startInterval = async () => {
             &&
             lowestMacd.index == macdList.length - 2
             &&
-            ((lowestMacd.index != lowestDiff.index
+            (
+                (lowestMacd.index != lowestDiff.index
                 &&
                 lowestDiff.index != macdList.length - 1
                 &&
                 lowestMacd.macd.diff > lowestDiff.macd.diff)
-                )||
-            (lowestMacd.index != lowestRSI.index && lowestMacd.index != lowestRSI.index - 1))
+                ||
+                lowestMacd.index != lowestRSI.index
+                // && lowestMacd.index != lowestRSI.index + 1
+            ))
 
         const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
             // &&
@@ -1423,41 +1426,56 @@ const startInterval = async () => {
             &&
             highestMacd.index == macdList.length - 2
             &&
-            ((highestMacd.index != highestDiff.index
+            (
+                (highestMacd.index != highestDiff.index
                 &&
                 highestDiff.index != macdList.length - 1
                 &&
                 highestMacd.macd.diff < highestDiff.macd.diff)
-                )||
-            (highestMacd.index != highestRSI.index && highestMacd.index != highestRSI.index - 1))
+                ||
+                highestMacd.index != highestRSI.index
+                // && highestMacd.index != highestRSI.index + 1
+            ))
 
-        const openLongCondition = latestRSI.RSI1 >= latestRSI.RSI3
-            &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+        const openLongCondition = bottomReverseCondition
+            // latestRSI.RSI1 >= latestRSI.RSI3
+            // &&
+            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
             // &&
             // deadOverlappingNum
 
-        const openShortCondition = latestRSI.RSI1 <= latestRSI.RSI3
-            &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+        const openShortCondition = topReverseCondition
+            // latestRSI.RSI1 <= latestRSI.RSI3
+            // &&
+            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
         // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             // &&
             // goldOverlappingNum
 
-        const closeLongCondition = latestRSI.RSI1 <= latestRSI.RSI3
-            && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
-            && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // (openShortCondition
+        const closeLongCondition = topReverseCondition
+            ||
+            latestRSI.RSI1 >= 80
+            // latestRSI.RSI1 <= latestRSI.RSI3
+            // && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+            // ||
+            // topReverseCondition
+        // (openShortCondition
             // ||
             // topReverseCondition)
             // &&
             // longRatio >= 0.0168
 
-        const closeShortCondition = latestRSI.RSI1 >= latestRSI.RSI3
-            && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
-            && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // (openLongCondition
+        const closeShortCondition = bottomReverseCondition
+            ||
+            latestRSI.RSI1 <= 20
+            // latestRSI.RSI1 >= latestRSI.RSI3
+            // && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+            // ||
+            // bottomReverseCondition
+        // (openLongCondition
             // ||
             // bottomReverseCondition)
             // &&
