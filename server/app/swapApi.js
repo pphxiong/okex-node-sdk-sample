@@ -17,7 +17,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let LEVERAGE = 25
+let LEVERAGE = 35
 let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
@@ -1224,7 +1224,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 3, // 单位为秒
+        granularity: 60 * 15, // 单位为秒
         // limit: 100,
         // start,
         // end
@@ -1456,6 +1456,10 @@ const startInterval = async () => {
         const closeLongCondition = topReverseCondition
             ||
             latestRSI.RSI1 >= 80
+            ||
+            mark_price <= lowestMacd.macd.price
+            ||
+            longRatio >= 0.138
             // latestRSI.RSI1 <= latestRSI.RSI3
             // && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
             // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
@@ -1470,6 +1474,10 @@ const startInterval = async () => {
         const closeShortCondition = bottomReverseCondition
             ||
             latestRSI.RSI1 <= 20
+            ||
+            mark_price >= highestMacd.macd.price
+            ||
+            shortRatio >= 0.138
             // latestRSI.RSI1 >= latestRSI.RSI3
             // && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
             // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
