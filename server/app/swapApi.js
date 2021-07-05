@@ -17,7 +17,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let LEVERAGE = 35
+let LEVERAGE = 10;
 let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
@@ -1437,7 +1437,7 @@ const startInterval = async () => {
                 // && highestMacd.index != highestRSI.index + 1
             ))
 
-        const openLongCondition = bottomReverseCondition
+        const openLongCondition = macdList[macdList.length-1].column > macdList[macdList.length-2].column
             // latestRSI.RSI1 >= latestRSI.RSI3
             // &&
             // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
@@ -1445,21 +1445,15 @@ const startInterval = async () => {
             // &&
             // deadOverlappingNum
 
-        const openShortCondition = topReverseCondition
+        const openShortCondition = macdList[macdList.length-1].column < macdList[macdList.length-2].column
             // latestRSI.RSI1 <= latestRSI.RSI3
             // &&
             // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-        // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
+            // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
             // &&
             // goldOverlappingNum
 
-        const closeLongCondition = topReverseCondition
-            ||
-            latestRSI.RSI1 >= 80
-            ||
-            mark_price <= lowestMacd.macd.price
-            ||
-            longRatio >= 0.138
+        const closeLongCondition = openShortCondition
             // latestRSI.RSI1 <= latestRSI.RSI3
             // && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
             // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
@@ -1471,13 +1465,7 @@ const startInterval = async () => {
             // &&
             // longRatio >= 0.0168
 
-        const closeShortCondition = bottomReverseCondition
-            ||
-            latestRSI.RSI1 <= 20
-            ||
-            mark_price >= highestMacd.macd.price
-            ||
-            shortRatio >= 0.138
+        const closeShortCondition = openLongCondition
             // latestRSI.RSI1 >= latestRSI.RSI3
             // && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
             // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
@@ -1491,17 +1479,18 @@ const startInterval = async () => {
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        console.log('latestRSI',latestRSI)
-        console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        console.log('bottomReverseCondition',bottomReverseCondition)
-        console.log('topReverseCondition',topReverseCondition)
-        console.log('mark_price',mark_price)
-        console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
-        console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
-        console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
-        console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
-        console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
-        console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
+        // console.log('latestRSI',latestRSI)
+        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
+        // console.log('bottomReverseCondition',bottomReverseCondition)
+        // console.log('topReverseCondition',topReverseCondition)
+        // console.log('mark_price',mark_price)
+        // console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
+        // console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
+        // console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
+        // console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
+        // console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
+        // console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
+        console.log('macdList',macdList.slice(-2))
         console.log('------------------')
 
         // if(goldList.length||deadList.length){
