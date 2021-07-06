@@ -1095,7 +1095,9 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         let mark_price;
         try{
-            const { data } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+            const result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+            console.log(result)
+            const { data } = result
             mark_price = Number(data[0].idxPx);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
