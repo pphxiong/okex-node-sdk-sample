@@ -1085,7 +1085,7 @@ const startInterval = async () => {
 
     try{
         const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-        // globalColumnsObjList = data.reverse().map(item=>Number(item[4]))
+        console.log(data)
         globalColumnsObjList = data.reverse()
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
