@@ -1084,8 +1084,7 @@ const startInterval = async () => {
     }
 
     try{
-        const data = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-        console.log(data)
+        const { data } = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
         globalColumnsObjList = data.reverse()
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
@@ -1095,9 +1094,7 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         let mark_price;
         try{
-            const result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-            console.log(result)
-            const { data } = result
+            const { data } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
             mark_price = Number(data[0].idxPx);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
