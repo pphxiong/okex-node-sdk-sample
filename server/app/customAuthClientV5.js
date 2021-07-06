@@ -47,20 +47,23 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
     return {
         swap: {
             getMarkPrice: function (instrument_id){
-                return get(`/api/v5/market/ticker?instId=${instrument_id}`)
+                return get(`/api/v5/market/index-tickers?instId=${instrument_id}`)
+            },
+            getPosition: function (instrument_id){
+                return get(`/api/v5/account/positions?instId=${instrument_id}`)
+            },
+            postOrder: function(params){
+                return post('/api/v5/trade/order', params)
             },
             closePosition: function (params) {
                 return post('/api/swap/v3/close_position', params)
             },
-            getTradeFee: function (){
-                return get(`/api/swap/v3/trade_fee`)
-            },
             getHistory: function (instrument_id, params) {
-                return get(`/api/swap/v3/instruments/${instrument_id}/history/candles?` + querystring.stringify(params));
+                return get(`/api/v5/market/history-candles?instId=${instrument_id}&` + querystring.stringify(params));
             },
-            getKData: function (instrument_id, params) {
-                return get(`/api/swap/v3/instruments/${instrument_id}/candles?` + querystring.stringify(params));
-            },
+            // getKData: function (instrument_id, params) {
+            //     return get(`/api/swap/v3/instruments/${instrument_id}/candles?` + querystring.stringify(params));
+            // },
         }
     }
 

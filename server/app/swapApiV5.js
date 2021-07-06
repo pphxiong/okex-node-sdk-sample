@@ -122,17 +122,6 @@ app.get('/swap/getAccounts', function(req, response) {
         });
 });
 
-app.get('/swap/getMarkPrice', function(req, response) {
-    const {query = {}} = req;
-    const {instrument_id} = query;
-    cAuthClient
-        .swap
-        .getMarkPrice(instrument_id)
-        .then(res => {
-            send(response, {errcode: 0, errmsg: 'ok', data: res});
-        });
-});
-
 app.get('/swap/information/', function(req, response) {
     const {query = {}} = req;
     const {currency} = query.params || query;
@@ -280,19 +269,27 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const instrument_id = ETH_INSTRUMENT_ID;
 
     async function postOrder(size,price) {
-        const type = openSide == 'long' ? 1 : 2;
+        const type = openSide == 'long' ? 'long' : 'short';
         console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('position', position, 'type', type, 'side', openSide)
+        // market：市价单
+        // limit：限价单
+        // post_only：只做maker单
+        // fok：全部成交或立即取消
+        // ioc：立即成交并取消剩余
+        // optimal_limit_ioc：市价委托立即成交并取消剩余（仅适用交割、永续）
+
         const payload = {
-            size,
-            type,
-            order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
-            instrument_id,
+            sz: size,
+            side: 'buy',
+            posSide: type,
+            ordType: 'market',
+            instId: instrument_id,
             // price,
             // match_price: 0
         }
         try{
-            await authClient.swap().postOrder(payload)
+            await cAuthClient.swap.postOrder(payload)
             positionChange = true
         }catch (e) {
             // throw new Error('Error');
@@ -300,17 +297,6 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
         }
     }
     await postOrder(position,mark_price)
-
-    // cancelInterval = setInterval(async ()=>{
-    //     const { result, nextQty } = await validateAndCancelOrder({instrument_id});
-    //     if(result){
-    //         clearInterval(cancelInterval)
-    //         cancelInterval = null;
-    //         return;
-    //     }
-    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-    //     await postOrder(nextQty,mark_price)
-    // },1000 * 4)
 }
 // 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
@@ -367,18 +353,19 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
 const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
     const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
     async function postOrder(size,price) {
-        const type = side == 'long' ? 3 : 4
+        const type = side == 'long' ? 'long' : 'short'
         const payload = {
-            size: Math.floor(Number(size)),
-            type,
-            order_type: 4, //1：只做Maker, 2：全部成交或立即取消 4：市价委托
-            instrument_id,
+            sz: Math.floor(Number(size)),
+            side: 'sell',
+            posSide: type,
+            ordType: 'market',
+            instId: instrument_id,
             // price,
             // match_price: 0
         }
         try{
             // await validateAndCancelOrder(payload)
-            await authClient.swap().postOrder(payload)
+            await cAuthClient.swap.postOrder(payload)
             positionChange = true
         }catch (e) {
             // throw new Error('Error');
@@ -389,58 +376,6 @@ const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) =>
     console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('###################################')
     await postOrder(position,mark_price)
-}
-
-// 开仓，availRatio开仓比例
-const autoOpenOrderSingle = async (params = {}) => {
-    const { openSide = 'long', lossNum = 0, winNum = 0, continuousWinSameSideNum = 0, continuousLossSameSideNum = 0, } = params;
-    let changeRatio = 1;
-
-    changeRatio = changeRatio > 0 ? changeRatio : 1
-    let positionRatio = changeRatio
-
-    const position = Math.ceil(Number(initPosition) * positionRatio)
-
-    // const { instrument_id, position: holdingPosition } = holding;
-    // // 可开张数
-    // let availNo;
-    // let avail = 0;
-    //
-    // if(instrument_id.includes('BTC')){
-    //     availNo = await getAvailNo({ mark_price });
-    // }else{
-    //     availNo = await getAvailNo({ val: 10, currency: 'EOS-USD', instrument_id: ETH_INSTRUMENT_ID, mark_price });
-    // }
-    // avail = Math.min(Math.floor(Number(availNo)), Number(position));
-
-    const type = openSide == 'long' ? 1 : 2;
-    const instrument_id = ETH_INSTRUMENT_ID;
-    console.log('openOrderMoment', moment().format('YYYY-MM-DD HH:mm:ss'))
-    console.log('position', position, 'type', type, 'side', openSide)
-
-    // const { result } = await validateAndCancelOrder({instrument_id, type: 1});
-    if(position) {
-        const payload = {
-            size: position,
-            type,
-            order_type: 4, //1：只做Maker 4：市价委托
-            instrument_id,
-            // price: mark_price,
-            // match_price: 0
-        }
-
-        try{
-            await authClient.swap().postOrder(payload)
-
-            const { mark_price } = await cAuthClient.swap.getMarkPrice(instrument_id);
-            primaryPrice = Number(mark_price)
-            primarySide = openSide
-        }catch (e) {
-            console.log(e)
-        }
-
-        return true;
-    }
 }
 
 // 平仓，closeRatio平仓比例
@@ -464,30 +399,6 @@ const autoOpenOrderSingle = async (params = {}) => {
 //     return new Promise(resolve=>{ resolve({ result: !result }) })
 // }
 
-// 获取可开张数
-const getAvailNo = async ({val = 100, currency = 'BTC-USD', instrument_id = ETH_INSTRUMENT_ID, mark_price}) => {
-    const result = await authClient.swap().getAccount(instrument_id);
-    const { equity, margin_frozen, margin, total_avail_balance } = result.info;
-    const available_qty = Number(equity) - Number(margin_frozen) - Number(margin);
-    console.log('equity', equity, 'margin_frozen', margin_frozen, 'margin', margin)
-    console.log('available_qty', available_qty)
-    console.log('total_avail_balance', total_avail_balance)
-    if(!mark_price) {
-        const result = await cAuthClient.swap.getMarkPrice(instrument_id);
-        mark_price = result.mark_price;
-    }
-    const leverageResult = await authClient.swap().getSettings(instrument_id);
-    const { long_leverage } = leverageResult;
-
-    return Math.floor(Number(total_avail_balance) * Number(mark_price) * Number(long_leverage) * 0.98 / val) || 0;
-}
-
-// 合约费率
-app.get('/swap/getTradeFee', function(req, response) {
-    cAuthClient.swap.getTradeFee().then(res=>{
-        send(response, {errcode: 0, errmsg: 'ok', data: res });
-    })
-});
 
 // 设置亏损和盈利数据
 app.get('/swap/setContinousWinAndLoss', function(req, response) {
@@ -594,62 +505,6 @@ let primaryPrice = 0;
 let primarySide = 'long';
 let otherPositionPrimaryPrice = 0;
 let otherFromPrimary = false
-const afterWin = async (holding, ratio) => {
-    const { instrument_id, side } = holding;
-    const continuousObj = continuousMap[instrument_id];
-
-    continuousObj.continuousLossNum = 0;
-    continuousObj.continuousWinNum = continuousObj.continuousWinNum + 1;
-
-    let isOpenShort = side == 'short';
-
-    // if(continuousObj.continuousWinNum >= 4){
-    //     isOpenShort = !isOpenShort
-    //     continuousObj.continuousWinNum = 0;
-    // }
-
-    const openSide = isOpenShort ? 'short' : 'long';
-    const payload = {
-        openSide,
-        lossNum: continuousObj.continuousLossNum,
-        winNum: continuousObj.continuousWinNum,
-        continuousWinSameSideNum,
-        continuousLossSameSideNum
-    }
-    primarySide = openSide
-    await autoOpenOrderSingle(payload);
-
-}
-const afterLoss = async (holding,type) =>{
-    const { instrument_id, side } = holding;
-    const continuousObj = continuousMap[instrument_id];
-
-    continuousObj.continuousLossNum = continuousObj.continuousLossNum + 1;
-    continuousObj.continuousWinNum = 0;
-
-    let isOpenShort = side == 'short';
-
-    // if(continuousObj.continuousLossNum >= 2){
-    //     isOpenShort = !isOpenShort
-    // }
-
-    lastLastLossDirection = lastLossDirection;
-    lastLossDirection = side;
-
-    lastMostWinRatio = 0;
-
-    let openSide = isOpenShort ? 'short' : 'long';
-    const payload = {
-        openSide,
-        lossNum: continuousObj.continuousLossNum,
-        winNum: continuousObj.continuousWinNum,
-        continuousWinSameSideNum,
-        continuousLossSameSideNum
-    }
-    primarySide = openSide
-    await autoOpenOrderSingle(payload);
-
-}
 
 let otherPositionLoss = false
 let otherPositionSide = null
@@ -1224,10 +1079,8 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        granularity: 60 * 15, // 单位为秒
+        bar: '15m', // 单位为秒
         // limit: 100,
-        // start,
-        // end
     }
 
     try{
@@ -1242,8 +1095,8 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         let mark_price;
         try{
-            const mark_result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-            mark_price = Number(mark_result.mark_price);
+            const { data } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+            mark_price = Number(data[0].idxPx);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
             restart()
@@ -1370,7 +1223,7 @@ const startInterval = async () => {
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
-                const { holding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
+                const { holding } = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID);
                 globalHolding = holding
                 positionChange = false
             }catch (e) {
@@ -1403,299 +1256,96 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
-        const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
-            // &&
-            // lowestMacd.index != lowestRSI.index)
-            &&
-            lowestMacd.index == macdList.length - 2
-            &&
-            (
-                (lowestMacd.index != lowestDiff.index
-                &&
-                lowestDiff.index != macdList.length - 1
-                &&
-                lowestMacd.macd.diff > lowestDiff.macd.diff)
-                ||
-                lowestMacd.index != lowestRSI.index
-                // && lowestMacd.index != lowestRSI.index + 1
-            ))
-
-        const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
-            // &&
-            // highestMacd.index != highestRSI.index)
-            &&
-            highestMacd.index == macdList.length - 2
-            &&
-            (
-                (highestMacd.index != highestDiff.index
-                &&
-                highestDiff.index != macdList.length - 1
-                &&
-                highestMacd.macd.diff < highestDiff.macd.diff)
-                ||
-                highestMacd.index != highestRSI.index
-                // && highestMacd.index != highestRSI.index + 1
-            ))
-
         const openLongCondition = macdList[macdList.length-1].column > macdList[macdList.length-2].column
-            // latestRSI.RSI1 >= latestRSI.RSI3
-            // &&
-            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
-            // &&
-            // deadOverlappingNum
 
         const openShortCondition = macdList[macdList.length-1].column < macdList[macdList.length-2].column
-            // latestRSI.RSI1 <= latestRSI.RSI3
-            // &&
-            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
-            // &&
-            // goldOverlappingNum
 
         const closeLongCondition = openShortCondition
-            // latestRSI.RSI1 <= latestRSI.RSI3
-            // && latestRSI.RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
-            // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 <= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // ||
-            // topReverseCondition
-        // (openShortCondition
-            // ||
-            // topReverseCondition)
-            // &&
-            // longRatio >= 0.0168
 
         const closeShortCondition = openLongCondition
-            // latestRSI.RSI1 >= latestRSI.RSI3
-            // && latestRSI.RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI1
-            // && latestColumnsObjList[latestColumnsObjList.length-2].RSI1 >= latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            // ||
-            // bottomReverseCondition
-        // (openLongCondition
-            // ||
-            // bottomReverseCondition)
-            // &&
-            // shortRatio >= 0.0168
 
         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
-        // console.log('latestRSI',latestRSI)
-        // console.log('goldOverlappingNum',goldOverlappingNum,'deadOverlappingNum',deadOverlappingNum)
-        // console.log('bottomReverseCondition',bottomReverseCondition)
-        // console.log('topReverseCondition',topReverseCondition)
-        // console.log('mark_price',mark_price)
-        // console.log('highestMacd',highestMacd.index,highestMacd.macd.high)
-        // console.log('highestDiff',highestDiff.index,highestDiff.macd.diff)
-        // console.log('highestRSI',highestRSI.index,highestRSI.RSI.RSI1)
-        // console.log('lowestMacd',lowestMacd.index,lowestMacd.macd.low)
-        // console.log('lowestDiff',lowestDiff.index,lowestDiff.macd.diff)
-        // console.log('lowestRSI',lowestRSI.index,lowestRSI.RSI.RSI1)
         console.log('macdList',macdList.slice(-2))
         console.log('------------------')
 
-        // if(goldList.length||deadList.length){
-        //     console.log('#####################################')
-        //     console.log('goldList',goldList)
-        //     console.log('deadList',deadList)
-        //     console.log('#####################################')
+        // //开多仓条件
+        // if(
+        //     openLongCondition
+        // ){
+        //     try {
+        //         if(!longHolding || !Number(longHolding.position)){
+        //             try{
+        //                 await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
+        //             }catch (e) {
+        //                 restart()
+        //             }
+        //         }
+        //     }catch (e){
+        //         console.log(e)
+        //     }
         // }
-
-        //开多仓条件
-        if(
-            openLongCondition
-        ){
-            try {
-                if(!longHolding || !Number(longHolding.position)){
-                    try{
-                        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-                        // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                        // const fLongHolding = futureHolding.find(item=>item.side=="long")
-                        // const futurePrice = getFuturePrice(fLongHolding,0.05,1)
-                        // const payload = {
-                        //     instrument_id: ETH_INSTRUMENT_ID,
-                        //     position: Number(fLongHolding.position),
-                        //     side: 'long',
-                        //     mark_price: futurePrice
-                        // }
-                        // await closeHalfPosition(payload);
-                    }catch (e) {
-                        restart()
-                    }
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //平多仓条件
-        if(
-            // latestRSI.RSI1 >= 81
-            // ||
-            // (mark_price <= lowestMacd.macd.low
-            //     // && lowestMacd.index == lowestDiff.index
-            // )
-            // ||
-            closeLongCondition
-            // ||
-            // deadOverlappingNum
-            // ||
-            // topReverseCondition
-            // ||
-            // (latestRSI.RSI1 >= 60
-            //     ||
-            //     longRatio < -0.05
-            //     // && latestRSI.RSI1 <= latestRSI.RSI2 && latestRSI.RSI2 <= latestRSI.RSI3
-            // )
-        ){
-            try {
-                if(longHolding && Number(longHolding.position)){
-                    const payload = {
-                        instrument_id: ETH_INSTRUMENT_ID,
-                        position: Number(longHolding.position),
-                        side: 'long',
-                        mark_price
-                    }
-                    // await closeHalfPosition(holding);
-                    await closeHalfPositionByMarket(payload)
-                    lastLongMaxWinRatio = 0
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //开空仓条件
-        if(
-            openShortCondition
-        ){
-            try {
-                if(!shortHolding || !Number(shortHolding.position)){
-                    try{
-                        await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
-                        // const { holding: futureHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-                        // const fShortHolding = futureHolding.find(item=>item.side=="short")
-                        // const futurePrice = getFuturePrice(fShortHolding,0.05,-1)
-                        // const payload = {
-                        //     instrument_id: ETH_INSTRUMENT_ID,
-                        //     position: Number(fShortHolding.position),
-                        //     side: 'short',
-                        //     mark_price: futurePrice
-                        // }
-                        // await closeHalfPosition(payload);
-                    }catch (e) {
-                        restart()
-                    }
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //平空仓条件
-        if(
-            // latestRSI.RSI1 <= 19
-            // ||
-            // (mark_price >= highestMacd.macd.high
-            //     // && highestMacd.index == highestDiff.index
-            // )
-            // ||
-            closeShortCondition
-            // ||
-            // goldOverlappingNum
-            // ||
-            // bottomReverseCondition
-            // ||
-            // (latestRSI.RSI1 <= 40
-            //     ||
-            //     shortRatio < -0.05
-            //     // && latestRSI.RSI1 >= latestRSI.RSI2 && latestRSI.RSI2 >= latestRSI.RSI3
-            // )
-        ){
-            try {
-                if(shortHolding && Number(shortHolding.position)){
-                    const payload = {
-                        instrument_id: ETH_INSTRUMENT_ID,
-                        position: Number(shortHolding.position),
-                        side: 'short',
-                        mark_price
-                    }
-                    // await closeHalfPosition(holding);
-                    await closeHalfPositionByMarket(payload)
-                    lastShortMaxWinRatio = 0
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
+        //
+        // //平多仓条件
+        // if(
+        //     closeLongCondition
+        // ){
+        //     try {
+        //         if(longHolding && Number(longHolding.position)){
+        //             const payload = {
+        //                 instrument_id: ETH_INSTRUMENT_ID,
+        //                 position: Number(longHolding.position),
+        //                 side: 'long',
+        //                 mark_price
+        //             }
+        //             await closeHalfPositionByMarket(payload)
+        //             lastLongMaxWinRatio = 0
+        //         }
+        //     }catch (e){
+        //         console.log(e)
+        //     }
+        // }
+        //
+        // //开空仓条件
+        // if(
+        //     openShortCondition
+        // ){
+        //     try {
+        //         if(!shortHolding || !Number(shortHolding.position)){
+        //             try{
+        //                 await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
+        //             }catch (e) {
+        //                 restart()
+        //             }
+        //         }
+        //     }catch (e){
+        //         console.log(e)
+        //     }
+        // }
+        //
+        // //平空仓条件
+        // if(
+        //     closeShortCondition
+        // ){
+        //     try {
+        //         if(shortHolding && Number(shortHolding.position)){
+        //             const payload = {
+        //                 instrument_id: ETH_INSTRUMENT_ID,
+        //                 position: Number(shortHolding.position),
+        //                 side: 'short',
+        //                 mark_price
+        //             }
+        //             await closeHalfPositionByMarket(payload)
+        //             lastShortMaxWinRatio = 0
+        //         }
+        //     }catch (e){
+        //         console.log(e)
+        //     }
+        // }
     }
 
     await waitTime(1000 * 8)
     await startInterval()
-
-    // let btcHolding = globalBtcHolding
-    // if(positionChange){
-    //     try{
-    //         console.log('******************moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-    //         btcHolding = tempBtcHolding
-    //         if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //             openMarketPrice = mark_price
-    //             await autoOpenOtherOrderSingle({ openSide: "long" })
-    //             await autoOpenOtherOrderSingle({ openSide: "short" })
-    //             await writeData()
-    //         }else {
-    //             if(isOpenMarketPriceChange){
-    //                 // const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
-    //                 // const { price_avg } = order_info[0]
-    //                 // openMarketPrice = price_avg
-    //                 await readData()
-    //             }
-    //         }
-    //
-    //         globalBtcHolding = btcHolding
-    //         // positionChange = false
-    //         isOpenMarketPriceChange = false
-    //     }catch (e){
-    //         console.log(e)
-    //     }
-    //     // isInit = false
-    // }else{
-    //     if(!btcHolding || !btcHolding[0] || !Number(btcHolding[0].position)){
-    //         const { holding: tempBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
-    //         btcHolding = tempBtcHolding
-    //         globalBtcHolding = btcHolding
-    //     }
-    // }
-    //
-    // const btcQty = (btcHolding && btcHolding[0]) ? Number(btcHolding[0].position) : 0;
-    //
-    // if(btcQty) {
-    //     if(btcHolding.length > 1 && Number(btcHolding[1].position)){
-    //         let mainHolding = btcHolding[0]
-    //         let otherHolding = btcHolding[1]
-    //         positionChange = false
-    //         await autoOperateSwap([mainHolding,otherHolding],mark_price)
-    //     }else{
-    //         if(positionChange){
-    //             const { order_info } = await authClient.swap().getOrders(ETH_INSTRUMENT_ID, {state: 2, limit: 1})
-    //             const { price_avg: last, type } = order_info[0]
-    //
-    //             if(Number(type) < 3){
-    //                 btcHolding[0].last = last
-    //             }else{
-    //                 btcHolding[0].last = btcHolding[0].avg_cost
-    //             }
-    //         }
-    //         positionChange = false
-    //         await autoOneSideSwap(btcHolding[0],mark_price)
-    //     }
-    //     await waitTime()
-    //     await startInterval()
-    // }else{
-    //     await waitTime()
-    //     await startInterval()
-    // }
 }
 
 function stopInterval() {
@@ -1715,9 +1365,7 @@ const waitTime = (time = 1000 * 4) => {
 
 // 定时获取交割合约账户信息
 (async ()=>{
-    // await startInterval()
-    const result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID)
-    console.log(result)
+    await startInterval()
 })()
 app.listen(8092);
 
