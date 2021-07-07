@@ -1085,7 +1085,7 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         let mark_price;
         try{
-            const result = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+            const result = await cAuthClient.swap.getMarkPrice(ETH_INSTTYPE);
             console.log(result)
             const { data } = result;
             mark_price = Number(data[0].idxPx);
