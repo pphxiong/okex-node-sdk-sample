@@ -260,7 +260,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const instrument_id = ETH_INSTRUMENT_ID;
 
     async function postOrder(size,price) {
-        const type = openSide == 'long' ? 'long' : 'short';
+        const type = openSide == 'long' ? 'buy' : 'sell';
         console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('position', position, 'type', type, 'side', openSide)
         // market：市价单
@@ -272,8 +272,8 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 
         const payload = {
             sz: size,
-            side: 'buy',
-            posSide: type,
+            side: type,
+            posSide: openSide,
             ordType: 'market',
             instId: instrument_id,
             tdMode: 'isolated',
@@ -345,11 +345,11 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
 const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
     const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
     async function postOrder(size,price) {
-        const type = side == 'long' ? 'long' : 'short'
+        const type = side == 'long' ? 'sell' : 'buy'
         const payload = {
             sz: Math.floor(Number(size)),
-            side: 'sell',
-            posSide: type,
+            side: type,
+            posSide: side,
             ordType: 'market',
             instId: instrument_id,
             tdMode: 'isolated',
