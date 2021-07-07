@@ -19,7 +19,6 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
 
     const getSignature = (method, relativeURI, opts = {}) => {
         const sig = signRequest(method, relativeURI, opts);
-        console.log(relativeURI,sig)
         return {
             'OK-ACCESS-KEY': sig.key,
             'OK-ACCESS-PASSPHRASE': sig.passphrase,
