@@ -1086,7 +1086,6 @@ const startInterval = async () => {
         let mark_price;
         try{
             const { data }= await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-            console.log(data)
             mark_price = Number(data[0].markPx);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
@@ -1214,8 +1213,7 @@ const startInterval = async () => {
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
-                const result = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
-                const { data: holding } = result
+                const { data: holding } = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
                 globalHolding = holding
                 positionChange = false
             }catch (e) {
@@ -1234,6 +1232,10 @@ const startInterval = async () => {
             longHolding = holding.find(item=>item.posSide=="long")
             shortHolding = holding.find(item=>item.posSide=="short")
         }
+
+        console.log('longHolding',longHolding)
+        console.log('shortHolding',shortHolding)
+
 
         if(longHolding){
             const { lever: leverage, avgPx: avg_cost, } = longHolding;
