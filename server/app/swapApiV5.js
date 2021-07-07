@@ -1233,10 +1233,6 @@ const startInterval = async () => {
             shortHolding = holding.find(item=>item.posSide=="short")
         }
 
-        console.log('longHolding',longHolding)
-        console.log('shortHolding',shortHolding)
-
-
         if(longHolding){
             const { lever: leverage, avgPx: avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
@@ -1250,9 +1246,9 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
-        const openLongCondition = macdList[macdList.length-1].column > macdList[macdList.length-2].column
+        const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
 
-        const openShortCondition = macdList[macdList.length-1].column < macdList[macdList.length-2].column
+        const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
 
         const closeLongCondition = openShortCondition
 
