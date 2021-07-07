@@ -8,6 +8,7 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         const what = timestamp + method.toUpperCase() + path + (options.body || '');
         const hmac = crypto.createHmac('sha256', secret);
         const signature = hmac.update(what).digest('base64');
+        // sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
         return {
             key,
             passphrase,

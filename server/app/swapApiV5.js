@@ -91,16 +91,6 @@ app.get('/account/getWallet', function(req, response) {
         });
 });
 
-
-app.get('/account/getAssetValuation', function(req, response) {
-    const {query = {}} = req;
-    const { type = 3, } = query;
-    cAuthClient.account.getAssetValuation(type)
-        .then(res => {
-            send(response, {errcode: 0, errmsg: 'ok', data: res});
-        });
-});
-
 app.get('/swap/getOrders', function(req, response) {
     const {query = {}} = req;
     const {instrument_id, limit, state = 2} = query; // "BTC-USD-200821"
@@ -1223,12 +1213,14 @@ const startInterval = async () => {
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
-                const { data: holding } = await cAuthClient.swap.getPosition(ETH_INSTTYPE, 'SWAP');
+                const result = await cAuthClient.swap.getPosition(ETH_INSTTYPE, 'SWAP');
+                console.log(result)
+                const { data: holding } = result
                 globalHolding = holding
                 positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
-                restart();
+                // restart();
             }
         }
 
