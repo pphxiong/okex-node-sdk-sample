@@ -284,7 +284,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             positionChange = true
         }catch (e) {
             // throw new Error('Error');
-            restart();
+            restart('open');
         }
     }
     await postOrder(position,mark_price)
@@ -360,7 +360,7 @@ const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) =>
             positionChange = true
         }catch (e) {
             // throw new Error('Error');
-            restart();
+            restart('close');
         }
     }
     console.log('###################################')
@@ -1089,7 +1089,7 @@ const startInterval = async () => {
             mark_price = Number(data[0].idxPx);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
-            restart()
+            restart('getMarkPrice')
         }
 
         // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
@@ -1214,13 +1214,12 @@ const startInterval = async () => {
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
                 const result = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
-                console.log(result)
                 const { data: holding } = result
                 globalHolding = holding
                 positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
-                restart();
+                restart('getPosition');
             }
         }
 
@@ -1267,11 +1266,7 @@ const startInterval = async () => {
         ){
             try {
                 if(!longHolding || !Number(longHolding.pos)){
-                    try{
-                        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-                    }catch (e) {
-                        restart()
-                    }
+                    await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
                 }
             }catch (e){
                 console.log(e)
@@ -1304,11 +1299,7 @@ const startInterval = async () => {
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.pos)){
-                    try{
-                        await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
-                    }catch (e) {
-                        restart()
-                    }
+                    await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
                 }
             }catch (e){
                 console.log(e)
@@ -1370,8 +1361,8 @@ process.on('uncaughtException', function (err) {
 });
 
 let exec = require('child_process').exec;
-function restart() {
-    console.log('restarting......')
+function restart(errorId) {
+    console.log(errorId,'restarting......')
     setTimeout(()=>{
         exec('npm run restart:product', function(err, stdout , stderr ){
             if (err) {
