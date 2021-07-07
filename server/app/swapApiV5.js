@@ -18,7 +18,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10;
-let initPosition = 6;
+let initPosition = 1;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1372,8 +1372,8 @@ console.log('8092 server start');
 
 process.on('uncaughtException', function (err) {
     //打印出错误
-    // console.log('uncaughtException',err);
-    // restart()
+    console.log('uncaughtException',err);
+    restart()
 });
 
 let exec = require('child_process').exec;
