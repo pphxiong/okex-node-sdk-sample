@@ -33,7 +33,7 @@ const continuousMap = {
     },
 };
 
-var config = require('./config');
+var config = require('./configV5');
 // const pClient = new PublicClient(config.urlHost);
 const authClient = new AuthenticatedClient(
     config.httpkey,
@@ -1219,7 +1219,7 @@ const startInterval = async () => {
                 positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
-                // restart();
+                restart();
             }
         }
 
