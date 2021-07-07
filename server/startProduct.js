@@ -3,5 +3,5 @@ require('babel-register') ({
 })
 require('babel-polyfill');
 
-module.exports = require('./app/swapApiV5.js')
-module.exports = require('./app/customAuthClientV5.js')
+module.exports = require('./app/swapApiV3.js')
+module.exports = require('./app/customAuthClient.js')
