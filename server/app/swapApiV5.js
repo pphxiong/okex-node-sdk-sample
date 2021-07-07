@@ -1223,7 +1223,7 @@ const startInterval = async () => {
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
-                const { data: holding } = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID, ETH_INSTTYPE);
+                const { data: holding } = await cAuthClient.swap.getPosition(ETH_INSTTYPE, 'SWAP');
                 globalHolding = holding
                 positionChange = false
             }catch (e) {
