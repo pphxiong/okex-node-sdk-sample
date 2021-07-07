@@ -1231,18 +1231,18 @@ const startInterval = async () => {
 
         let holding = globalHolding
         if(holding && holding.length){
-            longHolding = holding.find(item=>item.side=="long")
-            shortHolding = holding.find(item=>item.side=="short")
+            longHolding = holding.find(item=>item.posSide=="long")
+            shortHolding = holding.find(item=>item.posSide=="short")
         }
 
         if(longHolding){
-            const { position, leverage, avg_cost, } = longHolding;
+            const { lever: leverage, avgPx: avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
             lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
         }
 
         if(shortHolding){
-            const { position, leverage, avg_cost, } = shortHolding;
+            const { lever: leverage, avgPx: avg_cost, } = shortHolding;
             shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
             shortRatio = - shortRatio
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
@@ -1261,79 +1261,79 @@ const startInterval = async () => {
         console.log('macdList',macdList.slice(-2))
         console.log('------------------')
 
-        // //开多仓条件
-        // if(
-        //     openLongCondition
-        // ){
-        //     try {
-        //         if(!longHolding || !Number(longHolding.position)){
-        //             try{
-        //                 await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-        //             }catch (e) {
-        //                 restart()
-        //             }
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平多仓条件
-        // if(
-        //     closeLongCondition
-        // ){
-        //     try {
-        //         if(longHolding && Number(longHolding.position)){
-        //             const payload = {
-        //                 instrument_id: ETH_INSTRUMENT_ID,
-        //                 position: Number(longHolding.position),
-        //                 side: 'long',
-        //                 mark_price
-        //             }
-        //             await closeHalfPositionByMarket(payload)
-        //             lastLongMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //开空仓条件
-        // if(
-        //     openShortCondition
-        // ){
-        //     try {
-        //         if(!shortHolding || !Number(shortHolding.position)){
-        //             try{
-        //                 await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
-        //             }catch (e) {
-        //                 restart()
-        //             }
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     closeShortCondition
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.position)){
-        //             const payload = {
-        //                 instrument_id: ETH_INSTRUMENT_ID,
-        //                 position: Number(shortHolding.position),
-        //                 side: 'short',
-        //                 mark_price
-        //             }
-        //             await closeHalfPositionByMarket(payload)
-        //             lastShortMaxWinRatio = 0
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        //开多仓条件
+        if(
+            openLongCondition
+        ){
+            try {
+                if(!longHolding || !Number(longHolding.pos)){
+                    try{
+                        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
+                    }catch (e) {
+                        restart()
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平多仓条件
+        if(
+            closeLongCondition
+        ){
+            try {
+                if(longHolding && Number(longHolding.pos)){
+                    const payload = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(longHolding.pos),
+                        side: 'long',
+                        mark_price
+                    }
+                    await closeHalfPositionByMarket(payload)
+                    lastLongMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            openShortCondition
+        ){
+            try {
+                if(!shortHolding || !Number(shortHolding.pos)){
+                    try{
+                        await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
+                    }catch (e) {
+                        restart()
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            closeShortCondition
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.pos)){
+                    const payload = {
+                        instrument_id: ETH_INSTRUMENT_ID,
+                        position: Number(shortHolding.pos),
+                        side: 'short',
+                        mark_price
+                    }
+                    await closeHalfPositionByMarket(payload)
+                    lastShortMaxWinRatio = 0
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
     }
 
     await waitTime(1000 * 8)
