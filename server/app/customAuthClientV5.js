@@ -49,8 +49,8 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
             getMarkPrice: function (instrument_id){
                 return get(`/api/v5/market/index-tickers?instId=${instrument_id}`)
             },
-            getPosition: function (instrument_id){
-                return get(`/api/v5/account/positions?instId=${instrument_id}`)
+            getPosition: function (instrument_id, instType){
+                return get(`/api/v5/account/positions?instId=${instrument_id}&instType=${instType}`)
             },
             postOrder: function(params){
                 return post('/api/v5/trade/order', params)

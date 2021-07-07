@@ -11,6 +11,7 @@ const fs = require('fs');
 // let dataConfig = require('./configETH.json');
 
 let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
+const ETH_INSTTYPE = "ETH-USDT";
 let myInterval;
 let mode = 4; //下单模式
 
@@ -1079,7 +1080,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        bar: '5m', // 单位为秒
+        bar: '15m', // 单位为秒
         // limit: 100,
     }
 
@@ -1222,7 +1223,7 @@ const startInterval = async () => {
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
-                const { holding } = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID);
+                const { data: holding } = await cAuthClient.swap.getPosition(ETH_INSTRUMENT_ID, ETH_INSTTYPE);
                 globalHolding = holding
                 positionChange = false
             }catch (e) {
