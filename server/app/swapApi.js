@@ -1731,7 +1731,7 @@ let exec = require('child_process').exec;
 function restart() {
     console.log('restarting......')
     setTimeout(()=>{
-        exec('npm run restart:all', function(err, stdout , stderr ){
+        exec('npm run restart', function(err, stdout , stderr ){
             if (err) {
                 console.log('restarting failed')
             }else{
