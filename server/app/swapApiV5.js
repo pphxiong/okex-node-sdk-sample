@@ -276,6 +276,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             posSide: type,
             ordType: 'market',
             instId: instrument_id,
+            tdMode: 'isolated',
             // price,
             // match_price: 0
         }
@@ -351,6 +352,7 @@ const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) =>
             posSide: type,
             ordType: 'market',
             instId: instrument_id,
+            tdMode: 'isolated',
             // price,
             // match_price: 0
         }
