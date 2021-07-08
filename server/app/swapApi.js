@@ -1072,7 +1072,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        bar: '15m', // 单位为秒
+        bar: '5m', // 单位为秒
         // limit: 100,
     }
 
