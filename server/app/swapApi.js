@@ -1256,16 +1256,21 @@ const startInterval = async () => {
 
         const closeShortCondition = openLongCondition
 
+        console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('macdList',macdList.slice(-2))
+        console.log('------------------')
+
         //开多仓条件
         if(
             openLongCondition
         ){
             try {
                 if(!longHolding || !Number(longHolding.pos)){
-                    console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-                    console.log('------------------')
-                    console.log('macdList',macdList.slice(-2))
-                    console.log('------------------')
+                    // console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+                    // console.log('------------------')
+                    // console.log('macdList',macdList.slice(-2))
+                    // console.log('------------------')
 
                     await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
                 }
@@ -1300,10 +1305,10 @@ const startInterval = async () => {
         ){
             try {
                 if(!shortHolding || !Number(shortHolding.pos)){
-                    console.log('******************open short moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
-                    console.log('------------------')
-                    console.log('macdList',macdList.slice(-2))
-                    console.log('------------------')
+                    // console.log('******************open short moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+                    // console.log('------------------')
+                    // console.log('macdList',macdList.slice(-2))
+                    // console.log('------------------')
 
                     await autoOpenOtherOrderSingle({ openSide: "short", mark_price });
                 }
