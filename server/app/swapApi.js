@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10;
-let initPosition = 6;
+let initPosition = 2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1249,16 +1249,29 @@ const startInterval = async () => {
         }
 
         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
+        &&
+        (latestRSI.RSI1 < latestRSI.RSI3 || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3)
 
         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
+        &&
+        (latestRSI.RSI1 > latestRSI.RSI3 || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3)
 
-        const closeLongCondition = openShortCondition
+        const closeLongCondition = (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
+        &&
+        latestRSI.RSI1 < latestRSI.RSI3)
+        ||
+        latestRSI.RSI1 > 75
 
-        const closeShortCondition = openLongCondition
+        const closeShortCondition = (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
+        &&
+        latestRSI.RSI1 > latestRSI.RSI3)
+        ||
+        latestRSI.RSI1 < 15
 
         console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
         console.log('macdList',macdList.slice(-2))
+        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
         console.log('------------------')
 
         //开多仓条件
