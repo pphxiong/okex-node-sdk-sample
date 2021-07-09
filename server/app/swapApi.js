@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10;
-let initPosition = 4;
+let initPosition = 3;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1248,6 +1248,34 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
+        const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+            &&
+            lowestMacd.index == macdList.length - 2
+            &&
+            (
+                (lowestMacd.index != lowestDiff.index
+                    &&
+                    lowestDiff.index != macdList.length - 1
+                    &&
+                    lowestMacd.macd.diff > lowestDiff.macd.diff)
+                ||
+                lowestMacd.index != lowestRSI.index
+            ))
+
+        const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+            &&
+            highestMacd.index == macdList.length - 2
+            &&
+            (
+                (highestMacd.index != highestDiff.index
+                    &&
+                    highestDiff.index != macdList.length - 1
+                    &&
+                    highestMacd.macd.diff < highestDiff.macd.diff)
+                ||
+                highestMacd.index != highestRSI.index
+            ))
+
         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
         (latestRSI.RSI1 < latestRSI.RSI3 || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3)
@@ -1263,6 +1291,8 @@ const startInterval = async () => {
         latestRSI.RSI1 > 75
         ||
         (lastLongMaxWinRatio > 0.07 && longRatio < 0.02)
+        ||
+        topReverseCondition
 
         const closeShortCondition = (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
@@ -1271,6 +1301,8 @@ const startInterval = async () => {
         latestRSI.RSI1 < 15
         ||
         (lastShortMaxWinRatio > 0.07 && shortRatio < 0.02)
+        ||
+        bottomReverseCondition
 
         console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
