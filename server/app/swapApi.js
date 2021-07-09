@@ -1261,12 +1261,16 @@ const startInterval = async () => {
         latestRSI.RSI1 < latestRSI.RSI3)
         ||
         latestRSI.RSI1 > 75
+        ||
+        (lastLongMaxWinRatio > 0.07 && longRatio < 0.02)
 
         const closeShortCondition = (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
         latestRSI.RSI1 > latestRSI.RSI3)
         ||
         latestRSI.RSI1 < 15
+        ||
+        (lastShortMaxWinRatio > 0.07 && shortRatio < 0.02)
 
         console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
