@@ -1279,7 +1279,7 @@ const startInterval = async () => {
             openLongCondition
         ){
             try {
-                if(!longHolding || !Number(longHolding.pos)){
+                if((!longHolding || !Number(longHolding.pos)) && (!shortHolding || !Number(shortHolding.pos))){
                     // console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
                     // console.log('macdList',macdList.slice(-2))
@@ -1317,7 +1317,7 @@ const startInterval = async () => {
             openShortCondition
         ){
             try {
-                if(!shortHolding || !Number(shortHolding.pos)){
+                if((!longHolding || !Number(longHolding.pos)) && (!shortHolding || !Number(shortHolding.pos))){
                     // console.log('******************open short moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
                     // console.log('macdList',macdList.slice(-2))
