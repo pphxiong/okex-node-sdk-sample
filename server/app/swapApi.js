@@ -19,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10;
-let initPosition = 2;
+let initPosition = 4;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
