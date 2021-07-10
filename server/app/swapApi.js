@@ -1279,37 +1279,41 @@ const startInterval = async () => {
         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
         (latestRSI.RSI1 < latestRSI.RSI3 || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3)
+        // &&
+        // lastLongMaxWinRatio != 0
 
         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
         &&
         (latestRSI.RSI1 > latestRSI.RSI3 || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3)
+        // &&
+        // lastShortMaxWinRatio != 0
 
         const closeLongCondition = (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
         &&
         latestRSI.RSI1 < latestRSI.RSI3)
         ||
         latestRSI.RSI1 > 75
-        ||
-        (lastLongMaxWinRatio > 0.07 && longRatio < 0.02)
-        ||
-        topReverseCondition
+        // ||
+        // (lastLongMaxWinRatio > 0.07 && longRatio < 0.02)
+        // ||
+        // topReverseCondition
 
         const closeShortCondition = (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
         latestRSI.RSI1 > latestRSI.RSI3)
         ||
-        latestRSI.RSI1 < 15
-        ||
-        (lastShortMaxWinRatio > 0.07 && shortRatio < 0.02)
-        ||
-        bottomReverseCondition
+        latestRSI.RSI1 < 23
+        // ||
+        // (lastShortMaxWinRatio > 0.07 && shortRatio < 0.02)
+        // ||
+        // bottomReverseCondition
 
         console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
         console.log('macdList',macdList.slice(-2))
         console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio)
-        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio)
+        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
+        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
         console.log('------------------')
 
         //开多仓条件
