@@ -1308,6 +1308,8 @@ const startInterval = async () => {
         console.log('------------------')
         console.log('macdList',macdList.slice(-2))
         console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio)
+        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio)
         console.log('------------------')
 
         //开多仓条件
