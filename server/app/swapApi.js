@@ -1313,11 +1313,11 @@ const startInterval = async () => {
         console.log('------------------')
         console.log('allList',allList.slice(-2))
         console.log('globalColumnsObjList',globalColumnsObjList.slice(-2))
-        console.log('mark_price',mark_price)
-        console.log('macdList',macdList.slice(-2))
-        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
-        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
+        // console.log('mark_price',mark_price)
+        // console.log('macdList',macdList.slice(-2))
+        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        // console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
+        // console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
         console.log('------------------')
 
         //开多仓条件
