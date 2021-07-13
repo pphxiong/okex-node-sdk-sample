@@ -1072,7 +1072,7 @@ function getFuturePrice(holding,ratio,direction = 1) {
 }
 const startInterval = async () => {
     const payload = {
-        bar: '15m', // 单位为秒
+        bar: '15m',
         // limit: 100,
     }
 
@@ -1175,7 +1175,7 @@ const startInterval = async () => {
         // const result = getRSI(allList[allList.length-1],allList)
         // columnsObjList.push(result)
 
-        // columnsObjList = columnsObjList.reverse()
+        columnsObjList = columnsObjList.reverse()
         const latestColumnsObjList = columnsObjList.slice(-15)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
@@ -1311,12 +1311,13 @@ const startInterval = async () => {
 
         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
+        console.log('allListReverse',allList.reverse().slice(-2))
         console.log('allList',allList.slice(-2))
         console.log('mark_price',mark_price)
-        console.log('macdList',macdList.slice(-2))
-        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
-        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
+        // console.log('macdList',macdList.slice(-2))
+        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        // console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
+        // console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
         console.log('------------------')
 
         //开多仓条件
