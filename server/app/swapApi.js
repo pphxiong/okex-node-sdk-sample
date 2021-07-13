@@ -1280,7 +1280,7 @@ const startInterval = async () => {
         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
         (latestRSI.RSI1 < latestRSI.RSI3
-            || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+            // || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
         )
         // &&
         // lastLongMaxWinRatio != 0
@@ -1288,7 +1288,7 @@ const startInterval = async () => {
         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
         &&
         (latestRSI.RSI1 > latestRSI.RSI3
-            || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+            // || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
         )
         // &&
         // lastShortMaxWinRatio != 0
