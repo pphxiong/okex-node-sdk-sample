@@ -1159,7 +1159,7 @@ const startInterval = async () => {
         // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
         const newAllList = allList
         function* gen() {
-            for(let i = 0; i < 15; i ++){
+            for(let i = 0; i < 3; i ++){
                 if(i > 0) newAllList.pop()
                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
                 columnsObjList.push(result)
@@ -1168,7 +1168,7 @@ const startInterval = async () => {
         }
 
         for(let k of gen()){
-            if( k >= 15 ) break
+            if( k >= 3 ) break
         }
 
         // allList.pop()
@@ -1176,24 +1176,24 @@ const startInterval = async () => {
         // columnsObjList.push(result)
 
         columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-15)
-        let goldOverlappingNum = 0
-        let deadOverlappingNum = 0
+        const latestColumnsObjList = columnsObjList.slice(-3)
+        // let goldOverlappingNum = 0
+        // let deadOverlappingNum = 0
         // const goldList = []
         // const deadList = []
         // for(let i = 0; i < latestColumnsObjList.length - 2; i++){
-        const tripleList = latestColumnsObjList.slice(-6, -1)
-        const overlappingObj = isGoldOverLapping(tripleList, 0)
-        if(overlappingObj.isOverLapping) {
-            goldOverlappingNum++;
-            // goldList.push(overlappingObj)
-        }
-
-        const deadOverlappingObj = isDeadOverLapping(tripleList, 0)
-        if(deadOverlappingObj.isOverLapping) {
-            deadOverlappingNum++;
-            // deadList.push(deadOverlappingObj)
-        }
+        // const tripleList = latestColumnsObjList.slice(-6, -1)
+        // const overlappingObj = isGoldOverLapping(tripleList, 0)
+        // if(overlappingObj.isOverLapping) {
+        //     goldOverlappingNum++;
+        //     // goldList.push(overlappingObj)
+        // }
+        //
+        // const deadOverlappingObj = isDeadOverLapping(tripleList, 0)
+        // if(deadOverlappingObj.isOverLapping) {
+        //     deadOverlappingNum++;
+        //     // deadList.push(deadOverlappingObj)
+        // }
         // }
 
         // let lowestRSI = {}
