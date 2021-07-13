@@ -940,7 +940,7 @@ function getRSIByPeriod(newList, period){
     const RS = gainAverageI / lossAverageI;
     const RSI = 100 - 100 / (1 + RS);
     const newResult = {
-        RSI: toFixedAndToNumber(RSI,4),
+        RSI: toFixedAndToNumber(RSI,2),
         gainAverageI,
         lossAverageI
     }
@@ -948,7 +948,7 @@ function getRSIByPeriod(newList, period){
 }
 function getRSI(price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,9)
-    const { RSI: RSI2 } = getRSIByPeriod(list,72)
+    const { RSI: RSI2 } = getRSIByPeriod(list,45)
     const { RSI: RSI3 } = getRSIByPeriod(list,72)
 
     const result = {
