@@ -1310,6 +1310,8 @@ const startInterval = async () => {
 
         console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
+        console.log('allList',allList.slice(-2))
+        console.log('mark_price',mark_price)
         console.log('macdList',macdList.slice(-2))
         console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
         console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
