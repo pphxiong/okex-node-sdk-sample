@@ -1078,7 +1078,8 @@ const startInterval = async () => {
 
     try{
         const { data } = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-        globalColumnsObjList = data.reverse()
+        // globalColumnsObjList = data.reverse()
+        globalColumnsObjList = data
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
         restart()
@@ -1308,7 +1309,7 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
         console.log('allList',allList.slice(-2))
         console.log('mark_price',mark_price)
