@@ -1097,7 +1097,6 @@ const startInterval = async () => {
 
         // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
         const allList = globalColumnsObjList
-        console.log(allList.slice(-3))
         let macdList = []
         allList.map((item,index)=>{
             let result = {}
@@ -1130,31 +1129,31 @@ const startInterval = async () => {
 
         macdList = macdList.slice(-15)
 
-        let lowestMacd = {};
-        let highestMacd = {};
-        let lowestDiff = {};
-        let highestDiff = {};
-        macdList.reduce((pre,cur,index)=>{
-            if(index == 1) {
-                lowestMacd = { index: 0, macd: pre };
-                highestMacd = { index: 0, macd: pre };
-                lowestDiff = { index: 0, macd: pre };
-                highestDiff = { index: 0, macd: pre };
-            }
-            if(cur.low <= lowestMacd.macd.low) {
-                lowestMacd = { index, macd: cur };
-            }
-            if(cur.high >= highestMacd.macd.high){
-                highestMacd = { index, macd: cur };
-            }
-            if(cur.diff <= lowestDiff.macd.diff) {
-                lowestDiff = { index, macd: cur };
-            }
-            if(cur.diff >= highestDiff.macd.diff){
-                highestDiff = { index, macd: cur };
-            }
-            return cur;
-        })
+        // let lowestMacd = {};
+        // let highestMacd = {};
+        // let lowestDiff = {};
+        // let highestDiff = {};
+        // macdList.reduce((pre,cur,index)=>{
+        //     if(index == 1) {
+        //         lowestMacd = { index: 0, macd: pre };
+        //         highestMacd = { index: 0, macd: pre };
+        //         lowestDiff = { index: 0, macd: pre };
+        //         highestDiff = { index: 0, macd: pre };
+        //     }
+        //     if(cur.low <= lowestMacd.macd.low) {
+        //         lowestMacd = { index, macd: cur };
+        //     }
+        //     if(cur.high >= highestMacd.macd.high){
+        //         highestMacd = { index, macd: cur };
+        //     }
+        //     if(cur.diff <= lowestDiff.macd.diff) {
+        //         lowestDiff = { index, macd: cur };
+        //     }
+        //     if(cur.diff >= highestDiff.macd.diff){
+        //         highestDiff = { index, macd: cur };
+        //     }
+        //     return cur;
+        // })
 
         let columnsObjList = []
         // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
@@ -1197,21 +1196,21 @@ const startInterval = async () => {
         }
         // }
 
-        let lowestRSI = {}
-        let highestRSI = {}
-        latestColumnsObjList.reduce((pre,cur,index)=>{
-            if(index == 1){
-                lowestRSI = { index: 0, RSI: pre };
-                highestRSI = { index: 0, RSI: pre };
-            }
-            if(cur.RSI1 <= lowestRSI.RSI.RSI1){
-                lowestRSI = { index, RSI: cur }
-            }
-            if(cur.RSI1 >= highestRSI.RSI.RSI1){
-                highestRSI = { index, RSI: cur }
-            }
-            return cur;
-        })
+        // let lowestRSI = {}
+        // let highestRSI = {}
+        // latestColumnsObjList.reduce((pre,cur,index)=>{
+        //     if(index == 1){
+        //         lowestRSI = { index: 0, RSI: pre };
+        //         highestRSI = { index: 0, RSI: pre };
+        //     }
+        //     if(cur.RSI1 <= lowestRSI.RSI.RSI1){
+        //         lowestRSI = { index, RSI: cur }
+        //     }
+        //     if(cur.RSI1 >= highestRSI.RSI.RSI1){
+        //         highestRSI = { index, RSI: cur }
+        //     }
+        //     return cur;
+        // })
 
         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
 
@@ -1250,33 +1249,33 @@ const startInterval = async () => {
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
         }
 
-        const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
-            &&
-            lowestMacd.index == macdList.length - 2
-            &&
-            (
-                (lowestMacd.index != lowestDiff.index
-                    &&
-                    lowestDiff.index != macdList.length - 1
-                    &&
-                    lowestMacd.macd.diff > lowestDiff.macd.diff)
-                ||
-                lowestMacd.index != lowestRSI.index
-            ))
-
-        const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
-            &&
-            highestMacd.index == macdList.length - 2
-            &&
-            (
-                (highestMacd.index != highestDiff.index
-                    &&
-                    highestDiff.index != macdList.length - 1
-                    &&
-                    highestMacd.macd.diff < highestDiff.macd.diff)
-                ||
-                highestMacd.index != highestRSI.index
-            ))
+        // const bottomReverseCondition = !!(macdList[macdList.length-1].column >= macdList[macdList.length-2].column
+        //     &&
+        //     lowestMacd.index == macdList.length - 2
+        //     &&
+        //     (
+        //         (lowestMacd.index != lowestDiff.index
+        //             &&
+        //             lowestDiff.index != macdList.length - 1
+        //             &&
+        //             lowestMacd.macd.diff > lowestDiff.macd.diff)
+        //         ||
+        //         lowestMacd.index != lowestRSI.index
+        //     ))
+        //
+        // const topReverseCondition = !!(macdList[macdList.length-1].column <= macdList[macdList.length-2].column
+        //     &&
+        //     highestMacd.index == macdList.length - 2
+        //     &&
+        //     (
+        //         (highestMacd.index != highestDiff.index
+        //             &&
+        //             highestDiff.index != macdList.length - 1
+        //             &&
+        //             highestMacd.macd.diff < highestDiff.macd.diff)
+        //         ||
+        //         highestMacd.index != highestRSI.index
+        //     ))
 
         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
         &&
@@ -1310,15 +1309,15 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        // console.log('------------------')
-        // console.log('allList',allList.slice(-2))
-        // console.log('mark_price',mark_price)
-        // console.log('macdList',macdList.slice(-2))
-        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        // console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
-        // console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
-        // console.log('------------------')
+        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('allList',allList.slice(-2))
+        console.log('mark_price',mark_price)
+        console.log('macdList',macdList.slice(-2))
+        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
+        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
+        console.log('------------------')
 
         //开多仓条件
         if(
