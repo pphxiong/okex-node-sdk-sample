@@ -1078,8 +1078,8 @@ const startInterval = async () => {
 
     try{
         const { data } = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-        // globalColumnsObjList = data.reverse()
-        globalColumnsObjList = data
+        globalColumnsObjList = data.reverse()
+        // globalColumnsObjList = data
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
         restart()
@@ -1175,7 +1175,7 @@ const startInterval = async () => {
         // const result = getRSI(allList[allList.length-1],allList)
         // columnsObjList.push(result)
 
-        columnsObjList = columnsObjList.reverse()
+        // columnsObjList = columnsObjList.reverse()
         const latestColumnsObjList = columnsObjList.slice(-15)
         let goldOverlappingNum = 0
         let deadOverlappingNum = 0
