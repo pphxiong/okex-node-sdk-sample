@@ -1312,6 +1312,7 @@ const startInterval = async () => {
         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
         console.log('allList',allList.slice(-2))
+        console.log('globalColumnsObjList',globalColumnsObjList.slice(-2))
         console.log('mark_price',mark_price)
         console.log('macdList',macdList.slice(-2))
         console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
