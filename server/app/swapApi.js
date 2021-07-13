@@ -1078,9 +1078,7 @@ const startInterval = async () => {
 
     try{
         const { data } = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
-        console.log(data.slice(-2))
         globalColumnsObjList = data.reverse()
-        console.log(globalColumnsObjList.slice(-2))
         // globalColumnsObjList = data
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
@@ -1311,15 +1309,15 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        // console.log('------------------')
-        // console.log('allList',allList.slice(-2))
-        // console.log('mark_price',mark_price)
-        // console.log('macdList',macdList.slice(-2))
-        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        // console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
-        // console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
-        // console.log('------------------')
+        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('allList',allList.slice(-2))
+        console.log('mark_price',mark_price)
+        console.log('macdList',macdList.slice(-2))
+        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
+        console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
+        console.log('------------------')
 
         //开多仓条件
         if(
