@@ -1097,6 +1097,7 @@ const startInterval = async () => {
 
         // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
         const allList = globalColumnsObjList
+        console.log(allList.slice(-3))
         let macdList = []
         allList.map((item,index)=>{
             let result = {}
@@ -1309,16 +1310,15 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('------------------')
-        console.log('allList',allList.slice(-2))
-        console.log('globalColumnsObjList',globalColumnsObjList.slice(-2))
+        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('------------------')
+        // console.log('allList',allList.slice(-2))
         // console.log('mark_price',mark_price)
         // console.log('macdList',macdList.slice(-2))
         // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
         // console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
         // console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
-        console.log('------------------')
+        // console.log('------------------')
 
         //开多仓条件
         if(
