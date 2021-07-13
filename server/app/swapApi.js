@@ -18,7 +18,7 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let LEVERAGE = 10;
+let LEVERAGE = 20;
 let initPosition = 3;
 // let initPosition = LEVERAGE * 10 / 2;
 
@@ -1328,7 +1328,10 @@ const startInterval = async () => {
             openLongCondition
         ){
             try {
-                if((!longHolding || !Number(longHolding.pos)) && (!shortHolding || !Number(shortHolding.pos))){
+                if(
+                    (!longHolding || !Number(longHolding.pos))
+                    // && (!shortHolding || !Number(shortHolding.pos))
+                ){
                     // console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
                     // console.log('macdList',macdList.slice(-2))
@@ -1366,7 +1369,11 @@ const startInterval = async () => {
             openShortCondition
         ){
             try {
-                if((!longHolding || !Number(longHolding.pos)) && (!shortHolding || !Number(shortHolding.pos))){
+                if(
+                    // (!longHolding || !Number(longHolding.pos))
+                    // &&
+                    (!shortHolding || !Number(shortHolding.pos))
+                ){
                     // console.log('******************open short moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
                     // console.log('macdList',macdList.slice(-2))
