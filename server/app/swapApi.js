@@ -20,7 +20,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10;
-let initPosition = 0.4;
+let initPosition = 100;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1416,15 +1416,15 @@ const waitTime = (time = 1000 * 4) => {
 
 // 定时获取交割合约账户信息
 (async ()=>{
-    await startInterval()
-    // try{
-    //     const { data }= await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-    //     const mark_price = Number(data[0].markPx);
-    //     await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-    //     // await closeHalfPositionByMarket({ side: "long" })
-    // }catch (e) {
-    //     console.log(e)
-    // }
+    // await startInterval()
+    try{
+        const { data }= await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+        const mark_price = Number(data[0].markPx);
+        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
+        // await closeHalfPositionByMarket({ side: "long" })
+    }catch (e) {
+        console.log(e)
+    }
 })()
 app.listen(8091);
 
