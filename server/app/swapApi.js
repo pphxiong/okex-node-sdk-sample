@@ -285,7 +285,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             side: type,
             positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
             type: 'MARKET',
-            quantity: size,
+            quantity: Math.abs(size),
             recvWindow: 5000,
             // timeInForce: 'GTC',
             // timestamp: moment(new Date()).valueOf(),
@@ -317,7 +317,7 @@ const closeHalfPositionByMarket = async (holding) => {
             side: type,
             positionSide: side == 'long' ? 'LONG' : 'SHORT',
             type: 'MARKET',
-            quantity: size,
+            quantity: Math.abs(size),
             recvWindow: 5000,
             // timestamp: moment(new Date()).valueOf(),
         }
@@ -1208,7 +1208,7 @@ const startInterval = async () => {
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
                 const { positions: holding } = await cAuthClientBN.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
-                globalHolding = holding.filter(item=>item.positionAmt && Number(item.positionAmt) > 0) || []
+                globalHolding = holding.filter(item=>item.positionAmt && Math.abs(Number(item.positionAmt)) > 0) || []
                 console.log('globalHolding',globalHolding)
                 positionChange = false
             }catch (e) {
