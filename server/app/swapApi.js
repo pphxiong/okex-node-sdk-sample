@@ -1209,6 +1209,7 @@ const startInterval = async () => {
             try{
                 const { positions: holding } = await cAuthClientBN.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
                 globalHolding = holding.filter(item=>item.symbol==BN_SYMBOL && item.positionAmt && Number(item.positionAmt) > 0) || []
+                console.log('globalHolding',globalHolding)
                 positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
