@@ -287,7 +287,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             type: 'MARKET',
             quantity: size,
             recvWindow: 5000,
-            timeInForce: 'GTC',
+            // timeInForce: 'GTC',
             // timestamp: moment(new Date()).valueOf(),
             // quantity: size,
             // posSide: openSide,
@@ -319,7 +319,7 @@ const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) =>
             type: 'STOP_MARKET',
             closePosition: true,
             recvWindow: 5000,
-            timestamp: moment(new Date()).valueOf(),
+            // timestamp: moment(new Date()).valueOf(),
         }
         try{
             // await validateAndCancelOrder(payload)
