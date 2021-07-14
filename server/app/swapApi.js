@@ -19,8 +19,8 @@ let mode = 4; //下单模式
 let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
-let LEVERAGE = 20;
-let initPosition = 0.01;
+let LEVERAGE = 10;
+let initPosition = 0.4;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
