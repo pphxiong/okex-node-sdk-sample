@@ -287,7 +287,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             type: 'MARKET',
             quantity: size,
             recvWindow: 5000,
-            timestamp: moment(new Date()).valueOf(),
+            // timestamp: moment(new Date()).valueOf(),
             // timeInForce: 'GTC',
             // quantity: size,
             // posSide: openSide,
