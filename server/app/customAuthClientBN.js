@@ -10,6 +10,7 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         const hmac = crypto.createHmac('sha256', secret);
         const signature = hmac.update(what).digest('hex').toString('base64');
         // const signature=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
+        console.log(what)
         console.log(signature)
         return {
             key,
