@@ -20,7 +20,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 10;
-let initPosition = 0.4;
+let initPosition = 0.2;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -1304,12 +1304,14 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('------------------')
-        console.log('mark_price',mark_price)
-        console.log('macdList',macdList.slice(-2))
-        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        console.log('------------------')
+        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('------------------')
+        // console.log('mark_price',mark_price)
+        // console.log('macdList',macdList.slice(-2))
+        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        // console.log('------------------')
+        console.log('longHolding',longHolding)
+        console.log('shortHolding',shortHolding)
 
         //开多仓条件
         if(
