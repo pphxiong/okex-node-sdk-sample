@@ -35,11 +35,8 @@ function customAuthClient(key, secret, apiUri = 'https://api.binance.com', timeo
     const post = function(url, body, params) {
         const bodyJson = JSON.stringify(body);
         const signObj = getSignature('POST', url, { body: bodyJson });
-        const newBody = {
-            ...body,
-            signature: signObj.signature,
-            timestamp: signObj.timestamp
-        }
+        body['signature'] = signObj.signature;
+        body['timestamp'] = signObj.timestamp;
         const headers = {
             'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
             'content-type': 'application/json; charset=utf-8'
@@ -47,7 +44,7 @@ function customAuthClient(key, secret, apiUri = 'https://api.binance.com', timeo
         return request(apiUri + url,{
             method: 'POST',
             headers,
-            data: newBody
+            data: body
         })
     }
 
