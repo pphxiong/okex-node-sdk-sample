@@ -27,9 +27,14 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
     };
 
     const get = function(url, params) {
-        return request(apiUri + url,{
+        const signObj = getSignature('GET', url)
+        const { timestamp } = signObj;
+        const headers = {
+            'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
+        }
+        return request(apiUri + url + `?timestamp=${timestamp}`,{
             method: 'GET',
-            headers: getSignature('GET', url)
+            headers
         })
     }
 
