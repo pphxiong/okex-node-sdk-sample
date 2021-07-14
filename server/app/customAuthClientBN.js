@@ -9,7 +9,9 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         const what = (options.body || '') + '&timestamp=' + timestamp;
         const hmac = crypto.createHmac('sha256', secret);
         const signature = hmac.update(what).digest('base64');
-        // sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
+        console.log(what)
+        console.log(signature)
+        // const signature=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
         return {
             key,
             signature,
@@ -36,7 +38,6 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
     const post = function(url, body, params) {
         // const bodyJson = JSON.stringify(body);
         const bodyJson = querystring.stringify(body)
-        console.log(bodyJson)
         const signObj = getSignature('POST', url, { body: bodyJson });
         body['signature'] = signObj.signature;
         body['timestamp'] = signObj.timestamp;
@@ -44,7 +45,6 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
             'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
             'content-type': 'application/json'
         }
-        console.log(body['signature'])
         return request(apiUri + url,{
             method: 'POST',
             headers,
