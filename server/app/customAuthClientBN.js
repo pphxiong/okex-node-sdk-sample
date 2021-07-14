@@ -49,7 +49,7 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         return request(apiUri + url,{
             method: 'POST',
             headers,
-            data: body
+            data: JSON.stringify(body)
         })
     }
 
