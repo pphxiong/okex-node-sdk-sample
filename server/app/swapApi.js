@@ -1304,8 +1304,6 @@ const startInterval = async () => {
         // console.log('macdList',macdList.slice(-2))
         // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
         // console.log('------------------')
-        console.log('longHolding',longHolding)
-        console.log('shortHolding',shortHolding)
 
         //开多仓条件
         if(
