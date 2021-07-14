@@ -51,7 +51,7 @@ function customAuthClient(key, secret, apiUri = 'https://api.binance.com', timeo
     return {
         swap: {
             postOrder: function(params){
-                return post('/fapi/v1/order', params)
+                return post('/api/v3/order', params)
             },
         }
     }
