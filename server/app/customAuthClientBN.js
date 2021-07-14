@@ -34,7 +34,9 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
     }
 
     const post = function(url, body, params) {
-        const bodyJson = JSON.stringify(body);
+        // const bodyJson = JSON.stringify(body);
+        const bodyJson = querystring.stringify(body)
+        console.log(bodyJson)
         const signObj = getSignature('POST', url, { body: bodyJson });
         body['signature'] = signObj.signature;
         body['timestamp'] = signObj.timestamp;
@@ -42,8 +44,7 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
             'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
             'content-type': 'application/json'
         }
-        console.log(headers)
-        console.log(body)
+        console.log(body['signature'])
         return request(apiUri + url,{
             method: 'POST',
             headers,
