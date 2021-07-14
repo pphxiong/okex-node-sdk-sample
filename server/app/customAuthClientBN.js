@@ -4,7 +4,7 @@ import * as querystring from "querystring";
 
 function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', timeout = 3000, axiosConfig = {}) {
     const signRequest = (method, path, options = {}) => {
-        const timestamp = Date.now() - 1000;
+        const timestamp = Date.now();
         // const what = timestamp + method.toUpperCase() + path + (options.body || '');
         const what = (options.body || '') + '&timestamp=' + timestamp;
         const hmac = crypto.createHmac('sha256', secret);
