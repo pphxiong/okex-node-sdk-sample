@@ -43,7 +43,7 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         body['timestamp'] = signObj.timestamp;
         const headers = {
             'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
-            'content-type': 'application/json'
+            // 'content-type': 'application/json'
         }
         return request(apiUri + url,{
             method: 'POST',
