@@ -1208,8 +1208,7 @@ const startInterval = async () => {
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
                 const { positions: holding } = await cAuthClientBN.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
-                console.log(holding)
-                globalHolding = holding
+                globalHolding = holding.filter(item=>item.symbol==BN_SYMBOL && item.positionAmt && Number(item.positionAmt) > 0) || []
                 positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
@@ -1229,13 +1228,13 @@ const startInterval = async () => {
         }
 
         if(longHolding){
-            const { lever: leverage, avgPx: avg_cost, } = longHolding;
+            const { leverage, entryPrice: avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
             lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
         }
 
         if(shortHolding){
-            const { lever: leverage, avgPx: avg_cost, } = shortHolding;
+            const { leverage, entryPrice: avg_cost, } = shortHolding;
             shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
             shortRatio = - shortRatio
             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
@@ -1305,15 +1304,12 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        // console.log('------------------')
-        // console.log('allList',allList.slice(-2))
-        // console.log('mark_price',mark_price)
-        // console.log('macdList',macdList.slice(-2))
-        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        // console.log('lastLongMaxWinRatio',lastLongMaxWinRatio,'longRatio',longRatio)
-        // console.log('lastShortMaxWinRatio',lastShortMaxWinRatio,'shortRatio',shortRatio)
-        // console.log('------------------')
+        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('mark_price',mark_price)
+        console.log('macdList',macdList.slice(-2))
+        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        console.log('------------------')
 
         //开多仓条件
         if(
@@ -1321,7 +1317,7 @@ const startInterval = async () => {
         ){
             try {
                 if(
-                    (!longHolding || !Number(longHolding.pos))
+                    (!longHolding || !Number(longHolding.positionAmt))
                     // && (!shortHolding || !Number(shortHolding.pos))
                 ){
                     // console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -1341,10 +1337,10 @@ const startInterval = async () => {
             closeLongCondition
         ){
             try {
-                if(longHolding && Number(longHolding.pos)){
+                if(longHolding && Number(longHolding.positionAmt)){
                     const payload = {
                         instrument_id: ETH_INSTRUMENT_ID,
-                        position: Number(longHolding.pos),
+                        position: Number(longHolding.positionAmt),
                         side: 'long',
                         mark_price
                     }
@@ -1364,7 +1360,7 @@ const startInterval = async () => {
                 if(
                     // (!longHolding || !Number(longHolding.pos))
                     // &&
-                    (!shortHolding || !Number(shortHolding.pos))
+                    (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // console.log('******************open short moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
@@ -1383,10 +1379,10 @@ const startInterval = async () => {
             closeShortCondition
         ){
             try {
-                if(shortHolding && Number(shortHolding.pos)){
+                if(shortHolding && Number(shortHolding.positionAmt)){
                     const payload = {
                         instrument_id: ETH_INSTRUMENT_ID,
-                        position: Number(shortHolding.pos),
+                        position: Number(shortHolding.positionAmt),
                         side: 'short',
                         mark_price
                     }
