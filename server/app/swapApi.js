@@ -308,16 +308,16 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 }
 
 // 平仓
-const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
-    const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
+const closeHalfPositionByMarket = async (holding) => {
+    const { instrument_id = ETH_INSTRUMENT_ID, position = initPosition, side, mark_price } = holding;
     async function postOrder(size,price) {
         const type = side == 'long' ? 'SELL' : 'BUY'
         const payload = {
             symbol: BN_SYMBOL,
             side: type,
             positionSide: side == 'long' ? 'LONG' : 'SHORT',
-            type: 'STOP_MARKET',
-            closePosition: true,
+            type: 'MARKET',
+            quantity: size,
             recvWindow: 5000,
             // timestamp: moment(new Date()).valueOf(),
         }
