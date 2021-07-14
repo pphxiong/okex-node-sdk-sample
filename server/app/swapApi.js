@@ -289,12 +289,6 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
             recvWindow: 5000,
             // timeInForce: 'GTC',
             // timestamp: moment(new Date()).valueOf(),
-            // quantity: size,
-            // posSide: openSide,
-            // ordType: 'market',
-            // tdMode: 'isolated',
-            // price,
-            // match_price: 0
         }
         try{
             await cAuthClientBN.swap.postOrder(payload)
@@ -1209,7 +1203,6 @@ const startInterval = async () => {
             try{
                 const { positions: holding } = await cAuthClientBN.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
                 globalHolding = holding.filter(item=>item.positionAmt && Math.abs(Number(item.positionAmt)) > 0) || []
-                console.log('globalHolding',globalHolding)
                 positionChange = false
             }catch (e) {
                 // if(result.error_message) throw new Error('Cannot get position!');
@@ -1224,8 +1217,8 @@ const startInterval = async () => {
 
         let holding = globalHolding
         if(holding && holding.length){
-            longHolding = holding.find(item=>item.posSide=="LONG")
-            shortHolding = holding.find(item=>item.posSide=="SHORT")
+            longHolding = holding.find(item=>item.positionSide=="LONG")
+            shortHolding = holding.find(item=>item.positionSide=="SHORT")
         }
 
         if(longHolding){
