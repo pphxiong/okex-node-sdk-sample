@@ -44,8 +44,6 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
             // 'Content-Type': 'application/json;charset=UTF-8',
             // 'content-type': 'application/x-www-form-urlencoded'
         }
-        console.log(headers)
-        console.log(body)
         return request(apiUri + url + '?' + querystring.stringify(body),{
             method: 'POST',
             headers,
