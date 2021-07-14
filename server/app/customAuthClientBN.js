@@ -2,7 +2,7 @@ import request from '../utils/request';
 import * as crypto from 'crypto';
 import * as querystring from "querystring";
 
-function customAuthClient(key, secret, apiUri = 'https://api.binance.com', timeout = 3000, axiosConfig = {}) {
+function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', timeout = 3000, axiosConfig = {}) {
     const signRequest = (method, path, options = {}) => {
         const timestamp = Date.now() / 1000;
         const what = timestamp + method.toUpperCase() + path + (options.body || '');
@@ -51,7 +51,7 @@ function customAuthClient(key, secret, apiUri = 'https://api.binance.com', timeo
     return {
         swap: {
             postOrder: function(params){
-                return post('/api/v3/order', params)
+                return post('/fapi/v1/order', params)
             },
         }
     }
