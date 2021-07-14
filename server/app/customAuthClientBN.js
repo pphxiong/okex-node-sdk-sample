@@ -5,7 +5,8 @@ import * as querystring from "querystring";
 function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', timeout = 3000, axiosConfig = {}) {
     const signRequest = (method, path, options = {}) => {
         const timestamp = Date.now() / 1000;
-        const what = timestamp + method.toUpperCase() + path + (options.body || '');
+        // const what = timestamp + method.toUpperCase() + path + (options.body || '');
+        const what = timestamp + (options.body || '');
         const hmac = crypto.createHmac('sha256', secret);
         const signature = hmac.update(what).digest('base64');
         // sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
@@ -39,8 +40,10 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         body['timestamp'] = signObj.timestamp;
         const headers = {
             'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
-            'content-type': 'application/json; charset=utf-8'
+            'content-type': 'application/json'
         }
+        console.log(headers)
+        console.log(body)
         return request(apiUri + url,{
             method: 'POST',
             headers,
