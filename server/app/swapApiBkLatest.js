@@ -4,7 +4,6 @@ import moment from 'moment'
 // const {PublicClient} = require('@okfe/okex-node');
 const {AuthenticatedClient} = require('@okfe/okex-node');
 const customAuthClient = require('./customAuthClientV5');
-const customAuthClientBN = require('./customAuthClientBN');
 
 const fs = require('fs');
 
@@ -12,7 +11,7 @@ const fs = require('fs');
 // let dataConfig = require('./configETH.json');
 
 let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = "ETHUSDT";
+const ETH_INSTTYPE = "ETH-USDT";
 let myInterval;
 let mode = 4; //下单模式
 
@@ -20,7 +19,7 @@ let frequency = 1;
 const winRatio = 2;
 const lossRatio = 9;
 let LEVERAGE = 20;
-let initPosition = 1;
+let initPosition = 3;
 // let initPosition = LEVERAGE * 10 / 2;
 
 const continuousMap = {
@@ -35,7 +34,6 @@ const continuousMap = {
 };
 
 var config = require('./configV5');
-var configBN = require('./configBN');
 // const pClient = new PublicClient(config.urlHost);
 const authClient = new AuthenticatedClient(
     config.httpkey,
@@ -48,11 +46,6 @@ const cAuthClient = new customAuthClient(
     config.httpsecret,
     config.passphrase,
     config.urlHost
-)
-const cAuthClientBN = new customAuthClientBN(
-    configBN.httpkey,
-    configBN.httpsecret,
-    configBN.urlHost
 )
 
 var express = require('express');
@@ -267,37 +260,28 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     const instrument_id = ETH_INSTRUMENT_ID;
 
     async function postOrder(size,price) {
-        const type = openSide == 'long' ? 'BUY' : 'SELL';
+        const type = openSide == 'long' ? 'buy' : 'sell';
         console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('position', position, 'type', type, 'side', openSide)
-        // Parameter	Value
-        // symbol	LTCBTC
-        // side	BUY
-        // type	LIMIT
-        // timeInForce	GTC
-        // quantity	1
-        // price	0.1
-        // recvWindow	5000
-        // timestamp	1499827319559
+        // market：市价单
+        // limit：限价单
+        // post_only：只做maker单
+        // fok：全部成交或立即取消
+        // ioc：立即成交并取消剩余
+        // optimal_limit_ioc：市价委托立即成交并取消剩余（仅适用交割、永续）
 
         const payload = {
-            symbol: BN_SYMBOL,
+            sz: size,
             side: type,
-            positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
-            type: 'MARKET',
-            quantity: size,
-            recvWindow: 5000,
-            timestamp: moment(new Date()).valueOf(),
-            // timeInForce: 'GTC',
-            // quantity: size,
-            // posSide: openSide,
-            // ordType: 'market',
-            // tdMode: 'isolated',
+            posSide: openSide,
+            ordType: 'market',
+            instId: instrument_id,
+            tdMode: 'isolated',
             // price,
             // match_price: 0
         }
         try{
-            await cAuthClientBN.swap.postOrder(payload)
+            await cAuthClient.swap.postOrder(payload)
             positionChange = true
         }catch (e) {
             // throw new Error('Error');
@@ -306,42 +290,25 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
     }
     await postOrder(position,mark_price)
 }
-
-// 平仓
-const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
-    const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
-    async function postOrder(size,price) {
-        const type = side == 'long' ? 'SELL' : 'BUY'
-        const payload = {
-            symbol: BN_SYMBOL,
-            side: type,
-            positionSide: side == 'long' ? 'LONG' : 'SHORT',
-            type: 'STOP_MARKET',
-            closePosition: true,
-            recvWindow: 5000,
-            timestamp: moment(new Date()).valueOf(),
-        }
-        try{
-            // await validateAndCancelOrder(payload)
-            await cAuthClientBN.swap.postOrder(payload)
-            positionChange = true
-        }catch (e) {
-            // throw new Error('Error');
-            restart('close');
-        }
-    }
-    console.log('###################################')
-    console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
-    console.log('###################################')
-    await postOrder(position,mark_price)
-}
-
-
 // 平仓
 const closeHalfPosition = async (holding, oldPosition = initPosition) => {
     // const { holding: realBtcHolding } = await authClient.swap().getPosition(ETH_INSTRUMENT_ID);
     // if(realBtcHolding && realBtcHolding[0] && Number(realBtcHolding[0].position)){
     const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
+
+    // const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    // const payload = {
+    //     size: Math.ceil(Number(position)),
+    //     type: side == 'long' ? 3 : 4,
+    //     instrument_id,
+    //     order_type: 4,
+    //     // price: mark_price,
+    //     // match_price: 0
+    // }
+    //
+    // await authClient.swap().postOrder(payload)
+    // positionChange = true
+
     async function postOrder(size,price) {
         const payload = {
             size: Math.floor(Number(size)),
@@ -359,6 +326,48 @@ const closeHalfPosition = async (holding, oldPosition = initPosition) => {
             restart();
         }
     }
+    // await validateAndCancelOrder({instrument_id});
+    await postOrder(position,mark_price)
+
+    // cancelInterval = setInterval(async ()=>{
+    //     const { result, nextQty } = await validateAndCancelOrder({instrument_id});
+    //     if(result){
+    //         clearInterval(cancelInterval)
+    //         cancelInterval = null;
+    //         return;
+    //     }
+    //     const { mark_price } = await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    //     await postOrder(nextQty,mark_price)
+    // },1000 * 3)
+}
+
+// 平仓
+const closeHalfPositionByMarket = async (holding, oldPosition = initPosition) => {
+    const { instrument_id = ETH_INSTRUMENT_ID, position, side, mark_price } = holding;
+    async function postOrder(size,price) {
+        const type = side == 'long' ? 'sell' : 'buy'
+        const payload = {
+            sz: Math.floor(Number(size)),
+            side: type,
+            posSide: side,
+            ordType: 'market',
+            instId: instrument_id,
+            tdMode: 'isolated',
+            // price,
+            // match_price: 0
+        }
+        try{
+            // await validateAndCancelOrder(payload)
+            await cAuthClient.swap.postOrder(payload)
+            positionChange = true
+        }catch (e) {
+            // throw new Error('Error');
+            restart('close');
+        }
+    }
+    console.log('###################################')
+    console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('###################################')
     await postOrder(position,mark_price)
 }
 
@@ -1419,14 +1428,7 @@ const waitTime = (time = 1000 * 4) => {
 
 // 定时获取交割合约账户信息
 (async ()=>{
-    // await startInterval()
-    try{
-        const { data }= await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
-        const mark_price = Number(data[0].markPx);
-        await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
-    }catch (e) {
-        console.log(e)
-    }
+    await startInterval()
 })()
 app.listen(8091);
 

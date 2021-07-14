@@ -2,7 +2,7 @@ import request from '../utils/request';
 import * as crypto from 'crypto';
 import * as querystring from "querystring";
 
-function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.com', timeout = 3000, axiosConfig = {}) {
+function customAuthClient(key, secret, apiUri = 'https://api.binance.com', timeout = 3000, axiosConfig = {}) {
     const signRequest = (method, path, options = {}) => {
         const timestamp = Date.now() / 1000;
         const what = timestamp + method.toUpperCase() + path + (options.body || '');
@@ -11,7 +11,6 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
         // sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
         return {
             key,
-            passphrase,
             signature,
             timestamp
         };
@@ -20,10 +19,9 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
     const getSignature = (method, relativeURI, opts = {}) => {
         const sig = signRequest(method, relativeURI, opts);
         return {
-            'OK-ACCESS-KEY': sig.key,
-            'OK-ACCESS-PASSPHRASE': sig.passphrase,
-            'OK-ACCESS-SIGN': sig.signature,
-            'OK-ACCESS-TIMESTAMP': sig.timestamp
+            'X-MBX-APIKEY': sig.key,
+            signature: sig.signature,
+            timestamp: sig.timestamp
         };
     };
 
@@ -37,30 +35,26 @@ function customAuthClient(key, secret, passphrase, apiUri = 'https://www.okex.co
     const post = function(url, body, params) {
         const bodyJson = JSON.stringify(body);
         const signObj = getSignature('POST', url, { body: bodyJson });
-        signObj['content-type'] = 'application/json; charset=utf-8';
+        const newBody = {
+            ...body,
+            signature: signObj.signature,
+            timestamp: signObj.timestamp
+        }
+        const headers = {
+            'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
+            'content-type': 'application/json; charset=utf-8'
+        }
         return request(apiUri + url,{
             method: 'POST',
-            headers: signObj,
-            data: body
+            headers,
+            data: newBody
         })
     }
 
     return {
         swap: {
-            getMarkPrice: function (instrument_id){
-                return get(`/api/v5/public/mark-price?instId=${instrument_id}`)
-            },
-            getPosition: function (instrument_id, instType){
-                return get(`/api/v5/account/positions?instId=${instrument_id}&instType=${instType}`)
-            },
             postOrder: function(params){
-                return post('/api/v5/trade/order', params)
-            },
-            closePosition: function (params) {
-                return post('/api/swap/v3/close_position', params)
-            },
-            getHistory: function (instrument_id, params) {
-                return get(`/api/v5/market/history-candles?instId=${instrument_id}&` + querystring.stringify(params));
+                return post('/fapi/v1/order', params)
             },
         }
     }
