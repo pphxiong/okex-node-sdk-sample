@@ -7,7 +7,7 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         const timestamp = Date.now();
         // const what = timestamp + method.toUpperCase() + path + (options.body || '');
         const what = (options.body || '') + '&timestamp=' + timestamp;
-        const hmac = crypto.createHmac('sha256', secret);
+        const hmac = crypto.createHmac('hmacSha256', secret);
         const signature = hmac.update(what).digest('base64');
         console.log(what)
         console.log(signature)
