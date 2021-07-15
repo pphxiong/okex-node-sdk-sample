@@ -298,7 +298,7 @@ const startInterval = async () => {
             try {
                 if(
                     (!longHolding || !Number(longHolding.positionAmt))
-                    && (!shortHolding || !Number(shortHolding.pos))
+                    && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
@@ -337,7 +337,7 @@ const startInterval = async () => {
         ){
             try {
                 if(
-                    (!longHolding || !Number(longHolding.pos))
+                    (!longHolding || !Number(longHolding.positionAmt))
                     &&
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
