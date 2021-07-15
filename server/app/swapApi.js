@@ -11,10 +11,11 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
-let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
+const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
+const INIT_POSITION = 0.2;
+
 let myInterval;
-let initPosition = 0.2;
 
 var config = require('./configV5');
 var configBN = require('./configBN');
@@ -42,12 +43,12 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        bar: '15m',
+        bar: '5m',
         // limit: 100,
     }
 
     try{
-        const { data } = await cAuthClient.swap.getHistory('ETH-USDT-SWAP', payload)
+        const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
         globalColumnsObjList = data.reverse()
         // globalColumnsObjList = data
     }catch (e) {
@@ -58,7 +59,7 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         let mark_price;
         try{
-            const { data }= await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+            const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
             mark_price = Number(data[0].markPx);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
@@ -186,7 +187,7 @@ const startInterval = async () => {
 
         if(positionChange || !globalHolding || !globalHolding.length){
             try{
-                const { positions: holding } = await cAuthClientBN.swap.getPosition(ETH_INSTRUMENT_ID, 'SWAP');
+                const { positions: holding } = await cAuthClientBN.swap.getPosition();
                 globalHolding = holding.filter(item=>item.positionAmt && Math.abs(Number(item.positionAmt)) > 0) || []
                 positionChange = false
             }catch (e) {
@@ -297,7 +298,7 @@ const startInterval = async () => {
             try {
                 if(
                     (!longHolding || !Number(longHolding.positionAmt))
-                    // && (!shortHolding || !Number(shortHolding.pos))
+                    && (!shortHolding || !Number(shortHolding.pos))
                 ){
                     // console.log('******************open long moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
                     // console.log('------------------')
@@ -318,7 +319,6 @@ const startInterval = async () => {
             try {
                 if(longHolding && Number(longHolding.positionAmt)){
                     const payload = {
-                        instrument_id: ETH_INSTRUMENT_ID,
                         position: Number(longHolding.positionAmt),
                         side: 'long',
                         mark_price
@@ -337,8 +337,8 @@ const startInterval = async () => {
         ){
             try {
                 if(
-                    // (!longHolding || !Number(longHolding.pos))
-                    // &&
+                    (!longHolding || !Number(longHolding.pos))
+                    &&
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // console.log('******************open short moment******************', moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -360,7 +360,6 @@ const startInterval = async () => {
             try {
                 if(shortHolding && Number(shortHolding.positionAmt)){
                     const payload = {
-                        instrument_id: ETH_INSTRUMENT_ID,
                         position: Number(shortHolding.positionAmt),
                         side: 'short',
                         mark_price
@@ -394,8 +393,7 @@ app.get('/test', function(req, res) {
 
 let cancelInterval;
 const autoOpenOtherOrderSingle = async (params = {}) => {
-    const { openSide = 'long', position = Number(initPosition), mark_price } = params;
-    const instrument_id = ETH_INSTRUMENT_ID;
+    const { openSide = 'long', position = Number(INIT_POSITION), mark_price } = params;
 
     async function postOrder(size,price) {
         const type = openSide == 'long' ? 'BUY' : 'SELL';
@@ -434,7 +432,7 @@ const autoOpenOtherOrderSingle = async (params = {}) => {
 
 // 平仓
 const closeHalfPositionByMarket = async (holding) => {
-    const { instrument_id = ETH_INSTRUMENT_ID, position = initPosition, side, mark_price } = holding;
+    const { position = INIT_POSITION, side, mark_price } = holding;
     async function postOrder(size,price) {
         const type = side == 'long' ? 'SELL' : 'BUY'
         const payload = {
@@ -540,9 +538,9 @@ function getRSIByPeriod(newList, period){
     return newResult;
 }
 function getRSI(price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,6)
+    const { RSI: RSI1 } = getRSIByPeriod(list,4)
     const { RSI: RSI2 } = getRSIByPeriod(list,12)
-    const { RSI: RSI3 } = getRSIByPeriod(list,24)
+    const { RSI: RSI3 } = getRSIByPeriod(list,36)
 
     const result = {
         price,
@@ -677,7 +675,7 @@ const waitTime = (time = 1000 * 4) => {
 (async ()=>{
     await startInterval()
     // try{
-    //     const { data }= await cAuthClient.swap.getMarkPrice(ETH_INSTRUMENT_ID);
+    //     const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
     //     const mark_price = Number(data[0].markPx);
     //     await autoOpenOtherOrderSingle({ openSide: "long", mark_price })
     //     // await closeHalfPositionByMarket({ side: "long" })
