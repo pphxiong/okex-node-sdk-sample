@@ -14,25 +14,7 @@ const fs = require('fs');
 let ETH_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
 let myInterval;
-let mode = 4; //下单模式
-
-let frequency = 1;
-const winRatio = 2;
-const lossRatio = 9;
-let LEVERAGE = 20;
-let initPosition = 0.4;
-// let initPosition = LEVERAGE * 10 / 2;
-
-const continuousMap = {
-    [ETH_INSTRUMENT_ID]: {
-        continuousLossNum: 0,
-        continuousWinNum: 0,
-        continuousBatchNum: 0,
-        continuousProfitNum: 0,
-        continuousTripleLossNum: 0,
-        otherContinuousWinNum: 0
-    },
-};
+let initPosition = 0.2;
 
 var config = require('./configV5');
 var configBN = require('./configBN');
