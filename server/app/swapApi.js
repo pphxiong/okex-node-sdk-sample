@@ -18,13 +18,6 @@ let initPosition = 0.2;
 
 var config = require('./configV5');
 var configBN = require('./configBN');
-// const pClient = new PublicClient(config.urlHost);
-const authClient = new AuthenticatedClient(
-    config.httpkey,
-    config.httpsecret,
-    config.passphrase,
-    config.urlHost
-);
 const cAuthClient = new customAuthClient(
     config.httpkey,
     config.httpsecret,
@@ -38,7 +31,6 @@ const cAuthClientBN = new customAuthClientBN(
 )
 
 var express = require('express');
-// var http = require('../utils/http');
 var app = express();
 
 function send(res, ret) {
