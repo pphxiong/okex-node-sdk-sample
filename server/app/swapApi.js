@@ -284,12 +284,12 @@ const startInterval = async () => {
         // ||
         // bottomReverseCondition
 
-        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        // console.log('------------------')
-        // console.log('mark_price',mark_price)
-        // console.log('macdList',macdList.slice(-2))
-        // console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        // console.log('------------------')
+        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('------------------')
+        console.log('mark_price',mark_price)
+        console.log('macdList',macdList.slice(-2))
+        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+        console.log('------------------')
 
         //开多仓条件
         if(
