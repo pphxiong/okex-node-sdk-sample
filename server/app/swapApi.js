@@ -13,7 +13,7 @@ const fs = require('fs');
 
 const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 0.2;
+const INIT_POSITION = 0.4;
 
 let myInterval;
 
