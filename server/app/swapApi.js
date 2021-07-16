@@ -43,7 +43,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        bar: '5m',
+        bar: '3m',
         // limit: 100,
     }
 
@@ -257,10 +257,8 @@ const startInterval = async () => {
             latestRSI.RSI1 > latestRSI.RSI3
             &&
             latestRSI.RSI1 > 50
-            // &&
-            // latestRSI.RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI1
-            // &&
-            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < 50
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < 60
             // (latestRSI.RSI1 < latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
@@ -276,10 +274,8 @@ const startInterval = async () => {
             latestRSI.RSI1 < latestRSI.RSI3
             &&
             latestRSI.RSI1 < 50
-            // &&
-            // latestRSI.RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI1
-            // &&
-            // latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > 50
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > 40
             // (latestRSI.RSI1 > latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
