@@ -550,9 +550,9 @@ function getRSIByPeriod(newList, period){
     return newResult;
 }
 function getRSI(price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,9)
-    const { RSI: RSI2 } = getRSIByPeriod(list,36)
-    const { RSI: RSI3 } = getRSIByPeriod(list,72)
+    const { RSI: RSI1 } = getRSIByPeriod(list,5)
+    const { RSI: RSI2 } = getRSIByPeriod(list,15)
+    const { RSI: RSI3 } = getRSIByPeriod(list,30)
 
     const result = {
         price,
