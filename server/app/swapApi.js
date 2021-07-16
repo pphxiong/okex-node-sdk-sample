@@ -43,7 +43,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        bar: '5m',
+        bar: '15m',
         // limit: 100,
     }
 
