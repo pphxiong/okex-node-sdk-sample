@@ -13,7 +13,7 @@ const fs = require('fs');
 
 const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 0.3;
+const INIT_POSITION = 0.2;
 
 let myInterval;
 
@@ -250,27 +250,34 @@ const startInterval = async () => {
 
         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
             &&
-            (latestRSI.RSI1 < latestRSI.RSI3
-                || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            )
-            &&
             latestRSI.RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            &&
+            latestRSI.RSI1 > latestRSI.RSI3
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > 50
+            // (latestRSI.RSI1 < latestRSI.RSI3
+            //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+            // )
         // &&
         // lastLongMaxWinRatio != 0
 
         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
             &&
-            (latestRSI.RSI1 > latestRSI.RSI3
-                || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
-            )
-            &&
             latestRSI.RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI1
+            &&
+            latestRSI.RSI1 < latestRSI.RSI3
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < 50
+            // (latestRSI.RSI1 > latestRSI.RSI3
+            //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
+            // )
         // &&
         // lastShortMaxWinRatio != 0
 
         const closeLongCondition = (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
             &&
-            latestRSI.RSI1 < latestRSI.RSI3)
+            latestRSI.RSI1 < 50
+        )
         // ||
         // latestRSI.RSI1 > 75
         // ||
@@ -280,7 +287,8 @@ const startInterval = async () => {
 
         const closeShortCondition = (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
             &&
-            latestRSI.RSI1 > latestRSI.RSI3)
+            latestRSI.RSI1 > 50
+        )
         // ||
         // latestRSI.RSI1 < 23
         // ||
