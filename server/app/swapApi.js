@@ -255,6 +255,8 @@ const startInterval = async () => {
             latestRSI.RSI1 > latestRSI.RSI3
             &&
             latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > 50
+            &&
+            latestRSI.RSI1 < 72
             // (latestRSI.RSI1 < latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
@@ -268,6 +270,8 @@ const startInterval = async () => {
             latestRSI.RSI1 < latestRSI.RSI3
             &&
             latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < 50
+            &&
+            latestRSI.RSI1 > 28
             // (latestRSI.RSI1 > latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
