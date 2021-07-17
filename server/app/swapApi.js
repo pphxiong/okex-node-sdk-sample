@@ -256,7 +256,9 @@ const startInterval = async () => {
             &&
             latestRSI.RSI2 > latestRSI.RSI3
             &&
-            latestRSI.RSI3 >= 50
+            latestRSI.RSI3 > 50 && latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
+        ``  &&
+            latestRSI.RSI1 < 70
             // &&
             // latestRSI.RSI1 <= 70
             // (latestRSI.RSI1 < latestRSI.RSI3
@@ -273,14 +275,18 @@ const startInterval = async () => {
             &&
             latestRSI.RSI2 < latestRSI.RSI3
             &&
-            latestRSI.RSI3 <= 50
+            latestRSI.RSI3 < 50 &&  latestColumnsObjList[latestColumnsObjList.length-2].RSI3 > 50
+            &&
+            latestRSI.RSI1 > 25
             // (latestRSI.RSI1 > latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
         // &&
         // lastShortMaxWinRatio != 0
 
-        const closeLongCondition = openShortCondition
+        const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
+            ||
+            latestRSI.RSI1 > 80
         // ||
         // latestRSI.RSI1 > 75
         // ||
@@ -288,7 +294,9 @@ const startInterval = async () => {
         // ||
         // topReverseCondition
 
-        const closeShortCondition = openLongCondition
+        const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
+            // &&
+            // latestRSI.RSI1 < 25
         // ||
         // latestRSI.RSI1 < 23
         // ||
