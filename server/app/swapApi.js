@@ -43,7 +43,7 @@ let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
     const payload = {
-        bar: '5m',
+        bar: '3m',
         // limit: 100,
     }
 
@@ -252,13 +252,13 @@ const startInterval = async () => {
             &&
             Number(macdList[macdList.length-1].column) > 0
             &&
-            Number(macdList[macdList.length-2].column) < 0
+            latestRSI.RSI1 > latestRSI.RSI2
             &&
-            latestRSI.RSI1 > latestRSI.RSI3
+            latestRSI.RSI2 > latestRSI.RSI3
             &&
-            latestRSI.RSI1 > 50
-            &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < 60
+            latestRSI.RSI3 >= 50
+            // &&
+            // latestRSI.RSI1 <= 70
             // (latestRSI.RSI1 < latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 < latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
@@ -269,22 +269,18 @@ const startInterval = async () => {
             &&
             Number(macdList[macdList.length-1].column) < 0
             &&
-            Number(macdList[macdList.length-2].column) > 0
+            latestRSI.RSI1 < latestRSI.RSI2
             &&
-            latestRSI.RSI1 < latestRSI.RSI3
+            latestRSI.RSI2 < latestRSI.RSI3
             &&
-            latestRSI.RSI1 < 50
-            &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > 40
+            latestRSI.RSI3 <= 50
             // (latestRSI.RSI1 > latestRSI.RSI3
             //     || latestColumnsObjList[latestColumnsObjList.length-2].RSI1 > latestColumnsObjList[latestColumnsObjList.length-2].RSI3
             // )
         // &&
         // lastShortMaxWinRatio != 0
 
-        const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
-            &&
-            latestRSI.RSI1 < 50
+        const closeLongCondition = openShortCondition
         // ||
         // latestRSI.RSI1 > 75
         // ||
@@ -292,9 +288,7 @@ const startInterval = async () => {
         // ||
         // topReverseCondition
 
-        const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
-            &&
-            latestRSI.RSI1 > 50
+        const closeShortCondition = openLongCondition
         // ||
         // latestRSI.RSI1 < 23
         // ||
@@ -556,9 +550,9 @@ function getRSIByPeriod(newList, period){
     return newResult;
 }
 function getRSI(price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,5)
-    const { RSI: RSI2 } = getRSIByPeriod(list,15)
-    const { RSI: RSI3 } = getRSIByPeriod(list,30)
+    const { RSI: RSI1 } = getRSIByPeriod(list,6)
+    const { RSI: RSI2 } = getRSIByPeriod(list,12)
+    const { RSI: RSI3 } = getRSIByPeriod(list,24)
 
     const result = {
         price,
