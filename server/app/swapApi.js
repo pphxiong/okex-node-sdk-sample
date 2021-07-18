@@ -289,8 +289,8 @@ const startInterval = async () => {
         // lastShortMaxWinRatio != 0
 
         const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
-            ||
-            latestRSI.RSI1 > 80
+            // ||
+            // latestRSI.RSI1 > 80
         // ||
         // latestRSI.RSI1 > 75
         // ||
