@@ -259,7 +259,7 @@ const startInterval = async () => {
             latestRSI.RSI3 > 50
             &&
             latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
-        ``  &&
+            &&
             latestRSI.RSI1 < 70
             // &&
             // latestRSI.RSI1 <= 70
