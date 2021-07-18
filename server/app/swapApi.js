@@ -256,7 +256,9 @@ const startInterval = async () => {
             &&
             latestRSI.RSI2 > latestRSI.RSI3
             &&
-            latestRSI.RSI3 > 50 && latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
+            latestRSI.RSI3 > 50
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
         ``  &&
             latestRSI.RSI1 < 70
             // &&
@@ -275,7 +277,9 @@ const startInterval = async () => {
             &&
             latestRSI.RSI2 < latestRSI.RSI3
             &&
-            latestRSI.RSI3 < 50 &&  latestColumnsObjList[latestColumnsObjList.length-2].RSI3 > 50
+            latestRSI.RSI3 < 50
+            &&
+            latestColumnsObjList[latestColumnsObjList.length-2].RSI3 > 50
             &&
             latestRSI.RSI1 > 25
             // (latestRSI.RSI1 > latestRSI.RSI3
