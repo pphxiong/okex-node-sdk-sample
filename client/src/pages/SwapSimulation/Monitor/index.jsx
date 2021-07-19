@@ -712,23 +712,24 @@ export default props => {
   const fnGetHistoryByDay = async () => {
     const INIT_TIME = moment(moment().subtract(300,'m').format('YYYY-MM-DD HH:mm:00')).valueOf();
     let heatBeatNum = 0;
-    let heatBeatInterval = setInterval(async ()=>{
-      if(heatBeatNum >= 100){
-        clearInterval(heatBeatInterval);
-        heatBeatInterval = null;
-        return;
-      }
+    // let heatBeatInterval = setInterval(async ()=>{
+    //   if(heatBeatNum >= 100){
+    //     clearInterval(heatBeatInterval);
+    //     heatBeatInterval = null;
+    //     return;
+    //   }
       try{
         const time = moment(INIT_TIME).add(3 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
         const payload = { time: moment(time).valueOf() }
-        const { data: { currentPosition, totalProfit } } = await startHearBeat(payload)
+        const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
+        console.log('history', JSON.stringify(history))
         console.log('currentPosition',currentPosition)
         console.log('totalProfit',totalProfit)
         heatBeatNum++;
       }catch (e) {
         console.log(e)
       }
-    },1000 * 2)
+    // },1000 * 2)
 
     // console.log(moment().subtract(3,'m').format('YYYY-MM-DD HH:mm:00'))
     // console.log(moment().subtract(3,'m').valueOf())

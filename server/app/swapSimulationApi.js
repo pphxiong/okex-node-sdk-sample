@@ -653,7 +653,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
         const result = await getResult(time);
         await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {history: result, totalProfit, currentPosition} });
+        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition} });
     }catch (e) {
         restart()
     }
