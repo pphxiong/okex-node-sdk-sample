@@ -710,8 +710,8 @@ export default props => {
   }
 
   const fnGetHistoryByDay = async () => {
-    const INIT_DATE = '2021-07-16'
-    const INIT_TIME = moment('2021-07-16 00:00:00').valueOf();
+    const INIT_DATE = '2021-07-17'
+    const INIT_TIME = moment('2021-07-17 00:00:00').valueOf();
     let heatBeatNum = 5;
     // let heatBeatInterval = setInterval(async ()=>{
     //   if(heatBeatNum >= 100){
