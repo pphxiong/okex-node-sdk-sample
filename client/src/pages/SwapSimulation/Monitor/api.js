@@ -13,3 +13,9 @@ export async function startHearBeat(params) {
     params,
   });
 }
+
+export async function reset(params) {
+  return request(`${commonUrl}/swap/reset`, {
+    params,
+  });
+}

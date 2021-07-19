@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Divider, Button, DatePicker, InputNumber, Select, Spin } from 'antd';
+import { Card, Divider, Button, DatePicker, InputNumber, Select, Spin, message } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
 import {
-  startHearBeat
+  startHearBeat,
+  reset
 } from './api';
 import { tradeTypeEnum } from '../../config';
 import mockData from '../mock'
@@ -703,6 +704,11 @@ export default props => {
     return { pnl: t, ratio: tRatio, dList,  };
   }
 
+  const fnReset = async () => {
+    const { errmsg } = await reset();
+    message.info(errmsg)
+  }
+
   const fnGetHistoryByDay = async () => {
     const INIT_TIME = moment(moment().subtract(300,'m').format('YYYY-MM-DD HH:mm:00')).valueOf();
     let heatBeatNum = 0;
@@ -945,6 +951,8 @@ export default props => {
       <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>确定</Button>
 
       <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
+
+      <Button onClick={()=>fnReset()} type="primary" style={{ marginLeft: 10 }}>重置</Button>
 
       <Divider />
 

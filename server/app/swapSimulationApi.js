@@ -623,6 +623,12 @@ const waitTime = (time = 1000 * 4) => {
     });
 };
 
+app.get('/swap/reset', async (req, response) => {
+    totalProfit = 0;
+    currentPosition = {};
+    send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition } });
+});
+
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
     const { time } = query;
@@ -726,6 +732,7 @@ const checkDeal = async data => {
             ){
                 // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                 currentPosition = {
+                    side: 'OPEN',
                     positionSide: 'LONG',
                     leverage: LEVERAGE,
                     entryPrice: mark_price,
@@ -752,7 +759,12 @@ const checkDeal = async data => {
                 // }
                 // closePosition(payload)
                 totalProfit += longRatio;
-                currentPosition = { time: macdList[macdList.length-1].time }
+                currentPosition = {
+                    side: 'CLOSE',
+                    positionSide: 'LONG',
+                    entryPrice: mark_price,
+                    time: macdList[macdList.length-1].time
+                }
             }
         }catch (e){
             console.log(e)
@@ -771,6 +783,7 @@ const checkDeal = async data => {
             ){
                 // openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
                 currentPosition = {
+                    side: 'OPEN',
                     positionSide: 'SHORT',
                     leverage: LEVERAGE,
                     entryPrice: mark_price,
@@ -797,7 +810,12 @@ const checkDeal = async data => {
                 // }
                 // closePosition(payload);
                 totalProfit += shortRatio
-                currentPosition = { time: macdList[macdList.length-1].time }
+                currentPosition = {
+                    side: 'CLOSE',
+                    positionSide: 'SHORT',
+                    entryPrice: mark_price,
+                    time: macdList[macdList.length-1].time
+                }
             }
         }catch (e){
             console.log(e)
