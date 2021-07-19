@@ -796,6 +796,7 @@ const checkDeal = async data => {
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
                     }
+                    totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(currentPosition)
                 }
             }catch (e){
@@ -817,6 +818,7 @@ const checkDeal = async data => {
                     // }
                     // closePosition(payload)
                     totalProfit += longRatio;
+                    totalProfit += - 0.05 * 0.01 * LEVERAGE
                     currentPosition = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
@@ -851,6 +853,7 @@ const checkDeal = async data => {
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
                     }
+                    totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(currentPosition)
                 }
             }catch (e){
@@ -872,6 +875,7 @@ const checkDeal = async data => {
                     // }
                     // closePosition(payload);
                     totalProfit += shortRatio
+                    totalProfit += - 0.05 * 0.01 * LEVERAGE
                     currentPosition = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
