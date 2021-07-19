@@ -13,7 +13,10 @@ const fs = require('fs');
 
 const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 0.2;
+const INIT_POSITION = 1;
+const LEVERAGE = 10;
+let currentPosition = {};
+let totalProfit = 0;
 
 let myInterval;
 
@@ -72,7 +75,7 @@ function getCurrentMacd(list) {
         macdList.push(result)
     })
 
-    macdList = macdList.slice(-1)
+    macdList = macdList.slice(-2)
     return macdList
 }
 
@@ -91,241 +94,242 @@ function getCurrentRSI(list) {
         if( k >= 3 ) break
     }
 
-    rsiList = rsiList.reverse().slice(-1)
+    rsiList = rsiList.reverse()
+    rsiList = rsiList.slice(-2)
     return rsiList
 }
 
-let lastLongMaxWinRatio = 0
-let lastShortMaxWinRatio = 0
-const startInterval = async () => {
-    const payload = {
-        bar: '3m',
-        // limit: 100,
-    }
-
-    try{
-        const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-        globalColumnsObjList = data.reverse()
-        // globalColumnsObjList = data
-    }catch (e) {
-        // if(!Array.isArray(data)) throw new Error('Data is not array!');
-        restart()
-    }
-
-    if(Array.isArray(globalColumnsObjList)){
-        let mark_price;
-        try{
-            const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
-            mark_price = Number(data[0].markPx);
-        }catch (e) {
-            // if(!mark_result) throw new Error('mark_price is null!');
-            restart('getMarkPrice')
-        }
-
-        // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
-        const allList = globalColumnsObjList
-        let macdList = []
-        allList.map((item,index)=>{
-            let result = {}
-            if(index==0) {
-                result = {
-                    price: Number(item[4]),
-                    ema12: Number(item[4]),
-                    ema26: Number(item[4]),
-                    diff: 0,
-                    dea: 0,
-                    column: 0,
-                    high: Number(item[2]),
-                    low: Number(item[3])
-                }
-            }else{
-                const lastResult = macdList[macdList.length-1]
-                const payload = {
-                    price: Number(item[4]),
-                    lastEma12: lastResult.ema12,
-                    lastEma26: lastResult.ema26,
-                    lastDea: lastResult.dea,
-                    high: Number(item[2]),
-                    low: Number(item[3]),
-                }
-                result = getMacd(payload)
-            }
-
-            macdList.push(result)
-        })
-
-        macdList = macdList.slice(-15)
-
-        let columnsObjList = []
-        // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-        const newAllList = allList
-        function* gen() {
-            for(let i = 0; i < 3; i ++){
-                if(i > 0) newAllList.pop()
-                const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
-                columnsObjList.push(result)
-                yield i
-            }
-        }
-
-        for(let k of gen()){
-            if( k >= 3 ) break
-        }
-
-        columnsObjList = columnsObjList.reverse()
-        const latestColumnsObjList = columnsObjList.slice(-3)
-
-        const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
-
-        if(positionChange || !globalHolding || !globalHolding.length){
-            try{
-                const { positions: holding } = await cAuthClientBN.swap.getPosition();
-                globalHolding = holding.filter(item=>item.positionAmt && Math.abs(Number(item.positionAmt)) > 0) || []
-                positionChange = false
-            }catch (e) {
-                // if(result.error_message) throw new Error('Cannot get position!');
-                restart('getPosition');
-            }
-        }
-
-        let longHolding;
-        let shortHolding
-        let longRatio = 0
-        let shortRatio = 0
-
-        let holding = globalHolding
-        if(holding && holding.length){
-            longHolding = holding.find(item=>item.positionSide=="LONG")
-            shortHolding = holding.find(item=>item.positionSide=="SHORT")
-        }
-
-        if(longHolding){
-            const { leverage, entryPrice: avg_cost, } = longHolding;
-            longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-            lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
-        }
-
-        if(shortHolding){
-            const { leverage, entryPrice: avg_cost, } = shortHolding;
-            shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-            shortRatio = - shortRatio
-            lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
-        }
-
-        const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
-            &&
-            Number(macdList[macdList.length-1].column) > 0
-            &&
-            latestRSI.RSI1 > latestRSI.RSI2
-            &&
-            latestRSI.RSI2 > latestRSI.RSI3
-            &&
-            latestRSI.RSI3 > 50
-            &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
-            &&
-            latestRSI.RSI1 < 70
-
-        const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
-            &&
-            Number(macdList[macdList.length-1].column) < 0
-            &&
-            latestRSI.RSI1 < latestRSI.RSI2
-            &&
-            latestRSI.RSI2 < latestRSI.RSI3
-            &&
-            latestRSI.RSI3 < 50
-            &&
-            latestColumnsObjList[latestColumnsObjList.length-2].RSI3 > 50
-            &&
-            latestRSI.RSI1 > 25
-
-        const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
-
-        const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
-
-        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('------------------')
-        console.log('mark_price',mark_price)
-        console.log('macdList',macdList.slice(-2))
-        console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-        console.log('------------------')
-
-        //开多仓条件
-        if(
-            openLongCondition
-        ){
-            try {
-                if(
-                    (!longHolding || !Number(longHolding.positionAmt))
-                    && (!shortHolding || !Number(shortHolding.positionAmt))
-                ){
-                    await openPosition({ openSide: "long", mark_price })
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //平多仓条件
-        if(
-            closeLongCondition
-        ){
-            try {
-                if(longHolding && Number(longHolding.positionAmt)){
-                    const payload = {
-                        position: Number(longHolding.positionAmt),
-                        side: 'long',
-                        mark_price
-                    }
-                    await closePosition(payload)
-                    lastLongMaxWinRatio = 0
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //开空仓条件
-        if(
-            openShortCondition
-        ){
-            try {
-                if(
-                    (!longHolding || !Number(longHolding.positionAmt))
-                    &&
-                    (!shortHolding || !Number(shortHolding.positionAmt))
-                ){
-                    await openPosition({ openSide: "short", mark_price });
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //平空仓条件
-        if(
-            closeShortCondition
-        ){
-            try {
-                if(shortHolding && Number(shortHolding.positionAmt)){
-                    const payload = {
-                        position: Number(shortHolding.positionAmt),
-                        side: 'short',
-                        mark_price
-                    }
-                    await closePosition(payload)
-                    lastShortMaxWinRatio = 0
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-    }
-
-    await waitTime(1000 * 8)
-    await startInterval()
-}
+// let lastLongMaxWinRatio = 0
+// let lastShortMaxWinRatio = 0
+// const startInterval = async () => {
+//     const payload = {
+//         bar: '3m',
+//         // limit: 100,
+//     }
+//
+//     try{
+//         const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+//         globalColumnsObjList = data.reverse()
+//         // globalColumnsObjList = data
+//     }catch (e) {
+//         // if(!Array.isArray(data)) throw new Error('Data is not array!');
+//         restart()
+//     }
+//
+//     if(Array.isArray(globalColumnsObjList)){
+//         let mark_price;
+//         try{
+//             const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
+//             mark_price = Number(data[0].markPx);
+//         }catch (e) {
+//             // if(!mark_result) throw new Error('mark_price is null!');
+//             restart('getMarkPrice')
+//         }
+//
+//         // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
+//         const allList = globalColumnsObjList
+//         let macdList = []
+//         allList.map((item,index)=>{
+//             let result = {}
+//             if(index==0) {
+//                 result = {
+//                     price: Number(item[4]),
+//                     ema12: Number(item[4]),
+//                     ema26: Number(item[4]),
+//                     diff: 0,
+//                     dea: 0,
+//                     column: 0,
+//                     high: Number(item[2]),
+//                     low: Number(item[3])
+//                 }
+//             }else{
+//                 const lastResult = macdList[macdList.length-1]
+//                 const payload = {
+//                     price: Number(item[4]),
+//                     lastEma12: lastResult.ema12,
+//                     lastEma26: lastResult.ema26,
+//                     lastDea: lastResult.dea,
+//                     high: Number(item[2]),
+//                     low: Number(item[3]),
+//                 }
+//                 result = getMacd(payload)
+//             }
+//
+//             macdList.push(result)
+//         })
+//
+//         macdList = macdList.slice(-15)
+//
+//         let columnsObjList = []
+//         // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
+//         const newAllList = allList
+//         function* gen() {
+//             for(let i = 0; i < 3; i ++){
+//                 if(i > 0) newAllList.pop()
+//                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
+//                 columnsObjList.push(result)
+//                 yield i
+//             }
+//         }
+//
+//         for(let k of gen()){
+//             if( k >= 3 ) break
+//         }
+//
+//         columnsObjList = columnsObjList.reverse()
+//         const latestColumnsObjList = columnsObjList.slice(-3)
+//
+//         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
+//
+//         if(positionChange || !globalHolding || !globalHolding.length){
+//             try{
+//                 const { positions: holding } = await cAuthClientBN.swap.getPosition();
+//                 globalHolding = holding.filter(item=>item.positionAmt && Math.abs(Number(item.positionAmt)) > 0) || []
+//                 positionChange = false
+//             }catch (e) {
+//                 // if(result.error_message) throw new Error('Cannot get position!');
+//                 restart('getPosition');
+//             }
+//         }
+//
+//         let longHolding;
+//         let shortHolding
+//         let longRatio = 0
+//         let shortRatio = 0
+//
+//         let holding = globalHolding
+//         if(holding && holding.length){
+//             longHolding = holding.find(item=>item.positionSide=="LONG")
+//             shortHolding = holding.find(item=>item.positionSide=="SHORT")
+//         }
+//
+//         if(longHolding){
+//             const { leverage, entryPrice: avg_cost, } = longHolding;
+//             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+//             lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
+//         }
+//
+//         if(shortHolding){
+//             const { leverage, entryPrice: avg_cost, } = shortHolding;
+//             shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+//             shortRatio = - shortRatio
+//             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
+//         }
+//
+//         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
+//             &&
+//             Number(macdList[macdList.length-1].column) > 0
+//             &&
+//             latestRSI.RSI1 > latestRSI.RSI2
+//             &&
+//             latestRSI.RSI2 > latestRSI.RSI3
+//             &&
+//             latestRSI.RSI3 > 50
+//             &&
+//             latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
+//             &&
+//             latestRSI.RSI1 < 70
+//
+//         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
+//             &&
+//             Number(macdList[macdList.length-1].column) < 0
+//             &&
+//             latestRSI.RSI1 < latestRSI.RSI2
+//             &&
+//             latestRSI.RSI2 < latestRSI.RSI3
+//             &&
+//             latestRSI.RSI3 < 50
+//             &&
+//             latestColumnsObjList[latestColumnsObjList.length-2].RSI3 > 50
+//             &&
+//             latestRSI.RSI1 > 25
+//
+//         const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
+//
+//         const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
+//
+//         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+//         console.log('------------------')
+//         console.log('mark_price',mark_price)
+//         console.log('macdList',macdList.slice(-2))
+//         console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
+//         console.log('------------------')
+//
+//         //开多仓条件
+//         if(
+//             openLongCondition
+//         ){
+//             try {
+//                 if(
+//                     (!longHolding || !Number(longHolding.positionAmt))
+//                     && (!shortHolding || !Number(shortHolding.positionAmt))
+//                 ){
+//                     await openPosition({ openSide: "long", mark_price })
+//                 }
+//             }catch (e){
+//                 console.log(e)
+//             }
+//         }
+//
+//         //平多仓条件
+//         if(
+//             closeLongCondition
+//         ){
+//             try {
+//                 if(longHolding && Number(longHolding.positionAmt)){
+//                     const payload = {
+//                         position: Number(longHolding.positionAmt),
+//                         side: 'long',
+//                         mark_price
+//                     }
+//                     await closePosition(payload)
+//                     lastLongMaxWinRatio = 0
+//                 }
+//             }catch (e){
+//                 console.log(e)
+//             }
+//         }
+//
+//         //开空仓条件
+//         if(
+//             openShortCondition
+//         ){
+//             try {
+//                 if(
+//                     (!longHolding || !Number(longHolding.positionAmt))
+//                     &&
+//                     (!shortHolding || !Number(shortHolding.positionAmt))
+//                 ){
+//                     await openPosition({ openSide: "short", mark_price });
+//                 }
+//             }catch (e){
+//                 console.log(e)
+//             }
+//         }
+//
+//         //平空仓条件
+//         if(
+//             closeShortCondition
+//         ){
+//             try {
+//                 if(shortHolding && Number(shortHolding.positionAmt)){
+//                     const payload = {
+//                         position: Number(shortHolding.positionAmt),
+//                         side: 'short',
+//                         mark_price
+//                     }
+//                     await closePosition(payload)
+//                     lastShortMaxWinRatio = 0
+//                 }
+//             }catch (e){
+//                 console.log(e)
+//             }
+//         }
+//     }
+//
+//     await waitTime(1000 * 8)
+//     await startInterval()
+// }
 
 //测试
 app.all('*', function(req, res, next) {
@@ -349,33 +353,27 @@ const openPosition = async (params = {}) => {
         const type = openSide == 'long' ? 'BUY' : 'SELL';
         console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('position', position, 'type', type, 'side', openSide)
-        // Parameter	Value
-        // symbol	LTCBTC
-        // side	BUY
-        // type	LIMIT
-        // timeInForce	GTC
-        // quantity	1
-        // price	0.1
-        // recvWindow	5000
-        // timestamp	1499827319559
-
-        const payload = {
-            symbol: BN_SYMBOL,
-            side: type,
+        currentPosition = {
             positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
-            type: 'MARKET',
-            quantity: Math.abs(size),
-            recvWindow: 5000,
-            // timeInForce: 'GTC',
-            // timestamp: moment(new Date()).valueOf(),
+            leverage: LEVERAGE,
+            entryPrice: mark_price,
+            positionAmt: INIT_POSITION
         }
-        try{
-            await cAuthClientBN.swap.postOrder(payload)
-            positionChange = true
-        }catch (e) {
-            // throw new Error('Error');
-            restart('open');
-        }
+        // const payload = {
+        //     symbol: BN_SYMBOL,
+        //     side: type,
+        //     positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
+        //     type: 'MARKET',
+        //     quantity: Math.abs(size),
+        //     recvWindow: 5000,
+        // }
+        // try{
+        //     await cAuthClientBN.swap.postOrder(payload)
+        //     positionChange = true
+        // }catch (e) {
+        //     // throw new Error('Error');
+        //     restart('open');
+        // }
     }
     await postOrder(position,mark_price)
 }
@@ -384,24 +382,25 @@ const openPosition = async (params = {}) => {
 const closePosition = async (holding) => {
     const { position = INIT_POSITION, side, mark_price } = holding;
     async function postOrder(size,price) {
-        const type = side == 'long' ? 'SELL' : 'BUY'
-        const payload = {
-            symbol: BN_SYMBOL,
-            side: type,
-            positionSide: side == 'long' ? 'LONG' : 'SHORT',
-            type: 'MARKET',
-            quantity: Math.abs(size),
-            recvWindow: 5000,
-            // timestamp: moment(new Date()).valueOf(),
-        }
-        try{
-            // await validateAndCancelOrder(payload)
-            await cAuthClientBN.swap.postOrder(payload)
-            positionChange = true
-        }catch (e) {
-            // throw new Error('Error');
-            restart('close');
-        }
+        currentPosition = {}
+        // const type = side == 'long' ? 'SELL' : 'BUY'
+        // const payload = {
+        //     symbol: BN_SYMBOL,
+        //     side: type,
+        //     positionSide: side == 'long' ? 'LONG' : 'SHORT',
+        //     type: 'MARKET',
+        //     quantity: Math.abs(size),
+        //     recvWindow: 5000,
+        //     // timestamp: moment(new Date()).valueOf(),
+        // }
+        // try{
+        //     // await validateAndCancelOrder(payload)
+        //     await cAuthClientBN.swap.postOrder(payload)
+        //     positionChange = true
+        // }catch (e) {
+        //     // throw new Error('Error');
+        //     restart('close');
+        // }
     }
     console.log('###################################')
     console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -623,7 +622,9 @@ const waitTime = (time = 1000 * 4) => {
     });
 };
 
-app.get('/swap/getHistory', async (req, response) => {
+app.get('/swap/startHearBeat', async (req, response) => {
+    const {query = {}} = req;
+    const { time } = query;
     try{
         async function getResult(time) {
             const payload = {
@@ -637,19 +638,153 @@ app.get('/swap/getHistory', async (req, response) => {
             const rsiList = getCurrentRSI(list)
 
             const result = {
-                macd: macdList,
-                rsi: rsiList
+                macdList,
+                rsiList
             }
             return result;
         }
-        const time = moment();
-        console.log(time)
+
         const result = await getResult(time);
-        send(response, {errcode: 0, errmsg: 'ok', data: result });
+        await checkDeal(result);
+        send(response, {errcode: 0, errmsg: 'ok', data: {history: result, totalProfit, currentPosition} });
     }catch (e) {
         restart()
     }
 });
+
+const checkDeal = async data => {
+    const { macdList, rsiList } = data;
+    const mark_price = macdList[macdList.length-1].price;
+
+    let longHolding;
+    let shortHolding
+    let longRatio = 0
+    let shortRatio = 0
+
+    if(currentPosition.positionSide == 'LONG') longHolding = currentPosition;
+    if(currentPosition.positionSide == 'SHORT') shortHolding = currentPosition;
+
+    if(longHolding){
+        const { leverage, entryPrice: avg_cost, } = longHolding;
+        longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+    }
+
+    if(shortHolding){
+        const { leverage, entryPrice: avg_cost, } = shortHolding;
+        shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+        shortRatio = - shortRatio
+    }
+
+    const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
+        &&
+        Number(macdList[macdList.length-1].column) > 0
+        &&
+        rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+        &&
+        rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+        &&
+        rsiList[rsiList.length-1].RSI3 > 50
+        &&
+        rsiList[rsiList.length-2].RSI3 < 50
+        &&
+        rsiList[rsiList.length-1].RSI1 < 70
+
+    const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
+        &&
+        Number(macdList[macdList.length-1].column) < 0
+        &&
+        rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
+        &&
+        rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+        &&
+        rsiList[rsiList.length-1].RSI3 < 50
+        &&
+        rsiList[rsiList.length-2].RSI3 > 50
+        &&
+        rsiList[rsiList.length-1].RSI1 > 25
+
+    const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
+
+    const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
+
+    console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+    console.log('------------------')
+    console.log('mark_price',mark_price)
+    console.log('macdList',macdList.slice(-2))
+    console.log('latestColumnsObjList',rsiList.slice(-2))
+    console.log('------------------')
+
+    //开多仓条件
+    if(
+        openLongCondition
+    ){
+        try {
+            if(
+                (!longHolding || !Number(longHolding.positionAmt))
+                && (!shortHolding || !Number(shortHolding.positionAmt))
+            ){
+                await openPosition({ openSide: "long", mark_price })
+            }
+        }catch (e){
+            console.log(e)
+        }
+    }
+
+    //平多仓条件
+    if(
+        closeLongCondition
+    ){
+        try {
+            if(longHolding && Number(longHolding.positionAmt)){
+                const payload = {
+                    position: Number(longHolding.positionAmt),
+                    side: 'long',
+                    mark_price
+                }
+                await closePosition(payload)
+                totalProfit += longRatio
+            }
+        }catch (e){
+            console.log(e)
+        }
+    }
+
+    //开空仓条件
+    if(
+        openShortCondition
+    ){
+        try {
+            if(
+                (!longHolding || !Number(longHolding.positionAmt))
+                &&
+                (!shortHolding || !Number(shortHolding.positionAmt))
+            ){
+                await openPosition({ openSide: "short", mark_price });
+            }
+        }catch (e){
+            console.log(e)
+        }
+    }
+
+    //平空仓条件
+    if(
+        closeShortCondition
+    ){
+        try {
+            if(shortHolding && Number(shortHolding.positionAmt)){
+                const payload = {
+                    position: Number(shortHolding.positionAmt),
+                    side: 'short',
+                    mark_price
+                }
+                await closePosition(payload);
+                totalProfit += shortRatio
+            }
+        }catch (e){
+            console.log(e)
+        }
+    }
+}
 
 // 定时获取交割合约账户信息
 (async ()=>{
