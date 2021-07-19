@@ -83,7 +83,7 @@ function getCurrentMacd(list) {
 function getCurrentRSI(list) {
     let rsiList = []
     function* gen() {
-        for(let i = 1; i < Math.min(list.length, 400); i ++){
+        for(let i = 0; i < Math.min(list.length, 400); i ++){
             if(i > 0) list.pop()
             const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
             rsiList.push(result)
@@ -696,7 +696,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
             macdList,
             rsiList
         }
-        await checkDeal(result);
+        // await checkDeal(result);
         send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList} });
     }catch (e) {
         console.log(e)
