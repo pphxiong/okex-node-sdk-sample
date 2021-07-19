@@ -5,7 +5,9 @@ import moment from "moment";
 import { Line } from '@ant-design/charts';
 import {
   startHearBeat,
-  reset, getHistory
+  reset,
+  getHistory,
+  getLatestProfit
 } from './api';
 import { tradeTypeEnum } from '../../config';
 import mockData from '../mock'
@@ -709,6 +711,13 @@ export default props => {
     message.info(errmsg)
   }
 
+  const fnGetLatestProfit = async () => {
+    const time = moment().valueOf();
+    const payload = { time }
+    const { data } = await getHistory(payload)
+    console.log(data)
+  }
+
   const fnGetHistoryData = async () => {
     const INIT_TIME = moment('2021-07-15 00:00:00').valueOf();
     let heatBeatNum = 5;
@@ -960,6 +969,8 @@ export default props => {
       <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>确定</Button>
 
       <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
+
+      <Button onClick={()=>fnGetLatestProfit()} type="primary" style={{ marginLeft: 10 }}>最新盈亏</Button>
 
       <Button onClick={()=>fnGetHistoryData()} style={{ marginLeft: 10 }}>历史数据</Button>
 

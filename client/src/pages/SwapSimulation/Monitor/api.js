@@ -8,6 +8,12 @@ export async function getHistory(params) {
   });
 }
 
+export async function getLatestProfit(params) {
+  return request(`${commonUrl}/swap/getLatestProfit`, {
+    params,
+  });
+}
+
 export async function startHearBeat(params) {
   return request(`${commonUrl}/swap/startHearBeat`, {
     params,
