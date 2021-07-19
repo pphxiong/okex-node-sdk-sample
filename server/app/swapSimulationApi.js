@@ -91,7 +91,7 @@ function getCurrentRSI(list) {
         if( k >= 3 ) break
     }
 
-    rsiList = rsiList.slice(-1)
+    rsiList = rsiList.slice(1)
     return rsiList
 }
 
