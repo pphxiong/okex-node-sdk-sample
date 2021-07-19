@@ -53,7 +53,7 @@ function getCurrentMacd(list) {
                 column: 0,
                 high: Number(item[2]),
                 low: Number(item[3]),
-                time: moment(item[0]).format('YYYY-MM-DD HH:mm:ss')
+                time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss')
             }
         }else{
             const lastResult = macdList[macdList.length-1]
@@ -64,7 +64,7 @@ function getCurrentMacd(list) {
                 lastDea: lastResult.dea,
                 high: Number(item[2]),
                 low: Number(item[3]),
-                time: moment(item[0]).format('YYYY-MM-DD HH:mm:ss')
+                time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss')
             }
             result = getMacd(payload)
         }
