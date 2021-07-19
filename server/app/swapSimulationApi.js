@@ -346,10 +346,10 @@ app.get('/test', function(req, res) {
 });
 
 let cancelInterval;
-const openPosition = async (params = {}) => {
+const openPosition = (params = {}) => {
     const { openSide = 'long', position = Number(INIT_POSITION), mark_price, time } = params;
 
-    async function postOrder(size,price) {
+    function postOrder(size,price) {
         const type = openSide == 'long' ? 'BUY' : 'SELL';
         console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('position', position, 'type', type, 'side', openSide)
@@ -376,13 +376,13 @@ const openPosition = async (params = {}) => {
         //     restart('open');
         // }
     }
-    await postOrder(position,mark_price)
+    postOrder(position,mark_price)
 }
 
 // 平仓
-const closePosition = async (holding) => {
+const closePosition = (holding) => {
     const { position = INIT_POSITION, side, mark_price, time } = holding;
-    async function postOrder(size,price) {
+    function postOrder(size,price) {
         currentPosition = { time }
         // const type = side == 'long' ? 'SELL' : 'BUY'
         // const payload = {
@@ -406,7 +406,7 @@ const closePosition = async (holding) => {
     console.log('###################################')
     console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
     console.log('###################################')
-    await postOrder(position,mark_price)
+    postOrder(position,mark_price)
 }
 
 let positionChange = true;
@@ -724,7 +724,14 @@ const checkDeal = async data => {
                 (!longHolding || !Number(longHolding.positionAmt))
                 && (!shortHolding || !Number(shortHolding.positionAmt))
             ){
-                await openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
+                // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
+                currentPosition = {
+                    positionSide: 'SHORT',
+                    leverage: LEVERAGE,
+                    entryPrice: mark_price,
+                    positionAmt: INIT_POSITION,
+                    time: macdList[macdList.length-1].time,
+                }
             }
         }catch (e){
             console.log(e)
@@ -743,8 +750,9 @@ const checkDeal = async data => {
                     mark_price,
                     time: macdList[macdList.length-1].time
                 }
-                await closePosition(payload)
-                totalProfit += longRatio
+                // closePosition(payload)
+                totalProfit += longRatio;
+                currentPosition = { time: macdList[macdList.length-1].time }
             }
         }catch (e){
             console.log(e)
@@ -761,7 +769,14 @@ const checkDeal = async data => {
                 &&
                 (!shortHolding || !Number(shortHolding.positionAmt))
             ){
-                await openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
+                // openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
+                currentPosition = {
+                    positionSide: 'SHORT',
+                    leverage: LEVERAGE,
+                    entryPrice: mark_price,
+                    positionAmt: INIT_POSITION,
+                    time: macdList[macdList.length-1].time,
+                }
             }
         }catch (e){
             console.log(e)
@@ -780,8 +795,9 @@ const checkDeal = async data => {
                     mark_price,
                     time: macdList[macdList.length-1].time
                 }
-                await closePosition(payload);
+                // closePosition(payload);
                 totalProfit += shortRatio
+                currentPosition = { time: macdList[macdList.length-1].time }
             }
         }catch (e){
             console.log(e)

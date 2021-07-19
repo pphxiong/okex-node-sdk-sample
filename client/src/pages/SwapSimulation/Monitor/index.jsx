@@ -712,13 +712,18 @@ export default props => {
         heatBeatInterval = null;
         return;
       }
-      const time = moment(INIT_TIME).add(3 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
-      console.log(time)
-      const payload = { time: moment(time).valueOf() }
-      const result = await startHearBeat(payload)
-      console.log(result)
-      heatBeatNum++;
-    },1000)
+      try{
+        const time = moment(INIT_TIME).add(3 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
+        const payload = { time: moment(time).valueOf() }
+        const { data: { currentPosition } } = await startHearBeat(payload)
+        // if(currentPosition.time){
+          console.log(currentPosition)
+        // }
+        heatBeatNum++;
+      }catch (e) {
+        console.log(e)
+      }
+    },1000 * 2)
 
     // console.log(moment().subtract(3,'m').format('YYYY-MM-DD HH:mm:00'))
     // console.log(moment().subtract(3,'m').valueOf())
