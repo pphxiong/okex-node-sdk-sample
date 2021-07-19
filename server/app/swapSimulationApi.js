@@ -85,8 +85,8 @@ function getCurrentRSI(list) {
     let rsiList = []
     function* gen() {
         for(let i = 0; i < Math.min(newList.length, 400); i ++){
-            if(i > 0) newList.pop()
-            const result = getRSI(Number(newList[newList.length-1][0]),Number(newList[newList.length-1][4]),newList.map(item=>Number(item[4])))
+            if(i > 0) list.pop()
+            const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
             rsiList.push(result)
             yield i
         }
