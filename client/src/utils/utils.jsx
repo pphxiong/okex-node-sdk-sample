@@ -1,5 +1,5 @@
 import React from 'react';
-
+import moment from "moment";
 import { parse } from 'querystring';
 import pathRegexp from 'path-to-regexp';
 import Ellipsis from '@/components/Ellipsis';
@@ -80,3 +80,93 @@ export const columnEllipsisHandler = columns => {
   }));
   return newColumns;
 };
+
+export function getMacd(params) {
+  const {price,lastEma12,lastEma26,lastDea,high,low,time} = params
+
+  const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,4)
+  const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,4)
+
+  const diff = toFixedAndToNumber(ema12 - ema26,2)
+  const dea = toFixedAndToNumber(2/(9+1) * diff + 8/(9+1) * lastDea,2)
+
+  const column = toFixedAndToNumber(2 * (diff - dea),2)
+
+  const result = {
+    price,
+    ema12,
+    ema26,
+    diff,
+    dea,
+    column,
+    high,
+    low,
+    time
+  }
+
+  return result
+}
+export function toFixedAndToNumber(n,num=1){
+  // return Number(n.toFixed(num))
+  return Math.round(n * Math.pow(10,num)) / Math.pow(10,num)
+}
+export function getRSIAverage(list,i,n){
+  let diff;
+  let gainI = 0;
+  let lossI = 0;
+  if(i==0) {
+    diff = 0;
+  }else{
+    diff = Number(list[i]) - Number(list[i-1])
+    if(diff > 0){
+      gainI = Math.max(0,diff)
+    }else{
+      lossI = Math.max(0,-diff)
+    }
+  }
+
+  let gainAverageI;
+  let lossAverageI;
+
+  if(i==0) {
+    gainAverageI = gainI;
+    lossAverageI = lossI;
+  }else{
+    const lastRSIAverage = getRSIAverage(list,i-1,n);
+    gainAverageI = (gainI + (n-1) * lastRSIAverage.gainAverageI) / n;
+    lossAverageI = (lossI + (n-1) * lastRSIAverage.lossAverageI) / n;
+  }
+
+  // console.log('gain','loss',gainAverageI,lossAverageI)
+  return {
+    gainAverageI,
+    lossAverageI,
+  }
+}
+export function getRSIByPeriod(newList, period){
+  const result = getRSIAverage(newList,newList.length-1,period)
+  const { gainAverageI, lossAverageI } = result
+  // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
+  const RS = gainAverageI / lossAverageI;
+  const RSI = 100 - 100 / (1 + RS);
+  const newResult = {
+    RSI: toFixedAndToNumber(RSI,2),
+    gainAverageI,
+    lossAverageI
+  }
+  return newResult;
+}
+export function getRSI(time,price,list){
+  const { RSI: RSI1 } = getRSIByPeriod(list,6)
+  const { RSI: RSI2 } = getRSIByPeriod(list,12)
+  const { RSI: RSI3 } = getRSIByPeriod(list,24)
+
+  const result = {
+    time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
+    price,
+    RSI1,
+    RSI2,
+    RSI3
+  }
+  return result
+}

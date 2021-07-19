@@ -49,27 +49,27 @@ export default defineConfig({
           routes: [
             {
               path: '/',
-              redirect: '/swap/monitor',
+              redirect: '/swapSimulation/monitor',
             },
-            {
-              path: '/swap',
-              name: '永续',
-              icon: 'smile',
-              routes:[
-                {
-                  path: '/swap/monitor',
-                  name: '概览',
-                  icon: 'smile',
-                  component: './Swap/Monitor',
-                },
-                {
-                  path: '/swap/trade',
-                  name: '交易',
-                  icon: 'crown',
-                  component: './Swap/Trade',
-                },
-              ]
-            },
+            // {
+            //   path: '/swap',
+            //   name: '永续',
+            //   icon: 'smile',
+            //   routes:[
+            //     {
+            //       path: '/swap/monitor',
+            //       name: '概览',
+            //       icon: 'smile',
+            //       component: './Swap/Monitor',
+            //     },
+            //     {
+            //       path: '/swap/trade',
+            //       name: '交易',
+            //       icon: 'crown',
+            //       component: './Swap/Trade',
+            //     },
+            //   ]
+            // },
             {
               path: '/swapSimulation',
               name: '模拟',
@@ -81,12 +81,12 @@ export default defineConfig({
                   icon: 'smile',
                   component: './SwapSimulation/Monitor',
                 },
-                {
-                  path: '/swapSimulation/trade',
-                  name: '交易',
-                  icon: 'crown',
-                  component: './SwapSimulation/Trade',
-                },
+                // {
+                //   path: '/swapSimulation/trade',
+                //   name: '交易',
+                //   icon: 'crown',
+                //   component: './SwapSimulation/Trade',
+                // },
               ]
             },
             // {

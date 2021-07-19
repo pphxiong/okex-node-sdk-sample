@@ -4,18 +4,11 @@ import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
 import {
-  getOrders,
-  getSwapInformation,
-  getSwapInformationSentiment,
-  getTradeFee,
-  getHistory,
-  testOrderApi,
-  testOrderMultiApi,
-  getMultiStatus
+  startHearBeat
 } from './api';
-import { getSwapPosition } from '../../Swap/Trade/api'
 import { tradeTypeEnum } from '../../config';
 import mockData from '../mock'
+// import { getRSI, getMacd } from '@/utils/utils'
 
 const { RangePicker } = DatePicker;
 
@@ -47,15 +40,15 @@ export default props => {
 
   const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
-  const initBTCData = async () => {
-    const result = await getOrders({ instrument_id: BTC_INSTRUMENT_ID, limit: ordersLimit, state: 7 });
-    return result;
-  }
+  // const initBTCData = async () => {
+  //   const result = await getOrders({ instrument_id: BTC_INSTRUMENT_ID, limit: ordersLimit, state: 7 });
+  //   return result;
+  // }
 
-  const initEOSData = async () => {
-    const result = await getOrders({ instrument_id: 'MNEOS-USD-SWAP', limit: ordersLimit, state: 7 });
-    return result;
-  }
+  // const initEOSData = async () => {
+  //   const result = await getOrders({ instrument_id: 'MNEOS-USD-SWAP', limit: ordersLimit, state: 7 });
+  //   return result;
+  // }
 
   const getLongShortRatioData = async () => {
     const result = await getSwapInformation({ currency: 'BTC', granularity: 86400 * 10 });
@@ -290,6 +283,9 @@ export default props => {
     }
 
   }
+
+
+
   let batchNum = 0
   let lossAllNum = 0
   let batchSameSideNum = 0
@@ -536,16 +532,6 @@ export default props => {
     const monthData = mockData[month]
     while(loopNum < 134) {
       const start = moment(day,'YYYY-MM-DD HH:mm:ss').add((loopNum + 1) * 5,'hours').toISOString();
-      // const end = moment(day,'YYYY-MM-DD HH:mm:ss').add(loopNum * 5,'hours').toISOString();
-      // const result = await getHistory({
-      //   instrument_id: 'BTC-USD-SWAP',
-      //   granularity: 60,
-      //   // limit: 20,
-      //   start,
-      //   end
-      // })
-      // let data = result?.data;
-
       let data = monthData[start]
 
       if(Array.isArray(data)){
@@ -718,29 +704,47 @@ export default props => {
   }
 
   const fnGetHistoryByDay = async () => {
-    setPageLoading(true);
-    const firstDay = `2020-${month}-01 00:00:00`;
+    const INIT_TIME = moment(moment().subtract(300,'m').format('YYYY-MM-DD HH:mm:00')).valueOf();
+    let heatBeatNum = 0;
+    let heatBeatInterval = setInterval(async ()=>{
+      if(heatBeatNum >= 100){
+        clearInterval(heatBeatInterval);
+        heatBeatInterval = null;
+        return;
+      }
+      const time = moment(INIT_TIME).add(3 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
+      console.log(time)
+      const result = await startHearBeat(moment(time).valueOf())
+      console.log(result)
+      heatBeatNum++;
+    },1000)
 
-    setDayStep(dayStep+1)
-
-    const { pnl , ratio, dList } = await getDayPnl(firstDay,month);
-
-    setTPnl(pnl);
-    setTPnlRatio(ratio);
-    setPageLoading(false);
-
-    console.log(dList)
-    const newDList = dList.map(item=>({
-      ...item,
-      dList: item.dList?.filter(it=>it.ratio < 0)
-    }))
-    console.log(newDList)
+    // console.log(moment().subtract(3,'m').format('YYYY-MM-DD HH:mm:00'))
+    // console.log(moment().subtract(3,'m').valueOf())
+    // console.log(moment(moment().subtract(3,'m').format('YYYY-MM-DD HH:mm:00')).valueOf())
+    // setPageLoading(true);
+    // const firstDay = `2020-${month}-01 00:00:00`;
+    //
+    // setDayStep(dayStep+1)
+    //
+    // const { pnl , ratio, dList } = await getDayPnl(firstDay,month);
+    //
+    // setTPnl(pnl);
+    // setTPnlRatio(ratio);
+    // setPageLoading(false);
+    //
+    // console.log(dList)
+    // const newDList = dList.map(item=>({
+    //   ...item,
+    //   dList: item.dList?.filter(it=>it.ratio < 0)
+    // }))
+    // console.log(newDList)
   }
 
   useEffect(()=>{
     // getLongShortRatioData();
     // getSentiment();
-    getFee({ instrument_id : BTC_INSTRUMENT_ID });
+    // getFee({ instrument_id : BTC_INSTRUMENT_ID });
     // fnGetHistory();
   },[])
 
@@ -873,14 +877,14 @@ export default props => {
 
   return <Spin spinning={pageLoading}>
     <Card title='概况'>
-      <p>手续费率：
-        手续费档位: {feeObj.category} <Divider type='vertical' />
-        吃单手续费率: {feeObj.taker} <Divider type='vertical' />
-        挂单手续费率: {feeObj.maker} <Divider type='vertical' />
-        时间: {moment(feeObj.timestamp).format('YYYY-MM-DD HH:mm:ss')} <Divider type='vertical' />
-        {/*交割手续费率: {feeObj.delivery} <Divider type='vertical' />*/}
-      </p>
-      <Divider />
+      {/*<p>手续费率：*/}
+      {/*  手续费档位: {feeObj.category} <Divider type='vertical' />*/}
+      {/*  吃单手续费率: {feeObj.taker} <Divider type='vertical' />*/}
+      {/*  挂单手续费率: {feeObj.maker} <Divider type='vertical' />*/}
+      {/*  时间: {moment(feeObj.timestamp).format('YYYY-MM-DD HH:mm:ss')} <Divider type='vertical' />*/}
+      {/*  /!*交割手续费率: {feeObj.delivery} <Divider type='vertical' />*!/*/}
+      {/*</p>*/}
+      {/*<Divider />*/}
 
       frequency:
       <InputNumber
@@ -975,20 +979,20 @@ export default props => {
       <p>总盈亏比：{tPnlRatio}</p>
 
     </Card>
-    <Card title={'BTC交易记录'} >
-      <SearchTable
-        columns={getColumns(pageSize)}
-        getList={initBTCData}
-        responseHandler={data=>responseHandler(data,current,pageSize)}
-        rowKey={"order_id"}
-        tableId={"btc"}
-        key={'btc'}
-        callbackPageSize={(cr,ps)=> {
-          setCurrent(cr)
-          setPageSize(ps)
-        }}
-      />
-    </Card>
+    {/*<Card title={'BTC交易记录'} >*/}
+    {/*  <SearchTable*/}
+    {/*    columns={getColumns(pageSize)}*/}
+    {/*    getList={initBTCData}*/}
+    {/*    responseHandler={data=>responseHandler(data,current,pageSize)}*/}
+    {/*    rowKey={"order_id"}*/}
+    {/*    tableId={"btc"}*/}
+    {/*    key={'btc'}*/}
+    {/*    callbackPageSize={(cr,ps)=> {*/}
+    {/*      setCurrent(cr)*/}
+    {/*      setPageSize(ps)*/}
+    {/*    }}*/}
+    {/*  />*/}
+    {/*</Card>*/}
     {/*<Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>*/}
     {/*  <SearchTable*/}
     {/*    columns={getColumns(eosPageSize)}*/}
