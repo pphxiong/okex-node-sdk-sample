@@ -81,7 +81,7 @@ function getCurrentRSI(list) {
     function* gen() {
         for(let i = 0; i < 3; i ++){
             if(i > 0) list.pop()
-            const result = getRSI(Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
+            const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
             rsiList.push(result)
             yield i
         }
@@ -488,12 +488,13 @@ function getRSIByPeriod(newList, period){
     }
     return newResult;
 }
-function getRSI(price,list){
+function getRSI(time,price,list){
     const { RSI: RSI1 } = getRSIByPeriod(list,6)
     const { RSI: RSI2 } = getRSIByPeriod(list,12)
     const { RSI: RSI3 } = getRSIByPeriod(list,24)
 
     const result = {
+        time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
         price,
         RSI1,
         RSI2,
@@ -624,7 +625,7 @@ const waitTime = (time = 1000 * 4) => {
 
 app.get('/swap/getHistory', async (req, response) => {
     try{
-        function getResult(time) {
+        async function getResult(time) {
             const payload = {
                 bar: '3m',
                 // limit: 100,
