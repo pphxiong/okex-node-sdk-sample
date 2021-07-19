@@ -719,8 +719,7 @@ export default props => {
   }
 
   const fnGetHistoryByDay = async () => {
-    const INIT_DATE = '2021-07-16'
-    const INIT_TIME = moment('2021-07-16 00:00:00').valueOf();
+    const INIT_DATE = '2021-07-15'
     let heatBeatNum = 5;
     // let heatBeatInterval = setInterval(async ()=>{
     //   if(heatBeatNum >= 100){
@@ -729,7 +728,6 @@ export default props => {
     //     return;
     //   }
       try{
-        // const time = moment(INIT_TIME).add(3 * 100 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
         const payload = { date: INIT_DATE }
         const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
         console.log(JSON.stringify(history))
