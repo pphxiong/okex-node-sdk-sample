@@ -39,6 +39,45 @@ function send(res, ret) {
     res.send(str);
 }
 
+function getCurrentMacd(list) {
+    let macdList = []
+    list.map((item,index)=>{
+        let result = {}
+        if(index==0) {
+            result = {
+                price: Number(item[4]),
+                ema12: Number(item[4]),
+                ema26: Number(item[4]),
+                diff: 0,
+                dea: 0,
+                column: 0,
+                high: Number(item[2]),
+                low: Number(item[3])
+            }
+        }else{
+            const lastResult = macdList[macdList.length-1]
+            const payload = {
+                price: Number(item[4]),
+                lastEma12: lastResult.ema12,
+                lastEma26: lastResult.ema26,
+                lastDea: lastResult.dea,
+                high: Number(item[2]),
+                low: Number(item[3]),
+            }
+            result = getMacd(payload)
+        }
+
+        macdList.push(result)
+    })
+
+    macdList = macdList.slice(-1)
+    return macdList
+}
+
+function getCurrentRSI(list) {
+
+}
+
 let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
@@ -572,7 +611,13 @@ app.get('/swap/getHistory', async (req, response) => {
     }
 
     try{
-        const result = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+        const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+        const list = data.reverse()
+        const macdList = getCurrentMacd(list)
+
+        const result = {
+            macd: macdList,
+        }
         send(response, {errcode: 0, errmsg: 'ok', data: result });
     }catch (e) {
         restart()
