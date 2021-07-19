@@ -953,7 +953,7 @@ export default props => {
 
       <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
 
-      <Button onClick={()=>fnReset()} type="primary" style={{ marginLeft: 10 }}>重置</Button>
+      <Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>
 
       <Divider />
 
