@@ -705,7 +705,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async data => {
-    for(let i = 100; i < data.macdList.length - 1; i++){
+    for(let i = 0; i < data.macdList.length - 1; i++){
         checkByStep({
             macdList: [data.macdList[i],data.macdList[i+1]],
             rsiList: [data.rsiList[i],data.rsiList[i+1]],
