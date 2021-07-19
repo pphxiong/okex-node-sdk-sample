@@ -75,7 +75,7 @@ function getCurrentMacd(list) {
         macdList.push(result)
     })
 
-    macdList = macdList.slice(-2)
+    // macdList = macdList.slice(-2)
     return macdList
 }
 
@@ -95,7 +95,7 @@ function getCurrentRSI(list) {
     }
 
     rsiList = rsiList.reverse()
-    rsiList = rsiList.slice(-2)
+    // rsiList = rsiList.slice(-2)
     return rsiList
 }
 
@@ -640,11 +640,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // }
         // const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
         // const list = data.reverse();
-        console.log(date)
-        console.log(`./mock/${date}.js`)
         const mock = require(`./mock/${date}.js`);
         const list = mock.mockData
-        console.log(list.length)
         const newList = JSON.parse(JSON.stringify(list))
         const macdList = getCurrentMacd(newList)
         const rsiList = getCurrentRSI(newList)
@@ -842,7 +839,7 @@ let exec = require('child_process').exec;
 function restart() {
     console.log('restarting......')
     setTimeout(()=>{
-        exec('npm run restart', function(err, stdout , stderr ){
+        exec('npm run restart:product', function(err, stdout , stderr ){
             if (err) {
                 console.log('restarting failed')
             }else{
