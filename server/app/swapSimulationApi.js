@@ -465,6 +465,9 @@ function getRSIAverage(list,i,n){
     if(i==0) {
         gainAverageI = gainI;
         lossAverageI = lossI;
+    }else if(i==1||i==2){
+        gainAverageI = 100;
+        lossAverageI = 100;
     }else{
         const lastRSIAverage = getRSIAverage(list,i-1,n);
         gainAverageI = (gainI + (n-1) * lastRSIAverage.gainAverageI) / n;
@@ -690,14 +693,14 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         currentPosition = {};
 
         const newList = JSON.parse(JSON.stringify(list))
-        const macdList = getCurrentMacd(newList)
-        const rsiList = getCurrentRSI(newList)
+        const macdList = getCurrentMacd(newList).slice(-40)
+        const rsiList = getCurrentRSI(newList).slice(-40)
 
         const result = {
             macdList,
             rsiList
         }
-        // await checkDeal(result);
+        await checkDeal(result);
         send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList} });
     }catch (e) {
         console.log(e)
