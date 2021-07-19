@@ -726,7 +726,7 @@ const checkDeal = async data => {
             ){
                 // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                 currentPosition = {
-                    positionSide: 'SHORT',
+                    positionSide: 'LONG',
                     leverage: LEVERAGE,
                     entryPrice: mark_price,
                     positionAmt: INIT_POSITION,
@@ -744,12 +744,12 @@ const checkDeal = async data => {
     ){
         try {
             if(longHolding && Number(longHolding.positionAmt)){
-                const payload = {
-                    position: Number(longHolding.positionAmt),
-                    side: 'long',
-                    mark_price,
-                    time: macdList[macdList.length-1].time
-                }
+                // const payload = {
+                //     position: Number(longHolding.positionAmt),
+                //     side: 'long',
+                //     mark_price,
+                //     time: macdList[macdList.length-1].time
+                // }
                 // closePosition(payload)
                 totalProfit += longRatio;
                 currentPosition = { time: macdList[macdList.length-1].time }
@@ -789,12 +789,12 @@ const checkDeal = async data => {
     ){
         try {
             if(shortHolding && Number(shortHolding.positionAmt)){
-                const payload = {
-                    position: Number(shortHolding.positionAmt),
-                    side: 'short',
-                    mark_price,
-                    time: macdList[macdList.length-1].time
-                }
+                // const payload = {
+                //     position: Number(shortHolding.positionAmt),
+                //     side: 'short',
+                //     mark_price,
+                //     time: macdList[macdList.length-1].time
+                // }
                 // closePosition(payload);
                 totalProfit += shortRatio
                 currentPosition = { time: macdList[macdList.length-1].time }

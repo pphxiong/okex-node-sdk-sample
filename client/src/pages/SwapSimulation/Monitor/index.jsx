@@ -715,10 +715,9 @@ export default props => {
       try{
         const time = moment(INIT_TIME).add(3 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
         const payload = { time: moment(time).valueOf() }
-        const { data: { currentPosition } } = await startHearBeat(payload)
-        // if(currentPosition.time){
-          console.log(currentPosition)
-        // }
+        const { data: { currentPosition, totalProfit } } = await startHearBeat(payload)
+        console.log('currentPosition',currentPosition)
+        console.log('totalProfit',totalProfit)
         heatBeatNum++;
       }catch (e) {
         console.log(e)
