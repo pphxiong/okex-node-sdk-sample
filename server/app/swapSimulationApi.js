@@ -75,7 +75,22 @@ function getCurrentMacd(list) {
 }
 
 function getCurrentRSI(list) {
+    let rsiList = []
+    function* gen() {
+        for(let i = 0; i < 3; i ++){
+            if(i > 0) list.pop()
+            const result = getRSI(Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
+            rsiList.push(result)
+            yield i
+        }
+    }
 
+    for(let k of gen()){
+        if( k >= 3 ) break
+    }
+
+    rsiList = rsiList.slice(-1)
+    return rsiList
 }
 
 let lastLongMaxWinRatio = 0
@@ -614,9 +629,11 @@ app.get('/swap/getHistory', async (req, response) => {
         const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
         const list = data.reverse()
         const macdList = getCurrentMacd(list)
+        const rsiList = getCurrentRSI(list)
 
         const result = {
             macd: macdList,
+            rsi: rsiList
         }
         send(response, {errcode: 0, errmsg: 'ok', data: result });
     }catch (e) {
@@ -626,7 +643,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 // 定时获取交割合约账户信息
 (async ()=>{
-    await startInterval()
+    // await startInterval()
 })()
 app.listen(8092);
 
