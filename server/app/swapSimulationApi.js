@@ -846,7 +846,7 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
-                        currentProfit: longRatio
+                        currentProfit: shortRatio
                     }
                     dealDetailList.push(currentPosition)
                 }
