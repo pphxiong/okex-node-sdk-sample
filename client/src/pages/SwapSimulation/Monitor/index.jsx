@@ -714,7 +714,8 @@ export default props => {
       }
       const time = moment(INIT_TIME).add(3 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
       console.log(time)
-      const result = await startHearBeat(moment(time).valueOf())
+      const payload = { time: moment(time).valueOf() }
+      const result = await startHearBeat(payload)
       console.log(result)
       heatBeatNum++;
     },1000)

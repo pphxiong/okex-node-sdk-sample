@@ -347,7 +347,7 @@ app.get('/test', function(req, res) {
 
 let cancelInterval;
 const openPosition = async (params = {}) => {
-    const { openSide = 'long', position = Number(INIT_POSITION), mark_price } = params;
+    const { openSide = 'long', position = Number(INIT_POSITION), mark_price, time } = params;
 
     async function postOrder(size,price) {
         const type = openSide == 'long' ? 'BUY' : 'SELL';
@@ -357,7 +357,8 @@ const openPosition = async (params = {}) => {
             positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
             leverage: LEVERAGE,
             entryPrice: mark_price,
-            positionAmt: INIT_POSITION
+            positionAmt: INIT_POSITION,
+            time,
         }
         // const payload = {
         //     symbol: BN_SYMBOL,
@@ -380,9 +381,9 @@ const openPosition = async (params = {}) => {
 
 // 平仓
 const closePosition = async (holding) => {
-    const { position = INIT_POSITION, side, mark_price } = holding;
+    const { position = INIT_POSITION, side, mark_price, time } = holding;
     async function postOrder(size,price) {
-        currentPosition = {}
+        currentPosition = { time }
         // const type = side == 'long' ? 'SELL' : 'BUY'
         // const payload = {
         //     symbol: BN_SYMBOL,
@@ -723,7 +724,7 @@ const checkDeal = async data => {
                 (!longHolding || !Number(longHolding.positionAmt))
                 && (!shortHolding || !Number(shortHolding.positionAmt))
             ){
-                await openPosition({ openSide: "long", mark_price })
+                await openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
             }
         }catch (e){
             console.log(e)
@@ -739,7 +740,8 @@ const checkDeal = async data => {
                 const payload = {
                     position: Number(longHolding.positionAmt),
                     side: 'long',
-                    mark_price
+                    mark_price,
+                    time: macdList[macdList.length-1].time
                 }
                 await closePosition(payload)
                 totalProfit += longRatio
@@ -759,7 +761,7 @@ const checkDeal = async data => {
                 &&
                 (!shortHolding || !Number(shortHolding.positionAmt))
             ){
-                await openPosition({ openSide: "short", mark_price });
+                await openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
             }
         }catch (e){
             console.log(e)
@@ -775,7 +777,8 @@ const checkDeal = async data => {
                 const payload = {
                     position: Number(shortHolding.positionAmt),
                     side: 'short',
-                    mark_price
+                    mark_price,
+                    time: macdList[macdList.length-1].time
                 }
                 await closePosition(payload);
                 totalProfit += shortRatio
