@@ -635,13 +635,14 @@ app.get('/swap/startHearBeat', async (req, response) => {
     try{
         const payload = {
             bar: '3m',
-            // limit: 100,
+            limit: 100,
             after: time
         }
         const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-        const list = data.reverse()
-        const macdList = getCurrentMacd(list)
-        const rsiList = getCurrentRSI(list)
+        const list = data.reverse();
+        const newList = JSON.parse(JSON.stringify(list))
+        const macdList = getCurrentMacd(newList)
+        const rsiList = getCurrentRSI(newList)
 
         const result = {
             macdList,
