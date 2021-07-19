@@ -623,21 +623,27 @@ const waitTime = (time = 1000 * 4) => {
 };
 
 app.get('/swap/getHistory', async (req, response) => {
-    const payload = {
-        bar: '3m',
-        // limit: 100,
-    }
-
     try{
-        const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-        const list = data.reverse()
-        const macdList = getCurrentMacd(list)
-        const rsiList = getCurrentRSI(list)
+        function getResult(time) {
+            const payload = {
+                bar: '3m',
+                // limit: 100,
+                after: time
+            }
+            const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+            const list = data.reverse()
+            const macdList = getCurrentMacd(list)
+            const rsiList = getCurrentRSI(list)
 
-        const result = {
-            macd: macdList,
-            rsi: rsiList
+            const result = {
+                macd: macdList,
+                rsi: rsiList
+            }
+            return result;
         }
+        const time = moment();
+        console.log(time)
+        const result = getResult(time);
         send(response, {errcode: 0, errmsg: 'ok', data: result });
     }catch (e) {
         restart()
