@@ -642,7 +642,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // const list = data.reverse();
         console.log(date)
         console.log(`./mock/${date}.js`)
-        const list = require(`./mock/${date}.js`);
+        const mock = require(`./mock/${date}.js`);
+        const list = mock.mockData
         console.log(list.length)
         const newList = JSON.parse(JSON.stringify(list))
         const macdList = getCurrentMacd(newList)
