@@ -658,7 +658,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 });
 
 const checkDeal = async data => {
-    for(let i = 0; i < data.macdList.length - 1; i++){
+    for(let i = 100; i < data.macdList.length - 1; i++){
         checkByStep({
             macdList: [data.macdList[i],data.macdList[i+1]],
             rsiList: [data.rsiList[i],data.rsiList[i+1]],
@@ -720,12 +720,12 @@ const checkDeal = async data => {
 
         const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
 
-        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('------------------')
-        console.log('mark_price',mark_price)
-        console.log('macdList',macdList.slice(-2))
-        console.log('latestColumnsObjList',rsiList.slice(-2))
-        console.log('------------------')
+        // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('------------------')
+        // console.log('mark_price',mark_price)
+        // console.log('macdList',macdList.slice(-2))
+        // console.log('latestColumnsObjList',rsiList.slice(-2))
+        // console.log('------------------')
 
         //开多仓条件
         if(
