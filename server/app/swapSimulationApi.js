@@ -644,7 +644,7 @@ app.get('/swap/getHistory', async (req, response) => {
         }
         const time = moment();
         console.log(time)
-        const result = getResult(time);
+        const result = await getResult(time);
         send(response, {errcode: 0, errmsg: 'ok', data: result });
     }catch (e) {
         restart()
