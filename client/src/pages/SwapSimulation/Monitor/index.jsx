@@ -713,8 +713,9 @@ export default props => {
 
   const fnGetLatestProfit = async () => {
     const time = moment().valueOf();
+    console.log(time)
     const payload = { time }
-    const { data } = await getHistory(payload)
+    const { data } = await getLatestProfit(payload)
     console.log(data)
   }
 
@@ -970,7 +971,7 @@ export default props => {
 
       <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
 
-      <Button onClick={()=>fnGetLatestProfit()} type="primary" style={{ marginLeft: 10 }}>最新盈亏</Button>
+      <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最新盈亏</Button>
 
       <Button onClick={()=>fnGetHistoryData()} style={{ marginLeft: 10 }}>历史数据</Button>
 

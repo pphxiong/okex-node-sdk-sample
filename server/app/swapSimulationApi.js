@@ -699,6 +699,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         await checkDeal(result);
         send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList} });
     }catch (e) {
+        console.log(e)
         restart()
     }
 });
