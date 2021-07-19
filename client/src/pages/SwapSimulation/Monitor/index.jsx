@@ -5,7 +5,7 @@ import moment from "moment";
 import { Line } from '@ant-design/charts';
 import {
   startHearBeat,
-  reset
+  reset, getHistory
 } from './api';
 import { tradeTypeEnum } from '../../config';
 import mockData from '../mock'
@@ -711,10 +711,10 @@ export default props => {
 
   const fnGetHistoryData = async () => {
     const INIT_TIME = moment('2021-07-15 00:00:00').valueOf();
-    let heatBeatNum = 1;
+    let heatBeatNum = 5;
     const time = moment(INIT_TIME).add(3 * 100 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
     const payload = { time: moment(time).valueOf() }
-    const { data } = await startHearBeat(payload)
+    const { data } = await getHistory(payload)
     console.log(JSON.stringify(data))
   }
 
