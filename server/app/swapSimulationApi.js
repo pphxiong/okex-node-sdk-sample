@@ -17,6 +17,7 @@ const INIT_POSITION = 1;
 const LEVERAGE = 10;
 let currentPosition = {};
 let totalProfit = 0;
+let dealDetailList = [];
 
 let myInterval;
 
@@ -651,7 +652,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             rsiList
         }
         await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition} });
+        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList} });
     }catch (e) {
         restart()
     }
@@ -745,6 +746,7 @@ const checkDeal = async data => {
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
                     }
+                    dealDetailList.push(currentPosition)
                 }
             }catch (e){
                 console.log(e)
@@ -771,6 +773,7 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         time: macdList[macdList.length-1].time
                     }
+                    dealDetailList.push(currentPosition)
                 }
             }catch (e){
                 console.log(e)
@@ -796,6 +799,7 @@ const checkDeal = async data => {
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
                     }
+                    dealDetailList.push(currentPosition)
                 }
             }catch (e){
                 console.log(e)
@@ -822,6 +826,7 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         time: macdList[macdList.length-1].time
                     }
+                    dealDetailList.push(currentPosition)
                 }
             }catch (e){
                 console.log(e)
