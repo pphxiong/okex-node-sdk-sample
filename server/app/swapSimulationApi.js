@@ -658,11 +658,14 @@ app.get('/swap/startHearBeat', async (req, response) => {
 });
 
 const checkDeal = async data => {
-    for(let i = 0; i < data.length - 1; i++){
-        checkByStep([data[i],data[i+1]])
+    for(let i = 0; i < data.macdList.length - 1; i++){
+        checkByStep({
+            macdList: [data.macdList[i],data.macdList[i+1]],
+            rsiList: [data.rsiList[i],data.rsiList[i+1]],
+        })
     }
 
-    function checkByStep(list){
+    function checkByStep(data){
         const { macdList, rsiList } = data;
         const mark_price = macdList[macdList.length-1].price;
 
