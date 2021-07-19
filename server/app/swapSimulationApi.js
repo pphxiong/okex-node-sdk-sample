@@ -761,7 +761,6 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
-                        totalProfit,
                     }
                     dealDetailList.push(currentPosition)
                 }
@@ -817,7 +816,6 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
-                        totalProfit
                     }
                     dealDetailList.push(currentPosition)
                 }
