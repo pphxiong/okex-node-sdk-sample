@@ -75,14 +75,14 @@ function getCurrentMacd(list) {
         macdList.push(result)
     })
 
-    // macdList = macdList.slice(-2)
+    macdList = macdList.slice(-400)
     return macdList
 }
 
 function getCurrentRSI(list) {
     let rsiList = []
     function* gen() {
-        for(let i = 0; i < 480; i ++){
+        for(let i = 0; i < 400; i ++){
             if(i > 0) list.pop()
             const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
             rsiList.push(result)
@@ -91,7 +91,7 @@ function getCurrentRSI(list) {
     }
 
     for(let k of gen()){
-        if( k >= 480 ) break
+        if( k >= 400 ) break
     }
 
     rsiList = rsiList.reverse()
