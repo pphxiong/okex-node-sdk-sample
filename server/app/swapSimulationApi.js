@@ -52,7 +52,8 @@ function getCurrentMacd(list) {
                 dea: 0,
                 column: 0,
                 high: Number(item[2]),
-                low: Number(item[3])
+                low: Number(item[3]),
+                time: moment(item[0]).format('YYYY-MM-DD HH:mm:ss')
             }
         }else{
             const lastResult = macdList[macdList.length-1]
@@ -63,6 +64,7 @@ function getCurrentMacd(list) {
                 lastDea: lastResult.dea,
                 high: Number(item[2]),
                 low: Number(item[3]),
+                time: moment(item[0]).format('YYYY-MM-DD HH:mm:ss')
             }
             result = getMacd(payload)
         }
@@ -412,7 +414,7 @@ let globalHolding = null;
 let openMarketPrice = 0
 let globalColumnsObjList;
 function getMacd(params) {
-    const {price,lastEma12,lastEma26,lastDea,high,low} = params
+    const {price,lastEma12,lastEma26,lastDea,high,low,time} = params
 
     const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,4)
     const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,4)
@@ -430,7 +432,8 @@ function getMacd(params) {
         dea,
         column,
         high,
-        low
+        low,
+        time
     }
 
     return result
