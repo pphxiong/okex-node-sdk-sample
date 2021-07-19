@@ -630,9 +630,22 @@ app.get('/swap/reset', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition } });
 });
 
+app.get('/swap/getHistory', async (req, response) => {
+    const {query = {}} = req;
+    const { time } = query;
+    const payload = {
+        bar: '3m',
+        limit: 100,
+        after: time
+    }
+    const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+    const list = data.reverse();
+    send(response, {errcode: 0, errmsg: 'ok', data: list });
+});
+
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date } = query;
+    const { date } = query;
     try{
         // const payload = {
         //     bar: '3m',
@@ -641,6 +654,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // }
         // const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
         // const list = data.reverse();
+        totalProfit = 0;
+        currentPosition = {};
+
         const mock = require(`./mock/${date}.js`);
         const list = mock.mockData
         const newList = JSON.parse(JSON.stringify(list))

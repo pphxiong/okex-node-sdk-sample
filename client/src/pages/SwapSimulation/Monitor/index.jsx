@@ -709,9 +709,18 @@ export default props => {
     message.info(errmsg)
   }
 
+  const fnGetHistoryData = async () => {
+    const INIT_TIME = moment('2021-07-15 00:00:00').valueOf();
+    let heatBeatNum = 1;
+    const time = moment(INIT_TIME).add(3 * 100 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
+    const payload = { time: moment(time).valueOf() }
+    const { data } = await startHearBeat(payload)
+    console.log(JSON.stringify(data))
+  }
+
   const fnGetHistoryByDay = async () => {
-    const INIT_DATE = '2021-07-17'
-    const INIT_TIME = moment('2021-07-17 00:00:00').valueOf();
+    const INIT_DATE = '2021-07-16'
+    const INIT_TIME = moment('2021-07-16 00:00:00').valueOf();
     let heatBeatNum = 5;
     // let heatBeatInterval = setInterval(async ()=>{
     //   if(heatBeatNum >= 100){
@@ -720,8 +729,8 @@ export default props => {
     //     return;
     //   }
       try{
-        const time = moment(INIT_TIME).add(3 * 100 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
-        const payload = { time: moment(time).valueOf(), date: INIT_DATE }
+        // const time = moment(INIT_TIME).add(3 * 100 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
+        const payload = { date: INIT_DATE }
         const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
         console.log(JSON.stringify(history))
         console.log('currentPosition',currentPosition)
@@ -953,6 +962,8 @@ export default props => {
       <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>确定</Button>
 
       <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
+
+      <Button onClick={()=>fnGetHistoryData()} style={{ marginLeft: 10 }}>历史数据</Button>
 
       <Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>
 
