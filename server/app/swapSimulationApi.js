@@ -684,6 +684,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
             after: time
         }
         const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+        console.log(time)
+        console.log(data)
         const list = data.reverse();
         totalProfit = 0;
         currentPosition = {};

@@ -712,7 +712,7 @@ export default props => {
   }
 
   const fnGetLatestProfit = async () => {
-    const time = moment().valueOf();
+    const time = moment('2021-07-19 17:48:00').valueOf();
     console.log(time)
     const payload = { time }
     const { data } = await getLatestProfit(payload)
