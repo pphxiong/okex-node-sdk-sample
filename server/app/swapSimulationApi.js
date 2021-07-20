@@ -802,6 +802,13 @@ const checkDeal = async data => {
                 ){
                     // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                     currentPosition = {
+                        positionSide: 'LONG',
+                        leverage: LEVERAGE,
+                        entryPrice: mark_price,
+                        positionAmt: INIT_POSITION,
+                        time: macdList[macdList.length-1].time,
+                    }
+                    const dealDetail = {
                         side: 'OPEN',
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -810,7 +817,7 @@ const checkDeal = async data => {
                         time: macdList[macdList.length-1].time,
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
-                    dealDetailList.push(currentPosition)
+                    dealDetailList.push(dealDetail)
                 }
             }catch (e){
                 console.log(e)
@@ -832,7 +839,8 @@ const checkDeal = async data => {
                     // closePosition(payload)
                     totalProfit += longRatio;
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
-                    currentPosition = {
+                    currentPosition = {}
+                    const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
                         entryPrice: mark_price,
@@ -841,7 +849,7 @@ const checkDeal = async data => {
                         totalProfit,
                         currentProfit: longRatio
                     }
-                    dealDetailList.push(currentPosition)
+                    dealDetailList.push(dealDetail)
                     if(longRatio < mostLoss.profit){
                         mostLoss = {
                             profit: longRatio,
@@ -866,6 +874,13 @@ const checkDeal = async data => {
                 ){
                     // openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
                     currentPosition = {
+                        positionSide: 'SHORT',
+                        leverage: LEVERAGE,
+                        entryPrice: mark_price,
+                        positionAmt: INIT_POSITION,
+                        time: macdList[macdList.length-1].time,
+                    }
+                    const dealDetail = {
                         side: 'OPEN',
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
@@ -874,7 +889,7 @@ const checkDeal = async data => {
                         time: macdList[macdList.length-1].time,
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
-                    dealDetailList.push(currentPosition)
+                    dealDetailList.push(dealDetail)
                 }
             }catch (e){
                 console.log(e)
@@ -896,7 +911,8 @@ const checkDeal = async data => {
                     // closePosition(payload);
                     totalProfit += shortRatio
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
-                    currentPosition = {
+                    currentPosition = {}
+                    const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
                         entryPrice: mark_price,
@@ -905,7 +921,7 @@ const checkDeal = async data => {
                         totalProfit,
                         currentProfit: shortRatio
                     }
-                    dealDetailList.push(currentPosition)
+                    dealDetailList.push(dealDetail)
                     if(shortRatio < mostLoss.profit){
                         mostLoss = {
                             profit: shortRatio,
