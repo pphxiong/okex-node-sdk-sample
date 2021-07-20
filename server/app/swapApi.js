@@ -52,7 +52,7 @@ const startInterval = async () => {
     }
 
     try{
-        const data = await cAuthClientBN.swap.getHistory(BN_SYMBOL, payload)
+        const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         console.log(data[data.length-1])
         globalColumnsObjList = data.reverse()
         // globalColumnsObjList = data
@@ -66,7 +66,7 @@ const startInterval = async () => {
         try{
             // const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
             // mark_price = Number(data[0].markPx);
-            const { markPrice }= await cAuthClientBN.swap.getMarkPrice(BN_SYMBOL);
+            const { markPrice }= await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
             mark_price = Number(markPrice);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');

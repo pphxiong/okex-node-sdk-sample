@@ -26,6 +26,12 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
         };
     };
 
+    const commonGet = function(url, params) {
+        return request(apiUri + url,{
+            method: 'GET',
+        })
+    }
+
     const get = function(url, params) {
         const signObj = getSignature('GET', url)
         const { timestamp, signature } = signObj;
@@ -64,11 +70,13 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
             getPosition: function (instrument_id, instType){
                 return get(`/fapi/v2/account`)
             },
-            getHistory: function (symbol, params) {
-                return get(`/fapi/v1/klines?symbol=${symbol}&` + querystring.stringify(params));
-            },
+        },
+        common: {
             getMarkPrice: function (symbol){
-                return get(`/fapi/v1/premiumIndex?symbol=${symbol}`)
+                return commonGet(`/fapi/v1/premiumIndex?symbol=${symbol}`)
+            },
+            getHistory: function (symbol, params) {
+                return commonGet(`/fapi/v1/klines?symbol=${symbol}&` + querystring.stringify(params));
             },
         }
     }
