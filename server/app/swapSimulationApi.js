@@ -691,6 +691,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         const list = data.reverse();
         totalProfit = 0;
         currentPosition = {};
+        dealDetailList = [];
 
         const newList = JSON.parse(JSON.stringify(list))
         const macdList = getCurrentMacd(newList).slice(-40)
