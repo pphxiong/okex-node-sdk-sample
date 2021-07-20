@@ -36,7 +36,8 @@ export default props => {
   const [month,setMonth] = useState('11');
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
-  const [dayStep, setDayStep] = useState(0)
+  const [dayStep, setDayStep] = useState(0);
+  const [date,setDate] = useState("");
 
   const BTC_INSTRUMENT_ID = 'MNBTC-USD-SWAP';
   const SWAP_BTC_INSTRUMENT_ID = 'BTC-USD-SWAP';
@@ -736,25 +737,29 @@ export default props => {
   }
 
   const fnGetHistoryData = async () => {
-    const time = '2021-07-13 00:00:00'
+    if(!date) {
+      message.warning('请先选择日期');
+      return;
+    }
+    const time = `${date} 00:00:00`;
     const INIT_TIME = moment(time).valueOf();
     let i = 1;
     let hData = []
     const p = new Promise(resolve => {
-      let hInterval = setInterval(async () => {
-        if(i>6){
-          clearInterval(hInterval);
-          hInterval = null;
-          i=1;
-          resolve(hData)
-          return;
-        }
+      const getData = async () => {
         const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
         const payload = { time: moment(time).valueOf() }
         const { data } = await getHistory(payload)
         hData = hData.concat(data)
         i++;
-      }, 1000 * 3)
+        if(i>6){
+          i = 1;
+          resolve(hData);
+          return;
+        }
+        await getData();
+      }
+      getData();
     })
     p.then(data=>{
       console.log(JSON.stringify(data))
@@ -767,46 +772,12 @@ export default props => {
   }
 
   const fnGetHistoryByDay = async () => {
-    const INIT_DATE = '2021-07-17'
-    let heatBeatNum = 5;
-    // let heatBeatInterval = setInterval(async ()=>{
-    //   if(heatBeatNum >= 100){
-    //     clearInterval(heatBeatInterval);
-    //     heatBeatInterval = null;
-    //     return;
-    //   }
-      try{
-        const payload = { date: INIT_DATE }
-        const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
-        console.log(JSON.stringify(history))
-        console.log('currentPosition',currentPosition)
-        console.log('totalProfit',totalProfit)
-        heatBeatNum++;
-      }catch (e) {
-        console.log(e)
-      }
-    // },1000 * 2)
-
-    // console.log(moment().subtract(3,'m').format('YYYY-MM-DD HH:mm:00'))
-    // console.log(moment().subtract(3,'m').valueOf())
-    // console.log(moment(moment().subtract(3,'m').format('YYYY-MM-DD HH:mm:00')).valueOf())
-    // setPageLoading(true);
-    // const firstDay = `2020-${month}-01 00:00:00`;
-    //
-    // setDayStep(dayStep+1)
-    //
-    // const { pnl , ratio, dList } = await getDayPnl(firstDay,month);
-    //
-    // setTPnl(pnl);
-    // setTPnlRatio(ratio);
-    // setPageLoading(false);
-    //
-    // console.log(dList)
-    // const newDList = dList.map(item=>({
-    //   ...item,
-    //   dList: item.dList?.filter(it=>it.ratio < 0)
-    // }))
-    // console.log(newDList)
+    const INIT_DATE = date;
+    const payload = { date: INIT_DATE }
+    const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
+    console.log(JSON.stringify(history))
+    console.log('currentPosition',currentPosition)
+    console.log('totalProfit',totalProfit)
   }
 
   useEffect(()=>{
@@ -954,47 +925,47 @@ export default props => {
       {/*</p>*/}
       {/*<Divider />*/}
 
-      frequency:
-      <InputNumber
-        value={ frequency }
-        step={0.1}
-        min={0.1}
-        max={10}
-        onChange={v=>setFrequency(Number(v))}
-      />
+      {/*frequency:*/}
+      {/*<InputNumber*/}
+      {/*  value={ frequency }*/}
+      {/*  step={0.1}*/}
+      {/*  min={0.1}*/}
+      {/*  max={10}*/}
+      {/*  onChange={v=>setFrequency(Number(v))}*/}
+      {/*/>*/}
 
-      winRatio:
-      <InputNumber
-        value={ changebleWinRatio }
-        step={0.1}
-        min={0.1}
-        max={10}
-        onChange={v=> {
-          setChangebleWinRatio(Number(v))
-          winRatio.current = (Number(v))
-        }}
-      />
+      {/*winRatio:*/}
+      {/*<InputNumber*/}
+      {/*  value={ changebleWinRatio }*/}
+      {/*  step={0.1}*/}
+      {/*  min={0.1}*/}
+      {/*  max={10}*/}
+      {/*  onChange={v=> {*/}
+      {/*    setChangebleWinRatio(Number(v))*/}
+      {/*    winRatio.current = (Number(v))*/}
+      {/*  }}*/}
+      {/*/>*/}
 
-      lossRatio:
-      <InputNumber
-        value={ changebleLossRatio }
-        step={0.1}
-        min={0.1}
-        max={10}
-        onChange={v=> {
-          setChangebleLossRatio(Number(v))
-          lossRatio.current = (Number(v))
-        }}
-      />
+      {/*lossRatio:*/}
+      {/*<InputNumber*/}
+      {/*  value={ changebleLossRatio }*/}
+      {/*  step={0.1}*/}
+      {/*  min={0.1}*/}
+      {/*  max={10}*/}
+      {/*  onChange={v=> {*/}
+      {/*    setChangebleLossRatio(Number(v))*/}
+      {/*    lossRatio.current = (Number(v))*/}
+      {/*  }}*/}
+      {/*/>*/}
 
-      杠杆:
-      <InputNumber
-        value={ leverage }
-        step={1}
-        min={1}
-        max={100}
-        onChange={v=>setLeverage(Number(v))}
-      />
+      {/*杠杆:*/}
+      {/*<InputNumber*/}
+      {/*  value={ leverage }*/}
+      {/*  step={1}*/}
+      {/*  min={1}*/}
+      {/*  max={100}*/}
+      {/*  onChange={v=>setLeverage(Number(v))}*/}
+      {/*/>*/}
 
       月份：
       <Select value={month} onChange={v=>{setMonth(v);setDayStep(0)}} style={{ width: 120 }}>
@@ -1005,15 +976,17 @@ export default props => {
         }
       </Select>
 
+      <DatePicker onChange={(v,dateString)=>setDate(dateString)} style={{ marginLeft: 10 }}/>
+
       <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>确定</Button>
 
-      <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>步测</Button>
+      <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>测算</Button>
 
       <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最新盈亏</Button>
 
-      <Button onClick={()=>fnGetHistoryData()} style={{ marginLeft: 10 }}>历史数据</Button>
+      <Button onClick={()=>fnGetHistoryData()} style={{ marginLeft: 10 }}>下载历史数据</Button>
 
-      <Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>
+      {/*<Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>*/}
 
       <Divider />
 
