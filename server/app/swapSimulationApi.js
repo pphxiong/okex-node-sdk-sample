@@ -639,9 +639,9 @@ app.get('/swap/getHistory', async (req, response) => {
     const {query = {}} = req;
     const { time } = query;
     const payload = {
-        bar: '3m',
+        interval: '3m',
         limit: 80,
-        after: time
+        endTime: time
     }
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
     // const list = data.reverse();
@@ -686,9 +686,9 @@ app.get('/swap/getLatestProfit', async (req, response) => {
     const { time } = query;
     try{
         const payload = {
-            bar: '3m',
+            interval: '3m',
             limit: 100,
-            after: time
+            endTime: time
         }
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;

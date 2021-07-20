@@ -767,9 +767,9 @@ export default props => {
           return;
         }
         const newDate = `${yearAndMonth}-${dayList[i]}`;
-        setTimeout(async ()=>{
+        // setTimeout(async ()=>{
           await getDayData(newDate);
-        }, 1000 * 5)
+        // }, 1000 * 5)
       }
       const date = `${yearAndMonth}-${dayList[i]}`;
       await getDayData(date);
