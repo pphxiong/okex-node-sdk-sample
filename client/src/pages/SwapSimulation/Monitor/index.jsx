@@ -719,15 +719,33 @@ export default props => {
     console.log(data)
   }
 
+  function downLoad(content,fileName){
+    const aEle = document.createElement("a");// 创建a标签
+    const blob = new Blob([content]);
+    aEle.download = fileName;// 设置下载文件的文件名
+
+    const reader = new FileReader();
+    reader.readAsDataURL(blob); // 转换为base64，可以直接放入a表情href
+    reader.onload = function (e) {
+      // 转换完成，创建一个a标签用于下载
+      const a = document.createElement("a");
+      a.download = fileName + ".js";
+      a.href = e.target.result;
+      a.click();
+    };
+  }
+
   const fnGetHistoryData = async () => {
-    const INIT_TIME = moment('2021-07-19 00:00:00').valueOf();
+    const time = '2021-07-13 00:00:00'
+    const INIT_TIME = moment(time).valueOf();
     let i = 1;
     let hData = []
     const p = new Promise(resolve => {
       let hInterval = setInterval(async () => {
-        if(i>=6){
+        if(i>6){
           clearInterval(hInterval);
           hInterval = null;
+          i=1;
           resolve(hData)
           return;
         }
@@ -736,10 +754,15 @@ export default props => {
         const { data } = await getHistory(payload)
         hData = hData.concat(data)
         i++;
-      }, 1000 * 5)
+      }, 1000 * 3)
     })
     p.then(data=>{
       console.log(JSON.stringify(data))
+      const content = `const mockData = ${JSON.stringify(data)};
+      module.exports.mockData = mockData;`;
+
+      const fileName = `${time.split(' ')[0]}`;
+      downLoad(content,fileName);
     })
   }
 
@@ -1016,18 +1039,18 @@ export default props => {
 
       {/*<Divider />*/}
 
-      {
-        tPnlList.map((item,index)=>{
-          return <div key={item.month}>
-            <p>月份：{item.month}</p>
-            <p>盈亏：{item.totalPnl} </p>
-            <p>盈亏比：{item.totalRatio}</p>
-          </div>
-        })
-      }
+      {/*{*/}
+      {/*  tPnlList.map((item,index)=>{*/}
+      {/*    return <div key={item.month}>*/}
+      {/*      <p>月份：{item.month}</p>*/}
+      {/*      <p>盈亏：{item.totalPnl} </p>*/}
+      {/*      <p>盈亏比：{item.totalRatio}</p>*/}
+      {/*    </div>*/}
+      {/*  })*/}
+      {/*}*/}
 
-      <p>总盈亏：{tPnl} </p>
-      <p>总盈亏比：{tPnlRatio}</p>
+      {/*<p>总盈亏：{tPnl} </p>*/}
+      {/*<p>总盈亏比：{tPnlRatio}</p>*/}
 
     </Card>
     {/*<Card title={'BTC交易记录'} >*/}
