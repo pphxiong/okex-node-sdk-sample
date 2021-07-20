@@ -744,11 +744,13 @@ const checkDeal = async data => {
 
         const openLongCondition = rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
         &&
-            rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI3
+            rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+        && rsiList[rsiList.length-1].RSI3 > 50
 
         const openShortCondition = rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
             &&
-            rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI3
+            rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+        && rsiList[rsiList.length-1].RSI3 < 50
 
         const closeLongCondition = openShortCondition
 
