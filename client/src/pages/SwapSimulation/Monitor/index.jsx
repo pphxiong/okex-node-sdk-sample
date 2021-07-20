@@ -704,7 +704,36 @@ export default props => {
     };
   }
 
-  const fnGetHistoryData = async () => {
+  const fnGetHistoryByMonth = async () => {
+    if(!month) {
+      message.warning('请先选择月份');
+      return;
+    }
+    const yearAndMonth = `2021-${month}-`
+    const time = `${date} 00:00:00`;
+    const INIT_TIME = moment(time).valueOf();
+    // let i = 1;
+    let hData = []
+    const p = new Promise(resolve => {
+      const getData = async () => {
+        const payload = { time: INIT_TIME }
+        const { data } = await getHistory(payload)
+        hData = hData.concat(data);
+        resolve(hData);
+      }
+      getData();
+    })
+    p.then(data=>{
+      console.log(JSON.stringify(data))
+      const content = `const mockData = ${JSON.stringify(data)};
+      module.exports.mockData = mockData;`;
+
+      const fileName = `${time.split(' ')[0]}`;
+      downLoad(content,fileName);
+    })
+  }
+
+  const fnGetHistoryByDay = async () => {
     if(!date) {
       message.warning('请先选择日期');
       return;
@@ -746,7 +775,7 @@ export default props => {
     })
   }
 
-  const fnGetHistoryByMonth = async () => {
+  const fnGetProfitByMonth = async () => {
     setPageLoading(true);
     const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
     '21','22','23','24','25','26','27','28','29','30'];
@@ -790,7 +819,7 @@ export default props => {
   }
 
 
-  const fnGetHistoryByDay = async () => {
+  const fnGetProfitByDay = async () => {
     setPageLoading(true)
     if(!date) {
       message.warning('请先选择日期');
@@ -1003,13 +1032,15 @@ export default props => {
 
       <DatePicker onChange={(v,dateString)=>setDate(dateString)} style={{ marginLeft: 10 }}/>
 
-      <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>总计</Button>
+      <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
 
-      <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>测算</Button>
+      <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
 
-      <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最新盈亏</Button>
+      <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
 
-      <Button onClick={()=>fnGetHistoryData()} style={{ marginLeft: 10 }}>下载历史数据</Button>
+      <Button onClick={()=>fnGetHistoryByDay()} style={{ marginLeft: 10 }}>下载天历史数据</Button>
+
+      <Button onClick={()=>fnGetHistoryByMonth()} style={{ marginLeft: 10 }}>下载月历史数据</Button>
 
       {/*<Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>*/}
 
