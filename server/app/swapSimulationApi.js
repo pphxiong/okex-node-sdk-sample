@@ -640,8 +640,8 @@ app.get('/swap/getHistory', async (req, response) => {
     const { time } = query;
     const payload = {
         interval: '3m',
-        limit: 80,
-        endTime: time
+        limit: 480,
+        startTime: time
     }
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
     // const list = data.reverse();

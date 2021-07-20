@@ -715,19 +715,24 @@ export default props => {
     let hData = []
     const p = new Promise(resolve => {
       const getData = async () => {
-        const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
+        // const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
+        // const payload = { time: moment(time).valueOf() }
+        // const { data } = await getHistory(payload)
+        // hData = hData.concat(data)
+        // i++;
+        // if(i>6){
+        //   i = 1;
+        //   resolve(hData);
+        //   return;
+        // }
+        // setTimeout(async ()=>{
+        //   await getData();
+        // }, 1000 * 5)
+        // const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
         const payload = { time: moment(time).valueOf() }
         const { data } = await getHistory(payload)
-        hData = hData.concat(data)
-        i++;
-        if(i>6){
-          i = 1;
-          resolve(hData);
-          return;
-        }
-        setTimeout(async ()=>{
-          await getData();
-        }, 1000 * 5)
+        hData = hData.concat(data);
+        resolve(hData);
       }
       getData();
     })
@@ -767,9 +772,9 @@ export default props => {
           return;
         }
         const newDate = `${yearAndMonth}-${dayList[i]}`;
-        // setTimeout(async ()=>{
+        setTimeout(async ()=>{
           await getDayData(newDate);
-        // }, 1000 * 5)
+        }, 1000 * 5)
       }
       const date = `${yearAndMonth}-${dayList[i]}`;
       await getDayData(date);
