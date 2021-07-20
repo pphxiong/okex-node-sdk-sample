@@ -631,7 +631,8 @@ const waitTime = (time = 1000 * 4) => {
 app.get('/swap/reset', async (req, response) => {
     totalProfit = 0;
     currentPosition = {};
-    send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition } });
+    dealDetailList = []
+    send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition, dealDetailList } });
 });
 
 app.get('/swap/getHistory', async (req, response) => {
@@ -660,6 +661,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // const list = data.reverse();
         totalProfit = 0;
         currentPosition = {};
+        dealDetailList = [];
 
         const mock = require(`./mock/${date}.js`);
         const list = mock.mockData

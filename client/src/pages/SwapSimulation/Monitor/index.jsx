@@ -634,38 +634,6 @@ export default props => {
     // }, 1000 * 10)
   }
 
-  const fnGetHistoryByMonth = async () => {
-    setPageLoading(true);
-    lossAllNum = 0
-    const firstDay = `2020-${month}-01 00:00:00`;
-
-    // const payload = {
-    //   date: firstDay,
-    //   leverage,
-    //   winRatio: winRatio.current,
-    //   lossRatio: lossRatio.current,
-    //   frequency
-    // }
-
-    // const { data: {pnl, ratio} } = await testOrderApi(payload);
-    const { pnl , ratio, dList } = await getMonthPnl(firstDay,month);
-
-    setTPnl(pnl);
-    setTPnlRatio(ratio);
-    setPageLoading(false);
-
-    console.log('lossMap',lossMap)
-    console.log('winMap',winMap)
-    console.log('loss2Maps',loss2Maps)
-    console.log('lossAllNum',lossAllNum)
-    console.log(dList)
-    const newDList = dList.map(item=>({
-      ...item,
-      dList: item.dList?.filter(it=>it.ratio < 0)
-    }))
-    console.log(newDList)
-  }
-
   const getDayPnl = async (day,month) => {
     setPageLoading(true);
 
@@ -771,7 +739,53 @@ export default props => {
     })
   }
 
+  const fnGetHistoryByMonth = async () => {
+    setPageLoading(true);
+    const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19'];
+
+    const profitList = []
+    const month = '2021-07'
+
+    let i = 0;
+    const p = new Promise(async resolve => {
+      const getDayData = async date => {
+        const payload = { date }
+        const { data: { dealDetailList, totalProfit } } = await startHearBeat(payload);
+        const dayProfit = {
+          profit: totalProfit,
+          date,
+          dealDetailList,
+        }
+        profitList.push(dayProfit);
+
+        i++;
+        if(i >= dayList.length){
+          resolve(profitList);
+          return;
+        }
+        const newDate = `${month}-${dayList[i]}`;
+        await getDayData(newDate);
+      }
+      const date = `${month}-${dayList[i]}`;
+      await getDayData(date);
+    })
+
+    p.then(data=>{
+      setTPnlList(data);
+      let tProfit = 0;
+      data.map(item=>{ tProfit += item.profit });
+      setTPnlRatio(tProfit)
+    }).finally(()=>{
+      setPageLoading(false);
+    })
+  }
+
+
   const fnGetHistoryByDay = async () => {
+    if(!date) {
+      message.warning('请先选择日期');
+      return;
+    }
     const INIT_DATE = date;
     const payload = { date: INIT_DATE }
     const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
@@ -978,7 +992,7 @@ export default props => {
 
       <DatePicker onChange={(v,dateString)=>setDate(dateString)} style={{ marginLeft: 10 }}/>
 
-      <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>确定</Button>
+      <Button onClick={()=>fnGetHistoryByMonth()} type="primary" style={{ marginLeft: 10 }}>总计</Button>
 
       <Button onClick={()=>fnGetHistoryByDay()} type="primary" style={{ marginLeft: 10 }}>测算</Button>
 
@@ -1012,18 +1026,17 @@ export default props => {
 
       {/*<Divider />*/}
 
-      {/*{*/}
-      {/*  tPnlList.map((item,index)=>{*/}
-      {/*    return <div key={item.month}>*/}
-      {/*      <p>月份：{item.month}</p>*/}
-      {/*      <p>盈亏：{item.totalPnl} </p>*/}
-      {/*      <p>盈亏比：{item.totalRatio}</p>*/}
-      {/*    </div>*/}
-      {/*  })*/}
-      {/*}*/}
+      {
+        tPnlList.length && tPnlList.map((item,index)=>{
+          return <div key={`${item.date}-${index}`}>
+            <p>日期：{item.date}</p>
+            <p>盈亏比：{item.profit}</p>
+          </div>
+        })
+      }
 
       {/*<p>总盈亏：{tPnl} </p>*/}
-      {/*<p>总盈亏比：{tPnlRatio}</p>*/}
+      <p>总盈亏比：{tPnlRatio}</p>
 
     </Card>
     {/*<Card title={'BTC交易记录'} >*/}
