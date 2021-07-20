@@ -728,8 +728,8 @@ const checkDeal = async data => {
         let longRatio = 0
         let shortRatio = 0
 
-        if(currentPosition.positionSide == 'LONG') longHolding = currentPosition;
-        if(currentPosition.positionSide == 'SHORT') shortHolding = currentPosition;
+        if(currentPosition.positionSide == 'LONG' && currentPosition.positionAmt) longHolding = currentPosition;
+        if(currentPosition.positionSide == 'SHORT' && currentPosition.positionAmt) shortHolding = currentPosition;
 
         if(longHolding){
             const { leverage, entryPrice: avg_cost, } = longHolding;
@@ -752,9 +752,9 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
 
-        const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
+        const closeLongCondition = openShortCondition
 
-        const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
+        const closeShortCondition = openLongCondition
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
@@ -770,7 +770,7 @@ const checkDeal = async data => {
             try {
                 if(
                     (!longHolding || !Number(longHolding.positionAmt))
-                    && (!shortHolding || !Number(shortHolding.positionAmt))
+                    // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                     currentPosition = {
@@ -808,6 +808,7 @@ const checkDeal = async data => {
                         side: 'CLOSE',
                         positionSide: 'LONG',
                         entryPrice: mark_price,
+                        positionAmt: 0,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
                         currentProfit: longRatio
@@ -825,8 +826,8 @@ const checkDeal = async data => {
         ){
             try {
                 if(
-                    (!longHolding || !Number(longHolding.positionAmt))
-                    &&
+                    // (!longHolding || !Number(longHolding.positionAmt))
+                    // &&
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
@@ -865,6 +866,7 @@ const checkDeal = async data => {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
                         entryPrice: mark_price,
+                        positionAmt: 0,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
                         currentProfit: shortRatio
