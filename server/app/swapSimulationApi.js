@@ -18,6 +18,11 @@ const LEVERAGE = 10;
 let currentPosition = {};
 let totalProfit = 0;
 let dealDetailList = [];
+const INIT_MOST_LOSS = {
+    profit: 0,
+    time: null,
+}
+let mostLoss = INIT_MOST_LOSS
 
 let myInterval;
 
@@ -663,6 +668,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         totalProfit = 0;
         currentPosition = {};
         dealDetailList = [];
+        mostLoss = INIT_MOST_LOSS;
 
         const mock = require(`./mock/${date}.js`);
         const list = mock.mockData
@@ -675,7 +681,14 @@ app.get('/swap/startHearBeat', async (req, response) => {
             rsiList
         }
         await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList} });
+        send(response, {errcode: 0, errmsg: 'ok', data: {
+            history: list,
+            index: result,
+            totalProfit,
+            currentPosition,
+            dealDetailList,
+            mostLoss,
+            } });
     }catch (e) {
         restart()
     }
@@ -695,6 +708,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         totalProfit = 0;
         currentPosition = {};
         dealDetailList = [];
+        mostLoss = INIT_MOST_LOSS;
 
         const newList = JSON.parse(JSON.stringify(list))
         const macdList = getCurrentMacd(newList).slice(-1400)
@@ -705,7 +719,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
             rsiList
         }
         await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList} });
+        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList, mostLoss} });
     }catch (e) {
         console.log(e)
         restart()
@@ -815,6 +829,12 @@ const checkDeal = async data => {
                         currentProfit: longRatio
                     }
                     dealDetailList.push(currentPosition)
+                    if(longRatio < mostLoss.profit){
+                        mostLoss = {
+                            profit: longRatio,
+                            time: macdList[macdList.length-1].time,
+                        }
+                    }
                 }
             }catch (e){
                 console.log(e)
@@ -873,6 +893,12 @@ const checkDeal = async data => {
                         currentProfit: shortRatio
                     }
                     dealDetailList.push(currentPosition)
+                    if(shortRatio < mostLoss.profit){
+                        mostLoss = {
+                            profit: shortRatio,
+                            time: macdList[macdList.length-1].time,
+                        }
+                    }
                 }
             }catch (e){
                 console.log(e)

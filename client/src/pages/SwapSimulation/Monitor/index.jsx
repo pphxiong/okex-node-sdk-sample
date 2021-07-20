@@ -748,7 +748,8 @@ export default props => {
 
   const fnGetHistoryByMonth = async () => {
     setPageLoading(true);
-    const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19'];
+    const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
+    '21','22','23','24','25','26','27','28','29','30'];
 
     const profitList = []
 
@@ -772,9 +773,7 @@ export default props => {
           return;
         }
         const newDate = `${yearAndMonth}-${dayList[i]}`;
-        setTimeout(async ()=>{
-          await getDayData(newDate);
-        }, 1000 * 5)
+        await getDayData(newDate);
       }
       const date = `${yearAndMonth}-${dayList[i]}`;
       await getDayData(date);
