@@ -761,18 +761,29 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
-            && rsiList[rsiList.length-1].RSI3 > 47
 
         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
-            && rsiList[rsiList.length-1].RSI3 < 53
 
         const closeLongCondition = openShortCondition
+            ||
+            (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
+                &&
+                rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
+                && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 < 50
+            )
 
         const closeShortCondition = openLongCondition
-
+            ||
+            (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
+                &&
+                rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 > 50
+            )
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
         // console.log('mark_price',mark_price)
