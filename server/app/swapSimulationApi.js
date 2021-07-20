@@ -76,7 +76,7 @@ function getCurrentMacd(list) {
         macdList.push(result)
     })
 
-    macdList = macdList.slice(-400)
+    macdList = macdList.slice(-1400)
     return macdList
 }
 
@@ -84,7 +84,7 @@ function getCurrentRSI(list) {
     const newList = JSON.parse(JSON.stringify(list))
     let rsiList = []
     function* gen() {
-        for(let i = 0; i < Math.min(newList.length, 400); i ++){
+        for(let i = 0; i < Math.min(newList.length, 1400); i ++){
             if(i > 0) list.pop()
             const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
             rsiList.push(result)
@@ -93,7 +93,7 @@ function getCurrentRSI(list) {
     }
 
     for(let k of gen()){
-        if( k >= Math.min(newList.length, 400) ) break
+        if( k >= Math.min(newList.length, 1400) ) break
     }
 
     rsiList = rsiList.reverse()
@@ -687,7 +687,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
     try{
         const payload = {
             interval: '3m',
-            limit: 100,
+            limit: 1500,
             endTime: time
         }
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
@@ -697,8 +697,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         dealDetailList = [];
 
         const newList = JSON.parse(JSON.stringify(list))
-        const macdList = getCurrentMacd(newList).slice(-40)
-        const rsiList = getCurrentRSI(newList).slice(-40)
+        const macdList = getCurrentMacd(newList).slice(-1400)
+        const rsiList = getCurrentRSI(newList).slice(-1400)
 
         const result = {
             macdList,

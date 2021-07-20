@@ -711,7 +711,7 @@ export default props => {
     }
     const time = `${date} 00:00:00`;
     const INIT_TIME = moment(time).valueOf();
-    let i = 1;
+    // let i = 1;
     let hData = []
     const p = new Promise(resolve => {
       const getData = async () => {
@@ -729,7 +729,7 @@ export default props => {
         //   await getData();
         // }, 1000 * 5)
         // const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
-        const payload = { time: moment(time).valueOf() }
+        const payload = { time: INIT_TIME }
         const { data } = await getHistory(payload)
         hData = hData.concat(data);
         resolve(hData);
