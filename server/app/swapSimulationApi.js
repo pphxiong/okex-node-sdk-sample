@@ -791,6 +791,82 @@ const checkDeal = async data => {
         // console.log('latestColumnsObjList',rsiList.slice(-2))
         // console.log('------------------')
 
+        //平多仓条件
+        if(
+            closeLongCondition
+        ){
+            try {
+                if(longHolding && Number(longHolding.positionAmt)){
+                    // const payload = {
+                    //     position: Number(longHolding.positionAmt),
+                    //     side: 'long',
+                    //     mark_price,
+                    //     time: macdList[macdList.length-1].time
+                    // }
+                    // closePosition(payload)
+                    totalProfit += longRatio;
+                    totalProfit += - 0.05 * 0.01 * LEVERAGE
+                    currentPosition = {}
+                    const dealDetail = {
+                        side: 'CLOSE',
+                        positionSide: 'LONG',
+                        entryPrice: mark_price,
+                        positionAmt: INIT_POSITION,
+                        time: macdList[macdList.length-1].time,
+                        totalProfit,
+                        currentProfit: longRatio
+                    }
+                    dealDetailList.push(dealDetail)
+                    if(longRatio < mostLoss.profit){
+                        mostLoss = {
+                            profit: longRatio,
+                            time: macdList[macdList.length-1].time,
+                        }
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            closeShortCondition
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.positionAmt)){
+                    // const payload = {
+                    //     position: Number(shortHolding.positionAmt),
+                    //     side: 'short',
+                    //     mark_price,
+                    //     time: macdList[macdList.length-1].time
+                    // }
+                    // closePosition(payload);
+                    totalProfit += shortRatio
+                    totalProfit += - 0.05 * 0.01 * LEVERAGE
+                    currentPosition = {}
+                    const dealDetail = {
+                        side: 'CLOSE',
+                        positionSide: 'SHORT',
+                        entryPrice: mark_price,
+                        positionAmt: INIT_POSITION,
+                        time: macdList[macdList.length-1].time,
+                        totalProfit,
+                        currentProfit: shortRatio
+                    }
+                    dealDetailList.push(dealDetail)
+                    if(shortRatio < mostLoss.profit){
+                        mostLoss = {
+                            profit: shortRatio,
+                            time: macdList[macdList.length-1].time,
+                        }
+                    }
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
         //开多仓条件
         if(
             openLongCondition
@@ -818,44 +894,6 @@ const checkDeal = async data => {
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
-
-        //平多仓条件
-        if(
-            closeLongCondition
-        ){
-            try {
-                if(longHolding && Number(longHolding.positionAmt)){
-                    // const payload = {
-                    //     position: Number(longHolding.positionAmt),
-                    //     side: 'long',
-                    //     mark_price,
-                    //     time: macdList[macdList.length-1].time
-                    // }
-                    // closePosition(payload)
-                    totalProfit += longRatio;
-                    totalProfit += - 0.05 * 0.01 * LEVERAGE
-                    currentPosition = {}
-                    const dealDetail = {
-                        side: 'CLOSE',
-                        positionSide: 'LONG',
-                        entryPrice: mark_price,
-                        positionAmt: 0,
-                        time: macdList[macdList.length-1].time,
-                        totalProfit,
-                        currentProfit: longRatio
-                    }
-                    dealDetailList.push(dealDetail)
-                    if(longRatio < mostLoss.profit){
-                        mostLoss = {
-                            profit: longRatio,
-                            time: macdList[macdList.length-1].time,
-                        }
-                    }
                 }
             }catch (e){
                 console.log(e)
@@ -896,45 +934,7 @@ const checkDeal = async data => {
             }
         }
 
-        //平空仓条件
-        if(
-            closeShortCondition
-        ){
-            try {
-                if(shortHolding && Number(shortHolding.positionAmt)){
-                    // const payload = {
-                    //     position: Number(shortHolding.positionAmt),
-                    //     side: 'short',
-                    //     mark_price,
-                    //     time: macdList[macdList.length-1].time
-                    // }
-                    // closePosition(payload);
-                    totalProfit += shortRatio
-                    totalProfit += - 0.05 * 0.01 * LEVERAGE
-                    currentPosition = {}
-                    const dealDetail = {
-                        side: 'CLOSE',
-                        positionSide: 'SHORT',
-                        entryPrice: mark_price,
-                        positionAmt: 0,
-                        time: macdList[macdList.length-1].time,
-                        totalProfit,
-                        currentProfit: shortRatio
-                    }
-                    dealDetailList.push(dealDetail)
-                    if(shortRatio < mostLoss.profit){
-                        mostLoss = {
-                            profit: shortRatio,
-                            time: macdList[macdList.length-1].time,
-                        }
-                    }
-                }
-            }catch (e){
-                console.log(e)
-            }
-        }
     }
-
 }
 
 // 定时获取交割合约账户信息
