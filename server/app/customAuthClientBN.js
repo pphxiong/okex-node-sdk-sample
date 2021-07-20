@@ -64,6 +64,12 @@ function customAuthClient(key, secret, apiUri = 'https://fapi.binance.com', time
             getPosition: function (instrument_id, instType){
                 return get(`/fapi/v2/account`)
             },
+            getHistory: function (instrument_id, params) {
+                return get(`/api/v5/market/history-candles?instId=${instrument_id}&` + querystring.stringify(params));
+            },
+            getMarkPrice: function (instrument_id){
+                return get(`/api/v5/public/mark-price?instId=${instrument_id}`)
+            },
         }
     }
 
