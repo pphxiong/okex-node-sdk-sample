@@ -752,9 +752,9 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
 
-        const closeLongCondition = openShortCondition
+        const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
 
-        const closeShortCondition = openLongCondition
+        const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
