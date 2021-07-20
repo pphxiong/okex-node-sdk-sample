@@ -28,11 +28,11 @@ export default {
         '/okexSwap/': '/',
       },
     },
-    '/okexSwapSimulation/':{
+    '/bn/':{
       target: 'http://8.210.214.167:8092',
       changeOrigin: true,
       pathRewrite: {
-        '/okexSwapSimulation/': '/',
+        '/bn/': '/',
       },
     }
   },

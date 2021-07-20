@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-const commonUrl = '/okexSwapSimulation';
+const commonUrl = '/bn';
 
 export async function getHistory(params) {
   return request(`${commonUrl}/swap/getHistory`, {
