@@ -742,9 +742,9 @@ const checkDeal = async data => {
             shortRatio = - shortRatio
         }
 
-        const openLongCondition = rsiList[rsiList.length-1].RSI3 > 50
+        const openLongCondition = rsiList[rsiList.length-1].RSI3 < 20
 
-        const openShortCondition = rsiList[rsiList.length-1].RSI3 < 50
+        const openShortCondition = rsiList[rsiList.length-1].RSI3 > 80
 
         const closeLongCondition = openShortCondition
 
