@@ -53,9 +53,8 @@ const startInterval = async () => {
 
     try{
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
-        console.log(data[data.length-1])
-        globalColumnsObjList = data.reverse()
-        // globalColumnsObjList = data
+        // globalColumnsObjList = data.reverse()
+        globalColumnsObjList = data
     }catch (e) {
         // if(!Array.isArray(data)) throw new Error('Data is not array!');
         restart()

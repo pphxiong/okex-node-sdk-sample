@@ -643,8 +643,9 @@ app.get('/swap/getHistory', async (req, response) => {
         limit: 80,
         after: time
     }
-    const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-    const list = data.reverse();
+    const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
+    // const list = data.reverse();
+    const list = data;
     send(response, {errcode: 0, errmsg: 'ok', data: list });
 });
 
@@ -689,8 +690,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
             limit: 100,
             after: time
         }
-        const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-        const list = data.reverse();
+        const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
+        const list = data;
         totalProfit = 0;
         currentPosition = {};
         dealDetailList = [];
