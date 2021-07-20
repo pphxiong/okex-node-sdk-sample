@@ -682,8 +682,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
         }
         await checkDeal(result);
         send(response, {errcode: 0, errmsg: 'ok', data: {
-            history: list,
-            index: result,
+            // history: list,
+            // index: result,
             totalProfit,
             currentPosition,
             dealDetailList,
@@ -719,7 +719,9 @@ app.get('/swap/getLatestProfit', async (req, response) => {
             rsiList
         }
         await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {history: list, index: result, totalProfit, currentPosition, dealDetailList, mostLoss} });
+        send(response, {errcode: 0, errmsg: 'ok', data: {
+            // index: result,
+            totalProfit, currentPosition, dealDetailList, mostLoss } });
     }catch (e) {
         console.log(e)
         restart()
