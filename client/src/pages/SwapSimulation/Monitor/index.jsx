@@ -720,12 +720,27 @@ export default props => {
   }
 
   const fnGetHistoryData = async () => {
-    const INIT_TIME = moment('2021-07-15 00:00:00').valueOf();
-    let heatBeatNum = 5;
-    const time = moment(INIT_TIME).add(3 * 100 * heatBeatNum,'m').format('YYYY-MM-DD HH:mm:00');
-    const payload = { time: moment(time).valueOf() }
-    const { data } = await getHistory(payload)
-    console.log(JSON.stringify(data))
+    const INIT_TIME = moment('2021-07-19 00:00:00').valueOf();
+    let i = 1;
+    let hData = []
+    const p = new Promise(resolve => {
+      let hInterval = setInterval(async () => {
+        if(i>=6){
+          clearInterval(hInterval);
+          hInterval = null;
+          resolve(hData)
+          return;
+        }
+        const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
+        const payload = { time: moment(time).valueOf() }
+        const { data } = await getHistory(payload)
+        hData = hData.concat(data)
+        i++;
+      }, 1000 * 5)
+    })
+    p.then(data=>{
+      console.log(JSON.stringify(data))
+    })
   }
 
   const fnGetHistoryByDay = async () => {

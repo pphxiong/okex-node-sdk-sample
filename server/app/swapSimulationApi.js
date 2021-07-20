@@ -639,7 +639,7 @@ app.get('/swap/getHistory', async (req, response) => {
     const { time } = query;
     const payload = {
         bar: '3m',
-        limit: 100,
+        limit: 80,
         after: time
     }
     const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
