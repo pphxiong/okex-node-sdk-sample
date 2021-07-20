@@ -681,11 +681,11 @@ export default props => {
   }
 
   const fnGetLatestProfit = async () => {
+    setPageLoading(true)
     const time = moment().valueOf();
-    console.log(time)
     const payload = { time }
     const { data } = await getLatestProfit(payload)
-    console.log(data)
+    setPageLoading(false)
   }
 
   function downLoad(content,fileName){
@@ -766,7 +766,7 @@ export default props => {
         const newDate = `${month}-${dayList[i]}`;
         setTimeout(async ()=>{
           await getDayData(newDate);
-        }, 1000 * 3)
+        }, 1000 * 5)
       }
       const date = `${month}-${dayList[i]}`;
       await getDayData(date);
@@ -784,6 +784,7 @@ export default props => {
 
 
   const fnGetHistoryByDay = async () => {
+    setPageLoading(true)
     if(!date) {
       message.warning('请先选择日期');
       return;
@@ -794,6 +795,7 @@ export default props => {
     console.log(JSON.stringify(history))
     console.log('currentPosition',currentPosition)
     console.log('totalProfit',totalProfit)
+    setPageLoading(false)
   }
 
   useEffect(()=>{
@@ -1006,17 +1008,17 @@ export default props => {
 
       <Divider />
 
-      查询时长:
-      <InputNumber
-        value={ duration }
-        step={1}
-        min={1}
-        max={12}
-        onChange={v=>setDuration(Number(v))}
-      />
-      个月
-      <Button onClick={()=>fnGetHistory()} type="primary" style={{ marginLeft: 10 }}>测算</Button>
-      <Divider />
+      {/*查询时长:*/}
+      {/*<InputNumber*/}
+      {/*  value={ duration }*/}
+      {/*  step={1}*/}
+      {/*  min={1}*/}
+      {/*  max={12}*/}
+      {/*  onChange={v=>setDuration(Number(v))}*/}
+      {/*/>*/}
+      {/*个月*/}
+      {/*<Button onClick={()=>fnGetHistory()} type="primary" style={{ marginLeft: 10 }}>测算</Button>*/}
+      {/*<Divider />*/}
       {/*历史数据范围：*/}
       {/*<RangePicker*/}
       {/*  showTime*/}
