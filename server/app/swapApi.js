@@ -42,13 +42,18 @@ function send(res, ret) {
 let lastLongMaxWinRatio = 0
 let lastShortMaxWinRatio = 0
 const startInterval = async () => {
+    // const payload = {
+    //     bar: '3m',
+    //     // limit: 100,
+    // }
     const payload = {
-        bar: '3m',
-        // limit: 100,
+        interval: '3m',
+        limit: 200,
     }
 
     try{
-        const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
+        const data = await cAuthClientBN.swap.getHistory(BN_SYMBOL, payload)
+        console.log(data[data.length-1])
         globalColumnsObjList = data.reverse()
         // globalColumnsObjList = data
     }catch (e) {
@@ -59,8 +64,10 @@ const startInterval = async () => {
     if(Array.isArray(globalColumnsObjList)){
         let mark_price;
         try{
-            const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
-            mark_price = Number(data[0].markPx);
+            // const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
+            // mark_price = Number(data[0].markPx);
+            const { markPrice }= await cAuthClientBN.swap.getMarkPrice(BN_SYMBOL);
+            mark_price = Number(markPrice);
         }catch (e) {
             // if(!mark_result) throw new Error('mark_price is null!');
             restart('getMarkPrice')

@@ -747,7 +747,7 @@ export default props => {
 
     const profitList = []
 
-    const month = `2021-${month}`;
+    const yearAndMonth = `2021-${month}`;
 
     let i = 0;
     const p = new Promise(async resolve => {
@@ -766,12 +766,12 @@ export default props => {
           resolve(profitList);
           return;
         }
-        const newDate = `${month}-${dayList[i]}`;
+        const newDate = `${yearAndMonth}-${dayList[i]}`;
         setTimeout(async ()=>{
           await getDayData(newDate);
         }, 1000 * 5)
       }
-      const date = `${month}-${dayList[i]}`;
+      const date = `${yearAndMonth}-${dayList[i]}`;
       await getDayData(date);
     })
 
