@@ -776,24 +776,9 @@ const checkDeal = async data => {
         const closeLongCondition = longRatio <= -0.95
             || openShortCondition
 
-            // ||
-            // (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
-            //     &&
-            //     rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
-            //     && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 < 50
-            // )
-
         const closeShortCondition = shortRatio <= -0.95
             || openLongCondition
 
-            // ||
-            // (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
-            //     &&
-            //     rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
-            //     && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 > 50
-            // )
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
         // console.log('mark_price',mark_price)
