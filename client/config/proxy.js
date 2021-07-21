@@ -34,6 +34,10 @@ export default {
       pathRewrite: {
         '^/bn/': '/',
       },
+    },
+    '/swap/':{
+      target: 'http://8.210.214.167:8092',
+      changeOrigin: true,
     }
   },
   test: {

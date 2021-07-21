@@ -684,6 +684,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             rsiList
         }
         await checkDeal(result);
+        console.log('totalProfit',totalProfit)
         send(response, {errcode: 0, errmsg: 'ok', data: {
             // history: list,
             // index: result,
