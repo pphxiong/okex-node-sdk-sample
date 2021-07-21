@@ -737,10 +737,10 @@ const checkDeal = async data => {
         checkByStep({
             macdList: [data.macdList[i],data.macdList[i+1]],
             rsiList: [data.rsiList[i],data.rsiList[i+1]],
-        })
+        },i)
     }
 
-    function checkByStep(data){
+    function checkByStep(data,i){
         const { macdList, rsiList } = data;
         const mark_price = macdList[macdList.length-1].price;
 
@@ -774,6 +774,7 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 > 50
 
         const closeLongCondition = openShortCondition
+            || i == data.macdList.length - 2
 
             // ||
             // (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
@@ -784,6 +785,7 @@ const checkDeal = async data => {
             // )
 
         const closeShortCondition = openLongCondition
+            || i == data.macdList.length - 2
 
             // ||
             // (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
