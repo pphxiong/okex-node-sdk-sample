@@ -2,16 +2,16 @@ import request from '../utils/request';
 import moment from 'moment'
 
 // const {PublicClient} = require('@okfe/okex-node');
-const {AuthenticatedClient} = require('@okfe/okex-node');
-const customAuthClient = require('./customAuthClientV5');
+// const {AuthenticatedClient} = require('@okfe/okex-node');
+// const customAuthClient = require('./customAuthClientV5');
 const customAuthClientBN = require('./customAuthClientBN');
 
-const fs = require('fs');
+// const fs = require('fs');
 
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
-const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
+// const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1;
 const LEVERAGE = 10;
@@ -26,14 +26,14 @@ let mostLoss = INIT_MOST_LOSS
 
 let myInterval;
 
-var config = require('./configV5');
+// var config = require('./configV5');
 var configBN = require('./configBN');
-const cAuthClient = new customAuthClient(
-    config.httpkey,
-    config.httpsecret,
-    config.passphrase,
-    config.urlHost
-)
+// const cAuthClient = new customAuthClient(
+//     config.httpkey,
+//     config.httpsecret,
+//     config.passphrase,
+//     config.urlHost
+// )
 const cAuthClientBN = new customAuthClientBN(
     configBN.httpkey,
     configBN.httpsecret,
