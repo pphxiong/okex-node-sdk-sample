@@ -438,6 +438,9 @@ export default props => {
 
       {/*<Divider />*/}
 
+      {/*<p>总盈亏：{tPnl} </p>*/}
+      <p>总盈亏比：{tPnlRatio}</p>
+
       {
         tPnlList.length && tPnlList.map((item,index)=>{
           return <div key={`${item.date}-${index}`}>
@@ -446,9 +449,6 @@ export default props => {
           </div>
         })
       }
-
-      {/*<p>总盈亏：{tPnl} </p>*/}
-      <p>总盈亏比：{tPnlRatio}</p>
 
     </Card>
     {/*<Card title={'BTC交易记录'} >*/}
