@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 const serverUrl = 'http://8.210.214.167:8092';
 // const commonUrl = serverUrl;
-const commonUrl = '';
+const commonUrl = '/bn';
 
 export async function getHistory(params) {
   return request(`${commonUrl}/swap/getHistory`, {
