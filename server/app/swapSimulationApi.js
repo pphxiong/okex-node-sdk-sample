@@ -43,6 +43,19 @@ const cAuthClientBN = new customAuthClientBN(
 var express = require('express');
 var app = express();
 
+app.all('*', function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    res.header("Access-Control-Allow-Headers","content-type");
+    res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+    res.header('X-Powered-By', ' 3.2.1');
+    res.header('Content-Type', 'application/json;charset=utf-8');
+    if (req.method.toLowerCase() == 'options')
+        res.send(200);  //让options尝试请求快速结束
+    else
+        next();
+});
+
 function send(res, ret) {
     var str = JSON.stringify(ret);
     res.send(str);
@@ -337,16 +350,6 @@ function getCurrentRSI(list) {
 //     await waitTime(1000 * 8)
 //     await startInterval()
 // }
-
-//测试
-app.all('*', function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-    res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
-    res.header('X-Powered-By', ' 3.2.1');
-    res.header('Content-Type', 'application/json;charset=utf-8');
-    next();
-});
 
 app.get('/test', function(req, res) {
     send(res, {errcode: 0, errmsg: 'ok'});
