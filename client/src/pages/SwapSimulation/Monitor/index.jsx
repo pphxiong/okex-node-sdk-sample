@@ -709,27 +709,41 @@ export default props => {
       message.warning('请先选择月份');
       return;
     }
-    const yearAndMonth = `2021-${month}-`
-    const time = `${date} 00:00:00`;
-    const INIT_TIME = moment(time).valueOf();
-    // let i = 1;
-    let hData = []
-    const p = new Promise(resolve => {
-      const getData = async () => {
-        const payload = { time: INIT_TIME }
-        const { data } = await getHistory(payload)
-        hData = hData.concat(data);
-        resolve(hData);
-      }
-      getData();
-    })
-    p.then(data=>{
-      console.log(JSON.stringify(data))
-      const content = `const mockData = ${JSON.stringify(data)};
-      module.exports.mockData = mockData;`;
+    const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
+      '21','22','23','24','25','26','27','28','29','30'];
 
-      const fileName = `${time.split(' ')[0]}`;
-      downLoad(content,fileName);
+    const yearAndMonth = `2021-${month}`
+
+    let i = 0;
+    let hData = [];
+    const p = new Promise(resolve => {
+        const getData = async (timeP) => {
+          const payload = { time: timeP }
+          const { data } = await getHistory(payload)
+          hData = hData.concat(data);
+
+          const content = `const mockData = ${JSON.stringify(data)};
+          module.exports.mockData = mockData;`;
+
+          const fileName = `${timeP.split(' ')[0]}`;
+          downLoad(content,fileName);
+
+          if(i < dayList.length){
+            i++;
+            const time = `${yearAndMonth}-${dayList[i]} 00:00:00`;
+            const INIT_TIME = moment(time).valueOf();
+            await getData(INIT_TIME);
+          }else{
+            resolve()
+          }
+        }
+        const time = `${yearAndMonth}-${dayList[i]} 00:00:00`;
+        const INIT_TIME = moment(time).valueOf();
+        getData(INIT_TIME);
+    })
+
+    p.then(()=>{
+      console.log('end')
     })
   }
 
@@ -740,24 +754,9 @@ export default props => {
     }
     const time = `${date} 00:00:00`;
     const INIT_TIME = moment(time).valueOf();
-    // let i = 1;
     let hData = []
     const p = new Promise(resolve => {
       const getData = async () => {
-        // const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
-        // const payload = { time: moment(time).valueOf() }
-        // const { data } = await getHistory(payload)
-        // hData = hData.concat(data)
-        // i++;
-        // if(i>6){
-        //   i = 1;
-        //   resolve(hData);
-        //   return;
-        // }
-        // setTimeout(async ()=>{
-        //   await getData();
-        // }, 1000 * 5)
-        // const time = moment(INIT_TIME).add(3 * 80 * i,'m').format('YYYY-MM-DD HH:mm:00');
         const payload = { time: INIT_TIME }
         const { data } = await getHistory(payload)
         hData = hData.concat(data);
@@ -787,21 +786,24 @@ export default props => {
       const p = new Promise(async resolve => {
         const getDayData = async date => {
           const payload = { date }
-          const { data: { dealDetailList, totalProfit } } = await startHearBeat(payload);
-          const dayProfit = {
-            profit: totalProfit,
-            date,
-            dealDetailList,
-          }
-          profitList.push(dayProfit);
+          const { data } = await startHearBeat(payload);
+          if(data){
+            const { dealDetailList, totalProfit } = data;
+            const dayProfit = {
+              profit: totalProfit,
+              date,
+              dealDetailList,
+            }
+            profitList.push(dayProfit);
 
-          i++;
-          if(i >= dayList.length){
-            resolve(profitList);
-            return;
+            i++;
+            if(i >= dayList.length){
+              resolve(profitList);
+              return;
+            }
+            const newDate = `${yearAndMonth}-${dayList[i]}`;
+            await getDayData(newDate);
           }
-          const newDate = `${yearAndMonth}-${dayList[i]}`;
-          await getDayData(newDate);
         }
         const date = `${yearAndMonth}-${dayList[i]}`;
         await getDayData(date);
@@ -829,10 +831,13 @@ export default props => {
     setPageLoading(true)
     const INIT_DATE = date;
     const payload = { date: INIT_DATE }
-    const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
-    console.log(JSON.stringify(history))
-    console.log('currentPosition',currentPosition)
-    console.log('totalProfit',totalProfit)
+    const { data } = await startHearBeat(payload)
+    if(data){
+      const { history, currentPosition, totalProfit } = data;
+      console.log(JSON.stringify(history))
+      console.log('currentPosition',currentPosition)
+      console.log('totalProfit',totalProfit)
+    }
     setPageLoading(false)
   }
 
