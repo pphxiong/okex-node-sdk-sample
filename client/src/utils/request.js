@@ -53,6 +53,6 @@ const request = extend({
   errorHandler,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
-  timeout: 10000,
+  timeout: 100000,
 });
 export default request;

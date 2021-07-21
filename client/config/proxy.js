@@ -28,13 +28,13 @@ export default {
         '/okexSwap/': '/',
       },
     },
-    // '/bn/':{
-    //   target: 'http://8.210.214.167:8092',
-    //   changeOrigin: true,
-    //   pathRewrite: {
-    //     '^/bn/': '/',
-    //   },
-    // }
+    '/bn/':{
+      target: 'http://8.210.214.167:8092',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/bn/': '/',
+      },
+    }
   },
   test: {
     '/api/': {
