@@ -93,7 +93,7 @@ export default props => {
           const fileName = `${timeP.split(' ')[0]}`;
           downLoad(content,fileName);
 
-          if(i < dayList.length){
+          if(i < dayList.length - 1){
             i++;
             const time = `${yearAndMonth}-${dayList[i]} 00:00:00`;
             await getData(time);
