@@ -83,7 +83,7 @@ export default props => {
     let hData = [];
     const p = new Promise(resolve => {
         const getData = async (timeP) => {
-          const payload = { time: timeP }
+          const payload = { time: moment(timeP).valueOf() }
           const { data } = await getHistory(payload)
           hData = hData.concat(data);
 
@@ -96,15 +96,13 @@ export default props => {
           if(i < dayList.length){
             i++;
             const time = `${yearAndMonth}-${dayList[i]} 00:00:00`;
-            const INIT_TIME = moment(time).valueOf();
-            await getData(INIT_TIME);
+            await getData(time);
           }else{
             resolve()
           }
         }
         const time = `${yearAndMonth}-${dayList[i]} 00:00:00`;
-        const INIT_TIME = moment(time).valueOf();
-        getData(INIT_TIME);
+        getData(time);
     })
 
     p.then(()=>{
