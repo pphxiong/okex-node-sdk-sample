@@ -684,7 +684,6 @@ app.get('/swap/startHearBeat', async (req, response) => {
             rsiList
         }
         await checkDeal(result);
-        console.log('totalProfit',totalProfit)
         send(response, {errcode: 0, errmsg: 'ok', data: {
             // history: list,
             // index: result,
@@ -694,7 +693,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
             mostLoss,
             } });
     }catch (e) {
-        restart()
+        console.log(e)
+        restart('startHearBeat')
     }
 });
 
@@ -962,8 +962,8 @@ process.on('uncaughtException', function (err) {
 });
 
 let exec = require('child_process').exec;
-function restart() {
-    console.log('restarting......')
+function restart(resource) {
+    console.log('restarting......',resource)
     setTimeout(()=>{
         exec('npm run restart:product', function(err, stdout , stderr ){
             if (err) {
