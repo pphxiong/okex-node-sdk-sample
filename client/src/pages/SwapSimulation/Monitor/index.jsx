@@ -820,11 +820,11 @@ export default props => {
 
 
   const fnGetProfitByDay = async () => {
-    setPageLoading(true)
     if(!date) {
       message.warning('请先选择日期');
       return;
     }
+    setPageLoading(true)
     const INIT_DATE = date;
     const payload = { date: INIT_DATE }
     const { data: { history, currentPosition, totalProfit } } = await startHearBeat(payload)
