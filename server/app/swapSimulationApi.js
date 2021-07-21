@@ -651,10 +651,9 @@ app.get('/swap/getHistory', async (req, response) => {
         limit: 480,
         startTime: time
     }
-    // const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
-    // // const list = data.reverse();
-    // const list = data;
-    const list = []
+    const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
+    // const list = data.reverse();
+    const list = data;
     send(response, {errcode: 0, errmsg: 'ok', data: list });
 });
 
