@@ -776,46 +776,48 @@ export default props => {
   }
 
   const fnGetProfitByMonth = async () => {
-    setPageLoading(true);
-    const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
-    '21','22','23','24','25','26','27','28','29','30'];
+    try{
+      setPageLoading(true);
+      const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
+        '21','22','23','24','25','26','27','28','29','30'];
 
-    const profitList = []
+      const profitList = []
+      const yearAndMonth = `2021-${month}`;
+      let i = 0;
+      const p = new Promise(async resolve => {
+        const getDayData = async date => {
+          const payload = { date }
+          const { data: { dealDetailList, totalProfit } } = await startHearBeat(payload);
+          const dayProfit = {
+            profit: totalProfit,
+            date,
+            dealDetailList,
+          }
+          profitList.push(dayProfit);
 
-    const yearAndMonth = `2021-${month}`;
-
-    let i = 0;
-    const p = new Promise(async resolve => {
-      const getDayData = async date => {
-        const payload = { date }
-        const { data: { dealDetailList, totalProfit } } = await startHearBeat(payload);
-        const dayProfit = {
-          profit: totalProfit,
-          date,
-          dealDetailList,
+          i++;
+          if(i >= dayList.length){
+            resolve(profitList);
+            return;
+          }
+          const newDate = `${yearAndMonth}-${dayList[i]}`;
+          await getDayData(newDate);
         }
-        profitList.push(dayProfit);
+        const date = `${yearAndMonth}-${dayList[i]}`;
+        await getDayData(date);
+      })
 
-        i++;
-        if(i >= dayList.length){
-          resolve(profitList);
-          return;
-        }
-        const newDate = `${yearAndMonth}-${dayList[i]}`;
-        await getDayData(newDate);
-      }
-      const date = `${yearAndMonth}-${dayList[i]}`;
-      await getDayData(date);
-    })
-
-    p.then(data=>{
-      setTPnlList(data);
-      let tProfit = 0;
-      data.map(item=>{ tProfit += item.profit });
-      setTPnlRatio(tProfit)
-    }).finally(()=>{
-      setPageLoading(false);
-    })
+      p.then(data=>{
+        setTPnlList(data);
+        let tProfit = 0;
+        data.map(item=>{ tProfit += item.profit });
+        setTPnlRatio(tProfit)
+      }).finally(()=>{
+        setPageLoading(false);
+      })
+    }catch (e) {
+       console.log(e)
+    }
   }
 
 
