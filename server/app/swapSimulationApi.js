@@ -766,19 +766,34 @@ const checkDeal = async data => {
         const openLongCondition = Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI1 < 50
+            && rsiList[rsiList.length-1].RSI3 < 50
 
         const openShortCondition = Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI1 > 50
+            && rsiList[rsiList.length-1].RSI3 > 50
 
-        const closeLongCondition = longRatio <= -0.95
+        const closeLongCondition = longRatio <= -0.382
             || openShortCondition
 
-        const closeShortCondition = shortRatio <= -0.95
+            // ||
+            // (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
+            //     &&
+            //     rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
+            //     && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 < 50
+            // )
+
+        const closeShortCondition = shortRatio <= -0.382
             || openLongCondition
 
+            // ||
+            // (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
+            //     &&
+            //     rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+            //     && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 > 50
+            // )
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
         // console.log('mark_price',mark_price)
