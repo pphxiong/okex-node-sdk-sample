@@ -502,9 +502,9 @@ function getRSIByPeriod(newList, period){
     return newResult;
 }
 function getRSI(time,price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,6)
+    const { RSI: RSI1 } = getRSIByPeriod(list,9)
     const { RSI: RSI2 } = getRSIByPeriod(list,12)
-    const { RSI: RSI3 } = getRSIByPeriod(list,48)
+    const { RSI: RSI3 } = getRSIByPeriod(list,72)
 
     const result = {
         time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
