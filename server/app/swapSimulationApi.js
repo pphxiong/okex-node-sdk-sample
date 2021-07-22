@@ -775,10 +775,10 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 < 50
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
-            // && Number(macdList[macdList.length-1].diff) > Number(macdList[macdList.length-1].dea) + 1
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3 - 2
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
-            // && Number(macdList[macdList.length-1].diff) < Number(macdList[macdList.length-1].dea) - 1
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3 + 2
 
 
         const closeLongCondition = MAIN_OPEN_SHORT_CONDITION
