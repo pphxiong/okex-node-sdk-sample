@@ -766,12 +766,12 @@ const checkDeal = async data => {
             shortRatio = - shortRatio
         }
 
-        const openLongCondition = (Number(macdList[macdList.length-1].column) > 0
+        const openLongCondition = (Number(macdList[macdList.length-1].column) > 1
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
         )
 
-        const openShortCondition = (Number(macdList[macdList.length-1].column) < 0
+        const openShortCondition = (Number(macdList[macdList.length-1].column) < -1
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
         )
@@ -779,12 +779,12 @@ const checkDeal = async data => {
         const closeLongCondition = openShortCondition
             || isForceDeal
             || rsiList[rsiList.length-1].RSI3 > 80
-            || rsiList[rsiList.length-1].RSI3 < 30
+            // || rsiList[rsiList.length-1].RSI3 < 30
 
         const closeShortCondition = openLongCondition
             || isForceDeal
             || rsiList[rsiList.length-1].RSI3 < 20
-            || rsiList[rsiList.length-1].RSI3 > 70
+            // || rsiList[rsiList.length-1].RSI3 > 70
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
