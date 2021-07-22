@@ -769,11 +769,15 @@ const checkDeal = async data => {
         const openLongCondition = (Number(macdList[macdList.length-1].column) > 1
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
+            && rsiList[rsiList.length-1].RSI3 < 60
+            && rsiList[rsiList.length-1].RSI2 < 60
         )
 
         const openShortCondition = (Number(macdList[macdList.length-1].column) < -1
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
+            && rsiList[rsiList.length-1].RSI3 > 40
+            && rsiList[rsiList.length-1].RSI2 > 40
         )
 
         const closeLongCondition = openShortCondition
