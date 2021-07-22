@@ -764,17 +764,16 @@ const checkDeal = async data => {
         }
 
         const openLongCondition = Number(macdList[macdList.length-1].column) > 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
-            && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
 
         const openShortCondition = Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
-            && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
 
-        const closeLongCondition = (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 < 50)
+        const closeLongCondition = openShortCondition
             || isForceDeal
+            || longRatio < - 0.95
 
             // ||
             // (Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
@@ -784,8 +783,9 @@ const checkDeal = async data => {
             //     && rsiList[rsiList.length-1].RSI3 < 50
             // )
 
-        const closeShortCondition = (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 > 50)
+        const closeShortCondition = openLongCondition
             || isForceDeal
+            || shortRatio < - 0.95
             // ||
             // (Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
             //     &&
