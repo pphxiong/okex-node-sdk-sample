@@ -94,7 +94,7 @@ function getCurrentMacd(list) {
         macdList.push(result)
     })
 
-    macdList = macdList.slice(-1400)
+    macdList = macdList.slice(-1300)
     return macdList
 }
 
@@ -102,7 +102,7 @@ function getCurrentRSI(list) {
     const newList = JSON.parse(JSON.stringify(list))
     let rsiList = []
     function* gen() {
-        for(let i = 0; i < Math.min(newList.length, 1400); i ++){
+        for(let i = 0; i < Math.min(newList.length, 1300); i ++){
             if(i > 0) list.pop()
             const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
             rsiList.push(result)
@@ -111,7 +111,7 @@ function getCurrentRSI(list) {
     }
 
     for(let k of gen()){
-        if( k >= Math.min(newList.length, 1400) ) break
+        if( k >= Math.min(newList.length, 1300) ) break
     }
 
     rsiList = rsiList.reverse()
@@ -718,8 +718,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         mostLoss = INIT_MOST_LOSS;
 
         const newList = JSON.parse(JSON.stringify(list))
-        const macdList = getCurrentMacd(newList).slice(-1400)
-        const rsiList = getCurrentRSI(newList).slice(-1400)
+        const macdList = getCurrentMacd(newList).slice(-1300)
+        const rsiList = getCurrentRSI(newList).slice(-1300)
 
         const result = {
             macdList,
