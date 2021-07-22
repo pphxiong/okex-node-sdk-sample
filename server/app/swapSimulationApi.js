@@ -766,12 +766,12 @@ const checkDeal = async data => {
         const openLongCondition = (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50)
-            || rsiList[rsiList.length-1].RSI3 < 20
+            || (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI1 < 20 && rsiList[rsiList.length-1].RSI3 < 30)
 
         const openShortCondition = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50)
-            || rsiList[rsiList.length-1].RSI3 > 80
+            || (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI1 > 80 && rsiList[rsiList.length-1].RSI3 > 70)
 
         const closeLongCondition = openShortCondition
             || isForceDeal
