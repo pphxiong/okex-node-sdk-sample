@@ -640,6 +640,7 @@ app.get('/swap/reset', async (req, response) => {
     totalProfit = 0;
     currentPosition = {};
     dealDetailList = []
+    mostLoss = {}
     send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition, dealDetailList } });
 });
 

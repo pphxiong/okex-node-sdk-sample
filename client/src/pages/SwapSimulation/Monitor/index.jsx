@@ -184,8 +184,7 @@ export default props => {
   const fnGetProfitByMonth = async () => {
     try{
       setPageLoading(true);
-      const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
-        '21','22','23','24','25','26','27','28','29','30'];
+      const dayList = dayMonthMap[month];
 
       const profitList = []
       const yearAndMonth = `${year}-${month}`;
@@ -193,7 +192,7 @@ export default props => {
       const p = new Promise(async resolve => {
         const getDayData = async date => {
           const time = moment(`${date} 00:00:00`).valueOf()
-          const payload = { date, time }
+          const payload = { date, time, limit: 480 }
           const { data } = await startHearBeat(payload);
           if(data){
             const { dealDetailList, totalProfit, mostLoss } = data;
@@ -238,7 +237,7 @@ export default props => {
     }
     setPageLoading(true)
     const time = moment(`${date} 00:00:00`).valueOf()
-    const payload = { date, time }
+    const payload = { date, time, limit: 480 }
     const { data } = await startHearBeat(payload)
     if(data){
       const { totalProfit, dealDetailList, mostLoss } = data;
@@ -265,7 +264,7 @@ export default props => {
   return <Spin spinning={pageLoading}>
     <Card title='概况'>
       年份：
-      <Select value={year} onChange={v=>{setMonth(v);}} style={{ width: 120 }}>
+      <Select value={year} onChange={v=>{setYear(v);}} style={{ width: 120 }}>
         {
           yearMap.map(item=>{
             return  <Select.Option value={item} key={item}>{item}</Select.Option>
