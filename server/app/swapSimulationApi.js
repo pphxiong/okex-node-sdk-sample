@@ -659,22 +659,24 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { date } = query;
+    const { time, date, limit = 1440 } = query;
     try{
-        // const payload = {
-        //     bar: '3m',
-        //     limit: 100,
-        //     after: time
-        // }
-        // const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-        // const list = data.reverse();
         totalProfit = 0;
         currentPosition = {};
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
 
-        const mock = require(`./mock/${date}.js`);
-        const list = mock.mockData
+        // const mock = require(`./mock/${date}.js`);
+        // const list = mock.mockData
+
+        const payload = {
+            interval: '3m',
+            limit,
+            startTime: time
+        }
+        const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
+        const list = data;
+
         const newList = JSON.parse(JSON.stringify(list))
         const macdList = getCurrentMacd(newList)
         const rsiList = getCurrentRSI(newList)
@@ -775,13 +777,13 @@ const checkDeal = async data => {
             ||
             Number(macdList[macdList.length-1].column) > 5
             || isForceDeal
-            || longRatio < - 0.12
+            || longRatio < - 0.95
 
         const closeShortCondition = openLongCondition
             ||
             Number(macdList[macdList.length-1].column) < -5
             || isForceDeal
-            || shortRatio < - 0.12
+            || shortRatio < - 0.95
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
