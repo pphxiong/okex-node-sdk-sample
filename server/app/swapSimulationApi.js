@@ -771,7 +771,9 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
 
-        const closeLongCondition = openShortCondition
+        const closeLongCondition = (Number(macdList[macdList.length-1].column) < 0
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI3 < 50)
             || isForceDeal
             || longRatio < - 0.95
 
@@ -783,7 +785,9 @@ const checkDeal = async data => {
             //     && rsiList[rsiList.length-1].RSI3 < 50
             // )
 
-        const closeShortCondition = openLongCondition
+        const closeShortCondition = (Number(macdList[macdList.length-1].column) > 0
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI3 > 50)
             || isForceDeal
             || shortRatio < - 0.95
             // ||
@@ -823,7 +827,9 @@ const checkDeal = async data => {
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
-                        currentProfit: longRatio
+                        currentProfit: longRatio,
+                        macd: macdList[macdList.length-1],
+                        rsi: rsiList[rsiList.length-1]
                     }
                     dealDetailList.push(dealDetail)
                     if(longRatio < mostLoss.profit){
@@ -861,7 +867,9 @@ const checkDeal = async data => {
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
-                        currentProfit: shortRatio
+                        currentProfit: shortRatio,
+                        macd: macdList[macdList.length-1],
+                        rsi: rsiList[rsiList.length-1]
                     }
                     dealDetailList.push(dealDetail)
                     if(shortRatio < mostLoss.profit){
@@ -900,6 +908,8 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
+                        macd: macdList[macdList.length-1],
+                        rsi: rsiList[rsiList.length-1]
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
@@ -934,6 +944,8 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
+                        macd: macdList[macdList.length-1],
+                        rsi: rsiList[rsiList.length-1]
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
