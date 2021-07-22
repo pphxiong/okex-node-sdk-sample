@@ -659,7 +659,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, limit = 1440 } = query;
+    const { time, date, limit = 1500 } = query;
     try{
         totalProfit = 0;
         currentPosition = {};
@@ -727,7 +727,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         await checkDeal(result);
         send(response, {errcode: 0, errmsg: 'ok', data: {
             // index: result,
-            totalProfit, currentPosition, dealDetailList, mostLoss } });
+            totalProfit, dealDetailList, mostLoss } });
     }catch (e) {
         console.log(e)
         restart()

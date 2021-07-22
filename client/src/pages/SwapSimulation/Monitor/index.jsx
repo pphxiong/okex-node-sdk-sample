@@ -33,11 +33,13 @@ export default props => {
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('06');
+  const [year,setYear] = useState('2021');
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
   const [date,setDate] = useState("");
 
+  const yearMap = ['2020','2021']
   const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
   const dayMonthMap = {
     '01': ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
@@ -76,6 +78,22 @@ export default props => {
     const time = moment().valueOf();
     const payload = { time }
     const { data } = await getLatestProfit(payload)
+    if(data){
+      const { totalProfit, dealDetailList, mostLoss } = data;
+      const date = moment(time).format('YYYY-MM-DD hh:mm:ss')
+      const profitList = [];
+      const dayProfit = {
+        profit: totalProfit,
+        date,
+        dealDetailList,
+        mostLoss
+      }
+      profitList.push(dayProfit);
+      setTPnlList(profitList);
+      let tProfit = 0;
+      profitList.map(item=>{ tProfit += item.profit });
+      setTPnlRatio(tProfit)
+    }
     setPageLoading(false)
   }
 
@@ -103,7 +121,7 @@ export default props => {
     const dayList = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
       '21','22','23','24','25','26','27','28','29','30'];
 
-    const yearAndMonth = `2021-${month}`
+    const yearAndMonth = `${year}-${month}`
 
     let i = 0;
     let hData = [];
@@ -170,7 +188,7 @@ export default props => {
         '21','22','23','24','25','26','27','28','29','30'];
 
       const profitList = []
-      const yearAndMonth = `2021-${month}`;
+      const yearAndMonth = `${year}-${month}`;
       let i = 0;
       const p = new Promise(async resolve => {
         const getDayData = async date => {
@@ -178,11 +196,12 @@ export default props => {
           const payload = { date, time }
           const { data } = await startHearBeat(payload);
           if(data){
-            const { dealDetailList, totalProfit } = data;
+            const { dealDetailList, totalProfit, mostLoss } = data;
             const dayProfit = {
               profit: totalProfit,
               date,
               dealDetailList,
+              mostLoss
             }
             profitList.push(dayProfit);
 
@@ -212,211 +231,47 @@ export default props => {
     }
   }
 
-
   const fnGetProfitByDay = async () => {
     if(!date) {
       message.warning('请先选择日期');
       return;
     }
     setPageLoading(true)
-    const INIT_DATE = date;
-    const payload = { date: INIT_DATE }
+    const time = moment(`${date} 00:00:00`).valueOf()
+    const payload = { date, time }
     const { data } = await startHearBeat(payload)
     if(data){
-      const { history, currentPosition, totalProfit } = data;
-      console.log(JSON.stringify(history))
-      console.log('currentPosition',currentPosition)
-      console.log('totalProfit',totalProfit)
+      const { totalProfit, dealDetailList, mostLoss } = data;
+      const profitList = [];
+      const dayProfit = {
+        profit: totalProfit,
+        date,
+        dealDetailList,
+        mostLoss
+      }
+      profitList.push(dayProfit);
+      setTPnlList(profitList);
+      let tProfit = 0;
+      profitList.map(item=>{ tProfit += item.profit });
+      setTPnlRatio(tProfit)
     }
     setPageLoading(false)
   }
 
   useEffect(()=>{
-    // getLongShortRatioData();
-    // getSentiment();
-    // getFee({ instrument_id : BTC_INSTRUMENT_ID });
-    // fnGetHistory();
+
   },[])
-
-  const getColumns = ps => ([{
-    dataIndex: 'index',
-    title: '序号',
-    render:(text,__,index)=> {
-      if(index+1==ps) return text;
-      return ++index
-    }
-  },
-    //   {
-    //   dataIndex: 'order_id',
-    //   title: '订单ID'
-    // },
-    //   {
-    //   dataIndex: 'instrument_id',
-    //   title: '合约ID'
-    // },
-    {
-      dataIndex: 'type',
-      title: '交易类型',
-      render: text=>tradeTypeEnum[text]
-    },{
-      dataIndex: 'size',
-      title: '数量（张）'
-    },{
-      dataIndex: 'price_avg',
-      title: '成交均价'
-    },{
-      dataIndex: 'timestamp',
-      title: '成交时间',
-      render: (text,record,index)=> {
-        if(index+1==ps) return '';
-        return moment(text).format('YYYY-MM-DD HH:mm:ss')
-      }
-    },{
-      dataIndex: 'leverage',
-      title: '杠杆倍数'
-    },
-    //   {
-    //   dataIndex: 'fee',
-    //   title: '手续费'
-    // },
-    {
-      dataIndex: 'bzj-usd',
-      title: '保证金（美元）',
-      render: (_,{size, contract_val, price_avg, leverage},index)=> {
-        if(index+1==ps) return '';
-        return (Number(size) * Number(contract_val) / leverage).toFixed(2)
-      }
-    },
-    {
-      dataIndex: 'feeUsd',
-      title: '手续费（美元）',
-      render: (text,record,index) => {
-        if (index + 1 == ps) return text ? text.toFixed(2) : '';
-        return (Number(record.fee) * Number(record.price_avg)).toFixed(2)
-      }
-    },
-    {
-      dataIndex: 'feeUsdPercent',
-      title: '手续费占比(%)',
-      render: (text,{size, fee, contract_val, price_avg, leverage},index) => {
-        if(index+1==ps) return text ? text.toFixed(2) : '';
-        return ( Number(fee) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / leverage) ).toFixed(2)
-      }
-    },
-    {
-      dataIndex: 'value',
-      title: '合约价值',
-      render: (text,{type, size, price_avg},index)=>{
-        if(index+1==ps) return text ? text.toFixed(2) : '';
-        return (type == 1 || type == 2) ? ( Number(size) * Number(price_avg) ) : ( - Number(size) * Number(price_avg))
-      }
-    }
-    //   {
-    //   dataIndex: 'pnl',
-    //   title: '盈亏'
-    // },
-    //   {
-    //   dataIndex: 'pnlUsd',
-    //   title: '盈亏（美元）',
-    //   render: (text,record,index) => {
-    //     if(index+1==ps) return text ? text.toFixed(2) : '';
-    //     return (Number(record.pnl) * Number(record.price_avg)).toFixed(2)
-    //   }
-    // },{
-    //     dataIndex: 'ratio',
-    //     title: '盈亏占比',
-    //     render: (text,{ fee, size, contract_val, price_avg, leverage, pnl },index) => {
-    //       if(index+1==ps) return text ? (text.toFixed(2) + '%') : '-';
-    //       return ( (Number(fee) * Number(price_avg) + Number(pnl) * Number(price_avg)) * 100 / (Number(size) * Number(contract_val) / Number(leverage))).toFixed(2) + '%'
-    //     }
-    //   }
-  ]);
-
-  const responseHandler = (data, cr, ps)=>{
-    if(Array.isArray(data)) data = { order_info: data };
-    const records = data.order_info;
-    let bzjUsd = 0;
-    let feeUsd = 0;
-    let pnlUsd = 0;
-    let value = 0;
-    // let ratio = 0;
-    records.some(({ type, size, contract_val, price_avg, leverage, pnl, fee }, index) => {
-      if((index >= (cr - 1) * ps) && (index < cr * ps)){
-        bzjUsd += Number(size) * Number(contract_val) / Number(leverage)
-        feeUsd += Number(fee) * Number(price_avg);
-        pnlUsd += Number(pnl) * Number(price_avg);
-        value += (type == 1 || type == 2) ? (Number(size) * Number(price_avg)) : ( - Number(size) * Number(price_avg));
-        // ratio += Number(pnl) * Number(price_avg) * 100 / (Number(size) * Number(contract_val) / Number(leverage))
-      }
-      if(index == cr * ps - 2) return true;
-    });
-    records.splice((cr * ps-1), 0, {
-      index: '总计',
-      feeUsd,
-      pnlUsd,
-      feeUsdPercent: feeUsd * 100 / bzjUsd,
-      value,
-      ratio: ( feeUsd + pnlUsd ) * 100 / (bzjUsd / (ps - 1))
-    });
-    return { records };
-  }
-
-  const disabledDate = current => {
-    return current && current > moment().endOf('day');
-  }
 
   return <Spin spinning={pageLoading}>
     <Card title='概况'>
-      {/*<p>手续费率：*/}
-      {/*  手续费档位: {feeObj.category} <Divider type='vertical' />*/}
-      {/*  吃单手续费率: {feeObj.taker} <Divider type='vertical' />*/}
-      {/*  挂单手续费率: {feeObj.maker} <Divider type='vertical' />*/}
-      {/*  时间: {moment(feeObj.timestamp).format('YYYY-MM-DD HH:mm:ss')} <Divider type='vertical' />*/}
-      {/*  /!*交割手续费率: {feeObj.delivery} <Divider type='vertical' />*!/*/}
-      {/*</p>*/}
-      {/*<Divider />*/}
-
-      {/*frequency:*/}
-      {/*<InputNumber*/}
-      {/*  value={ frequency }*/}
-      {/*  step={0.1}*/}
-      {/*  min={0.1}*/}
-      {/*  max={10}*/}
-      {/*  onChange={v=>setFrequency(Number(v))}*/}
-      {/*/>*/}
-
-      {/*winRatio:*/}
-      {/*<InputNumber*/}
-      {/*  value={ changebleWinRatio }*/}
-      {/*  step={0.1}*/}
-      {/*  min={0.1}*/}
-      {/*  max={10}*/}
-      {/*  onChange={v=> {*/}
-      {/*    setChangebleWinRatio(Number(v))*/}
-      {/*    winRatio.current = (Number(v))*/}
-      {/*  }}*/}
-      {/*/>*/}
-
-      {/*lossRatio:*/}
-      {/*<InputNumber*/}
-      {/*  value={ changebleLossRatio }*/}
-      {/*  step={0.1}*/}
-      {/*  min={0.1}*/}
-      {/*  max={10}*/}
-      {/*  onChange={v=> {*/}
-      {/*    setChangebleLossRatio(Number(v))*/}
-      {/*    lossRatio.current = (Number(v))*/}
-      {/*  }}*/}
-      {/*/>*/}
-
-      {/*杠杆:*/}
-      {/*<InputNumber*/}
-      {/*  value={ leverage }*/}
-      {/*  step={1}*/}
-      {/*  min={1}*/}
-      {/*  max={100}*/}
-      {/*  onChange={v=>setLeverage(Number(v))}*/}
-      {/*/>*/}
+      年份：
+      <Select value={year} onChange={v=>{setMonth(v);}} style={{ width: 120 }}>
+        {
+          yearMap.map(item=>{
+            return  <Select.Option value={item} key={item}>{item}</Select.Option>
+          })
+        }
+      </Select>
 
       月份：
       <Select value={month} onChange={v=>{setMonth(v);setDayStep(0)}} style={{ width: 120 }}>
@@ -473,6 +328,7 @@ export default props => {
           return <div key={`${item.date}-${index}`}>
             <p>日期：{item.date}</p>
             <p>盈亏比：{item.profit}</p>
+            <p>最大亏损：{item.mostLoss && item.mostLoss.profit} {item.mostLoss && item.mostLoss.time}</p>
           </div>
         })
       }
