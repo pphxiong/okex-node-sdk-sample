@@ -768,12 +768,12 @@ const checkDeal = async data => {
 
         const openLongCondition = (Number(macdList[macdList.length-1].column) > 0 && Number(macdList[macdList.length-1].column) < 5
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI3 > 45
+            && rsiList[rsiList.length-1].RSI3 > 52
         )
 
         const openShortCondition = (Number(macdList[macdList.length-1].column) < 0 && Number(macdList[macdList.length-1].column) > -5
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI3 < 55
+            && rsiList[rsiList.length-1].RSI3 < 48
         )
 
         const closeLongCondition = openShortCondition
