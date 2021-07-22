@@ -782,11 +782,11 @@ const checkDeal = async data => {
 
         const closeLongCondition = openShortCondition
             || isForceDeal
-            || longRatio < - 0.168
+            || longRatio < - 0.382
 
         const closeShortCondition = openLongCondition
             || isForceDeal
-            || shortRatio < - 0.168
+            || shortRatio < - 0.382
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
