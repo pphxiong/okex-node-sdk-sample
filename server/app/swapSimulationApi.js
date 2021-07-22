@@ -769,30 +769,26 @@ const checkDeal = async data => {
         const openLongCondition = (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
-            && rsiList[rsiList.length-1].RSI3 < 55
-            && Number(macdList[macdList.length-1].diff) > Number(macdList[macdList.length-1].dea) + 1
-            // && rsiList[rsiList.length-1].RSI1 > 50
-            // && rsiList[rsiList.length-1].RSI2 < 60
+        ) || (Number(macdList[macdList.length-1].column) < 0
+            && rsiList[rsiList.length-1].RSI3 > 50
         )
 
         const openShortCondition = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
-            && rsiList[rsiList.length-1].RSI3 > 45
-            && Number(macdList[macdList.length-1].diff) < Number(macdList[macdList.length-1].dea) - 1
-            // && rsiList[rsiList.length-1].RSI1 < 50
-            // && rsiList[rsiList.length-1].RSI2 > 40
+        ) || (Number(macdList[macdList.length-1].column) > 0
+            && rsiList[rsiList.length-1].RSI3 < 50
         )
 
         const closeLongCondition = openShortCondition
             || isForceDeal
             || rsiList[rsiList.length-1].RSI3 > 80
-            || (rsiList[rsiList.length-1].RSI3 < 50 && Number(macdList[macdList.length-1].column) < 0)
+            // || (rsiList[rsiList.length-1].RSI3 < 50 && Number(macdList[macdList.length-1].column) < 0)
 
         const closeShortCondition = openLongCondition
             || isForceDeal
             || rsiList[rsiList.length-1].RSI3 < 20
-            || (rsiList[rsiList.length-1].RSI3 > 50 && Number(macdList[macdList.length-1].column) > 0)
+            // || (rsiList[rsiList.length-1].RSI3 > 50 && Number(macdList[macdList.length-1].column) > 0)
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
