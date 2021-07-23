@@ -22,7 +22,8 @@ const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
 }
-let mostLoss = INIT_MOST_LOSS
+let mostLoss = INIT_MOST_LOSS;
+let maxWinRatio = 0;
 
 let myInterval;
 
@@ -666,6 +667,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         currentPosition = {};
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
+        maxWinRatio = 0;
 
         // const mock = require(`./mock/${date}.js`);
         // const list = mock.mockData
@@ -716,6 +718,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         currentPosition = {};
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
+        maxWinRatio = 0;
 
         const newList = JSON.parse(JSON.stringify(list))
         const macdList = getCurrentMacd(newList).slice(-1400)
@@ -758,12 +761,14 @@ const checkDeal = async data => {
         if(longHolding){
             const { leverage, entryPrice: avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
+            maxWinRatio = Math.max(maxWinRatio,longRatio)
         }
 
         if(shortHolding){
             const { leverage, entryPrice: avg_cost, } = shortHolding;
             shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
             shortRatio = - shortRatio
+            maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0.5
@@ -782,9 +787,11 @@ const checkDeal = async data => {
 
         const closeLongCondition = MAIN_OPEN_SHORT_CONDITION
             || isForceDeal
+            || (maxWinRatio < 0.06 && longRatio < -0.12)
 
         const closeShortCondition = MAIN_OPEN_LONG_CONDITION
             || isForceDeal
+            || (maxWinRatio < 0.06 && shortRatio < -0.12)
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
@@ -827,6 +834,7 @@ const checkDeal = async data => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
+                    maxWinRatio = 0;
                 }
             }catch (e){
                 console.log(e)
@@ -867,6 +875,7 @@ const checkDeal = async data => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
+                    maxWinRatio = 0;
                 }
             }catch (e){
                 console.log(e)
