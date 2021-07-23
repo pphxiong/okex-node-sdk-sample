@@ -766,26 +766,21 @@ const checkDeal = async data => {
             shortRatio = - shortRatio
         }
 
-        const MAIN_OPEN_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0 && Number(macdList[macdList.length-1].diff) > 0
-            // && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+        const MAIN_OPEN_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
 
-        const MAIN_OPEN_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0 && Number(macdList[macdList.length-1].diff) < 0
-            // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+        const MAIN_OPEN_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
 
-        const openLongCondition = MAIN_OPEN_SHORT_CONDITION
-            ||
-            Number(macdList[macdList.length-1].column) < 0 || Number(macdList[macdList.length-1].diff) < 0
-            || rsiList[rsiList.length-1].RSI3 < 50
-            // || rsiList[rsiList.length-1].RSI3 < 20
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION
+            || rsiList[rsiList.length-1].RSI3 < 20
             // || rsiList[rsiList.length-1].RSI1 < 10
             // && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3 - 2
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
-        || Number(macdList[macdList.length-1].column) > 0 || Number(macdList[macdList.length-1].diff) > 0
-            || rsiList[rsiList.length-1].RSI3 > 50
-            // || rsiList[rsiList.length-1].RSI3 > 80
+            || rsiList[rsiList.length-1].RSI3 > 80
             // || rsiList[rsiList.length-1].RSI1 > 90
             // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3 + 2
 
