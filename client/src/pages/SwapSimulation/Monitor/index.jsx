@@ -240,7 +240,8 @@ export default props => {
     }
     setPageLoading(true)
     const time = moment(`${date} 00:00:00`).valueOf()
-    const payload = { date, time, limit: 480 }
+    const limit = 60 * 24 / Number(interval.split('m')[0])
+    const payload = { date, time, limit }
     const { data } = await startHearBeat(payload)
     if(data){
       const { totalProfit, dealDetailList, mostLoss } = data;
