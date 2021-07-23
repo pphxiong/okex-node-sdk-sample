@@ -661,7 +661,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, limit = 1500 } = query;
+    const { time, date, interval = '3m', limit = 1500 } = query;
     try{
         totalProfit = 0;
         currentPosition = {};
@@ -673,7 +673,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // const list = mock.mockData
 
         const payload = {
-            interval: '3m',
+            interval,
             limit,
             startTime: time
         }
@@ -705,10 +705,10 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/getLatestProfit', async (req, response) => {
     const {query = {}} = req;
-    const { time } = query;
+    const { time, interval = '3m' } = query;
     try{
         const payload = {
-            interval: '3m',
+            interval,
             limit: 1500,
             endTime: time
         }

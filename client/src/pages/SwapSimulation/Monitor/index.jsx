@@ -34,12 +34,14 @@ export default props => {
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('06');
   const [year,setYear] = useState('2021');
+  const [interval,setInterval] = useState('3m');
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
   const [date,setDate] = useState("");
 
   const yearMap = ['2020','2021']
+  const intervalMap = ['1m','3m','5m','15m','30m']
   const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
   const dayMonthMap = {
     '01': ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
@@ -76,7 +78,7 @@ export default props => {
   const fnGetLatestProfit = async () => {
     setPageLoading(true)
     const time = moment().valueOf();
-    const payload = { time }
+    const payload = { time, interval }
     const { data } = await getLatestProfit(payload)
     if(data){
       const { totalProfit, dealDetailList, mostLoss } = data;
@@ -192,7 +194,8 @@ export default props => {
       const p = new Promise(async resolve => {
         const getDayData = async date => {
           const time = moment(`${date} 00:00:00`).valueOf()
-          const payload = { date, time, limit: 480 }
+          const limit = 60 * 24 / Number(interval.split('m')[0])
+          const payload = { date, time, interval, limit }
           const { data } = await startHearBeat(payload);
           if(data){
             const { dealDetailList, totalProfit, mostLoss } = data;
@@ -282,6 +285,15 @@ export default props => {
       </Select>
 
       <DatePicker onChange={(v,dateString)=>setDate(dateString)} style={{ marginLeft: 10 }}/>
+
+      间隔：
+      <Select value={interval} onChange={v=>{setInterval(v);}} style={{ width: 120 }}>
+        {
+          intervalMap.map(item=>{
+            return  <Select.Option value={item} key={item}>{item}</Select.Option>
+          })
+        }
+      </Select>
 
       <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
 
