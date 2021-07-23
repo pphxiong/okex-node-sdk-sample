@@ -791,7 +791,7 @@ const checkDeal = async data => {
 
         const closeShortCondition = MAIN_OPEN_LONG_CONDITION
             || isForceDeal
-            || (maxWinRatio < 0.06 && shortRatio < -0.10 || (maxWinRatio > 0.08 && shortRatio < 0.02))
+            || ((maxWinRatio < 0.06 && shortRatio < -0.10) || (maxWinRatio > 0.08 && shortRatio < 0.02))
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
