@@ -767,14 +767,14 @@ const checkDeal = async data => {
         }
 
         const MAIN_OPEN_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI3 > 50
+            // && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            // && rsiList[rsiList.length-1].RSI3 > 50
             && Number(macdList[macdList.length-1].diff) > 0
             && Number(macdList[macdList.length-1].dea) > 0
 
         const MAIN_OPEN_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI3 < 50
+            // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            // && rsiList[rsiList.length-1].RSI3 < 50
             && Number(macdList[macdList.length-1].diff) < 0
             && Number(macdList[macdList.length-1].dea) < 0
 
