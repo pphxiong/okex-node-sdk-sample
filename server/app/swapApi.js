@@ -575,21 +575,36 @@ const checkDeal = async data => {
         console.log('rsiList',rsiList.slice(-1))
         console.log('------------------')
 
+        const closeLongPosition = async ()=>{
+            if(longHolding && Number(longHolding.positionAmt)){
+                const payload = {
+                    position: Number(longHolding.positionAmt),
+                    side: 'long',
+                    mark_price,
+                    time: macdList[macdList.length-1].time
+                }
+                await closePosition(payload)
+            }
+        }
+
+        const closeShortPosition = async ()=>{
+            if(shortHolding && Number(shortHolding.positionAmt)){
+                const payload = {
+                    position: Number(shortHolding.positionAmt),
+                    side: 'short',
+                    mark_price,
+                    time: macdList[macdList.length-1].time
+                }
+                await closePosition(payload);
+            }
+        }
+
         //平多仓条件
         if(
             closeLongCondition
         ){
             try {
-                if(longHolding && Number(longHolding.positionAmt)){
-                    const payload = {
-                        position: Number(longHolding.positionAmt),
-                        side: 'long',
-                        mark_price,
-                        time: macdList[macdList.length-1].time
-                    }
-                    await closePosition(payload)
-                    maxWinRatio = 0;
-                }
+                await closeLongPosition();
             }catch (e){
                 console.log(e)
             }
@@ -600,16 +615,7 @@ const checkDeal = async data => {
             closeShortCondition
         ){
             try {
-                if(shortHolding && Number(shortHolding.positionAmt)){
-                    const payload = {
-                        position: Number(shortHolding.positionAmt),
-                        side: 'short',
-                        mark_price,
-                        time: macdList[macdList.length-1].time
-                    }
-                    await closePosition(payload);
-                    maxWinRatio = 0;
-                }
+               await closeShortPosition();
             }catch (e){
                 console.log(e)
             }
@@ -624,14 +630,7 @@ const checkDeal = async data => {
                     (!longHolding || !Number(longHolding.positionAmt))
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
-                    if(shortHolding && Number(shortHolding.positionAmt)){
-                        const payload = {
-                            position: Number(shortHolding.positionAmt),
-                            side: 'short',
-                            mark_price,
-                        }
-                        await closePosition(payload);
-                    }
+                    await closeShortPosition()
                     await openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                 }
             }catch (e){
@@ -649,14 +648,7 @@ const checkDeal = async data => {
                     // &&
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
-                    if(longHolding && Number(longHolding.positionAmt)){
-                        const payload = {
-                            position: Number(longHolding.positionAmt),
-                            side: 'long',
-                            mark_price,
-                        }
-                        await closePosition(payload)
-                    }
+                    await closeLongPosition();
                     await openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
                 }
             }catch (e){
