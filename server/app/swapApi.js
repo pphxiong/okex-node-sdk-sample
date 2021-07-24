@@ -632,7 +632,7 @@ const checkDeal = async data => {
                     (!longHolding || !Number(longHolding.positionAmt))
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
-                    await closeShortPosition()
+                    // await closeShortPosition()
                     await openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                 }
             }catch (e){
@@ -650,7 +650,7 @@ const checkDeal = async data => {
                     // &&
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
-                    await closeLongPosition();
+                    // await closeLongPosition();
                     await openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
                 }
             }catch (e){
