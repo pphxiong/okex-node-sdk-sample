@@ -561,12 +561,12 @@ const checkDeal = async data => {
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition = (MAIN_OPEN_SHORT_CONDITION && rsiList[rsiList.length-1].RSI3 > 50)
-            || isForceDeal
             || longRatio < - 0.95 * LEVERAGE / 10
+            // || isForceDeal
 
         const closeShortCondition = (MAIN_OPEN_LONG_CONDITION && rsiList[rsiList.length-1].RSI3 < 50)
-            || isForceDeal
             || shortRatio < - 0.95 * LEVERAGE / 10
+            // || isForceDeal
 
         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
