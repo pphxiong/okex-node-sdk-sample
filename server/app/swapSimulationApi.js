@@ -735,12 +735,12 @@ const checkDeal = async data => {
         const closeLongCondition = rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
             || isForceDeal
-            || longRatio < - 0.95
+            || longRatio < - 0.382
 
         const closeShortCondition = rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
             || isForceDeal
-            || shortRatio < - 0.95
+            || shortRatio < - 0.382
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
