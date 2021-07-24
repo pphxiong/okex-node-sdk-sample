@@ -810,7 +810,7 @@ const checkDeal = async data => {
             if(longHolding && Number(longHolding.positionAmt)){
                 totalProfit += longRatio;
                 totalProfit += - 0.05 * 0.01 * LEVERAGE
-                longHolding = {}
+                // longHolding = {}
                 currentPosition = {}
                 const dealDetail = {
                     side: 'CLOSE',
@@ -838,7 +838,7 @@ const checkDeal = async data => {
             if(shortHolding && Number(shortHolding.positionAmt)){
                 totalProfit += shortRatio
                 totalProfit += - 0.05 * 0.01 * LEVERAGE
-                shortHolding = {}
+                // shortHolding = {}
                 currentPosition = {}
                 const dealDetail = {
                     side: 'CLOSE',
