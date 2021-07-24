@@ -894,7 +894,7 @@ const checkDeal = async data => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
-                    closeLong()
+                    closeShort()
                     currentPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -931,7 +931,7 @@ const checkDeal = async data => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
-                    closeShort()
+                    closeLong()
                     currentPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
