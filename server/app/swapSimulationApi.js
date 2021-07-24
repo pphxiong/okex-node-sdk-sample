@@ -16,6 +16,8 @@ const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1;
 const LEVERAGE = 10;
 let currentPosition = {};
+let longPosition = {};
+let shortPosition = {};
 let totalProfit = 0;
 let dealDetailList = [];
 const INIT_MOST_LOSS = {
@@ -758,6 +760,9 @@ const checkDeal = async data => {
         if(currentPosition.positionSide == 'LONG' && currentPosition.positionAmt) longHolding = currentPosition;
         if(currentPosition.positionSide == 'SHORT' && currentPosition.positionAmt) shortHolding = currentPosition;
 
+        if(longPosition && longPosition.positionAmt) longHolding =  longPosition;
+        if(shortPosition && shortPosition.positionAmt) shortHolding =  shortPosition;
+
         if(longHolding){
             const { leverage, entryPrice: avg_cost, } = longHolding;
             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
@@ -811,7 +816,8 @@ const checkDeal = async data => {
                 totalProfit += longRatio;
                 totalProfit += - 0.05 * 0.01 * LEVERAGE
                 longHolding = {}
-                currentPosition = {}
+                // currentPosition = {}
+                longPosition = {}
                 const dealDetail = {
                     side: 'CLOSE',
                     positionSide: 'LONG',
@@ -839,7 +845,8 @@ const checkDeal = async data => {
                 totalProfit += shortRatio
                 totalProfit += - 0.05 * 0.01 * LEVERAGE
                 shortHolding = {}
-                currentPosition = {}
+                // currentPosition = {}
+                shortPosition = {}
                 const dealDetail = {
                     side: 'CLOSE',
                     positionSide: 'SHORT',
@@ -893,8 +900,7 @@ const checkDeal = async data => {
                     (!longHolding || !Number(longHolding.positionAmt))
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
-                    // openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
-                    closeShort()
+                    // closeShort()
                     currentPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -930,8 +936,7 @@ const checkDeal = async data => {
                     // &&
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
-                    // openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
-                    closeLong()
+                    // closeLong()
                     currentPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
