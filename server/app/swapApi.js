@@ -1,19 +1,10 @@
 import request from '../utils/request';
 import moment from 'moment'
 
-// const {PublicClient} = require('@okfe/okex-node');
-// const {AuthenticatedClient} = require('@okfe/okex-node');
-// const customAuthClient = require('./customAuthClientV5');
 const customAuthClientBN = require('./customAuthClientBN');
 
-// const fs = require('fs');
-
-//读取配置文件，变量config的类型是Object类型
-// let dataConfig = require('./configETH.json');
-
-// const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 1;
+const INIT_POSITION = 5;
 const LEVERAGE = 10;
 const DEFAULT_INTERVAL = '3m';
 
@@ -507,14 +498,12 @@ const checkDeal = async data => {
     });
 
     async function checkByStep(data,isForceDeal) {
-        console.log(data)
         const { macdList, rsiList } = data;
         let mark_price;
         try{
             const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
             mark_price = Number(data.markPrice);
         }catch (e) {
-            // if(!mark_result) throw new Error('mark_price is null!');
             restart('getMarkPrice')
         }
 
@@ -573,91 +562,91 @@ const checkDeal = async data => {
 
         const closeLongCondition = (MAIN_OPEN_SHORT_CONDITION && rsiList[rsiList.length-1].RSI3 > 50)
             || isForceDeal
-            || longRatio < - 0.95
+            || longRatio < - 0.95 * LEVERAGE / 10
 
         const closeShortCondition = (MAIN_OPEN_LONG_CONDITION && rsiList[rsiList.length-1].RSI3 < 50)
             || isForceDeal
-            || shortRatio < - 0.95
+            || shortRatio < - 0.95 * LEVERAGE / 10
 
         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
         console.log('mark_price',mark_price)
-        console.log('macdList',macdList.slice(-2))
-        console.log('rsiList',rsiList.slice(-2))
+        console.log('macdList',macdList.slice(-1))
+        console.log('rsiList',rsiList.slice(-1))
         console.log('------------------')
 
-        // //平多仓条件
-        // if(
-        //     closeLongCondition
-        // ){
-        //     try {
-        //         if(longHolding && Number(longHolding.positionAmt)){
-        //             const payload = {
-        //                 position: Number(longHolding.positionAmt),
-        //                 side: 'long',
-        //                 mark_price,
-        //                 time: macdList[macdList.length-1].time
-        //             }
-        //             closePosition(payload)
-        //             maxWinRatio = 0;
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //平空仓条件
-        // if(
-        //     closeShortCondition
-        // ){
-        //     try {
-        //         if(shortHolding && Number(shortHolding.positionAmt)){
-        //             const payload = {
-        //                 position: Number(shortHolding.positionAmt),
-        //                 side: 'short',
-        //                 mark_price,
-        //                 time: macdList[macdList.length-1].time
-        //             }
-        //             closePosition(payload);
-        //             maxWinRatio = 0;
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //开多仓条件
-        // if(
-        //     openLongCondition
-        // ){
-        //     try {
-        //         if(
-        //             (!longHolding || !Number(longHolding.positionAmt))
-        //             // && (!shortHolding || !Number(shortHolding.positionAmt))
-        //         ){
-        //             openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
-        //
-        // //开空仓条件
-        // if(
-        //     openShortCondition
-        // ){
-        //     try {
-        //         if(
-        //             // (!longHolding || !Number(longHolding.positionAmt))
-        //             // &&
-        //             (!shortHolding || !Number(shortHolding.positionAmt))
-        //         ){
-        //             openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
-        //         }
-        //     }catch (e){
-        //         console.log(e)
-        //     }
-        // }
+        //平多仓条件
+        if(
+            closeLongCondition
+        ){
+            try {
+                if(longHolding && Number(longHolding.positionAmt)){
+                    const payload = {
+                        position: Number(longHolding.positionAmt),
+                        side: 'long',
+                        mark_price,
+                        time: macdList[macdList.length-1].time
+                    }
+                    await closePosition(payload)
+                    maxWinRatio = 0;
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //平空仓条件
+        if(
+            closeShortCondition
+        ){
+            try {
+                if(shortHolding && Number(shortHolding.positionAmt)){
+                    const payload = {
+                        position: Number(shortHolding.positionAmt),
+                        side: 'short',
+                        mark_price,
+                        time: macdList[macdList.length-1].time
+                    }
+                    await closePosition(payload);
+                    maxWinRatio = 0;
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开多仓条件
+        if(
+            openLongCondition
+        ){
+            try {
+                if(
+                    (!longHolding || !Number(longHolding.positionAmt))
+                    // && (!shortHolding || !Number(shortHolding.positionAmt))
+                ){
+                    await openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        //开空仓条件
+        if(
+            openShortCondition
+        ){
+            try {
+                if(
+                    // (!longHolding || !Number(longHolding.positionAmt))
+                    // &&
+                    (!shortHolding || !Number(shortHolding.positionAmt))
+                ){
+                    await openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
+                }
+            }catch (e){
+                console.log(e)
+            }
+        }
     }
 }
 
