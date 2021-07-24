@@ -718,8 +718,8 @@ const checkDeal = async data => {
             // && rsiList[rsiList.length-1].RSI1 < 50
             && rsiList[rsiList.length-1].RSI2 < 50
             && rsiList[rsiList.length-1].RSI3 < 50
-            && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI2
-            && rsiList[rsiList.length-1].RSI3 > rsiList[rsiList.length-2].RSI3
+            && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
+            && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
             )
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
@@ -728,8 +728,8 @@ const checkDeal = async data => {
                 // && rsiList[rsiList.length-1].RSI1 > 50
                 && rsiList[rsiList.length-1].RSI2 > 50
                 && rsiList[rsiList.length-1].RSI3 > 50
-                && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
-                && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI2
+                && rsiList[rsiList.length-1].RSI3 > rsiList[rsiList.length-2].RSI3
             )
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
