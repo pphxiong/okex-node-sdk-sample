@@ -913,6 +913,7 @@ const checkDeal = async data => {
                         macd: macdList[macdList.length-1],
                         rsi: rsiList[rsiList.length-1]
                     }
+                    totalProfit += shortRatio
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
@@ -949,6 +950,7 @@ const checkDeal = async data => {
                         macd: macdList[macdList.length-1],
                         rsi: rsiList[rsiList.length-1]
                     }
+                    totalProfit += longRatio
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
