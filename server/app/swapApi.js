@@ -501,13 +501,13 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async data => {
-    const macdListLength = data.macdList.length
     await checkByStep({
-        macdList: [data.macdList[macdListLength-2],data.macdList[macdListLength-1]],
-        rsiList: [data.rsiList[macdListLength-2],data.rsiList[macdListLength-1]],
+        macdList: data.macdList.slice(-2),
+        rsiList: data.rsiList.slice(-2),
     });
 
     async function checkByStep(data,isForceDeal) {
+        console.log(data)
         const { macdList, rsiList } = data;
         let mark_price;
         try{
