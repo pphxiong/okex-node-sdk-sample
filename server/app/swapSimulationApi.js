@@ -821,6 +821,7 @@ const checkDeal = async data => {
                     // closePosition(payload)
                     totalProfit += longRatio;
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
+                    longHolding = {}
                     currentPosition = {}
                     const dealDetail = {
                         side: 'CLOSE',
@@ -862,6 +863,7 @@ const checkDeal = async data => {
                     // closePosition(payload);
                     totalProfit += shortRatio
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
+                    shortHolding = {}
                     currentPosition = {}
                     const dealDetail = {
                         side: 'CLOSE',
@@ -915,7 +917,7 @@ const checkDeal = async data => {
                         macd: macdList[macdList.length-1],
                         rsi: rsiList[rsiList.length-1]
                     }
-                    totalProfit += shortRatio
+                    if(shortHolding && Number(shortHolding.positionAmt)) totalProfit += shortRatio
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
@@ -952,7 +954,7 @@ const checkDeal = async data => {
                         macd: macdList[macdList.length-1],
                         rsi: rsiList[rsiList.length-1]
                     }
-                    totalProfit += longRatio
+                    if(longHolding && Number(longHolding.positionAmt)) totalProfit += longRatio
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
