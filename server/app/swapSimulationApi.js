@@ -358,74 +358,6 @@ app.get('/test', function(req, res) {
     send(res, {errcode: 0, errmsg: 'ok'});
 });
 
-let cancelInterval;
-const openPosition = (params = {}) => {
-    const { openSide = 'long', position = Number(INIT_POSITION), mark_price, time } = params;
-
-    function postOrder(size,price) {
-        const type = openSide == 'long' ? 'BUY' : 'SELL';
-        console.log('openOtherOrderMoment', openSide, moment().format('YYYY-MM-DD HH:mm:ss'))
-        console.log('position', position, 'type', type, 'side', openSide)
-        currentPosition = {
-            positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
-            leverage: LEVERAGE,
-            entryPrice: mark_price,
-            positionAmt: INIT_POSITION,
-            time,
-        }
-        // const payload = {
-        //     symbol: BN_SYMBOL,
-        //     side: type,
-        //     positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
-        //     type: 'MARKET',
-        //     quantity: Math.abs(size),
-        //     recvWindow: 5000,
-        // }
-        // try{
-        //     await cAuthClientBN.swap.postOrder(payload)
-        //     positionChange = true
-        // }catch (e) {
-        //     // throw new Error('Error');
-        //     restart('open');
-        // }
-    }
-    postOrder(position,mark_price)
-}
-
-// 平仓
-const closePosition = (holding) => {
-    const { position = INIT_POSITION, side, mark_price, time } = holding;
-    function postOrder(size,price) {
-        currentPosition = { time }
-        // const type = side == 'long' ? 'SELL' : 'BUY'
-        // const payload = {
-        //     symbol: BN_SYMBOL,
-        //     side: type,
-        //     positionSide: side == 'long' ? 'LONG' : 'SHORT',
-        //     type: 'MARKET',
-        //     quantity: Math.abs(size),
-        //     recvWindow: 5000,
-        //     // timestamp: moment(new Date()).valueOf(),
-        // }
-        // try{
-        //     // await validateAndCancelOrder(payload)
-        //     await cAuthClientBN.swap.postOrder(payload)
-        //     positionChange = true
-        // }catch (e) {
-        //     // throw new Error('Error');
-        //     restart('close');
-        // }
-    }
-    console.log('###################################')
-    console.log('closePositionMoment',moment().format('YYYY-MM-DD HH:mm:ss'))
-    console.log('###################################')
-    postOrder(position,mark_price)
-}
-
-let positionChange = true;
-let globalHolding = null;
-let openMarketPrice = 0
-let globalColumnsObjList;
 function getMacd(params) {
     const {price,lastEma12,lastEma26,lastDea,high,low,time} = params
 
@@ -642,6 +574,8 @@ const waitTime = (time = 1000 * 4) => {
 app.get('/swap/reset', async (req, response) => {
     totalProfit = 0;
     currentPosition = {};
+    longPosition = {};
+    shortPosition = {};
     dealDetailList = []
     mostLoss = {}
     send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition, dealDetailList } });
@@ -670,6 +604,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
         maxWinRatio = 0;
+        longPosition = {};
+        shortPosition = {}
 
         // const mock = require(`./mock/${date}.js`);
         // const list = mock.mockData
@@ -718,6 +654,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
         const list = data;
         totalProfit = 0;
         currentPosition = {};
+        longPosition = {};
+        shortPosition = {};
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
         maxWinRatio = 0;
@@ -757,8 +695,8 @@ const checkDeal = async data => {
         let longRatio = 0
         let shortRatio = 0
 
-        if(currentPosition.positionSide == 'LONG' && currentPosition.positionAmt) longHolding = currentPosition;
-        if(currentPosition.positionSide == 'SHORT' && currentPosition.positionAmt) shortHolding = currentPosition;
+        // if(currentPosition.positionSide == 'LONG' && currentPosition.positionAmt) longHolding = currentPosition;
+        // if(currentPosition.positionSide == 'SHORT' && currentPosition.positionAmt) shortHolding = currentPosition;
 
         if(longPosition && longPosition.positionAmt) longHolding =  longPosition;
         if(shortPosition && shortPosition.positionAmt) shortHolding =  shortPosition;
@@ -901,7 +839,7 @@ const checkDeal = async data => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeShort()
-                    currentPosition = {
+                    longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
                         entryPrice: mark_price,
@@ -937,7 +875,7 @@ const checkDeal = async data => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeLong()
-                    currentPosition = {
+                    shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
                         entryPrice: mark_price,
