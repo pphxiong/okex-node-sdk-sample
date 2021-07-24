@@ -789,16 +789,12 @@ const checkDeal = async data => {
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
-        const closeLongCondition =
-            (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 > 50)
-            ||
-            isForceDeal
+        const closeLongCondition = (openShortCondition && rsiList[rsiList.length-1].RSI3 > 50)
+            || isForceDeal
             || longRatio < - 0.95
 
-        const closeShortCondition =
-            (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 < 50)
-            ||
-            isForceDeal
+        const closeShortCondition = (openLongCondition && rsiList[rsiList.length-1].RSI3 < 50)
+            || isForceDeal
             || shortRatio < - 0.95
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
