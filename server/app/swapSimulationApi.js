@@ -737,12 +737,12 @@ const checkDeal = async data => {
         const closeLongCondition = openShortCondition
             || (Number(macdList[macdList.length-1].column) < 0 && longRatio < 0)
             || isForceDeal
-            || longRatio < - 0.382
+            || longRatio < - 0.95
 
         const closeShortCondition = openLongCondition
             || (Number(macdList[macdList.length-1].column) > 0 && shortRatio < 0)
             || isForceDeal
-            || shortRatio < - 0.382
+            || shortRatio < - 0.95
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
