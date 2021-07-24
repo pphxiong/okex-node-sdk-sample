@@ -4,7 +4,7 @@ import moment from 'moment'
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 2;
+const INIT_POSITION = 1.5;
 const LEVERAGE = 10;
 const DEFAULT_INTERVAL = '3m';
 
@@ -676,8 +676,7 @@ const startInterval = async () => {
 
 // 定时获取交割合约账户信息
 (async ()=>{
-    // await startInterval()
-    await openPosition({ openSide: "long" })
+    await startInterval()
 })()
 app.listen(8091);
 
