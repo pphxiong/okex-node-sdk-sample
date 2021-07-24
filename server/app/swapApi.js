@@ -119,7 +119,7 @@ app.get('/test', function(req, res) {
 
 let cancelInterval;
 const openPosition = async (params = {}) => {
-    const { openSide = 'long', position = Number(INIT_POSITION), mark_price, time } = params;
+    const { openSide = 'long', position = Number(INIT_POSITION), mark_price } = params;
 
     async function postOrder(size,price) {
         const type = openSide == 'long' ? 'BUY' : 'SELL';
@@ -676,7 +676,8 @@ const startInterval = async () => {
 
 // 定时获取交割合约账户信息
 (async ()=>{
-    await startInterval()
+    // await startInterval()
+    await openPosition({ openSide: "long" })
 })()
 app.listen(8091);
 
