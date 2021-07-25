@@ -714,16 +714,16 @@ const checkDeal = async data => {
             maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
 
-        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0 && Number(macdList[macdList.length-2].column) < 0
-            && rsiList[rsiList.length-1].RSI3 < 45
+        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI3 > 50
             )
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
 
-        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0 && Number(macdList[macdList.length-2].column) > 0
-                && rsiList[rsiList.length-1].RSI3 > 55
-                // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                // && rsiList[rsiList.length-1].RSI3 > 60
+        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 < 50
             )
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
