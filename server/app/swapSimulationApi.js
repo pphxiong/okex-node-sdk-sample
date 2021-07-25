@@ -738,7 +738,7 @@ const checkDeal = async data => {
             || longRatio < - 0.95
 
         const closeShortCondition = openLongCondition
-            || (Number(macdList[macdList.length-1].column) > 0 && longRatio > 0)
+            || (Number(macdList[macdList.length-1].column) > 0 && shortRatio < 0)
             || isForceDeal
             || shortRatio < - 0.95
 
