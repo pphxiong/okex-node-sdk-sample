@@ -770,11 +770,13 @@ const checkDeal = async data => {
 
         const MAIN_OPEN_LONG_CONDITION = (minPriceIndex == macdList.length - 1
             && minPriceIndex != minMacdIndex
-            // && rsiList[rsiList.length-1].RSI3 > 50
+            && macdList[macdList.length-1].column < 0
+            // && rsiList[rsiList.length-1].RSI3 < 50
             )
 
         const MAIN_OPEN_SHORT_CONDITION = (maxPriceIndex == macdList.length - 1
             && maxPriceIndex != maxMacdIndex
+            && macdList[macdList.length-1].column > 0
             // && rsiList[rsiList.length-1].RSI3 < 50
             )
 
