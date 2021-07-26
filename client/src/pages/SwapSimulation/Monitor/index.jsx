@@ -35,6 +35,7 @@ export default props => {
   const [month,setMonth] = useState('06');
   const [year,setYear] = useState('2021');
   const [interval,setInterval] = useState('3m');
+  const [latestInterval,setLatestInterval] = useState(20);
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
@@ -42,6 +43,7 @@ export default props => {
 
   const yearMap = ['2020','2021']
   const intervalMap = ['1m','3m','5m','15m','30m']
+  const latestIntervalMap = [10, 20, 40, 80, 240, 480, 1440]
   const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
   const dayMonthMap = {
     '01': ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
@@ -78,7 +80,7 @@ export default props => {
   const fnGetLatestProfit = async () => {
     setPageLoading(true)
     const time = moment().valueOf();
-    const payload = { time, interval }
+    const payload = { time, interval, limit: latestInterval }
     const { data } = await getLatestProfit(payload)
     if(data){
       const { totalProfit, dealDetailList, mostLoss } = data;
@@ -300,7 +302,17 @@ export default props => {
 
       <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
 
+      <Select value={latestInterval} onChange={v=>{setLatestInterval(v);}} style={{ width: 120 }}>
+        {
+          latestIntervalMap.map(item=>{
+            return  <Select.Option value={item} key={item}>{item}</Select.Option>
+          })
+        }
+      </Select>
+
       <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
+
+      <br />
 
       <Button onClick={()=>fnGetHistoryByDay()} style={{ marginLeft: 10 }}>下载天历史数据</Button>
 

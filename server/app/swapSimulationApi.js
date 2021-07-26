@@ -643,11 +643,11 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/getLatestProfit', async (req, response) => {
     const {query = {}} = req;
-    const { time, interval = '3m' } = query;
+    const { time, interval = '3m', limit = 1440 } = query;
     try{
         const payload = {
             interval,
-            limit: 1500,
+            limit,
             endTime: time
         }
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
@@ -679,11 +679,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async data => {
-    for(let i = 0; i < data.macdList.length - 1; i++){
+    for(let i = 0; i < data.macdList.length - 4; i++){
         checkByStep({
-            macdList: [data.macdList[i],data.macdList[i+1]],
-            rsiList: [data.rsiList[i],data.rsiList[i+1]],
-        },i == data.macdList.length - 2)
+            macdList: data.macdList.slice(i,i+5),
+            rsiList: data.rsiList.slice(i,i+5),
+        },i == data.macdList.length - 5)
     }
 
     function checkByStep(data,isForceDeal){
