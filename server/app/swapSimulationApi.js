@@ -774,28 +774,32 @@ const checkDeal = async data => {
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
-        const closeLongCondition = (
-                // Number(macdList[macdList.length-1].column) < 0
-                // &&
-                rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
-                && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 < 50
-                && (longRatio > 0.02 || longRatio < - 0.1 || Number(macdList[macdList.length-1].column) < 0)
-            )
-            || openShortCondition
+        const closeLongCondition =
+            // (
+            //     // Number(macdList[macdList.length-1].column) < 0
+            //     // &&
+            //     rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
+            //     && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 < 50
+            //     && (longRatio > 0.02 || longRatio < - 0.1 || Number(macdList[macdList.length-1].column) < 0)
+            // )
+            // ||
+            openShortCondition
             || isForceDeal
             || longRatio < - 0.95
 
-        const closeShortCondition = (
-                // Number(
-                // macdList[macdList.length-1].column) > 0
-                // &&
-                rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
-                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 > 50
-                && (shortRatio > 0.02 || shortRatio < - 0.1 || Number(macdList[macdList.length-1].column) > 0)
-            )
-            || openLongCondition
+        const closeShortCondition =
+            // (
+            //     // Number(
+            //     // macdList[macdList.length-1].column) > 0
+            //     // &&
+            //     rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+            //     && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 > 50
+            //     && (shortRatio > 0.02 || shortRatio < - 0.1 || Number(macdList[macdList.length-1].column) > 0)
+            // )
+            // ||
+            openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
 
