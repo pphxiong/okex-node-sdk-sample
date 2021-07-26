@@ -737,7 +737,7 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 > 50
             && !ifMacdLongContinuity
             && ifMacdLongGreaterContinuity
-            // && rsiList[rsiList.length-1].RSI3 < 60
+            && rsiList[rsiList.length-1].RSI3 < 60
             )
             // ||
             // (
@@ -753,6 +753,7 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI3 < 50
                 && !ifMacdShortContinuity
                 && ifMacdShortLessContinuity
+                && rsiList[rsiList.length-1].RSI3 > 40
             )
             // || rsiList[rsiList.length-1].RSI3 > 80
             // || rsiList[rsiList.length-1].RSI1 > 90
