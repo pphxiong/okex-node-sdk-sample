@@ -717,7 +717,7 @@ const checkDeal = async data => {
         const MAIN_OPEN_LONG_CONDITION =
             rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-            // && rsiList[rsiList.length-1].RSI3 > 50
+            && rsiList[rsiList.length-1].RSI3 > 50
             // (Number(macdList[macdList.length-1].column) > 0
             // && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             // && rsiList[rsiList.length-1].RSI3 > 50
@@ -728,7 +728,7 @@ const checkDeal = async data => {
         const MAIN_OPEN_SHORT_CONDITION =
             rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-            // && rsiList[rsiList.length-1].RSI3 < 50
+            && rsiList[rsiList.length-1].RSI3 < 50
             // (Number(macdList[macdList.length-1].column) < 0
             //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             //     && rsiList[rsiList.length-1].RSI3 < 50
