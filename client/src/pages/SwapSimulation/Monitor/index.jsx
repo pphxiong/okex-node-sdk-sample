@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Divider, Button, DatePicker, InputNumber, Select, Spin, message } from 'antd';
+import { Card, Divider, Button, DatePicker, InputNumber, Select, Spin, message, Row, Col } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from "moment";
 import { Line } from '@ant-design/charts';
@@ -269,54 +269,57 @@ export default props => {
 
   return <Spin spinning={pageLoading}>
     <Card title='概况'>
-      年份：
-      <Select value={year} onChange={v=>{setYear(v);}} style={{ width: 120 }}>
-        {
-          yearMap.map(item=>{
-            return  <Select.Option value={item} key={item}>{item}</Select.Option>
-          })
-        }
-      </Select>
+      <Row>
+        年份：
+        <Select value={year} onChange={v=>{setYear(v);}} style={{ width: 120 }}>
+          {
+            yearMap.map(item=>{
+              return  <Select.Option value={item} key={item}>{item}</Select.Option>
+            })
+          }
+        </Select>
 
-      月份：
-      <Select value={month} onChange={v=>{setMonth(v);setDayStep(0)}} style={{ width: 120 }}>
-        {
-          monthMap.map(item=>{
-            return  <Select.Option value={item} key={item}>{item}</Select.Option>
-          })
-        }
-      </Select>
+        月份：
+        <Select value={month} onChange={v=>{setMonth(v);setDayStep(0)}} style={{ width: 120 }}>
+          {
+            monthMap.map(item=>{
+              return  <Select.Option value={item} key={item}>{item}</Select.Option>
+            })
+          }
+        </Select>
 
-      <DatePicker onChange={(v,dateString)=>setDate(dateString)} style={{ marginLeft: 10 }}/>
+        <DatePicker onChange={(v,dateString)=>setDate(dateString)} style={{ marginLeft: 10 }}/>
 
-      间隔：
-      <Select value={interval} onChange={v=>{setInterval(v);}} style={{ width: 120 }}>
-        {
-          intervalMap.map(item=>{
-            return  <Select.Option value={item} key={item}>{item}</Select.Option>
-          })
-        }
-      </Select>
+        间隔：
+        <Select value={interval} onChange={v=>{setInterval(v);}} style={{ width: 120 }}>
+          {
+            intervalMap.map(item=>{
+              return  <Select.Option value={item} key={item}>{item}</Select.Option>
+            })
+          }
+        </Select>
 
-      <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
+        <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
 
-      <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
+        <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
 
-      <Select value={latestInterval} onChange={v=>{setLatestInterval(v);}} style={{ width: 120 }}>
-        {
-          latestIntervalMap.map(item=>{
-            return  <Select.Option value={item} key={item}>{item}</Select.Option>
-          })
-        }
-      </Select>
+        <Select value={latestInterval} onChange={v=>{setLatestInterval(v);}} style={{ width: 120, marginLeft: 10 }}>
+          {
+            latestIntervalMap.map(item=>{
+              return  <Select.Option value={item} key={item}>{item}</Select.Option>
+            })
+          }
+        </Select>
 
-      <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
+        <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
+      </Row>
 
-      <br />
+      <Row style={{ marginTop: 10 }}>
+        <Button onClick={()=>fnGetHistoryByDay()} style={{ marginLeft: 10 }}>下载天历史数据</Button>
 
-      <Button onClick={()=>fnGetHistoryByDay()} style={{ marginLeft: 10 }}>下载天历史数据</Button>
+        <Button onClick={()=>fnGetHistoryByMonth()} style={{ marginLeft: 10 }}>下载月历史数据</Button>
+      </Row>
 
-      <Button onClick={()=>fnGetHistoryByMonth()} style={{ marginLeft: 10 }}>下载月历史数据</Button>
 
       {/*<Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>*/}
 

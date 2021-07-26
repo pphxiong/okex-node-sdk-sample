@@ -732,15 +732,22 @@ const checkDeal = async data => {
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
-        const closeLongCondition = (Number(macdList[macdList.length-1].column) < 0
-                // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+        const closeLongCondition = (
+                // Number(macdList[macdList.length-1].column) < 0
+                // &&
+                rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
+                && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
             )
             || isForceDeal
             || longRatio < - 0.95
 
-        const closeShortCondition = (Number(macdList[macdList.length-1].column) > 0
-                // && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+        const closeShortCondition = (
+            Number(
+                // macdList[macdList.length-1].column) > 0
+                // &&
+                rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 > 50
             )
             || isForceDeal
