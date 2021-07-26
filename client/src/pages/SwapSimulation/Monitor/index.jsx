@@ -6,6 +6,7 @@ import { Line } from '@ant-design/charts';
 import {
   startHearBeat,
   reset,
+  setRSIParams,
   getHistory,
   getLatestProfit
 } from './api';
@@ -36,6 +37,9 @@ export default props => {
   const [year,setYear] = useState('2021');
   const [interval,setInterval] = useState('3m');
   const [latestInterval,setLatestInterval] = useState(20);
+  const [rsi1,setRsi1] = useState(6);
+  const [rsi2,setRsi2] = useState(12);
+  const [rsi3,setRsi3] = useState(24);
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
@@ -115,6 +119,12 @@ export default props => {
       a.href = e.target.result;
       a.click();
     };
+  }
+
+  const fnSetRSI = async () => {
+    const payload = { rsi1, rsi2, rsi3 };
+    const { errmsg } = await setRSIParams(payload);
+    message.success(errmsg)
   }
 
   const fnGetHistoryByMonth = async () => {
@@ -298,26 +308,35 @@ export default props => {
             })
           }
         </Select>
-
-        <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
-
-        <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
-
-        <Select value={latestInterval} onChange={v=>{setLatestInterval(v);}} style={{ width: 120, marginLeft: 10 }}>
-          {
-            latestIntervalMap.map(item=>{
-              return  <Select.Option value={item} key={item}>{item}</Select.Option>
-            })
-          }
-        </Select>
-
-        <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
-      </Row>
-
-      <Row style={{ marginTop: 10 }}>
         <Button onClick={()=>fnGetHistoryByDay()} style={{ marginLeft: 10 }}>下载天历史数据</Button>
 
         <Button onClick={()=>fnGetHistoryByMonth()} style={{ marginLeft: 10 }}>下载月历史数据</Button>
+
+      </Row>
+
+      <Row style={{ marginTop: 10 }} gutter={12}>
+        <Col>
+          RSI1: <InputNumber step={1} value={rsi1} onChange={v=>setRsi1(v)} />
+          RSI2: <InputNumber step={1} value={rsi2} onChange={v=>setRsi2(v)} />
+          RSI3: <InputNumber step={1} value={rsi3} onChange={v=>setRsi3(v)} />
+          <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
+        </Col>
+        <Col>
+          <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
+
+          <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
+
+          <Select value={latestInterval} onChange={v=>{setLatestInterval(v);}} style={{ width: 120, marginLeft: 10 }}>
+            {
+              latestIntervalMap.map(item=>{
+                return  <Select.Option value={item} key={item}>{item}</Select.Option>
+              })
+            }
+          </Select>
+
+          <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
+        </Col>
+
       </Row>
 
 

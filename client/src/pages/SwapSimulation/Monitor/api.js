@@ -27,3 +27,10 @@ export async function reset(params) {
     params,
   });
 }
+
+export async function setRSIParams(params) {
+  return request(`${commonUrl}/swap/setRSIParams`, {
+    params,
+  });
+}
+
