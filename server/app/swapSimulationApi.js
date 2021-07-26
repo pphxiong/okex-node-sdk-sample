@@ -717,6 +717,9 @@ const checkDeal = async data => {
         let ifMacdLongContinuity = true;
         let ifMacdShortContinuity = true;
 
+        let ifMacdLongGreaterContinuity = true;
+        let ifMacdShortLessContinuity = true;
+
         macdList.reduce((pre,cur,index)=>{
             if(index < macdList.length - 1){
                 if(cur.column < pre.column) ifMacdLongContinuity = false;
@@ -725,10 +728,17 @@ const checkDeal = async data => {
             return cur;
         })
 
+        macdList.reduce((pre,cur,index)=>{
+            if(pre.column < 0) ifMacdLongGreaterContinuity = false;
+            if(pre.column > 0) ifMacdShortLessContinuity = false;
+            return cur;
+        })
+
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
             && !ifMacdShortContinuity
+            && ifMacdLongGreaterContinuity
             // && rsiList[rsiList.length-1].RSI3 < 60
             )
             // ||
@@ -744,6 +754,7 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
                 && !ifMacdLongContinuity
+                && ifMacdShortLessContinuity
             )
             // || rsiList[rsiList.length-1].RSI3 > 80
             // || rsiList[rsiList.length-1].RSI1 > 90
