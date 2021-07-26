@@ -609,7 +609,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, interval = '3m', limit = 1500, isAutoReset = true } = query;
+    const { time, date, interval = '3m', limit = 1500, isAutoReset = false } = query;
     try{
         if(isAutoReset){
             totalProfit = 0;
