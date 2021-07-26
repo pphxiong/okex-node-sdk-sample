@@ -743,7 +743,7 @@ const checkDeal = async data => {
             || longRatio < - 0.95
 
         const closeShortCondition = (
-            Number(
+                // Number(
                 // macdList[macdList.length-1].column) > 0
                 // &&
                 rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
