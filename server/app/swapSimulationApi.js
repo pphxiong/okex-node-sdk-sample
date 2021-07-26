@@ -641,7 +641,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             macdList,
             rsiList
         }
-        await checkDeal(result);
+        await checkDeal(result,isAutoReset);
         send(response, {errcode: 0, errmsg: 'ok', data: {
             // history: list,
             // index: result,
@@ -693,12 +693,12 @@ app.get('/swap/getLatestProfit', async (req, response) => {
     }
 });
 
-const checkDeal = async data => {
+const checkDeal = async (data,isAutoReset = true) => {
     for(let i = 0; i < data.macdList.length - 4; i++){
         checkByStep({
             macdList: data.macdList.slice(i,i+5),
             rsiList: data.rsiList.slice(i,i+5),
-        },i == data.macdList.length - 5)
+        },isAutoReset && i == data.macdList.length - 5)
     }
 
     function checkByStep(data,isForceDeal){
