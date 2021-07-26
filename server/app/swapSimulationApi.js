@@ -719,6 +719,12 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 > 50
             && rsiList[rsiList.length-1].RSI3 < 60
             )
+            ||
+            (
+                Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 < 40
+            )
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
 
@@ -726,6 +732,12 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
                 && rsiList[rsiList.length-1].RSI3 > 40
+            )
+            ||
+            (
+                Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 > 60
             )
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
@@ -741,7 +753,6 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
             )
-            || rsiList[rsiList.length-1].RSI3 > 60
             || isForceDeal
             || longRatio < - 0.95
 
@@ -753,7 +764,6 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 > 50
             )
-            || rsiList[rsiList.length-1].RSI3 < 40
             || isForceDeal
             || shortRatio < - 0.95
 
