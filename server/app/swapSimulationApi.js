@@ -716,9 +716,12 @@ const checkDeal = async data => {
 
         let ifMacdLongContinuity = true;
         let ifMacdShortContinuity = true;
-        macdList.reduce((pre,cur)=>{
-            if(cur.column < pre.column) ifMacdLongContinuity = false;
-            if(cur.column > pre.column) ifMacdShortContinuity = false;
+
+        macdList.reduce((pre,cur,index)=>{
+            if(index < macdList.length - 1){
+                if(cur.column < pre.column) ifMacdLongContinuity = false;
+                if(cur.column > pre.column) ifMacdShortContinuity = false;
+            }
             return cur;
         })
 
@@ -755,7 +758,6 @@ const checkDeal = async data => {
                 rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
                 && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
-                && longRatio < - 0.1
             )
             || openShortCondition
             || isForceDeal
@@ -767,8 +769,6 @@ const checkDeal = async data => {
                 // &&
                 rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
                 && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 > 50
-                && shortRatio < - 0.1
             )
             || openLongCondition
             || isForceDeal
