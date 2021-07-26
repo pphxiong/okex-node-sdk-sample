@@ -797,6 +797,7 @@ const checkDeal = async data => {
             || isForceDeal
             || shortRatio < - 0.95
 
+
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
         // console.log('mark_price',mark_price)
