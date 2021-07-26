@@ -817,8 +817,6 @@ const checkDeal = async data => {
                     mostLoss = {
                         profit: longRatio,
                         time: macdList[macdList.length-1].time,
-                        macdList,
-                        rsiList,
                     }
                 }
                 maxWinRatio = 0;
@@ -848,8 +846,6 @@ const checkDeal = async data => {
                     mostLoss = {
                         profit: shortRatio,
                         time: macdList[macdList.length-1].time,
-                        macdList,
-                        rsiList,
                     }
                 }
                 maxWinRatio = 0;
@@ -902,8 +898,8 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
-                        macd: macdList[macdList.length-1],
-                        rsi: rsiList[rsiList.length-1]
+                        macdList,
+                        rsiList,
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
@@ -938,8 +934,8 @@ const checkDeal = async data => {
                         entryPrice: mark_price,
                         positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
-                        macd: macdList[macdList.length-1],
-                        rsi: rsiList[rsiList.length-1]
+                        macdList,
+                        rsiList,
                     }
                     totalProfit += - 0.05 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
