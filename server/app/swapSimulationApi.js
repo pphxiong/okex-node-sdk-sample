@@ -779,6 +779,7 @@ const checkDeal = async data => {
             // )
             // ||
             (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 > 55)
+            || openShortCondition
             || isForceDeal
             || longRatio < - 0.95
 
@@ -794,6 +795,7 @@ const checkDeal = async data => {
             // )
             // ||
             (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 < 45)
+            || openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
 
