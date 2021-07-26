@@ -732,58 +732,25 @@ const checkDeal = async data => {
             return cur;
         })
 
-        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
-            // && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+        const MAIN_OPEN_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+            && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
-            // && !ifMacdLongContinuity
-            // && ifMacdLongGreaterContinuity
-            // && rsiList[rsiList.length-1].RSI3 < 60
-            )
-            // ||
-            // (
-            //     Number(macdList[macdList.length-1].column) < 0
-            //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 < 40
-            // )
-            // || rsiList[rsiList.length-1].RSI3 < 20
-            // || rsiList[rsiList.length-1].RSI1 < 10
 
-        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
-                // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 < 50
-                // && !ifMacdShortContinuity
-                // && ifMacdShortLessContinuity
-                // && rsiList[rsiList.length-1].RSI3 > 40
-            )
-            // || rsiList[rsiList.length-1].RSI3 > 80
-            // || rsiList[rsiList.length-1].RSI1 > 90
+        const MAIN_OPEN_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
+            && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI3 < 50
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
-        const closeLongCondition = (
-                // Number(macdList[macdList.length-1].column) < 0
-                // &&
-                rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
-                && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 < 50
-                // && (longRatio > 0.02 || longRatio < - 0.1 || Number(macdList[macdList.length-1].column) < 0)
-            )
-            // || openShortCondition
+        const closeLongCondition = openShortCondition
             || isForceDeal
             || longRatio < - 0.95
 
-        const closeShortCondition = (
-                // Number(
-                // macdList[macdList.length-1].column) > 0
-                // &&
-                rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
-                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 > 50
-                // && (shortRatio > 0.02 || shortRatio < - 0.1 || Number(macdList[macdList.length-1].column) > 0)
-            )
-            // || openLongCondition
+        const closeShortCondition = openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
 
