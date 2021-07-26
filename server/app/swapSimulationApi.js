@@ -797,7 +797,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             || longRatio < LOSS_MAX
             || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
-
         const closeShortCondition =
             openLongCondition
             || rsiList[rsiList.length-1].RSI3 < 20
