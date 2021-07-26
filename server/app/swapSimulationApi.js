@@ -756,6 +756,7 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
             )
+            || openShortCondition
             || isForceDeal
             || longRatio < - 0.95
 
@@ -767,6 +768,7 @@ const checkDeal = async data => {
                 && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 > 50
             )
+            || openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
 
