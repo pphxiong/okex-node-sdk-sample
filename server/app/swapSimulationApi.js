@@ -744,40 +744,45 @@ const checkDeal = async data => {
             return cur;
         })
 
-        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            // && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI3 > 50
-            // && !ifMacdLongContinuity
-            // && ifMacdLongGreaterContinuity
-            )
-            // || rsiList[rsiList.length-1].RSI3 < 20
-            // || rsiList[rsiList.length-1].RSI1 < 10
+        const getMinIndex = (arr,key) => {
+            let i = 0;
+            arr.reduce((pre,cur,index)=>{
+                if(cur[key] < pre[key]) i = index;
+                return cur;
+            })
+            return i;
+        }
 
-        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            // && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-1].RSI3 < 50
-                // && !ifMacdShortContinuity
-                // && ifMacdShortLessContinuity
+        const getMaxIndex = (arr,key) => {
+            let i = 0;
+            arr.reduce((pre,cur,index)=>{
+                if(cur[key] > pre[key]) i = index;
+                return cur;
+            })
+            return i;
+        }
+
+        const minPriceIndex = getMinIndex(macdList,'low');
+        const minMacdIndex = getMinIndex(macdList,'column');
+
+        const maxPriceIndex = getMaxIndex(macdList,'low');
+        const maxMacdIndex = getMaxIndex(macdList,'column');
+
+        const MAIN_OPEN_LONG_CONDITION = (minPriceIndex == macdList.length - 1
+            && minPriceIndex != minMacdIndex
+            // && rsiList[rsiList.length-1].RSI3 > 50
             )
-            // || rsiList[rsiList.length-1].RSI3 > 80
-            // || rsiList[rsiList.length-1].RSI1 > 90
+
+        const MAIN_OPEN_SHORT_CONDITION = (maxPriceIndex == macdList.length - 1
+            && maxPriceIndex != maxMacdIndex
+            // && rsiList[rsiList.length-1].RSI3 < 50
+            )
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
-            // (
-            //     // Number(macdList[macdList.length-1].column) < 0
-            //     // &&
-            //     rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
-            //     && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 < 50
-            //     && (longRatio > 0.02 || longRatio < - 0.1 || Number(macdList[macdList.length-1].column) < 0)
-            // )
-            // ||
             openShortCondition
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
@@ -785,16 +790,6 @@ const checkDeal = async data => {
             || longRatio < - 0.95
 
         const closeShortCondition =
-            // (
-            //     // Number(
-            //     // macdList[macdList.length-1].column) > 0
-            //     // &&
-            //     rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
-            //     && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 > 50
-            //     && (shortRatio > 0.02 || shortRatio < - 0.1 || Number(macdList[macdList.length-1].column) > 0)
-            // )
-            // ||
             openLongCondition
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
