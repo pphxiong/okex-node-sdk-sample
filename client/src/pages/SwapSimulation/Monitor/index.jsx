@@ -207,7 +207,7 @@ export default props => {
         const getDayData = async date => {
           const time = moment(`${date} 00:00:00`).valueOf()
           const limit = 60 * 24 / Number(interval.split('m')[0])
-          const payload = { date, time, interval, limit }
+          const payload = { date, time, interval, limit, isAutoReset: false }
           const { data } = await startHearBeat(payload);
           if(data){
             const { dealDetailList, totalProfit, mostLoss } = data;

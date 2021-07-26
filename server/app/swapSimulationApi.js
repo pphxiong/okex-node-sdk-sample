@@ -609,15 +609,17 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, interval = '3m', limit = 1500 } = query;
+    const { time, date, interval = '3m', limit = 1500, isAutoReset = true } = query;
     try{
-        totalProfit = 0;
-        currentPosition = {};
-        dealDetailList = [];
-        mostLoss = INIT_MOST_LOSS;
-        maxWinRatio = 0;
-        longPosition = {};
-        shortPosition = {}
+        if(isAutoReset){
+            totalProfit = 0;
+            currentPosition = {};
+            dealDetailList = [];
+            mostLoss = INIT_MOST_LOSS;
+            maxWinRatio = 0;
+            longPosition = {};
+            shortPosition = {}
+        }
 
         // const mock = require(`./mock/${date}.js`);
         // const list = mock.mockData
