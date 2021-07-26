@@ -817,6 +817,8 @@ const checkDeal = async data => {
                     mostLoss = {
                         profit: longRatio,
                         time: macdList[macdList.length-1].time,
+                        macdList,
+                        rsiList,
                     }
                 }
                 maxWinRatio = 0;
@@ -846,6 +848,8 @@ const checkDeal = async data => {
                     mostLoss = {
                         profit: shortRatio,
                         time: macdList[macdList.length-1].time,
+                        macdList,
+                        rsiList,
                     }
                 }
                 maxWinRatio = 0;
