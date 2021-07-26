@@ -778,7 +778,7 @@ const checkDeal = async data => {
             //     && (longRatio > 0.02 || longRatio < - 0.1 || Number(macdList[macdList.length-1].column) < 0)
             // )
             // ||
-            (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 > 55)
+            (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 > 70)
             || openShortCondition
             || isForceDeal
             || longRatio < - 0.95
@@ -794,7 +794,7 @@ const checkDeal = async data => {
             //     && (shortRatio > 0.02 || shortRatio < - 0.1 || Number(macdList[macdList.length-1].column) > 0)
             // )
             // ||
-            (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 < 45)
+            (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 < 30)
             || openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
