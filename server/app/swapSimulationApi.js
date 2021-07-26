@@ -714,8 +714,14 @@ const checkDeal = async data => {
             maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
 
-        const ifMacdLongContinuity = macdList.every((item,index)=>!index || item[index].column < item[index - 1].column);
-        const ifMacdShortContinuity = macdList.every((item,index)=>!index || item[index].column > item[index - 1].column);
+        const ifMacdLongContinuity = macdList.every((item,index)=>{
+            if(index==0) return true;
+            return item[index].column < item[index - 1].column
+        });
+        const ifMacdShortContinuity = macdList.every((item,index)=>{
+            if(index==0) return true;
+            return item[index].column > item[index - 1].column
+        });
 
         let ifMacdLongGreaterContinuity = true;
         let ifMacdShortLessContinuity = true;
