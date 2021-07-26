@@ -615,7 +615,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     const { time, date, interval = '3m', limit = 1500, isAutoReset = true } = query;
     try{
         dealDetailList = [];
-        // mostLoss = INIT_MOST_LOSS;
+        mostLoss = INIT_MOST_LOSS;
 
         if(isAutoReset){
             totalProfit = 0;
