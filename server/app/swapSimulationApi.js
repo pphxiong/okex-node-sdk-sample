@@ -755,7 +755,7 @@ const checkDeal = async data => {
             // || rsiList[rsiList.length-1].RSI1 < 10
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             // && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
                 // && !ifMacdShortContinuity
