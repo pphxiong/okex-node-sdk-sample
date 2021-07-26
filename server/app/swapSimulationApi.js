@@ -715,12 +715,12 @@ const checkDeal = async data => {
         }
 
         const ifMacdLongContinuity = macdList.every((item,index,arr)=>{
-            if(index==0||index==arr.length-1) return true;
-            return arr[index].column > arr[index - 1].column
+            if(index==0) return true;
+            return arr[index].column < arr[index - 1].column
         });
         const ifMacdShortContinuity = macdList.every((item,index,arr)=>{
-            if(index==0||index==arr.length-1) return true;
-            return arr[index].column < arr[index - 1].column
+            if(index==0) return true;
+            return arr[index].column > arr[index - 1].column
         });
 
         let ifMacdLongGreaterContinuity = true;
