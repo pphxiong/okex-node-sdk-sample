@@ -624,26 +624,26 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
                 if(longPatchNum || isForceDeal){
-                    totalProfit += longRatio;
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE
-                    longHolding = {}
-                    // currentPosition = {}
-                    longPosition = {}
+                    totalProfit += longRatio * longHolding.positionAmt;
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
                         entryPrice: mark_price,
-                        positionAmt: INIT_POSITION,
+                        positionAmt: longHolding.positionAmt,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
-                        currentProfit: longRatio,
+                        currentProfit: longRatio * longHolding.positionAmt,
                         macd: macdList[macdList.length-1],
                         rsi: rsiList[rsiList.length-1]
                     }
                     dealDetailList.push(dealDetail)
+                    longHolding = {}
+                    // currentPosition = {}
+                    longPosition = {}
                     if(longRatio < mostLoss.profit){
                         mostLoss = {
-                            profit: longRatio,
+                            profit: longRatio * longHolding.positionAmt,
                             time: macdList[macdList.length-1].time,
                         }
                     }
@@ -661,26 +661,26 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
                 if(shortPatchNum || isForceDeal){
-                    totalProfit += shortRatio
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE
-                    shortHolding = {}
-                    // currentPosition = {}
-                    shortPosition = {}
+                    totalProfit += shortRatio * shortHolding.positionAmt
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
                         entryPrice: mark_price,
-                        positionAmt: INIT_POSITION,
+                        positionAmt: shortHolding.positionAmt,
                         time: macdList[macdList.length-1].time,
                         totalProfit,
-                        currentProfit: shortRatio,
+                        currentProfit: shortRatio * shortHolding.positionAmt,
                         macd: macdList[macdList.length-1],
                         rsi: rsiList[rsiList.length-1]
                     }
                     dealDetailList.push(dealDetail)
+                    shortHolding = {}
+                    // currentPosition = {}
+                    shortPosition = {}
                     if(shortRatio < mostLoss.profit){
                         mostLoss = {
-                            profit: shortRatio,
+                            profit: shortRatio * shortHolding.positionAmt,
                             time: macdList[macdList.length-1].time,
                         }
                     }
