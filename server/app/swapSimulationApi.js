@@ -30,8 +30,8 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.20;
-const WIN_MAX = 0.45;
+const LOSS_MAX = - 0.16;
+const WIN_MAX = 0.35;
 
 let myInterval;
 
@@ -777,11 +777,13 @@ const checkDeal = async (data,isAutoReset = true) => {
         const MAIN_OPEN_LONG_CONDITION = (macdList[macdList.length-1].column > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
+            && rsiList[rsiList.length-1].RSI3 < 65
             )
 
         const MAIN_OPEN_SHORT_CONDITION = (macdList[macdList.length-1].column < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
+            && rsiList[rsiList.length-1].RSI3 > 30
             )
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
