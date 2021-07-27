@@ -584,7 +584,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         // console.log('------------------')
 
         const patchPosition = async (holding,direction) => {
-            const price = (mark_price + holding.entryPrice) / 2
+            const price = (Number(mark_price) + Number(holding.entryPrice)) / 2
             if(direction == 'LONG'){
                 longPosition = {
                     positionSide: direction,
