@@ -32,7 +32,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.14;
+const LOSS_MAX = - 0.08;
 const WIN_MAX = 0.25;
 
 let myInterval;
