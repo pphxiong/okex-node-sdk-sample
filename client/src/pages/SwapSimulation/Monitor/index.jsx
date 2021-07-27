@@ -47,7 +47,7 @@ export default props => {
 
   const yearMap = ['2020','2021']
   const intervalMap = ['1m','3m','5m','15m','30m']
-  const latestIntervalMap = [10, 20, 40, 80, 240, 480, 1440]
+  const latestIntervalMap = [10, 20, 40, 80, 240, 480, 960, 1440]
   const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
   const dayMonthMap = {
     '01': ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20',
@@ -259,7 +259,6 @@ export default props => {
       })
 
       yP.then(data=>{
-        console.log(data)
         setTPnlList(data);
         let tProfit = 0;
         data.map(item=>{ tProfit += item.profit });
@@ -399,11 +398,11 @@ export default props => {
           <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
         </Col>
         <Col>
-          <Button onClick={()=>fnGetProfitByYear()} type="primary" style={{ marginLeft: 10 }}>年总计</Button>
-
           <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
 
           <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
+
+          <Button onClick={()=>fnGetProfitByYear()} style={{ marginLeft: 10 }}>年总计</Button>
 
           <Select value={latestInterval} onChange={v=>{setLatestInterval(v);}} style={{ width: 120, marginLeft: 10 }}>
             {

@@ -32,7 +32,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.8;
+const LOSS_MAX = - 0.08;
 const WIN_MAX = 0;
 
 let myInterval;
@@ -623,7 +623,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
-                if(!longPatchNum && longRatio > WIN_MAX && !isForceDeal) {
+                if(!longPatchNum && longRatio < LOSS_MAX && !isForceDeal) {
                     await patchPosition(longHolding, 'LONG')
                     longPatchNum += 1;
                 }else{
@@ -658,7 +658,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
-                if(!shortPatchNum && shortRatio > WIN_MAX && !isForceDeal){
+                if(!shortPatchNum && shortRatio < LOSS_MAX && !isForceDeal){
                     await patchPosition(shortHolding,'SHORT')
                     shortPatchNum += 1;
                 }else{
