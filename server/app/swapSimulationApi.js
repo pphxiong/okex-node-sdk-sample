@@ -32,7 +32,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.08;
+const LOSS_MAX = - 0.14;
 const WIN_MAX = 0.25;
 
 let myInterval;
@@ -623,7 +623,10 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
-                if(longPatchNum || isForceDeal){
+                if(!longPatchNum && longRatio < LOSS_MAX && !isForceDeal) {
+                    await patchPosition(longHolding, 'LONG')
+                    longPatchNum += 1;
+                }else{
                     totalProfit += longRatio * longHolding.positionAmt;
                     totalProfit += - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
                     const dealDetail = {
@@ -649,18 +652,16 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }
                     maxWinRatio = 0;
                     longPatchNum = 0;
-                }else{
-                    if(longPatchNum == 0) {
-                        await patchPosition(longHolding, 'LONG')
-                    }
                 }
-
             }
         }
 
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
-                if(shortPatchNum || isForceDeal){
+                if(!shortPatchNum && shortRatio < LOSS_MAX && !isForceDeal){
+                    await patchPosition(shortHolding,'SHORT')
+                    shortPatchNum += 1;
+                }else{
                     totalProfit += shortRatio * shortHolding.positionAmt
                     totalProfit += - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
                     const dealDetail = {
@@ -686,11 +687,6 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }
                     maxWinRatio = 0;
                     shortPatchNum = 0;
-                }else{
-                    if(shortPatchNum == 0){
-                        await patchPosition(shortHolding,'SHORT')
-                        shortPatchNum += 1;
-                    }
                 }
             }
         }
