@@ -32,7 +32,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.08;
+const LOSS_MAX = - 0.2;
 const WIN_MAX = 0;
 
 let myInterval;
@@ -565,15 +565,13 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeLongCondition =
             openShortCondition
             || isForceDeal
-            || longRatio < - 0.3
-            // || longRatio < LOSS_MAX
+            || longRatio < LOSS_MAX
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
             openLongCondition
             || isForceDeal
-            || shortRatio < - 0.3
-            // || shortRatio < LOSS_MAX
+            || shortRatio < LOSS_MAX
             // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
