@@ -263,9 +263,10 @@ export default props => {
         let tProfit = 0;
         data.map(item=>{ tProfit += item.profit });
         setTPnlRatio(tProfit)
+      }).finally(()=>{
+        setPageLoading(false);
       })
 
-      setPageLoading(false);
     }catch (e) {
       console.log(e)
     }
