@@ -546,14 +546,14 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 > 48
+                && rsiList[rsiList.length-1].RSI3 > 51
             )
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 < 52
+                && rsiList[rsiList.length-1].RSI3 < 49
             )
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
