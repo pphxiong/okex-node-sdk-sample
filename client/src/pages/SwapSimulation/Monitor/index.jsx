@@ -200,8 +200,9 @@ export default props => {
       setPageLoading(true);
 
       let y = 0;
+      const yProfitList = [];
+
       const yP = new Promise(async resolveP => {
-        const yProfitList = [];
         const fnGetM = async m => {
           const dayList = dayMonthMap[m];
 
@@ -237,7 +238,7 @@ export default props => {
             await getDayData(date);
           })
 
-          p.then(data=>{
+          p.then(async data=>{
             let tProfit = 0;
             data.map(item=>{ tProfit += item.profit });
 
@@ -245,20 +246,20 @@ export default props => {
               date: monthMap[y],
               profit: tProfit
             })
+
+            y++;
+            if(y >= monthMap.length){
+              resolveP(yProfitList);
+              return;
+            }
+            await fnGetM(monthMap[y]);
           })
-
-          y++;
-          if(y >= monthMap.length){
-            resolveP(yProfitList);
-            return;
-          }
-          await fnGetM(monthMap[y]);
         }
-
         await fnGetM(monthMap[y]);
       })
 
       yP.then(data=>{
+        console.log(data)
         setTPnlList(data);
         let tProfit = 0;
         data.map(item=>{ tProfit += item.profit });
