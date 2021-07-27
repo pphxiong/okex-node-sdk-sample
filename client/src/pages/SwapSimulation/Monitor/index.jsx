@@ -195,6 +195,82 @@ export default props => {
     })
   }
 
+  const fnGetProfitByYear = async () => {
+    try{
+      setPageLoading(true);
+
+      let y = 0;
+      const yP = new Promise(async resolveP => {
+        const yProfitList = [];
+        const fnGetM = async m => {
+          const dayList = dayMonthMap[m];
+
+          const profitList = []
+          const yearAndMonth = `${year}-${m}`;
+          let i = 0;
+          const p = new Promise(async resolve => {
+            const getDayData = async date => {
+              const time = moment(`${date} 00:00:00`).valueOf()
+              const limit = 60 * 24 / Number(interval.split('m')[0])
+              const payload = { date, time, interval, limit, isAutoReset: false }
+              const { data } = await startHearBeat(payload);
+              if(data){
+                const { dealDetailList, totalProfit, mostLoss } = data;
+                const dayProfit = {
+                  profit: totalProfit,
+                  date,
+                  // dealDetailList,
+                  // mostLoss
+                }
+                profitList.push(dayProfit);
+
+                i++;
+                if(i >= dayList.length){
+                  resolve(profitList);
+                  return;
+                }
+                const newDate = `${yearAndMonth}-${dayList[i]}`;
+                await getDayData(newDate);
+              }
+            }
+            const date = `${yearAndMonth}-${dayList[i]}`;
+            await getDayData(date);
+          })
+
+          p.then(data=>{
+            let tProfit = 0;
+            data.map(item=>{ tProfit += item.profit });
+
+            yProfitList.push({
+              date: monthMap[y],
+              profit: tProfit
+            })
+          })
+
+          y++;
+          if(y >= monthMap.length){
+            resolveP(yProfitList);
+            return;
+          }
+          await fnGetM(monthMap[y]);
+        }
+
+        await fnGetM(monthMap[y]);
+      })
+
+      yP.then(data=>{
+        setTPnlList(data);
+        let tProfit = 0;
+        data.map(item=>{ tProfit += item.profit });
+        setTPnlRatio(tProfit)
+      })
+
+      setPageLoading(false);
+    }catch (e) {
+      console.log(e)
+    }
+  }
+
   const fnGetProfitByMonth = async () => {
     try{
       setPageLoading(true);
@@ -322,6 +398,8 @@ export default props => {
           <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
         </Col>
         <Col>
+          <Button onClick={()=>fnGetProfitByYear()} type="primary" style={{ marginLeft: 10 }}>年总计</Button>
+
           <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>
 
           <Button onClick={()=>fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>天总计</Button>
