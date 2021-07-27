@@ -547,13 +547,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 > 50
-            )
-            ||
-            (
-                Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 > 40
-                && rsiList[rsiList.length-1].RSI2 > 40
-                && rsiList[rsiList.length-1].RSI3 > 40
+                && ifMacdLongGreaterContinuity
             )
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
@@ -561,13 +555,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 50
-            )
-            ||
-            (
-                Number(macdList[macdList.length-1].column) < 0
-                && rsiList[rsiList.length-1].RSI1 > 60
-                && rsiList[rsiList.length-1].RSI2 > 60
-                && rsiList[rsiList.length-1].RSI3 > 60
+                && ifMacdShortLessContinuity
             )
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
