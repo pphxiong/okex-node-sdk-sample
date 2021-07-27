@@ -775,10 +775,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const maxMacdIndex = getMaxIndex(macdList,'column');
 
         const MAIN_OPEN_LONG_CONDITION = macdList[macdList.length-1].column > 0
-        && rsiList[rsiList.length-1].rsi3 > 50
+        && rsiList[rsiList.length-1].RSI3 > 50
 
         const MAIN_OPEN_SHORT_CONDITION = macdList[macdList.length-1].column < 0
-        && rsiList[rsiList.length-1].rsi3 < 50
+        && rsiList[rsiList.length-1].RSI3 < 50
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
