@@ -18,6 +18,8 @@ const LEVERAGE = 10;
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
+let isLongPatch = false;
+let isShortPatch = false;
 let totalProfit = 0;
 let dealDetailList = [];
 const INIT_MOST_LOSS = {
@@ -127,238 +129,6 @@ function getCurrentRSI(list) {
     // rsiList = rsiList.slice(-2)
     return rsiList
 }
-
-// let lastLongMaxWinRatio = 0
-// let lastShortMaxWinRatio = 0
-// const startInterval = async () => {
-//     const payload = {
-//         bar: '3m',
-//         // limit: 100,
-//     }
-//
-//     try{
-//         const { data } = await cAuthClient.swap.getHistory(OK_INSTRUMENT_ID, payload)
-//         globalColumnsObjList = data.reverse()
-//         // globalColumnsObjList = data
-//     }catch (e) {
-//         // if(!Array.isArray(data)) throw new Error('Data is not array!');
-//         restart()
-//     }
-//
-//     if(Array.isArray(globalColumnsObjList)){
-//         let mark_price;
-//         try{
-//             const { data }= await cAuthClient.swap.getMarkPrice(OK_INSTRUMENT_ID);
-//             mark_price = Number(data[0].markPx);
-//         }catch (e) {
-//             // if(!mark_result) throw new Error('mark_price is null!');
-//             restart('getMarkPrice')
-//         }
-//
-//         // const allList = globalColumnsObjList.concat([0,0,0,0,Number(mark_price)])
-//         const allList = globalColumnsObjList
-//         let macdList = []
-//         allList.map((item,index)=>{
-//             let result = {}
-//             if(index==0) {
-//                 result = {
-//                     price: Number(item[4]),
-//                     ema12: Number(item[4]),
-//                     ema26: Number(item[4]),
-//                     diff: 0,
-//                     dea: 0,
-//                     column: 0,
-//                     high: Number(item[2]),
-//                     low: Number(item[3])
-//                 }
-//             }else{
-//                 const lastResult = macdList[macdList.length-1]
-//                 const payload = {
-//                     price: Number(item[4]),
-//                     lastEma12: lastResult.ema12,
-//                     lastEma26: lastResult.ema26,
-//                     lastDea: lastResult.dea,
-//                     high: Number(item[2]),
-//                     low: Number(item[3]),
-//                 }
-//                 result = getMacd(payload)
-//             }
-//
-//             macdList.push(result)
-//         })
-//
-//         macdList = macdList.slice(-15)
-//
-//         let columnsObjList = []
-//         // const newAllList = allList.concat([[0,0,0,0,Number(mark_price)]])
-//         const newAllList = allList
-//         function* gen() {
-//             for(let i = 0; i < 3; i ++){
-//                 if(i > 0) newAllList.pop()
-//                 const result = getRSI(Number(newAllList[newAllList.length-1][4]),newAllList.map(item=>Number(item[4])))
-//                 columnsObjList.push(result)
-//                 yield i
-//             }
-//         }
-//
-//         for(let k of gen()){
-//             if( k >= 3 ) break
-//         }
-//
-//         columnsObjList = columnsObjList.reverse()
-//         const latestColumnsObjList = columnsObjList.slice(-3)
-//
-//         const latestRSI = latestColumnsObjList[latestColumnsObjList.length-1]
-//
-//         if(positionChange || !globalHolding || !globalHolding.length){
-//             try{
-//                 const { positions: holding } = await cAuthClientBN.swap.getPosition();
-//                 globalHolding = holding.filter(item=>item.positionAmt && Math.abs(Number(item.positionAmt)) > 0) || []
-//                 positionChange = false
-//             }catch (e) {
-//                 // if(result.error_message) throw new Error('Cannot get position!');
-//                 restart('getPosition');
-//             }
-//         }
-//
-//         let longHolding;
-//         let shortHolding
-//         let longRatio = 0
-//         let shortRatio = 0
-//
-//         let holding = globalHolding
-//         if(holding && holding.length){
-//             longHolding = holding.find(item=>item.positionSide=="LONG")
-//             shortHolding = holding.find(item=>item.positionSide=="SHORT")
-//         }
-//
-//         if(longHolding){
-//             const { leverage, entryPrice: avg_cost, } = longHolding;
-//             longRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-//             lastLongMaxWinRatio = Math.max(longRatio,lastLongMaxWinRatio)
-//         }
-//
-//         if(shortHolding){
-//             const { leverage, entryPrice: avg_cost, } = shortHolding;
-//             shortRatio = (Number(mark_price) - Number(avg_cost)) * Number(leverage) / Number(mark_price);
-//             shortRatio = - shortRatio
-//             lastShortMaxWinRatio = Math.max(shortRatio,lastShortMaxWinRatio)
-//         }
-//
-//         const openLongCondition = Number(macdList[macdList.length-1].column) > Number(macdList[macdList.length-2].column)
-//             &&
-//             Number(macdList[macdList.length-1].column) > 0
-//             &&
-//             latestRSI.RSI1 > latestRSI.RSI2
-//             &&
-//             latestRSI.RSI2 > latestRSI.RSI3
-//             &&
-//             latestRSI.RSI3 > 50
-//             &&
-//             latestColumnsObjList[latestColumnsObjList.length-2].RSI3 < 50
-//             &&
-//             latestRSI.RSI1 < 70
-//
-//         const openShortCondition = Number(macdList[macdList.length-1].column) < Number(macdList[macdList.length-2].column)
-//             &&
-//             Number(macdList[macdList.length-1].column) < 0
-//             &&
-//             latestRSI.RSI1 < latestRSI.RSI2
-//             &&
-//             latestRSI.RSI2 < latestRSI.RSI3
-//             &&
-//             latestRSI.RSI3 < 50
-//             &&
-//             latestColumnsObjList[latestColumnsObjList.length-2].RSI3 > 50
-//             &&
-//             latestRSI.RSI1 > 25
-//
-//         const closeLongCondition = Number(macdList[macdList.length-1].column) < 0
-//
-//         const closeShortCondition = Number(macdList[macdList.length-1].column) > 0
-//
-//         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-//         console.log('------------------')
-//         console.log('mark_price',mark_price)
-//         console.log('macdList',macdList.slice(-2))
-//         console.log('latestColumnsObjList',latestColumnsObjList.slice(-2))
-//         console.log('------------------')
-//
-//         //开多仓条件
-//         if(
-//             openLongCondition
-//         ){
-//             try {
-//                 if(
-//                     (!longHolding || !Number(longHolding.positionAmt))
-//                     && (!shortHolding || !Number(shortHolding.positionAmt))
-//                 ){
-//                     await openPosition({ openSide: "long", mark_price })
-//                 }
-//             }catch (e){
-//                 console.log(e)
-//             }
-//         }
-//
-//         //平多仓条件
-//         if(
-//             closeLongCondition
-//         ){
-//             try {
-//                 if(longHolding && Number(longHolding.positionAmt)){
-//                     const payload = {
-//                         position: Number(longHolding.positionAmt),
-//                         side: 'long',
-//                         mark_price
-//                     }
-//                     await closePosition(payload)
-//                     lastLongMaxWinRatio = 0
-//                 }
-//             }catch (e){
-//                 console.log(e)
-//             }
-//         }
-//
-//         //开空仓条件
-//         if(
-//             openShortCondition
-//         ){
-//             try {
-//                 if(
-//                     (!longHolding || !Number(longHolding.positionAmt))
-//                     &&
-//                     (!shortHolding || !Number(shortHolding.positionAmt))
-//                 ){
-//                     await openPosition({ openSide: "short", mark_price });
-//                 }
-//             }catch (e){
-//                 console.log(e)
-//             }
-//         }
-//
-//         //平空仓条件
-//         if(
-//             closeShortCondition
-//         ){
-//             try {
-//                 if(shortHolding && Number(shortHolding.positionAmt)){
-//                     const payload = {
-//                         position: Number(shortHolding.positionAmt),
-//                         side: 'short',
-//                         mark_price
-//                     }
-//                     await closePosition(payload)
-//                     lastShortMaxWinRatio = 0
-//                 }
-//             }catch (e){
-//                 console.log(e)
-//             }
-//         }
-//     }
-//
-//     await waitTime(1000 * 8)
-//     await startInterval()
-// }
 
 app.get('/test', function(req, res) {
     send(res, {errcode: 0, errmsg: 'ok'});
@@ -796,7 +566,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             openShortCondition
             || isForceDeal
             || longRatio < - 0.95
-            || rsiList[rsiList.length-1].RSI1 > 70
             // || longRatio < LOSS_MAX
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
@@ -804,7 +573,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
-            || rsiList[rsiList.length-1].RSI1 < 30
             // || shortRatio < LOSS_MAX
             // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
@@ -815,61 +583,106 @@ const checkDeal = async (data,isAutoReset = true) => {
         // console.log('latestColumnsObjList',rsiList.slice(-2))
         // console.log('------------------')
 
+        const patchPosition = async (holding,direction) => {
+            const price = (mark_price + holding.entryPrice) / 2
+            if(direction == 'LONG'){
+                longPosition = {
+                    positionSide: direction,
+                    leverage: LEVERAGE,
+                    entryPrice: price,
+                    positionAmt: INIT_POSITION * 2,
+                    time: macdList[macdList.length-1].time,
+                }
+            }else{
+                shortPosition = {
+                    positionSide: direction,
+                    leverage: LEVERAGE,
+                    entryPrice: price,
+                    positionAmt: INIT_POSITION * 2,
+                    time: macdList[macdList.length-1].time,
+                }
+            }
+            const dealDetail = {
+                side: 'OPEN',
+                positionSide: direction,
+                leverage: LEVERAGE,
+                entryPrice: price,
+                positionAmt: INIT_POSITION * 2,
+                time: macdList[macdList.length-1].time,
+                macdList,
+                rsiList,
+            }
+            totalProfit += - 0.037 * 0.01 * LEVERAGE
+            dealDetailList.push(dealDetail)
+        }
+
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
-                totalProfit += longRatio;
-                totalProfit += - 0.037 * 0.01 * LEVERAGE
-                longHolding = {}
-                // currentPosition = {}
-                longPosition = {}
-                const dealDetail = {
-                    side: 'CLOSE',
-                    positionSide: 'LONG',
-                    entryPrice: mark_price,
-                    positionAmt: INIT_POSITION,
-                    time: macdList[macdList.length-1].time,
-                    totalProfit,
-                    currentProfit: longRatio,
-                    macd: macdList[macdList.length-1],
-                    rsi: rsiList[rsiList.length-1]
-                }
-                dealDetailList.push(dealDetail)
-                if(longRatio < mostLoss.profit){
-                    mostLoss = {
-                        profit: longRatio,
+                if(isLongPatch || isForceDeal){
+                    totalProfit += longRatio;
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
+                    longHolding = {}
+                    // currentPosition = {}
+                    longPosition = {}
+                    const dealDetail = {
+                        side: 'CLOSE',
+                        positionSide: 'LONG',
+                        entryPrice: mark_price,
+                        positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
+                        totalProfit,
+                        currentProfit: longRatio,
+                        macd: macdList[macdList.length-1],
+                        rsi: rsiList[rsiList.length-1]
                     }
+                    dealDetailList.push(dealDetail)
+                    if(longRatio < mostLoss.profit){
+                        mostLoss = {
+                            profit: longRatio,
+                            time: macdList[macdList.length-1].time,
+                        }
+                    }
+                    maxWinRatio = 0;
+                    isLongPatch = false;
+                }else{
+                    await patchPosition(longHolding,'LONG')
+                    isLongPatch = true;
                 }
-                maxWinRatio = 0;
+
             }
         }
 
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
-                totalProfit += shortRatio
-                totalProfit += - 0.037 * 0.01 * LEVERAGE
-                shortHolding = {}
-                // currentPosition = {}
-                shortPosition = {}
-                const dealDetail = {
-                    side: 'CLOSE',
-                    positionSide: 'SHORT',
-                    entryPrice: mark_price,
-                    positionAmt: INIT_POSITION,
-                    time: macdList[macdList.length-1].time,
-                    totalProfit,
-                    currentProfit: shortRatio,
-                    macd: macdList[macdList.length-1],
-                    rsi: rsiList[rsiList.length-1]
-                }
-                dealDetailList.push(dealDetail)
-                if(shortRatio < mostLoss.profit){
-                    mostLoss = {
-                        profit: shortRatio,
+                if(isShortPatch || isForceDeal){
+                    totalProfit += shortRatio
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
+                    shortHolding = {}
+                    // currentPosition = {}
+                    shortPosition = {}
+                    const dealDetail = {
+                        side: 'CLOSE',
+                        positionSide: 'SHORT',
+                        entryPrice: mark_price,
+                        positionAmt: INIT_POSITION,
                         time: macdList[macdList.length-1].time,
+                        totalProfit,
+                        currentProfit: shortRatio,
+                        macd: macdList[macdList.length-1],
+                        rsi: rsiList[rsiList.length-1]
                     }
+                    dealDetailList.push(dealDetail)
+                    if(shortRatio < mostLoss.profit){
+                        mostLoss = {
+                            profit: shortRatio,
+                            time: macdList[macdList.length-1].time,
+                        }
+                    }
+                    maxWinRatio = 0;
+                }else{
+                    await patchPosition(shortHolding,'SHORT')
+                    isShortPatch = true;
                 }
-                maxWinRatio = 0;
             }
         }
 
