@@ -796,6 +796,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             openShortCondition
             || isForceDeal
             || longRatio < - 0.95
+            || rsiList[rsiList.length-1].RSI1 > 70
             // || longRatio < LOSS_MAX
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
@@ -803,6 +804,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
+            || rsiList[rsiList.length-1].RSI1 < 30
             // || shortRatio < LOSS_MAX
             // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
