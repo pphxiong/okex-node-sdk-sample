@@ -32,8 +32,8 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.3;
-const WIN_MAX = 0.25;
+const LOSS_MAX = - 0.8;
+const WIN_MAX = 0;
 
 let myInterval;
 
@@ -563,14 +563,14 @@ const checkDeal = async (data,isAutoReset = true) => {
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
-            (openShortCondition && longRatio > 0)
+            openShortCondition
             || isForceDeal
             || longRatio < - 0.95
             // || longRatio < LOSS_MAX
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
-            (openLongCondition && shortRatio > 0)
+            openLongCondition
             || isForceDeal
             || shortRatio < - 0.95
             // || shortRatio < LOSS_MAX
@@ -623,7 +623,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
-                if(!longPatchNum && longRatio < LOSS_MAX && !isForceDeal && false) {
+                if(!longPatchNum && longRatio > WIN_MAX && !isForceDeal) {
                     await patchPosition(longHolding, 'LONG')
                     longPatchNum += 1;
                 }else{
@@ -641,15 +641,15 @@ const checkDeal = async (data,isAutoReset = true) => {
                         rsi: rsiList[rsiList.length-1]
                     }
                     dealDetailList.push(dealDetail)
-                    longHolding = {}
-                    // currentPosition = {}
-                    longPosition = {}
                     if(longRatio < mostLoss.profit){
                         mostLoss = {
                             profit: longRatio * longHolding.positionAmt,
                             time: macdList[macdList.length-1].time,
                         }
                     }
+                    longHolding = {}
+                    // currentPosition = {}
+                    longPosition = {}
                     maxWinRatio = 0;
                     longPatchNum = 0;
                 }
@@ -658,7 +658,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
-                if(!shortPatchNum && shortRatio < LOSS_MAX && !isForceDeal && false){
+                if(!shortPatchNum && shortRatio > WIN_MAX && !isForceDeal){
                     await patchPosition(shortHolding,'SHORT')
                     shortPatchNum += 1;
                 }else{
@@ -676,15 +676,15 @@ const checkDeal = async (data,isAutoReset = true) => {
                         rsi: rsiList[rsiList.length-1]
                     }
                     dealDetailList.push(dealDetail)
-                    shortHolding = {}
-                    // currentPosition = {}
-                    shortPosition = {}
                     if(shortRatio < mostLoss.profit){
                         mostLoss = {
                             profit: shortRatio * shortHolding.positionAmt,
                             time: macdList[macdList.length-1].time,
                         }
                     }
+                    shortHolding = {}
+                    // currentPosition = {}
+                    shortPosition = {}
                     maxWinRatio = 0;
                     shortPatchNum = 0;
                 }
