@@ -774,34 +774,29 @@ const checkDeal = async (data,isAutoReset = true) => {
         const maxPriceIndex = getMaxIndex(macdList,'high');
         const maxMacdIndex = getMaxIndex(macdList,'column');
 
-        const MAIN_OPEN_LONG_CONDITION = minPriceIndex == macdList.length - 1
-        && minPriceIndex != minMacdIndex
+        const MAIN_OPEN_LONG_CONDITION = macdList[macdList.length-1].column > 0
+        && rsiList[rsiList.length-1].rsi3 > 50
 
-        const MAIN_OPEN_SHORT_CONDITION = maxPriceIndex == macdList.length - 1
-        && maxPriceIndex != maxMacdIndex
+        const MAIN_OPEN_SHORT_CONDITION = macdList[macdList.length-1].column < 0
+        && rsiList[rsiList.length-1].rsi3 < 50
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
-            // openShortCondition
-            // || rsiList[rsiList.length-1].RSI3 > 80
-            // || rsiList[rsiList.length-1].RSI1 > 90
-            // // || rsiList[rsiList.length-1].RSI1 < 30
-            // ||
-            isForceDeal
+            openShortCondition
+            || isForceDeal
             || longRatio < - 0.95
             || longRatio < LOSS_MAX
             || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
-            // openLongCondition
+            openLongCondition
             // || rsiList[rsiList.length-1].RSI3 < 20
             // || rsiList[rsiList.length-1].RSI1 < 10
             // || rsiList[rsiList.length-1].RSI1 > 70
-            // ||
-            isForceDeal
+            || isForceDeal
             || shortRatio < - 0.95
             || shortRatio < LOSS_MAX
             || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
