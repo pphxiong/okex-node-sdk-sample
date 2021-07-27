@@ -226,7 +226,7 @@ export default props => {
                 profitList.push(dayProfit);
 
                 i++;
-                if(i >= dayList.length){
+                if(i >= dayList.length || totalProfit == 0){
                   resolve(profitList);
                   return;
                 }
@@ -248,7 +248,7 @@ export default props => {
             })
 
             y++;
-            if(y >= monthMap.length){
+            if(y >= monthMap.length || tProfit == 0){
               resolveP(yProfitList);
               return;
             }
