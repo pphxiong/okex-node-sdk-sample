@@ -544,19 +544,19 @@ const checkDeal = async (data,isAutoReset = true) => {
         const maxPriceIndex = getMaxIndex(macdList,'high');
         const maxMacdIndex = getMaxIndex(macdList,'column');
 
-        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) >= 0.05
+        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 >= 51
+                && rsiList[rsiList.length-1].RSI3 > 51
             )
-            || rsiList[rsiList.length-1].RSI3 <= 20
-            || rsiList[rsiList.length-1].RSI1 <= 10
+            || rsiList[rsiList.length-1].RSI3 < 20
+            || rsiList[rsiList.length-1].RSI1 < 10
 
-        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) <= - 0.05
+        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-1].RSI3 <= 49
+                && rsiList[rsiList.length-1].RSI3 < 49
             )
-            || rsiList[rsiList.length-1].RSI3 >= 80
-            || rsiList[rsiList.length-1].RSI1 >= 90
+            || rsiList[rsiList.length-1].RSI3 > 80
+            || rsiList[rsiList.length-1].RSI1 > 90
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
@@ -612,7 +612,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 macdList,
                 rsiList,
             }
-            totalProfit += - 0.037 * 0.01 * LEVERAGE
+            totalProfit += - 0.038 * 0.01 * LEVERAGE
             dealDetailList.push(dealDetail)
             if(direction == 'LONG'){
                 longPatchNum += 1;
@@ -628,7 +628,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     longPatchNum += 1;
                 }else{
                     totalProfit += longRatio * longHolding.positionAmt;
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
+                    totalProfit += - 0.038 * 0.01 * LEVERAGE * longHolding.positionAmt
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
@@ -663,7 +663,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     shortPatchNum += 1;
                 }else{
                     totalProfit += shortRatio * shortHolding.positionAmt
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
+                    totalProfit += - 0.038 * 0.01 * LEVERAGE * shortHolding.positionAmt
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
@@ -740,7 +740,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE
+                    totalProfit += - 0.038 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
             }catch (e){
@@ -776,7 +776,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE
+                    totalProfit += - 0.038 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
             }catch (e){
