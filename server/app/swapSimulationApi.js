@@ -778,14 +778,12 @@ const checkDeal = async (data,isAutoReset = true) => {
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 > 50
             && rsiList[rsiList.length-1].RSI3 < 65
-            && !ifMacdLongContinuity
             )
 
         const MAIN_OPEN_SHORT_CONDITION = (macdList[macdList.length-1].column < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-1].RSI3 < 50
             && rsiList[rsiList.length-1].RSI3 > 30
-            && !ifMacdShortContinuity
             )
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
@@ -796,6 +794,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             openShortCondition
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
+            || rsiList[rsiList.length-1].RSI1 < 30
             || isForceDeal
             || longRatio < - 0.95
             || longRatio < LOSS_MAX
@@ -805,6 +804,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             openLongCondition
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
+            || rsiList[rsiList.length-1].RSI1 > 70
             || isForceDeal
             || shortRatio < - 0.95
             || shortRatio < LOSS_MAX
