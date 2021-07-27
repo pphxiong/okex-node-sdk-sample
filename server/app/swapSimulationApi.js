@@ -614,6 +614,11 @@ const checkDeal = async (data,isAutoReset = true) => {
             }
             totalProfit += - 0.037 * 0.01 * LEVERAGE
             dealDetailList.push(dealDetail)
+            if(direction == 'LONG'){
+                longPatchNum += 1;
+            }else{
+                shortPatchNum += 1;
+            }
         }
 
         const closeLong = async () => {
@@ -647,7 +652,6 @@ const checkDeal = async (data,isAutoReset = true) => {
                 }else{
                     if(longPatchNum == 0) {
                         await patchPosition(longHolding, 'LONG')
-                        longPatchNum += 1;
                     }
                 }
 
@@ -681,6 +685,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         }
                     }
                     maxWinRatio = 0;
+                    shortPatchNum = 0;
                 }else{
                     if(shortPatchNum == 0){
                         await patchPosition(shortHolding,'SHORT')
