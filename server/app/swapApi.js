@@ -560,13 +560,11 @@ const checkDeal = async data => {
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
-        const closeLongCondition = rsiList[rsiList.length-1].RSI3 > 80
-            || rsiList[rsiList.length-1].RSI1 > 90
+        const closeLongCondition = openShortCondition
             || longRatio < - 0.95 * LEVERAGE / 10
             // || isForceDeal
 
-        const closeShortCondition = rsiList[rsiList.length-1].RSI3 < 20
-            || rsiList[rsiList.length-1].RSI1 < 10
+        const closeShortCondition = openLongCondition
             || shortRatio < - 0.95 * LEVERAGE / 10
             // || isForceDeal
 
