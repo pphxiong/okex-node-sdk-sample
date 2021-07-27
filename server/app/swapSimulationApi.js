@@ -774,13 +774,19 @@ const checkDeal = async (data,isAutoReset = true) => {
         const maxPriceIndex = getMaxIndex(macdList,'high');
         const maxMacdIndex = getMaxIndex(macdList,'column');
 
-        const MAIN_OPEN_LONG_CONDITION = macdList[macdList.length-1].column > 0
-        && rsiList[rsiList.length-1].RSI3 > 50
-        && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+        const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 > 50
+            )
+            || rsiList[rsiList.length-1].RSI3 < 20
+            || rsiList[rsiList.length-1].RSI1 < 10
 
-        const MAIN_OPEN_SHORT_CONDITION = macdList[macdList.length-1].column < 0
-        && rsiList[rsiList.length-1].RSI3 < 50
-            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+        const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 < 50
+            )
+            || rsiList[rsiList.length-1].RSI3 > 80
+            || rsiList[rsiList.length-1].RSI1 > 90
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
