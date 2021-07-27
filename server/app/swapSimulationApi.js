@@ -813,7 +813,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
                 totalProfit += longRatio;
-                totalProfit += - 0.038 * 0.01 * LEVERAGE
+                totalProfit += - 0.037 * 0.01 * LEVERAGE
                 longHolding = {}
                 // currentPosition = {}
                 longPosition = {}
@@ -842,7 +842,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
                 totalProfit += shortRatio
-                totalProfit += - 0.038 * 0.01 * LEVERAGE
+                totalProfit += - 0.037 * 0.01 * LEVERAGE
                 shortHolding = {}
                 // currentPosition = {}
                 shortPosition = {}
@@ -917,7 +917,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.038 * 0.01 * LEVERAGE
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
             }catch (e){
@@ -953,7 +953,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.038 * 0.01 * LEVERAGE
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
             }catch (e){
