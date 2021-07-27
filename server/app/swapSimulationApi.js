@@ -18,8 +18,8 @@ const LEVERAGE = 10;
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
-let isLongPatch = false;
-let isShortPatch = false;
+let longPatchNum = 0;
+let shortPatchNum = 0;
 let totalProfit = 0;
 let dealDetailList = [];
 const INIT_MOST_LOSS = {
@@ -618,7 +618,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLong = async () => {
             if(longHolding && Number(longHolding.positionAmt)){
-                if(isLongPatch || isForceDeal){
+                if(longPatchNum || isForceDeal){
                     totalProfit += longRatio;
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     longHolding = {}
@@ -643,10 +643,12 @@ const checkDeal = async (data,isAutoReset = true) => {
                         }
                     }
                     maxWinRatio = 0;
-                    isLongPatch = false;
+                    longPatchNum = 0;
                 }else{
-                    await patchPosition(longHolding,'LONG')
-                    isLongPatch = true;
+                    if(longPatchNum == 0) {
+                        await patchPosition(longHolding, 'LONG')
+                        longPatchNum += 1;
+                    }
                 }
 
             }
@@ -654,7 +656,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShort = async () => {
             if(shortHolding && Number(shortHolding.positionAmt)){
-                if(isShortPatch || isForceDeal){
+                if(shortPatchNum || isForceDeal){
                     totalProfit += shortRatio
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     shortHolding = {}
@@ -680,8 +682,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }
                     maxWinRatio = 0;
                 }else{
-                    await patchPosition(shortHolding,'SHORT')
-                    isShortPatch = true;
+                    if(shortPatchNum == 0){
+                        await patchPosition(shortHolding,'SHORT')
+                        shortPatchNum += 1;
+                    }
                 }
             }
         }
