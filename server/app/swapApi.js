@@ -7,7 +7,7 @@ const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1.5;
 const LEVERAGE = 10;
 const DEFAULT_INTERVAL = '3m';
-const LOSS_MAX = - 0.3;
+const LOSS_MAX = - 0.25;
 const WIN_MAX = 0;
 
 let currentPosition = {};
