@@ -565,14 +565,14 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeLongCondition =
             openShortCondition
             || isForceDeal
-            || longRatio < - 0.95
+            || longRatio < - 0.3
             // || longRatio < LOSS_MAX
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
             openLongCondition
             || isForceDeal
-            || shortRatio < - 0.95
+            || shortRatio < - 0.3
             // || shortRatio < LOSS_MAX
             // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
