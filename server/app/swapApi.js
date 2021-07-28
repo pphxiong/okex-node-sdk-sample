@@ -1,4 +1,3 @@
-import request from '../utils/request';
 import moment from 'moment'
 
 const customAuthClientBN = require('./customAuthClientBN');
@@ -6,13 +5,10 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1.9;
 const LEVERAGE = 10;
-const DEFAULT_INTERVAL = '3m';
+const DEFAULT_INTERVAL = '5m';
 const LOSS_MAX = - 0.25 * LEVERAGE / 10;
 const WIN_MAX = 0 * LEVERAGE / 10;
 
-let currentPosition = {};
-let totalProfit = 0;
-let dealDetailList = [];
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -20,16 +16,7 @@ const INIT_MOST_LOSS = {
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
 
-let myInterval;
-
-// var config = require('./configV5');
 var configBN = require('./configBN');
-// const cAuthClient = new customAuthClient(
-//     config.httpkey,
-//     config.httpsecret,
-//     config.passphrase,
-//     config.urlHost
-// )
 const cAuthClientBN = new customAuthClientBN(
     configBN.httpkey,
     configBN.httpsecret,
@@ -177,8 +164,6 @@ const closePosition = async (holding) => {
 
 let positionChange = true;
 let globalHolding = null;
-let openMarketPrice = 0
-let globalColumnsObjList;
 function getMacd(params) {
     const {price,lastEma12,lastEma26,lastDea,high,low,time} = params
 
@@ -205,7 +190,6 @@ function getMacd(params) {
     return result
 }
 function toFixedAndToNumber(n,num=1){
-    // return Number(n.toFixed(num))
     return Math.round(n * Math.pow(10,num)) / Math.pow(10,num)
 }
 function getRSIAverage(list,i,n){
@@ -237,8 +221,6 @@ function getRSIAverage(list,i,n){
         gainAverageI = (gainI + (n-1) * lastRSIAverage.gainAverageI) / n;
         lossAverageI = (lossI + (n-1) * lastRSIAverage.lossAverageI) / n;
     }
-
-    // console.log('gain','loss',gainAverageI,lossAverageI)
     return {
         gainAverageI,
         lossAverageI,
@@ -271,103 +253,7 @@ function getRSI(time,price,list){
     }
     return result
 }
-//计算向量叉乘
-function crossMul(v1,v2){
-    return v1.x*v2.y-v1.y*v2.x;
-}
-//判断两条线段是否相交
-function checkCross(p1,p2,p3,p4){
-    let v1={x:p1.x-p3.x,y:p1.y-p3.y},
-        v2={x:p2.x-p3.x,y:p2.y-p3.y},
-        v3={x:p4.x-p3.x,y:p4.y-p3.y},
-        v=crossMul(v1,v3)*crossMul(v2,v3)
-    v1={x:p3.x-p1.x,y:p3.y-p1.y}
-    v2={x:p4.x-p1.x,y:p4.y-p1.y}
-    v3={x:p2.x-p1.x,y:p2.y-p1.y}
-    return (v<=0&&crossMul(v1,v3)*crossMul(v2,v3)<=0)?true:false
-}
-function isTripleDown(list){
-    return list.every(item=>item.RSI1<item.RSI2);
-}
-function isTripleUp(list){
-    return list.every(item=>item.RSI1>item.RSI2);
-}
-function isGoldOverLapping(list, index){
-    // let isOverLapping = false
-    const isOverLapping = list.every(item=>/* item.RSI1 >= item.RSI2 && */ item.RSI2 >= item.RSI3)
-    // if(
-    //     // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
-    //     // ||
-    //     list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-    //     &&
-    //     list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
-    // ){
-    //     const point1 = {
-    //         x: index,
-    //         y: list[0].RSI1
-    //     }
-    //     const point2 = {
-    //         x: index + 2,
-    //         y: list[2].RSI1
-    //     }
-    //     const point3 = {
-    //         x: index,
-    //         y: list[0].RSI2,
-    //     }
-    //     const point4 = {
-    //         x: index + 2,
-    //         y: list[2].RSI2
-    //     }
-    // if(checkCross(point1,point2,point3,point4)){
-    //     isOverLapping = true
-    // }
-    // }
-    const overlappingObj = {
-        isOverLapping,
-        overlappingIndex: index,
-        overlappingObj: list[0],
-    }
-    return overlappingObj
-}
-function isDeadOverLapping(list,index){
-    // let isOverLapping = false
-    const isOverLapping = list.every(item=>/* item.RSI1 <= item.RSI2 && */ item.RSI2 <= item.RSI3)
-    // if(
-    //     // ((list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3)
-    //     // ||
-    //     list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3
-    //     &&
-    //     list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
-    //     &&
-    //     list[2].RSI1 <= list[2].RSI2 && list[2].RSI2 <= list[2].RSI3
-    // ){
-    //     const point1 = {
-    //         x: index,
-    //         y: list[0].RSI1
-    //     }
-    //     const point2 = {
-    //         x: index + 2,
-    //         y: list[2].RSI1
-    //     }
-    //     const point3 = {
-    //         x: index,
-    //         y: list[0].RSI2,
-    //     }
-    //     const point4 = {
-    //         x: index + 2,
-    //         y: list[2].RSI2
-    //     }
-    //     // if(checkCross(point1,point2,point3,point4)){
-    //         isOverLapping = true
-    //     // }
-    // }
-    const overlappingObj = {
-        isOverLapping,
-        overlappingIndex: index,
-        overlappingObj: list[0]
-    }
-    return overlappingObj
-}
+
 function getAverage(list){
     let sum=0;
     for(let i = 0; i < list.length; i++){
@@ -377,13 +263,6 @@ function getAverage(list){
     return mean
 }
 
-function stopInterval() {
-    if(myInterval) {
-        clearInterval(myInterval);
-        myInterval = null;
-    }
-}
-
 const waitTime = (time = 1000 * 4) => {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -391,107 +270,6 @@ const waitTime = (time = 1000 * 4) => {
         }, time);
     });
 };
-
-app.get('/swap/reset', async (req, response) => {
-    totalProfit = 0;
-    currentPosition = {};
-    dealDetailList = []
-    mostLoss = {}
-    send(response, {errcode: 0, errmsg: 'ok', data: { totalProfit, currentPosition, dealDetailList } });
-});
-
-app.get('/swap/getHistory', async (req, response) => {
-    const {query = {}} = req;
-    const { time } = query;
-    const payload = {
-        interval: '3m',
-        limit: 480,
-        startTime: time
-    }
-    const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
-    // const list = data.reverse();
-    const list = data;
-    send(response, {errcode: 0, errmsg: 'ok', data: list });
-});
-
-app.get('/swap/startHearBeat', async (req, response) => {
-    const {query = {}} = req;
-    const { time, date, interval = '3m', limit = 1500 } = query;
-    try{
-        totalProfit = 0;
-        currentPosition = {};
-        dealDetailList = [];
-        mostLoss = INIT_MOST_LOSS;
-        maxWinRatio = 0;
-
-        // const mock = require(`./mock/${date}.js`);
-        // const list = mock.mockData
-
-        const payload = {
-            interval,
-            limit,
-            startTime: time
-        }
-        const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
-        const list = data;
-
-        const newList = JSON.parse(JSON.stringify(list))
-        const macdList = getCurrentMacd(newList)
-        const rsiList = getCurrentRSI(newList)
-
-        const result = {
-            macdList,
-            rsiList
-        }
-        await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {
-                // history: list,
-                // index: result,
-                totalProfit,
-                currentPosition,
-                dealDetailList,
-                mostLoss,
-            } });
-    }catch (e) {
-        console.log(e)
-        restart('startHearBeat')
-    }
-});
-
-app.get('/swap/getLatestProfit', async (req, response) => {
-    const {query = {}} = req;
-    const { time, interval = '3m' } = query;
-    try{
-        const payload = {
-            interval,
-            limit: 1500,
-            endTime: time
-        }
-        const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
-        const list = data;
-        totalProfit = 0;
-        currentPosition = {};
-        dealDetailList = [];
-        mostLoss = INIT_MOST_LOSS;
-        maxWinRatio = 0;
-
-        const newList = JSON.parse(JSON.stringify(list))
-        const macdList = getCurrentMacd(newList).slice(-400)
-        const rsiList = getCurrentRSI(newList).slice(-400)
-
-        const result = {
-            macdList,
-            rsiList
-        }
-        await checkDeal(result);
-        send(response, {errcode: 0, errmsg: 'ok', data: {
-                // index: result,
-                totalProfit, dealDetailList, mostLoss } });
-    }catch (e) {
-        console.log(e)
-        restart()
-    }
-});
 
 const checkDeal = async data => {
     await checkByStep({
