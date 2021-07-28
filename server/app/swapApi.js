@@ -435,27 +435,32 @@ const checkDeal = async data => {
 }
 
 const startInterval = async () => {
-    const time = moment().valueOf()
-    const payload = {
-        interval: DEFAULT_INTERVAL,
-        limit: 500,
-        endTime: time
+    try{
+        const time = moment().valueOf()
+        const payload = {
+            interval: DEFAULT_INTERVAL,
+            limit: 500,
+            endTime: time
+        }
+        const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
+        const list = data;
+
+        const newList = JSON.parse(JSON.stringify(list))
+        newList.pop();
+        const macdList = getCurrentMacd(newList)
+        const rsiList = getCurrentRSI(newList)
+
+        const result = {
+            macdList,
+            rsiList
+        }
+        await checkDeal(result);
+
+        await waitTime(1000 * 8)
+        await startInterval()
+    }catch (e) {
+        restart()
     }
-    const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
-    const list = data;
-
-    const newList = JSON.parse(JSON.stringify(list))
-    const macdList = getCurrentMacd(newList)
-    const rsiList = getCurrentRSI(newList)
-
-    const result = {
-        macdList,
-        rsiList
-    }
-    await checkDeal(result);
-
-    await waitTime(1000 * 8)
-    await startInterval()
 }
 
 // 定时获取交割合约账户信息
