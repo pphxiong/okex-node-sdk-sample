@@ -7,8 +7,8 @@ const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1.5;
 const LEVERAGE = 10;
 const DEFAULT_INTERVAL = '3m';
-const LOSS_MAX = - 0.25;
-const WIN_MAX = 0;
+const LOSS_MAX = - 0.25 * LEVERAGE / 10;
+const WIN_MAX = 0 * LEVERAGE / 10;
 
 let currentPosition = {};
 let totalProfit = 0;
@@ -567,10 +567,10 @@ const checkDeal = async data => {
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition = openShortCondition
-            || longRatio < LOSS_MAX * LEVERAGE / 10
+            || longRatio < LOSS_MAX
 
         const closeShortCondition = openLongCondition
-            || shortRatio < LOSS_MAX * LEVERAGE / 10
+            || shortRatio < LOSS_MAX
 
         console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         console.log('------------------')
