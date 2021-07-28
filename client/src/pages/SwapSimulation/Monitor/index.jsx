@@ -7,6 +7,7 @@ import {
   startHearBeat,
   reset,
   setRSIParams,
+  setConditionParams,
   getHistory,
   getLatestProfit
 } from './api';
@@ -41,7 +42,7 @@ export default props => {
   const [rsi2,setRsi2] = useState(12);
   const [rsi3,setRsi3] = useState(24);
   const [longCondition,setLongCondition] = useState(50);
-  const [shortCondition,setShortCondition] = useState(49);
+  const [shortCondition,setShortCondition] = useState(48.5);
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
@@ -401,12 +402,6 @@ export default props => {
 
       <Row style={{ marginTop: 10 }} gutter={12}>
         <Col>
-          RSI1: <InputNumber step={1} value={rsi1} onChange={v=>setRsi1(v)} />
-          RSI2: <InputNumber step={1} value={rsi2} onChange={v=>setRsi2(v)} />
-          RSI3: <InputNumber step={1} value={rsi3} onChange={v=>setRsi3(v)} />
-          <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
-        </Col>
-        <Col>
           LONGCONDITION: <InputNumber step={0.1} value={longCondition} onChange={v=>setLongCondition(v)} />
           SHORTCONDITION: <InputNumber step={0.1} value={shortCondition} onChange={v=>setShortCondition(v)} />
           <Button onClick={()=>fnSetCondition()} style={{ marginLeft: 10 }}>CONDITION设置</Button>
@@ -429,6 +424,15 @@ export default props => {
           <Button onClick={()=>fnGetLatestProfit()} style={{ marginLeft: 10 }}>最近总计</Button>
         </Col>
 
+      </Row>
+
+      <Row style={{ marginTop: 10 }} gutter={12}>
+        <Col>
+          RSI1: <InputNumber step={1} value={rsi1} onChange={v=>setRsi1(v)} />
+          RSI2: <InputNumber step={1} value={rsi2} onChange={v=>setRsi2(v)} />
+          RSI3: <InputNumber step={1} value={rsi3} onChange={v=>setRsi3(v)} />
+          <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
+        </Col>
       </Row>
 
 
