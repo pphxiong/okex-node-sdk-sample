@@ -556,12 +556,12 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < 49
             )
 
-        const openLongCondition = MAIN_OPEN_LONG_CONDITION
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION && rsiList[rsiList.length-1].RSI3 < 60
 
-        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
+        const openShortCondition = MAIN_OPEN_SHORT_CONDITION && rsiList[rsiList.length-1].RSI3 > 40
 
         const closeLongCondition =
-            openShortCondition
+            MAIN_OPEN_SHORT_CONDITION
             || isForceDeal
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
@@ -569,7 +569,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
-            openLongCondition
+            MAIN_OPEN_LONG_CONDITION
             || isForceDeal
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
