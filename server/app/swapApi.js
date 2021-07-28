@@ -4,11 +4,11 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1.9;
-const LEVERAGE = 10;
 const DEFAULT_INTERVAL = '5m';
-const LOSS_MAX = - 0.25 * LEVERAGE / 10;
-const WIN_MAX = 0 * LEVERAGE / 10;
+const LONG_CONDITION = 50;
+const SHORT_CONDITION = 48.5;
 
+// const LEVERAGE = 10;
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -325,13 +325,13 @@ const checkDeal = async data => {
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-            && rsiList[rsiList.length-1].RSI3 > 50
+            && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
         )
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-            && rsiList[rsiList.length-1].RSI3 < 48.5
+            && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
         )
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION

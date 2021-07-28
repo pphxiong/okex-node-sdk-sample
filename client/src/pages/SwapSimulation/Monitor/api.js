@@ -34,3 +34,9 @@ export async function setRSIParams(params) {
   });
 }
 
+export async function setConditionParams(params) {
+  return request(`${commonUrl}/swap/setConditionParams`, {
+    params,
+  });
+}
+

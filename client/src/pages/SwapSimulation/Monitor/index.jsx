@@ -40,6 +40,8 @@ export default props => {
   const [rsi1,setRsi1] = useState(6);
   const [rsi2,setRsi2] = useState(12);
   const [rsi3,setRsi3] = useState(24);
+  const [longCondition,setLongCondition] = useState(50);
+  const [shortCondition,setShortCondition] = useState(49);
   const [leverage,setLeverage] = useState(10);
   const [duration,setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
@@ -124,6 +126,12 @@ export default props => {
   const fnSetRSI = async () => {
     const payload = { rsi1, rsi2, rsi3 };
     const { errmsg } = await setRSIParams(payload);
+    message.success(errmsg)
+  }
+
+  const fnSetCondition = async () => {
+    const payload = { longCondition, shortCondition };
+    const { errmsg } = await setConditionParams(payload);
     message.success(errmsg)
   }
 
@@ -397,6 +405,11 @@ export default props => {
           RSI2: <InputNumber step={1} value={rsi2} onChange={v=>setRsi2(v)} />
           RSI3: <InputNumber step={1} value={rsi3} onChange={v=>setRsi3(v)} />
           <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
+        </Col>
+        <Col>
+          LONGCONDITION: <InputNumber step={0.1} value={longCondition} onChange={v=>setLongCondition(v)} />
+          SHORTCONDITION: <InputNumber step={0.1} value={shortCondition} onChange={v=>setShortCondition(v)} />
+          <Button onClick={()=>fnSetCondition()} style={{ marginLeft: 10 }}>CONDITION设置</Button>
         </Col>
         <Col>
           <Button onClick={()=>fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>月总计</Button>

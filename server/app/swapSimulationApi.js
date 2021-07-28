@@ -369,6 +369,14 @@ app.get('/swap/setRSIParams', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: { rsi1, rsi2, rsi3 } });
 });
 
+app.get('/swap/setConditionParams', async (req, response) => {
+    const {query = {}} = req;
+    const { longCondition: longConditionP, shortCondition: shortConditionP } = query;
+    longCondition = longConditionP;
+    shortCondition = shortConditionP;
+    send(response, {errcode: 0, errmsg: 'ok', data: { longCondition, shortCondition } });
+});
+
 app.get('/swap/getHistory', async (req, response) => {
     const {query = {}} = req;
     const { time } = query;
