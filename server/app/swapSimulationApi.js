@@ -556,9 +556,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < 49
             )
 
-        const openLongCondition = MAIN_OPEN_LONG_CONDITION && rsiList[rsiList.length-2].RSI3 < 70
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION && rsiList[rsiList.length-1].RSI3 < 65
 
-        const openShortCondition = MAIN_OPEN_SHORT_CONDITION && rsiList[rsiList.length-2].RSI3 > 30
+        const openShortCondition = MAIN_OPEN_SHORT_CONDITION && rsiList[rsiList.length-1].RSI3 > 35
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
