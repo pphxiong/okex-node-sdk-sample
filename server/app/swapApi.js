@@ -4,7 +4,7 @@ import moment from 'moment'
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 1.5;
+const INIT_POSITION = 1.9;
 const LEVERAGE = 10;
 const DEFAULT_INTERVAL = '3m';
 const LOSS_MAX = - 0.25 * LEVERAGE / 10;
