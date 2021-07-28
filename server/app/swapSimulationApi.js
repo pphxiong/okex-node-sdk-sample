@@ -32,7 +32,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const LOSS_MAX = - 0.28;
+const LOSS_MAX = - 0.25;
 const WIN_MAX = 0;
 
 let myInterval;
@@ -548,7 +548,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > 51
-                && rsiList[rsiList.length-1].RSI3 < 70
+                // && rsiList[rsiList.length-1].RSI3 < 70
             )
             || rsiList[rsiList.length-1].RSI3 < 20
             || rsiList[rsiList.length-1].RSI1 < 10
@@ -557,7 +557,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < 49
-                && rsiList[rsiList.length-1].RSI3 > 30
+                // && rsiList[rsiList.length-1].RSI3 > 30
             )
             || rsiList[rsiList.length-1].RSI3 > 80
             || rsiList[rsiList.length-1].RSI1 > 90
