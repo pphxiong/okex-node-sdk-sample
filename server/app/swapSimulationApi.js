@@ -612,7 +612,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 macdList,
                 rsiList,
             }
-            totalProfit += - 0.038 * 0.01 * LEVERAGE
+            totalProfit += - 0.037 * 0.01 * LEVERAGE
             dealDetailList.push(dealDetail)
             if(direction == 'LONG'){
                 longPatchNum += 1;
@@ -628,7 +628,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     longPatchNum += 1;
                 }else{
                     totalProfit += longRatio * longHolding.positionAmt;
-                    totalProfit += - 0.038 * 0.01 * LEVERAGE * longHolding.positionAmt
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
@@ -663,7 +663,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     shortPatchNum += 1;
                 }else{
                     totalProfit += shortRatio * shortHolding.positionAmt
-                    totalProfit += - 0.038 * 0.01 * LEVERAGE * shortHolding.positionAmt
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
@@ -740,7 +740,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.038 * 0.01 * LEVERAGE
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
             }catch (e){
@@ -776,7 +776,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.038 * 0.01 * LEVERAGE
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                 }
             }catch (e){
