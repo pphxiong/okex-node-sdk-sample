@@ -570,12 +570,16 @@ const checkDeal = async (data,isAutoReset = true) => {
             openShortCondition
             || isForceDeal
             || longRatio < LOSS_MAX
+            || rsiList[rsiList.length-1].RSI3 > 80
+            || rsiList[rsiList.length-1].RSI1 > 90
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
             openLongCondition
             || isForceDeal
             || shortRatio < LOSS_MAX
+            || rsiList[rsiList.length-1].RSI3 < 20
+            || rsiList[rsiList.length-1].RSI1 < 10
             // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
