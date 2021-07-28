@@ -576,6 +576,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || shortRatio < LOSS_MAX
             // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
+
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
         // console.log('mark_price',mark_price)
