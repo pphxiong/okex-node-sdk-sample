@@ -558,11 +558,15 @@ const checkDeal = async (data,isAutoReset = true) => {
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
         const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
 
+        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
+        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
+
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
-            )
+                && !ifMacdWeakenContinuity
+            ) || IS_TOP
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
@@ -570,14 +574,11 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
 
-        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
-        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
-
-        const openLongCondition = (MAIN_OPEN_LONG_CONDITION && !ifMacdWeakenContinuity) || (MAIN_OPEN_SHORT_CONDITION && ifMacdEnhanceContinuity)
-        const openShortCondition = (MAIN_OPEN_SHORT_CONDITION && !ifMacdEnhanceContinuity) || (MAIN_OPEN_LONG_CONDITION && ifMacdWeakenContinuity)
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION
+        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
-            openShortCondition
+            MAIN_OPEN_SHORT_CONDITION
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-1].RSI1 - 20 && longRatio > 0)
             // || IS_TOP
@@ -587,7 +588,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
-            openLongCondition
+            MAIN_OPEN_LONG_CONDITION
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-1].RSI1 + 20 && shortRatio > 0)
             // || IS_BOTTOM
