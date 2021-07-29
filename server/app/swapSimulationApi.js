@@ -32,7 +32,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-let longCondition = 50;
+let longCondition = 49.5;
 let shortCondition = 48.5;
 
 const LOSS_MAX = - 0.12;
