@@ -574,7 +574,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
 
         const openLongCondition = (MAIN_OPEN_LONG_CONDITION && !ifLatestTop)
-        const openShortCondition = (MAIN_OPEN_SHORT_CONDITION && !ifLatestBottom) || IS_TOP
+        const openShortCondition = (MAIN_OPEN_SHORT_CONDITION && !ifLatestBottom)
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
@@ -588,7 +588,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
             || isForceDeal
-            // || IS_BOTTOM
+            || IS_BOTTOM
             || (ifLatestTop && rsiList[rsiList.length-1].RSI3 < shortCondition)
             || (ifLatestBottom && shortRatio < LOSS_MAX)
             || shortRatio < - 0.95
