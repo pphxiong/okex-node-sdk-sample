@@ -478,11 +478,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 29; i++){
+    for(let i = 0; i < data.macdList.length - 19; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i+30),
-            rsiList: data.rsiList.slice(i,i+30),
-        },isAutoReset && i == data.macdList.length - 30)
+            macdList: data.macdList.slice(i,i + 20),
+            rsiList: data.rsiList.slice(i,i + 20),
+        },isAutoReset && i == data.macdList.length - 20)
     }
 
     function checkByStep(data,isForceDeal){
@@ -562,21 +562,21 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
+                && !ifLatestTop
             )
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
+                && !ifLatestBottom
             )
 
-        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
-        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
+        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 80
+        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 20
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION || IS_BOTTOM
-            // (MAIN_OPEN_LONG_CONDITION && !ifLatestTop) || IS_BOTTOM
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION || IS_TOP
-            // (MAIN_OPEN_SHORT_CONDITION && !ifLatestBottom) || IS_TOP
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
