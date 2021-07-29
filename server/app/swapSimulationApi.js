@@ -562,23 +562,23 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
-            ) && !ifMacdWeakenContinuity
+            )
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-                // && !ifLatestBottom
             )
 
         const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
 
-        const openLongCondition = MAIN_OPEN_LONG_CONDITION
-        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
+        const openLongCondition = (MAIN_OPEN_LONG_CONDITION && !ifMacdWeakenContinuity) || (MAIN_OPEN_SHORT_CONDITION && ifMacdEnhanceContinuity)
+        const openShortCondition = (MAIN_OPEN_SHORT_CONDITION && !ifMacdEnhanceContinuity) || (MAIN_OPEN_LONG_CONDITION && ifMacdWeakenContinuity)
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
+            || (MAIN_OPEN_LONG_CONDITION && ifMacdWeakenContinuity)
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-1].RSI1 - 20 && longRatio > 0)
             // || IS_TOP
@@ -589,6 +589,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
+            || (MAIN_OPEN_SHORT_CONDITION && ifMacdEnhanceContinuity)
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-1].RSI1 + 20 && shortRatio > 0)
             // || IS_BOTTOM
