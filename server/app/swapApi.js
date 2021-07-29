@@ -322,11 +322,11 @@ const checkDeal = async data => {
             maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
 
-        const ifMacdLongContinuity = macdList.every((item,index,arr)=>{
+        const ifMacdWeakenContinuity = macdList.every((item,index,arr)=>{
             if(index==0) return true;
             return arr[index].column < arr[index - 1].column
         });
-        const ifMacdShortContinuity = macdList.every((item,index,arr)=>{
+        const ifMacdEnhanceContinuity = macdList.every((item,index,arr)=>{
             if(index==0) return true;
             return arr[index].column > arr[index - 1].column
         });
@@ -335,7 +335,7 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
-            && !ifMacdLongContinuity
+            && !ifMacdWeakenContinuity
         )
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
