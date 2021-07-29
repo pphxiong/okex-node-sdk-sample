@@ -478,11 +478,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 14; i++){
+    for(let i = 0; i < data.macdList.length - 4; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i + 15),
-            rsiList: data.rsiList.slice(i,i + 15),
-        },isAutoReset && i == data.macdList.length - 15)
+            macdList: data.macdList.slice(i,i + 5),
+            rsiList: data.rsiList.slice(i,i + 5),
+        },isAutoReset && i == data.macdList.length - 5)
     }
 
     function checkByStep(data,isForceDeal){
@@ -513,24 +513,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
 
-        const ifMacdLongContinuity = macdList.every((item,index,arr)=>{
-            if(index==0) return true;
-            return arr[index].column < arr[index - 1].column
-        });
-        const ifMacdShortContinuity = macdList.every((item,index,arr)=>{
-            if(index==0) return true;
-            return arr[index].column > arr[index - 1].column
-        });
-
-        let ifMacdLongGreaterContinuity = true;
-        let ifMacdShortLessContinuity = true;
-
-        macdList.reduce((pre,cur,index)=>{
-            if(pre.column < 0) ifMacdLongGreaterContinuity = false;
-            if(pre.column > 0) ifMacdShortLessContinuity = false;
-            return cur;
-        })
-
         const getMinIndex = (arr,key) => {
             let i = 0;
             arr.reduce((pre,cur,index)=>{
@@ -555,6 +537,24 @@ const checkDeal = async (data,isAutoReset = true) => {
         const maxPriceIndex = getMaxIndex(macdList,'high');
         const maxMacdIndex = getMaxIndex(macdList,'column');
 
+        const ifMacdLongContinuity = macdList.every((item,index,arr)=>{
+            if(index==0) return true;
+            return arr[index].column < arr[index - 1].column
+        });
+        const ifMacdShortContinuity = macdList.every((item,index,arr)=>{
+            if(index==0) return true;
+            return arr[index].column > arr[index - 1].column
+        });
+
+        let ifMacdLongGreaterContinuity = true;
+        let ifMacdShortLessContinuity = true;
+
+        macdList.reduce((pre,cur,index)=>{
+            if(pre.column < 0) ifMacdLongGreaterContinuity = false;
+            if(pre.column > 0) ifMacdShortLessContinuity = false;
+            return cur;
+        })
+
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
         const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
 
@@ -563,14 +563,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 // && !ifLatestTop
-            )
+            ) || ifMacdShortContinuity
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
                 // && !ifLatestBottom
-            )
+            ) || ifMacdLongContinuity
 
         const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
