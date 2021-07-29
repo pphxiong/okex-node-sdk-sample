@@ -4,7 +4,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1.9;
-const DEFAULT_INTERVAL = '3m';
+const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 49.5;
 const SHORT_CONDITION = 48.5;
 

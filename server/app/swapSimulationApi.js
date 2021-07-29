@@ -381,7 +381,7 @@ app.get('/swap/getHistory', async (req, response) => {
     const {query = {}} = req;
     const { time } = query;
     const payload = {
-        interval: '3m',
+        interval: '5m',
         limit: 480,
         startTime: time
     }
@@ -393,7 +393,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, interval = '3m', limit = 1500, isAutoReset = true } = query;
+    const { time, date, interval = '5m', limit = 1500, isAutoReset = true } = query;
     try{
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
@@ -442,7 +442,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/getLatestProfit', async (req, response) => {
     const {query = {}} = req;
-    const { time, interval = '3m', limit = 1440 } = query;
+    const { time, interval = '5m', limit = 1440 } = query;
     try{
         const payload = {
             interval,
