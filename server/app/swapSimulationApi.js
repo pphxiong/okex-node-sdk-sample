@@ -580,7 +580,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             MAIN_OPEN_SHORT_CONDITION
             || isForceDeal
             || IS_TOP
-            || (ifLatestTop && rsiList[rsiList.length-1].RSI3 > longCondition)
+            || (ifLatestBottom && rsiList[rsiList.length-1].RSI3 > longCondition)
             // || longRatio < LOSS_MAX
             // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
 
