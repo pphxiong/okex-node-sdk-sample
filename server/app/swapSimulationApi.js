@@ -573,8 +573,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
 
-        const openLongCondition = (MAIN_OPEN_LONG_CONDITION && !ifLatestTop) || IS_BOTTOM
-        const openShortCondition = (MAIN_OPEN_SHORT_CONDITION && !ifLatestBottom) || IS_TOP
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION || IS_BOTTOM
+            // (MAIN_OPEN_LONG_CONDITION && !ifLatestTop) || IS_BOTTOM
+        const openShortCondition = MAIN_OPEN_SHORT_CONDITION || IS_TOP
+            // (MAIN_OPEN_SHORT_CONDITION && !ifLatestBottom) || IS_TOP
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
