@@ -393,7 +393,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, interval = '5m', limit = 1500, isAutoReset = true } = query;
+    const { time, date, interval = '5m', limit = 1500, isAutoReset = false } = query;
     try{
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
