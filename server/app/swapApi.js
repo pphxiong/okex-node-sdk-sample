@@ -273,8 +273,8 @@ const waitTime = (time = 1000 * 4) => {
 
 const checkDeal = async data => {
     await checkByStep({
-        macdList: data.macdList.slice(-2),
-        rsiList: data.rsiList.slice(-2),
+        macdList: data.macdList.slice(-6),
+        rsiList: data.rsiList.slice(-6),
     });
 
     async function checkByStep(data,isForceDeal) {
@@ -322,17 +322,26 @@ const checkDeal = async data => {
             maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
 
+        const ifMacdLongContinuity = macdList.every((item,index,arr)=>{
+            if(index==0) return true;
+            return arr[index].column < arr[index - 1].column
+        });
+        const ifMacdShortContinuity = macdList.every((item,index,arr)=>{
+            if(index==0) return true;
+            return arr[index].column > arr[index - 1].column
+        });
+
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
-        )
+        ) && !ifMacdLongContinuity
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
-        )
+        ) && !ifMacdShortContinuity
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
