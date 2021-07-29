@@ -575,7 +575,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
 
         const openLongCondition = (MAIN_OPEN_LONG_CONDITION && !ifMacdWeakenContinuity) || (MAIN_OPEN_SHORT_CONDITION && ifMacdEnhanceContinuity)
-        const openShortCondition = (MAIN_OPEN_SHORT_CONDITION && !ifMacdEnhanceContinuity) || (MAIN_OPEN_LONG_CONDITION && ifMacdWeakenContinuity)
+        const openShortCondition = false
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
