@@ -558,8 +558,8 @@ const checkDeal = async (data,isAutoReset = true) => {
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
         const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
 
-        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 85 || rsiList[rsiList.length-1].RSI3 > 70
-        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 15 || rsiList[rsiList.length-1].RSI3 < 30
+        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 75
+        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 25
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
