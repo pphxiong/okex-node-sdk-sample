@@ -564,9 +564,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION = ifMacdEnhanceContinuity
             && longRatio <= 0
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
+
         const REVERSE_SHORT_CONDITION = ifMacdWeakenContinuity
             && shortRatio <= 0
-            && (rsiList[rsiList.length-1].RSI1 < 20 || rsiList[rsiList.length-1].RSI3 < 40)
+            && (rsiList[rsiList.length-1].RSI1 < 25 || rsiList[rsiList.length-1].RSI3 < 45)
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
@@ -581,7 +582,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            || (ifLatestTop && ifMacdWeakenContinuity)
+            || REVERSE_SHORT_CONDITION
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
