@@ -561,13 +561,16 @@ const checkDeal = async (data,isAutoReset = true) => {
         const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 10 || rsiList[rsiList.length-1].RSI3 < 30
 
+        const REVERSE_LONG_CONDITION = ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
+        const REVERSE_SHORT_CONDITION = ifMacdWeakenContinuity && (rsiList[rsiList.length-1].RSI1 < 20 || rsiList[rsiList.length-1].RSI3 < 40)
+
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 && !ifMacdWeakenContinuity
             )
-            || (ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 53))
+            || REVERSE_LONG_CONDITION
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
@@ -575,7 +578,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
                 // && !ifMacdEnhanceContinuity
             )
-            // || IS_TOP
+            || REVERSE_SHORT_CONDITION
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
@@ -592,7 +595,6 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
-            || (ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 60))
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-1].RSI1 + 20 && shortRatio > 0)
             // || IS_BOTTOM
