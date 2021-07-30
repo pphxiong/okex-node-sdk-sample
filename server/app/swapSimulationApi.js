@@ -555,7 +555,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             return cur;
         })
 
-        const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
+        const ifLatestTop = rsiList.some(item=>item.RSI1 > 95 || item.RSI3 > 75)
         const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
 
         const IS_TOP = rsiList[rsiList.length-1].RSI1 > 95 || rsiList[rsiList.length-1].RSI2 > 80 || rsiList[rsiList.length-1].RSI3 > 75
