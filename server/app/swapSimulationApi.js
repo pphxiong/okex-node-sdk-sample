@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 49.5;
 let shortCondition = 48.5;
 
-const LOSS_MAX = - 0.12;
+const LOSS_MAX = - 0.3;
 const WIN_MAX = 0;
 
 let myInterval;
@@ -751,11 +751,12 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeShort()
+                    const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
                         entryPrice: mark_price,
-                        positionAmt: INIT_POSITION,
+                        positionAmt: openPositionAmt,
                         time: macdList[macdList.length-1].time,
                     }
                     const dealDetail = {
@@ -763,7 +764,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
                         entryPrice: mark_price,
-                        positionAmt: INIT_POSITION,
+                        positionAmt: openPositionAmt,
                         time: macdList[macdList.length-1].time,
                         macdList,
                         rsiList,
@@ -787,11 +788,12 @@ const checkDeal = async (data,isAutoReset = true) => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeLong()
+                    const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
                         entryPrice: mark_price,
-                        positionAmt: INIT_POSITION,
+                        positionAmt: openPositionAmt,
                         time: macdList[macdList.length-1].time,
                     }
                     const dealDetail = {
@@ -799,7 +801,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
                         entryPrice: mark_price,
-                        positionAmt: INIT_POSITION,
+                        positionAmt: openPositionAmt,
                         time: macdList[macdList.length-1].time,
                         macdList,
                         rsiList,
