@@ -347,6 +347,7 @@ const checkDeal = async data => {
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
+            || (ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 80 || rsiList[rsiList.length-1].RSI3 > 60))
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
