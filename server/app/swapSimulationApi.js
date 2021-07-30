@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 49.5;
 let shortCondition = 48.5;
 
-const LOSS_MAX = - 0.3;
+const LOSS_MAX = - 0.2;
 const WIN_MAX = 0;
 
 let myInterval;
