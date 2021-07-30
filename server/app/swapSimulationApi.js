@@ -592,7 +592,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
-            || (rsiList[rsiList.length-1].RSI1 > 80 || rsiList[rsiList.length-1].RSI3 > 60)
+            || (ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 80 || rsiList[rsiList.length-1].RSI3 > 60))
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-1].RSI1 + 20 && shortRatio > 0)
             // || IS_BOTTOM
