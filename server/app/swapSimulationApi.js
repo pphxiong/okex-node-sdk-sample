@@ -555,7 +555,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             return cur;
         })
 
-        const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70 || (item.RSI1 > 75 && item.RSI2 > 75))
+        const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
         const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
 
         const IS_TOP = rsiList[rsiList.length-1].RSI1 > 90 || rsiList[rsiList.length-1].RSI3 > 70
@@ -565,7 +565,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
 
         const REVERSE_SHORT_CONDITION = ifMacdWeakenContinuity
-            && (rsiList[rsiList.length-1].RSI1 < 25 || rsiList[rsiList.length-1].RSI3 < 45)
+            && (rsiList[rsiList.length-1].RSI1 < 30 || rsiList[rsiList.length-1].RSI3 < shortCondition)
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
@@ -586,7 +586,11 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
-            || (ifMacdWeakenContinuity && ifLatestTop && rsiList[rsiList.length-1].RSI1 < 0)
+            || (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 < longCondition
+            )
             || isForceDeal
             // || (ifMacdWeakenContinuity && (rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-1].RSI1 - 20 && longRatio > 0))
             // || IS_TOP
@@ -597,6 +601,11 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
+            || (Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 > shortCondition
+            )
             || isForceDeal
             // || (rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-1].RSI1 + 20 && shortRatio > 0)
             // || IS_BOTTOM
