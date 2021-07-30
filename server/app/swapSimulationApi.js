@@ -478,11 +478,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 6; i++){
+    for(let i = 0; i < data.macdList.length - 5; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i + 7),
-            rsiList: data.rsiList.slice(i,i + 7),
-        },isAutoReset && i == data.macdList.length - 7)
+            macdList: data.macdList.slice(i,i + 6),
+            rsiList: data.rsiList.slice(i,i + 6),
+        },isAutoReset && i == data.macdList.length - 6)
     }
 
     function checkByStep(data,isForceDeal){
@@ -565,7 +565,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
 
         const REVERSE_SHORT_CONDITION = ifMacdWeakenContinuity
-            && (rsiList[rsiList.length-1].RSI1 < 25 || rsiList[rsiList.length-1].RSI3 < shortCondition)
+            && (rsiList[rsiList.length-1].RSI1 < 25 || rsiList[rsiList.length-1].RSI3 < 45)
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
@@ -586,7 +586,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
-            || (REVERSE_SHORT_CONDITION && ifLatestTop)
+            || (ifMacdWeakenContinuity && ifLatestTop && rsiList[rsiList.length-1].RSI1 < 0)
             || isForceDeal
             // || (ifMacdWeakenContinuity && (rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-1].RSI1 - 20 && longRatio > 0))
             // || IS_TOP
