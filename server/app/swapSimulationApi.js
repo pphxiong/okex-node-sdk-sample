@@ -541,7 +541,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             if(index==0) return true;
             return arr[index].column < arr[index - 1].column
         });
-        const ifMacdEnhanceContinuity = macdList.slice(-6).every((item,index,arr)=>{
+        const ifMacdEnhanceContinuity = macdList.slice(-5).every((item,index,arr)=>{
             if(index==0) return true;
             return arr[index].column > arr[index - 1].column
         });
