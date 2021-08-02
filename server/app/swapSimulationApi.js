@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 49.5;
 let shortCondition = 48.5;
 
-const LOSS_MAX = - 0.2;
+const LOSS_MAX = - 0.15;
 const WIN_MAX = 0;
 
 let myInterval;
@@ -676,8 +676,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    // longHolding = {}
-                    // longPosition = {}
+                    longHolding = {}
+                    longPosition = {}
                     maxWinRatio = 0;
                     longPatchNum = 0;
                 }
@@ -710,8 +710,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    // shortHolding = {}
-                    // shortPosition = {}
+                    shortHolding = {}
+                    shortPosition = {}
                     maxWinRatio = 0;
                     shortPatchNum = 0;
                 }
@@ -750,9 +750,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeShort()
-                    const openPositionAmt = (shortRatio * (Number(shortHolding.positionAmt || 1)) < LOSS_MAX) ? INIT_POSITION * 2 : INIT_POSITION
-                    shortHolding = {}
-                    shortPosition = {}
+                    const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     // const openPositionAmt = INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
@@ -790,9 +788,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeLong()
-                    const openPositionAmt = (longRatio * (Number(longHolding.positionAmt || 1)) < LOSS_MAX) ? INIT_POSITION * 2 : INIT_POSITION
-                    longHolding = {}
-                    longPosition = {}
+                    const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     // const openPositionAmt = INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
