@@ -569,6 +569,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 && !ifMacdWeakenContinuity
@@ -577,6 +578,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
@@ -750,8 +752,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeShort()
-                    const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    // const openPositionAmt = INIT_POSITION
+                    // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    const openPositionAmt = INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -788,8 +790,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeLong()
-                    const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    // const openPositionAmt = INIT_POSITION
+                    // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    const openPositionAmt = INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
