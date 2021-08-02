@@ -676,8 +676,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    longHolding = {}
-                    longPosition = {}
+                    // longHolding = {}
+                    // longPosition = {}
                     maxWinRatio = 0;
                     longPatchNum = 0;
                 }
@@ -710,8 +710,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    shortHolding = {}
-                    shortPosition = {}
+                    // shortHolding = {}
+                    // shortPosition = {}
                     maxWinRatio = 0;
                     shortPatchNum = 0;
                 }
@@ -750,7 +750,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeShort()
-                    const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    const openPositionAmt = shortRatio * (shortHolding.positionAmt || 1) < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    shortHolding = {}
+                    shortPosition = {}
                     // const openPositionAmt = INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
@@ -788,7 +790,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // closeLong()
-                    const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    const openPositionAmt = longRatio * (longHolding.positionAmt || 1) < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    longHolding = {}
+                    longPosition = {}
                     // const openPositionAmt = INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
