@@ -574,10 +574,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION = (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
 
-        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) > 0
-            && rsiList[rsiList.length-1].RSI3 > longCondition
-            && rsiList[rsiList.length-2].RSI3 > longCondition
-            && rsiList[rsiList.length-3].RSI3 > longCondition
+        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
+            && rsiList[rsiList.length-1].RSI3 < shortCondition
+            && rsiList[rsiList.length-2].RSI3 < shortCondition
+            && rsiList[rsiList.length-3].RSI3 < shortCondition
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
