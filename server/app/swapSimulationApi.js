@@ -584,7 +584,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            || (rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            || (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
                 && rsiList[rsiList.length-2].RSI3 > longCondition
             )
