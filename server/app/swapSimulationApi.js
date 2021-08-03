@@ -549,11 +549,11 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
             if(index==0) return true;
-            return arr[index].RSI1 < arr[index].RSI2 && arr[index].RSI2 < arr[index].RSI3
+            return arr[index].RSI1 < arr[index].RSI2 && arr[index].RSI2 < arr[index].RSI3 && arr[index].RSI3 < shortCondition
         });
         const ifRSIEnhanceContinuity = rsiList.every((item,index,arr)=>{
             if(index==0) return true;
-            return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3
+            return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3 && arr[index].RSI3 > longCondition
         });
 
         let ifMacdPositiveContinuity = true;
@@ -582,11 +582,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && !ifRSIWeakenContinuity && !ifRSIEnhanceContinuity
             )
 
-        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-2].column) > 0
-            && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-            && rsiList[rsiList.length-3].RSI1 > rsiList[rsiList.length-3].RSI3
-            && rsiList[rsiList.length-2].RSI3 > longCondition
-            && Number(macdList[macdList.length-1].column) < 0
+        const REVERSE_SHORT_CONDITION = ifRSIWeakenContinuity
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
