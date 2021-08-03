@@ -588,7 +588,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 && !ifMacdWeakenContinuity
-                && ifMacdPositiveContinuity
+                // && ifMacdPositiveContinuity
             )
             || REVERSE_LONG_CONDITION
 
@@ -596,7 +596,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-                && ifMacdNegativeContinuity
+                // && ifMacdNegativeContinuity
             )
             || REVERSE_SHORT_CONDITION
 
