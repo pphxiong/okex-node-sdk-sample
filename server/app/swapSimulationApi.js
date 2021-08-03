@@ -582,9 +582,11 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && !ifRSIWeakenContinuity && !ifRSIEnhanceContinuity
             )
 
-        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-2].column) > 0 && Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-4].RSI1 > rsiList[rsiList.length-4].RSI3
+        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-2].column) > 0
+            && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+            && rsiList[rsiList.length-3].RSI1 > rsiList[rsiList.length-3].RSI3
+            && rsiList[rsiList.length-2].RSI3 > longCondition
+            && Number(macdList[macdList.length-1].column) < 0
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
