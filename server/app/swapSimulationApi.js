@@ -573,9 +573,18 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const REVERSE_LONG_CONDITION = (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
+            ||
+            (
+                rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 > longCondition
+                && !ifMacdPositiveContinuity && !ifMacdNegativeContinuity
+                && !ifRSIWeakenContinuity && !ifRSIEnhanceContinuity
+            )
 
         const REVERSE_SHORT_CONDITION = rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI2
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-1].RSI3
+            && rsiList[rsiList.length-1].RSI3 < shortCondition
             && !ifMacdPositiveContinuity && !ifMacdNegativeContinuity
             && !ifRSIWeakenContinuity && !ifRSIEnhanceContinuity
 
