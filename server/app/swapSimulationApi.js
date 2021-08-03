@@ -574,7 +574,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION = (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
 
-        const REVERSE_SHORT_CONDITION = ifRSIWeakenContinuity
+        const REVERSE_SHORT_CONDITION = ifRSIWeakenContinuity && ifMacdNegativeContinuity
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
