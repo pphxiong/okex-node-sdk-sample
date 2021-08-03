@@ -37,7 +37,7 @@ let shortCondition = 48.5;
 
 const LOSS_MAX = - 0.15 * LEVERAGE / 10;
 const WIN_MAX = 0 * LEVERAGE / 10;
-const REVERSE_RATIO = - 0.1 * LEVERAGE / 10;
+const REVERSE_RATIO = - 0.15 * LEVERAGE / 10;
 
 let myInterval;
 
