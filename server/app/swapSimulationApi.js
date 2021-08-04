@@ -35,8 +35,8 @@ let rsi3 = 24;
 let longCondition = 49.5;
 let shortCondition = 48.5;
 
-const LOSS_MAX = - 0.06 * LEVERAGE / 10;
-const WIN_MAX = 0.12 * LEVERAGE / 10;
+const LOSS_MAX = - 0.02 * LEVERAGE / 10;
+const WIN_MAX = 0.04 * LEVERAGE / 10;
 // const REVERSE_RATIO = - 0.15 * LEVERAGE / 10;
 
 let myInterval;
@@ -611,7 +611,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || IS_TOP
             // || (ifLatestBottom && rsiList[rsiList.length-1].RSI3 > longCondition)
             // || (ifLatestTop && longRatio < LOSS_MAX)
-            // || (longRatio < WIN_MAX && maxWinRatio > WIN_MAX)
+            || (longRatio < LOSS_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
@@ -619,7 +619,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || IS_BOTTOM
             // || (ifLatestTop && rsiList[rsiList.length-1].RSI3 < shortCondition)
             // || (ifLatestBottom && shortRatio < LOSS_MAX)
-            // || (shortRatio < WIN_MAX && maxWinRatio > WIN_MAX)
+            || (shortRatio < LOSS_MAX && maxWinRatio > WIN_MAX)
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
