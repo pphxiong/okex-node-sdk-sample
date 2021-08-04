@@ -599,8 +599,8 @@ const checkDeal = async (data,isAutoReset = true) => {
             )
             // || REVERSE_SHORT_CONDITION
 
-        const openLongCondition = MAIN_OPEN_SHORT_CONDITION
-        const openShortCondition = MAIN_OPEN_LONG_CONDITION
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION
+        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
