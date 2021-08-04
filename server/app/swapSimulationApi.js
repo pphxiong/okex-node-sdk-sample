@@ -37,6 +37,10 @@ let shortCondition = 48;
 
 const LOSS_MAX = - 0.02 * LEVERAGE / 10;
 const WIN_MAX = 0.04 * LEVERAGE / 10;
+
+let lastMode = 0;
+let modeChange = false;
+
 // const REVERSE_RATIO = - 0.15 * LEVERAGE / 10;
 
 let myInterval;
@@ -574,16 +578,20 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION =
             (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
-            ||
-            (
-                Number(macdList[macdList.length-1].column) > 0
-                && Number(macdList[macdList.length-2].column) < 0
-                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-2].RSI1
-                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI2
-                && rsiList[rsiList.length-1].RSI3 > rsiList[rsiList.length-2].RSI3
-            )
 
-        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
+        // const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
+        //     && Number(macdList[macdList.length-2].column) > 0
+        //     && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-2].RSI1
+        //     && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
+        //     && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
+
+        const OTHER_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0
+            && Number(macdList[macdList.length-2].column) < 0
+            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-2].RSI1
+            && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI2
+            && rsiList[rsiList.length-1].RSI3 > rsiList[rsiList.length-2].RSI3
+
+        const OTHER_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
             && Number(macdList[macdList.length-2].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-2].RSI1
             && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
@@ -602,13 +610,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            || REVERSE_SHORT_CONDITION
-
-        const openLongCondition = MAIN_OPEN_LONG_CONDITION
-        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
+            // || REVERSE_SHORT_CONDITION
+        if(modeChange) lastMode = lastMode ? 0 : 1
+        const openLongCondition = !lastMode ? MAIN_OPEN_LONG_CONDITION: OTHER_LONG_CONDITION
+        const openShortCondition = !lastMode ? MAIN_OPEN_SHORT_CONDITION: OTHER_SHORT_CONDITION
+        modeChange = false
 
         const closeLongCondition =
-            MAIN_OPEN_SHORT_CONDITION
+            openShortCondition
             || isForceDeal
             // || IS_TOP
             // || (ifLatestBottom && rsiList[rsiList.length-1].RSI3 > longCondition)
@@ -616,7 +625,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || (longRatio < LOSS_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
-            MAIN_OPEN_LONG_CONDITION
+            openLongCondition
             || isForceDeal
             // || IS_BOTTOM
             // || (ifLatestTop && rsiList[rsiList.length-1].RSI3 < shortCondition)
@@ -674,6 +683,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     await patchPosition(longHolding, 'LONG')
                     longPatchNum += 1;
                 }else{
+                    if(longRatio < 0) modeChange = true
                     totalProfit += longRatio * longHolding.positionAmt;
                     totalProfit += - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
                     const dealDetail = {
@@ -708,6 +718,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     await patchPosition(shortHolding,'SHORT')
                     shortPatchNum += 1;
                 }else{
+                    if(shortRatio < 0) modeChange = true
                     totalProfit += shortRatio * shortHolding.positionAmt
                     totalProfit += - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
                     const dealDetail = {
