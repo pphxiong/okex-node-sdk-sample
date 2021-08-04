@@ -612,8 +612,8 @@ const checkDeal = async (data,isAutoReset = true) => {
             )
             // || REVERSE_SHORT_CONDITION
         if(modeChange) lastMode = lastMode ? 0 : 1
-        const openLongCondition = !lastMode ? MAIN_OPEN_LONG_CONDITION: OTHER_LONG_CONDITION
-        const openShortCondition = !lastMode ? MAIN_OPEN_SHORT_CONDITION: OTHER_SHORT_CONDITION
+        const openLongCondition = MAIN_OPEN_LONG_CONDITION
+        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
         modeChange = false
 
         const closeLongCondition =
