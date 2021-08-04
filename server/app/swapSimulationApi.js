@@ -572,25 +572,26 @@ const checkDeal = async (data,isAutoReset = true) => {
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 5 || rsiList[rsiList.length-1].RSI3 < 25
 
         const REVERSE_LONG_CONDITION =
-            (ifMacdEnhanceContinuity
-            && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
-            ||
+            // (ifMacdEnhanceContinuity
+            // && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
+            // ||
             (
                 Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > longCondition
+                && (rsiList[rsiList.length-1].RSI3 > longCondition || rsiList[rsiList.length-1].RSI3 < 35)
             )
 
         const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-            && rsiList[rsiList.length-1].RSI3 < shortCondition
+            && (rsiList[rsiList.length-1].RSI3 < shortCondition || rsiList[rsiList.length-1].RSI3 > 55)
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
+                && rsiList[rsiList.length-1].RSI3 < 55
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
@@ -599,6 +600,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
+                && rsiList[rsiList.length-1].RSI3 > 35
             )
             || REVERSE_SHORT_CONDITION
 
