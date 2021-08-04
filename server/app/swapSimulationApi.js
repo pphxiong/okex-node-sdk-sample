@@ -591,7 +591,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
-                && rsiList[rsiList.length-1].RSI3 < 55
+                // && rsiList[rsiList.length-1].RSI3 < 55
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
@@ -600,7 +600,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-                && rsiList[rsiList.length-1].RSI3 > 35
+                // && rsiList[rsiList.length-1].RSI3 > 35
             )
             // || REVERSE_SHORT_CONDITION
 
