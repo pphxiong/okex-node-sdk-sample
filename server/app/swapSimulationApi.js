@@ -618,7 +618,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLongCondition =
             openShortCondition
-            || Number(macdList[macdList.length-1].column) < 0
+            || (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 < shortCondition)
             || isForceDeal
             // || IS_TOP
             // || (ifLatestBottom && rsiList[rsiList.length-1].RSI3 > longCondition)
@@ -627,7 +627,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShortCondition =
             openLongCondition
-            || Number(macdList[macdList.length-1].column) > 0
+            || (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 > longCondition)
             || isForceDeal
             // || IS_BOTTOM
             // || (ifLatestTop && rsiList[rsiList.length-1].RSI3 < shortCondition)
