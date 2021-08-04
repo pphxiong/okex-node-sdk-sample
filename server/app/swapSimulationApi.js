@@ -32,8 +32,8 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-let longCondition = 49.5;
-let shortCondition = 48.5;
+let longCondition = 48;
+let shortCondition = 48;
 
 const LOSS_MAX = - 0.02 * LEVERAGE / 10;
 const WIN_MAX = 0.04 * LEVERAGE / 10;
@@ -607,7 +607,6 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
-            || (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 < shortCondition)
             || isForceDeal
             // || IS_TOP
             // || (ifLatestBottom && rsiList[rsiList.length-1].RSI3 > longCondition)
@@ -616,7 +615,6 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
-            || (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 > longCondition)
             || isForceDeal
             // || IS_BOTTOM
             // || (ifLatestTop && rsiList[rsiList.length-1].RSI3 < shortCondition)
