@@ -36,7 +36,7 @@ let longCondition = 49.5;
 let shortCondition = 48.5;
 
 const LOSS_MAX = - 0.15 * LEVERAGE / 10;
-const WIN_MAX = 0 * LEVERAGE / 10;
+const WIN_MAX = 0.1 * LEVERAGE / 10;
 // const REVERSE_RATIO = - 0.15 * LEVERAGE / 10;
 
 let myInterval;
@@ -574,18 +574,16 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION =
             (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
-            ||
-            (
-                Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > longCondition
-            )
+            || (longRatio > WIN_MAX || shortRatio > WIN_MAX)
+            // ||
+            // (
+            //     Number(macdList[macdList.length-1].column) > 0
+            //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 > longCondition
+            // )
 
-        const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-            && rsiList[rsiList.length-1].RSI3 > 55
+        const REVERSE_SHORT_CONDITION = longRatio > WIN_MAX || shortRatio > WIN_MAX
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
