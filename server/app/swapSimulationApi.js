@@ -574,18 +574,20 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION =
             (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
-            // ||
-            // (
-            //     Number(macdList[macdList.length-1].column) > 0
-            //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 > longCondition
-            // )
+            ||
+            (
+                Number(macdList[macdList.length-1].column) > 0
+                && Number(macdList[macdList.length-2].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-2].RSI1
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI2
+                && rsiList[rsiList.length-1].RSI3 > rsiList[rsiList.length-2].RSI3
+            )
 
         const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-            && rsiList[rsiList.length-1].RSI3 < shortCondition
+            && Number(macdList[macdList.length-2].column) > 0
+            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-2].RSI1
+            && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
+            && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
@@ -600,7 +602,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            // || REVERSE_SHORT_CONDITION
+            || REVERSE_SHORT_CONDITION
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
