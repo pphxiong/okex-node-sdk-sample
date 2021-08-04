@@ -551,6 +551,22 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].column > arr[index - 1].column
         });
 
+        const isDownRSI = rsiList.some((item,index,arr)=>{
+            if(index==0) return false;
+            return Number(macdList[index].column) > 0
+                && arr[index].RSI1 < arr[index].RSI3
+                && arr[index-1].RSI1 > arr[index-1].RSI3
+                && arr[index].RSI3 > longCondition
+        });
+
+        const isUpRSI = rsiList.some((item,index,arr)=>{
+            if(index==0) return false;
+            return Number(macdList[index].column) < 0
+                && arr[index].RSI1 > arr[index].RSI3
+                && arr[index-1].RSI1 < arr[index-1].RSI3
+                && arr[index].RSI3 < shortCondition
+        });
+
         const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
             if(index==0) return true;
             return arr[index].RSI1 < arr[index].RSI2 && arr[index].RSI2 < arr[index].RSI3
@@ -598,17 +614,19 @@ const checkDeal = async (data,isAutoReset = true) => {
             && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
+                && isDownRSI
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
-                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
+                && isUpRSI
             )
             // || REVERSE_SHORT_CONDITION
         if(modeChange) lastMode = lastMode ? 0 : 1
