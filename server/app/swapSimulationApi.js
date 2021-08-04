@@ -574,13 +574,13 @@ const checkDeal = async (data,isAutoReset = true) => {
         const REVERSE_LONG_CONDITION =
             (ifMacdEnhanceContinuity
             && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
-            // ||
-            // (
-            //     Number(macdList[macdList.length-1].column) > 0
-            //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            //     && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-            //     && rsiList[rsiList.length-1].RSI3 > longCondition
-            // )
+            ||
+            (
+                Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 > longCondition
+            )
 
         const REVERSE_SHORT_CONDITION = longRatio > WIN_MAX || shortRatio > WIN_MAX || longRatio < LOSS_MAX || shortRatio < LOSS_MAX
 
