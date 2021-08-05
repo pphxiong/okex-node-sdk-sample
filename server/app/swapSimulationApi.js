@@ -437,7 +437,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
         const newList = JSON.parse(JSON.stringify(global.lastHistoryList.concat(list)))
         console.log('lastHistoryList',global.lastHistoryList.length,'isInit',isInit);
-        lastHistoryList = list.slice(-300);
+        global.lastHistoryList = list.slice(-300);
         console.log('lastHistoryList',global.lastHistoryList.length);
 
         const macdList = getCurrentMacd(newList).slice(-list.length)
