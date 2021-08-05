@@ -407,6 +407,11 @@ app.get('/swap/getHistory', async (req, response) => {
 let lastMacd;
 let lastRSI;
 app.post('/swap/startHearBeat', async (req, response) => {
+    console.log(req.body)
+    send(response, {errcode: 0, errmsg: 'ok', data: {
+
+        }});
+    return
     //1.通过判断url路径和请求方式来判断是否是表单提交
     if (req.url === '/swap/startHearBeat' && req.method === 'POST') {
 
