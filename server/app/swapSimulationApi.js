@@ -428,7 +428,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const payload = {
             interval,
             limit: limit * 2,
-            startTime: moment(time).subtract(1,'days').valueOf()
+            startTime: moment(time).subtract(1,'day').valueOf()
         }
         console.log(payload)
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
