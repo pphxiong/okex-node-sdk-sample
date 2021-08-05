@@ -121,7 +121,7 @@ function getCurrentRSI(list,last) {
     const newList = JSON.parse(JSON.stringify(list))
     let rsiList = []
     function* gen() {
-        for(let i = 0; i < Math.min(newList.length, 1400); i ++){
+        for(let i = 0; i < newList.length - 24; i ++){
             if(i > 0) list.pop()
             const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])),last)
             rsiList.push(result)
@@ -130,11 +130,11 @@ function getCurrentRSI(list,last) {
     }
 
     for(let k of gen()){
-        if( k >= Math.min(newList.length, 1400) ) break
+        if( k >= newList.length - 24 ) break
     }
 
     rsiList = rsiList.reverse()
-    // rsiList = rsiList.slice(-2)
+    rsiList = rsiList.slice(-1400)
     return rsiList
 }
 
@@ -434,7 +434,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        const newList = JSON.parse(JSON.stringify(list))
+        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
         lastHistoryList = list;
 
         const macdList = getCurrentMacd(newList,lastMacd)
@@ -444,8 +444,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
             macdList,
             rsiList
         }
-        lastMacd = macdList[macdList.length-1]
-        lastRSI = rsiList[rsiList.length-1]
+        // lastMacd = macdList[macdList.length-1]
+        // lastRSI = rsiList[rsiList.length-1]
 
         await checkDeal(result,isAutoReset);
         send(response, {errcode: 0, errmsg: 'ok', data: {
