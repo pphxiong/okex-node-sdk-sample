@@ -219,13 +219,13 @@ export default props => {
           const yearAndMonth = `${year}-${m}`;
           let i = 0;
           const p = new Promise(async resolve => {
-            const getDayData = async date => {
+            const getDayData = async (date,iList = []) => {
               const time = moment(`${date} 00:00:00`).valueOf()
               const limit = 60 * 24 / Number(interval.split('m')[0])
-              const payload = { date, time, interval, limit, isAutoReset: true }
+              const payload = { date, time, interval, limit, isAutoReset: true, initList: iList }
               const { data } = await startHearBeat(payload);
               if(data){
-                const { dealDetailList, totalProfit, mostLoss } = data;
+                const { dealDetailList, totalProfit, mostLoss, initList } = data;
                 const dayProfit = {
                   profit: totalProfit,
                   date,
@@ -240,7 +240,7 @@ export default props => {
                   return;
                 }
                 const newDate = `${yearAndMonth}-${dayList[i]}`;
-                await getDayData(newDate);
+                await getDayData(newDate,initList);
               }
             }
             const date = `${yearAndMonth}-${dayList[i]}`;
@@ -290,13 +290,13 @@ export default props => {
       const yearAndMonth = `${year}-${month}`;
       let i = 0;
       const p = new Promise(async resolve => {
-        const getDayData = async date => {
+        const getDayData = async (date, iList = []) => {
           const time = moment(`${date} 00:00:00`).valueOf()
           const limit = 60 * 24 / Number(interval.split('m')[0])
-          const payload = { date, time, interval, limit, isAutoReset: true }
+          const payload = { date, time, interval, limit, isAutoReset: true, initList: iList }
           const { data } = await startHearBeat(payload);
           if(data){
-            const { dealDetailList, totalProfit, mostLoss } = data;
+            const { dealDetailList, totalProfit, mostLoss, initList } = data;
             const dayProfit = {
               profit: totalProfit,
               date,
@@ -311,7 +311,7 @@ export default props => {
               return;
             }
             const newDate = `${yearAndMonth}-${dayList[i]}`;
-            await getDayData(newDate);
+            await getDayData(newDate, initList);
           }
         }
         const date = `${yearAndMonth}-${dayList[i]}`;

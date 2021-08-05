@@ -121,7 +121,7 @@ function getCurrentRSI(list,last) {
     const newList = JSON.parse(JSON.stringify(list))
     let rsiList = []
     function* gen() {
-        for(let i = 0; i < newList.length - 24; i ++){
+        for(let i = 0; i < Math.min(newList.length, 1400); i ++){
             if(i > 0) list.pop()
             const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])),last)
             rsiList.push(result)
@@ -130,11 +130,10 @@ function getCurrentRSI(list,last) {
     }
 
     for(let k of gen()){
-        if( k >= newList.length - 24 ) break
+        if( k >= Math.min(newList.length, 1400) ) break
     }
 
     rsiList = rsiList.reverse()
-    rsiList = rsiList.slice(-1400)
     return rsiList
 }
 
@@ -405,12 +404,11 @@ app.get('/swap/getHistory', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: list });
 });
 
-let lastHistoryList = [];
 let lastMacd;
 let lastRSI;
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
-    const { time, date, interval = '5m', limit = 1500, isAutoReset = true } = query;
+    const { time, date, interval = '5m', limit = 1500, isAutoReset = true, initList = [] } = query;
     try{
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
@@ -434,8 +432,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
-        lastHistoryList = list;
+        const newList = JSON.parse(JSON.stringify(initList.concat(list)))
 
         const macdList = getCurrentMacd(newList,lastMacd)
         const rsiList = getCurrentRSI(newList,lastRSI)
@@ -455,6 +452,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             currentPosition,
             dealDetailList,
             mostLoss,
+            initList: initList.slice(-300),
             } });
     }catch (e) {
         console.log(e)
