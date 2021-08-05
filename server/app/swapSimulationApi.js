@@ -629,6 +629,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && isUpRSI
             )
             // || REVERSE_SHORT_CONDITION
+
         if(modeChange) lastMode = lastMode ? 0 : 1
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
