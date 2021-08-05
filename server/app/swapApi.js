@@ -346,17 +346,21 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
         )
 
+        const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        const hmsArr = (currentTime.split(' '))[1].split(':')
+        if(hmsArr[0] == '00' && hmsArr[1] == '00') isForceDeal = true;
+
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
 
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
-            MAIN_OPEN_SHORT_CONDITION
+            MAIN_OPEN_SHORT_CONDITION || isForceDeal
 
         const closeShortCondition =
-            MAIN_OPEN_LONG_CONDITION
+            MAIN_OPEN_LONG_CONDITION || isForceDeal
 
-        console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
+        console.log('************************************', currentTime)
         console.log('------------------')
         console.log('mark_price',mark_price)
         console.log('macdList',macdList.slice(-1))
