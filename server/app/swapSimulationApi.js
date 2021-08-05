@@ -542,11 +542,11 @@ const checkDeal = async (data,isAutoReset = true) => {
         const maxPriceIndex = getMaxIndex(macdList,'high');
         const maxMacdIndex = getMaxIndex(macdList,'column');
 
-        const ifMacdWeakenContinuity = macdList.every((item,index,arr)=>{
+        const ifMacdWeakenContinuity = macdList.slice(-6).every((item,index,arr)=>{
             if(index==0) return true;
             return arr[index].column < arr[index - 1].column
         });
-        const ifMacdEnhanceContinuity = macdList.every((item,index,arr)=>{
+        const ifMacdEnhanceContinuity = macdList.slice(-6).every((item,index,arr)=>{
             if(index==0) return true;
             return arr[index].column > arr[index - 1].column
         });
@@ -579,7 +579,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         let ifMacdPositiveContinuity = true;
         let ifMacdNegativeContinuity = true;
 
-        macdList.reduce((pre,cur,index)=>{
+        macdList.slice(-6).reduce((pre,cur,index)=>{
             if(pre.column < 0) ifMacdPositiveContinuity = false;
             if(pre.column > 0) ifMacdNegativeContinuity = false;
             return cur;
@@ -631,6 +631,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || REVERSE_SHORT_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
+
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
         modeChange = false
