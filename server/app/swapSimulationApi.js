@@ -407,6 +407,9 @@ app.get('/swap/getHistory', async (req, response) => {
 let lastMacd;
 let lastRSI;
 let lastHistoryList = []
+const getLastHistoryList = function() {
+    return lastHistoryList;
+}
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}, body} = req;
     const { time, date, interval = '5m', limit = 1500, isAutoReset = true, isInit = false } = query;
@@ -435,8 +438,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
         if(isInit) lastHistoryList = []
 
-        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
-        console.log('lastHistoryList',lastHistoryList.length, 'list',list.length, 'newList', newList.length, 'isInit', isInit, lastHistoryList.concat(list).length)
+        const newList = JSON.parse(JSON.stringify(getLastHistoryList().concat(list)))
+        console.log('lastHistoryList',getLastHistoryList().length, 'list',list.length, 'newList', newList.length, 'isInit', isInit, lastHistoryList.concat(list).length)
 
         lastHistoryList = list.slice(-300);
         const macdList = getCurrentMacd(newList).slice(-list.length)
