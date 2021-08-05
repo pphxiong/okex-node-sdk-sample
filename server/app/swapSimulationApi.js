@@ -436,7 +436,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         if(isInit) {
             lastHistoryList = []
         }else{
-            lastHistoryList = await readData()
+            // lastHistoryList = await readData()
         }
 
         console.log('lastHistoryList',lastHistoryList.length)
@@ -974,7 +974,7 @@ app.post('/swap/startHearBeat', async (req, response) => {
 });
 
 const readData = async () => {
-    let dataConfig =  JSON.parse(fs.readFileSync('./app/lastHistoryList.json','utf-8'));
+    let dataConfig = JSON.parse(fs.readFileSync('./app/lastHistoryList.json','utf-8'));
     return dataConfig.lastHistoryList
 }
 
