@@ -406,10 +406,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 let lastMacd;
 let lastRSI;
-let lastHistoryList = []
-const getLastHistoryList = function() {
-    return lastHistoryList;
-}
+let lastHistoryList = {}
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}, body} = req;
     const { time, date, interval = '5m', limit = 1500, isAutoReset = true, isInit = false } = query;
@@ -436,12 +433,12 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        if(isInit) lastHistoryList = []
+        if(isInit) lastHistoryList.prototype.list = []
 
-        const newList = JSON.parse(JSON.stringify(getLastHistoryList().concat(list)))
-        console.log('lastHistoryList',getLastHistoryList().length, 'list',list.length, 'newList', newList.length, 'isInit', isInit, lastHistoryList.concat(list).length)
+        const newList = JSON.parse(JSON.stringify(lastHistoryList.prototype.list.concat(list)))
+        console.log('lastHistoryList',lastHistoryList.prototype.list.length, 'list',list.length, 'newList', newList.length, 'isInit', isInit, )
 
-        lastHistoryList = list.slice(-300);
+        lastHistoryList.prototype.list = list.slice(-300);
         const macdList = getCurrentMacd(newList).slice(-list.length)
         const rsiList = getCurrentRSI(newList).slice(-list.length)
 
