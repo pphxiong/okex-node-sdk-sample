@@ -80,12 +80,12 @@ function send(res, ret) {
     res.send(str);
 }
 
-function getCurrentMacd(list) {
+function getCurrentMacd(list,last) {
     let macdList = []
     list.map((item,index)=>{
         let result = {}
         if(index==0) {
-            result = {
+            result = last || {
                 price: Number(item[4]),
                 ema12: Number(item[4]),
                 ema26: Number(item[4]),
@@ -117,13 +117,13 @@ function getCurrentMacd(list) {
     return macdList
 }
 
-function getCurrentRSI(list) {
+function getCurrentRSI(list,last) {
     const newList = JSON.parse(JSON.stringify(list))
     let rsiList = []
     function* gen() {
         for(let i = 0; i < Math.min(newList.length, 1400); i ++){
             if(i > 0) list.pop()
-            const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])))
+            const result = getRSI(Number(list[list.length-1][0]),Number(list[list.length-1][4]),list.map(item=>Number(item[4])),last)
             rsiList.push(result)
             yield i
         }
@@ -171,12 +171,21 @@ function toFixedAndToNumber(n,num=1){
     // return Number(n.toFixed(num))
     return Math.round(n * Math.pow(10,num)) / Math.pow(10,num)
 }
-function getRSIAverage(list,i,n){
+function getRSIAverage(list,i,n,last){
     let diff;
     let gainI = 0;
     let lossI = 0;
     if(i==0) {
-        diff = 0;
+        if(last){
+            diff = Number(list[i]) - last.price
+            if(diff > 0){
+                gainI = Math.max(0,diff)
+            }else{
+                lossI = Math.max(0,-diff)
+            }
+        }else{
+            diff = 0;
+        }
     }else{
         diff = Number(list[i]) - Number(list[i-1])
         if(diff > 0){
@@ -192,7 +201,7 @@ function getRSIAverage(list,i,n){
     if(i==0) {
         gainAverageI = gainI;
         lossAverageI = lossI;
-    }else if(i==1||i==2){
+    }else if((i==1||i==2) && !last){
         gainAverageI = 100;
         lossAverageI = 100;
     }else{
@@ -207,8 +216,8 @@ function getRSIAverage(list,i,n){
         lossAverageI,
     }
 }
-function getRSIByPeriod(newList, period){
-    const result = getRSIAverage(newList,newList.length-1,period)
+function getRSIByPeriod(newList, period, last){
+    const result = getRSIAverage(newList,newList.length-1,period, last)
     const { gainAverageI, lossAverageI } = result
     // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
     const RS = gainAverageI / (lossAverageI || 1);
@@ -220,10 +229,10 @@ function getRSIByPeriod(newList, period){
     }
     return newResult;
 }
-function getRSI(time,price,list){
-    const { RSI: RSI1 } = getRSIByPeriod(list,rsi1)
-    const { RSI: RSI2 } = getRSIByPeriod(list,rsi2)
-    const { RSI: RSI3 } = getRSIByPeriod(list,rsi3)
+function getRSI(time,price,list,last){
+    const { RSI: RSI1 } = getRSIByPeriod(list,rsi1,last)
+    const { RSI: RSI2 } = getRSIByPeriod(list,rsi2,last)
+    const { RSI: RSI3 } = getRSIByPeriod(list,rsi3,last)
 
     const result = {
         time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
@@ -397,6 +406,8 @@ app.get('/swap/getHistory', async (req, response) => {
 });
 
 let lastHistoryList = [];
+let lastMacd;
+let lastRSI;
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
     const { time, date, interval = '5m', limit = 1500, isAutoReset = true } = query;
@@ -423,16 +434,19 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
+        const newList = JSON.parse(JSON.stringify(list))
         lastHistoryList = list;
 
-        const macdList = getCurrentMacd(newList)
-        const rsiList = getCurrentRSI(newList)
+        const macdList = getCurrentMacd(newList,lastMacd)
+        const rsiList = getCurrentRSI(newList,lastRSI)
 
         const result = {
             macdList,
             rsiList
         }
+        lastMacd = macdList[macdList.length-1]
+        lastRSI = rsiList[rsiList.length-1]
+
         await checkDeal(result,isAutoReset);
         send(response, {errcode: 0, errmsg: 'ok', data: {
             // history: list,
