@@ -452,7 +452,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             currentPosition,
             dealDetailList,
             mostLoss,
-            initList: initList.slice(-300),
+            initList: list.slice(-300),
             } });
     }catch (e) {
         console.log(e)
