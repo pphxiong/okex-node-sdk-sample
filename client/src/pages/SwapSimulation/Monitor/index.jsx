@@ -219,13 +219,13 @@ export default props => {
           const yearAndMonth = `${year}-${m}`;
           let i = 0;
           const p = new Promise(async resolve => {
-            const getDayData = async (date,iList = []) => {
+            const getDayData = async (date,isInit) => {
               const time = moment(`${date} 00:00:00`).valueOf()
               const limit = 60 * 24 / Number(interval.split('m')[0])
-              const payload = { date, time, interval, limit, isAutoReset: true, initList: iList }
+              const payload = { date, time, interval, limit, isAutoReset: true, isInit }
               const { data } = await startHearBeat(payload);
               if(data){
-                const { dealDetailList, totalProfit, mostLoss, initList } = data;
+                const { dealDetailList, totalProfit, mostLoss, } = data;
                 const dayProfit = {
                   profit: totalProfit,
                   date,
@@ -240,11 +240,11 @@ export default props => {
                   return;
                 }
                 const newDate = `${yearAndMonth}-${dayList[i]}`;
-                await getDayData(newDate,initList);
+                await getDayData(newDate,false);
               }
             }
             const date = `${yearAndMonth}-${dayList[i]}`;
-            await getDayData(date);
+            await getDayData(date,true);
           })
 
           p.then(async data=>{
@@ -290,13 +290,13 @@ export default props => {
       const yearAndMonth = `${year}-${month}`;
       let i = 0;
       const p = new Promise(async resolve => {
-        const getDayData = async (date, iList = []) => {
+        const getDayData = async (date, isInit) => {
           const time = moment(`${date} 00:00:00`).valueOf()
           const limit = 60 * 24 / Number(interval.split('m')[0])
-          const payload = { date, time, interval, limit, isAutoReset: true, initList: iList }
+          const payload = { date, time, interval, limit, isAutoReset: true, isInit }
           const { data } = await startHearBeat(payload);
           if(data){
-            const { dealDetailList, totalProfit, mostLoss, initList } = data;
+            const { dealDetailList, totalProfit, mostLoss } = data;
             const dayProfit = {
               profit: totalProfit,
               date,
@@ -311,11 +311,11 @@ export default props => {
               return;
             }
             const newDate = `${yearAndMonth}-${dayList[i]}`;
-            await getDayData(newDate, initList);
+            await getDayData(newDate, false);
           }
         }
         const date = `${yearAndMonth}-${dayList[i]}`;
-        await getDayData(date);
+        await getDayData(date, true);
       })
 
       p.then(data=>{

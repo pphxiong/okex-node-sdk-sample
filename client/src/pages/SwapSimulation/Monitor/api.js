@@ -18,8 +18,7 @@ export async function getLatestProfit(params) {
 
 export async function startHearBeat(params) {
   return request(`${commonUrl}/swap/startHearBeat`, {
-    method: 'POST',
-    data: params,
+    params,
   });
 }
 
