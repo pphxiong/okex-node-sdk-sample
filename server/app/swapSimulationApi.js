@@ -406,7 +406,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 let lastMacd;
 let lastRSI;
-app.on('request', function (req, response) {
+app.post('/swap/startHearBeat', async (req, response) => {
     //1.通过判断url路径和请求方式来判断是否是表单提交
     if (req.url === '/swap/startHearBeat' && req.method === 'POST') {
 
