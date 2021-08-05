@@ -6,7 +6,7 @@ import moment from 'moment'
 // const customAuthClient = require('./customAuthClientV5');
 const customAuthClientBN = require('./customAuthClientBN');
 const querystring = require('querystring');
-// const fs = require('fs');
+const fs = require('fs');
 
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
@@ -406,7 +406,7 @@ app.get('/swap/getHistory', async (req, response) => {
 
 let lastMacd;
 let lastRSI;
-let lastHistoryList = []
+let lastHistoryList = [];
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}, body} = req;
     const { time, date, interval = '5m', limit = 1500, isAutoReset = true, isInit = false } = query;
@@ -433,10 +433,15 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        if(isInit) lastHistoryList = []
+        if(isInit) {
+            lastHistoryList = []
+        }else{
+            lastHistoryList = await readData()
+        }
 
         const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
         lastHistoryList = list.slice(-300);
+        await writeData(lastHistoryList)
 
         const macdList = getCurrentMacd(newList).slice(-list.length)
         const rsiList = getCurrentRSI(newList).slice(-list.length)
@@ -449,7 +454,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // lastRSI = rsiList[rsiList.length-1]
 
         await checkDeal(result,isAutoReset);
-        await send(response, {errcode: 0, errmsg: 'ok', data: {
+        send(response, {errcode: 0, errmsg: 'ok', data: {
             // history: list,
             // index: result,
             totalProfit,
@@ -965,6 +970,35 @@ app.post('/swap/startHearBeat', async (req, response) => {
     }
 
 });
+
+const readData = async () => {
+    let dataConfig =  JSON.parse(fs.readFileSync('./app/lastHistoryList.json','utf-8'));
+    lastHistoryList = dataConfig.lastHistoryList
+    return lastHistoryList
+}
+
+const writeData = async (data) => {
+    //将修改后的配置写入文件前需要先转成json字符串格式
+    let dataConfig = {
+        "lastHistoryList": JSON.stringify(data).toString(),
+    }
+    let jsonStr = JSON.stringify(dataConfig);
+
+    const result = await new Promise(resolve=>{
+        //将修改后的内容写入文件
+        fs.writeFile('./app/lastHistoryList.json', jsonStr, function(err) {
+            if (err) {
+                console.error(err);
+            }else{
+                console.log('----------修改成功-------------');
+                resolve(true)
+            }
+        });
+    })
+
+    return result
+}
+
 
 // 定时获取交割合约账户信息
 (async ()=>{
