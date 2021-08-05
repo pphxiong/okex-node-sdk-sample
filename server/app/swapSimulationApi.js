@@ -407,7 +407,7 @@ app.get('/swap/getHistory', async (req, response) => {
 let lastMacd;
 let lastRSI;
 app.post('/swap/startHearBeat', async (req, response) => {
-    console.log(req.body)
+    console.log(req)
     send(response, {errcode: 0, errmsg: 'ok', data: {
 
         }});
