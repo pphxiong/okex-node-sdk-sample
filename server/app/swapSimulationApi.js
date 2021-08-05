@@ -427,8 +427,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
         const payload = {
             interval,
-            limit,
-            startTime: time
+            limit: limit * 2,
+            startTime: moment(time).subtract(1,'days').valueOf()
         }
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
@@ -439,14 +439,14 @@ app.get('/swap/startHearBeat', async (req, response) => {
             // lastHistoryList = await readData()
         }
 
-        console.log('lastHistoryList',lastHistoryList.length)
+        // console.log('lastHistoryList',lastHistoryList.length)
 
-        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
-        lastHistoryList = list.slice(-300);
-        await writeData(lastHistoryList)
+        const newList = JSON.parse(JSON.stringify(list))
+        // lastHistoryList = list.slice(-300);
+        // await writeData(lastHistoryList)
 
-        const macdList = getCurrentMacd(newList).slice(-list.length)
-        const rsiList = getCurrentRSI(newList).slice(-list.length)
+        const macdList = getCurrentMacd(newList).slice(-limit)
+        const rsiList = getCurrentRSI(newList).slice(-limit)
 
         const result = {
             macdList,
