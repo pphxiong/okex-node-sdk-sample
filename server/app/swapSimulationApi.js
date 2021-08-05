@@ -396,6 +396,7 @@ app.get('/swap/getHistory', async (req, response) => {
     send(response, {errcode: 0, errmsg: 'ok', data: list });
 });
 
+let lastHistoryList = [];
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}} = req;
     const { time, date, interval = '5m', limit = 1500, isAutoReset = true } = query;
@@ -422,7 +423,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        const newList = JSON.parse(JSON.stringify(list))
+        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
+        lastHistoryList = list;
+
         const macdList = getCurrentMacd(newList)
         const rsiList = getCurrentRSI(newList)
 
@@ -483,11 +486,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 5; i++){
+    for(let i = 0; i < data.macdList.length - 9; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i + 6),
-            rsiList: data.rsiList.slice(i,i + 6),
-        },isAutoReset && i == data.macdList.length - 6)
+            macdList: data.macdList.slice(i,i + 10),
+            rsiList: data.rsiList.slice(i,i + 10),
+        },isAutoReset && i == data.macdList.length - 10)
     }
 
     function checkByStep(data,isForceDeal){
