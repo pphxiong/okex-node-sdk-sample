@@ -433,12 +433,12 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload)
         const list = data;
 
-        if(isInit) lastHistoryList = []
+        if(isInit) global.lastHistoryList = []
 
-        const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
-        console.log('lastHistoryList',lastHistoryList.length,'isInit',isInit);
+        const newList = JSON.parse(JSON.stringify(global.lastHistoryList.concat(list)))
+        console.log('lastHistoryList',global.lastHistoryList.length,'isInit',isInit);
         lastHistoryList = list.slice(-300);
-        console.log('lastHistoryList',lastHistoryList.length);
+        console.log('lastHistoryList',global.lastHistoryList.length);
 
         const macdList = getCurrentMacd(newList).slice(-list.length)
         const rsiList = getCurrentRSI(newList).slice(-list.length)
