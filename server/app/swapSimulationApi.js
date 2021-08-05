@@ -434,9 +434,11 @@ app.get('/swap/startHearBeat', async (req, response) => {
         const list = data;
 
         if(isInit) lastHistoryList = []
-        console.log('lastHistoryList',lastHistoryList.length)
 
         const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
+        lastHistoryList = list.slice(-300);
+
+        console.log('lastHistoryList',lastHistoryList.length, 'list',list.length)
 
         const macdList = getCurrentMacd(newList).slice(-list.length)
         const rsiList = getCurrentRSI(newList).slice(-list.length)
@@ -449,8 +451,6 @@ app.get('/swap/startHearBeat', async (req, response) => {
         // lastRSI = rsiList[rsiList.length-1]
 
         await checkDeal(result,isAutoReset);
-
-        lastHistoryList = list.slice(-300);
         send(response, {errcode: 0, errmsg: 'ok', data: {
             // history: list,
             // index: result,
