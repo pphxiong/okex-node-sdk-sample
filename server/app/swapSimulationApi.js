@@ -436,10 +436,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
         if(isInit) lastHistoryList = []
 
         const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
-        lastHistoryList = list.slice(-300);
-
         console.log('lastHistoryList',lastHistoryList.length, 'list',list.length, 'newList', newList.length, 'isInit', isInit, lastHistoryList.concat(list).length)
 
+        lastHistoryList = list.slice(-300);
         const macdList = getCurrentMacd(newList).slice(-list.length)
         const rsiList = getCurrentRSI(newList).slice(-list.length)
 
