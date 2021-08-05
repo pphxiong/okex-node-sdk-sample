@@ -990,9 +990,9 @@ const writeData = async (data) => {
         //将修改后的内容写入文件
         fs.writeFile('./app/lastHistoryList.json', jsonStr, function(err) {
             if (err) {
-                console.error(err);
+                // console.error(err);
             }else{
-                console.log('----------修改成功-------------');
+                // console.log('----------修改成功-------------');
                 resolve(true)
             }
         });
