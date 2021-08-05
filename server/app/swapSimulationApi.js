@@ -436,8 +436,11 @@ app.get('/swap/startHearBeat', async (req, response) => {
         if(isInit) {
             lastHistoryList = []
         }else{
-            lastHistoryList = await readData()
+            const d = await readData()
+            lastHistoryList = d.lastHistoryList
         }
+
+        console.log('lastHistoryList',lastHistoryList.length)
 
         const newList = JSON.parse(JSON.stringify(lastHistoryList.concat(list)))
         lastHistoryList = list.slice(-300);
