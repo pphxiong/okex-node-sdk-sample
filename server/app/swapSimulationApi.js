@@ -638,7 +638,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || REVERSE_LONG_CONDITION
             || (Number(macdList[macdList.length-1].close) > Number(macdList[macdList.length-1].open)
                 &&
-                Number(macdList[macdList.length-1].quantity) > Number(macdList[macdList.length-2].quantity)
+                Number(macdList[macdList.length-1].quantity) > Number(macdList[macdList.length-2].quantity) * 2
                 &&
                 Number(macdList[macdList.length-1].open) < Number(macdList[macdList.length-2].open)
                 &&
