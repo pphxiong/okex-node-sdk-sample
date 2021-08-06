@@ -637,7 +637,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            // || isDownRSI
+            || (isDownRSI && rsiList[rsiList.length-1].RSI3 < 40)
             // || REVERSE_SHORT_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
