@@ -435,15 +435,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
         if(isInit) {
             lastHistoryList = []
-        }else{
-            // lastHistoryList = await readData()
         }
 
-        // console.log('lastHistoryList',lastHistoryList.length)
-
         const newList = JSON.parse(JSON.stringify(list))
-        // lastHistoryList = list.slice(-300);
-        // await writeData(lastHistoryList)
 
         const macdList = getCurrentMacd(newList).slice(-limit)
         const rsiList = getCurrentRSI(newList).slice(-limit)
@@ -452,8 +446,6 @@ app.get('/swap/startHearBeat', async (req, response) => {
             macdList,
             rsiList
         }
-        // lastMacd = macdList[macdList.length-1]
-        // lastRSI = rsiList[rsiList.length-1]
 
         await checkDeal(result,isAutoReset);
         send(response, {errcode: 0, errmsg: 'ok', data: {
@@ -509,11 +501,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 9; i++){
+    for(let i = 0; i < data.macdList.length - 5; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i + 10),
-            rsiList: data.rsiList.slice(i,i + 10),
-        },isAutoReset && i == data.macdList.length - 10)
+            macdList: data.macdList.slice(i,i + 6),
+            rsiList: data.rsiList.slice(i,i + 6),
+        },isAutoReset && i == data.macdList.length - 6)
     }
 
     function checkByStep(data,isForceDeal){
@@ -577,20 +569,12 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].column > arr[index - 1].column
         });
 
-        const isDownRSI = rsiList.some((item,index,arr)=>{
-            if(index==0) return false;
-            return Number(macdList[index].column) > 0
-                && arr[index].RSI1 < arr[index].RSI3
-                && arr[index-1].RSI1 > arr[index-1].RSI3
-                // && arr[index].RSI3 > longCondition
+        const isDownRSI = rsiList.every((item,index,arr)=>{
+            return item.RSI1 < item.RSI2 && item.RSI2 < item.RSI3
         });
 
-        const isUpRSI = rsiList.some((item,index,arr)=>{
-            if(index==0) return false;
-            return Number(macdList[index].column) < 0
-                && arr[index].RSI1 > arr[index].RSI3
-                && arr[index-1].RSI1 < arr[index-1].RSI3
-                // && arr[index].RSI3 < shortCondition
+        const isUpRSI = rsiList.every((item,index,arr)=>{
+            return item.RSI1 > item.RSI2 && item.RSI2 > item.RSI3
         });
 
         const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
@@ -643,17 +627,17 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
-                // && isDownRSI
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
+            || isUpRSI
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-                // && isUpRSI
             )
+            || isDownRSI
             // || REVERSE_SHORT_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
