@@ -635,16 +635,30 @@ const checkDeal = async (data,isAutoReset = true) => {
             (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > shortCondition
-                && !ifMacdWeakenContinuity
+                && rsiList[rsiList.length-1].RSI3 > longCondition
+                // && !ifMacdWeakenContinuity
             )
-            || REVERSE_LONG_CONDITION
+            // || REVERSE_LONG_CONDITION
 
         const MAIN_OPEN_SHORT_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 < shortCondition
+            )
+
+        const MAIN_CLOSE_LONG_CONDITION =
+            (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < longCondition
+            )
+
+        const MAIN_CLOSE_SHORT_CONDITION =
+            (Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 > shortCondition
             )
 
         if(modeChange) lastMode = lastMode ? 0 : 1
@@ -654,22 +668,12 @@ const checkDeal = async (data,isAutoReset = true) => {
         modeChange = false
 
         const closeLongCondition =
-            openShortCondition
+            MAIN_CLOSE_LONG_CONDITION
             || isForceDeal
-            // || (Number(macdList[macdList.length-1].column) < 0 && rsiList[rsiList.length-1].RSI3 < shortCondition)
-            // || IS_TOP
-            // || (ifLatestBottom && rsiList[rsiList.length-1].RSI3 > longCondition)
-            // || (ifLatestTop && longRatio < LOSS_MAX)
-            // || (longRatio < LOSS_MAX && maxWinRatio > WIN_MAX)
 
         const closeShortCondition =
-            openLongCondition
+            MAIN_CLOSE_SHORT_CONDITION
             || isForceDeal
-            // || (Number(macdList[macdList.length-1].column) > 0 && rsiList[rsiList.length-1].RSI3 > longCondition)
-            // || IS_BOTTOM
-            // || (ifLatestTop && rsiList[rsiList.length-1].RSI3 < shortCondition)
-            // || (ifLatestBottom && shortRatio < LOSS_MAX)
-            // || (shortRatio < LOSS_MAX && maxWinRatio > WIN_MAX)
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
         // console.log('------------------')
