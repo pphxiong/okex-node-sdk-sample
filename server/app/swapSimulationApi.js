@@ -86,25 +86,29 @@ function getCurrentMacd(list,last) {
         let result = {}
         if(index==0) {
             result = last || {
-                price: Number(item[4]),
                 ema12: Number(item[4]),
                 ema26: Number(item[4]),
                 diff: 0,
                 dea: 0,
                 column: 0,
+                open: Number(item[1]),
                 high: Number(item[2]),
                 low: Number(item[3]),
+                close: Number(item[4]),
+                quantity: Number(item[5]),
                 time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss')
             }
         }else{
             const lastResult = macdList[macdList.length-1]
             const payload = {
-                price: Number(item[4]),
                 lastEma12: lastResult.ema12,
                 lastEma26: lastResult.ema26,
                 lastDea: lastResult.dea,
+                open: Number(item[1]),
                 high: Number(item[2]),
                 low: Number(item[3]),
+                close: Number(item[4]),
+                quantity: Number(item[5]),
                 time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss')
             }
             result = getMacd(payload)
@@ -142,7 +146,7 @@ app.get('/test', function(req, res) {
 });
 
 function getMacd(params) {
-    const {price,lastEma12,lastEma26,lastDea,high,low,time} = params
+    const {close: price,lastEma12,lastEma26,lastDea,high,low,time,quantity,open} = params
 
     const ema12 = toFixedAndToNumber(2/(12+1) * price + 11/(12+1) * lastEma12,4)
     const ema26 = toFixedAndToNumber(2/(26+1) * price + 25/(26+1) * lastEma26,4)
@@ -153,7 +157,8 @@ function getMacd(params) {
     const column = toFixedAndToNumber(2 * (diff - dea),2)
 
     const result = {
-        price,
+        open,
+        close: price,
         ema12,
         ema26,
         diff,
@@ -161,6 +166,7 @@ function getMacd(params) {
         column,
         high,
         low,
+        quantity,
         time
     }
 
@@ -510,7 +516,7 @@ const checkDeal = async (data,isAutoReset = true) => {
 
     function checkByStep(data,isForceDeal){
         const { macdList, rsiList } = data;
-        const mark_price = macdList[macdList.length-1].price;
+        const mark_price = macdList[macdList.length-1].close;
 
         let longHolding;
         let shortHolding
@@ -630,14 +636,18 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
-            || (isUpRSI && rsiList[rsiList.length-1].RSI3 > 60)
+            || (Number(macdList[macdList.length-1].close) > Number(macdList[macdList.length-1].open)
+                &&
+                Number(macdList[macdList.length-1].quantity) > Number(macdList[macdList.length-1].quantity)
+            )
+            // || (isUpRSI && rsiList[rsiList.length-1].RSI3 > 60)
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            || (isDownRSI && rsiList[rsiList.length-1].RSI3 < 40)
+            // || (isDownRSI && rsiList[rsiList.length-1].RSI3 < 40)
             // || REVERSE_SHORT_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
