@@ -608,14 +608,16 @@ const checkDeal = async (data,isAutoReset = true) => {
         const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 5 || rsiList[rsiList.length-1].RSI3 < 25
 
         const REVERSE_LONG_CONDITION =
-            (ifMacdEnhanceContinuity
-            && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
+            (
+            // ifMacdEnhanceContinuity
+            isUpRSI
+            &&
+            (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55))
 
-        // const REVERSE_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
-        //     && Number(macdList[macdList.length-2].column) > 0
-        //     && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-2].RSI1
-        //     && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
-        //     && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
+        const REVERSE_SHORT_CONDITION =   (
+            isDownRSI
+            &&
+            (rsiList[rsiList.length-1].RSI1 < 25 || rsiList[rsiList.length-1].RSI3 < 45))
 
         const OTHER_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0
             && Number(macdList[macdList.length-2].column) < 0
@@ -641,9 +643,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
+                && !ifMacdEnhanceContinuity
             )
-            // || (isDownRSI && rsiList[rsiList.length-1].RSI3 < 40)
-            // || REVERSE_SHORT_CONDITION
+            || REVERSE_SHORT_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
