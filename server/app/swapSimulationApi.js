@@ -630,7 +630,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
-            || isUpRSI
+            || (isUpRSI && rsiList[rsiList.length-1].RSI3 > 60)
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
