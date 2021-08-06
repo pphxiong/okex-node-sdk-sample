@@ -635,7 +635,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > longCondition
+                && rsiList[rsiList.length-1].RSI3 > shortCondition
                 // && !ifMacdWeakenContinuity
             )
             // || REVERSE_LONG_CONDITION
@@ -644,7 +644,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 < shortCondition
+                && rsiList[rsiList.length-1].RSI3 < longCondition
             )
 
         if(modeChange) lastMode = lastMode ? 0 : 1
