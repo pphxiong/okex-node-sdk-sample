@@ -643,6 +643,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                 Number(macdList[macdList.length-1].open) < Number(macdList[macdList.length-2].open)
                 &&
                 Number(macdList[macdList.length-1].close) > Number(macdList[macdList.length-2].close)
+                &&
+                Number(macdList[macdList.length-1].column) < 0
+                &&
+                rsiList[rsiList.length-1].RSI3 < shortCondition
             )
             // || (isUpRSI && rsiList[rsiList.length-1].RSI3 > 60)
 
