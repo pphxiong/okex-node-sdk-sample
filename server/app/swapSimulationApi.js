@@ -636,17 +636,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && !ifMacdWeakenContinuity
             )
             || REVERSE_LONG_CONDITION
-            || (Number(macdList[macdList.length-1].close) > Number(macdList[macdList.length-1].open)
-                &&
-                Number(macdList[macdList.length-1].quantity) > Number(macdList[macdList.length-2].quantity) * 2
-                &&
-                Number(macdList[macdList.length-1].open) < Number(macdList[macdList.length-2].open)
-                &&
-                Number(macdList[macdList.length-1].close) > Number(macdList[macdList.length-2].close)
-                &&
-                Number(macdList[macdList.length-1].column) < 0
-                &&
-                rsiList[rsiList.length-1].RSI3 < shortCondition
+            || (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI2
+                && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-1].RSI3 > 50
+                && Number(macdList[macdList.length-2].column) > 0
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI2
+                && rsiList[rsiList.length-2].RSI2 > rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-2].RSI3 > 50
             )
             // || (isUpRSI && rsiList[rsiList.length-1].RSI3 > 60)
 
