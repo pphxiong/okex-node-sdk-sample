@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-const LOSS_MAX = - 0.02 * LEVERAGE / 10;
+const LOSS_MAX = - 0.01 * LEVERAGE / 10;
 const WIN_MAX = 0.04 * LEVERAGE / 10;
 
 let lastMode = 0;
@@ -652,14 +652,14 @@ const checkDeal = async (data,isAutoReset = true) => {
             ||
             (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI3 < longCondition
-            && longRatio < 0)
+            && longRatio < LOSS_MAX)
 
         const MAIN_CLOSE_SHORT_CONDITION =
             MAIN_OPEN_LONG_CONDITION
             ||
             (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI3 > shortCondition
-            && shortRatio < 0)
+            && shortRatio < LOSS_MAX)
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
