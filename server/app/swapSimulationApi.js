@@ -648,14 +648,18 @@ const checkDeal = async (data,isAutoReset = true) => {
             )
 
         const MAIN_CLOSE_LONG_CONDITION =
-            rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+            Number(macdList[macdList.length-1].column) < 0
+            // && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            // && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 < longCondition
+            && longRatio < 0
 
         const MAIN_CLOSE_SHORT_CONDITION =
-            rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-            && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+            Number(macdList[macdList.length-1].column) > 0
+            // rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            // && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 > shortCondition
+            && shortRatio < 0
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
