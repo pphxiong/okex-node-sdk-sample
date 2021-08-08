@@ -36,7 +36,7 @@ let longCondition = 48;
 let shortCondition = 48;
 
 const LOSS_MAX = - 0.01 * LEVERAGE / 10;
-const WIN_MAX = 0.04 * LEVERAGE / 10;
+const WIN_MAX = 0.1 * LEVERAGE / 10;
 
 let lastMode = 0;
 let modeChange = false;
@@ -637,8 +637,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 // && !ifMacdWeakenContinuity
-            )
-            || rsiList[rsiList.length-1].RSI1 > 75
+            ) || (shortRatio > 0 && shortRatio < maxWinRatio * 2 / 5)
             // || REVERSE_LONG_CONDITION
 
         const MAIN_OPEN_SHORT_CONDITION =
@@ -646,22 +645,23 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-            )
-            || rsiList[rsiList.length-1].RSI1 < 25
+            ) || (longRatio > 0 && longRatio < maxWinRatio * 2 / 5)
 
         const MAIN_CLOSE_LONG_CONDITION =
-            (Number(macdList[macdList.length-1].column) < 0
-                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 < longCondition
-            )  || rsiList[rsiList.length-1].RSI1 < 25
+            MAIN_OPEN_SHORT_CONDITION
+            // (Number(macdList[macdList.length-1].column) < 0
+            //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 < longCondition
+            // )
 
         const MAIN_CLOSE_SHORT_CONDITION =
-            (Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > shortCondition
-            ) || rsiList[rsiList.length-1].RSI1 > 75
+            MAIN_OPEN_LONG_CONDITION
+            // (Number(macdList[macdList.length-1].column) > 0
+            //     && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 > shortCondition
+            // )
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
