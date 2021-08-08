@@ -36,7 +36,7 @@ let longCondition = 48;
 let shortCondition = 48;
 
 const LOSS_MAX = - 0.01 * LEVERAGE / 10;
-const WIN_MAX = 0.1 * LEVERAGE / 10;
+const WIN_MAX = 0.15 * LEVERAGE / 10;
 
 let lastMode = 0;
 let modeChange = false;
