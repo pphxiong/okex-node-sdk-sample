@@ -36,7 +36,7 @@ let longCondition = 48;
 let shortCondition = 48;
 
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
-const WIN_MAX = 0.1 * LEVERAGE / 10;
+const WIN_MAX = 0.15 * LEVERAGE / 10;
 
 let lastMode = 0;
 let modeChange = false;
@@ -637,7 +637,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 // && !ifMacdWeakenContinuity
-            ) || (!shortRatio && shortRatio < maxWinRatio * (maxWinRatio * 10 + 2) / 10  && maxWinRatio > WIN_MAX)
+            ) || (!shortRatio && shortRatio < maxWinRatio * 4 / 10  && maxWinRatio > WIN_MAX)
             // || REVERSE_LONG_CONDITION
 
         const MAIN_OPEN_SHORT_CONDITION =
@@ -645,7 +645,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-            ) || (!longRatio && longRatio < maxWinRatio * (maxWinRatio * 10 + 2) / 10 && maxWinRatio > WIN_MAX)
+            ) || (!longRatio && longRatio < maxWinRatio * 4 / 10 && maxWinRatio > WIN_MAX)
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
