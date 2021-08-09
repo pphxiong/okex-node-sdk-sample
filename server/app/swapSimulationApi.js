@@ -507,11 +507,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 1; i++){
+    for(let i = 0; i < data.macdList.length - 9; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i + 2),
-            rsiList: data.rsiList.slice(i,i + 2),
-        },isAutoReset && i == data.macdList.length - 2)
+            macdList: data.macdList.slice(i,i + 10),
+            rsiList: data.rsiList.slice(i,i + 10),
+        },isAutoReset && i == data.macdList.length - 10)
     }
 
     function checkByStep(data,isForceDeal){
@@ -592,11 +592,11 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3
         });
 
-        let ifMacdPositiveContinuity = macdList.every((item,index,arr)=>{
-            return item.column > 0 && rsiList[index].RSI3 > longCondition
+        let ifMacdPositiveContinuity = macdList.slice(-3).every((item,index,arr)=>{
+            return item.column > 0 && rsiList.slice(-3)[index].RSI3 > longCondition
         });
-        let ifMacdNegativeContinuity = macdList.every((item,index,arr)=>{
-            return item.column < 0 && rsiList[index].RSI3 < shortCondition
+        let ifMacdNegativeContinuity = macdList.slice(-3).every((item,index,arr)=>{
+            return item.column < 0 && rsiList.slice(-3)[index].RSI3 < shortCondition
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
