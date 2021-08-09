@@ -666,7 +666,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && (rsiList[rsiList.length-1].RSI3 < shortCondition
-                    || rsiList[rsiList.length-1].RSI3 > longCondition + 10
+                    // || rsiList[rsiList.length-1].RSI3 > longCondition + 10
                 )
             )
 
@@ -675,7 +675,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && (rsiList[rsiList.length-1].RSI3 > longCondition
-                    || rsiList[rsiList.length-1].RSI3 < shortCondition - 10
+                    // || rsiList[rsiList.length-1].RSI3 < shortCondition - 10
                 )
             )
 
