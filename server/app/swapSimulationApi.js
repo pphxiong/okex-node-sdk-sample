@@ -607,10 +607,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         });
 
         let ifMacdPositiveContinuity = macdList.slice(-3).every((item,index,arr)=>{
-            return item.column > 0 && item.RSI1 > item.RSI3 && item.RSI3 > longCondition
+            return item.column > 0 && rsiList.slice(-3)[index].RSI1 > rsiList.slice(-3)[index].RSI3 && rsiList.slice(-3)[index].RSI3 > longCondition
         });
         let ifMacdNegativeContinuity = macdList.slice(-3).every((item,index,arr)=>{
-            return item.column < 0 && item.RSI1 < item.RSI3 && item.RSI3 < shortCondition
+            return item.column < 0 && rsiList.slice(-3)[index].RSI1 < rsiList.slice(-3)[index].RSI3 && rsiList.slice(-3)[index].RSI3 < shortCondition
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
