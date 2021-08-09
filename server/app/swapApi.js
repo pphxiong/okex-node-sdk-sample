@@ -336,10 +336,10 @@ const checkDeal = async data => {
         const latestMacdList = macdList.slice(-3)
         const latestRsiList = rsiList.slice(-3)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
-            return item.column > 0 && latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > LONG_CONDITION
+            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > LONG_CONDITION
         });
         let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
-            return item.column < 0 && latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < SHORT_CONDITION
+            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < SHORT_CONDITION
         });
 
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
