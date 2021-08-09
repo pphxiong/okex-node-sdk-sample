@@ -593,10 +593,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         });
 
         let ifMacdPositiveContinuity = macdList.slice(-3).every((item,index,arr)=>{
-            return item.column > 0 && rsiList.slice(-3)[index].RSI3 > longCondition
+            return /* item.column > 0 && */ rsiList.slice(-3)[index].RSI3 > longCondition
         });
         let ifMacdNegativeContinuity = macdList.slice(-3).every((item,index,arr)=>{
-            return item.column < 0 && rsiList.slice(-3)[index].RSI3 < shortCondition
+            return /* item.column < 0 && */ rsiList.slice(-3)[index].RSI3 < shortCondition
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
@@ -635,7 +635,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 // && !ifMacdWeakenContinuity
-            ) || (ifMacdPositiveContinuity && shortRatio < 0)
+            )
+            || ifMacdPositiveContinuity
             // || REVERSE_LONG_CONDITION
 
         const MAIN_OPEN_SHORT_CONDITION =
@@ -643,10 +644,13 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-            ) || (ifMacdNegativeContinuity && longRatio < 0)
+            )
+            || ifMacdNegativeContinuity
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
+            // ||
+            // ifMacdPositiveContinuity
             // (Number(macdList[macdList.length-1].column) < 0
             //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             //     && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
@@ -655,6 +659,8 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const MAIN_CLOSE_SHORT_CONDITION =
             MAIN_OPEN_LONG_CONDITION
+            // ||
+            // ifMacdNegativeContinuity
             // (Number(macdList[macdList.length-1].column) > 0
             //     && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             //     && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
