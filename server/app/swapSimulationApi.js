@@ -507,11 +507,11 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 });
 
 const checkDeal = async (data,isAutoReset = true) => {
-    for(let i = 0; i < data.macdList.length - 3; i++){
+    for(let i = 0; i < data.macdList.length - 2; i++){
         checkByStep({
-            macdList: data.macdList.slice(i,i + 4),
-            rsiList: data.rsiList.slice(i,i + 4),
-        },isAutoReset && i == data.macdList.length - 4)
+            macdList: data.macdList.slice(i,i + 3),
+            rsiList: data.rsiList.slice(i,i + 3),
+        },isAutoReset && i == data.macdList.length - 3)
     }
 
     function checkByStep(data,isForceDeal){
