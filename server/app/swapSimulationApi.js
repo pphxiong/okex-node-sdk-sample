@@ -592,14 +592,12 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3
         });
 
-        let ifMacdPositiveContinuity = true;
-        let ifMacdNegativeContinuity = true;
-
-        macdList.reduce((pre,cur,index)=>{
-            if(pre.column < 0) ifMacdPositiveContinuity = false;
-            if(pre.column > 0) ifMacdNegativeContinuity = false;
-            return cur;
-        })
+        let ifMacdPositiveContinuity = macdList.every((item,index,arr)=>{
+            return item.column > 0 && rsiList[index].RSI3 > longCondition
+        });
+        let ifMacdNegativeContinuity = macdList.every((item,index,arr)=>{
+            return item.column < 0 && rsiList[index].RSI3 < shortCondition
+        });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
         const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
