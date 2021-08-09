@@ -362,10 +362,12 @@ const checkDeal = async data => {
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
-            MAIN_OPEN_SHORT_CONDITION || isForceDeal
+            MAIN_OPEN_SHORT_CONDITION
+            // || isForceDeal
 
         const closeShortCondition =
-            MAIN_OPEN_LONG_CONDITION || isForceDeal
+            MAIN_OPEN_LONG_CONDITION
+            // || isForceDeal
 
         console.log('************************************', currentTime)
         console.log('------------------')
