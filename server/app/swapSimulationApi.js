@@ -577,12 +577,12 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const isDownRSI = rsiList.some((item,index,arr)=>{
             if(index==0) return false
-            return item.RSI1 < item.RSI3 && arr[index-1] > item.RSI3
+            return item.RSI1 < item.RSI3 && arr[index-1] > arr[index-1].RSI3
         });
 
         const isUpRSI = rsiList.some((item,index,arr)=>{
             if(index==0) return false
-            return item.RSI1 > item.RSI3 && arr[index-1] < item.RSI3
+            return item.RSI1 > item.RSI3 && arr[index-1].RSI1 < arr[index-1].RSI3
         });
 
         const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
