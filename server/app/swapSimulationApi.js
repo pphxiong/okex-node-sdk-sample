@@ -575,14 +575,24 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].column > arr[index - 1].column
         });
 
-        const isDownRSI = rsiList.some((item,index,arr)=>{
+        const isDownRSILong = rsiList.slice(-10).some((item,index,arr)=>{
             if(index==0) return false
-            return item.RSI1 < item.RSI3 && arr[index-1] > arr[index-1].RSI3
+            return item.RSI1 < item.RSI3 && arr[index-1] > arr[index-1].RSI3 && item.RSI3 > longCondition
         });
 
-        const isUpRSI = rsiList.some((item,index,arr)=>{
+        const isUpRSILong = rsiList.slice(-10).some((item,index,arr)=>{
             if(index==0) return false
-            return item.RSI1 > item.RSI3 && arr[index-1].RSI1 < arr[index-1].RSI3
+            return item.RSI1 > item.RSI3 && arr[index-1].RSI1 < arr[index-1].RSI3 && item.RSI3 > longCondition
+        });
+
+        const isDownRSIShort = rsiList.slice(-10).some((item,index,arr)=>{
+            if(index==0) return false
+            return item.RSI1 < item.RSI3 && arr[index-1] > arr[index-1].RSI3 && item.RSI3 > shortCondition
+        });
+
+        const isUpRSIShort = rsiList.slice(-10).some((item,index,arr)=>{
+            if(index==0) return false
+            return item.RSI1 > item.RSI3 && arr[index-1].RSI1 < arr[index-1].RSI3 && item.RSI3 > shortCondition
         });
 
         const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
@@ -632,21 +642,46 @@ const checkDeal = async (data,isAutoReset = true) => {
             && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
 
         const MAIN_OPEN_LONG_CONDITION =
-            (Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > longCondition
-                // && !ifMacdWeakenContinuity
-            )
-            // || REVERSE_LONG_CONDITION
-            || (isUpRSI && !isDownRSI && rsiList[rsiList.length-1].RSI3 > longCondition)
-
-        const MAIN_OPEN_SHORT_CONDITION =
-            (Number(macdList[macdList.length-1].column) < 0
+            // (Number(macdList[macdList.length-1].column) > 0
+            //     && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 > longCondition
+            //     // && !ifMacdWeakenContinuity
+            // )
+            // // || REVERSE_LONG_CONDITION
+            // ||
+            (isDownRSILong
+                &&
+                Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 > longCondition
+            )
+            || (
+                isUpRSIShort
+                &&
+                !isDownRSIShort
+            )
+
+        const MAIN_OPEN_SHORT_CONDITION =
+            // (Number(macdList[macdList.length-1].column) < 0
+            //     && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            //     && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+            //     && rsiList[rsiList.length-1].RSI3 < shortCondition
+            // )
+            // ||
+            (isUpRSIShort
+                &&
+                Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-            ) || (isDownRSI && !isUpRSI && rsiList[rsiList.length-1].RSI3 < shortCondition)
+            )
+            || (
+                isDownRSILong
+                &&
+                !isUpRSILong
+            )
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
