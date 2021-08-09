@@ -604,11 +604,11 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3
         });
 
-        let ifMacdPositiveContinuity = macdList.slice(-10).every((item,index,arr)=>{
-            return item.column > 0 && item.RSI1 > item.RSI3
+        let ifMacdPositiveContinuity = macdList.slice(-6).every((item,index,arr)=>{
+            return item.column > 0 && item.RSI1 > item.RSI3 && item.RSI3 > longCondition
         });
-        let ifMacdNegativeContinuity = macdList.slice(-10).every((item,index,arr)=>{
-            return item.column < 0 && item.RSI1 < item.RSI3
+        let ifMacdNegativeContinuity = macdList.slice(-6).every((item,index,arr)=>{
+            return item.column < 0 && item.RSI1 < item.RSI3 && item.RSI3 < shortCondition
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
