@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-const INTERVAL = '3m';
+const INTERVAL = '5m';
 
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
@@ -663,17 +663,21 @@ const checkDeal = async (data,isAutoReset = true) => {
             // ifMacdNegativeContinuity
 
         const MAIN_CLOSE_LONG_CONDITION =
+            MAIN_OPEN_SHORT_CONDITION
+            ||
             (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > longCondition + 2
+                && rsiList[rsiList.length-1].RSI3 > longCondition + 5
             )
 
         const MAIN_CLOSE_SHORT_CONDITION =
+            MAIN_OPEN_LONG_CONDITION
+            ||
             (Number(macdList[macdList.length-1].column) > 0
                 && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 < shortCondition - 2
+                && rsiList[rsiList.length-1].RSI3 < shortCondition - 5
             )
 
         if(modeChange) lastMode = lastMode ? 0 : 1
