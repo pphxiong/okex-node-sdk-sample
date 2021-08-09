@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-const INTERVAL = '5m';
+const INTERVAL = '3m';
 
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
@@ -606,11 +606,13 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3
         });
 
-        let ifMacdPositiveContinuity = macdList.slice(-3).every((item,index,arr)=>{
-            return item.column > 0 && rsiList.slice(-3)[index].RSI1 > rsiList.slice(-3)[index].RSI3 && rsiList.slice(-3)[index].RSI3 > longCondition
+        const latestMacdList = macdList.slice(-4)
+        const latestRsiList = rsiList.slice(-4)
+        let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
+            return item.column > 0 && latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > longCondition
         });
-        let ifMacdNegativeContinuity = macdList.slice(-3).every((item,index,arr)=>{
-            return item.column < 0 && rsiList.slice(-3)[index].RSI1 < rsiList.slice(-3)[index].RSI3 && rsiList.slice(-3)[index].RSI3 < shortCondition
+        let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
+            return item.column < 0 && latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < shortCondition
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
