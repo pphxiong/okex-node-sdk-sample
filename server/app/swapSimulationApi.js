@@ -650,17 +650,17 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 > longCondition
                 // && !ifMacdWeakenContinuity
             )
-            // ||
-            // ifMacdPositiveContinuity
+            ||
+            ifMacdPositiveContinuity
 
         const MAIN_OPEN_SHORT_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-            ) && false
-            // ||
-            // ifMacdNegativeContinuity
+            )
+            ||
+            ifMacdNegativeContinuity
 
         const MAIN_CLOSE_LONG_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
@@ -670,7 +670,11 @@ const checkDeal = async (data,isAutoReset = true) => {
             )
 
         const MAIN_CLOSE_SHORT_CONDITION =
-            MAIN_OPEN_LONG_CONDITION
+            (Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 > longCondition
+            )
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
