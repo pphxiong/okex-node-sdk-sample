@@ -576,11 +576,13 @@ const checkDeal = async (data,isAutoReset = true) => {
         });
 
         const isDownRSI = rsiList.some((item,index,arr)=>{
-            return item.RSI1 < item.RSI3
+            if(index==0) return false
+            return item.RSI1 < item.RSI3 && arr[index-1] > item.RSI3
         });
 
         const isUpRSI = rsiList.some((item,index,arr)=>{
-            return item.RSI1 > item.RSI3
+            if(index==0) return false
+            return item.RSI1 > item.RSI3 && arr[index-1] < item.RSI3
         });
 
         const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
