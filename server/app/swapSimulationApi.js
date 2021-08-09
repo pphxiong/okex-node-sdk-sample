@@ -35,6 +35,8 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
+const INTERVAL = '3m';
+
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 
@@ -400,7 +402,7 @@ app.get('/swap/getHistory', async (req, response) => {
     const {query = {}} = req;
     const { time } = query;
     const payload = {
-        interval: '5m',
+        interval: INTERVAL,
         limit: 480,
         startTime: time
     }
@@ -415,7 +417,7 @@ let lastRSI;
 let lastHistoryList = [];
 app.get('/swap/startHearBeat', async (req, response) => {
     const {query = {}, body} = req;
-    const { time, date, interval = '5m', limit = 1500, isAutoReset = true, isInit = false } = query;
+    const { time, date, interval = INTERVAL, limit = 1500, isAutoReset = true, isInit = false } = query;
     try{
         dealDetailList = [];
         mostLoss = INIT_MOST_LOSS;
@@ -470,7 +472,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/getLatestProfit', async (req, response) => {
     const {query = {}} = req;
-    const { time, interval = '5m', limit = 1440 } = query;
+    const { time, interval = INTERVAL, limit = 1440 } = query;
     try{
         const payload = {
             interval,
@@ -661,10 +663,18 @@ const checkDeal = async (data,isAutoReset = true) => {
             // ifMacdNegativeContinuity
 
         const MAIN_CLOSE_LONG_CONDITION =
-            MAIN_OPEN_SHORT_CONDITION
+            (Number(macdList[macdList.length-1].column) < 0
+                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 < longCondition + 2
+            )
 
         const MAIN_CLOSE_SHORT_CONDITION =
-            MAIN_OPEN_LONG_CONDITION
+            (Number(macdList[macdList.length-1].column) > 0
+                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
+                && rsiList[rsiList.length-1].RSI3 > shortCondition - 2
+            )
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
@@ -918,7 +928,7 @@ app.post('/swap/startHearBeat', async (req, response) => {
         req.on('end', async () => {
             const dataObject = querystring.parse(data);
 
-            const { time, date, interval = '5m', limit = 1500, isAutoReset = true, initList = [] } = dataObject;
+            const { time, date, interval = INTERVAL, limit = 1500, isAutoReset = true, initList = [] } = dataObject;
             try{
                 dealDetailList = [];
                 mostLoss = INIT_MOST_LOSS;
