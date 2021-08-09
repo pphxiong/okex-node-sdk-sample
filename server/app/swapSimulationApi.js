@@ -639,14 +639,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                 // && !ifMacdWeakenContinuity
             )
             // || REVERSE_LONG_CONDITION
-            || (isUpRSI && !isDownRSI)
+            || (isUpRSI && !isDownRSI && rsiList[rsiList.length-1].RSI3 > longCondition)
 
         const MAIN_OPEN_SHORT_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
-            ) || (isDownRSI && !isUpRSI)
+            ) || (isDownRSI && !isUpRSI && rsiList[rsiList.length-1].RSI3 < shortCondition)
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
