@@ -333,8 +333,8 @@ const checkDeal = async data => {
 
         const REVERSE_LONG_CONDITION = ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
 
-        const latestMacdList = macdList.slice(-4)
-        const latestRsiList = rsiList.slice(-4)
+        const latestMacdList = macdList.slice(-3)
+        const latestRsiList = rsiList.slice(-3)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
             return item.column > 0 && latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > LONG_CONDITION
         });

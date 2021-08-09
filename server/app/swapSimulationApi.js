@@ -35,7 +35,7 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-const INTERVAL = '3m';
+const INTERVAL = '5m';
 
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
