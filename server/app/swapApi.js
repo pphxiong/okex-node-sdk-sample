@@ -333,25 +333,32 @@ const checkDeal = async data => {
 
         const REVERSE_LONG_CONDITION = ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
 
+        const latestMacdList = macdList.slice(-4)
+        const latestRsiList = rsiList.slice(-4)
+        let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
+            return item.column > 0 && latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > LONG_CONDITION
+        });
+        let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
+            return item.column < 0 && latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < SHORT_CONDITION
+        });
+
         const MAIN_OPEN_LONG_CONDITION = (Number(macdList[macdList.length-1].column) > 0
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
-            && !ifMacdWeakenContinuity
-        ) || REVERSE_LONG_CONDITION
+        ) || ifMacdPositiveContinuity
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
-        )
+        ) || ifMacdNegativeContinuity
 
         const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
         const hmsArr = (currentTime.split(' '))[1].split(':')
         if(hmsArr[0] == '00' && hmsArr[1] == '00') isForceDeal = true;
 
         const openLongCondition = MAIN_OPEN_LONG_CONDITION
-
         const openShortCondition = MAIN_OPEN_SHORT_CONDITION
 
         const closeLongCondition =
