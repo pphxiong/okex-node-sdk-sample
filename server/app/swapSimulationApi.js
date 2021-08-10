@@ -651,8 +651,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
-            ||
-            (ifMacdPositiveContinuity && shortRatio > WIN_MAX)
+            || (ifMacdPositiveContinuity && shortRatio > WIN_MAX)
+            || (maxWinRatio < - LOSS_MAX && shortRatio < LOSS_MAX)
 
         const MAIN_OPEN_SHORT_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
@@ -660,14 +660,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            ||
-            (ifMacdNegativeContinuity && longRatio > WIN_MAX)
+            || (ifMacdNegativeContinuity && longRatio > WIN_MAX)
+            || (maxWinRatio < - LOSS_MAX && longRatio < LOSS_MAX)
 
         const MAIN_CLOSE_LONG_CONDITION =
-            MAIN_OPEN_SHORT_CONDITION || longRatio < LOSS_MAX
+            MAIN_OPEN_SHORT_CONDITION
 
         const MAIN_CLOSE_SHORT_CONDITION =
-            MAIN_OPEN_LONG_CONDITION || shortRatio < LOSS_MAX
+            MAIN_OPEN_LONG_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
