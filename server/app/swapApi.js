@@ -3,7 +3,7 @@ import moment from 'moment'
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 1.2;
+const INIT_POSITION = 1.4;
 const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 48;
 const SHORT_CONDITION = 48;
@@ -349,16 +349,14 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
             )
-            ||
-            (ifMacdPositiveContinuity && shortRatio > WIN_MAX)
+            || (ifMacdPositiveContinuity && shortRatio > WIN_MAX)
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
             )
-            ||
-            (ifMacdNegativeContinuity && longRatio > WIN_MAX)
+            || (ifMacdNegativeContinuity && longRatio > WIN_MAX)
 
         const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
         const hmsArr = (currentTime.split(' '))[1].split(':')
