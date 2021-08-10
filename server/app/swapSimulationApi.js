@@ -609,10 +609,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const latestMacdList = macdList.slice(-1)
         const latestRsiList = rsiList.slice(-1)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
-            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > shortCondition
+            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > shortCondition && shortRatio > 0
         });
         let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
-            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition
+            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition && longRatio > 0
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
@@ -651,19 +651,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
-            // ||
-            // ifMacdPositiveContinuity
+            ||
+            ifMacdPositiveContinuity
 
         const MAIN_OPEN_SHORT_CONDITION =
-            (Number(macdList[macdList.length-1].column) < 0
-                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 < shortCondition
-            )
-            // ||
-            // ifMacdNegativeContinuity
-
-        const MAIN_CLOSE_LONG_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
                 && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
@@ -672,14 +663,11 @@ const checkDeal = async (data,isAutoReset = true) => {
             ||
             ifMacdNegativeContinuity
 
+        const MAIN_CLOSE_LONG_CONDITION =
+            MAIN_OPEN_SHORT_CONDITION
+
         const MAIN_CLOSE_SHORT_CONDITION =
-            (Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
-                && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
-                && rsiList[rsiList.length-1].RSI3 > longCondition
-            )
-            ||
-            ifMacdPositiveContinuity
+            MAIN_OPEN_LONG_CONDITION
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
