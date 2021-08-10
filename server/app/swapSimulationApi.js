@@ -37,7 +37,7 @@ let shortCondition = 48;
 
 const INTERVAL = '5m';
 
-const LOSS_MAX = - 0.2 * LEVERAGE / 10;
+const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.2 * LEVERAGE / 10;
 
 let lastMode = 0;
@@ -651,7 +651,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
-            || (ifMacdPositiveContinuity && (shortRatio > WIN_MAX || shortRatio < LOSS_MAX))
+            || (ifMacdPositiveContinuity
+                && shortRatio > WIN_MAX
+            )
+            // || shortRatio < LOSS_MAX
 
         const MAIN_OPEN_SHORT_CONDITION =
             (Number(macdList[macdList.length-1].column) < 0
@@ -659,7 +662,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
-            || (ifMacdNegativeContinuity && (longRatio > WIN_MAX || longRatio < LOSS_MAX))
+            || (ifMacdNegativeContinuity
+                && longRatio > WIN_MAX
+            )
+            // || longRatio < LOSS_MAX
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
