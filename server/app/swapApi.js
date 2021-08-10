@@ -7,6 +7,8 @@ const INIT_POSITION = 1.2;
 const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 48;
 const SHORT_CONDITION = 48;
+const LEVERAGE = 10;
+const WIN_MAX = 0.2 * LEVERAGE / 10;
 
 // const LEVERAGE = 10;
 const INIT_MOST_LOSS = {
@@ -333,8 +335,8 @@ const checkDeal = async data => {
 
         const REVERSE_LONG_CONDITION = ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
 
-        const latestMacdList = macdList.slice(-3)
-        const latestRsiList = rsiList.slice(-3)
+        const latestMacdList = macdList.slice(-4)
+        const latestRsiList = rsiList.slice(-4)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
             return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > LONG_CONDITION
         });
@@ -346,13 +348,17 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
-        ) || ifMacdPositiveContinuity
+            )
+            ||
+            (ifMacdPositiveContinuity && shortRatio > WIN_MAX)
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
             && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
             && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
-        ) || ifMacdNegativeContinuity
+            )
+            ||
+            (ifMacdNegativeContinuity && longRatio > WIN_MAX)
 
         const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
         const hmsArr = (currentTime.split(' '))[1].split(':')
