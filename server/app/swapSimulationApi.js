@@ -38,7 +38,7 @@ let shortCondition = 48;
 const INTERVAL = '5m';
 
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
-const WIN_MAX = 0.36 * LEVERAGE / 10;
+const WIN_MAX = 0.2 * LEVERAGE / 10;
 
 let lastMode = 0;
 let modeChange = false;
