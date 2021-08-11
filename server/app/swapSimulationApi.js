@@ -15,11 +15,14 @@ const fs = require('fs');
 const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1;
 const LEVERAGE = 10;
+const INTERVAL = '5m';
+const LOSS_MAX = - 0.1 * LEVERAGE / 10;
+const WIN_MAX = 0.2 * LEVERAGE / 10;
+const FI_LIST = [1,2,3,5,8,13,21,34]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
 }
-const FI_LIST = [1,1.1,2,3,5,8,13,21,34]
 
 let currentPosition = {};
 let longPosition = {};
@@ -37,10 +40,7 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-const INTERVAL = '5m';
-
-const LOSS_MAX = - 0.1 * LEVERAGE / 10;
-const WIN_MAX = 0.2 * LEVERAGE / 10;
+let totalPosition = 0;
 
 let lastMode = 0;
 let modeChange = false;
@@ -430,6 +430,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             currentPosition = {};
             longPosition = {};
             shortPosition = {};
+            totalPosition = 0;
         }
 
         // const mock = require(`./mock/${date}.js`);
@@ -462,6 +463,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             // history: list,
             // index: result,
             totalProfit,
+            totalPosition,
             currentPosition,
             dealDetailList,
             mostLoss,
@@ -799,8 +801,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     const fiIndex = FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
-                    const nextPosition = FI_LIST[fiIndex+1] * INIT_POSITION
-                    const openPositionAmt = shortRatio < 0 && shortRatio > LOSS_MAX ? nextPosition : INIT_POSITION
+                    const increasePosition = FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INIT_POSITION / 2
+                    let openPositionAmt = INIT_POSITION
+                    if(shortRatio < 0 && shortRatio > LOSS_MAX){
+                        openPositionAmt = increasePosition
+                    }else if(shortRatio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
+                    }
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -822,6 +830,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     dealDetailList.push(dealDetail)
                     shortHolding = {}
                     shortPosition = {}
+
+                    totalPosition += openPositionAmt
                 }
             }catch (e){
                 console.log(e)
@@ -841,8 +851,14 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     const fiIndex = FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
-                    const nextPosition = FI_LIST[fiIndex+1] * INIT_POSITION
-                    const openPositionAmt = longRatio < 0 && longRatio > LOSS_MAX ? nextPosition : INIT_POSITION
+                    const increasePosition = FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INIT_POSITION / 2
+                    let openPositionAmt = INIT_POSITION
+                    if(longRatio < 0 && longRatio > LOSS_MAX){
+                        openPositionAmt = increasePosition
+                    }else if(longRatio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
+                    }
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
@@ -864,6 +880,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     dealDetailList.push(dealDetail)
                     longHolding = {}
                     longPosition = {}
+
+                    totalPosition += openPositionAmt
                 }
             }catch (e){
                 console.log(e)
