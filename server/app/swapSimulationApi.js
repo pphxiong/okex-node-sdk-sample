@@ -15,6 +15,12 @@ const fs = require('fs');
 const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1;
 const LEVERAGE = 10;
+const INIT_MOST_LOSS = {
+    profit: 0,
+    time: null,
+}
+const FI_LIST = [1,1.1,2,3,5,8,13,21,34]
+
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
@@ -22,10 +28,6 @@ let longPatchNum = 0;
 let shortPatchNum = 0;
 let totalProfit = 0;
 let dealDetailList = [];
-const INIT_MOST_LOSS = {
-    profit: 0,
-    time: null,
-}
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
 let rsi1 = 6;
@@ -785,7 +787,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             }
         }
 
-        const fiList = [1,1.1,2,3,5,8,13,21,34]
         //开多仓条件
         if(
             openLongCondition
@@ -797,8 +798,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const fiIndex = fiList.findIndex(item=>item==Number(shortHolding.positionAmt))
-                    const nextPosition = fiList[fiIndex+1] * INIT_POSITION
+                    const fiIndex = FI_LIST.findIndex(item=>item==Number(shortHolding.positionAmt))
+                    console.log('fiIndex',fiIndex,FI_LIST[fiIndex+1])
+                    const nextPosition = FI_LIST[fiIndex+1] * INIT_POSITION
                     const openPositionAmt = shortRatio < 0 ? nextPosition : INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
@@ -839,8 +841,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const fiIndex = fiList.findIndex(item=>item==Number(longHolding.positionAmt))
-                    const nextPosition = fiList[fiIndex+1] * INIT_POSITION
+                    const fiIndex = FI_LIST.findIndex(item=>item==Number(longHolding.positionAmt))
+                    const nextPosition = FI_LIST[fiIndex+1] * INIT_POSITION
                     const openPositionAmt = longRatio < 0 ? nextPosition : INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
