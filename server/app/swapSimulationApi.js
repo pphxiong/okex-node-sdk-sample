@@ -514,7 +514,7 @@ function fibonacci(n) {
     };
     return fibonacci(n - 2) + fibonacci(n - 1);
 }
-const fiList = [1,1.1,2,3,5,8,13]
+const fiList = [1,1.1,2,3,5,8,13,21,34]
 
 const checkDeal = async (data,isAutoReset = true) => {
     for(let i = 0; i < data.macdList.length - 9; i++){
