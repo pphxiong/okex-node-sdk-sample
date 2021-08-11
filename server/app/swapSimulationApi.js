@@ -530,7 +530,7 @@ const checkDeal = async (data,isAutoReset = true) => {
         const mark_price = macdList[macdList.length-1].close;
 
         let longHolding;
-        let shortHolding
+        let shortHolding;
         let longRatio = 0
         let shortRatio = 0
 
@@ -798,8 +798,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const fiIndex = FI_LIST.findIndex(item=>item==Number(shortHolding.positionAmt))
-                    console.log('fiIndex',fiIndex,FI_LIST[fiIndex+1])
+                    const fiIndex = FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
                     const nextPosition = FI_LIST[fiIndex+1] * INIT_POSITION
                     const openPositionAmt = shortRatio < 0 ? nextPosition : INIT_POSITION
                     longPosition = {
@@ -841,7 +840,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const fiIndex = FI_LIST.findIndex(item=>item==Number(longHolding.positionAmt))
+                    const fiIndex = FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
                     const nextPosition = FI_LIST[fiIndex+1] * INIT_POSITION
                     const openPositionAmt = longRatio < 0 ? nextPosition : INIT_POSITION
                     shortPosition = {
