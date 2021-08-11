@@ -508,6 +508,14 @@ app.get('/swap/getLatestProfit', async (req, response) => {
     }
 });
 
+function fibonacci(n) {
+    if (n == 1 || n == 2) {
+        return 1
+    };
+    return fibonacci(n - 2) + fibonacci(n - 1);
+}
+const fiList = [1,1.1,2,3,5,8,13]
+
 const checkDeal = async (data,isAutoReset = true) => {
     for(let i = 0; i < data.macdList.length - 9; i++){
         checkByStep({
@@ -524,9 +532,6 @@ const checkDeal = async (data,isAutoReset = true) => {
         let shortHolding
         let longRatio = 0
         let shortRatio = 0
-
-        // if(currentPosition.positionSide == 'LONG' && currentPosition.positionAmt) longHolding = currentPosition;
-        // if(currentPosition.positionSide == 'SHORT' && currentPosition.positionAmt) shortHolding = currentPosition;
 
         if(longPosition && longPosition.positionAmt) longHolding =  longPosition;
         if(shortPosition && shortPosition.positionAmt) shortHolding =  shortPosition;
@@ -577,35 +582,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             return arr[index].column > arr[index - 1].column
         });
 
-        const isDownRSILong = rsiList.slice(-10).some((item,index,arr)=>{
-            if(index==0) return false
-            return item.RSI1 < item.RSI3 && arr[index-1] > arr[index-1].RSI3 && item.RSI3 > longCondition
-        });
-
-        const isUpRSILong = rsiList.slice(-10).some((item,index,arr)=>{
-            if(index==0) return false
-            return item.RSI1 > item.RSI3 && arr[index-1].RSI1 < arr[index-1].RSI3 && item.RSI3 > longCondition
-        });
-
-        const isDownRSIShort = rsiList.slice(-10).some((item,index,arr)=>{
-            if(index==0) return false
-            return item.RSI1 < item.RSI3 && arr[index-1] > arr[index-1].RSI3 && item.RSI3 > shortCondition
-        });
-
-        const isUpRSIShort = rsiList.slice(-10).some((item,index,arr)=>{
-            if(index==0) return false
-            return item.RSI1 > item.RSI3 && arr[index-1].RSI1 < arr[index-1].RSI3 && item.RSI3 > shortCondition
-        });
-
-        const ifRSIWeakenContinuity = rsiList.every((item,index,arr)=>{
-            if(index==0) return true;
-            return arr[index].RSI1 < arr[index].RSI2 && arr[index].RSI2 < arr[index].RSI3
-        });
-        const ifRSIEnhanceContinuity = rsiList.every((item,index,arr)=>{
-            if(index==0) return true;
-            return arr[index].RSI1 > arr[index].RSI2 && arr[index].RSI2 > arr[index].RSI3
-        });
-
         const latestMacdList = macdList.slice(-4)
         const latestRsiList = rsiList.slice(-4)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
@@ -614,12 +590,6 @@ const checkDeal = async (data,isAutoReset = true) => {
         let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
             return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition
         });
-
-        const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
-        const ifLatestBottom = rsiList.some(item=>item.RSI1 < 10 || item.RSI3 < 30)
-
-        const IS_TOP = rsiList[rsiList.length-1].RSI1 > 95 || rsiList[rsiList.length-1].RSI3 > 75
-        const IS_BOTTOM = rsiList[rsiList.length-1].RSI1 < 5 || rsiList[rsiList.length-1].RSI3 < 25
 
         const REVERSE_LONG_CONDITION =
             (
@@ -632,18 +602,6 @@ const checkDeal = async (data,isAutoReset = true) => {
             // isDownRSI
             // &&
             (rsiList[rsiList.length-1].RSI1 < 25 || rsiList[rsiList.length-1].RSI3 < 45))
-
-        const OTHER_LONG_CONDITION = Number(macdList[macdList.length-1].column) > 0
-            && Number(macdList[macdList.length-2].column) < 0
-            && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-2].RSI1
-            && rsiList[rsiList.length-1].RSI2 > rsiList[rsiList.length-2].RSI2
-            && rsiList[rsiList.length-1].RSI3 > rsiList[rsiList.length-2].RSI3
-
-        const OTHER_SHORT_CONDITION = Number(macdList[macdList.length-1].column) < 0
-            && Number(macdList[macdList.length-2].column) > 0
-            && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-2].RSI1
-            && rsiList[rsiList.length-1].RSI2 < rsiList[rsiList.length-2].RSI2
-            && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
 
         const MAIN_OPEN_LONG_CONDITION =
             (
@@ -839,7 +797,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = shortRatio < 0 ? Number((Number(shortHolding.positionAmt) * Number(shortHolding.positionAmt) * 1.1).toFixed(1)) : INIT_POSITION
+                    const fiIndex = fiList.findIndex(item=>item==Number(shortHolding.positionAmt))
+                    const nextPosition = fiList[fiIndex+1] * INIT_POSITION
+                    const openPositionAmt = shortRatio < 0 ? nextPosition : INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -879,7 +839,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = longRatio < 0 ? Number((Number(longHolding.positionAmt) * Number(longHolding.positionAmt) * 1.1).toFixed(1)) : INIT_POSITION
+                    const fiIndex = fiList.findIndex(item=>item==Number(longHolding.positionAmt))
+                    const nextPosition = fiList[fiIndex+1] * INIT_POSITION
+                    const openPositionAmt = longRatio < 0 ? nextPosition : INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
