@@ -3,7 +3,7 @@ import moment from 'moment'
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 1.4;
+const INIT_POSITION = 1;
 const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 48;
 const SHORT_CONDITION = 48;
@@ -438,8 +438,17 @@ const checkDeal = async data => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // await closeShortPosition()
-
-                    await openPosition({ openSide: "long", mark_price, time: macdList[macdList.length-1].time })
+                    const fiIndex = FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
+                    const increasePosition = FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INIT_POSITION / 2
+                    let openPositionAmt = INIT_POSITION
+                    const ratio = shortRatio
+                    if(ratio < 0 && ratio > LOSS_MAX){
+                        openPositionAmt = increasePosition
+                    }else if(ratio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
+                    }
+                    await openPosition({ position: openPositionAmt, openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                 }
             }catch (e){
                 console.log(e)
@@ -457,7 +466,17 @@ const checkDeal = async data => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // await closeLongPosition();
-                    await openPosition({ openSide: "short", mark_price, time: macdList[macdList.length-1].time });
+                    const fiIndex = FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
+                    const increasePosition = FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INIT_POSITION / 2
+                    let openPositionAmt = INIT_POSITION
+                    const ratio = longRatio
+                    if(ratio < 0 && ratio > LOSS_MAX){
+                        openPositionAmt = increasePosition
+                    }else if(ratio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
+                    }
+                    await openPosition({ position: openPositionAmt, openSide: "short", mark_price, time: macdList[macdList.length-1].time });
                 }
             }catch (e){
                 console.log(e)
