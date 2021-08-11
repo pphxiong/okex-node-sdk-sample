@@ -839,7 +839,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = shortRatio < 0 ? Number((Number(shortHolding.positionAmt) * Number(shortHolding.positionAmt)).toFixed(1)) : INIT_POSITION
+                    const openPositionAmt = shortRatio < 0 ? Number((Number(shortHolding.positionAmt) * Number(shortHolding.positionAmt) * 1.1).toFixed(1)) : INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -879,7 +879,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = longRatio < 0 ? Number((Number(longHolding.positionAmt) * Number(longHolding.positionAmt)).toFixed(1)) : INIT_POSITION
+                    const openPositionAmt = longRatio < 0 ? Number((Number(longHolding.positionAmt) * Number(longHolding.positionAmt) * 1.1).toFixed(1)) : INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
