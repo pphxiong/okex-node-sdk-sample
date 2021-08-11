@@ -879,7 +879,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = longRatio < 0 ? Number((Number(shortHolding.positionAmt) * 1.1).toFixed(1)) : INIT_POSITION
+                    const openPositionAmt = longRatio < 0 ? Number((Number(longHolding.positionAmt) * 1.1).toFixed(1)) : INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
