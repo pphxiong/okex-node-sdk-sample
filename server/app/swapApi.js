@@ -12,7 +12,6 @@ const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const FI_LIST = [1,1.5,2,3,5,8,13,21]
 
-// const LEVERAGE = 10;
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
