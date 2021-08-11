@@ -609,10 +609,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const latestMacdList = macdList.slice(-4)
         const latestRsiList = rsiList.slice(-4)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
-            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > shortCondition
+            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > shortCondition - 5
         });
         let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
-            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition
+            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition + 5
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
@@ -646,8 +646,10 @@ const checkDeal = async (data,isAutoReset = true) => {
             && rsiList[rsiList.length-1].RSI3 < rsiList[rsiList.length-2].RSI3
 
         const MAIN_OPEN_LONG_CONDITION =
-            (Number(macdList[macdList.length-1].column) > 0
-                && rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
+            (
+                // Number(macdList[macdList.length-1].column) > 0
+                // &&
+                rsiList[rsiList.length-1].RSI1 < rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 > rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
@@ -657,8 +659,10 @@ const checkDeal = async (data,isAutoReset = true) => {
             // || shortRatio < LOSS_MAX
 
         const MAIN_OPEN_SHORT_CONDITION =
-            (Number(macdList[macdList.length-1].column) < 0
-                && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
+            (
+                // Number(macdList[macdList.length-1].column) < 0
+                // &&
+                rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
                 && rsiList[rsiList.length-2].RSI1 < rsiList[rsiList.length-2].RSI3
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
