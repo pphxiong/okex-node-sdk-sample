@@ -17,8 +17,8 @@ const INIT_POSITION = 1;
 const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
-const WIN_MAX = 0.2 * LEVERAGE / 10;
-const FI_LIST = [1,2,3,5,8,13,21,34]
+const WIN_MAX = 0.1 * LEVERAGE / 10;
+const FI_LIST = [1,1.5,2,3,5,8,13,21]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -614,7 +614,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
             || (ifMacdPositiveContinuity
-                && shortRatio > WIN_MAX
+                && shortRatio > WIN_MAX * 2
             )
             // || (maxWinRatio > WIN_MAX && shortRatio < 0 && Number(macdList[macdList.length-1].column) > 0)
             // || shortRatio < LOSS_MAX
@@ -627,7 +627,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
             || (ifMacdNegativeContinuity
-                && longRatio > WIN_MAX
+                && longRatio > WIN_MAX * 2
             )
             // || (maxWinRatio > WIN_MAX && longRatio < 0 && Number(macdList[macdList.length-1].column) < 0)
             // || longRatio < LOSS_MAX
@@ -804,9 +804,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const increasePosition = FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     let openPositionAmt = INIT_POSITION
-                    if(shortRatio < 0 && shortRatio > LOSS_MAX){
+                    if(!shortRatio && shortRatio < WIN_MAX && shortRatio > LOSS_MAX){
                         openPositionAmt = increasePosition
-                    }else if(shortRatio < LOSS_MAX){
+                    }else if(shortRatio < LOSS_MAX || shortRatio > WIN_MAX * 2){
                         openPositionAmt = decreasePosition
                     }
                     longPosition = {
@@ -854,9 +854,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const increasePosition = FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     let openPositionAmt = INIT_POSITION
-                    if(longRatio < 0 && longRatio > LOSS_MAX){
+                    if(!longRatio && longRatio < WIN_MAX && longRatio > LOSS_MAX){
                         openPositionAmt = increasePosition
-                    }else if(longRatio < LOSS_MAX){
+                    }else if(longRatio < LOSS_MAX || longRatio > WIN_MAX * 2){
                         openPositionAmt = decreasePosition
                     }
                     shortPosition = {
