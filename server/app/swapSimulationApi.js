@@ -806,9 +806,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     let openPositionAmt = INIT_POSITION
                     const ratio = longHolding ? shortRatio * Number(longHolding.positionAmt) : 0
                     if(ratio < 0 && ratio > LOSS_MAX){
-                        openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX){
                         openPositionAmt = decreasePosition
+                    }else if(ratio < LOSS_MAX){
+                        openPositionAmt = increasePosition
                     }
                     longPosition = {
                         positionSide: 'LONG',
