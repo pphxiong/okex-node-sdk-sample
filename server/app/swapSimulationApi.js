@@ -38,7 +38,7 @@ let shortCondition = 48;
 const INTERVAL = '5m';
 
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
-const WIN_MAX = 0.2 * LEVERAGE / 10;
+const WIN_MAX = 0.1 * LEVERAGE / 10;
 
 let lastMode = 0;
 let modeChange = false;
@@ -609,10 +609,10 @@ const checkDeal = async (data,isAutoReset = true) => {
         const latestMacdList = macdList.slice(-4)
         const latestRsiList = rsiList.slice(-4)
         let ifMacdPositiveContinuity = latestMacdList.every((item,index,arr)=>{
-            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > shortCondition - 5
+            return latestRsiList[index].RSI1 > latestRsiList[index].RSI3 && latestRsiList[index].RSI3 > shortCondition
         });
         let ifMacdNegativeContinuity = latestMacdList.every((item,index,arr)=>{
-            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition + 5
+            return latestRsiList[index].RSI1 < latestRsiList[index].RSI3 && latestRsiList[index].RSI3 < longCondition
         });
 
         const ifLatestTop = rsiList.some(item=>item.RSI1 > 90 || item.RSI3 > 70)
