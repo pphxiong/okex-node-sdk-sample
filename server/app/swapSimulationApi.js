@@ -655,7 +655,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || (ifMacdPositiveContinuity
                 && shortRatio > WIN_MAX
             )
-            || (maxWinRatio > WIN_MAX && shortRatio < 0 && Number(macdList[macdList.length-1].column) > 0)
+            // || (maxWinRatio > WIN_MAX && shortRatio < 0 && Number(macdList[macdList.length-1].column) > 0)
             // || shortRatio < LOSS_MAX
 
         const MAIN_OPEN_SHORT_CONDITION =
@@ -668,7 +668,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || (ifMacdNegativeContinuity
                 && longRatio > WIN_MAX
             )
-            || (maxWinRatio > WIN_MAX && longRatio < 0 && Number(macdList[macdList.length-1].column) < 0)
+            // || (maxWinRatio > WIN_MAX && longRatio < 0 && Number(macdList[macdList.length-1].column) < 0)
             // || longRatio < LOSS_MAX
 
         const MAIN_CLOSE_LONG_CONDITION =
@@ -763,8 +763,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    longHolding = {}
-                    longPosition = {}
+                    // longHolding = {}
+                    // longPosition = {}
                     maxWinRatio = 0;
                     longPatchNum = 0;
                 }
@@ -798,8 +798,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    shortHolding = {}
-                    shortPosition = {}
+                    // shortHolding = {}
+                    // shortPosition = {}
                     maxWinRatio = 0;
                     shortPatchNum = 0;
                 }
@@ -839,7 +839,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = INIT_POSITION
+                    const openPositionAmt = shortRatio < 0 ? Number(shortHolding.positionAmt) + INIT_POSITION / 10 : INIT_POSITION
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -859,6 +859,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
+                    shortHolding = {}
+                    shortPosition = {}
                 }
             }catch (e){
                 console.log(e)
@@ -877,7 +879,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    const openPositionAmt = INIT_POSITION
+                    const openPositionAmt = longRatio < 0 ? Number(longHolding.positionAmt) + INIT_POSITION / 10 : INIT_POSITION
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
@@ -897,6 +899,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
+                    longHolding = {}
+                    longPosition = {}
                 }
             }catch (e){
                 console.log(e)
