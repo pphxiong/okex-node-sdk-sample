@@ -18,14 +18,15 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [1,1.5,2,3,5,8,13,21]
+const INCREASE_FI_LIST = [1,1.5,2,3]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
 }
 
 let totalPosition = 0;
-let totalCapital = 4;
+let totalCapital = 5
+;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
 let currentPosition = {};
