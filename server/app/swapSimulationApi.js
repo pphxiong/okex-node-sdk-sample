@@ -18,7 +18,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [1,1.1,1.2,2,3,5,8,10]
+const INCREASE_FI_LIST = [1,1.1,1.2,1.5,2,3,5,8,10]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -815,7 +815,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     const ratio = shortRatio
-                    if(ratio < 0 && ratio > LOSS_MAX){
+                    if(ratio > 0){
+                        openPositionAmt = INIT_POSITION
+                    }else if(ratio < 0 && ratio > LOSS_MAX){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX){
                         openPositionAmt = decreasePosition
@@ -870,7 +872,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     const ratio = longRatio
-                    if(ratio < 0 && ratio > LOSS_MAX){
+                    if(ratio > 0){
+                        openPositionAmt = INIT_POSITION
+                    }else if(ratio < 0 && ratio > LOSS_MAX){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX){
                         openPositionAmt = decreasePosition
