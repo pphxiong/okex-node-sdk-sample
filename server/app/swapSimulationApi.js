@@ -466,6 +466,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             totalProfit,
             totalPosition,
             totalCapital,
+            minTotalCapital,
             currentPosition,
             dealDetailList,
             mostLoss,
