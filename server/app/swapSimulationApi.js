@@ -25,8 +25,9 @@ const INIT_MOST_LOSS = {
 }
 
 let totalPosition = 0;
-let totalCapital = 5;
+let totalCapital = 4;
 let minTotalCapital = totalCapital;
+let maxOpenPosition = 0;
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
@@ -467,6 +468,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             totalPosition,
             totalCapital,
             minTotalCapital,
+            maxOpenPosition,
             currentPosition,
             dealDetailList,
             mostLoss,
@@ -821,6 +823,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     if(totalCapital < openPositionAmt) openPositionAmt = 0
+                    maxOpenPosition = Math.max(maxOpenPosition,openPositionAmt)
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -874,6 +877,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
+                    maxOpenPosition = Math.max(maxOpenPosition,openPositionAmt)
                     if(totalCapital < openPositionAmt) openPositionAmt = 0
                     shortPosition = {
                         positionSide: 'SHORT',
