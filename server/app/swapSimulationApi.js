@@ -617,7 +617,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
             || (ifMacdPositiveContinuity
-                && shortRatio > WIN_MAX * 2
+                // && shortRatio > WIN_MAX * 2
             )
             // || (maxWinRatio > WIN_MAX && shortRatio < 0 && Number(macdList[macdList.length-1].column) > 0)
             // || shortRatio < LOSS_MAX
@@ -630,7 +630,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
             || (ifMacdNegativeContinuity
-                && longRatio > WIN_MAX * 2
+                // && longRatio > WIN_MAX * 2
             )
             // || (maxWinRatio > WIN_MAX && longRatio < 0 && Number(macdList[macdList.length-1].column) < 0)
             // || longRatio < LOSS_MAX
@@ -813,9 +813,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     let openPositionAmt = INIT_POSITION
                     const ratio = shortRatio
                     if(ratio < 0 && ratio > LOSS_MAX){
-                        openPositionAmt = decreasePosition
-                    }else if(ratio < LOSS_MAX){
                         openPositionAmt = increasePosition
+                    }else if(ratio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
@@ -866,9 +866,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     let openPositionAmt = INIT_POSITION
                     const ratio = longRatio
                     if(ratio < 0 && ratio > LOSS_MAX){
-                        openPositionAmt = decreasePosition
-                    }else if(ratio < LOSS_MAX){
                         openPositionAmt = increasePosition
+                    }else if(ratio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
