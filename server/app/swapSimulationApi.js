@@ -816,9 +816,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = shortRatio
                     const increasePosition = INIT_POSITION * 2
                     const decreasePosition = INIT_POSITION / 2
-                    if(ratio < 0 && ratio > LOSS_MAX){
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX){
+                    }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
@@ -872,7 +872,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = longRatio
                     const increasePosition = INIT_POSITION * 2
                     const decreasePosition = INIT_POSITION / 2
-                    if(ratio < 0 && ratio > LOSS_MAX){
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX){
                         openPositionAmt = decreasePosition
