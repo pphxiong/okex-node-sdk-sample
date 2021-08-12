@@ -25,7 +25,7 @@ const INIT_MOST_LOSS = {
 }
 
 let totalPosition = 0;
-let totalCapital = 3;
+let totalCapital = 5;
 let minTotalCapital = totalCapital;
 let currentPosition = {};
 let longPosition = {};
