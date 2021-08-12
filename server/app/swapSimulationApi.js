@@ -18,7 +18,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [1,1.5,2,3,5,8,13,21]
+const INCREASE_FI_LIST = [1,1.2,1.5,2,2.5,4,6,10]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -810,7 +810,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
-                    fiIndex = shortHolding && Number(shortHolding.positionAmt) == INIT_POSITION / 2 ? 1 : fiIndex
+                    fiIndex = shortHolding && Number(shortHolding.positionAmt) == INIT_POSITION / 2 ? 0 : fiIndex
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     let openPositionAmt = INIT_POSITION
@@ -865,7 +865,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
-                    fiIndex = longHolding && Number(longHolding.positionAmt) == INIT_POSITION / 2 ? 1 : fiIndex
+                    fiIndex = longHolding && Number(longHolding.positionAmt) == INIT_POSITION / 2 ? 0 : fiIndex
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     let openPositionAmt = INIT_POSITION
