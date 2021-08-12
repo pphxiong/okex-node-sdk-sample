@@ -813,17 +813,17 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     let openPositionAmt = INIT_POSITION
-                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
-                    const ratio = shortRatio
-
-                    // fiIndex = fiIndex == -1 ? INCREASE_FI_LIST.length-2 : fiIndex
-                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
-                    // const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX){
-                        openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX * 2){
-                        // openPositionAmt = decreasePosition
-                    }
+                    // let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
+                    // const ratio = shortRatio
+                    //
+                    // // fiIndex = fiIndex == -1 ? INCREASE_FI_LIST.length-2 : fiIndex
+                    // const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    // // const decreasePosition = INCREASE_FI_LIST[0]
+                    // if(ratio < 0 && ratio > LOSS_MAX){
+                    //     openPositionAmt = increasePosition
+                    // }else if(ratio < LOSS_MAX * 2){
+                    //     // openPositionAmt = decreasePosition
+                    // }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     if(totalCapital < openPositionAmt) openPositionAmt = 0
@@ -869,17 +869,17 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     let openPositionAmt = INIT_POSITION
-                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
-                    const ratio = longRatio
-
+                    // let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
+                    // const ratio = longRatio
+                    //
                     // fiIndex = fiIndex == -1 ? INCREASE_FI_LIST.length-2 : fiIndex
-                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
-                    // const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX){
-                        openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX * 2){
-                        // openPositionAmt = decreasePosition
-                    }
+                    // const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    // // const decreasePosition = INCREASE_FI_LIST[0]
+                    // if(ratio < 0 && ratio > LOSS_MAX){
+                    //     openPositionAmt = increasePosition
+                    // }else if(ratio < LOSS_MAX * 2){
+                    //     // openPositionAmt = decreasePosition
+                    // }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     maxOpenPosition = Math.max(maxOpenPosition,openPositionAmt)
