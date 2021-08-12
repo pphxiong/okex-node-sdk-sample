@@ -811,7 +811,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     let openPositionAmt = INIT_POSITION
                     let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
-                    fiIndex = fiIndex == -1 ? 0 : fiIndex
+                    fiIndex = fiIndex == -1 ? 1 : fiIndex
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     const ratio = shortRatio
@@ -866,7 +866,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
                     let openPositionAmt = INIT_POSITION
                     let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
-                    fiIndex = fiIndex == -1 ? 0 : fiIndex
+                    fiIndex = fiIndex == -1 ? 1 : fiIndex
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INIT_POSITION / 2
                     const ratio = longRatio
