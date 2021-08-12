@@ -26,6 +26,7 @@ const INIT_MOST_LOSS = {
 
 let totalPosition = 0;
 let totalCapital = 3;
+let minTotalCapital = totalCapital;
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
@@ -464,6 +465,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
             // index: result,
             totalProfit,
             totalPosition,
+            totalCapital,
             currentPosition,
             dealDetailList,
             mostLoss,
@@ -707,6 +709,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const currentProfit = longRatio * longHolding.positionAmt - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
                     totalProfit += currentProfit;
                     totalCapital += currentProfit;
+                    minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
@@ -743,6 +746,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const currentProfit = shortRatio * shortHolding.positionAmt - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
                     totalProfit += currentProfit
                     totalCapital += currentProfit
+                    minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
@@ -813,6 +817,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
+                    minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     if(totalCapital < openPositionAmt) openPositionAmt = 0
                     longPosition = {
                         positionSide: 'LONG',
@@ -865,6 +870,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                         openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
+                    minTotalCapital = Math.min(minTotalCapital,totalCapital)
                     if(totalCapital < openPositionAmt) openPositionAmt = 0
                     shortPosition = {
                         positionSide: 'SHORT',
