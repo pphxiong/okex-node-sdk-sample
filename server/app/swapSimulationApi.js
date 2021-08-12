@@ -24,6 +24,8 @@ const INIT_MOST_LOSS = {
     time: null,
 }
 
+let totalPosition = 0;
+let totalCapital = 3;
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
@@ -39,8 +41,6 @@ let rsi3 = 24;
 
 let longCondition = 48;
 let shortCondition = 48;
-
-let totalPosition = 0;
 
 let lastMode = 0;
 let modeChange = false;
@@ -704,8 +704,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     longPatchNum += 1;
                 }else{
                     if(longRatio < 0) modeChange = true
-                    totalProfit += longRatio * longHolding.positionAmt;
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
+                    const currentProfit = longRatio * longHolding.positionAmt - 0.037 * 0.01 * LEVERAGE * longHolding.positionAmt
+                    totalProfit += currentProfit;
+                    totalCapital += currentProfit;
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'LONG',
@@ -739,8 +740,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     shortPatchNum += 1;
                 }else{
                     if(shortRatio < 0) modeChange = true
-                    totalProfit += shortRatio * shortHolding.positionAmt
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
+                    const currentProfit = shortRatio * shortHolding.positionAmt - 0.037 * 0.01 * LEVERAGE * shortHolding.positionAmt
+                    totalProfit += currentProfit
+                    totalCapital += currentProfit
                     const dealDetail = {
                         side: 'CLOSE',
                         positionSide: 'SHORT',
@@ -810,6 +812,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }else if(ratio < LOSS_MAX){
                         openPositionAmt = decreasePosition
                     }
+                    totalCapital += - 0.037 * 0.01 * LEVERAGE
+                    if(totalCapital < openPositionAmt) openPositionAmt = 0
                     longPosition = {
                         positionSide: 'LONG',
                         leverage: LEVERAGE,
@@ -827,11 +831,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                     shortHolding = {}
                     shortPosition = {}
-
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     totalPosition += openPositionAmt
                 }
             }catch (e){
@@ -861,6 +864,8 @@ const checkDeal = async (data,isAutoReset = true) => {
                     }else if(ratio < LOSS_MAX){
                         openPositionAmt = decreasePosition
                     }
+                    totalCapital += - 0.037 * 0.01 * LEVERAGE
+                    if(totalCapital < openPositionAmt) openPositionAmt = 0
                     shortPosition = {
                         positionSide: 'SHORT',
                         leverage: LEVERAGE,
