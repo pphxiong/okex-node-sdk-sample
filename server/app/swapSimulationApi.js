@@ -433,9 +433,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
             longPosition = {};
             shortPosition = {};
             totalPosition = 0;
-            totalCapital = 0;
-            maxOpenPosition = 0;
-            minTotalCapital = 0;
+            // totalCapital = 0;
+            // maxOpenPosition = 0;
+            // minTotalCapital = 0;
         }
 
         // const mock = require(`./mock/${date}.js`);
