@@ -308,8 +308,8 @@ const checkDeal = async data => {
 
         let holding = globalHolding
         if(holding && holding.length){
-            longHolding = holding.find(item=>item.positionSide=="LONG")
-            shortHolding = holding.find(item=>item.positionSide=="SHORT")
+            longHolding = holding.find(item=>item.positionSide && item.positionSide.toUpperCase()=="LONG")
+            shortHolding = holding.find(item=>item.positionSide && item.positionSide.toUpperCase()=="SHORT")
         }
 
         if(longHolding){
@@ -324,17 +324,6 @@ const checkDeal = async data => {
             shortRatio = - shortRatio
             maxWinRatio = Math.max(maxWinRatio,shortRatio)
         }
-
-        const ifMacdWeakenContinuity = macdList.every((item,index,arr)=>{
-            if(index==0) return true;
-            return arr[index].column < arr[index - 1].column
-        });
-        const ifMacdEnhanceContinuity = macdList.every((item,index,arr)=>{
-            if(index==0) return true;
-            return arr[index].column > arr[index - 1].column
-        });
-
-        const REVERSE_LONG_CONDITION = ifMacdEnhanceContinuity && (rsiList[rsiList.length-1].RSI1 > 75 || rsiList[rsiList.length-1].RSI3 > 55)
 
         const latestMacdList = macdList.slice(-4)
         const latestRsiList = rsiList.slice(-4)
@@ -437,7 +426,7 @@ const checkDeal = async data => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // await closeShortPosition()
-                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
+                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Math.abs(Number(shortHolding.positionAmt)))
                     fiIndex = fiIndex == INCREASE_FI_LIST.length-1 ? INCREASE_FI_LIST.length-2 : fiIndex
 
                     let openPositionAmt = INIT_POSITION
@@ -467,7 +456,7 @@ const checkDeal = async data => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // await closeLongPosition();
-                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
+                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Math.abs(Number(longHolding.positionAmt)))
                     fiIndex = fiIndex == INCREASE_FI_LIST.length-1 ? INCREASE_FI_LIST.length-2 : fiIndex
 
                     let openPositionAmt = INIT_POSITION
