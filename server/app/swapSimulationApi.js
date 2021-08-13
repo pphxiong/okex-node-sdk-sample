@@ -16,7 +16,7 @@ const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1;
 const LEVERAGE = 10;
 const INTERVAL = '5m';
-const LOSS_MAX = - 0.08 * LEVERAGE / 10;
+const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const INCREASE_FI_LIST = [0.5,1,1.5,2,3]
 const INIT_MOST_LOSS = {
@@ -622,7 +622,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
             || (ifMacdPositiveContinuity
-                && shortRatio > WIN_MAX
+                // && shortRatio > WIN_MAX
             )
             // || (maxWinRatio > WIN_MAX && shortRatio < 0 && Number(macdList[macdList.length-1].column) > 0)
             // || shortRatio < LOSS_MAX
@@ -635,7 +635,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
             || (ifMacdNegativeContinuity
-                && longRatio > WIN_MAX
+                // && longRatio > WIN_MAX
             )
             // || (maxWinRatio > WIN_MAX && longRatio < 0 && Number(macdList[macdList.length-1].column) < 0)
             // || longRatio < LOSS_MAX

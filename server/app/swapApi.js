@@ -3,7 +3,7 @@ import moment from 'moment'
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 1;
+const INIT_POSITION = 0.8;
 const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 48;
 const SHORT_CONDITION = 48;
@@ -476,7 +476,7 @@ const checkDeal = async data => {
                     const decreasePosition = INCREASE_FI_LIST[0]
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX){
+                    }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
                     }
                     await openPosition({ position: openPositionAmt, openSide: "short", mark_price, time: macdList[macdList.length-1].time });
