@@ -10,7 +10,7 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [1,1.5,2,3,5,8,13,21]
+const INCREASE_FI_LIST = [0.5,1,1.5,2,3]
 
 const INIT_MOST_LOSS = {
     profit: 0,
@@ -437,17 +437,18 @@ const checkDeal = async data => {
                     // && (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // await closeShortPosition()
-                    // let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
-                    // fiIndex = fiIndex == -1 ? 0 : fiIndex
-                    // const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
-                    // const decreasePosition = INIT_POSITION / 2
+                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
+                    fiIndex = fiIndex == INCREASE_FI_LIST.length-1 ? INCREASE_FI_LIST.length-2 : fiIndex
+
                     let openPositionAmt = INIT_POSITION
-                    // const ratio = shortRatio
-                    // if(ratio < 0 && ratio > LOSS_MAX){
-                    //     openPositionAmt = increasePosition
-                    // }else if(ratio < LOSS_MAX){
-                    //     openPositionAmt = decreasePosition
-                    // }
+                    const ratio = shortRatio
+                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INCREASE_FI_LIST[0]
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
+                        openPositionAmt = increasePosition
+                    }else if(ratio < LOSS_MAX * 2){
+                        openPositionAmt = decreasePosition
+                    }
                     await openPosition({ position: openPositionAmt, openSide: "long", mark_price, time: macdList[macdList.length-1].time })
                 }
             }catch (e){
@@ -466,17 +467,18 @@ const checkDeal = async data => {
                     (!shortHolding || !Number(shortHolding.positionAmt))
                 ){
                     // await closeLongPosition();
-                    // let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
-                    // fiIndex = fiIndex == -1 ? 0 : fiIndex
-                    // const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
-                    // const decreasePosition = INIT_POSITION / 2
+                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
+                    fiIndex = fiIndex == INCREASE_FI_LIST.length-1 ? INCREASE_FI_LIST.length-2 : fiIndex
+
                     let openPositionAmt = INIT_POSITION
-                    // const ratio = longRatio
-                    // if(ratio < 0 && ratio > LOSS_MAX){
-                    //     openPositionAmt = increasePosition
-                    // }else if(ratio < LOSS_MAX){
-                    //     openPositionAmt = decreasePosition
-                    // }
+                    const ratio = longRatio
+                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INCREASE_FI_LIST[0]
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
+                        openPositionAmt = increasePosition
+                    }else if(ratio < LOSS_MAX){
+                        openPositionAmt = decreasePosition
+                    }
                     await openPosition({ position: openPositionAmt, openSide: "short", mark_price, time: macdList[macdList.length-1].time });
                 }
             }catch (e){
