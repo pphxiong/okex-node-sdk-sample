@@ -357,10 +357,12 @@ const checkDeal = async data => {
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
+            || longRatio < - 0.95
             // || isForceDeal
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
+            || shortRatio < - 0.95
             // || isForceDeal
 
         console.log('************************************', currentTime)
@@ -428,11 +430,12 @@ const checkDeal = async data => {
                     // await closeShortPosition()
                     let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Math.abs(Number(shortHolding.positionAmt)))
                     fiIndex = fiIndex == INCREASE_FI_LIST.length-1 ? INCREASE_FI_LIST.length-2 : fiIndex
-
                     let openPositionAmt = INIT_POSITION
                     const ratio = shortRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INCREASE_FI_LIST[0]
+                    console.log('shortHolding',shortHolding)
+                    console.log('ratio',ratio)
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
@@ -463,6 +466,8 @@ const checkDeal = async data => {
                     const ratio = longRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INCREASE_FI_LIST[0]
+                    console.log('longHolding',longHolding)
+                    console.log('ratio',ratio)
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
