@@ -16,7 +16,7 @@ const BN_SYMBOL = "ETHUSDT";
 const INIT_POSITION = 1;
 const LEVERAGE = 10;
 const INTERVAL = '5m';
-const LOSS_MAX = - 0.1 * LEVERAGE / 10;
+const LOSS_MAX = - 0.08 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const INCREASE_FI_LIST = [0.5,1,1.5,2,3]
 const INIT_MOST_LOSS = {
@@ -819,7 +819,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = shortRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX){
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
@@ -875,7 +875,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = longRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
                     const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX){
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
