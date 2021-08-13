@@ -18,7 +18,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [1,1.2,1.5,2,3]
+const INCREASE_FI_LIST = [0.5,1,1.5,2,3]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -812,10 +812,13 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeShort()
                     // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
+                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>shortHolding && item==Number(shortHolding.positionAmt))
+                    fiIndex = fiIndex == -1 ? INCREASE_FI_LIST.length-2 : fiIndex
+
                     let openPositionAmt = INIT_POSITION
                     const ratio = shortRatio
-                    const increasePosition = INIT_POSITION * 2
-                    const decreasePosition = INIT_POSITION / 2
+                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INCREASE_FI_LIST[0]
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
@@ -865,13 +868,13 @@ const checkDeal = async (data,isAutoReset = true) => {
                 ){
                     // closeLong()
                     // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-                    // let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
-                    // fiIndex = fiIndex == -1 ? INCREASE_FI_LIST.length-2 : fiIndex
+                    let fiIndex = INCREASE_FI_LIST.findIndex(item=>longHolding && item==Number(longHolding.positionAmt))
+                    fiIndex = fiIndex == -1 ? INCREASE_FI_LIST.length-2 : fiIndex
 
                     let openPositionAmt = INIT_POSITION
                     const ratio = longRatio
-                    const increasePosition = INIT_POSITION * 2
-                    const decreasePosition = INIT_POSITION / 2
+                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    const decreasePosition = INCREASE_FI_LIST[0]
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX){
