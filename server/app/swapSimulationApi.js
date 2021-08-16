@@ -19,7 +19,7 @@ const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
-const INCREASE_FI_LIST = [0.5,0.6,1,1.5,2.5,4]
+const INCREASE_FI_LIST = [0.2,0.4,0.6,1,1.6,2.6,4.2]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
