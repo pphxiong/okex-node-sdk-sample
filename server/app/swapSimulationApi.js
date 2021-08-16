@@ -18,7 +18,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [0.4,0.8,1.2,2,2.5,3]
+const INCREASE_FI_LIST = [0.4,0.8,1.2,2,2.5,3.2]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
