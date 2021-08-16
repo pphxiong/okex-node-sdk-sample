@@ -18,7 +18,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
-const INCREASE_FI_LIST = [1,1]
+const INCREASE_FI_LIST = [0.5,1,1.5,2,3]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -624,8 +624,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || (ifMacdPositiveContinuity
                 && shortRatio > WIN_MAX * 2
             )
-            // || (maxWinRatio > WIN_MAX && shortRatio < 0 && Number(macdList[macdList.length-1].column) > 0)
-            // || shortRatio < LOSS_MAX
+            || shortRatio < LOSS_MAX * 9
 
         const MAIN_OPEN_SHORT_CONDITION =
             (
@@ -637,8 +636,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || (ifMacdNegativeContinuity
                 && longRatio > WIN_MAX * 2
             )
-            // || (maxWinRatio > WIN_MAX && longRatio < 0 && Number(macdList[macdList.length-1].column) < 0)
-            // || longRatio < LOSS_MAX
+            || longRatio < LOSS_MAX * 9
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
@@ -654,12 +652,10 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         const closeLongCondition =
             MAIN_CLOSE_LONG_CONDITION
-            || longRatio < - 0.95
             || isForceDeal
 
         const closeShortCondition =
             MAIN_CLOSE_SHORT_CONDITION
-            || shortRatio < - 0.95
             || isForceDeal
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -736,8 +732,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    // longHolding = {}
-                    // longPosition = {}
+                    if(isForceDeal){
+                        longHolding = {}
+                        longPosition = {}
+                    }
                     maxWinRatio = 0;
                     longPatchNum = 0;
                 }
@@ -773,8 +771,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                             time: macdList[macdList.length-1].time,
                         }
                     }
-                    // shortHolding = {}
-                    // shortPosition = {}
+                    if(isForceDeal){
+                        shortHolding = {}
+                        shortPosition = {}
+                    }
                     maxWinRatio = 0;
                     shortPatchNum = 0;
                 }
@@ -903,11 +903,10 @@ const checkDeal = async (data,isAutoReset = true) => {
                         macdList,
                         rsiList,
                     }
-                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     dealDetailList.push(dealDetail)
                     longHolding = {}
                     longPosition = {}
-
+                    totalProfit += - 0.037 * 0.01 * LEVERAGE
                     totalPosition += openPositionAmt
                 }
             }catch (e){
