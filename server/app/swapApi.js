@@ -10,6 +10,7 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
+const BAO_RATIO = LOSS_MAX * 8;
 const INCREASE_FI_LIST = [0.5,1,1.5,2,2.5,3,3.5].map(item=>item * 2)
 
 const INIT_MOST_LOSS = {
@@ -340,6 +341,7 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 > LONG_CONDITION
             )
             || (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
+            || shortRatio < BAO_RATIO
 
         const MAIN_OPEN_SHORT_CONDITION = (Number(macdList[macdList.length-1].column) < 0
             && rsiList[rsiList.length-1].RSI1 > rsiList[rsiList.length-1].RSI3
@@ -347,6 +349,7 @@ const checkDeal = async data => {
             && rsiList[rsiList.length-1].RSI3 < SHORT_CONDITION
             )
             || (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
+            || longRatio < BAO_RATIO
 
         const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
         const hmsArr = (currentTime.split(' '))[1].split(':')
@@ -357,12 +360,10 @@ const checkDeal = async data => {
 
         const closeLongCondition =
             MAIN_OPEN_SHORT_CONDITION
-            || longRatio < - 0.95
             // || isForceDeal
 
         const closeShortCondition =
             MAIN_OPEN_LONG_CONDITION
-            || shortRatio < - 0.95
             // || isForceDeal
 
         console.log('************************************', currentTime)
