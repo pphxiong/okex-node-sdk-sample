@@ -13,13 +13,13 @@ const fs = require('fs');
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 0.6;
+const INIT_POSITION = 1;
 const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
-const INCREASE_FI_LIST = [0.4,0.6,1,1.6,2.6,4.2]
+const INCREASE_FI_LIST = [0.3,0.5,1,1.5,2.5,4]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
