@@ -20,7 +20,7 @@ const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
-const INCREASE_FI_LIST = [0.2,0.5,1,1.5,2.5,3.5,4.5]
+const INCREASE_FI_LIST = [0.2,0.5,1,1.5,2,3.5,4.5]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
