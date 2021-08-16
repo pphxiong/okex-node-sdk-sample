@@ -18,6 +18,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
+const BAO_RATIO = LOSS_MAX * 8;
 const INCREASE_FI_LIST = [0.5,1,1.5,2,2.5,3,3.5]
 const INIT_MOST_LOSS = {
     profit: 0,
@@ -624,7 +625,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || (ifMacdPositiveContinuity
                 && shortRatio > WIN_MAX * 2
             )
-            || shortRatio < LOSS_MAX * 9
+            || shortRatio < BAO_RATIO
 
         const MAIN_OPEN_SHORT_CONDITION =
             (
@@ -636,7 +637,7 @@ const checkDeal = async (data,isAutoReset = true) => {
             || (ifMacdNegativeContinuity
                 && longRatio > WIN_MAX * 2
             )
-            || longRatio < LOSS_MAX * 9
+            || longRatio < BAO_RATIO
 
         const MAIN_CLOSE_LONG_CONDITION =
             MAIN_OPEN_SHORT_CONDITION
