@@ -20,7 +20,7 @@ const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
-const INCREASE_FI_LIST = [0.5,1,1.5,2.5,3,3.5,4]
+const INCREASE_FI_LIST = [1,1.5,2.5,3,3.5,4]
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -624,7 +624,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 > longCondition
             )
             || (ifMacdPositiveContinuity
-                // && shortRatio > WIN_MAX * 2
+                && shortRatio > WIN_MAX * 2
             )
             || shortRatio < BAO_RATIO
 
@@ -636,7 +636,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                 && rsiList[rsiList.length-1].RSI3 < shortCondition
             )
             || (ifMacdNegativeContinuity
-                // && longRatio > WIN_MAX * 2
+                && longRatio > WIN_MAX * 2
             )
             || longRatio < BAO_RATIO
 
