@@ -10,8 +10,9 @@ const LEVERAGE = 20;
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
-const INCREASE_FI_LIST = [1,1.5,2.5,3.5,4.5,5]
-const INIT_POSITION = 1;
+const CAPITAL_RATIO = 3;
+const INCREASE_FI_LIST = [1,1.5,2.5,3.5,4.5,5].map(item=>item * CAPITAL_RATIO)
+const INIT_POSITION = CAPITAL_RATIO;
 
 const INIT_MOST_LOSS = {
     profit: 0,
@@ -433,7 +434,7 @@ const checkDeal = async data => {
                     fiIndex = fiIndex == INCREASE_FI_LIST.length-1 ? INCREASE_FI_LIST.length-2 : fiIndex
                     let openPositionAmt = INIT_POSITION
                     const ratio = shortRatio
-                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
                     console.log('shortHolding',shortHolding)
                     console.log('ratio',ratio)
@@ -465,7 +466,7 @@ const checkDeal = async data => {
 
                     let openPositionAmt = INIT_POSITION
                     const ratio = longRatio
-                    const increasePosition = INCREASE_FI_LIST[fiIndex+1] * INIT_POSITION
+                    const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
                     console.log('longHolding',longHolding)
                     console.log('ratio',ratio)
