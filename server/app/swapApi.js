@@ -3,7 +3,6 @@ import moment from 'moment'
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = "ETHUSDT";
-const INIT_POSITION = 3;
 const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 48;
 const SHORT_CONDITION = 48;
@@ -11,7 +10,9 @@ const LEVERAGE = 20;
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
-const INCREASE_FI_LIST = [1,1.5,2.5,3.5,4.5,5].map(item=>item * 3)
+const CAPITAL_RATIO = 3;
+const INCREASE_FI_LIST = [1,1.5,2.5,3.5,4.5,5].map(item=>item * CAPITAL_RATIO)
+const INIT_POSITION = INCREASE_FI_LIST[0];
 
 const INIT_MOST_LOSS = {
     profit: 0,
