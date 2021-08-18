@@ -10,9 +10,8 @@ const LEVERAGE = 20;
 const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
-const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1,1.5,2.5,3.5,4.5,5].map(item=>item * CAPITAL_RATIO)
-const INIT_POSITION = INCREASE_FI_LIST[0];
+const INCREASE_FI_LIST = [1,1.5,2.5,3.5,4.5,5]
+const INIT_POSITION = 1;
 
 const INIT_MOST_LOSS = {
     profit: 0,
