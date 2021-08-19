@@ -21,7 +21,7 @@ const BAO_RATIO = - 0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
 const INCREASE_FI_LIST = [1.5,2,3,4,5].map(item=>item * CAPITAL_RATIO)
-const INIT_POSITION = CAPITAL_RATIO;
+const INIT_POSITION = INCREASE_FI_LIST[0];
 
 
 const INIT_MOST_LOSS = {
