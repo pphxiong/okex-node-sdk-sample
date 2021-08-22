@@ -22,7 +22,7 @@ const BAO_RATIO = - 0.809;
 const CAPITAL_RATIO = 3;
 const INCREASE_FI_LIST = [1,2,3,4.5,5].map(item=>item * CAPITAL_RATIO)
 const INIT_POSITION = INCREASE_FI_LIST[0];
-
+let MODE = 1
 
 const INIT_MOST_LOSS = {
     profit: 0,
@@ -650,16 +650,21 @@ const checkDeal = async (data,isAutoReset = true) => {
 
         if(modeChange) lastMode = lastMode ? 0 : 1
 
-        const openLongCondition = MAIN_OPEN_LONG_CONDITION
-        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
+        const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION
+        const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION
+        const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2
+        const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2
+
+        const openLongCondition = MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2
+        const openShortCondition = MODE == 1 ?  MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2
         modeChange = false
 
         const closeLongCondition =
-            MAIN_CLOSE_LONG_CONDITION
+            (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2)
             || isForceDeal
 
         const closeShortCondition =
-            MAIN_CLOSE_SHORT_CONDITION
+            (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2)
             || isForceDeal
 
         // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
@@ -825,9 +830,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = shortRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX * 1){
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX * 1){
+                    }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
@@ -856,6 +861,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     shortPosition = {}
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     totalPosition += openPositionAmt
+                    if(ratio < LOSS_MAX * 2) MODE = MODE == 1 ? 2 : 1
                 }
             }catch (e){
                 console.log(e)
@@ -881,9 +887,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = longRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX * 1){
+                    if(ratio < 0 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX * 1){
+                    }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
@@ -912,6 +918,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     longPosition = {}
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     totalPosition += openPositionAmt
+                    if(ratio < LOSS_MAX * 2) MODE = MODE == 1 ? 2 : 1
                 }
             }catch (e){
                 console.log(e)
