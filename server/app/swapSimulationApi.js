@@ -861,7 +861,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     shortPosition = {}
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     totalPosition += openPositionAmt
-                    if(ratio < LOSS_MAX * 2) MODE = MODE == 1 ? 2 : 1
+                    if(ratio > WIN_MAX * 2) MODE = MODE == 1 ? 2 : 1
                 }
             }catch (e){
                 console.log(e)
@@ -918,7 +918,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     longPosition = {}
                     totalProfit += - 0.037 * 0.01 * LEVERAGE
                     totalPosition += openPositionAmt
-                    if(ratio < LOSS_MAX * 2) MODE = MODE == 1 ? 2 : 1
+                    if(ratio > WIN_MAX * 2) MODE = MODE == 1 ? 2 : 1
                 }
             }catch (e){
                 console.log(e)
