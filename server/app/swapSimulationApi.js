@@ -23,7 +23,6 @@ const CAPITAL_RATIO = 4;
 const INCREASE_FI_LIST = [1,2,3].map(item=>item * CAPITAL_RATIO)
 const INIT_POSITION = INCREASE_FI_LIST[0];
 
-
 const INIT_MOST_LOSS = {
     profit: 0,
     time: null,
@@ -826,9 +825,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
-                        openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
+                    }else if(ratio < LOSS_MAX * 2){
+                        openPositionAmt = increasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
@@ -882,9 +881,9 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
                     if(ratio < 0 && ratio > LOSS_MAX * 2){
-                        openPositionAmt = increasePosition
-                    }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
+                    }else if(ratio < LOSS_MAX * 2){
+                        openPositionAmt = increasePosition
                     }
                     totalCapital += - 0.037 * 0.01 * LEVERAGE
                     minTotalCapital = Math.min(minTotalCapital,totalCapital)
