@@ -20,7 +20,7 @@ const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1,2,3,4.5,3.5,2.5,1.5].map(item=>item * CAPITAL_RATIO)
+const INCREASE_FI_LIST = [1,1.5,2,2.5,3,3.5,4,4.5,5].map(item=>item * CAPITAL_RATIO)
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1
 
@@ -830,7 +830,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = shortRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX * 2){
+                    if(ratio < WIN_MAX * 2 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
@@ -887,7 +887,7 @@ const checkDeal = async (data,isAutoReset = true) => {
                     const ratio = longRatio
                     const increasePosition = INCREASE_FI_LIST[fiIndex+1]
                     const decreasePosition = INCREASE_FI_LIST[0]
-                    if(ratio < 0 && ratio > LOSS_MAX * 2){
+                    if(ratio < WIN_MAX * 2 && ratio > LOSS_MAX * 2){
                         openPositionAmt = increasePosition
                     }else if(ratio < LOSS_MAX * 2){
                         openPositionAmt = decreasePosition
