@@ -741,7 +741,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     if(ifIgnore) ignoreNum++;
-    if(ignoreNum >= 144){
+    if(ignoreNum >= 72){
       ifIgnore = false;
       ignoreNum = 0;
     }
