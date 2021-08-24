@@ -736,14 +736,16 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if((MAIN_CLOSE_LONG_CONDITION && longRatio > WIN_MAX * 5) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio > WIN_MAX * 5)){
+    if((MAIN_CLOSE_LONG_CONDITION && longRatio > WIN_MAX * 6) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio > WIN_MAX * 6)){
       ifIgnore = true;
     }
 
-    if(ifIgnore) ignoreNum++;
-    if(ignoreNum >= 72){
-      ifIgnore = false;
-      ignoreNum = 0;
+    if(ifIgnore) {
+      ignoreNum++;
+      if(ignoreNum >= 72){
+        ifIgnore = false;
+        ignoreNum = 0;
+      }
     }
 
     // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
