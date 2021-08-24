@@ -32,6 +32,9 @@ let totalCapital = 10 * CAPITAL_RATIO;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
+let ifIgnore = false;
+let ignoreNum = 0;
+
 let currentPosition = {};
 let longPosition = {};
 let shortPosition = {};
@@ -718,18 +721,30 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     const openLongCondition =
-      MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
+      (MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2) && !ifIgnore;
     const openShortCondition =
-      MODE == 1 ? MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2;
+      (MODE == 1 ? MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2) && !ifIgnore;
     modeChange = false;
 
     const closeLongCondition =
       (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2) ||
+      longRatio > WIN_MAX * 5 ||
       isForceDeal;
 
     const closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
+      shortRatio > WIN_MAX * 5 ||
       isForceDeal;
+
+    if(longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5){
+      ifIgnore = true;
+    }
+
+    if(ifIgnore) ignoreNum++;
+    if(ignoreNum >= 288){
+      ifIgnore = false;
+      ignoreNum = 0;
+    }
 
     // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
     // console.log('------------------')
