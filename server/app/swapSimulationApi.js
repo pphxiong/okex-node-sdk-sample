@@ -730,16 +730,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const closeLongCondition =
       (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2) ||
-      // longRatio > WIN_MAX * 5 ||
       isForceDeal;
 
     const closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
-      // shortRatio > WIN_MAX * 5 ||
       isForceDeal;
 
-    if(longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5){
-      // ifIgnore = true;
+    if((MAIN_CLOSE_LONG_CONDITION && longRatio > WIN_MAX * 5) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio > WIN_MAX * 5)){
+      ifIgnore = true;
     }
 
     if(ifIgnore) ignoreNum++;
