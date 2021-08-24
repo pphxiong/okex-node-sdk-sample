@@ -742,8 +742,15 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if((MAIN_CLOSE_LONG_CONDITION && longRatio > WIN_MAX * 6) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio > WIN_MAX * 6)){
+    if((MAIN_CLOSE_LONG_CONDITION && longRatio > WIN_MAX * 5) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio > WIN_MAX * 5)){
       // ifIgnore = true;
+      MODE = 2
+    }
+
+    if(MODE == 2
+      && (MAIN_CLOSE_LONG_CONDITION && longRatio < LOSS_MAX) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio < LOSS_MAX)){
+      // ifIgnore = true;
+      MODE = 1
     }
 
     if(ifIgnore) {
