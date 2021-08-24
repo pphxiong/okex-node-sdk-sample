@@ -737,7 +737,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       isForceDeal;
 
     if((MAIN_CLOSE_LONG_CONDITION && longRatio > WIN_MAX * 6) || (MAIN_CLOSE_SHORT_CONDITION && shortRatio > WIN_MAX * 6)){
-      ifIgnore = true;
+      // ifIgnore = true;
     }
 
     if(ifIgnore) {
