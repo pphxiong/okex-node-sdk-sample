@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1,2,3,5,8].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = [1,2,3,5,3.5,5.5].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
@@ -927,9 +927,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          if(fiIndex == INCREASE_FI_LIST.length - 1){
-            openPositionAmt = openPositionAmt / 2
-          }
+          // if(fiIndex == INCREASE_FI_LIST.length - 1){
+          //   openPositionAmt = openPositionAmt / 2
+          // }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           if (totalCapital < openPositionAmt) openPositionAmt = 0;
@@ -992,9 +992,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          if(fiIndex == INCREASE_FI_LIST.length - 1){
-            openPositionAmt = openPositionAmt / 2
-          }
+          // if(fiIndex == INCREASE_FI_LIST.length - 1){
+          //   openPositionAmt = openPositionAmt / 2
+          // }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
