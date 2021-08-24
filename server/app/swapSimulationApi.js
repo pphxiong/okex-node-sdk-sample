@@ -19,8 +19,8 @@ const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
-const CAPITAL_RATIO = 1;
-const INCREASE_FI_LIST = [1,2,3,5,6].map((item) => item * CAPITAL_RATIO);
+const CAPITAL_RATIO = 3;
+const INCREASE_FI_LIST = [1,2,3,4,5,6].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
@@ -730,16 +730,16 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const closeLongCondition =
       (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2) ||
-      longRatio > WIN_MAX * 5 ||
+      // longRatio > WIN_MAX * 5 ||
       isForceDeal;
 
     const closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
-      shortRatio > WIN_MAX * 5 ||
+      // shortRatio > WIN_MAX * 5 ||
       isForceDeal;
 
     if(longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5){
-      ifIgnore = true;
+      // ifIgnore = true;
     }
 
     if(ifIgnore) ignoreNum++;
