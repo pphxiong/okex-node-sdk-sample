@@ -824,7 +824,7 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-          if (isForceDeal) {
+          if (isForceDeal || ifIgnore) {
             longHolding = {};
             longPosition = {};
           }
@@ -865,7 +865,7 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-          if (isForceDeal) {
+          if (isForceDeal || ifIgnore) {
             shortHolding = {};
             shortPosition = {};
           }
