@@ -11,7 +11,7 @@ const LOSS_MAX = - 0.1 * LEVERAGE / 10;
 const WIN_MAX = 0.1 * LEVERAGE / 10;
 const BAO_RATIO = - 0.809;
 const CAPITAL_RATIO = 1;
-const INCREASE_FI_LIST = [1,2,3,5,6].map(item=>item * CAPITAL_RATIO)
+const INCREASE_FI_LIST = [1,2,5,4,3,6].map(item=>item * CAPITAL_RATIO)
 const INIT_POSITION = CAPITAL_RATIO;
 
 const INIT_MOST_LOSS = {
