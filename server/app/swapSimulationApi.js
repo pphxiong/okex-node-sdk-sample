@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1,2,3].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = [1,2,3,5,6].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
@@ -728,14 +728,6 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => holding && item == Number(holding.positionAmt)
-    );
-
-    if(fiIndex == INCREASE_FI_LIST.length - 1){
-      MODE = MODE == 1 ? 2 : 1;
-    }
-
     const openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
     const openShortCondition =
@@ -920,6 +912,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           let fiIndex = INCREASE_FI_LIST.findIndex(
             (item) => shortHolding && item == Number(shortHolding.positionAmt)
           );
+          if(fiIndex == INCREASE_FI_LIST.length - 1){
+            MODE = MODE == 1 ? 2 : 1;
+          }
+
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
               ? INCREASE_FI_LIST.length - 2
@@ -981,6 +977,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           let fiIndex = INCREASE_FI_LIST.findIndex(
             (item) => longHolding && item == Number(longHolding.positionAmt)
           );
+          if(fiIndex == INCREASE_FI_LIST.length - 1){
+            MODE = MODE == 1 ? 2 : 1;
+          }
+
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
               ? INCREASE_FI_LIST.length - 2
