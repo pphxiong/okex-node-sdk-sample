@@ -607,10 +607,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     let shortHolding;
     let longRatio = 0;
     let shortRatio = 0;
+    let holding;
 
-    if (longPosition && longPosition.positionAmt) longHolding = longPosition;
-    if (shortPosition && shortPosition.positionAmt)
+    if (longPosition && longPosition.positionAmt) {
+      longHolding = longPosition;
+      holding = longHolding
+    }
+    if (shortPosition && shortPosition.positionAmt){
       shortHolding = shortPosition;
+      holding = shortHolding
+    }
 
     if (longHolding) {
       const {leverage, entryPrice: avg_cost} = longHolding;
@@ -721,6 +727,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+        (item) => holding && item == Number(holding.positionAmt)
+    );
+
+    if(fiIndex == INCREASE_FI_LIST.length - 1){
+      MODE = MODE == 1 ? 2 : 1;
+    }
 
     const openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
@@ -915,7 +929,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < 0 && ratio > LOSS_MAX * 2) {
+          if (ratio < WIN_MAX && ratio > LOSS_MAX * 2) {
             openPositionAmt = increasePosition;
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
@@ -976,7 +990,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < 0 && ratio > LOSS_MAX * 2) {
+          if (ratio < WIN_MAX && ratio > LOSS_MAX * 2) {
             openPositionAmt = increasePosition;
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
