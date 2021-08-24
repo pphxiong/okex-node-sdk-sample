@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1,2,3].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = [1,2,3,5,8].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
@@ -912,9 +912,6 @@ const checkDeal = async (data, isAutoReset = true) => {
           let fiIndex = INCREASE_FI_LIST.findIndex(
             (item) => shortHolding && item == Number(shortHolding.positionAmt)
           );
-          if(fiIndex == INCREASE_FI_LIST.length - 1){
-            MODE = MODE == 1 ? 2 : 1;
-          }
 
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
@@ -929,6 +926,9 @@ const checkDeal = async (data, isAutoReset = true) => {
             openPositionAmt = increasePosition;
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
+          }
+          if(fiIndex == INCREASE_FI_LIST.length - 1){
+            openPositionAmt = openPositionAmt / 2
           }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -977,9 +977,6 @@ const checkDeal = async (data, isAutoReset = true) => {
           let fiIndex = INCREASE_FI_LIST.findIndex(
             (item) => longHolding && item == Number(longHolding.positionAmt)
           );
-          if(fiIndex == INCREASE_FI_LIST.length - 1){
-            MODE = MODE == 1 ? 2 : 1;
-          }
 
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
@@ -994,6 +991,9 @@ const checkDeal = async (data, isAutoReset = true) => {
             openPositionAmt = increasePosition;
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
+          }
+          if(fiIndex == INCREASE_FI_LIST.length - 1){
+            openPositionAmt = openPositionAmt / 2
           }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
