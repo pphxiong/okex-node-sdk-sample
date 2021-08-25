@@ -530,6 +530,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         currentPosition,
         dealDetailList,
         mostLoss,
+        mode: MODE,
       },
     });
   } catch (e) {
@@ -765,7 +766,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         (closeShortCondition && shortRatio < LOSS_MAX * 1))
     ) {
       // ifIgnore = true;
-      MODE = 1;
+      // MODE = 1;
     }
 
     if (ifIgnore) {
@@ -949,7 +950,13 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          if (MODE == 2) openPositionAmt = INIT_POSITION;
+          if (MODE == 2) {
+            openPositionAmt = INIT_POSITION;
+            if((closeLongCondition && longRatio < LOSS_MAX * 1) ||
+                (closeShortCondition && shortRatio < LOSS_MAX * 1)){
+                MODE = 1;
+            }
+          }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           if (totalCapital < openPositionAmt) openPositionAmt = 0;
@@ -1012,7 +1019,13 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          if (MODE == 2) openPositionAmt = INIT_POSITION;
+          if (MODE == 2) {
+            openPositionAmt = INIT_POSITION;
+            if((closeLongCondition && longRatio < LOSS_MAX * 1) ||
+                (closeShortCondition && shortRatio < LOSS_MAX * 1)){
+              MODE = 1;
+            }
+          }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
