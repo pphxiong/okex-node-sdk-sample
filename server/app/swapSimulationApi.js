@@ -755,8 +755,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       isForceDeal;
 
     if (
-      (closeLongCondition && longRatio > WIN_MAX * 5) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 5)
+      (closeLongCondition && longRatio > WIN_MAX * 4) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
       // ifIgnore = true;
       MODE = 2;
