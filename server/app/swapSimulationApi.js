@@ -482,9 +482,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
       totalProfit = 0;
       maxWinRatio = 0;
       totalPosition = 0;
-      // currentPosition = {};
-      // longPosition = {};
-      // shortPosition = {};
+      currentPosition = {};
+      longPosition = {};
+      shortPosition = {};
       // totalCapital = 0;
       // maxOpenPosition = 0;
       // minTotalCapital = 0;
@@ -530,7 +530,6 @@ app.get('/swap/startHearBeat', async (req, response) => {
         currentPosition,
         dealDetailList,
         mostLoss,
-        MODE,
       },
     });
   } catch (e) {
