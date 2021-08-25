@@ -956,10 +956,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           if (MODE == 2) {
             openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < LOSS_MAX * 1.5) ||
-                (closeShortCondition && shortRatio < LOSS_MAX * 1.5)){
+            if((closeLongCondition && longRatio < LOSS_MAX * 2) ||
+                (closeShortCondition && shortRatio < LOSS_MAX * 2)){
                 MODE = 1;
-                // openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-1]
+                openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-1]
             }
           }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
@@ -1027,10 +1027,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           if (MODE == 2) {
             openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < LOSS_MAX * 1.5) ||
-                (closeShortCondition && shortRatio < LOSS_MAX * 1.5)){
+            if((closeLongCondition && longRatio < LOSS_MAX * 2) ||
+                (closeShortCondition && shortRatio < LOSS_MAX * 2)){
               MODE = 1;
-              // openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-1]
+              openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-1]
             }
           }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
