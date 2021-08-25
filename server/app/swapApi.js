@@ -13,6 +13,7 @@ const BAO_RATIO = - 0.809;
 const CAPITAL_RATIO = 1;
 const INCREASE_FI_LIST = [1,1.5,5,4.5,3,6].map(item=>item * CAPITAL_RATIO)
 const INIT_POSITION = CAPITAL_RATIO;
+let MODE = 1;
 
 const INIT_MOST_LOSS = {
     profit: 0,
@@ -356,15 +357,25 @@ const checkDeal = async data => {
         const hmsArr = (currentTime.split(' '))[1].split(':')
         if(hmsArr[0] == '00' && hmsArr[1] == '00') isForceDeal = true;
 
-        const openLongCondition = MAIN_OPEN_LONG_CONDITION
-        const openShortCondition = MAIN_OPEN_SHORT_CONDITION
+        const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION;
+        const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION;
+        const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
+        const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+
+        const MAIN_CLOSE_LONG_CONDITION = MAIN_OPEN_SHORT_CONDITION;
+        const MAIN_CLOSE_SHORT_CONDITION = MAIN_OPEN_LONG_CONDITION;
+
+        const openLongCondition =
+            MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
+        const openShortCondition =
+            MODE == 1 ? MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2;
 
         const closeLongCondition =
-            MAIN_OPEN_SHORT_CONDITION
+            (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2)
             // || isForceDeal
 
         const closeShortCondition =
-            MAIN_OPEN_LONG_CONDITION
+            (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2)
             // || isForceDeal
 
         console.log('************************************', currentTime)
