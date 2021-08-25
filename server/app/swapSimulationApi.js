@@ -760,7 +760,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       (closeLongCondition && longRatio > WIN_MAX * 4) ||
       (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
-      MODE = 2;
+      // MODE = 2;
       // modeChange = true
     }
 
