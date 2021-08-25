@@ -603,7 +603,7 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 
   function checkByStep(data, isForceDeal) {
-    isForceDeal = false;
+    // isForceDeal = false;
     const {macdList, rsiList} = data;
     const mark_price = macdList[macdList.length - 1].close;
 
@@ -1027,8 +1027,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           if (MODE == 2) {
             openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < LOSS_MAX * 2) ||
-                (closeShortCondition && shortRatio < LOSS_MAX * 2)){
+            if((closeLongCondition && longRatio < LOSS_MAX * 1) ||
+                (closeShortCondition && shortRatio < LOSS_MAX * 1)){
               MODE = 1;
               openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-1]
             }
