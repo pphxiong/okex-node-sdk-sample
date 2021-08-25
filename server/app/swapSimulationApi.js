@@ -20,7 +20,9 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.809;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1,1.5,5,4.5,3,6].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
+  (item) => item * CAPITAL_RATIO
+);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
@@ -600,6 +602,7 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 
   function checkByStep(data, isForceDeal) {
+    isForceDeal = false;
     const {macdList, rsiList} = data;
     const mark_price = macdList[macdList.length - 1].close;
 
@@ -611,11 +614,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (longPosition && longPosition.positionAmt) {
       longHolding = longPosition;
-      holding = longHolding
+      holding = longHolding;
     }
-    if (shortPosition && shortPosition.positionAmt){
+    if (shortPosition && shortPosition.positionAmt) {
       shortHolding = shortPosition;
-      holding = shortHolding
+      holding = shortHolding;
     }
 
     if (longHolding) {
@@ -704,20 +707,22 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 > longCondition) ||
-      (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
-      shortRatio < BAO_RATIO ||
-          (Number(macdList[macdList.length - 1].column) < 0 && longRatio > WIN_MAX * 5))
-        && !ifIgnore
+        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
+        shortRatio < BAO_RATIO ||
+        (Number(macdList[macdList.length - 1].column) > 0 &&
+          shortRatio > WIN_MAX * 5)) &&
+      !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
       ((Number(macdList[macdList.length - 1].column) < 0 &&
         rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 < shortCondition) ||
-      (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
-      longRatio < BAO_RATIO ||
-          (Number(macdList[macdList.length - 1].column) > 0 && shortRatio > WIN_MAX * 5))
-        && !ifIgnore
+        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
+        longRatio < BAO_RATIO ||
+        (Number(macdList[macdList.length - 1].column) < 0 &&
+          longRatio > WIN_MAX * 5)) &&
+      !ifIgnore;
 
     const MAIN_CLOSE_LONG_CONDITION = MAIN_OPEN_SHORT_CONDITION;
 
@@ -725,8 +730,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION || shortRatio < LOSS_MAX;
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION || longRatio < LOSS_MAX;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION || shortRatio < LOSS_MAX;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION || longRatio < LOSS_MAX;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
@@ -744,20 +751,26 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if((closeLongCondition && longRatio > WIN_MAX * 5) || (closeShortCondition && shortRatio > WIN_MAX * 5)){
+    if (
+      (closeLongCondition && longRatio > WIN_MAX * 5) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 5)
+    ) {
       // ifIgnore = true;
-      MODE = 2
+      MODE = 2;
     }
 
-    if(MODE == 2
-      && (closeLongCondition && longRatio < LOSS_MAX * 1) || (closeShortCondition && shortRatio < LOSS_MAX)){
+    if (
+      MODE == 2 &&
+      ((closeLongCondition && longRatio < LOSS_MAX * 1) ||
+        (closeShortCondition && shortRatio < LOSS_MAX * 1))
+    ) {
       // ifIgnore = true;
-      MODE = 1
+      MODE = 1;
     }
 
-    if(ifIgnore) {
+    if (ifIgnore) {
       ignoreNum++;
-      if(ignoreNum >= 72){
+      if (ignoreNum >= 72) {
         ifIgnore = false;
         ignoreNum = 0;
       }
@@ -936,7 +949,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          // if(MODE == 2) openPositionAmt = INIT_POSITION;
+          if (MODE == 2) openPositionAmt = INIT_POSITION;
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           if (totalCapital < openPositionAmt) openPositionAmt = 0;
@@ -999,7 +1012,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          // if(MODE == 2) openPositionAmt = INIT_POSITION;
+          if (MODE == 2) openPositionAmt = INIT_POSITION;
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
