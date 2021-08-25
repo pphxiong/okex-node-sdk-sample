@@ -757,7 +757,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
       // ifIgnore = true;
-      MODE = MODE == 1 ? 2 : 1;
+      MODE = 2;
     }
 
     if (ifIgnore) {
@@ -945,8 +945,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           // if (MODE == 2) {
             // openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < 0) ||
-                (closeShortCondition && shortRatio < 0)){
+            if((closeLongCondition && longRatio < LOSS_MAX) ||
+                (closeShortCondition && shortRatio < LOSS_MAX)){
                 MODE = MODE == 1 ? 2 : 1;
                 // openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-2]
             }
@@ -1016,8 +1016,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           // if (MODE == 2) {
             // openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < 0) ||
-                (closeShortCondition && shortRatio < 0)){
+            if((closeLongCondition && longRatio < LOSS_MAX) ||
+                (closeShortCondition && shortRatio < LOSS_MAX)){
               MODE = MODE == 1 ? 2 : 1;
               // openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-2]
             }
