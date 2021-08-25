@@ -24,7 +24,7 @@ const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
-let MODE = 1;
+let MODE = 2;
 let modeChange = false;
 
 const INIT_MOST_LOSS = {
@@ -733,8 +733,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION && shortRatio < LOSS_MAX;
+    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION && longRatio < LOSS_MAX;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
@@ -752,15 +752,15 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    // if((closeLongCondition && longRatio < 0) || (closeShortCondition && shortRatio < 0)){
-    //   MODE = MODE == 1 ? 2 : 1
-    // }
+    if(MODE == 2 && ((closeLongCondition && longRatio < 0) || (closeShortCondition && shortRatio < 0))){
+      MODE = 1
+    }
 
     if (
       (closeLongCondition && longRatio > WIN_MAX * 4) ||
       (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
-      // MODE = 2;
+      MODE = 2;
       // modeChange = true
     }
 
@@ -932,12 +932,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           let fiIndex = INCREASE_FI_LIST.findIndex(
             (item) => shortHolding && item == Number(shortHolding.positionAmt)
           );
-          if(MODE == 2 && fiIndex == INCREASE_FI_LIST.length - 1){
-            MODE = 1
-          }
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
-              ? (MODE == 1 ? INCREASE_FI_LIST.length - 2 : 0)
+              ? INCREASE_FI_LIST.length - 2
               : fiIndex;
 
           let openPositionAmt = INIT_POSITION;
@@ -998,12 +995,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           let fiIndex = INCREASE_FI_LIST.findIndex(
             (item) => longHolding && item == Number(longHolding.positionAmt)
           );
-          if(MODE == 2 && fiIndex == INCREASE_FI_LIST.length - 1){
-            MODE = 1
-          }
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
-              ? (MODE == 1 ? INCREASE_FI_LIST.length - 2 : 0)
+              ? INCREASE_FI_LIST.length - 2
               : fiIndex;
 
           let openPositionAmt = INIT_POSITION;
