@@ -708,7 +708,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList[rsiList.length - 1].RSI3 > longCondition) ||
         (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
         shortRatio < BAO_RATIO
-        || shortRatio < LOSS_MAX
+        // || shortRatio < LOSS_MAX
         // ||(Number(macdList[macdList.length - 1].column) > 0 &&
         //   shortRatio > WIN_MAX * 5)
       ) &&
@@ -721,7 +721,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList[rsiList.length - 1].RSI3 < shortCondition) ||
         (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
         longRatio < BAO_RATIO
-        || longRatio < LOSS_MAX
+        // || longRatio < LOSS_MAX
         // longRatio < LOSS_MAX / 1
         // ||(Number(macdList[macdList.length - 1].column) < 0 &&
         //   longRatio > WIN_MAX * 5)
@@ -752,6 +752,11 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
+    if((closeLongCondition && longRatio < 0) ||
+        (closeShortCondition && shortRatio < 0)){
+      MODE = MODE == 1 ? 2 : 1;
+    }
+
     if (
       (closeLongCondition && longRatio > WIN_MAX * 4) ||
       (closeShortCondition && shortRatio > WIN_MAX * 4)
@@ -759,6 +764,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       // ifIgnore = true;
       MODE = 2;
     }
+
 
     if (ifIgnore) {
       ignoreNum++;
@@ -943,14 +949,6 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          // if (MODE == 2) {
-            // openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < LOSS_MAX) ||
-                (closeShortCondition && shortRatio < LOSS_MAX)){
-                MODE = MODE == 1 ? 2 : 1;
-                // openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-2]
-            }
-          // }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           if (totalCapital < openPositionAmt) openPositionAmt = 0;
@@ -1014,14 +1012,6 @@ const checkDeal = async (data, isAutoReset = true) => {
           } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
-          // if (MODE == 2) {
-            // openPositionAmt = INIT_POSITION;
-            if((closeLongCondition && longRatio < LOSS_MAX) ||
-                (closeShortCondition && shortRatio < LOSS_MAX)){
-              MODE = MODE == 1 ? 2 : 1;
-              // openPositionAmt = INCREASE_FI_LIST[INCREASE_FI_LIST.length-2]
-            }
-          // }
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
