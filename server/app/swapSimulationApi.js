@@ -940,7 +940,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
+              ? (MODE == 1 ? INCREASE_FI_LIST.length - 2 : 0)
               : fiIndex;
 
           let openPositionAmt = INIT_POSITION;
@@ -1011,7 +1011,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           fiIndex =
             fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
+              ? (MODE == 1 ? INCREASE_FI_LIST.length - 2 : 0)
               : fiIndex;
 
           let openPositionAmt = INIT_POSITION;
