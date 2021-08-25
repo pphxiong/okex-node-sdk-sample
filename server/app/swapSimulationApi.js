@@ -530,7 +530,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
         currentPosition,
         dealDetailList,
         mostLoss,
-        mode: MODE,
+        MODE,
       },
     });
   } catch (e) {
@@ -847,6 +847,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             currentProfit: longRatio * longHolding.positionAmt,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
+            MODE,
           };
           dealDetailList.push(dealDetail);
           if (longRatio < mostLoss.profit) {
@@ -888,6 +889,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             currentProfit: shortRatio * shortHolding.positionAmt,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
+            MODE,
           };
           dealDetailList.push(dealDetail);
           if (shortRatio < mostLoss.profit) {
@@ -979,6 +981,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             time: macdList[macdList.length - 1].time,
             macdList,
             rsiList,
+            MODE,
           };
           dealDetailList.push(dealDetail);
           shortHolding = {};
@@ -1048,6 +1051,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             time: macdList[macdList.length - 1].time,
             macdList,
             rsiList,
+            MODE,
           };
           dealDetailList.push(dealDetail);
           longHolding = {};
