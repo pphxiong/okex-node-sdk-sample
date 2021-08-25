@@ -24,7 +24,7 @@ const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
-let MODE = 1;
+let MODE = 2;
 
 const INIT_MOST_LOSS = {
   profit: 0,
@@ -738,29 +738,22 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
-    let openLongCondition =
+    const openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
-    let openShortCondition =
+    const openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2;
     modeChange = false;
 
-    let closeLongCondition =
+    const closeLongCondition =
       (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2) ||
       isForceDeal;
 
-    let closeShortCondition =
+    const closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    // if(MODE == 1) {
-      if(longRatio < LOSS_MAX){
-        closeLongCondition = true;
-        openShortCondition = true
-      }else if(shortRatio < LOSS_MAX){
-        closeShortCondition = true;
-        openLongCondition = true
-      }
-      MODE = MODE == 1 ? 2 : 1
+    // if((closeLongCondition && longRatio < 0) || (closeShortCondition && shortRatio < 0)){
+    //   MODE = MODE == 1 ? 2 : 1
     // }
 
     if (
