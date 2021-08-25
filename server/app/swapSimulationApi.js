@@ -480,8 +480,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
     if (isAutoReset) {
       totalProfit = 0;
-      // maxWinRatio = 0;
-      // totalPosition = 0;
+      maxWinRatio = 0;
+      totalPosition = 0;
       // currentPosition = {};
       // longPosition = {};
       // shortPosition = {};
@@ -598,12 +598,11 @@ const checkDeal = async (data, isAutoReset = true) => {
         macdList: data.macdList.slice(i, i + 10),
         rsiList: data.rsiList.slice(i, i + 10),
       },
-      isAutoReset && i == data.macdList.length - 10
+      isAutoReset /*&& i == data.macdList.length - 10*/
     );
   }
 
   function checkByStep(data, isForceDeal) {
-    isForceDeal = false;
     const {macdList, rsiList} = data;
     const mark_price = macdList[macdList.length - 1].close;
 
