@@ -24,7 +24,7 @@ const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
-let MODE = 2;
+let MODE = 1;
 let modeChange = false;
 
 const INIT_MOST_LOSS = {
