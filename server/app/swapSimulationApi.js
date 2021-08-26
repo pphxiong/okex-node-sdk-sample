@@ -749,10 +749,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   MODE = MODE == 1 ? 2 : 1
     // }
     //
-    // if (longRatio > WIN_MAX * 4 || shortRatio > WIN_MAX * 4) {
-    //   MODE = 2;
-    //   modeChange = true
-    // }
+    if ((closeLongCondition && (longRatio > WIN_MAX * 4 || longRatio < LOSS_MAX / 2))
+        || (closeShortCondition && (shortRatio > WIN_MAX * 4 || shortRatio < LOSS_MAX / 2))) {
+      MODE = MODE == 1 ? 2 : 1
+      modeChange = true
+    }
 
     if (ifIgnore) {
       ignoreNum++;
