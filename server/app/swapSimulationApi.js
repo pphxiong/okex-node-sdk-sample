@@ -706,11 +706,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 > longCondition) ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
         shortRatio < BAO_RATIO
-        || shortRatio < LOSS_MAX * 2
-        // ||(Number(macdList[macdList.length - 1].column) > 0 &&
-        //   shortRatio > WIN_MAX * 5)
       ) &&
       !ifIgnore;
 
@@ -719,36 +715,34 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 < shortCondition) ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
         longRatio < BAO_RATIO
-        || longRatio < LOSS_MAX * 2
-        // ||(Number(macdList[macdList.length - 1].column) < 0 &&
-        //   longRatio > WIN_MAX * 5)
       ) &&
       !ifIgnore;
 
-    const MAIN_CLOSE_LONG_CONDITION = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_SHORT_CONDITION = MAIN_OPEN_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION || ifMacdPositiveContinuity
+    const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION || ifMacdNegativeContinuity
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION || ifMacdPositiveContinuity;
+    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION || ifMacdNegativeContinuity;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     modeChange = false;
     const openLongCondition =
-      MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
+      MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
     const openShortCondition =
-      MODE == 1 ? MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2;
+      MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
 
     const closeLongCondition =
-      (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2) ||
+      (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2) ||
       isForceDeal;
 
     const closeShortCondition =
-      (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2) ||
+      (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
     // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
