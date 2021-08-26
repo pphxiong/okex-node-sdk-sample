@@ -24,7 +24,7 @@ const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
-let MODE = 1;
+let MODE = 2;
 let modeChange = false;
 
 const INIT_MOST_LOSS = {
@@ -745,9 +745,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
-      MODE = MODE == 1 ? 2 : 1
-    }
+    // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
+    //   MODE = MODE == 1 ? 2 : 1
+    // }
     //
     // if (longRatio > WIN_MAX * 4 || shortRatio > WIN_MAX * 4) {
     //   MODE = 2;
