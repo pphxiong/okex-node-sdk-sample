@@ -17,7 +17,7 @@ const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
-const BAO_RATIO = -0.809;
+const BAO_RATIO = -LOSS_MAX * 2;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
 const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
@@ -689,45 +689,41 @@ const checkDeal = async (data, isAutoReset = true) => {
       );
     });
 
-    const REVERSE_LONG_CONDITION =
-      ifMacdEnhanceContinuity &&
-      // isUpRSI
-      (rsiList[rsiList.length - 1].RSI1 > 70 ||
-        rsiList[rsiList.length - 1].RSI3 > 50);
-
-    const REVERSE_SHORT_CONDITION =
-      // isDownRSI
-      // &&
-      rsiList[rsiList.length - 1].RSI1 < 25 ||
-      rsiList[rsiList.length - 1].RSI3 < 45;
-
     const MAIN_OPEN_LONG_CONDITION =
-      ((Number(macdList[macdList.length - 1].column) > 0 &&
-        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-        rsiList[rsiList.length - 1].RSI3 > longCondition) ||
-        shortRatio < BAO_RATIO
-      ) &&
+      Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > longCondition &&
       !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      ((Number(macdList[macdList.length - 1].column) < 0 &&
-        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-        rsiList[rsiList.length - 1].RSI3 < shortCondition) ||
-        longRatio < BAO_RATIO
-      ) &&
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < shortCondition &&
       !ifIgnore;
 
-    const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION || ifMacdPositiveContinuity
-    const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION || ifMacdNegativeContinuity
+    const MAIN_OPEN_LONG_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION ||
+      ifMacdPositiveContinuity ||
+      shortRatio < BAO_RATIO;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION ||
+      ifMacdNegativeContinuity ||
+      longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION || ifMacdPositiveContinuity;
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION || ifMacdNegativeContinuity;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION ||
+      ifMacdPositiveContinuity ||
+      shortRatio < BAO_RATIO;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION ||
+      ifMacdNegativeContinuity ||
+      longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
@@ -745,17 +741,27 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
-    //   MODE = MODE == 1 ? 2 : 1
-    // }
-    //
-    if ((closeLongCondition && (longRatio > WIN_MAX * 4 /*|| longRatio < LOSS_MAX / 2*/))
-        || (closeShortCondition && (shortRatio > WIN_MAX * 4 /*|| shortRatio < LOSS_MAX / 2*/))) {
-      MODE = MODE == 1 ? 2 : 1
-      modeChange = true
-    }
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+      (item) => holding && item == Number(holding.positionAmt)
+    );
+    fiIndex =
+      fiIndex == INCREASE_FI_LIST.length - 1
+        ? INCREASE_FI_LIST.length - 2
+        : fiIndex;
+
+    if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
 
     if (ifIgnore) {
+      // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
+      //   MODE = MODE == 1 ? 2 : 1
+      // }
+      //
+      // if ((closeLongCondition && (longRatio > WIN_MAX * 4))
+      //     || (closeShortCondition && (shortRatio > WIN_MAX * 4))) {
+      //   MODE = MODE == 1 ? 2 : 1
+      //   modeChange = true
+      // }
+
       ignoreNum++;
       if (ignoreNum >= 72) {
         ifIgnore = false;
