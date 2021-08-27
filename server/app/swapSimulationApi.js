@@ -24,7 +24,7 @@ const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
-let MODE = 2;
+let MODE = 1;
 let modeChange = false;
 
 const INIT_MOST_LOSS = {
@@ -702,15 +702,15 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition &&
-      !ifIgnore;
+      rsiList[rsiList.length - 1].RSI3 > longCondition
+      // && !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition &&
-      !ifIgnore;
+      rsiList[rsiList.length - 1].RSI3 < shortCondition
+      // && !ifIgnore;
 
     const MAIN_OPEN_LONG_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
@@ -741,14 +741,25 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
     const openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
-
     const closeLongCondition =
       (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2) ||
       isForceDeal;
-
     const closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
+
+    if(MODE == 1 && (
+        (closeLongCondition && longRatio > WIN_MAX * 2)
+        || (closeShortCondition && shortRatio > WIN_MAX * 2))
+    ){
+      MODE = 2;
+    }
+
+    if(MODE == 2 ){
+        if((closeLongCondition && shortRatio < LOSS_MAX) || (closeShortCondition && longRatio < LOSS_MAX)){
+          MODE = 1;
+        }
+    }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
