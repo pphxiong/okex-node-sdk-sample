@@ -737,29 +737,39 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     modeChange = false;
-    const openLongCondition =
+    let openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
-    const openShortCondition =
+    let openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
-    const closeLongCondition =
+    let closeLongCondition =
       (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2) ||
       isForceDeal;
-    const closeShortCondition =
+    let closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if(
+    if(MODE == 1 && (
         (closeLongCondition && longRatio > WIN_MAX * 2)
-        || (closeShortCondition && shortRatio > WIN_MAX * 2)
+        || (closeShortCondition && shortRatio > WIN_MAX * 2))
     ){
-      MODE = MODE == 1 ? 2 : 1;
+      MODE = 2;
     }
 
-    // if(MODE == 2){
-    //     if((closeLongCondition && shortRatio < LOSS_MAX) || (closeShortCondition && longRatio < LOSS_MAX)){
-    //       MODE = 1;
-    //     }
-    // }
+    if(MODE == 2){
+        if(openShortCondition && shortRatio < LOSS_MAX){
+          openShortCondition = false
+          closeShortCondition = true
+          openLongCondition = true
+          closeLongCondition = false
+          MODE = 1;
+        }else if(openLongCondition && longRatio < LOSS_MAX){
+          openShortCondition = true
+          closeShortCondition = false
+          openLongCondition = false
+          closeLongCondition = true
+          MODE = 1;
+        }
+    }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
