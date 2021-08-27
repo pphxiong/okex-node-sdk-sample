@@ -748,18 +748,18 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if(MODE == 1 && (
+    if(
         (closeLongCondition && longRatio > WIN_MAX * 2)
-        || (closeShortCondition && shortRatio > WIN_MAX * 2))
+        || (closeShortCondition && shortRatio > WIN_MAX * 2)
     ){
-      MODE = 2;
+      MODE = MODE == 1 ? 2 : 1;
     }
 
-    if(MODE == 2 ){
-        if((closeLongCondition && shortRatio < LOSS_MAX) || (closeShortCondition && longRatio < LOSS_MAX)){
-          MODE = 1;
-        }
-    }
+    // if(MODE == 2){
+    //     if((closeLongCondition && shortRatio < LOSS_MAX) || (closeShortCondition && longRatio < LOSS_MAX)){
+    //       MODE = 1;
+    //     }
+    // }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
