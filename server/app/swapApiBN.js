@@ -9,7 +9,7 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
-const BAO_RATIO = -0.809;
+const BAO_RATIO = -0.95;
 const CAPITAL_RATIO = 2;
 const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
@@ -376,12 +376,21 @@ const checkDeal = async (data) => {
       );
     });
 
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+        (item) => holding && item == Number(holding.positionAmt)
+    );
+    fiIndex =
+        fiIndex == INCREASE_FI_LIST.length - 1
+            ? INCREASE_FI_LIST.length - 2
+            : fiIndex;
+    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
+
     const MAIN_OPEN_LONG_CONDITION =
       (Number(macdList[macdList.length - 1].column) > 0 &&
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION) ||
-      ifMacdPositiveContinuity ||
+        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
       shortRatio < BAO_RATIO;
 
     const MAIN_OPEN_SHORT_CONDITION =
@@ -389,7 +398,7 @@ const checkDeal = async (data) => {
         rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION) ||
-      ifMacdNegativeContinuity ||
+        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
       longRatio < BAO_RATIO;
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -404,15 +413,6 @@ const checkDeal = async (data) => {
 
     const closeShortCondition = MAIN_OPEN_LONG_CONDITION;
     // || isForceDeal
-
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => holding && item == Number(holding.positionAmt)
-    );
-    fiIndex =
-        fiIndex == INCREASE_FI_LIST.length - 1
-            ? INCREASE_FI_LIST.length - 2
-            : fiIndex;
-    if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
 
     console.log('************************************', currentTime);
     console.log('------------------');
