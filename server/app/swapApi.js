@@ -418,6 +418,15 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2;
     // || isForceDeal
 
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+        (item) => holding && item == Number(holding.positionAmt)
+    );
+    fiIndex =
+        fiIndex == INCREASE_FI_LIST.length - 1
+            ? INCREASE_FI_LIST.length - 2
+            : fiIndex;
+    if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
+
     console.log('************************************', currentTime);
     console.log('------------------');
     console.log('mark_price', mark_price);
@@ -476,14 +485,6 @@ const checkDeal = async (data) => {
           // && (!shortHolding || !Number(shortHolding.positionAmt))
         ) {
           // await closeShortPosition()
-          let fiIndex = INCREASE_FI_LIST.findIndex(
-            (item) =>
-              shortHolding && item == Math.abs(Number(shortHolding.positionAmt))
-          );
-          fiIndex =
-            fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
-              : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
@@ -517,15 +518,6 @@ const checkDeal = async (data) => {
           !Number(shortHolding.positionAmt)
         ) {
           // await closeLongPosition();
-          let fiIndex = INCREASE_FI_LIST.findIndex(
-            (item) =>
-              longHolding && item == Math.abs(Number(longHolding.positionAmt))
-          );
-          fiIndex =
-            fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
-              : fiIndex;
-
           let openPositionAmt = INIT_POSITION;
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
