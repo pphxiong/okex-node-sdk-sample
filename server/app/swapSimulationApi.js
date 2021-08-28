@@ -702,8 +702,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
 
     if (MODE == 2) {
-      longCondition = 52;
-      shortCondition = 46;
+      longCondition = 50;
+      shortCondition = 50;
     } else {
       longCondition = 48;
       shortCondition = 48;
