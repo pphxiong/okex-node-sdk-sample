@@ -376,13 +376,21 @@ const checkDeal = async (data) => {
       );
     });
 
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => holding && item == Number(holding.positionAmt)
-    );
+    let fiIndex;
+    if (longHolding) {
+      INCREASE_FI_LIST.findIndex(
+        (item) => longHolding && item == Number(longHolding.positionAmt)
+      );
+    } else if (shortHolding) {
+      INCREASE_FI_LIST.findIndex(
+        (item) => shortHolding && item == Number(shortHolding.positionAmt)
+      );
+    }
+
     fiIndex =
-        fiIndex == INCREASE_FI_LIST.length - 1
-            ? INCREASE_FI_LIST.length - 2
-            : fiIndex;
+      fiIndex == INCREASE_FI_LIST.length - 1
+        ? INCREASE_FI_LIST.length - 2
+        : fiIndex;
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
 
     const MAIN_OPEN_LONG_CONDITION =
@@ -390,7 +398,7 @@ const checkDeal = async (data) => {
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION) ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
+      (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
       shortRatio < BAO_RATIO;
 
     const MAIN_OPEN_SHORT_CONDITION =
@@ -398,7 +406,7 @@ const checkDeal = async (data) => {
         rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION) ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
+      (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
       longRatio < BAO_RATIO;
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
