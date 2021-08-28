@@ -22,10 +22,10 @@ const BAO_RATIO = -0.85;
 const CAPITAL_RATIO = 3;
 const MODE_RATIO = {
   1: [1, 1.5, 5, 4.5, 3, 6],
-  2: [1, 1.5, 2.5, 4, 3.5, 4, 4.5, 5, 6].map((item) => item / 2),
+  2: [0.5, 1, 1.5, 2, 3, 4.5, 6, 8].map((item) => item / 1),
 };
 let MODE = 1;
-const INCREASE_FI_LIST = MODE_RATIO[1].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = MODE_RATIO[2].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 
 let modeChange = false;
@@ -760,29 +760,29 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if (
-      MODE == 1 &&
-      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
-        (closeShortCondition && shortRatio > WIN_MAX * 2))
-    ) {
-      MODE = 2;
-    }
+    // if (
+    //   MODE == 1 &&
+    //   ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+    //     (closeShortCondition && shortRatio > WIN_MAX * 2))
+    // ) {
+    //   MODE = 2;
+    // }
 
-    if (MODE == 2) {
-      if (openShortCondition && shortRatio < LOSS_MAX * 1) {
-        openShortCondition = false;
-        closeShortCondition = true;
-        openLongCondition = true;
-        closeLongCondition = false;
-        MODE = 1;
-      } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
-        openShortCondition = true;
-        closeShortCondition = false;
-        openLongCondition = false;
-        closeLongCondition = true;
-        MODE = 1;
-      }
-    }
+    // if (MODE == 2) {
+    //   if (openShortCondition && shortRatio < LOSS_MAX * 1) {
+    //     openShortCondition = false;
+    //     closeShortCondition = true;
+    //     openLongCondition = true;
+    //     closeLongCondition = false;
+    //     MODE = 1;
+    //   } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
+    //     openShortCondition = true;
+    //     closeShortCondition = false;
+    //     openLongCondition = false;
+    //     closeLongCondition = true;
+    //     MODE = 1;
+    //   }
+    // }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
