@@ -25,7 +25,7 @@ const MODE_RATIO = {
   2: [0.5, 1, 1.5, 2, 3, 4.5, 6, 8].map((item) => item / 1),
 };
 let MODE = 1;
-const INCREASE_FI_LIST = MODE_RATIO[2].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = MODE_RATIO[1].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 
 let modeChange = false;
