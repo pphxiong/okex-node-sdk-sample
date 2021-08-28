@@ -701,6 +701,13 @@ const checkDeal = async (data, isAutoReset = true) => {
         : fiIndex;
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
 
+    if (MODE == 2) {
+      longCondition = 52;
+      shortCondition = 46;
+    } else {
+      longCondition = 48;
+      shortCondition = 48;
+    }
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
@@ -753,29 +760,29 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    // if (
-    //   MODE == 1 &&
-    //   ((closeLongCondition && longRatio > WIN_MAX * 2) ||
-    //     (closeShortCondition && shortRatio > WIN_MAX * 2))
-    // ) {
-    //   MODE = 2;
-    // }
+    if (
+      MODE == 1 &&
+      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+        (closeShortCondition && shortRatio > WIN_MAX * 2))
+    ) {
+      MODE = 2;
+    }
 
-    // if (MODE == 2) {
-    //   if (openShortCondition && shortRatio < LOSS_MAX * 1) {
-    //     openShortCondition = false;
-    //     closeShortCondition = true;
-    //     openLongCondition = true;
-    //     closeLongCondition = false;
-    //     MODE = 1;
-    //   } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
-    //     openShortCondition = true;
-    //     closeShortCondition = false;
-    //     openLongCondition = false;
-    //     closeLongCondition = true;
-    //     MODE = 1;
-    //   }
-    // }
+    if (MODE == 2) {
+      if (openShortCondition && shortRatio < LOSS_MAX * 1) {
+        openShortCondition = false;
+        closeShortCondition = true;
+        openLongCondition = true;
+        closeLongCondition = false;
+        MODE = 1;
+      } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
+        openShortCondition = true;
+        closeShortCondition = false;
+        openLongCondition = false;
+        closeLongCondition = true;
+        MODE = 1;
+      }
+    }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
