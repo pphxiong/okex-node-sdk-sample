@@ -706,7 +706,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > longCondition &&
-      (shortRatio < LOSS_MAX || shortRatio == 0);
+      (shortRatio < LOSS_MAX || shortRatio >= 0);
     // && !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
@@ -714,7 +714,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition &&
-      (longRatio < LOSS_MAX || longRatio == 0);
+      (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
     const MAIN_OPEN_LONG_CONDITION1 =
