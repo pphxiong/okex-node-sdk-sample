@@ -756,34 +756,34 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if (
-      MODE == 1 &&
-      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
-        (closeShortCondition && shortRatio > WIN_MAX * 2))
-    ) {
-      MODE = 2;
-    }
+    // if (
+    //   MODE == 1 &&
+    //   ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+    //     (closeShortCondition && shortRatio > WIN_MAX * 2))
+    // ) {
+    //   MODE = 2;
+    // }
 
-    if (MODE == 2) {
-      MODE2_NUM++;
-      if (MODE2_NUM >= 72) {
-        MODE == 1;
-        MODE2_NUM = 0;
-      }
-      // if (openShortCondition && shortRatio < LOSS_MAX * 1) {
-      //   openShortCondition = false;
-      //   closeShortCondition = true;
-      //   openLongCondition = true;
-      //   closeLongCondition = false;
-      //   MODE = 1;
-      // } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
-      //   openShortCondition = true;
-      //   closeShortCondition = false;
-      //   openLongCondition = false;
-      //   closeLongCondition = true;
-      //   MODE = 1;
-      // }
-    }
+    // if (MODE == 2) {
+    //   MODE2_NUM++;
+    //   if (MODE2_NUM >= 72) {
+    //     MODE == 1;
+    //     MODE2_NUM = 0;
+    //   }
+    //   // if (openShortCondition && shortRatio < LOSS_MAX * 1) {
+    //   //   openShortCondition = false;
+    //   //   closeShortCondition = true;
+    //   //   openLongCondition = true;
+    //   //   closeLongCondition = false;
+    //   //   MODE = 1;
+    //   // } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
+    //   //   openShortCondition = true;
+    //   //   closeShortCondition = false;
+    //   //   openLongCondition = false;
+    //   //   closeLongCondition = true;
+    //   //   MODE = 1;
+    //   // }
+    // }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
