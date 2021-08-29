@@ -22,7 +22,7 @@ const BAO_RATIO = -0.85;
 const CAPITAL_RATIO = 3;
 const MODE_RATIO = {
   1: [1, 1.5, 5, 4.5, 3, 6],
-  2: [1],
+  2: [1, 1.5, 5, 4.5, 3, 6],
 };
 let MODE = 1;
 let MODE2_NUM = 0;
