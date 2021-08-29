@@ -735,11 +735,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION2 =
       MAIN_OPEN_SHORT_CONDITION ||
-      (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
+      ifMacdPositiveContinuity ||
       shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION2 =
       MAIN_OPEN_LONG_CONDITION ||
-      (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
+      ifMacdNegativeContinuity ||
       longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;

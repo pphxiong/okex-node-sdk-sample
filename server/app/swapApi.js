@@ -403,7 +403,8 @@ const checkDeal = async (data) => {
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION) ||
-      (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
+      ifMacdPositiveContinuity ||
+      // && shortRatio > WIN_MAX * 2
       shortRatio < BAO_RATIO;
 
     const MAIN_OPEN_SHORT_CONDITION =
@@ -411,7 +412,8 @@ const checkDeal = async (data) => {
         rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
         rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION) ||
-      (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
+      ifMacdNegativeContinuity ||
+      // && longRatio > WIN_MAX * 2
       longRatio < BAO_RATIO;
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
