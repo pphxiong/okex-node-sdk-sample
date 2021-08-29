@@ -378,11 +378,11 @@ const checkDeal = async (data) => {
     });
 
     let fiIndex;
-    if (longHolding) {
+    if (longHolding && Math.abs(Number(longHolding.positionAmt)) > 0) {
       fiIndex = INCREASE_FI_LIST.findIndex(
         (item) => longHolding && item == Number(longHolding.positionAmt)
       );
-    } else if (shortHolding) {
+    } else if (shortHolding && Math.abs(Number(shortHolding.positionAmt)) > 0) {
       fiIndex = INCREASE_FI_LIST.findIndex(
         (item) => shortHolding && item == Number(shortHolding.positionAmt)
       );
