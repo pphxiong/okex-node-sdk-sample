@@ -702,13 +702,6 @@ const checkDeal = async (data, isAutoReset = true) => {
         : fiIndex;
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
 
-    if (MODE == 2) {
-      longCondition = 53;
-      shortCondition = 43;
-    } else {
-      longCondition = 48;
-      shortCondition = 48;
-    }
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
