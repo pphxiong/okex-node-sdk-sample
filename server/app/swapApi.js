@@ -382,22 +382,6 @@ const checkDeal = async (data) => {
       );
     });
 
-    let fiIndex;
-    if (longHolding && Math.abs(Number(longHolding.positionAmt)) > 0) {
-      fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => longHolding && item == Number(longHolding.positionAmt)
-      );
-    } else if (shortHolding && Math.abs(Number(shortHolding.positionAmt)) > 0) {
-      fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => shortHolding && item == Number(shortHolding.positionAmt)
-      );
-    }
-    fiIndex =
-      fiIndex == INCREASE_FI_LIST.length - 1
-        ? INCREASE_FI_LIST.length - 2
-        : fiIndex;
-    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
-
     const MAIN_OPEN_LONG_CONDITION =
       (Number(macdList[macdList.length - 1].column) > 0 &&
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
@@ -499,6 +483,14 @@ const checkDeal = async (data) => {
           // && (!shortHolding || !Number(shortHolding.positionAmt))
         ) {
           // await closeShortPosition()
+          let fiIndex;
+          fiIndex = INCREASE_FI_LIST.findIndex(
+            (item) => shortHolding && item == Number(shortHolding.positionAmt)
+          );
+          fiIndex =
+            fiIndex == INCREASE_FI_LIST.length - 1
+              ? INCREASE_FI_LIST.length - 2
+              : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
@@ -532,6 +524,14 @@ const checkDeal = async (data) => {
           !Number(shortHolding.positionAmt)
         ) {
           // await closeLongPosition();
+          let fiIndex;
+          fiIndex = INCREASE_FI_LIST.findIndex(
+            (item) => longHolding && item == Number(longHolding.positionAmt)
+          );
+          fiIndex =
+            fiIndex == INCREASE_FI_LIST.length - 1
+              ? INCREASE_FI_LIST.length - 2
+              : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
