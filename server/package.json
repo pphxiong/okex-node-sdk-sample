@@ -11,9 +11,8 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start startBN.js --env=production",
+    "start": "pm2 start startBN.js --env=manul",
     "start:product": "pm2 start startProduct.js --env=manul",
-    "start:bn": "pm2 start startBN.js --env=manul",
     "start:all": "pm2 start startBN.js && pm2 start startProduct.js",
     "restart": "pm2 restart 0",
     "restart:product": "pm2 restart 1",
@@ -23,8 +22,6 @@
     "stop:product": "pm2 delete 1",
     "stop:bn": "pm2 delete 2",
     "stop:all": "pm2 delete all",
-    "start:normal": "babel-node start.js --env=production",
-    "start:pm2": "pm2 start ecosystem.config.js --env=production --interpreter babel-node",
     "log": "pm2 log 0",
     "log:product": "pm2 log 1",
     "log:bn": "pm2 log 2"
