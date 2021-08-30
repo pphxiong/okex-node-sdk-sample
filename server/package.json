@@ -11,10 +11,10 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start start.js --env=production",
+    "start": "pm2 start startBN.js --env=production",
     "start:product": "pm2 start startProduct.js --env=manul",
     "start:bn": "pm2 start startBN.js --env=manul",
-    "start:all": "pm2 start start.js && pm2 start startProduct.js && pm2 start startBN.js",
+    "start:all": "pm2 start startBN.js && pm2 start startProduct.js",
     "restart": "pm2 restart 0",
     "restart:product": "pm2 restart 1",
     "restart:bn": "pm2 restart 2",
