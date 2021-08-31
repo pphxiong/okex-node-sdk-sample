@@ -753,7 +753,6 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
-
     // if (
     //   MODE == 1 &&
     //   ((closeLongCondition && longRatio > WIN_MAX * 2) ||
