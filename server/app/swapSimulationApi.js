@@ -21,7 +21,7 @@ const BAO_RATIO = -0.85;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
 const MODE_RATIO = {
-  1: [0.5, 0.6, 1, 1.5, 2, 3, 4, 5, 6],
+  1: [1, 1.5, 2, 3.5, 5.5, 6.5],
   2: [1, 1.5, 5, 4.5, 3, 6],
 };
 let MODE = 1;
@@ -726,8 +726,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       MAIN_OPEN_SHORT_CONDITION ||
       ifMacdNegativeContinuity /* && longRatio > WIN_MAX * 2 */ ||
       longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
