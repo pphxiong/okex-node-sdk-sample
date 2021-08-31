@@ -724,14 +724,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION2 =
       MAIN_OPEN_SHORT_CONDITION ||
-      // ifMacdPositiveContinuity ||
+      ifMacdPositiveContinuity ||
       shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION2 =
       MAIN_OPEN_LONG_CONDITION ||
-      // ifMacdNegativeContinuity ||
+      ifMacdNegativeContinuity ||
       longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2 || ifMacdNegativeContinuity;
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2 || ifMacdPositiveContinuity;
+    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
+    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     modeChange = false;
     let openLongCondition =
@@ -757,7 +757,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         fiIndex == INCREASE_FI_LIST.length - 1
             ? INCREASE_FI_LIST.length - 2
             : fiIndex;
-    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
+    if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = 2;
 
     // if (
     //   MODE == 1 &&
@@ -939,6 +939,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (closeLongCondition) {
       try {
         closeLong();
+        MODE = 1
       } catch (e) {
         console.log(e);
       }
@@ -948,6 +949,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (closeShortCondition) {
       try {
         closeShort();
+        MODE = 1
       } catch (e) {
         console.log(e);
       }
