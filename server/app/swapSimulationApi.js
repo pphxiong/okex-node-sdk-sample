@@ -22,11 +22,11 @@ const BAO_RATIO = -0.85;
 const CAPITAL_RATIO = 3;
 const MODE_RATIO = {
   1: [1, 1.5, 2, 3.5, 5.5, 6.5],
-  2: [1, 1.5, 5, 4.5, 3, 6],
+  2: [1, 1.5, 2, 3.5, 5.5, 6.5],
 };
-let MODE = 1;
+let MODE = 2;
 let MODE2_NUM = 0;
-const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
+const INCREASE_FI_LIST = MODE_RATIO[1].map((item) => item * CAPITAL_RATIO);
 const INIT_POSITION = INCREASE_FI_LIST[0];
 
 let modeChange = false;
@@ -753,11 +753,15 @@ const checkDeal = async (data, isAutoReset = true) => {
     let fiIndex = INCREASE_FI_LIST.findIndex(
         (item) => holding && item == Number(holding.positionAmt)
     );
-    fiIndex =
-        fiIndex == INCREASE_FI_LIST.length - 1
-            ? INCREASE_FI_LIST.length - 2
-            : fiIndex;
-    if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = 2;
+    if(fiIndex == INCREASE_FI_LIST.length - 1){
+      MODE = MODE == 1 ? 2 : 1;
+      fiIndex = -1
+    }
+    // fiIndex =
+    //     fiIndex == INCREASE_FI_LIST.length - 1
+    //         ? INCREASE_FI_LIST.length - 2
+    //         : fiIndex;
+    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = 2;
 
     // if (
     //   MODE == 1 &&
@@ -939,7 +943,6 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (closeLongCondition) {
       try {
         closeLong();
-        MODE = 1
       } catch (e) {
         console.log(e);
       }
@@ -949,7 +952,6 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (closeShortCondition) {
       try {
         closeShort();
-        MODE = 1
       } catch (e) {
         console.log(e);
       }
