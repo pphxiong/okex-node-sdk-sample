@@ -21,7 +21,7 @@ const BAO_RATIO = -0.85;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
 const MODE_RATIO = {
-  1: [0.5, 1, 1.5, 2, 3.5, 5.5, 6.5],
+  1: [0.5, 0.6, 1, 1.5, 2, 3.5, 5.5, 6.5],
   2: [1, 1.5, 5, 4.5, 3, 6],
 };
 let MODE = 1;
@@ -678,8 +678,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-6);
-    const latestRsiList = rsiList.slice(-6);
+    const latestMacdList = macdList.slice(-4);
+    const latestRsiList = rsiList.slice(-4);
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
