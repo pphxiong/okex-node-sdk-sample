@@ -21,7 +21,7 @@ const BAO_RATIO = -0.85;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
 const MODE_RATIO = {
-  1: [1, 1,2, 1,4, 1.6, 1.8, 2, 4, 4.2, 4.4, 4.6, 4.8, 5, 6, 6.2, 6.4, 6.6, 6.8, 7],
+  1: [1, 1.5, 2, 2.5, 3, 4, 4.5, 5, 5.5, 6],
   2: [1, 1.5, 2, 3.5, 5.5, 6.5],
 };
 const DEFAULT_MODE = 1;
