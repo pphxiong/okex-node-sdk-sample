@@ -617,11 +617,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (longPosition && longPosition.positionAmt) {
       longHolding = longPosition;
-      holding = longHolding;
+      // holding = longHolding;
     }
     if (shortPosition && shortPosition.positionAmt) {
       shortHolding = shortPosition;
-      holding = shortHolding;
+      // holding = shortHolding;
     }
 
     if (longHolding) {
@@ -693,15 +693,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       );
     });
 
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-      (item) => holding && item == Number(holding.positionAmt)
-    );
-    fiIndex =
-      fiIndex == INCREASE_FI_LIST.length - 1
-        ? INCREASE_FI_LIST.length - 2
-        : fiIndex;
-    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
-
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
@@ -753,6 +744,21 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
+
+    if(openLongCondition) {
+      holding = shortHolding
+    }else if(openShortCondition) {
+      holding = longHolding
+    }
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+        (item) => holding && item == Number(holding.positionAmt)
+    );
+    fiIndex =
+        fiIndex == INCREASE_FI_LIST.length - 1
+            ? INCREASE_FI_LIST.length - 2
+            : fiIndex;
+    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) fiIndex = -1;
+
     // if (
     //   MODE == 1 &&
     //   ((closeLongCondition && longRatio > WIN_MAX * 2) ||
