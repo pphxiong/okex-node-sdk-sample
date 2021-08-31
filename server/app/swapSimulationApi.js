@@ -755,12 +755,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     );
     if(fiIndex == INCREASE_FI_LIST.length - 1){
       MODE = MODE == 1 ? 2 : 1;
-      fiIndex = -1
     }
-    // fiIndex =
-    //     fiIndex == INCREASE_FI_LIST.length - 1
-    //         ? INCREASE_FI_LIST.length - 2
-    //         : fiIndex;
+    fiIndex =
+        fiIndex == INCREASE_FI_LIST.length - 1
+            ? INCREASE_FI_LIST.length - 2
+            : fiIndex;
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = 2;
 
     // if (
