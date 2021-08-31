@@ -877,10 +877,10 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-          if (isForceDeal || ifIgnore) {
+          // if (isForceDeal || ifIgnore) {
             longHolding = {};
             longPosition = {};
-          }
+          // }
           maxWinRatio = 0;
           longPatchNum = 0;
         }
@@ -919,10 +919,10 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-          if (isForceDeal || ifIgnore) {
+          // if (isForceDeal || ifIgnore) {
             shortHolding = {};
             shortPosition = {};
-          }
+          // }
           maxWinRatio = 0;
           shortPatchNum = 0;
         }
@@ -990,8 +990,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             MODE,
           };
           dealDetailList.push(dealDetail);
-          shortHolding = {};
-          shortPosition = {};
+          // shortHolding = {};
+          // shortPosition = {};
           totalProfit += -0.038 * 0.01 * LEVERAGE;
           totalPosition += openPositionAmt;
           // if(ratio < LOSS_MAX * 1) MODE = MODE == 1 ? 2 : 1
@@ -1045,8 +1045,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             MODE,
           };
           dealDetailList.push(dealDetail);
-          longHolding = {};
-          longPosition = {};
+          // longHolding = {};
+          // longPosition = {};
           totalProfit += -0.038 * 0.01 * LEVERAGE;
           totalPosition += openPositionAmt;
           // if(ratio < LOSS_MAX * 1) MODE = MODE == 1 ? 2 : 1
