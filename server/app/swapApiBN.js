@@ -11,7 +11,7 @@ const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [0.5, 1, 1.5, 2, 3.5, 5.5, 6.5].map(
+const INCREASE_FI_LIST = [1, 1.5, 2, 3.5, 5.5, 6.5].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = CAPITAL_RATIO;
@@ -383,47 +383,51 @@ const checkDeal = async (data) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      (Number(macdList[macdList.length - 1].column) > 0 &&
+        Number(macdList[macdList.length - 1].column) > 0 &&
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-        rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION) ||
-      ifMacdPositiveContinuity ||
-      // && shortRatio > WIN_MAX * 2
-      shortRatio < BAO_RATIO;
+        rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      (Number(macdList[macdList.length - 1].column) < 0 &&
+        Number(macdList[macdList.length - 1].column) < 0 &&
         rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
         rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-        rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION) ||
-      ifMacdNegativeContinuity ||
-      // && longRatio > WIN_MAX * 2
-      longRatio < BAO_RATIO;
+        rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
+
+    const MAIN_OPEN_LONG_CONDITION1 =
+        MAIN_OPEN_LONG_CONDITION ||
+        ifMacdPositiveContinuity /* && shortRatio > WIN_MAX * 2 */ ||
+        shortRatio < BAO_RATIO;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+        MAIN_OPEN_SHORT_CONDITION ||
+        ifMacdNegativeContinuity /* && longRatio > WIN_MAX * 2 */ ||
+        longRatio < BAO_RATIO;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+
+    const MAIN_OPEN_LONG_CONDITION2 =
+        MAIN_OPEN_SHORT_CONDITION ||
+        ifMacdPositiveContinuity ||
+        shortRatio < BAO_RATIO;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+        MAIN_OPEN_LONG_CONDITION ||
+        ifMacdNegativeContinuity ||
+        longRatio < BAO_RATIO;
+    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
+    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+
+    const openLongCondition =
+        MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
+    const openShortCondition =
+        MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
+    const closeLongCondition =
+        (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2)
+    const closeShortCondition =
+        (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2)
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const hmsArr = currentTime.split(' ')[1].split(':');
     if (hmsArr[0] == '00' && hmsArr[1] == '00') isForceDeal = true;
-
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
-
-    const MAIN_CLOSE_LONG_CONDITION = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_SHORT_CONDITION = MAIN_OPEN_LONG_CONDITION;
-
-    const openLongCondition =
-      MODE == 1 ? MAIN_OPEN_LONG_CONDITION : MAIN_OPEN_LONG_CONDITION2;
-    const openShortCondition =
-      MODE == 1 ? MAIN_OPEN_SHORT_CONDITION : MAIN_OPEN_SHORT_CONDITION2;
-
-    const closeLongCondition =
-      MODE == 1 ? MAIN_CLOSE_LONG_CONDITION : MAIN_CLOSE_LONG_CONDITION2;
-    // || isForceDeal
-
-    const closeShortCondition =
-      MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION : MAIN_CLOSE_SHORT_CONDITION2;
-    // || isForceDeal
 
     console.log('************************************', currentTime);
     console.log('------------------');
