@@ -618,11 +618,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (longPosition && longPosition.positionAmt) {
       longHolding = longPosition;
-      // holding = longHolding;
+      holding = longHolding;
     }
     if (shortPosition && shortPosition.positionAmt) {
       shortHolding = shortPosition;
-      // holding = shortHolding;
+      holding = shortHolding;
     }
 
     if (longHolding) {
