@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.85;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const DEFAULT_POSITION_RATIO_LIST = [1, 1.1, 2, 3, 5, 8, 13, 21, 34].map(item=> item / 2)
+const DEFAULT_POSITION_RATIO_LIST = [1,1.2, 2, 3, 5, 8, 13, 21, 34, 55].map(item => item / 2)
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 2.5, 4, 5.5, 6.5],
