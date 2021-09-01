@@ -679,8 +679,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-6);
-    const latestRsiList = rsiList.slice(-6);
+    const latestMacdList = macdList.slice(-3);
+    const latestRsiList = rsiList.slice(-3);
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
@@ -710,13 +710,21 @@ const checkDeal = async (data, isAutoReset = true) => {
     // (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+        (item) => holding && item == Number(holding.positionAmt)
+    );
+    fiIndex =
+        fiIndex == INCREASE_FI_LIST.length - 1
+            ? INCREASE_FI_LIST.length - 2
+            : fiIndex;
+
     const MAIN_OPEN_LONG_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
-      ifMacdPositiveContinuity /* && shortRatio > WIN_MAX * 2 */ ||
+      (ifMacdPositiveContinuity && (shortRatio > WIN_MAX * 2 || fiIndex >= INCREASE_FI_LIST.length - 4)) ||
       shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
-      ifMacdNegativeContinuity /* && longRatio > WIN_MAX * 2 */ ||
+      (ifMacdNegativeContinuity && (longRatio > WIN_MAX * 2 || fiIndex >= INCREASE_FI_LIST.length - 4))  ||
       longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
@@ -751,13 +759,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     }else if(openShortCondition) {
       holding = longHolding
     }
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => holding && item == Number(holding.positionAmt)
-    );
-    fiIndex =
-        fiIndex == INCREASE_FI_LIST.length - 1
-            ? INCREASE_FI_LIST.length - 2
-            : fiIndex;
+
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = MODE == 1 ? 2 : 1;
 
     // if (
