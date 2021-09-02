@@ -460,7 +460,7 @@ const checkDeal = async (data) => {
             )
         )
     ){
-      // MODE = 1
+      MODE = 1
     }
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
