@@ -23,9 +23,9 @@ const CAPITAL_RATIO = 3;
 const DEFAULT_POSITION_RATIO_LIST = [1, 1.5, 5, 4.5, 3, 6]
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
-  2: [1, 1.5, 2.5, 4, 5.5, 6.5],
+  2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 1;
+const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
@@ -733,13 +733,21 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
-      MAIN_OPEN_SHORT_CONDITION ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
-        // || shortRatio < BAO_RATIO;
+        Number(macdList[macdList.length - 1].column) < 0 &&
+        (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+        || (
+            Number(macdList[macdList.length - 1].column) > 0 &&
+            (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+        )
+
     const MAIN_OPEN_SHORT_CONDITION2 =
-      MAIN_OPEN_LONG_CONDITION ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
-        // || longRatio < BAO_RATIO;
+        Number(macdList[macdList.length - 1].column) > 0 &&
+        (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
+        || (
+            Number(macdList[macdList.length - 1].column) < 0 &&
+            (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
+        )
+
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
@@ -763,34 +771,30 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = MODE == 1 ? 2 : 1;
 
-    // if (
-    //   MODE == 1 &&
-    //   ((closeLongCondition && longRatio > WIN_MAX * 2) ||
-    //     (closeShortCondition && shortRatio > WIN_MAX * 2))
-    // ) {
-    //   MODE = 2;
-    // }
+    if (
+      MODE == 1 &&
+      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+        (closeShortCondition && shortRatio > WIN_MAX * 2))
+    ) {
+      MODE = 2;
+    }
 
-    // if (MODE == 2) {
-    //   MODE2_NUM++;
-    //   if (MODE2_NUM >= 72) {
-    //     MODE == 1;
-    //     MODE2_NUM = 0;
-    //   }
-    //   // if (openShortCondition && shortRatio < LOSS_MAX * 1) {
-    //   //   openShortCondition = false;
-    //   //   closeShortCondition = true;
-    //   //   openLongCondition = true;
-    //   //   closeLongCondition = false;
-    //   //   MODE = 1;
-    //   // } else if (openLongCondition && longRatio < LOSS_MAX * 1) {
-    //   //   openShortCondition = true;
-    //   //   closeShortCondition = false;
-    //   //   openLongCondition = false;
-    //   //   closeLongCondition = true;
-    //   //   MODE = 1;
-    //   // }
-    // }
+    if(MODE == 2 &&
+       (
+          (closeLongCondition && (
+           Number(macdList[macdList.length - 1].column) > 0 &&
+           (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+          ))
+           || (closeShortCondition && (
+              (
+                  Number(macdList[macdList.length - 1].column) > 0 &&
+                  (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+              )
+          ))
+       )
+    ){
+      MODE = 1
+    }
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
