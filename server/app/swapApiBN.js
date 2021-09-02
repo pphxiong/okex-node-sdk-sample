@@ -381,14 +381,18 @@ const checkDeal = async (data) => {
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      if(index) return true;
+      if(index) return latestMacdList[index] > 0;
       return (
+          latestMacdList[index] > 0
+          &&
           latestMacdList[index].column > latestMacdList[index-1].column
       );
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-      if(index) return true;
+      if(index) return latestMacdList[index] < 0;
       return (
+          latestMacdList[index] < 0
+          &&
           latestMacdList[index].column < latestMacdList[index-1].column
       );
     });
@@ -419,20 +423,14 @@ const checkDeal = async (data) => {
          Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
         )
         ||
-        (Number(macdList[macdList.length - 1].column) > 0 &&
-            Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
-            && ifMacdPositiveContinuity
-        ))
+        ifMacdPositiveContinuity)
 
     const MAIN_OPEN_SHORT_CONDITION2 =
         ((Number(macdList[macdList.length - 1].column) > 0 &&
             Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
         )
         ||
-        (Number(macdList[macdList.length - 1].column) < 0 &&
-            Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
-            && ifMacdNegativeContinuity
-        ))
+        ifMacdNegativeContinuity)
 
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
@@ -457,12 +455,8 @@ const checkDeal = async (data) => {
 
     if(MODE == 2 &&
         (
-            (closeLongCondition &&
-                ifMacdPositiveContinuity
-            )
-            || (closeShortCondition &&
-                ifMacdNegativeContinuity
-            )
+            (closeLongCondition && ifMacdNegativeContinuity)
+            || (closeShortCondition && ifMacdPositiveContinuity)
         )
     ){
       MODE = 1
