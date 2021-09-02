@@ -735,18 +735,18 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_LONG_CONDITION2 =
         Number(macdList[macdList.length - 1].column) < 0 &&
         (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
-        || (
-            Number(macdList[macdList.length - 1].column) > 0 &&
-            (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
-        )
+        // || (
+        //     Number(macdList[macdList.length - 1].column) > 0 &&
+        //     (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+        // )
 
     const MAIN_OPEN_SHORT_CONDITION2 =
         Number(macdList[macdList.length - 1].column) > 0 &&
         (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
-        || (
-            Number(macdList[macdList.length - 1].column) < 0 &&
-            (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
-        )
+        // || (
+        //     Number(macdList[macdList.length - 1].column) < 0 &&
+        //     (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
+        // )
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
