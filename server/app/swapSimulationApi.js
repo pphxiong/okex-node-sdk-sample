@@ -25,7 +25,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 2;
+const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
@@ -736,7 +736,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         MAIN_OPEN_SHORT_CONDITION ||
         (Number(macdList[macdList.length - 1].column) > 0 &&
             rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3) &&
-            (longRatio == 0 || shortRatio < LOSS_MAX)
+            shortRatio < LOSS_MAX
         ||
         (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
 
@@ -744,7 +744,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         MAIN_OPEN_LONG_CONDITION ||
         (Number(macdList[macdList.length - 1].column) < 0 &&
         rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-        (shortRatio == 0 || longRatio < LOSS_MAX))
+        longRatio < LOSS_MAX)
         ||
         (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
 
