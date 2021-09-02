@@ -9,9 +9,8 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
-const BAO_RATIO = -0.95;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1, 2, 5, 4, 3, 6.5].map(
+const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = CAPITAL_RATIO;
@@ -396,23 +395,19 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
         MAIN_OPEN_LONG_CONDITION ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2) ||
-        shortRatio < BAO_RATIO;
+        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
     const MAIN_OPEN_SHORT_CONDITION1 =
         MAIN_OPEN_SHORT_CONDITION ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2) ||
-        longRatio < BAO_RATIO;
+        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
         MAIN_OPEN_SHORT_CONDITION ||
-        ifMacdPositiveContinuity ||
-        shortRatio < BAO_RATIO;
+        ifMacdPositiveContinuity
     const MAIN_OPEN_SHORT_CONDITION2 =
         MAIN_OPEN_LONG_CONDITION ||
-        ifMacdNegativeContinuity ||
-        longRatio < BAO_RATIO;
+        ifMacdNegativeContinuity
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
