@@ -782,10 +782,13 @@ const checkDeal = async (data, isAutoReset = true) => {
           (closeLongCondition &&
               (Number(macdList[macdList.length - 1].column) < 0 &&
                   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3)
+                  && longRatio < LOSS_MAX
           )
            || (closeShortCondition &&
                   (Number(macdList[macdList.length - 1].column) > 0 &&
-                      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3)
+                      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3
+                      && shortRatio < LOSS_MAX
+                  )
           )
        )
     ){
