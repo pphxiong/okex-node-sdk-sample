@@ -682,16 +682,32 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const latestMacdList = macdList.slice(-4);
     const latestRsiList = rsiList.slice(-4);
-    let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
+    let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
-        latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
-        latestRsiList[index].RSI3 > longCondition
+          latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
+          latestRsiList[index].RSI3 > LONG_CONDITION
+      );
+    });
+    let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
+      return (
+          latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
+          latestRsiList[index].RSI3 < SHORT_CONDITION
+      );
+    });
+    let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
+      if(index) return latestMacdList[index] > 0;
+      return (
+          latestMacdList[index] > 0
+          &&
+          latestMacdList[index].column > latestMacdList[index-1].column
       );
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
+      if(index) return latestMacdList[index] < 0;
       return (
-        latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
-        latestRsiList[index].RSI3 < shortCondition
+          latestMacdList[index] < 0
+          &&
+          latestMacdList[index].column < latestMacdList[index-1].column
       );
     });
 
@@ -721,11 +737,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
-      (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
+      (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2)
         // || shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
-      (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
+      (ifRSINegativeContinuity && longRatio > WIN_MAX * 2)
         // || longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1 /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1 /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/;
@@ -733,20 +749,18 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
-        MAIN_OPEN_SHORT_CONDITION ||
-        (Number(macdList[macdList.length - 1].column) > 0 &&
-            rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3) &&
-            shortRatio < LOSS_MAX
-        ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
+        ((Number(macdList[macdList.length - 1].column) < 0 &&
+                Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
+            )
+            ||
+            ifMacdPositiveContinuity)
 
     const MAIN_OPEN_SHORT_CONDITION2 =
-        MAIN_OPEN_LONG_CONDITION ||
-        (Number(macdList[macdList.length - 1].column) < 0 &&
-        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-        longRatio < LOSS_MAX)
-        ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
+        ((Number(macdList[macdList.length - 1].column) > 0 &&
+                Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
+            )
+            ||
+            ifMacdNegativeContinuity)
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
@@ -769,8 +783,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       holding = longHolding
     }
 
-    // if (ifMacdPositiveContinuity || ifMacdNegativeContinuity) MODE = MODE == 1 ? 2 : 1;
-
     if (
       MODE == 1 &&
       ((closeLongCondition && longRatio > WIN_MAX * 2) ||
@@ -780,19 +792,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     if(MODE == 2 &&
-       (
-          (closeLongCondition &&
-              (Number(macdList[macdList.length - 1].column) < 0 &&
-                  rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3)
-                  && longRatio < LOSS_MAX
-          )
-           || (closeShortCondition &&
-                  (Number(macdList[macdList.length - 1].column) > 0 &&
-                      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3
-                      && shortRatio < LOSS_MAX
-                  )
-          )
-       )
+        (
+            (closeLongCondition && ifMacdNegativeContinuity)
+            || (closeShortCondition && ifMacdPositiveContinuity)
+        )
     ){
       MODE = 1
     }
