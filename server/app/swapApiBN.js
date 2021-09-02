@@ -409,9 +409,8 @@ const checkDeal = async (data) => {
         ||
         (Number(macdList[macdList.length - 1].column) > 0 &&
             Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
+            && ifMacdPositiveContinuity
         ))
-        ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
 
     const MAIN_OPEN_SHORT_CONDITION2 =
         ((Number(macdList[macdList.length - 1].column) > 0 &&
@@ -420,9 +419,9 @@ const checkDeal = async (data) => {
         ||
         (Number(macdList[macdList.length - 1].column) < 0 &&
             Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
+            && ifMacdNegativeContinuity
         ))
-        ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
+
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
