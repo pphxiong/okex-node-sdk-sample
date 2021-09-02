@@ -779,18 +779,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if(MODE == 2 &&
        (
-          (closeLongCondition && (
+          (closeLongCondition &&
               (Number(macdList[macdList.length - 1].column) < 0 &&
                   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3)
-              ||
-              (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
-          ))
-           || (closeShortCondition && (
-              (
+          )
+           || (closeShortCondition &&
                   (Number(macdList[macdList.length - 1].column) > 0 &&
                       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3)
-              )
-          ))
+          )
        )
     ){
       MODE = 1
