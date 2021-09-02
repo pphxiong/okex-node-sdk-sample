@@ -735,14 +735,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_LONG_CONDITION2 =
         MAIN_OPEN_SHORT_CONDITION ||
         (Number(macdList[macdList.length - 1].column) > 0 &&
-            rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3)
+            rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3) &&
+            (longRatio == 0 || shortRatio < LOSS_MAX)
         ||
         (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
 
     const MAIN_OPEN_SHORT_CONDITION2 =
         MAIN_OPEN_LONG_CONDITION ||
         (Number(macdList[macdList.length - 1].column) < 0 &&
-        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3)
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        (shortRatio == 0 || longRatio < LOSS_MAX))
         ||
         (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
 
