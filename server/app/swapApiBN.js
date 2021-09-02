@@ -368,16 +368,28 @@ const checkDeal = async (data) => {
 
     const latestMacdList = macdList.slice(-4);
     const latestRsiList = rsiList.slice(-4);
-    let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
+    let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
         latestRsiList[index].RSI3 > LONG_CONDITION
       );
     });
-    let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
+    let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
         latestRsiList[index].RSI3 < SHORT_CONDITION
+      );
+    });
+    let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
+      if(index) return true;
+      return (
+          latestMacdList[index].column > latestMacdList[index-1].column
+      );
+    });
+    let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
+      if(index) return true;
+      return (
+          latestMacdList[index].column < latestMacdList[index-1].column
       );
     });
 
@@ -395,10 +407,10 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
         MAIN_OPEN_LONG_CONDITION ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
+        (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2)
     const MAIN_OPEN_SHORT_CONDITION1 =
         MAIN_OPEN_SHORT_CONDITION ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
+        (ifRSINegativeContinuity && longRatio > WIN_MAX * 2)
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
@@ -446,17 +458,10 @@ const checkDeal = async (data) => {
     if(MODE == 2 &&
         (
             (closeLongCondition &&
-                ((Number(macdList[macdList.length - 1].column) > 0 &&
-                        Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
-                        && ifMacdPositiveContinuity
-                    )
-                )
+                ifMacdPositiveContinuity
             )
             || (closeShortCondition &&
-                (Number(macdList[macdList.length - 1].column) < 0 &&
-                    Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
-                    && ifMacdNegativeContinuity
-                )
+                ifMacdNegativeContinuity
             )
         )
     ){
