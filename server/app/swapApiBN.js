@@ -403,11 +403,21 @@ const checkDeal = async (data) => {
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
-        MAIN_OPEN_SHORT_CONDITION ||
-        (ifMacdPositiveContinuity && shortRatio > WIN_MAX * 2)
+        Number(macdList[macdList.length - 1].column) < 0 &&
+        (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+        || (
+            Number(macdList[macdList.length - 1].column) > 0 &&
+            (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+        )
+
     const MAIN_OPEN_SHORT_CONDITION2 =
-        MAIN_OPEN_LONG_CONDITION ||
-        (ifMacdNegativeContinuity && longRatio > WIN_MAX * 2)
+        Number(macdList[macdList.length - 1].column) > 0 &&
+        (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
+        || (
+            Number(macdList[macdList.length - 1].column) < 0 &&
+            (Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column))
+        )
+
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
@@ -419,6 +429,31 @@ const checkDeal = async (data) => {
         (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2)
     const closeShortCondition =
         (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2)
+
+    if (
+        MODE == 1 &&
+        ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+            (closeShortCondition && shortRatio > WIN_MAX * 2))
+    ) {
+      MODE = 2;
+    }
+
+    if(MODE == 2 &&
+        (
+            (closeLongCondition && (
+                Number(macdList[macdList.length - 1].column) > 0 &&
+                (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+            ))
+            || (closeShortCondition && (
+                (
+                    Number(macdList[macdList.length - 1].column) > 0 &&
+                    (Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column))
+                )
+            ))
+        )
+    ){
+      MODE = 1
+    }
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const hmsArr = currentTime.split(' ')[1].split(':');
