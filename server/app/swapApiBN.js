@@ -446,13 +446,16 @@ const checkDeal = async (data) => {
     if(MODE == 2 &&
         (
             (closeLongCondition &&
-                (Number(macdList[macdList.length - 1].column) < 0 &&
-                    Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
+                ((Number(macdList[macdList.length - 1].column) > 0 &&
+                        Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
+                        && ifMacdPositiveContinuity
+                    )
                 )
             )
             || (closeShortCondition &&
-                (Number(macdList[macdList.length - 1].column) > 0 &&
-                    Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
+                (Number(macdList[macdList.length - 1].column) < 0 &&
+                    Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
+                    && ifMacdNegativeContinuity
                 )
             )
         )
