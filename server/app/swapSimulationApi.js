@@ -765,8 +765,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList[rsiList.length - 1].RSI3 > longCondition2) ||
         (ifRSINegativeContinuity && longRatio > WIN_MAX * 2)
 
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2 || longRatio > WIN_MAX;
+    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2 || shortRatio > WIN_MAX;
 
     modeChange = false;
     let openLongCondition =
@@ -786,19 +786,19 @@ const checkDeal = async (data, isAutoReset = true) => {
       holding = longHolding
     }
 
+    if(MODE == 2 && (
+        (openLongCondition && longRatio < LOSS_MAX ) ||
+        (openShortCondition && shortRatio < LOSS_MAX)
+    )){
+      MODE = 1;
+    }
+
     if (
         // MODE == 1 &&
         (closeLongCondition && longRatio > WIN_MAX * 2) ||
         (closeShortCondition && shortRatio > WIN_MAX * 2)
     ) {
       MODE = 2;
-    }
-
-    if(MODE == 2 && (
-        (openLongCondition && longRatio < LOSS_MAX * 2) ||
-        (openShortCondition && shortRatio < LOSS_MAX * 2)
-    )){
-      MODE = 1;
     }
 
     if (ifIgnore) {
