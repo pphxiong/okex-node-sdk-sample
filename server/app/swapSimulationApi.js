@@ -789,23 +789,15 @@ const checkDeal = async (data, isAutoReset = true) => {
     // }
 
     if (
-      // MODE == 1 &&
-      (closeLongCondition && longRatio > WIN_MAX * 2) ||
+      (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
       (closeShortCondition && shortRatio > WIN_MAX * 2)
     ) {
-      MODE = MODE == 1 ? 2 : 1;
+      ifIgnore = true;
     }
 
     if (ifIgnore) {
-      // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
-      //   MODE = MODE == 1 ? 2 : 1
-      // }
-      //
-      // if ((closeLongCondition && (longRatio > WIN_MAX * 4))
-      //     || (closeShortCondition && (shortRatio > WIN_MAX * 4))) {
-      //   MODE = MODE == 1 ? 2 : 1
-      //   modeChange = true
-      // }
+      openLongCondition = false;
+      openShortCondition = false;
 
       ignoreNum++;
       if (ignoreNum >= 72) {
