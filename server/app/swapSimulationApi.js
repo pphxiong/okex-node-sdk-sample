@@ -60,8 +60,8 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-let longCondition2 = 54;
-let shortCondition2 = 42;
+let longCondition2 = 52;
+let shortCondition2 = 52;
 
 let lastMode = 0;
 
