@@ -381,85 +381,79 @@ const checkDeal = async (data) => {
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      if(index) return latestMacdList[index] > 0;
+      if (index) return latestMacdList[index] > 0;
       return (
-          latestMacdList[index] > 0
-          &&
-          latestMacdList[index].column > latestMacdList[index-1].column
+        latestMacdList[index] > 0 &&
+        latestMacdList[index].column > latestMacdList[index - 1].column
       );
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-      if(index) return latestMacdList[index] < 0;
+      if (index) return latestMacdList[index] < 0;
       return (
-          latestMacdList[index] < 0
-          &&
-          latestMacdList[index].column < latestMacdList[index-1].column
+        latestMacdList[index] < 0 &&
+        latestMacdList[index].column < latestMacdList[index - 1].column
       );
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-        Number(macdList[macdList.length - 1].column) > 0 &&
-        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-        rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
+      Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION =
-        Number(macdList[macdList.length - 1].column) < 0 &&
-        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-        rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-        MAIN_OPEN_LONG_CONDITION ||
-        (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2)
+      MAIN_OPEN_LONG_CONDITION ||
+      (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
     const MAIN_OPEN_SHORT_CONDITION1 =
-        MAIN_OPEN_SHORT_CONDITION ||
-        (ifRSINegativeContinuity && longRatio > WIN_MAX * 2)
+      MAIN_OPEN_SHORT_CONDITION ||
+      (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
-        ((Number(macdList[macdList.length - 1].column) < 0 &&
-         Number(macdList[macdList.length - 2].column) < Number(macdList[macdList.length - 1].column)
-        )
-        ||
-        ifMacdPositiveContinuity)
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        Number(macdList[macdList.length - 2].column) <
+          Number(macdList[macdList.length - 1].column)) ||
+      ifMacdPositiveContinuity;
 
     const MAIN_OPEN_SHORT_CONDITION2 =
-        ((Number(macdList[macdList.length - 1].column) > 0 &&
-            Number(macdList[macdList.length - 2].column) > Number(macdList[macdList.length - 1].column)
-        )
-        ||
-        ifMacdNegativeContinuity)
-
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        Number(macdList[macdList.length - 2].column) >
+          Number(macdList[macdList.length - 1].column)) ||
+      ifMacdNegativeContinuity;
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     const openLongCondition =
-        MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
+      MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
     const openShortCondition =
-        MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
+      MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
     const closeLongCondition =
-        (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2)
+      MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     const closeShortCondition =
-        (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2)
+      MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (
-        MODE == 1 &&
-        ((closeLongCondition && longRatio > WIN_MAX * 2) ||
-            (closeShortCondition && shortRatio > WIN_MAX * 2))
+      MODE == 1 &&
+      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+        (closeShortCondition && shortRatio > WIN_MAX * 2))
     ) {
-      MODE = 2;
+      // MODE = 2;
     }
 
-    if(MODE == 2 &&
-        (
-            (closeLongCondition && ifMacdNegativeContinuity)
-            || (closeShortCondition && ifMacdPositiveContinuity)
-        )
-    ){
-      MODE = 1
+    if (
+      MODE == 2 &&
+      ((closeLongCondition && ifMacdNegativeContinuity) ||
+        (closeShortCondition && ifMacdPositiveContinuity))
+    ) {
+      MODE = 1;
     }
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');

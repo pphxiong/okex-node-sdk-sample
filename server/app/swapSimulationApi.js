@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1, 1.5, 5, 4.5, 3, 6]
+const DEFAULT_POSITION_RATIO_LIST = [1, 1.5, 5, 4.5, 3, 6];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -687,30 +687,28 @@ const checkDeal = async (data, isAutoReset = true) => {
     const latestRsiList = rsiList.slice(-4);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
-          latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
-          latestRsiList[index].RSI3 > longCondition
+        latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
+        latestRsiList[index].RSI3 > longCondition
       );
     });
     let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
       return (
-          latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
-          latestRsiList[index].RSI3 < shortCondition
+        latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
+        latestRsiList[index].RSI3 < shortCondition
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      if(index) return latestMacdList[index] > 0;
+      if (index) return latestMacdList[index] > 0;
       return (
-          latestMacdList[index] > 0
-          &&
-          latestMacdList[index].column > latestMacdList[index-1].column
+        latestMacdList[index] > 0 &&
+        latestMacdList[index].column > latestMacdList[index - 1].column
       );
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-      if(index) return latestMacdList[index] < 0;
+      if (index) return latestMacdList[index] < 0;
       return (
-          latestMacdList[index] < 0
-          &&
-          latestMacdList[index].column < latestMacdList[index-1].column
+        latestMacdList[index] < 0 &&
+        latestMacdList[index].column < latestMacdList[index - 1].column
       );
     });
 
@@ -731,34 +729,38 @@ const checkDeal = async (data, isAutoReset = true) => {
     // && !ifIgnore;
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
-        (item) => holding && item == Number(holding.positionAmt)
+      (item) => holding && item == Number(holding.positionAmt)
     );
     fiIndex =
-        fiIndex == INCREASE_FI_LIST.length - 1
-            ? INCREASE_FI_LIST.length - 2
-            : fiIndex;
+      fiIndex == INCREASE_FI_LIST.length - 1
+        ? INCREASE_FI_LIST.length - 2
+        : fiIndex;
 
     const MAIN_OPEN_LONG_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
-      (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2)
-        // || shortRatio < BAO_RATIO;
+      (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
+    // || shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
-      (ifRSINegativeContinuity && longRatio > WIN_MAX * 2)
-        // || longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1 /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/;
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1 /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/;
+      (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
+    // || longRatio < BAO_RATIO;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION1; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION1; /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
-        MAIN_OPEN_LONG_CONDITION1
+      MAIN_OPEN_SHORT_CONDITION ||
+      (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
 
     const MAIN_OPEN_SHORT_CONDITION2 =
-        MAIN_OPEN_SHORT_CONDITION1
+      MAIN_OPEN_LONG_CONDITION ||
+      (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2 || longRatio > WIN_MAX;
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2 || shortRatio > WIN_MAX;
+    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
+    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     modeChange = false;
     let openLongCondition =
@@ -772,23 +774,23 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
       isForceDeal;
 
-    if(openLongCondition) {
-      holding = shortHolding
-    }else if(openShortCondition) {
-      holding = longHolding
+    if (openLongCondition) {
+      holding = shortHolding;
+    } else if (openShortCondition) {
+      holding = longHolding;
     }
 
-    if(MODE == 2 && (
-        (closeLongCondition && longRatio < LOSS_MAX * 2) ||
-        (closeShortCondition && shortRatio < LOSS_MAX * 2)
-    )){
+    if (
+      (MODE == 2 && closeLongCondition && longRatio < LOSS_MAX * 2) ||
+      (closeShortCondition && shortRatio < LOSS_MAX * 2)
+    ) {
       MODE = 1;
     }
 
     if (
-        MODE == 1 &&
-        (closeLongCondition && longRatio > WIN_MAX * 2) ||
-        (closeShortCondition && shortRatio > WIN_MAX * 2)
+      MODE == 1 &&
+      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+        (closeShortCondition && shortRatio > WIN_MAX * 2))
     ) {
       MODE = 2;
     }
@@ -889,8 +891,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
           // if (isForceDeal || ifIgnore) {
-            longHolding = {};
-            longPosition = {};
+          longHolding = {};
+          longPosition = {};
           // }
           maxWinRatio = 0;
           longPatchNum = 0;
@@ -931,8 +933,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
           // if (isForceDeal || ifIgnore) {
-            shortHolding = {};
-            shortPosition = {};
+          shortHolding = {};
+          shortPosition = {};
           // }
           maxWinRatio = 0;
           shortPatchNum = 0;
