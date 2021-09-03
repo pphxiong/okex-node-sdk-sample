@@ -792,7 +792,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
       (closeShortCondition && shortRatio > WIN_MAX * 2)
     ) {
-      ifIgnore = true;
+      // ifIgnore = true;
     }
 
     if (ifIgnore) {

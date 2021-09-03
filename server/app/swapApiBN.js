@@ -431,9 +431,9 @@ const checkDeal = async (data) => {
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
-    const openLongCondition =
+    let openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
-    const openShortCondition =
+    let openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
     const closeLongCondition =
       MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
@@ -441,19 +441,11 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (
-      MODE == 1 &&
-      ((closeLongCondition && longRatio > WIN_MAX * 2) ||
-        (closeShortCondition && shortRatio > WIN_MAX * 2))
+      (closeLongCondition && longRatio > WIN_MAX * 4) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
-      // MODE = 2;
-    }
-
-    if (
-      MODE == 2 &&
-      ((closeLongCondition && ifMacdNegativeContinuity) ||
-        (closeShortCondition && ifMacdPositiveContinuity))
-    ) {
-      MODE = 1;
+      closeLongCondition = false;
+      closeShortCondition = false;
     }
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -592,6 +584,13 @@ const checkDeal = async (data) => {
         console.log(e);
       }
     }
+
+    if (
+      (closeLongCondition && longRatio > WIN_MAX * 4) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 4)
+    ) {
+      stop();
+    }
   }
 };
 
@@ -651,6 +650,18 @@ function restart() {
     });
   }, 1000 * 10);
 }
+function start() {
+  console.log('starting......');
+  setTimeout(() => {
+    exec('npm run start', function (err, stdout, stderr) {
+      if (err) {
+        console.log('starting failed');
+      } else {
+        console.log('starting success');
+      }
+    });
+  }, 1000 * 10);
+}
 function stop() {
   console.log('stopping......');
   setTimeout(() => {
@@ -660,6 +671,9 @@ function stop() {
       } else {
         console.log('stopping success');
       }
+      setTimeout(() => {
+        start();
+      }, 1000 * 60 * 60 * 24 * 1);
     });
   }, 1000 * 10);
 }
