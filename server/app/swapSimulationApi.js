@@ -60,6 +60,9 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
+let longCondition2 = 55;
+let shortCondition2 = 55;
+
 let lastMode = 0;
 
 // const REVERSE_RATIO = - 0.15 * LEVERAGE / 10;
@@ -749,10 +752,18 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
     const MAIN_OPEN_LONG_CONDITION2 =
-        Number(macdList[macdList.length - 2].column) < 0 && Number(macdList[macdList.length - 1].column) > 0
+        (Number(macdList[macdList.length - 1].column) < 0 &&
+        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 < shortCondition2) ||
+        (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2)
 
     const MAIN_OPEN_SHORT_CONDITION2 =
-        Number(macdList[macdList.length - 2].column) > 0 && Number(macdList[macdList.length - 1].column) < 0
+        (Number(macdList[macdList.length - 1].column) > 0 &&
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 > longCondition2) ||
+        (ifRSINegativeContinuity && longRatio > WIN_MAX * 2)
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
@@ -784,10 +795,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     if(MODE == 2 &&
-        (
-            (closeLongCondition && ifMacdNegativeContinuity)
-            || (closeShortCondition && ifMacdPositiveContinuity)
-        )
+        ((closeLongCondition && longRatio > WIN_MAX * 2) ||
+            (closeShortCondition && shortRatio > WIN_MAX * 2))
     ){
       MODE = 1
     }
