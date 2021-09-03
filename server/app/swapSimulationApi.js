@@ -23,7 +23,7 @@ const CAPITAL_RATIO = 3;
 const DEFAULT_POSITION_RATIO_LIST = [1, 1.5, 5, 4.5, 3, 6]
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
-  2: DEFAULT_POSITION_RATIO_LIST,
+  2: [1, 1.5, 5, 4.5, 3, 6],
 };
 const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
@@ -60,8 +60,8 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-let longCondition2 = 55;
-let shortCondition2 = 55;
+let longCondition2 = 56;
+let shortCondition2 = 40;
 
 let lastMode = 0;
 
