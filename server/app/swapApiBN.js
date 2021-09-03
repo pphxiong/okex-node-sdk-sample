@@ -657,3 +657,15 @@ function restart() {
     });
   }, 1000 * 10);
 }
+function stop() {
+  console.log('stopping......');
+  setTimeout(() => {
+    exec('npm run stop', function (err, stdout, stderr) {
+      if (err) {
+        console.log('stopping failed');
+      } else {
+        console.log('stopping success');
+      }
+    });
+  }, 1000 * 10);
+}

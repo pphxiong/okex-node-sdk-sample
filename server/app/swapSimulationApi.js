@@ -60,8 +60,8 @@ let rsi3 = 24;
 let longCondition = 48;
 let shortCondition = 48;
 
-let longCondition2 = 56;
-let shortCondition2 = 40;
+let longCondition2 = 52;
+let shortCondition2 = 52;
 
 let lastMode = 0;
 
@@ -787,12 +787,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     if (
+        MODE == 1 &&
         (closeLongCondition && longRatio > WIN_MAX * 2) ||
         (closeShortCondition && shortRatio > WIN_MAX * 2)
     ) {
-      MODE = MODE == 1 ? 2 : 1;
+      // MODE = 2;
     }
-
 
     if (ifIgnore) {
       // if(longRatio < LOSS_MAX || shortRatio < LOSS_MAX){
