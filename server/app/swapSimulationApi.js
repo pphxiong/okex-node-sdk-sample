@@ -759,8 +759,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       MAIN_OPEN_LONG_CONDITION ||
       (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+    const MAIN_CLOSE_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION2 || longRatio > WIN_MAX;
+    const MAIN_CLOSE_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION2 || shortRatio > WIN_MAX;
 
     modeChange = false;
     let openLongCondition =
@@ -782,8 +784,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (
       MODE == 2 &&
-      ((closeLongCondition && longRatio < LOSS_MAX) ||
-        (closeShortCondition && shortRatio < LOSS_MAX))
+      ((closeLongCondition && longRatio < LOSS_MAX * 4) ||
+        (closeShortCondition && shortRatio < LOSS_MAX * 4))
     ) {
       MODE = 1;
     }
