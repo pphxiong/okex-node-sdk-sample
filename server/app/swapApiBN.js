@@ -441,8 +441,8 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (
-      (closeLongCondition && longRatio > WIN_MAX * 4) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 4)
+      (closeLongCondition && longRatio > WIN_MAX * 5) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 5)
     ) {
       closeLongCondition = false;
       closeShortCondition = false;
@@ -586,8 +586,8 @@ const checkDeal = async (data) => {
     }
 
     if (
-      (closeLongCondition && longRatio > WIN_MAX * 4) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 4)
+      (closeLongCondition && longRatio > WIN_MAX * 5) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 5)
     ) {
       stop();
     }
