@@ -10,7 +10,7 @@ const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1, 1.5, 5, 4.5, 3, 6].map(
+const INCREASE_FI_LIST = [1, 2, 5, 4, 3, 6].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = CAPITAL_RATIO;
