@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1, 2, 4, 3, 4.5, 5];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 4.5, 4, 3, 5];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -57,8 +57,9 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-let longCondition = 48;
-let shortCondition = 48;
+const DEFAULT_CONDITION = 48;
+let longCondition = DEFAULT_CONDITION;
+let shortCondition = DEFAULT_CONDITION;
 
 let longCondition2 = 48;
 let shortCondition2 = 48;
