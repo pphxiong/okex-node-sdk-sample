@@ -10,7 +10,7 @@ const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 3;
-const INCREASE_FI_LIST = [1, 2, 5, 4, 3, 4.5, 3.5].map(
+const INCREASE_FI_LIST = [1, 2, 5, 4, 3, 4.5].map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = CAPITAL_RATIO;
@@ -441,8 +441,8 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (
-      (closeLongCondition && longRatio > WIN_MAX * 5) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 5)
+      (closeLongCondition && longRatio > WIN_MAX * 4) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
       closeLongCondition = false;
       closeShortCondition = false;
@@ -586,8 +586,8 @@ const checkDeal = async (data) => {
     }
 
     if (
-      (closeLongCondition && longRatio > WIN_MAX * 5) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 5)
+      (closeLongCondition && longRatio > WIN_MAX * 4) ||
+      (closeShortCondition && shortRatio > WIN_MAX * 4)
     ) {
       stop();
     }
