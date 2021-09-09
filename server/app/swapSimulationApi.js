@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1, 2, 4.5, 3, 4, 5];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 5, 4, 3, 4.5];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -29,7 +29,7 @@ const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
-const INIT_POSITION = INCREASE_FI_LIST[0];
+const INIT_POSITION = INCREASE_FI_LIST[1];
 
 let modeChange = false;
 
