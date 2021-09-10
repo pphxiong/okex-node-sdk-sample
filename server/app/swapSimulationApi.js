@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1, 2, 5, 4, 3, 4.5];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 3];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -729,21 +729,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     // (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-      (item) => holding && item == Number(holding.positionAmt)
-    );
-    fiIndex =
-      fiIndex == INCREASE_FI_LIST.length - 1
-        ? INCREASE_FI_LIST.length - 2
-        : fiIndex;
-
     const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION
-      || (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
+      MAIN_OPEN_LONG_CONDITION ||
+      (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
     // || shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION
-      || (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
+      MAIN_OPEN_SHORT_CONDITION ||
+      (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     // || longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION1; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
@@ -781,13 +773,20 @@ const checkDeal = async (data, isAutoReset = true) => {
       holding = longHolding;
     }
 
-    // if (
-    //   MODE == 2 &&
-    //   ((closeLongCondition && longRatio < LOSS_MAX * 4) ||
-    //     (closeShortCondition && shortRatio < LOSS_MAX * 4))
-    // ) {
-    //   MODE = 1;
-    // }
+    let fiIndex = INCREASE_FI_LIST.findIndex(
+      (item) => holding && item == Number(holding.positionAmt)
+    );
+    fiIndex =
+      fiIndex == INCREASE_FI_LIST.length - 1
+        ? INCREASE_FI_LIST.length - 2
+        : fiIndex;
+
+    if (
+      (closeLongCondition || closeShortCondition) &&
+      fiIndex == INCREASE_FI_LIST.length - 1
+    ) {
+      MODE = MODE == 1 ? 2 : 1;
+    }
 
     if (
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
