@@ -761,11 +761,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     let openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
     let closeLongCondition =
-      (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2) ||
-      isForceDeal;
+      MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
+    // || isForceDeal;
     let closeShortCondition =
-      (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
-      isForceDeal;
+      MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
+    // || isForceDeal;
 
     if (openLongCondition) {
       holding = shortHolding;
