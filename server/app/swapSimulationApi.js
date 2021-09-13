@@ -784,7 +784,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       // MODE = MODE == 1 ? 2 : 1;
     }
 
-    fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
+    fiIndex =
+      fiIndex == INCREASE_FI_LIST.length - 1
+        ? INCREASE_FI_LIST.length - 2
+        : fiIndex;
 
     if (
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
