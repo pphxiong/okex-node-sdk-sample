@@ -489,9 +489,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
     mostLoss = INIT_MOST_LOSS;
 
     // if (isAutoReset) {
-    //   totalProfit = 0;
-    //   maxWinRatio = 0;
-    //   totalPosition = 0;
+    totalProfit = 0;
+    maxWinRatio = 0;
+    // totalPosition = 0;
     //   currentPosition = {};
     //   longPosition = {};
     //   shortPosition = {};
