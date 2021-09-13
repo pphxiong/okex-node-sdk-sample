@@ -781,7 +781,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       (closeLongCondition || closeShortCondition) &&
       fiIndex == INCREASE_FI_LIST.length - 1
     ) {
-      MODE = MODE == 1 ? 2 : 1;
+      // MODE = MODE == 1 ? 2 : 1;
     }
 
     fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
