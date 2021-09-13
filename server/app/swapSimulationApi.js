@@ -969,7 +969,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < WIN_MAX && ratio > LOSS_MAX * 1) {
+          if (ratio > WIN_MAX) {
             openPositionAmt = increasePosition;
           } else if (ratio < LOSS_MAX * 1) {
             openPositionAmt = decreasePosition;
@@ -1024,7 +1024,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < WIN_MAX && ratio > LOSS_MAX * 1) {
+          if (ratio > WIN_MAX) {
             openPositionAmt = increasePosition;
           } else if (ratio < LOSS_MAX * 1) {
             openPositionAmt = decreasePosition;
