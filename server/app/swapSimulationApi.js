@@ -25,7 +25,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
 };
-const DEFAULT_MODE = 1;
+const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
@@ -783,7 +783,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       (closeLongCondition || closeShortCondition) &&
       fiIndex == INCREASE_FI_LIST.length - 1
     ) {
-      MODE = MODE == 1 ? 2 : 1;
+      // MODE = MODE == 1 ? 2 : 1;
     }
 
     fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
