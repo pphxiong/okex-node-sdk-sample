@@ -780,7 +780,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     );
 
     if (longRatio < LOSS_MAX || shortRatio < LOSS_MAX) {
-      MODE = MODE == 1 ? 2 : 1;
+      // MODE = MODE == 1 ? 2 : 1;
     }
 
     fiIndex =
