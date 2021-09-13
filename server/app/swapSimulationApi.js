@@ -20,9 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const DEFAULT_POSITION_RATIO_LIST = [
-  0.1, 1, 1.1, 2, 3, 5, 8, 13, 21, 34, 55, 89,
-];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 5, 4, 3, 4.5];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -781,11 +779,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       (item) => holding && item == Number(holding.positionAmt)
     );
 
-    if (
-      (closeLongCondition || closeShortCondition) &&
-      fiIndex == INCREASE_FI_LIST.length - 1
-    ) {
-      // MODE = MODE == 1 ? 2 : 1;
+    if (longRatio < LOSS_MAX || shortRatio < LOSS_MAX) {
+      MODE = MODE == 1 ? 2 : 1;
     }
 
     fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
