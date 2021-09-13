@@ -25,7 +25,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
 };
-const DEFAULT_MODE = 2;
+const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
@@ -716,18 +716,26 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition; //&&
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 > longCondition) ||
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 < shortCondition - 10); //&&
     // (shortRatio < LOSS_MAX || shortRatio >= 0);
     // && !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition; // &&
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 < shortCondition) ||
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 > longCondition + 10); // &&
     // (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
