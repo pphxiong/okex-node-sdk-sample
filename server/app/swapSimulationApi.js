@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 5, 4, 3, 4.5];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -970,9 +970,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio > WIN_MAX) {
+          if (ratio < WIN_MAX && ratio > LOSS_MAX * 2) {
             openPositionAmt = increasePosition;
-          } else if (ratio < LOSS_MAX * 1) {
+          } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
           // if(modeChange) openPositionAmt = INIT_POSITION;
@@ -1025,9 +1025,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio > WIN_MAX) {
+          if (ratio < WIN_MAX && ratio > LOSS_MAX * 2) {
             openPositionAmt = increasePosition;
-          } else if (ratio < LOSS_MAX * 1) {
+          } else if (ratio < LOSS_MAX * 2) {
             openPositionAmt = decreasePosition;
           }
           // if(modeChange) openPositionAmt = INIT_POSITION;
