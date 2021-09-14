@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1, 2, 3];
+const DEFAULT_POSITION_RATIO_LIST = [1];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -488,17 +488,17 @@ app.get('/swap/startHearBeat', async (req, response) => {
     dealDetailList = [];
     mostLoss = INIT_MOST_LOSS;
 
-    // if (isAutoReset) {
-    totalProfit = 0;
-    maxWinRatio = 0;
-    // totalPosition = 0;
-    //   currentPosition = {};
-    //   longPosition = {};
-    //   shortPosition = {};
-    //   // totalCapital = 0;
-    //   // maxOpenPosition = 0;
-    //   // minTotalCapital = 0;
-    // }
+    if (isAutoReset) {
+      totalProfit = 0;
+      maxWinRatio = 0;
+      totalPosition = 0;
+      currentPosition = {};
+      longPosition = {};
+      shortPosition = {};
+      // totalCapital = 0;
+      // maxOpenPosition = 0;
+      // minTotalCapital = 0;
+    }
 
     // const mock = require(`./mock/${date}.js`);
     // const list = mock.mockData
@@ -765,11 +765,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     let openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
     let closeLongCondition =
-      MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
-    // || isForceDeal;
+      MODE == 1
+        ? MAIN_CLOSE_LONG_CONDITION1
+        : MAIN_CLOSE_LONG_CONDITION2 || isForceDeal;
     let closeShortCondition =
-      MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
-    // || isForceDeal;
+      MODE == 1
+        ? MAIN_CLOSE_SHORT_CONDITION1
+        : MAIN_CLOSE_SHORT_CONDITION2 || isForceDeal;
 
     if (openLongCondition) {
       holding = shortHolding;
