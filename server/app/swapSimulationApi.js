@@ -716,16 +716,20 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      // Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 2].RSI3 < longCondition &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition; //&&
+      Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > longCondition &&
+      rsiList[rsiList.length - 1].RSI3 < longCondition + 5; //&&
     // (shortRatio < LOSS_MAX || shortRatio >= 0);
     // && !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      // Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 2].RSI3 > shortCondition &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition; // &&
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < shortCondition &&
+      rsiList[rsiList.length - 1].RSI3 > shortCondition - 5; // &&
     // (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
