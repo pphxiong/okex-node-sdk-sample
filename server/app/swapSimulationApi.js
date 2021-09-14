@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 5, 4, 3, 4.5];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -492,9 +492,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
       totalProfit = 0;
       maxWinRatio = 0;
       totalPosition = 0;
-      // currentPosition = {};
-      // longPosition = {};
-      // shortPosition = {};
+      currentPosition = {};
+      longPosition = {};
+      shortPosition = {};
       // totalCapital = 0;
       // maxOpenPosition = 0;
       // minTotalCapital = 0;
@@ -614,7 +614,6 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 
   function checkByStep(data, isForceDeal) {
-    isForceDeal = false;
     const {macdList, rsiList} = data;
     const mark_price = macdList[macdList.length - 1].close;
 
@@ -720,8 +719,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition &&
-      rsiList[rsiList.length - 1].RSI3 < longCondition + 5; //&&
+      rsiList[rsiList.length - 1].RSI3 > longCondition; //&&
     // (shortRatio < LOSS_MAX || shortRatio >= 0);
     // && !ifIgnore;
 
@@ -729,8 +727,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition &&
-      rsiList[rsiList.length - 1].RSI3 > shortCondition - 5; // &&
+      rsiList[rsiList.length - 1].RSI3 < shortCondition; // &&
     // (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
