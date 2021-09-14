@@ -29,7 +29,7 @@ const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) => item * CAPITAL_RATIO);
-const INIT_POSITION = INCREASE_FI_LIST[1];
+const INIT_POSITION = INCREASE_FI_LIST[0];
 
 let modeChange = false;
 
