@@ -493,8 +493,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
       maxWinRatio = 0;
       totalPosition = 0;
       currentPosition = {};
-      // longPosition = {};
-      // shortPosition = {};
+      longPosition = {};
+      shortPosition = {};
       // totalCapital = 0;
       // maxOpenPosition = 0;
       // minTotalCapital = 0;
@@ -614,6 +614,7 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 
   function checkByStep(data, isForceDeal) {
+    isForceDeal = false;
     const {macdList, rsiList} = data;
     const mark_price = macdList[macdList.length - 1].close;
 
