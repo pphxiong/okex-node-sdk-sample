@@ -481,7 +481,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     date,
     interval = INTERVAL,
     limit = 1500,
-    isAutoReset = false,
+    isAutoReset = true,
     isInit = false,
   } = query;
   try {
