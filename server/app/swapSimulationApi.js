@@ -488,7 +488,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     dealDetailList = [];
     mostLoss = INIT_MOST_LOSS;
 
-    if (isAutoReset) {
+    if (isAutoReset && false) {
       totalProfit = 0;
       maxWinRatio = 0;
       totalPosition = 0;
@@ -614,6 +614,7 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 
   function checkByStep(data, isForceDeal) {
+    isForceDeal = false;
     const {macdList, rsiList} = data;
     const mark_price = macdList[macdList.length - 1].close;
 
