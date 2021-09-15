@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1];
+const DEFAULT_POSITION_RATIO_LIST = [1, 2, 3, 5, 8];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -717,20 +717,22 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
+      // Number(macdList[macdList.length - 1].column) > 0 &&
       Number(macdList[macdList.length - 1].column) >
-        Number(macdList[macdList.length - 2].column) &&
-      // rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI3 < longCondition &&
-      rsiList[rsiList.length - 1].RSI3 < longCondition; //&&
+      Number(macdList[macdList.length - 2].column);
+    // rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+    // rsiList[rsiList.length - 2].RSI3 < longCondition &&
+    // rsiList[rsiList.length - 1].RSI3 > longCondition; //&&
     // (shortRatio < LOSS_MAX || shortRatio >= 0);
     // && !ifIgnore;
 
     const MAIN_OPEN_SHORT_CONDITION =
+      // Number(macdList[macdList.length - 1].column) < 0 &&
       Number(macdList[macdList.length - 1].column) <
-        Number(macdList[macdList.length - 2].column) &&
-      // rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > shortCondition; // &&
+      Number(macdList[macdList.length - 2].column);
+    // rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+    // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+    // rsiList[rsiList.length - 1].RSI3 < shortCondition; // &&
     // (longRatio < LOSS_MAX || longRatio >= 0);
     // && !ifIgnore;
 
@@ -972,11 +974,12 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio > 0) {
+          if (ratio < 0) {
             openPositionAmt = increasePosition;
-          } else if (ratio < LOSS_MAX) {
-            openPositionAmt = decreasePosition;
           }
+          // else if (ratio < LOSS_MAX) {
+          //   openPositionAmt = decreasePosition;
+          // }
           // if(modeChange) openPositionAmt = INIT_POSITION;
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1027,11 +1030,12 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio > 0) {
+          if (ratio < 0) {
             openPositionAmt = increasePosition;
-          } else if (ratio < LOSS_MAX) {
-            openPositionAmt = decreasePosition;
           }
+          // else if (ratio < LOSS_MAX) {
+          //   openPositionAmt = decreasePosition;
+          // }
           // if(modeChange) openPositionAmt = INIT_POSITION;
           totalCapital += -0.038 * 0.01 * LEVERAGE;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
