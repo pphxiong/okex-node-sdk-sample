@@ -687,8 +687,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-4);
-    const latestRsiList = rsiList.slice(-4);
+    const latestMacdList = macdList.slice(-6);
+    const latestRsiList = rsiList.slice(-6);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
@@ -702,31 +702,27 @@ const checkDeal = async (data, isAutoReset = true) => {
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      if (index) return latestMacdList[index] > 0;
+      if (index == 0) return true;
+      if (index == arr.length - 1)
+        return latestMacdList[index].column < latestMacdList[index - 1].column;
       return (
-        latestMacdList[index] > 0 &&
+        // latestMacdList[index] > 0 &&
         latestMacdList[index].column > latestMacdList[index - 1].column
       );
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-      if (index) return latestMacdList[index] < 0;
+      if (index == 0) return true;
+      if (index == arr.length - 1)
+        return latestMacdList[index].column > latestMacdList[index - 1].column;
       return (
-        latestMacdList[index] < 0 &&
+        // latestMacdList[index] < 0 &&
         latestMacdList[index].column < latestMacdList[index - 1].column
       );
     });
 
-    const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+    const MAIN_OPEN_LONG_CONDITION = ifMacdNegativeContinuity;
 
-    const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+    const MAIN_OPEN_SHORT_CONDITION = ifMacdPositiveContinuity;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     // ||
@@ -736,11 +732,15 @@ const checkDeal = async (data, isAutoReset = true) => {
     // ||
     // (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     // || longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      Number(macdList[macdList.length - 1].column) <
+      Number(macdList[macdList.length - 2].column);
     // Number(macdList[macdList.length - 1].column) < 0 &&
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      Number(macdList[macdList.length - 1].column) >
+      Number(macdList[macdList.length - 2].column);
     // Number(macdList[macdList.length - 1].column) > 0 &&
     // rsiList[rsiList.length - 1].RSI3 > longCondition;
     /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/
