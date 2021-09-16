@@ -20,7 +20,7 @@ const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1, 2, 3];
+const DEFAULT_POSITION_RATIO_LIST = [1];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -734,13 +734,17 @@ const checkDeal = async (data, isAutoReset = true) => {
     // || longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION1 =
       Number(macdList[macdList.length - 1].column) <
-      Number(macdList[macdList.length - 2].column);
+        Number(macdList[macdList.length - 2].column) &&
+      Number(macdList[macdList.length - 2].column) <
+        Number(macdList[macdList.length - 3].column);
     // Number(macdList[macdList.length - 1].column) < 0 &&
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
     const MAIN_CLOSE_SHORT_CONDITION1 =
       Number(macdList[macdList.length - 1].column) >
-      Number(macdList[macdList.length - 2].column);
+        Number(macdList[macdList.length - 2].column) &&
+      Number(macdList[macdList.length - 2].column) >
+        Number(macdList[macdList.length - 3].column);
     // Number(macdList[macdList.length - 1].column) > 0 &&
     // rsiList[rsiList.length - 1].RSI3 > longCondition;
     /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/
