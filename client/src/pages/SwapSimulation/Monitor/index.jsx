@@ -436,7 +436,7 @@ export default props => {
       </Row>
 
 
-      {/*<Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>*/}
+      <Button onClick={()=>fnReset()} style={{ marginLeft: 10 }}>重置</Button>
 
       <Divider />
 
