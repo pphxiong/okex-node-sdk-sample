@@ -751,13 +751,15 @@ const checkDeal = async (data, isAutoReset = true) => {
     // ||
     // (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     // || longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
-    // ||(ifMacdNegativeContinuity && longRatio > WIN_MAX);
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION1 ||
+      (ifMacdNegativeContinuity && longRatio > WIN_MAX);
     // ||
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
-    // ||(ifMacdPositiveContinuity && shortRatio > WIN_MAX);
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION1 ||
+      (ifMacdPositiveContinuity && shortRatio > WIN_MAX);
     // ||
     // rsiList[rsiList.length - 1].RSI3 > longCondition;
     /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/
