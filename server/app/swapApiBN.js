@@ -526,10 +526,7 @@ const checkDeal = async (data) => {
             (item) =>
               shortHolding && item == Math.abs(Number(shortHolding.positionAmt))
           );
-          fiIndex =
-            fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
-              : fiIndex;
+          fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
@@ -569,10 +566,7 @@ const checkDeal = async (data) => {
             (item) =>
               longHolding && item == Math.abs(Number(longHolding.positionAmt))
           );
-          fiIndex =
-            fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
-              : fiIndex;
+          fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
