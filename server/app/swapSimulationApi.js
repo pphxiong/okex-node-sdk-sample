@@ -548,8 +548,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
       data: {
         // history: list,
         // index: result,
-        totalProfit,
-        totalPosition: totalPosition || -0.001,
+        totalProfit: totalProfit || -0.001,
+        totalPosition,
         totalCapital,
         minTotalCapital,
         maxOpenPosition,
