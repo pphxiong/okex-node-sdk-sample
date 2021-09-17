@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    arr.push(init + 0.1);
+    arr.push(init + 0.2);
     i++;
   }
   return arr;
