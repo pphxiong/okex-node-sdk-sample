@@ -37,7 +37,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = 10 * CAPITAL_RATIO;
+let totalCapital = 4 * CAPITAL_RATIO;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
@@ -704,22 +704,12 @@ const checkDeal = async (data, isAutoReset = true) => {
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      if (index == 0) return true;
-      if (index == latestMacdList.length - 1)
-        return latestMacdList[index].column < latestMacdList[index - 1].column;
-      return (
-        // latestMacdList[index] > 0 &&
-        latestMacdList[index].column > latestMacdList[index - 1].column
-      );
+      if (index) return true;
+      return latestMacdList[index].column > latestMacdList[index - 1].column;
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-      if (index == 0) return true;
-      if (index == latestMacdList.length - 1)
-        return latestMacdList[index].column > latestMacdList[index - 1].column;
-      return (
-        // latestMacdList[index] < 0 &&
-        latestMacdList[index].column < latestMacdList[index - 1].column
-      );
+      if (index) return true;
+      return latestMacdList[index].column < latestMacdList[index - 1].column;
     });
 
     const isHasLongCondition = latestMacdList.some((item, index) => {
@@ -761,11 +751,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     // ||
     // (ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     // || longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION1 || ifMacdNegativeContinuity;
     // ||
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION1 || ifMacdPositiveContinuity;
     // ||
     // rsiList[rsiList.length - 1].RSI3 > longCondition;
     /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/
