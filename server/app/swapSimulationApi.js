@@ -704,11 +704,11 @@ const checkDeal = async (data, isAutoReset = true) => {
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      if (index) return true;
+      if (index == 0) return true;
       return latestMacdList[index].column > latestMacdList[index - 1].column;
     });
     let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-      if (index) return true;
+      if (index == 0) return true;
       return latestMacdList[index].column < latestMacdList[index - 1].column;
     });
 
