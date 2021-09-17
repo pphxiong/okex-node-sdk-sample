@@ -2,6 +2,17 @@ import moment from 'moment';
 
 const customAuthClientBN = require('./customAuthClientBN');
 
+const generatePositionList = (init, num) => {
+  const arr = [init];
+  let i = 0;
+  while (i < num) {
+    init = Number((init + init * 0.2).toFixed(1));
+    arr.push(init);
+    i++;
+  }
+  return arr;
+};
+
 const BN_SYMBOL = 'ETHUSDT';
 const DEFAULT_INTERVAL = '5m';
 const LONG_CONDITION = 48;
@@ -9,8 +20,8 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
-const CAPITAL_RATIO = 1;
-const INCREASE_FI_LIST = [1, 2, 5, 4, 3, 4.5].map(
+const CAPITAL_RATIO = 2.5;
+const INCREASE_FI_LIST = generatePositionList(1, 5).map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = CAPITAL_RATIO;
