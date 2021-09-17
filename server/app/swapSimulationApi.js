@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = init + init * 0.2;
+    init = Number((init + init * 0.2).toFixed(1));
     arr.push(init);
     i++;
   }
@@ -623,7 +623,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         macdList: data.macdList.slice(i, i + 10),
         rsiList: data.rsiList.slice(i, i + 10),
       },
-      isAutoReset && i == data.macdList.length - 10
+      isAutoReset
+      // && i == data.macdList.length - 10
     );
   }
 
