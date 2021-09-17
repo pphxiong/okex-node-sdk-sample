@@ -16,7 +16,7 @@ const BN_SYMBOL = 'ETHUSDT';
 const LEVERAGE = 10;
 const INTERVAL = '5m';
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * LEVERAGE) / 10;
+const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
@@ -37,7 +37,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = 4 * CAPITAL_RATIO;
+let totalCapital = 5 * CAPITAL_RATIO;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
