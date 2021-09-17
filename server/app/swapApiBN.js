@@ -24,7 +24,7 @@ const CAPITAL_RATIO = 2.5;
 const INCREASE_FI_LIST = generatePositionList(1, 5).map(
   (item) => item * CAPITAL_RATIO
 );
-const INIT_POSITION = CAPITAL_RATIO;
+const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
 const INIT_MOST_LOSS = {
@@ -528,11 +528,8 @@ const checkDeal = async (data) => {
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-          const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < WIN_MAX && ratio > LOSS_MAX * 2) {
+          if (ratio < WIN_MAX * 2) {
             openPositionAmt = increasePosition;
-          } else if (ratio < LOSS_MAX * 2) {
-            openPositionAmt = decreasePosition;
           }
           console.log('shortHolding', shortHolding);
           console.log('ratio', ratio);
@@ -568,13 +565,10 @@ const checkDeal = async (data) => {
           let openPositionAmt = INIT_POSITION;
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-          const decreasePosition = INCREASE_FI_LIST[0];
           console.log('longHolding', longHolding);
           console.log('ratio', ratio);
-          if (ratio < WIN_MAX && ratio > LOSS_MAX * 2) {
+          if (ratio < WIN_MAX * 2) {
             openPositionAmt = increasePosition;
-          } else if (ratio < LOSS_MAX * 2) {
-            openPositionAmt = decreasePosition;
           }
           await openPosition({
             position: openPositionAmt,
