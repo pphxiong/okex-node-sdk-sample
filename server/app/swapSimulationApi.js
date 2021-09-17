@@ -11,6 +11,16 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
+const generatePositionList = (init, num) => {
+  const arr = [init];
+  let i = 0;
+  while (i < num) {
+    arr.push(init + 0.1);
+    i++;
+  }
+  return arr;
+};
+
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = 'ETHUSDT';
 const LEVERAGE = 10;
@@ -20,7 +30,7 @@ const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 3;
-const DEFAULT_POSITION_RATIO_LIST = [1];
+const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 30);
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
@@ -874,7 +884,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         shortHolding &&
         Number(shortHolding.positionAmt) &&
         shortPatchNum <= 1 &&
-        shortRatio
+        shortRatio &&
+        false
       ) {
         await patchPosition(shortHolding, 'SHORT');
         shortPatchNum += 1;
@@ -924,7 +935,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         longHolding &&
         Number(longHolding.positionAmt) &&
         longPatchNum <= 1 &&
-        longRatio
+        longRatio &&
+        false
       ) {
         await patchPosition(longHolding, 'LONG');
         longPatchNum += 1;
@@ -1003,7 +1015,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < 0) {
+          if (ratio < WIN_MAX * 2) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
@@ -1059,7 +1071,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < 0) {
+          if (ratio < WIN_MAX * 2) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
