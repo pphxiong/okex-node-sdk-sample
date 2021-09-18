@@ -6,7 +6,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = Number((init + init * 0.2).toFixed(1));
+    init = Number((init + init * 0.12).toFixed(1));
     arr.push(init);
     i++;
   }
@@ -20,8 +20,8 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
-const CAPITAL_RATIO = 2.5;
-const INCREASE_FI_LIST = generatePositionList(1, 4).map((item) =>
+const CAPITAL_RATIO = 3;
+const INCREASE_FI_LIST = generatePositionList(1, 10).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
