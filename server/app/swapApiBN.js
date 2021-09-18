@@ -528,7 +528,7 @@ const checkDeal = async (data) => {
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX) {
+          if (ratio < WIN_MAX * 2) {
             openPositionAmt = increasePosition;
           }
           console.log('shortHolding', shortHolding);
@@ -567,7 +567,7 @@ const checkDeal = async (data) => {
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           console.log('longHolding', longHolding);
           console.log('ratio', ratio);
-          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX) {
+          if (ratio < WIN_MAX * 2) {
             openPositionAmt = increasePosition;
           }
           await openPosition({
