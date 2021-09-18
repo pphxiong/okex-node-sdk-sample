@@ -21,7 +21,7 @@ const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 2.5;
-const INCREASE_FI_LIST = generatePositionList(1, 5).map(
+const INCREASE_FI_LIST = generatePositionList(1, 4).map(
   (item) => item * CAPITAL_RATIO
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
@@ -524,7 +524,10 @@ const checkDeal = async (data) => {
             (item) =>
               shortHolding && item == Math.abs(Number(shortHolding.positionAmt))
           );
-          fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
+          fiIndex =
+            fiIndex == INCREASE_FI_LIST.length - 1
+              ? INCREASE_FI_LIST.length - 2
+              : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
@@ -561,7 +564,10 @@ const checkDeal = async (data) => {
             (item) =>
               longHolding && item == Math.abs(Number(longHolding.positionAmt))
           );
-          fiIndex = fiIndex == INCREASE_FI_LIST.length - 1 ? -1 : fiIndex;
+          fiIndex =
+            fiIndex == INCREASE_FI_LIST.length - 1
+              ? INCREASE_FI_LIST.length - 2
+              : fiIndex;
           let openPositionAmt = INIT_POSITION;
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
