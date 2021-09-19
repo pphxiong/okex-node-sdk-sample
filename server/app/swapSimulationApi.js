@@ -810,8 +810,15 @@ const checkDeal = async (data, isAutoReset = true) => {
       (item) => holding && item == Number(holding.positionAmt)
     );
 
-    if (longRatio < LOSS_MAX || shortRatio < LOSS_MAX) {
+    if ((longRatio < LOSS_MAX || shortRatio < LOSS_MAX) && !isForceDeal) {
       // MODE = MODE == 1 ? 2 : 1;
+      if (openLongCondition) {
+        openLongCondition = false;
+        openShortCondition = true;
+      } else {
+        openLongCondition = true;
+        openShortCondition = false;
+      }
     }
 
     fiIndex =
