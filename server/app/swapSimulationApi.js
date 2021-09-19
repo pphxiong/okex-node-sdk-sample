@@ -810,21 +810,23 @@ const checkDeal = async (data, isAutoReset = true) => {
       (item) => holding && item == Number(holding.positionAmt)
     );
 
+    fiIndex =
+      fiIndex == INCREASE_FI_LIST.length - 1
+        ? INCREASE_FI_LIST.length - 2
+        : fiIndex;
+
     if (!isForceDeal) {
       // MODE = MODE == 1 ? 2 : 1;
       if (openLongCondition && shortRatio < LOSS_MAX) {
         openLongCondition = false;
         openShortCondition = true;
+        fiIndex = -1;
       } else if (openShortCondition && longRatio < LOSS_MAX) {
         openLongCondition = true;
         openShortCondition = false;
+        fiIndex = -1;
       }
     }
-
-    fiIndex =
-      fiIndex == INCREASE_FI_LIST.length - 1
-        ? INCREASE_FI_LIST.length - 2
-        : fiIndex;
 
     if (
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
