@@ -810,12 +810,12 @@ const checkDeal = async (data, isAutoReset = true) => {
       (item) => holding && item == Number(holding.positionAmt)
     );
 
-    if ((longRatio < LOSS_MAX || shortRatio < LOSS_MAX) && !isForceDeal) {
+    if (!isForceDeal) {
       // MODE = MODE == 1 ? 2 : 1;
-      if (openLongCondition) {
+      if (openLongCondition && shortRatio < LOSS_MAX) {
         openLongCondition = false;
         openShortCondition = true;
-      } else {
+      } else if (openShortCondition && longRatio < LOSS_MAX) {
         openLongCondition = true;
         openShortCondition = false;
       }
