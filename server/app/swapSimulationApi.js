@@ -818,13 +818,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (!isForceDeal) {
       // MODE = MODE == 1 ? 2 : 1;
       if (closeShortCondition && shortRatio < LOSS_MAX) {
-        // openLongCondition = false;
-        // openShortCondition = true;
+        openLongCondition = false;
+        openShortCondition = true;
         // fiIndex = -1;
         MODE = MODE == 1 ? 2 : 1;
       } else if (closeLongCondition && longRatio < LOSS_MAX) {
-        // openLongCondition = true;
-        // openShortCondition = false;
+        openLongCondition = true;
+        openShortCondition = false;
         // fiIndex = -1;
         MODE = MODE == 1 ? 2 : 1;
       }
