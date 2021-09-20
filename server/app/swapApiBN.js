@@ -449,13 +449,13 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (
-      (closeLongCondition && longRatio > WIN_MAX * 4) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 4)
-    ) {
-      closeLongCondition = false;
-      closeShortCondition = false;
-    }
+    // if (
+    //   (closeLongCondition && longRatio > WIN_MAX * 4) ||
+    //   (closeShortCondition && shortRatio > WIN_MAX * 4)
+    // ) {
+    //   openLongCondition = false;
+    //   openShortCondition = false;
+    // }
 
     const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const hmsArr = currentTime.split(' ')[1].split(':');
