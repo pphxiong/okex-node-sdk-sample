@@ -816,7 +816,6 @@ const checkDeal = async (data, isAutoReset = true) => {
         : fiIndex;
 
     if (!isForceDeal && MODE == 2) {
-      // MODE = MODE == 1 ? 2 : 1;
       if (closeShortCondition && shortRatio < LOSS_MAX) {
         openLongCondition = false;
         openShortCondition = true;
@@ -838,9 +837,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       // }
     }
 
-    if (MODE == 1 && (longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5)) {
-      MODE = 2;
-    }
+    // if (MODE == 1 && (longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5)) {
+    //   MODE = 2;
+    // }
 
     if (
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
