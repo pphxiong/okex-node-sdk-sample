@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = Number((init + init * 0.12).toFixed(1));
+    init = Number((init + init * 0.12 * 1.1).toFixed(1));
     arr.push(init);
     i++;
   }
@@ -51,7 +51,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = 5 * CAPITAL_RATIO;
+let totalCapital = 6 * CAPITAL_RATIO;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
