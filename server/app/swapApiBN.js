@@ -27,6 +27,10 @@ const INCREASE_FI_LIST = generatePositionList(1, 12).map((item) =>
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
+let rsi1 = 5;
+let rsi2 = 10;
+let rsi3 = 20;
+
 const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
@@ -278,9 +282,9 @@ function getRSIByPeriod(newList, period) {
   return newResult;
 }
 function getRSI(time, price, list) {
-  const {RSI: RSI1} = getRSIByPeriod(list, 6);
-  const {RSI: RSI2} = getRSIByPeriod(list, 12);
-  const {RSI: RSI3} = getRSIByPeriod(list, 24);
+  const {RSI: RSI1} = getRSIByPeriod(list, rsi1);
+  const {RSI: RSI2} = getRSIByPeriod(list, rsi2);
+  const {RSI: RSI3} = getRSIByPeriod(list, rsi3);
 
   const result = {
     time: moment(parseInt(time)).format('YYYY-MM-DD HH:mm:ss'),
