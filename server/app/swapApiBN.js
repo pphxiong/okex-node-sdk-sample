@@ -21,7 +21,7 @@ const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 2.5;
-const INCREASE_FI_LIST = generatePositionList(1, 12).map((item) =>
+const INCREASE_FI_LIST = generatePositionList(1, 5).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
