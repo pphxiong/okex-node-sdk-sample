@@ -20,7 +20,7 @@ const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
-const CAPITAL_RATIO = 2.5;
+const CAPITAL_RATIO = 0.5;
 const INCREASE_FI_LIST = generatePositionList(1, 5).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
