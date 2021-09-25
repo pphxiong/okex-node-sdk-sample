@@ -26,8 +26,8 @@ const generatePositionList = (init, num) => {
 const BN_SYMBOL = 'ETHUSDT';
 const LEVERAGE = 10;
 const INTERVAL = '5m';
-const LOSS_MAX = (-0.15 * LEVERAGE) / 10;
-const WIN_MAX = (0.08 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 2.5;
@@ -1051,7 +1051,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX) {
+          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX * 2) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
@@ -1107,7 +1107,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX) {
+          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX * 2) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
