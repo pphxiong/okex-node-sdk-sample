@@ -776,19 +776,23 @@ const checkDeal = async (data, isAutoReset = true) => {
     //  ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     // || longRatio < BAO_RATIO;
     const MAIN_CLOSE_LONG_CONDITION1 =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+      MAIN_OPEN_SHORT_CONDITION ||
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 > longCondition &&
+        longRatio > WIN_MAX);
     // ||(ifMacdNegativeContinuity && longRatio > WIN_MAX);
     // ||
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      MAIN_OPEN_LONG_CONDITION ||
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 < shortCondition &&
+        shortRatio > WIN_MAX);
     // ||(ifMacdPositiveContinuity && shortRatio > WIN_MAX);
     // ||
     // rsiList[rsiList.length - 1].RSI3 > longCondition;
