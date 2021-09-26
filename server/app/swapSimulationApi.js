@@ -24,7 +24,7 @@ const generatePositionList = (init, num) => {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const LEVERAGE = 20;
+const LEVERAGE = 10;
 const INTERVAL = "5m";
 const LOSS_MAX = (-0.08 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
