@@ -709,13 +709,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
-        latestRsiList[index].RSI3 > longCondition + 5
+        latestRsiList[index].RSI1 > 80
       );
     });
     let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
-        latestRsiList[index].RSI3 < shortCondition - 5
+        latestRsiList[index].RSI1 < 20
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
