@@ -26,7 +26,7 @@ const generatePositionList = (init, num) => {
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
-const LOSS_MAX = (-0.15 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.08 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
@@ -759,8 +759,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION || ifRSIPositiveContinuity;
+    const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     // ||
     // (Number(macdList[macdList.length - 1].column) > 0 &&
     //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI2 &&
@@ -768,8 +767,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   rsiList[rsiList.length - 1].RSI3 < shortCondition - 10);
     //  ||(ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
     // || shortRatio < BAO_RATIO;
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION || ifRSINegativeContinuity;
+    const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
     // ||
     // (Number(macdList[macdList.length - 1].column) < 0 &&
     //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI2 &&
@@ -1053,11 +1051,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (
-            ratio <
-            WIN_MAX * 2
-            // && ratio > LOSS_MAX
-          ) {
+          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
@@ -1113,11 +1107,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (
-            ratio <
-            WIN_MAX * 2
-            // && ratio > LOSS_MAX
-          ) {
+          if (ratio < WIN_MAX * 2 && ratio > LOSS_MAX) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
