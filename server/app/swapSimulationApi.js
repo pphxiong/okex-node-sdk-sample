@@ -37,7 +37,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
 };
-const DEFAULT_MODE = 1;
+const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
@@ -796,10 +796,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION1 ||
+      (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 >
+        30 &&
+        rsiList[rsiList.length - 1].RSI1 > 70);
     // || (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
 
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION1 ||
+      (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 <
+        -30 &&
+        rsiList[rsiList.length - 1].RSI1 < 30);
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
