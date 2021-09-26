@@ -761,7 +761,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 30;
+      (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 >
+        30 &&
+        rsiList[rsiList.length - 1].RSI1 > 70);
     // ||
     // (Number(macdList[macdList.length - 1].column) > 0 &&
     //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI2 &&
@@ -771,7 +773,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     // || shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -30;
+      (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 <
+        -30 &&
+        rsiList[rsiList.length - 1].RSI1 < 30);
     // ||
     // (Number(macdList[macdList.length - 1].column) < 0 &&
     //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI2 &&
