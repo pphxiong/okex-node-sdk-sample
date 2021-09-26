@@ -832,23 +832,23 @@ const checkDeal = async (data, isAutoReset = true) => {
         ? INCREASE_FI_LIST.length - 2
         : fiIndex;
 
-    // if (!isForceDeal && MODE == 2) {
-    //   if (closeShortCondition && shortRatio < LOSS_MAX) {
-    //     openLongCondition = false;
-    //     openShortCondition = true;
-    //     // fiIndex = -1;
-    //     if (fiIndex >= 2) {
-    //       MODE = 1;
-    //     }
-    //   } else if (closeLongCondition && longRatio < LOSS_MAX) {
-    //     openLongCondition = true;
-    //     openShortCondition = false;
-    //     // fiIndex = -1;
-    //     if (fiIndex >= 2) {
-    //       MODE = 1;
-    //     }
-    //   }
-    // }
+    if (!isForceDeal && MODE == 2) {
+      if (closeShortCondition && shortRatio < LOSS_MAX) {
+        openLongCondition = false;
+        openShortCondition = true;
+        // fiIndex = -1;
+        if (fiIndex >= 2) {
+          MODE = 1;
+        }
+      } else if (closeLongCondition && longRatio < LOSS_MAX) {
+        openLongCondition = true;
+        openShortCondition = false;
+        // fiIndex = -1;
+        if (fiIndex >= 2) {
+          MODE = 1;
+        }
+      }
+    }
 
     // if (MODE == 1 && (longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5)) {
     //   MODE = 2;
