@@ -760,7 +760,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION || rsiList[rsiList.length - 1].RSI1 > 85;
+      MAIN_OPEN_LONG_CONDITION ||
+      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 30;
     // ||
     // (Number(macdList[macdList.length - 1].column) > 0 &&
     //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI2 &&
@@ -769,7 +770,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     //  ||(ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
     // || shortRatio < BAO_RATIO;
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION || rsiList[rsiList.length - 1].RSI1 < 15;
+      MAIN_OPEN_SHORT_CONDITION ||
+      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -30;
     // ||
     // (Number(macdList[macdList.length - 1].column) < 0 &&
     //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI2 &&
