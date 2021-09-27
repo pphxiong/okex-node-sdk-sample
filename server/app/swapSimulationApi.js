@@ -850,9 +850,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    // if (MODE == 1 && (longRatio > WIN_MAX * 5 || shortRatio > WIN_MAX * 5)) {
-    //   MODE = 2;
-    // }
+    if (MODE == 1 && (longRatio > WIN_MAX || shortRatio > WIN_MAX)) {
+      MODE = 2;
+    }
 
     if (
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
