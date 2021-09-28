@@ -796,10 +796,12 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION1 || shortRatio < BAO_RATIO;
     // || (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
 
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION1 || longRatio < BAO_RATIO;
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
@@ -832,27 +834,27 @@ const checkDeal = async (data, isAutoReset = true) => {
         ? INCREASE_FI_LIST.length - 2
         : fiIndex;
 
-    if (!isForceDeal && MODE == 2) {
-      if (closeShortCondition && shortRatio < LOSS_MAX) {
-        openLongCondition = false;
-        openShortCondition = true;
-        // fiIndex = -1;
-        if (fiIndex >= 2) {
-          MODE = 1;
-        }
-      } else if (closeLongCondition && longRatio < LOSS_MAX) {
-        openLongCondition = true;
-        openShortCondition = false;
-        // fiIndex = -1;
-        if (fiIndex >= 2) {
-          MODE = 1;
-        }
-      }
-    }
+    // if (!isForceDeal && MODE == 2) {
+    //   if (closeShortCondition && shortRatio < LOSS_MAX) {
+    //     openLongCondition = false;
+    //     openShortCondition = true;
+    //     // fiIndex = -1;
+    //     if (fiIndex >= 2) {
+    //       MODE = 1;
+    //     }
+    //   } else if (closeLongCondition && longRatio < LOSS_MAX) {
+    //     openLongCondition = true;
+    //     openShortCondition = false;
+    //     // fiIndex = -1;
+    //     if (fiIndex >= 2) {
+    //       MODE = 1;
+    //     }
+    //   }
+    // }
 
-    if (MODE == 1 && (longRatio > WIN_MAX || shortRatio > WIN_MAX)) {
-      MODE = 2;
-    }
+    // if (MODE == 1 && (longRatio > WIN_MAX || shortRatio > WIN_MAX)) {
+    //   MODE = 2;
+    // }
 
     if (
       (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
