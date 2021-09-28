@@ -759,7 +759,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
-    const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION || shortRatio < BAO_RATIO;
     // ||
     // (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 >
     //   30 &&
@@ -771,7 +772,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   rsiList[rsiList.length - 1].RSI3 < shortCondition - 10);
     //  ||(ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
     // || shortRatio < BAO_RATIO;
-    const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION || longRatio < BAO_RATIO;
     // ||
     // (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 <
     //   -30 &&
@@ -796,12 +798,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 =
-      MAIN_OPEN_SHORT_CONDITION1 || shortRatio < BAO_RATIO;
+    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     // || (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
 
-    const MAIN_OPEN_SHORT_CONDITION2 =
-      MAIN_OPEN_LONG_CONDITION1 || longRatio < BAO_RATIO;
+    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
