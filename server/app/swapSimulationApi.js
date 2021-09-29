@@ -926,7 +926,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         shortHolding &&
         Number(shortHolding.positionAmt) &&
         // shortPatchNum <= 1 &&
-        !!shortRatio
+        shortRatio < 0
       ) {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
@@ -976,7 +976,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         longHolding &&
         Number(longHolding.positionAmt) &&
         // longPatchNum <= 1 &&
-        !!longRatio
+        longRatio < 0
       ) {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
