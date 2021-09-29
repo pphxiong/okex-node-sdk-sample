@@ -880,8 +880,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     // console.log('------------------')
 
     const patchPosition = async (holding, direction) => {
-      const price = (Number(mark_price) + Number(holding.entryPrice)) / 2;
       const positionAmt = Number(holding.positionAmt) + INIT_POSITION;
+      const price =
+        (Number(mark_price) * INIT_POSITION +
+          Number(holding.entryPrice) * Numner(holding.positionAmt)) /
+        positionAmt;
       if (direction == "LONG") {
         longPosition = {
           positionSide: direction,
@@ -923,13 +926,12 @@ const checkDeal = async (data, isAutoReset = true) => {
         shortHolding &&
         Number(shortHolding.positionAmt) &&
         // shortPatchNum <= 1 &&
-        !!shortRatio &&
-        false
+        !!shortRatio
       ) {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (!longPatchNum && longRatio < LOSS_MAX && !isForceDeal && false) {
+        if (!longPatchNum && longRatio < LOSS_MAX && !isForceDeal) {
           await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
         } else {
@@ -974,13 +976,12 @@ const checkDeal = async (data, isAutoReset = true) => {
         longHolding &&
         Number(longHolding.positionAmt) &&
         // longPatchNum <= 1 &&
-        !!longRatio &&
-        false
+        !!longRatio
       ) {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (!shortPatchNum && shortRatio < LOSS_MAX && !isForceDeal && false) {
+        if (!shortPatchNum && shortRatio < LOSS_MAX && !isForceDeal) {
           await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
         } else {
