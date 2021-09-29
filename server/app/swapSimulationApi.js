@@ -31,7 +31,7 @@ const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 2.5;
-const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
+const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 12);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
@@ -881,12 +881,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const patchPosition = async (holding, direction) => {
       const price = (Number(mark_price) + Number(holding.entryPrice)) / 2;
+      const positionAmt = Number(holding.positionAmt) + INIT_POSITION;
       if (direction == "LONG") {
         longPosition = {
           positionSide: direction,
           leverage: LEVERAGE,
           entryPrice: price,
-          positionAmt: INIT_POSITION * 2,
+          positionAmt,
           time: macdList[macdList.length - 1].time,
         };
       } else {
@@ -894,7 +895,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           positionSide: direction,
           leverage: LEVERAGE,
           entryPrice: price,
-          positionAmt: INIT_POSITION * 2,
+          positionAmt,
           time: macdList[macdList.length - 1].time,
         };
       }
@@ -903,12 +904,12 @@ const checkDeal = async (data, isAutoReset = true) => {
         positionSide: direction,
         leverage: LEVERAGE,
         entryPrice: price,
-        positionAmt: INIT_POSITION * 2,
+        positionAmt,
         time: macdList[macdList.length - 1].time,
         macdList,
         rsiList,
       };
-      totalProfit += -0.038 * 0.01 * LEVERAGE;
+      totalProfit += -0.038 * 0.01 * positionAmt;
       dealDetailList.push(dealDetail);
       if (direction == "LONG") {
         longPatchNum += 1;
@@ -921,21 +922,20 @@ const checkDeal = async (data, isAutoReset = true) => {
       if (
         shortHolding &&
         Number(shortHolding.positionAmt) &&
-        shortPatchNum <= 1 &&
-        shortRatio &&
-        false
+        // shortPatchNum <= 1 &&
+        !!shortRatio
       ) {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (!longPatchNum && longRatio < LOSS_MAX && !isForceDeal && false) {
+        if (!longPatchNum && longRatio < LOSS_MAX && !isForceDeal) {
           await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
         } else {
           if (longRatio < 0) modeChange = true;
           const currentProfit =
-            longRatio * longHolding.positionAmt -
-            0.038 * 0.01 * LEVERAGE * longHolding.positionAmt;
+            (longRatio * longHolding.positionAmt) / LEVERAGE -
+            0.038 * 0.01 * longHolding.positionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -972,9 +972,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       if (
         longHolding &&
         Number(longHolding.positionAmt) &&
-        longPatchNum <= 1 &&
-        longRatio &&
-        false
+        // longPatchNum <= 1 &&
+        !!longRatio
       ) {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
@@ -985,8 +984,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         } else {
           if (shortRatio < 0) modeChange = true;
           const currentProfit =
-            shortRatio * shortHolding.positionAmt -
-            0.038 * 0.01 * LEVERAGE * shortHolding.positionAmt;
+            (shortRatio * shortHolding.positionAmt) / LEVERAGE -
+            0.038 * 0.01 * shortHolding.positionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1043,8 +1042,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (openLongCondition) {
       try {
         if (
-          (!longHolding || !Number(longHolding.positionAmt)) &&
-          !shortPatchNum
+          !longHolding ||
+          !Number(longHolding.positionAmt)
+          // &&
+          // !shortPatchNum
           // && (!shortHolding || !Number(shortHolding.positionAmt))
         ) {
           // closeShort()
@@ -1064,9 +1065,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   openPositionAmt = decreasePosition;
           // }
           // if(modeChange) openPositionAmt = INIT_POSITION;
-          totalCapital += -0.038 * 0.01 * LEVERAGE;
-          minTotalCapital = Math.min(minTotalCapital, totalCapital);
+
           if (totalCapital < openPositionAmt) openPositionAmt = 0;
+          totalCapital += -0.038 * 0.01 * openPositionAmt;
+          minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
           longPosition = {
             positionSide: "LONG",
@@ -1089,7 +1091,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           dealDetailList.push(dealDetail);
           // shortHolding = {};
           // shortPosition = {};
-          totalProfit += -0.038 * 0.01 * LEVERAGE;
+          totalProfit += -0.038 * 0.01 * openPositionAmt;
           totalPosition += openPositionAmt;
           // if(ratio < LOSS_MAX * 1) MODE = MODE == 1 ? 2 : 1
         }
@@ -1124,10 +1126,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   openPositionAmt = decreasePosition;
           // }
           // if(modeChange) openPositionAmt = INIT_POSITION;
-          totalCapital += -0.038 * 0.01 * LEVERAGE;
+          if (totalCapital < openPositionAmt) openPositionAmt = 0;
+          totalCapital += -0.038 * 0.01 * openPositionAmt;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
-          if (totalCapital < openPositionAmt) openPositionAmt = 0;
           shortPosition = {
             positionSide: "SHORT",
             leverage: LEVERAGE,
@@ -1149,7 +1151,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           dealDetailList.push(dealDetail);
           // longHolding = {};
           // longPosition = {};
-          totalProfit += -0.038 * 0.01 * LEVERAGE;
+          totalProfit += -0.038 * 0.01 * openPositionAmt;
           totalPosition += openPositionAmt;
           // if(ratio < LOSS_MAX * 1) MODE = MODE == 1 ? 2 : 1
         }
