@@ -24,7 +24,7 @@ const generatePositionList = (init, num) => {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const LEVERAGE = 10;
+const LEVERAGE = 20;
 const INTERVAL = "5m";
 const LOSS_MAX = (-0.08 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
@@ -37,7 +37,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: [1, 1.5, 5, 4.5, 3, 6],
 };
-const DEFAULT_MODE = 1;
+const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
