@@ -892,7 +892,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       const positionAmt = Number(holding.positionAmt) + INIT_POSITION;
       const price =
         (Number(mark_price) * INIT_POSITION +
-          Number(holding.entryPrice) * Numner(holding.positionAmt)) /
+          Number(holding.entryPrice) * Number(holding.positionAmt)) /
         positionAmt;
       if (direction == 'LONG') {
         longPosition = {
