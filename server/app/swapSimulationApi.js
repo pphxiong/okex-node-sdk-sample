@@ -1,12 +1,12 @@
-import request from '../utils/request';
-import moment from 'moment';
+import request from "../utils/request";
+import moment from "moment";
 
 // const {PublicClient} = require('@okfe/okex-node');
 // const {AuthenticatedClient} = require('@okfe/okex-node');
 // const customAuthClient = require('./customAuthClientV5');
-const customAuthClientBN = require('./customAuthClientBN');
-const querystring = require('querystring');
-const fs = require('fs');
+const customAuthClientBN = require("./customAuthClientBN");
+const querystring = require("querystring");
+const fs = require("fs");
 
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
@@ -23,9 +23,9 @@ const generatePositionList = (init, num) => {
 };
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = 'ETHUSDT';
+const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
-const INTERVAL = '5m';
+const INTERVAL = "5m";
 const LOSS_MAX = (-0.08 * LEVERAGE) / 10;
 const WIN_MAX = (0.08 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
@@ -85,7 +85,7 @@ let lastMode = 0;
 let myInterval;
 
 // var config = require('./configV5');
-var configBN = require('./configBN');
+var configBN = require("./configBN");
 // const cAuthClient = new customAuthClient(
 //     config.httpkey,
 //     config.httpsecret,
@@ -98,17 +98,17 @@ const cAuthClientBN = new customAuthClientBN(
   configBN.urlHost
 );
 
-var express = require('express');
+var express = require("express");
 var app = express();
 
-app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-  res.header('Access-Control-Allow-Headers', 'content-type');
-  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
-  res.header('X-Powered-By', ' 3.2.1');
-  res.header('Content-Type', 'application/json;charset=utf-8');
-  if (req.method.toLowerCase() == 'options') res.send(200);
+app.all("*", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Headers", "content-type");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  res.header("X-Powered-By", " 3.2.1");
+  res.header("Content-Type", "application/json;charset=utf-8");
+  if (req.method.toLowerCase() == "options") res.send(200);
   //让options尝试请求快速结束
   else next();
 });
@@ -134,7 +134,7 @@ function getCurrentMacd(list, last) {
         low: Number(item[3]),
         close: Number(item[4]),
         quantity: Number(item[5]),
-        time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
+        time: moment(parseInt(item[0])).format("YYYY-MM-DD HH:mm:ss"),
       };
     } else {
       const lastResult = macdList[macdList.length - 1];
@@ -147,7 +147,7 @@ function getCurrentMacd(list, last) {
         low: Number(item[3]),
         close: Number(item[4]),
         quantity: Number(item[5]),
-        time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
+        time: moment(parseInt(item[0])).format("YYYY-MM-DD HH:mm:ss"),
       };
       result = getMacd(payload);
     }
@@ -184,8 +184,8 @@ function getCurrentRSI(list, last) {
   return rsiList;
 }
 
-app.get('/test', function (req, res) {
-  send(res, {errcode: 0, errmsg: 'ok'});
+app.get("/test", function (req, res) {
+  send(res, { errcode: 0, errmsg: "ok" });
 });
 
 function getMacd(params) {
@@ -285,7 +285,7 @@ function getRSIAverage(list, i, n, last) {
 }
 function getRSIByPeriod(newList, period, last) {
   const result = getRSIAverage(newList, newList.length - 1, period, last);
-  const {gainAverageI, lossAverageI} = result;
+  const { gainAverageI, lossAverageI } = result;
   // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
   const RS = gainAverageI / (lossAverageI || 1);
   const RSI = 100 - 100 / (1 + RS);
@@ -297,12 +297,12 @@ function getRSIByPeriod(newList, period, last) {
   return newResult;
 }
 function getRSI(time, price, list, last) {
-  const {RSI: RSI1} = getRSIByPeriod(list, rsi1, last);
-  const {RSI: RSI2} = getRSIByPeriod(list, rsi2, last);
-  const {RSI: RSI3} = getRSIByPeriod(list, rsi3, last);
+  const { RSI: RSI1 } = getRSIByPeriod(list, rsi1, last);
+  const { RSI: RSI2 } = getRSIByPeriod(list, rsi2, last);
+  const { RSI: RSI3 } = getRSIByPeriod(list, rsi3, last);
 
   const result = {
-    time: moment(parseInt(time)).format('YYYY-MM-DD HH:mm:ss'),
+    time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
     price,
     RSI1,
     RSI2,
@@ -316,13 +316,13 @@ function crossMul(v1, v2) {
 }
 //判断两条线段是否相交
 function checkCross(p1, p2, p3, p4) {
-  let v1 = {x: p1.x - p3.x, y: p1.y - p3.y},
-    v2 = {x: p2.x - p3.x, y: p2.y - p3.y},
-    v3 = {x: p4.x - p3.x, y: p4.y - p3.y},
+  let v1 = { x: p1.x - p3.x, y: p1.y - p3.y },
+    v2 = { x: p2.x - p3.x, y: p2.y - p3.y },
+    v3 = { x: p4.x - p3.x, y: p4.y - p3.y },
     v = crossMul(v1, v3) * crossMul(v2, v3);
-  v1 = {x: p3.x - p1.x, y: p3.y - p1.y};
-  v2 = {x: p4.x - p1.x, y: p4.y - p1.y};
-  v3 = {x: p2.x - p1.x, y: p2.y - p1.y};
+  v1 = { x: p3.x - p1.x, y: p3.y - p1.y };
+  v2 = { x: p4.x - p1.x, y: p4.y - p1.y };
+  v3 = { x: p2.x - p1.x, y: p2.y - p1.y };
   return v <= 0 && crossMul(v1, v3) * crossMul(v2, v3) <= 0 ? true : false;
 }
 function isTripleDown(list) {
@@ -435,7 +435,7 @@ const waitTime = (time = 1000 * 4) => {
   });
 };
 
-app.get('/swap/reset', async (req, response) => {
+app.get("/swap/reset", async (req, response) => {
   totalProfit = 0;
   currentPosition = {};
   longPosition = {};
@@ -444,36 +444,36 @@ app.get('/swap/reset', async (req, response) => {
   mostLoss = {};
   send(response, {
     errcode: 0,
-    errmsg: 'ok',
-    data: {totalProfit, currentPosition, dealDetailList},
+    errmsg: "ok",
+    data: { totalProfit, currentPosition, dealDetailList },
   });
 });
 
-app.get('/swap/setRSIParams', async (req, response) => {
-  const {query = {}} = req;
-  const {rsi1: rsiP1, rsi2: rsiP2, rsi3: rsiP3} = query;
+app.get("/swap/setRSIParams", async (req, response) => {
+  const { query = {} } = req;
+  const { rsi1: rsiP1, rsi2: rsiP2, rsi3: rsiP3 } = query;
   rsi1 = rsiP1;
   rsi2 = rsiP2;
   rsi3 = rsiP3;
-  send(response, {errcode: 0, errmsg: 'ok', data: {rsi1, rsi2, rsi3}});
+  send(response, { errcode: 0, errmsg: "ok", data: { rsi1, rsi2, rsi3 } });
 });
 
-app.get('/swap/setConditionParams', async (req, response) => {
-  const {query = {}} = req;
-  const {longCondition: longConditionP, shortCondition: shortConditionP} =
+app.get("/swap/setConditionParams", async (req, response) => {
+  const { query = {} } = req;
+  const { longCondition: longConditionP, shortCondition: shortConditionP } =
     query;
   longCondition = longConditionP;
   shortCondition = shortConditionP;
   send(response, {
     errcode: 0,
-    errmsg: 'ok',
-    data: {longCondition, shortCondition},
+    errmsg: "ok",
+    data: { longCondition, shortCondition },
   });
 });
 
-app.get('/swap/getHistory', async (req, response) => {
-  const {query = {}} = req;
-  const {time} = query;
+app.get("/swap/getHistory", async (req, response) => {
+  const { query = {} } = req;
+  const { time } = query;
   const payload = {
     interval: INTERVAL,
     limit: 480,
@@ -482,14 +482,14 @@ app.get('/swap/getHistory', async (req, response) => {
   const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
   // const list = data.reverse();
   const list = data;
-  send(response, {errcode: 0, errmsg: 'ok', data: list});
+  send(response, { errcode: 0, errmsg: "ok", data: list });
 });
 
 let lastMacd;
 let lastRSI;
 let lastHistoryList = [];
-app.get('/swap/startHearBeat', async (req, response) => {
-  const {query = {}, body} = req;
+app.get("/swap/startHearBeat", async (req, response) => {
+  const { query = {}, body } = req;
   const {
     time,
     date,
@@ -546,7 +546,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     await checkDeal(result, isAutoReset);
     send(response, {
       errcode: 0,
-      errmsg: 'ok',
+      errmsg: "ok",
       data: {
         // history: list,
         // index: result,
@@ -562,13 +562,13 @@ app.get('/swap/startHearBeat', async (req, response) => {
     });
   } catch (e) {
     console.log(e);
-    restart('startHearBeat');
+    restart("startHearBeat");
   }
 });
 
-app.get('/swap/getLatestProfit', async (req, response) => {
-  const {query = {}} = req;
-  const {time, interval = INTERVAL, limit = 1440} = query;
+app.get("/swap/getLatestProfit", async (req, response) => {
+  const { query = {} } = req;
+  const { time, interval = INTERVAL, limit = 1440 } = query;
   try {
     const payload = {
       interval,
@@ -597,7 +597,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
     await checkDeal(result);
     send(response, {
       errcode: 0,
-      errmsg: 'ok',
+      errmsg: "ok",
       data: {
         // index: result,
         totalProfit,
@@ -632,7 +632,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
   function checkByStep(data, isForceDeal) {
     isForceDeal = false;
-    const {macdList, rsiList} = data;
+    const { macdList, rsiList } = data;
     const mark_price = macdList[macdList.length - 1].close;
 
     let longHolding;
@@ -651,7 +651,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     if (longHolding) {
-      const {leverage, entryPrice: avg_cost} = longHolding;
+      const { leverage, entryPrice: avg_cost } = longHolding;
       longRatio =
         ((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
         Number(mark_price);
@@ -659,7 +659,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     if (shortHolding) {
-      const {leverage, entryPrice: avg_cost} = shortHolding;
+      const { leverage, entryPrice: avg_cost } = shortHolding;
       shortRatio =
         ((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
         Number(mark_price);
@@ -685,11 +685,11 @@ const checkDeal = async (data, isAutoReset = true) => {
       return i;
     };
 
-    const minPriceIndex = getMinIndex(macdList, 'low');
-    const minMacdIndex = getMinIndex(macdList, 'column');
+    const minPriceIndex = getMinIndex(macdList, "low");
+    const minMacdIndex = getMinIndex(macdList, "column");
 
-    const maxPriceIndex = getMaxIndex(macdList, 'high');
-    const maxMacdIndex = getMaxIndex(macdList, 'column');
+    const maxPriceIndex = getMaxIndex(macdList, "high");
+    const maxMacdIndex = getMaxIndex(macdList, "column");
 
     const ifMacdWeakenContinuity = macdList
       .slice(-6)
@@ -751,13 +751,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3;
-    // rsiList[rsiList.length - 1].RSI3 > longCondition;
+    rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
+      Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3;
-    // rsiList[rsiList.length - 1].RSI3 < shortCondition;
+    rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     // ||
@@ -783,18 +783,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   rsiList[rsiList.length - 1].RSI3 > longCondition + 10);
     //  ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     // || longRatio < BAO_RATIO;
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     // ||(ifMacdNegativeContinuity && longRatio > WIN_MAX);
     // ||
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
     // ||(ifMacdPositiveContinuity && shortRatio > WIN_MAX);
     // ||
     // rsiList[rsiList.length - 1].RSI3 > longCondition;
@@ -892,7 +886,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         (Number(mark_price) * INIT_POSITION +
           Number(holding.entryPrice) * Number(holding.positionAmt)) /
         positionAmt;
-      if (direction == 'LONG') {
+      if (direction == "LONG") {
         longPosition = {
           positionSide: direction,
           leverage: LEVERAGE,
@@ -910,7 +904,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         };
       }
       const dealDetail = {
-        side: 'OPEN',
+        side: "OPEN",
         positionSide: direction,
         leverage: LEVERAGE,
         entryPrice: price,
@@ -921,7 +915,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       };
       totalProfit += -0.038 * 0.01 * positionAmt;
       dealDetailList.push(dealDetail);
-      if (direction == 'LONG') {
+      if (direction == "LONG") {
         longPatchNum += 1;
       } else {
         shortPatchNum += 1;
@@ -936,11 +930,11 @@ const checkDeal = async (data, isAutoReset = true) => {
         shortRatio < 0 &&
         false
       ) {
-        await patchPosition(shortHolding, 'SHORT');
+        await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
         if (!longPatchNum && longRatio < LOSS_MAX && !isForceDeal && false) {
-          await patchPosition(longHolding, 'LONG');
+          await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
         } else {
           if (longRatio < 0) modeChange = true;
@@ -951,8 +945,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           const dealDetail = {
-            side: 'CLOSE',
-            positionSide: 'LONG',
+            side: "CLOSE",
+            positionSide: "LONG",
             entryPrice: mark_price,
             positionAmt: longHolding.positionAmt,
             time: macdList[macdList.length - 1].time,
@@ -987,11 +981,11 @@ const checkDeal = async (data, isAutoReset = true) => {
         longRatio < 0 &&
         false
       ) {
-        await patchPosition(longHolding, 'LONG');
+        await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
         if (!shortPatchNum && shortRatio < LOSS_MAX && !isForceDeal && false) {
-          await patchPosition(shortHolding, 'SHORT');
+          await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
         } else {
           if (shortRatio < 0) modeChange = true;
@@ -1002,8 +996,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           const dealDetail = {
-            side: 'CLOSE',
-            positionSide: 'SHORT',
+            side: "CLOSE",
+            positionSide: "SHORT",
             entryPrice: mark_price,
             positionAmt: shortHolding.positionAmt,
             time: macdList[macdList.length - 1].time,
@@ -1083,15 +1077,15 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
           longPosition = {
-            positionSide: 'LONG',
+            positionSide: "LONG",
             leverage: LEVERAGE,
             entryPrice: mark_price,
             positionAmt: openPositionAmt,
             time: macdList[macdList.length - 1].time,
           };
           const dealDetail = {
-            side: 'OPEN',
-            positionSide: 'LONG',
+            side: "OPEN",
+            positionSide: "LONG",
             leverage: LEVERAGE,
             entryPrice: mark_price,
             positionAmt: openPositionAmt,
@@ -1143,15 +1137,15 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
           shortPosition = {
-            positionSide: 'SHORT',
+            positionSide: "SHORT",
             leverage: LEVERAGE,
             entryPrice: mark_price,
             positionAmt: openPositionAmt,
             time: macdList[macdList.length - 1].time,
           };
           const dealDetail = {
-            side: 'OPEN',
-            positionSide: 'SHORT',
+            side: "OPEN",
+            positionSide: "SHORT",
             leverage: LEVERAGE,
             entryPrice: mark_price,
             positionAmt: openPositionAmt,
@@ -1174,24 +1168,24 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 };
 
-app.post('/swap/startHearBeat', async (req, response) => {
+app.post("/swap/startHearBeat", async (req, response) => {
   console.log(req.query);
-  send(response, {errcode: 0, errmsg: 'ok', data: {}});
+  send(response, { errcode: 0, errmsg: "ok", data: {} });
   return;
   //1.通过判断url路径和请求方式来判断是否是表单提交
-  if (req.url === '/swap/startHearBeat' && req.method === 'POST') {
+  if (req.url === "/swap/startHearBeat" && req.method === "POST") {
     //创建空字符叠加数据片段
-    let data = '';
+    let data = "";
 
     //2.注册data事件接收数据（每当收到一段表单提交的数据，该方法会执行一次）
-    req.on('data', function (chunk) {
+    req.on("data", function (chunk) {
       // chunk 默认是一个二进制数据，和 data 拼接会自动 toString
       data += chunk;
     });
 
     // 3.当接收表单提交的数据完毕之后，就可以进一步处理了
     //注册end事件，所有数据接收完成会执行一次该方法
-    req.on('end', async () => {
+    req.on("end", async () => {
       const dataObject = querystring.parse(data);
 
       const {
@@ -1240,7 +1234,7 @@ app.post('/swap/startHearBeat', async (req, response) => {
         await checkDeal(result, isAutoReset);
         send(response, {
           errcode: 0,
-          errmsg: 'ok',
+          errmsg: "ok",
           data: {
             // history: list,
             // index: result,
@@ -1253,7 +1247,7 @@ app.post('/swap/startHearBeat', async (req, response) => {
         });
       } catch (e) {
         console.log(e);
-        restart('startHearBeat');
+        restart("startHearBeat");
       }
     });
   }
@@ -1261,7 +1255,7 @@ app.post('/swap/startHearBeat', async (req, response) => {
 
 const readData = async () => {
   let dataConfig = JSON.parse(
-    fs.readFileSync('./app/lastHistoryList.json', 'utf-8')
+    fs.readFileSync("./app/lastHistoryList.json", "utf-8")
   );
   return dataConfig.lastHistoryList;
 };
@@ -1275,7 +1269,7 @@ const writeData = async (data) => {
 
   const result = await new Promise((resolve) => {
     //将修改后的内容写入文件
-    fs.writeFile('./app/lastHistoryList.json', jsonStr, function (err) {
+    fs.writeFile("./app/lastHistoryList.json", jsonStr, function (err) {
       if (err) {
         // console.error(err);
       } else {
@@ -1294,23 +1288,23 @@ const writeData = async (data) => {
 })();
 app.listen(8092);
 
-console.log('8092 server start');
+console.log("8092 server start");
 
-process.on('uncaughtException', function (err) {
+process.on("uncaughtException", function (err) {
   //打印出错误
   // console.log('uncaughtException',err);
   restart();
 });
 
-let exec = require('child_process').exec;
+let exec = require("child_process").exec;
 function restart(resource) {
-  console.log('restarting......', resource);
+  console.log("restarting......", resource);
   setTimeout(() => {
-    exec('npm run restart:product', function (err, stdout, stderr) {
+    exec("npm run restart:product", function (err, stdout, stderr) {
       if (err) {
-        console.log('restarting failed');
+        console.log("restarting failed");
       } else {
-        console.log('restarting success');
+        console.log("restarting success");
       }
     });
   }, 1000 * 10);
