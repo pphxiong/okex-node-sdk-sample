@@ -37,7 +37,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 1;
+const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
@@ -820,11 +820,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     let openShortCondition =
       MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
     let closeLongCondition =
-      (MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2) ||
-      isForceDeal;
+      MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     let closeShortCondition =
-      (MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2) ||
-      isForceDeal;
+      MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (openLongCondition) {
       holding = shortHolding;
