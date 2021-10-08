@@ -776,11 +776,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION1 ||
-      rsiList[rsiList.length - 1].RSI3 > longCondition + 15;
+      rsiList[rsiList.length - 1].RSI3 > longCondition + 10;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION1 ||
-      rsiList[rsiList.length - 1].RSI3 < shortCondition - 15;
+      rsiList[rsiList.length - 1].RSI3 < shortCondition - 10;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
