@@ -31,7 +31,7 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = -0.95;
-const LOSS_MAX = (-0.168 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.168 * 2 * LEVERAGE) / 10;
 const WIN_MAX = (0.168 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -81,7 +81,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const DEFAULT_CONDITION = 50;
+const DEFAULT_CONDITION = 48;
 let longCondition = DEFAULT_CONDITION;
 let shortCondition = DEFAULT_CONDITION;
 
@@ -761,29 +761,24 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 1].RSI2 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+      // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 1].RSI2 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      // rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      (MAIN_OPEN_SHORT_CONDITION1 ||
-        (Number(macdList[macdList.length - 1].column) < 0 &&
-          rsiList[rsiList.length - 1].RSI3 > longCondition + 5)) &&
-      (longRatio > 0 || longRatio < LOSS_MAX);
+      longRatio > WIN_MAX || longRatio < LOSS_MAX;
+
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION1 ||
-        (Number(macdList[macdList.length - 1].column) > 0 &&
-          rsiList[rsiList.length - 1].RSI3 < shortCondition - 5)) &&
-      (shortRatio > 0 || shortRatio < LOSS_MAX);
+      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
@@ -807,35 +802,35 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // openLongCondition = false;
-    // openShortCondition = false;
+    openLongCondition = false;
+    openShortCondition = false;
 
-    // if (
-    //   closeLongCondition ||
-    //   closeShortCondition ||
-    //   (longRatio == 0 && shortRatio == 0)
-    // ) {
-    //   const random = getRandomNumberByRange(0, 2);
-    //   if (random == 0) {
-    //     openLongCondition = true;
-    //   } else {
-    //     openShortCondition = true;
-    //   }
-    // }
+    if (
+      closeLongCondition ||
+      closeShortCondition ||
+      (longRatio == 0 && shortRatio == 0)
+    ) {
+      const random = getRandomNumberByRange(0, 2);
+      if (random == 0) {
+        openLongCondition = true;
+      } else {
+        openShortCondition = true;
+      }
+    }
 
-    // if (closeLongCondition || closeShortCondition) {
-    //   if (longRatio > 0 || shortRatio > 0) {
-    //     continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
-    //     continuous_loss = 0;
-    //     lastWinOrLoss = 1;
-    //     maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
-    //   } else if (longRatio < 0 || shortRatio < 0) {
-    //     continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
-    //     continuous_win = 0;
-    //     lastWinOrLoss = 0;
-    //     maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
-    //   }
-    // }
+    if (closeLongCondition || closeShortCondition) {
+      if (longRatio > 0 || shortRatio > 0) {
+        continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
+        continuous_loss = 0;
+        lastWinOrLoss = 1;
+        maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
+      } else if (longRatio < 0 || shortRatio < 0) {
+        continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
+        continuous_win = 0;
+        lastWinOrLoss = 0;
+        maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
+      }
+    }
 
     if (closeShortCondition) {
       holding = shortHolding;
