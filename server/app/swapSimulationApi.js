@@ -832,9 +832,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    if (openLongCondition) {
+    if (closeShortCondition) {
       holding = shortHolding;
-    } else if (openShortCondition) {
+    } else if (closeLongCondition) {
       holding = longHolding;
     }
 
