@@ -22,12 +22,16 @@ const generatePositionList = (init, num) => {
   return arr;
 };
 
+function getRandomNumberByRange(start, end) {
+  return Math.floor(Math.random() * (end - start) + start);
+}
+
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
-const LOSS_MAX = (-0.08 * LEVERAGE) / 10;
-const WIN_MAX = (0.08 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 2.5;
@@ -757,52 +761,14 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
-    // ||
-    // (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 >
-    //   30 &&
-    //   rsiList[rsiList.length - 1].RSI1 > 70);
-    // ||
-    // (Number(macdList[macdList.length - 1].column) > 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI2 &&
-    //   rsiList[rsiList.length - 1].RSI2 > rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 < shortCondition - 10);
-    //  ||(ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
-    // || shortRatio < BAO_RATIO;
+
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
-    // ||
-    // (rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 <
-    //   -30 &&
-    //   rsiList[rsiList.length - 1].RSI1 < 30);
-    // ||
-    // (Number(macdList[macdList.length - 1].column) < 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI2 &&
-    //   rsiList[rsiList.length - 1].RSI2 < rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 > longCondition + 10);
-    //  ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
-    // || longRatio < BAO_RATIO;
+
     const MAIN_CLOSE_LONG_CONDITION1 =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
-    // ||
-    // (Number(macdList[macdList.length - 1].column) < 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 < shortCondition);
-    // ||
-    // rsiList[rsiList.length - 1].RSI3 < shortCondition;
-    // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION; /*|| (longRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) < 0)*/
+      longRatio > WIN_MAX || longRatio < LOSS_MAX;
+
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
-    // ||
-    // (Number(macdList[macdList.length - 1].column) > 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 > longCondition);
-    // ||(ifMacdPositiveContinuity && shortRatio > WIN_MAX);
-    // ||
-    // rsiList[rsiList.length - 1].RSI3 > longCondition;
-    /*|| (shortRatio > WIN_MAX * 5 && Number(macdList[macdList.length - 1].column) > 0)*/
+      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
@@ -825,6 +791,18 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
+
+    openLongCondition = false;
+    openShortCondition = false;
+
+    if (closeLongCondition || closeShortCondition) {
+      const random = getRandomNumberByRange(0, 1);
+      if (random == 0) {
+        openLongCondition = true;
+      } else {
+        openShortCondition = true;
+      }
+    }
 
     if (openLongCondition) {
       holding = shortHolding;
