@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = Number((init + init * 1).toFixed(1));
+    init = Number((init + init * 1.5).toFixed(1));
     arr.push(init);
     i++;
   }
@@ -35,7 +35,7 @@ const LOSS_MAX = (-0.168 * LEVERAGE) / 10;
 const WIN_MAX = (0.168 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
+const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 5);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
