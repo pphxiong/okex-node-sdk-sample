@@ -795,7 +795,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     openLongCondition = false;
     openShortCondition = false;
 
-    if (closeLongCondition || closeShortCondition) {
+    if (
+      closeLongCondition ||
+      closeShortCondition ||
+      (longRatio == 0 && shortRatio == 0)
+    ) {
       const random = getRandomNumberByRange(0, 1);
       if (random == 0) {
         openLongCondition = true;
