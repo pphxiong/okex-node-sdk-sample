@@ -1128,8 +1128,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         if (
           // (!longHolding || !Number(longHolding.positionAmt))
           // &&
-          (!shortHolding || !Number(shortHolding.positionAmt)) &&
-          !longPatchNum
+          !shortHolding ||
+          !Number(shortHolding.positionAmt)
+          // &&
+          // !longPatchNum
         ) {
           // closeLong()
           // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
