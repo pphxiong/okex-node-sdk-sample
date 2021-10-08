@@ -30,8 +30,8 @@ function getRandomNumberByRange(start, end) {
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
-const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.2 * LEVERAGE) / 10;
+const WIN_MAX = (0.2 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 2.5;
@@ -48,6 +48,9 @@ const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
 const INIT_POSITION = INCREASE_FI_LIST[0];
+
+let continuous_win = 0;
+let continuous_loss = 0;
 
 let modeChange = false;
 
@@ -807,6 +810,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         openShortCondition = true;
       }
     }
+
+    // if (closeLongCondition || closeShortCondition) {
+    //   con
+    // }
 
     if (openLongCondition) {
       holding = shortHolding;
