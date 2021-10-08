@@ -34,7 +34,7 @@ const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
-const CAPITAL_RATIO = 2.5;
+const CAPITAL_RATIO = 1;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 10);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
@@ -61,7 +61,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = 100;
+let totalCapital = 1000;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
@@ -821,10 +821,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (closeLongCondition || closeShortCondition) {
       if (longRatio > 0 || shortRatio > 0) {
         continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
+        continuous_loss = 0;
         lastWinOrLoss = 1;
         maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
       } else if (longRatio < 0 || shortRatio < 0) {
         continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
+        continuous_win = 0;
         lastWinOrLoss = 0;
         maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
       }
