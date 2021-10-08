@@ -31,8 +31,8 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = -0.95;
-const LOSS_MAX = (-0.168 * 2 * LEVERAGE) / 10;
-const WIN_MAX = (0.168 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.191 * LEVERAGE) / 10;
+const WIN_MAX = (0.191 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
@@ -811,9 +811,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       (longRatio == 0 && shortRatio == 0)
     ) {
       if (longRatio > 0) {
-        openLongCondition = true;
-      } else if (shortRatio > 0) {
         openShortCondition = true;
+      } else if (shortRatio > 0) {
+        openLongCondition = true;
       } else {
         const random = getRandomNumberByRange(0, 2);
         if (random == 0) {
