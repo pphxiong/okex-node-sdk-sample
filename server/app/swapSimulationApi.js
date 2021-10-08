@@ -30,8 +30,8 @@ function getRandomNumberByRange(start, end) {
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
-const LOSS_MAX = (-0.2 * LEVERAGE) / 10;
-const WIN_MAX = (0.2 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.1 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 2.5;
@@ -804,7 +804,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       (longRatio == 0 && shortRatio == 0)
     ) {
       const random = getRandomNumberByRange(0, 2);
-      if (random == 0) {
+      if (random == 1) {
         openLongCondition = true;
       } else {
         openShortCondition = true;
