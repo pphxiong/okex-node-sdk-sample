@@ -30,9 +30,9 @@ function getRandomNumberByRange(start, end) {
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
-const LOSS_MAX = (-0.168 * LEVERAGE) / 10;
-const WIN_MAX = (0.168 * LEVERAGE) / 10;
 const BAO_RATIO = -0.95;
+const LOSS_MAX = LOSS_MAX;
+const WIN_MAX = (0.168 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
