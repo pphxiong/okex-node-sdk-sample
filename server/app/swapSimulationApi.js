@@ -810,18 +810,18 @@ const checkDeal = async (data, isAutoReset = true) => {
       closeShortCondition ||
       (longRatio == 0 && shortRatio == 0)
     ) {
-      // if (longRatio > 0) {
-      //   openShortCondition = true;
-      // } else if (shortRatio > 0) {
-      //   openLongCondition = true;
-      // } else {
-      const random = getRandomNumberByRange(0, 2);
-      if (random == 0) {
+      if (longRatio < 0) {
         openLongCondition = true;
-      } else {
+      } else if (shortRatio < 0) {
         openShortCondition = true;
+      } else {
+        const random = getRandomNumberByRange(0, 2);
+        if (random == 0) {
+          openLongCondition = true;
+        } else {
+          openShortCondition = true;
+        }
       }
-      // }
     }
 
     if (closeLongCondition || closeShortCondition) {
