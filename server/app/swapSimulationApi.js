@@ -51,6 +51,9 @@ const INIT_POSITION = INCREASE_FI_LIST[0];
 
 let continuous_win = 0;
 let continuous_loss = 0;
+let lastWinOrLoss = 0; // 0: loss, 1: win
+let maxContinuousWin = 0;
+let maxContinuousLoss = 0;
 
 let modeChange = false;
 
@@ -562,6 +565,8 @@ app.get("/swap/startHearBeat", async (req, response) => {
         currentPosition,
         dealDetailList,
         mostLoss,
+        maxContinuousWin,
+        maxContinuousLoss,
       },
     });
   } catch (e) {
@@ -607,6 +612,8 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         totalProfit,
         dealDetailList,
         mostLoss,
+        maxContinuousWin,
+        maxContinuousLoss,
       },
     });
   } catch (e) {
@@ -804,16 +811,24 @@ const checkDeal = async (data, isAutoReset = true) => {
       (longRatio == 0 && shortRatio == 0)
     ) {
       const random = getRandomNumberByRange(0, 2);
-      if (random == 1) {
+      if (random == 0) {
         openLongCondition = true;
       } else {
         openShortCondition = true;
       }
     }
 
-    // if (closeLongCondition || closeShortCondition) {
-    //   con
-    // }
+    if (closeLongCondition || closeShortCondition) {
+      if (longRatio > 0 || shortRatio > 0) {
+        continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
+        lastWinOrLoss = 1;
+        maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
+      } else if (longRatio < 0 || shortRatio < 0) {
+        continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
+        lastWinOrLoss = 0;
+        maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
+      }
+    }
 
     if (openLongCondition) {
       holding = shortHolding;
