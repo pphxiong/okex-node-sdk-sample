@@ -907,7 +907,71 @@ const checkDeal = async (data, isAutoReset = true) => {
     // console.log('latestColumnsObjList',rsiList.slice(-2))
     // console.log('------------------')
 
-    const closeHalfPosition = async (holding, direction) => {};
+    const closeHalfPosition = async (holding, direction) => {
+      let positionAmt = Number(holding.positionAmt) / 2;
+      const price =
+        Number(holding.entryPrice) * Number(holding.positionAmt) -
+        (Number(mark_price) * Number(holding.positionAmt)) / positionAmt;
+
+      let currentProfit = 0;
+
+      if (direction == "LONG") {
+        currentProfit =
+          (longRatio * longHolding.positionAmt) / 2 / LEVERAGE -
+          0.038 * 0.01 * longHolding.positionAmt;
+      } else {
+        currentProfit =
+          (shortRatio * shortHolding.positionAmt) / 2 / LEVERAGE -
+          0.038 * 0.01 * shortHolding.positionAmt;
+      }
+      totalProfit += currentProfit;
+      totalCapital += currentProfit;
+
+      if (direction == "LONG") {
+        longPosition = {
+          positionSide: direction,
+          leverage: LEVERAGE,
+          entryPrice: price,
+          positionAmt,
+          time: macdList[macdList.length - 1].time,
+        };
+      } else {
+        shortPosition = {
+          positionSide: direction,
+          leverage: LEVERAGE,
+          entryPrice: price,
+          positionAmt,
+          time: macdList[macdList.length - 1].time,
+        };
+      }
+
+      const dealDetail = {
+        side: "CLOSE",
+        positionSide: direction,
+        entryPrice: mark_price,
+        positionAmt,
+        time: macdList[macdList.length - 1].time,
+        totalProfit,
+        currentProfit,
+        macd: macdList[macdList.length - 1],
+        rsi: rsiList[rsiList.length - 1],
+        MODE,
+        isCloseHalf: true,
+      };
+      dealDetailList.push(dealDetail);
+
+      if (direction == "LONG") {
+        longPatchNum -= 1;
+      } else {
+        shortPatchNum -= 1;
+      }
+    };
+
+    if (longRatio < LOSS_MAX / 4 && longPatchNum > 0) {
+      await closeHalfPosition(longHolding, "LONG");
+    } else if (shortRatio < LOSS_MAX / 4 && shortPatchNum > 0) {
+      await closeHalfPosition(shortHolding, "SHORT");
+    }
 
     const patchPosition = async (holding, direction) => {
       console.log("patchPosition", holding);
