@@ -968,9 +968,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     };
 
     if (longRatio < LOSS_MAX / 4 && longPatchNum > 0) {
-      await closeHalfPosition(longHolding, "LONG");
+      closeHalfPosition(longHolding, "LONG");
     } else if (shortRatio < LOSS_MAX / 4 && shortPatchNum > 0) {
-      await closeHalfPosition(shortHolding, "SHORT");
+      closeHalfPosition(shortHolding, "SHORT");
     }
 
     const patchPosition = async (holding, direction) => {
