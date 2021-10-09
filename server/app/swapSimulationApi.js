@@ -54,6 +54,7 @@ let continuous_loss = 0;
 let lastWinOrLoss = 0; // 0: loss, 1: win
 let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
+let baoNumTotal = 0;
 
 let modeChange = false;
 
@@ -569,6 +570,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
         maxContinuousLoss,
         longPosition,
         shortPosition,
+        BAO_RATIO,
       },
     });
   } catch (e) {
@@ -618,6 +620,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         maxContinuousLoss,
         longPosition,
         shortPosition,
+        BAO_RATIO,
       },
     });
   } catch (e) {
@@ -968,6 +971,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           longPatchNum += 1;
         } else if (longRatio > 0 || longRatio < BAO_RATIO) {
           if (longRatio < 0) modeChange = true;
+          if (longRatio < BAO_RATIO) baoNumTotal++;
           const currentProfit =
             (longRatio * longHolding.positionAmt) / LEVERAGE -
             0.038 * 0.01 * longHolding.positionAmt;
@@ -1018,6 +1022,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
         } else if (shortRatio > 0 || shortRatio < BAO_RATIO) {
+          if (shortRatio < BAO_RATIO) baoNumTotal++;
           if (shortRatio < 0) modeChange = true;
           const currentProfit =
             (shortRatio * shortHolding.positionAmt) / LEVERAGE -
