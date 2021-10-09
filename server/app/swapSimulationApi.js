@@ -966,7 +966,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio < LOSS_MAX && longPatchNum <= 2) {
+        if (longRatio < LOSS_MAX && longPatchNum <= 3) {
           await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
         } else if (longRatio > 0 || longRatio < BAO_RATIO) {
@@ -1018,7 +1018,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (shortRatio < LOSS_MAX && shortPatchNum <= 2) {
+        if (shortRatio < LOSS_MAX && shortPatchNum <= 3) {
           await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
         } else if (shortRatio > 0 || shortRatio < BAO_RATIO) {
