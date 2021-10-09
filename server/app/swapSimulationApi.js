@@ -1038,8 +1038,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           if (longRatio < 0) modeChange = true;
           if (longRatio < LOSS_MAX) {
             baoNumTotal++;
-            openLongCondition = false;
-            openShortCondition = true;
+            // openLongCondition = false;
+            // openShortCondition = true;
           }
           const currentProfit =
             (longRatio * longHolding.positionAmt) / LEVERAGE -
@@ -1091,8 +1091,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         } else if (shortRatio < LOSS_MAX || shortRatio > WIN_MAX) {
           if (shortRatio < LOSS_MAX) {
             baoNumTotal++;
-            openLongCondition = true;
-            openShortCondition = false;
+            // openLongCondition = true;
+            // openShortCondition = false;
           }
           if (shortRatio < 0) modeChange = true;
           const currentProfit =
