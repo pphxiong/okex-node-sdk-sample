@@ -959,10 +959,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio < LOSS_MAX * 2 && !isForceDeal && false) {
+        if (longRatio < LOSS_MAX) {
           await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
-        } else if (longRatio > 0 || longRatio < BAO_RATIO || true) {
+        } else if (longRatio > 0 || longRatio < BAO_RATIO) {
           if (longRatio < 0) modeChange = true;
           const currentProfit =
             (longRatio * longHolding.positionAmt) / LEVERAGE -
@@ -1010,10 +1010,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (shortRatio < LOSS_MAX * 2 && !isForceDeal && false) {
+        if (shortRatio < LOSS_MAX) {
           await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
-        } else if (shortRatio > 0 || shortRatio < BAO_RATIO || true) {
+        } else if (shortRatio > 0 || shortRatio < BAO_RATIO) {
           if (shortRatio < 0) modeChange = true;
           const currentProfit =
             (shortRatio * shortHolding.positionAmt) / LEVERAGE -
