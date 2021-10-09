@@ -567,6 +567,8 @@ app.get("/swap/startHearBeat", async (req, response) => {
         mostLoss,
         maxContinuousWin,
         maxContinuousLoss,
+        longPosition,
+        shortPosition,
       },
     });
   } catch (e) {
@@ -614,6 +616,8 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         mostLoss,
         maxContinuousWin,
         maxContinuousLoss,
+        longPosition,
+        shortPosition,
       },
     });
   } catch (e) {
