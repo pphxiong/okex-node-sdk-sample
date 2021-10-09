@@ -813,8 +813,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     openShortCondition = false;
 
     if (
-      (closeLongCondition && longRatio != 0) ||
-      (closeShortCondition && shortRatio != 0) ||
+      (closeLongCondition && longRatio > WIN_MAX) ||
+      (closeShortCondition && shortRatio > WIN_MAX) ||
       (longRatio == 0 && shortRatio == 0)
     ) {
       // if (longRatio > 0) {
