@@ -19,9 +19,9 @@ const LONG_CONDITION = 48;
 const SHORT_CONDITION = 48;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
-const LOSS_MAX = (-0.2 * 1 * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * 1 * LEVERAGE) / 10;
-const CAPITAL_RATIO = 0.5;
+const LOSS_MAX = (-0.3 * 1 * LEVERAGE) / 10;
+const WIN_MAX = (0.2 * 1 * LEVERAGE) / 10;
+const CAPITAL_RATIO = 0.2;
 const INCREASE_FI_LIST = generatePositionList(1, 0).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
@@ -472,8 +472,8 @@ const checkDeal = async (data) => {
     openShortCondition = false;
 
     if (
-      (closeLongCondition && longRatio != 0) ||
-      (closeShortCondition && shortRatio != 0) ||
+      (closeLongCondition && longRatio > WIN_MAX) ||
+      (closeShortCondition && shortRatio > WIN_MAX) ||
       (longRatio == 0 && shortRatio == 0)
     ) {
       const random = getRandomNumberByRange(0, 2);
@@ -511,7 +511,7 @@ const checkDeal = async (data) => {
           Number(longHolding.positionAmt),
           INIT_POSITION
         );
-        if (longRatio < LOSS_MAX && patchNum <= 3) {
+        if (longRatio < LOSS_MAX && patchNum < 3) {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < BAO_RATIO) {
           const payload = {
@@ -531,7 +531,7 @@ const checkDeal = async (data) => {
           Number(shortHolding.positionAmt),
           INIT_POSITION
         );
-        if (shortRatio < LOSS_MAX && patchNum <= 3) {
+        if (shortRatio < LOSS_MAX && patchNum < 3) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < BAO_RATIO) {
           const payload = {
