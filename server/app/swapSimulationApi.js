@@ -511,11 +511,11 @@ app.get("/swap/startHearBeat", async (req, response) => {
     mostLoss = INIT_MOST_LOSS;
 
     if (isAutoReset) {
-      totalProfit = 0;
-      maxWinRatio = 0;
-      totalPosition = 0;
-      longPatchNum = 0;
-      shortPatchNum = 0;
+      // totalProfit = 0;
+      // maxWinRatio = 0;
+      // totalPosition = 0;
+      // longPatchNum = 0;
+      // shortPatchNum = 0;
       // currentPosition = {};
       // longPosition = {};
       // shortPosition = {};
@@ -915,9 +915,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           Number(holding.entryPrice) * Number(holding.positionAmt)) /
         positionAmt;
 
-      totalProfit += -0.038 * 0.01 * positionAmt;
-      totalCapital += -0.038 * 0.01 * positionAmt;
-      if (totalCapital < positionAmt) positionAmt = 0;
+      totalProfit += (-0.038 * 0.01 * positionAmt) / 2;
+      totalCapital += (-0.038 * 0.01 * positionAmt) / 2;
+      if (totalCapital < positionAmt / 2) positionAmt = 0;
       maxOpenPosition = Math.max(maxOpenPosition, positionAmt);
       if (direction == "LONG") {
         longPosition = {
