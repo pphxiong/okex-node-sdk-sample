@@ -782,12 +782,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longRatio > WIN_MAX / Number(longPosition.positionAmt || 1) ||
-      longRatio < LOSS_MAX;
+      longRatio > WIN_MAX || longRatio < LOSS_MAX;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortRatio > WIN_MAX / Number(shortPosition.positionAmt || 1) ||
-      shortRatio < LOSS_MAX;
+      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
@@ -908,6 +906,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     // console.log('macdList',macdList.slice(-2))
     // console.log('latestColumnsObjList',rsiList.slice(-2))
     // console.log('------------------')
+
+    const closeHalfPosition = async (holding, direction) => {};
 
     const patchPosition = async (holding, direction) => {
       console.log("patchPosition", holding);
