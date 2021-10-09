@@ -813,8 +813,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     openShortCondition = false;
 
     if (
-      (closeLongCondition && longRatio > WIN_MAX) ||
-      (closeShortCondition && shortRatio > WIN_MAX) ||
+      (closeLongCondition && longRatio < LOSS_MAX) ||
+      (closeShortCondition && shortRatio < LOSS_MAX) ||
       (longRatio == 0 && shortRatio == 0)
     ) {
       // if (longRatio > 0) {
@@ -1032,9 +1032,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       ) {
         await patchPosition(shortHolding, "SHORT");
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio < WIN_MAX && longPatchNum < 3) {
+        if (longRatio > WIN_MAX && longPatchNum < 3) {
           await patchPosition(longHolding, "LONG");
-        } else if (longRatio > LOSS_MAX || longRatio > WIN_MAX) {
+        } else if (longRatio < LOSS_MAX || longRatio > WIN_MAX) {
           if (longRatio < 0) modeChange = true;
           if (longRatio < LOSS_MAX) baoNumTotal++;
           const currentProfit =
