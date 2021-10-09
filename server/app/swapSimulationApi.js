@@ -910,19 +910,20 @@ const checkDeal = async (data, isAutoReset = true) => {
     const closeHalfPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) / 2;
       const price =
-        Number(holding.entryPrice) * Number(holding.positionAmt) -
-        (Number(mark_price) * Number(holding.positionAmt)) / positionAmt;
+        (Number(holding.entryPrice) * Number(holding.positionAmt) -
+          (Number(mark_price) * Number(holding.positionAmt)) / 2) /
+        positionAmt;
 
       let currentProfit = 0;
 
       if (direction == "LONG") {
         currentProfit =
           (longRatio * longHolding.positionAmt) / 2 / LEVERAGE -
-          0.038 * 0.01 * longHolding.positionAmt;
+          (0.038 * 0.01 * longHolding.positionAmt) / 2;
       } else {
         currentProfit =
           (shortRatio * shortHolding.positionAmt) / 2 / LEVERAGE -
-          0.038 * 0.01 * shortHolding.positionAmt;
+          (0.038 * 0.01 * shortHolding.positionAmt) / 2;
       }
       totalProfit += currentProfit;
       totalCapital += currentProfit;
@@ -948,7 +949,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       const dealDetail = {
         side: "CLOSE",
         positionSide: direction,
-        entryPrice: mark_price,
+        entryPrice: price,
         positionAmt,
         time: macdList[macdList.length - 1].time,
         totalProfit,
