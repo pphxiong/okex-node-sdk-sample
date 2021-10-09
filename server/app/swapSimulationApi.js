@@ -31,7 +31,7 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = -0.95;
-const LOSS_MAX = (-0.2 * 1.5 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.2 * 1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 1 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -966,7 +966,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio < LOSS_MAX && longPatchNum <= 3) {
+        if (longRatio < LOSS_MAX && longPatchNum <= 2) {
           await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
         } else if (longRatio > 0 || longRatio < BAO_RATIO) {
@@ -1018,7 +1018,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (shortRatio < LOSS_MAX && shortPatchNum <= 3) {
+        if (shortRatio < LOSS_MAX && shortPatchNum <= 2) {
           await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
         } else if (shortRatio > 0 || shortRatio < BAO_RATIO) {
