@@ -570,7 +570,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
         maxContinuousLoss,
         longPosition,
         shortPosition,
-        BAO_RATIO,
+        baoNumTotal,
       },
     });
   } catch (e) {
@@ -620,7 +620,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         maxContinuousLoss,
         longPosition,
         shortPosition,
-        BAO_RATIO,
+        baoNumTotal,
       },
     });
   } catch (e) {
