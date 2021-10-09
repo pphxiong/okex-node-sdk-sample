@@ -513,7 +513,7 @@ const checkDeal = async (data) => {
         );
         if (longRatio < LOSS_MAX && patchNum < 3) {
           await patchPosition(longHolding, "long");
-        } else if (longRatio > WIN_MAX || longRatio < BAO_RATIO) {
+        } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX) {
           const payload = {
             position: Number(longHolding.positionAmt),
             side: "long",
@@ -533,7 +533,7 @@ const checkDeal = async (data) => {
         );
         if (shortRatio < LOSS_MAX && patchNum < 3) {
           await patchPosition(shortHolding, "long");
-        } else if (shortRatio > WIN_MAX || shortRatio < BAO_RATIO) {
+        } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX) {
           const payload = {
             position: Number(shortHolding.positionAmt),
             side: "short",
