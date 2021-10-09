@@ -31,7 +31,7 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = -0.95;
-const LOSS_MAX = (-0.3 * 1 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.2 * 1 * LEVERAGE) / 10;
 const WIN_MAX = (0.2 * 1 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -968,11 +968,11 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     };
 
-    if (longRatio > LOSS_MAX / 4 && longPatchNum > 0) {
-      closeHalfPosition(longHolding, "LONG");
-    } else if (shortRatio > LOSS_MAX / 4 && shortPatchNum > 0) {
-      closeHalfPosition(shortHolding, "SHORT");
-    }
+    // if (longRatio > LOSS_MAX / 4 && longPatchNum > 0) {
+    //   closeHalfPosition(longHolding, "LONG");
+    // } else if (shortRatio > LOSS_MAX / 4 && shortPatchNum > 0) {
+    //   closeHalfPosition(shortHolding, "SHORT");
+    // }
 
     const patchPosition = async (holding, direction) => {
       console.log("patchPosition", holding);
