@@ -918,7 +918,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       totalProfit += -0.038 * 0.01 * positionAmt;
       totalCapital += -0.038 * 0.01 * positionAmt;
       if (totalCapital < positionAmt) positionAmt = 0;
-
+      maxOpenPosition = Math.max(maxOpenPosition, positionAmt);
       if (direction == "LONG") {
         longPosition = {
           positionSide: direction,
@@ -966,7 +966,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(shortHolding, "SHORT");
         shortPatchNum += 1;
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio < LOSS_MAX && longPatchNum <= 4) {
+        if (longRatio < LOSS_MAX && longPatchNum <= 3) {
           await patchPosition(longHolding, "LONG");
           longPatchNum += 1;
         } else if (longRatio > 0 || longRatio < BAO_RATIO) {
@@ -1018,7 +1018,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         await patchPosition(longHolding, "LONG");
         longPatchNum += 1;
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (shortRatio < LOSS_MAX && shortPatchNum <= 4) {
+        if (shortRatio < LOSS_MAX && shortPatchNum <= 3) {
           await patchPosition(shortHolding, "SHORT");
           shortPatchNum += 1;
         } else if (shortRatio > 0 || shortRatio < BAO_RATIO) {
