@@ -1152,11 +1152,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (openLongCondition) {
       try {
         if (
-          !longHolding ||
-          !Number(longHolding.positionAmt)
+          (!longHolding || !Number(longHolding.positionAmt)) &&
           // &&
           // !shortPatchNum
-          // && (!shortHolding || !Number(shortHolding.positionAmt))
+          (!shortHolding || !Number(shortHolding.positionAmt))
         ) {
           // closeShort()
           // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
@@ -1210,10 +1209,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (openShortCondition) {
       try {
         if (
-          // (!longHolding || !Number(longHolding.positionAmt))
-          // &&
-          !shortHolding ||
-          !Number(shortHolding.positionAmt)
+          (!longHolding || !Number(longHolding.positionAmt)) &&
+          (!shortHolding || !Number(shortHolding.positionAmt))
           // &&
           // !longPatchNum
         ) {
