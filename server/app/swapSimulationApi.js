@@ -571,6 +571,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
         longPosition,
         shortPosition,
         baoNumTotal,
+        lastWinOrLoss,
       },
     });
   } catch (e) {
@@ -621,6 +622,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         longPosition,
         shortPosition,
         baoNumTotal,
+        lastWinOrLoss,
       },
     });
   } catch (e) {
