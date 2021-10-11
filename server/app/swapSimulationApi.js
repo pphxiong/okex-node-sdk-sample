@@ -854,6 +854,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   }
     // }
 
+    if (closeLongCondition) {
+      lastWinOrLoss = longRatio;
+    } else if (closeShortCondition) {
+      lastWinOrLoss = shortRatio;
+    }
+
     if (closeShortCondition) {
       holding = shortHolding;
     } else if (closeLongCondition) {
@@ -1174,7 +1180,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < LOSS_MAX) {
+          if (lastWinOrLoss < LOSS_MAX) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
@@ -1231,7 +1237,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          if (ratio < LOSS_MAX) {
+          if (lastWinOrLoss < LOSS_MAX) {
             openPositionAmt = increasePosition;
           }
           // else if (ratio < LOSS_MAX) {
