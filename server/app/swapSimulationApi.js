@@ -31,8 +31,8 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = -0.95;
-const LOSS_MAX = (-0.2 * 1 * LEVERAGE) / 10;
-const WIN_MAX = (0.2 * 1 * LEVERAGE) / 10;
+const LOSS_MAX = (-0.3 * 1 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * 1 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
@@ -976,7 +976,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const patchPosition = async (holding, direction) => {
       console.log("patchPosition", holding);
-      let positionAmt = Number(holding.positionAmt) * 2;
+      let positionAmt = Number(holding.positionAmt) * 3;
       const price =
         (Number(mark_price) * Number(holding.positionAmt) +
           Number(holding.entryPrice) * Number(holding.positionAmt)) /
@@ -1032,7 +1032,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       ) {
         await patchPosition(shortHolding, "SHORT");
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio > WIN_MAX && longPatchNum < 3) {
+        if (longRatio < LOSS_MAX && longPatchNum < 3) {
           await patchPosition(longHolding, "LONG");
         } else if (longRatio < LOSS_MAX || longRatio > WIN_MAX) {
           if (longRatio < 0) modeChange = true;
@@ -1086,7 +1086,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       ) {
         await patchPosition(longHolding, "LONG");
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (shortRatio > WIN_MAX && shortPatchNum < 3) {
+        if (shortRatio < LOSS_MAX && shortPatchNum < 3) {
           await patchPosition(shortHolding, "SHORT");
         } else if (shortRatio < LOSS_MAX || shortRatio > WIN_MAX) {
           if (shortRatio < LOSS_MAX) {
