@@ -15,8 +15,8 @@ const generatePositionList = (init, num) => {
 
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "5m";
-const LONG_CONDITION = 48;
-const SHORT_CONDITION = 48;
+const LONG_CONDITION = 60;
+const SHORT_CONDITION = 40;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
 const LOSS_MAX = (-0.3 * 1 * LEVERAGE) / 10;
@@ -425,24 +425,26 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
+      Number(macdList[macdList.length - 2].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
+      Number(macdList[macdList.length - 2].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     //  ||(ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
     //  ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longRatio > WIN_MAX || longRatio < LOSS_MAX;
+      MAIN_OPEN_SHORT_CONDITION ||
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        longRatio < LOSS_MAX);
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
+      MAIN_OPEN_LONG_CONDITION ||
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        shortRatio < LOSS_MAX);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       (Number(macdList[macdList.length - 1].column) < 0 &&
@@ -468,21 +470,21 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    openLongCondition = false;
-    openShortCondition = false;
+    // openLongCondition = false;
+    // openShortCondition = false;
 
-    if (
-      (closeLongCondition && longRatio > WIN_MAX) ||
-      (closeShortCondition && shortRatio > WIN_MAX) ||
-      (longRatio == 0 && shortRatio == 0)
-    ) {
-      const random = getRandomNumberByRange(0, 2);
-      if (random == 0) {
-        openLongCondition = true;
-      } else {
-        openShortCondition = true;
-      }
-    }
+    // if (
+    //   (closeLongCondition && longRatio > WIN_MAX) ||
+    //   (closeShortCondition && shortRatio > WIN_MAX) ||
+    //   (longRatio == 0 && shortRatio == 0)
+    // ) {
+    //   const random = getRandomNumberByRange(0, 2);
+    //   if (random == 0) {
+    //     openLongCondition = true;
+    //   } else {
+    //     openShortCondition = true;
+    //   }
+    // }
 
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
     const hmsArr = currentTime.split(" ")[1].split(":");
@@ -511,9 +513,9 @@ const checkDeal = async (data) => {
           Number(longHolding.positionAmt),
           INIT_POSITION
         );
-        if (longRatio < LOSS_MAX && patchNum < 3) {
+        if (longRatio < LOSS_MAX && patchNum < 3 && false) {
           await patchPosition(longHolding, "long");
-        } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX) {
+        } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
           const payload = {
             position: Number(longHolding.positionAmt),
             side: "long",
@@ -531,9 +533,9 @@ const checkDeal = async (data) => {
           Number(shortHolding.positionAmt),
           INIT_POSITION
         );
-        if (shortRatio < LOSS_MAX && patchNum < 3) {
+        if (shortRatio < LOSS_MAX && patchNum < 3 && false) {
           await patchPosition(shortHolding, "long");
-        } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX) {
+        } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
           const payload = {
             position: Number(shortHolding.positionAmt),
             side: "short",
@@ -584,9 +586,9 @@ const checkDeal = async (data) => {
           let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-          if (ratio < WIN_MAX * 2) {
-            openPositionAmt = increasePosition;
-          }
+          // if (ratio < WIN_MAX * 2) {
+          //   openPositionAmt = increasePosition;
+          // }
           console.log("shortHolding", shortHolding);
           console.log("ratio", ratio);
           console.log("openPositionAmt", openPositionAmt);
@@ -626,9 +628,9 @@ const checkDeal = async (data) => {
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           console.log("longHolding", longHolding);
           console.log("ratio", ratio);
-          if (ratio < WIN_MAX * 2) {
-            openPositionAmt = increasePosition;
-          }
+          // if (ratio < WIN_MAX * 2) {
+          //   openPositionAmt = increasePosition;
+          // }
           await openPosition({
             position: openPositionAmt,
             openSide: "short",
