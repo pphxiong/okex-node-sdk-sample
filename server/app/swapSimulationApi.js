@@ -788,14 +788,14 @@ const checkDeal = async (data, isAutoReset = true) => {
       MAIN_OPEN_SHORT_CONDITION ||
       (Number(macdList[macdList.length - 1].column) < 0 &&
         Number(macdList[macdList.length - 2].column) > 0 &&
-        rsiList[rsiList.length - 1].RSI3 < shortCondition);
+        longRatio < 0);
     // || longRatio < LOSS_MAX;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
       (Number(macdList[macdList.length - 1].column) > 0 &&
         Number(macdList[macdList.length - 2].column) < 0 &&
-        rsiList[rsiList.length - 1].RSI3 > longCondition);
+        shortRatio < 0);
     // || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
