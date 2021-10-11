@@ -768,24 +768,22 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longRatio > WIN_MAX || longRatio < LOSS_MAX;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
@@ -809,41 +807,41 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    openLongCondition = false;
-    openShortCondition = false;
+    // openLongCondition = false;
+    // openShortCondition = false;
 
-    if (
-      (closeLongCondition && longRatio > WIN_MAX) ||
-      (closeShortCondition && shortRatio > WIN_MAX) ||
-      (longRatio == 0 && shortRatio == 0)
-    ) {
-      // if (longRatio > 0) {
-      //   openLongCondition = true;
-      // } else if (shortRatio > 0) {
-      //   openShortCondition = true;
-      // } else {
-      const random = getRandomNumberByRange(0, 2);
-      if (random == 0) {
-        openLongCondition = true;
-      } else {
-        openShortCondition = true;
-      }
-      // }
-    }
+    // if (
+    //   (closeLongCondition && longRatio > WIN_MAX) ||
+    //   (closeShortCondition && shortRatio > WIN_MAX) ||
+    //   (longRatio == 0 && shortRatio == 0)
+    // ) {
+    //   // if (longRatio > 0) {
+    //   //   openLongCondition = true;
+    //   // } else if (shortRatio > 0) {
+    //   //   openShortCondition = true;
+    //   // } else {
+    //   const random = getRandomNumberByRange(0, 2);
+    //   if (random == 0) {
+    //     openLongCondition = true;
+    //   } else {
+    //     openShortCondition = true;
+    //   }
+    //   // }
+    // }
 
-    if (closeLongCondition || closeShortCondition) {
-      if (longRatio > 0 || shortRatio > 0) {
-        continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
-        continuous_loss = 0;
-        lastWinOrLoss = 1;
-        maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
-      } else if (longRatio < 0 || shortRatio < 0) {
-        continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
-        continuous_win = 0;
-        lastWinOrLoss = 0;
-        maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
-      }
-    }
+    // if (closeLongCondition || closeShortCondition) {
+    //   if (longRatio > 0 || shortRatio > 0) {
+    //     continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
+    //     continuous_loss = 0;
+    //     lastWinOrLoss = 1;
+    //     maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
+    //   } else if (longRatio < 0 || shortRatio < 0) {
+    //     continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
+    //     continuous_win = 0;
+    //     lastWinOrLoss = 0;
+    //     maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
+    //   }
+    // }
 
     if (closeShortCondition) {
       holding = shortHolding;
@@ -1032,9 +1030,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       ) {
         await patchPosition(shortHolding, "SHORT");
       } else if (longHolding && Number(longHolding.positionAmt)) {
-        if (longRatio < LOSS_MAX && longPatchNum < 3) {
+        if (longRatio < LOSS_MAX && longPatchNum < 3 && false) {
           await patchPosition(longHolding, "LONG");
-        } else if (longRatio < LOSS_MAX || longRatio > WIN_MAX) {
+        } else if (longRatio < LOSS_MAX || longRatio > WIN_MAX || true) {
           if (longRatio < 0) modeChange = true;
           if (longRatio < LOSS_MAX) {
             baoNumTotal++;
@@ -1086,9 +1084,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       ) {
         await patchPosition(longHolding, "LONG");
       } else if (shortHolding && Number(shortHolding.positionAmt)) {
-        if (shortRatio < LOSS_MAX && shortPatchNum < 3) {
+        if (shortRatio < LOSS_MAX && shortPatchNum < 3 && false) {
           await patchPosition(shortHolding, "SHORT");
-        } else if (shortRatio < LOSS_MAX || shortRatio > WIN_MAX) {
+        } else if (shortRatio < LOSS_MAX || shortRatio > WIN_MAX || true) {
           if (shortRatio < LOSS_MAX) {
             baoNumTotal++;
             // openLongCondition = true;
