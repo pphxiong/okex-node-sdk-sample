@@ -1166,6 +1166,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     //平空仓条件
     if (closeShortCondition) {
       try {
+        const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
         console.log("lastWinOrLoss", lastWinOrLoss);
         console.log(increasePosition);
         closeShort();
