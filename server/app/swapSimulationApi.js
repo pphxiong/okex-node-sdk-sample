@@ -1168,7 +1168,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       try {
         closeShort();
         const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-        console.log("lastWinOrLoss", lastWinOrLoss);
+        console.log("lastWinOrLoss", lastWinOrLoss, LOSS_MAX);
         console.log(increasePosition);
         // if(shortRatio > WIN_MAX * 2) MODE = DEFAULT_MODE
       } catch (e) {
