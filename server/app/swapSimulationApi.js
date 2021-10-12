@@ -930,66 +930,66 @@ const checkDeal = async (data, isAutoReset = true) => {
     // console.log('latestColumnsObjList',rsiList.slice(-2))
     // console.log('------------------')
 
-    const closeHalfPosition = async (holding, direction) => {
-      let positionAmt = Number(holding.positionAmt) / 2;
-      const price =
-        (Number(holding.entryPrice) * Number(holding.positionAmt) -
-          (Number(mark_price) * Number(holding.positionAmt)) / 2) /
-        positionAmt;
+    // const closeHalfPosition = async (holding, direction) => {
+    //   let positionAmt = Number(holding.positionAmt) / 2;
+    //   const price =
+    //     (Number(holding.entryPrice) * Number(holding.positionAmt) -
+    //       (Number(mark_price) * Number(holding.positionAmt)) / 2) /
+    //     positionAmt;
 
-      let currentProfit = 0;
+    //   let currentProfit = 0;
 
-      if (direction == "LONG") {
-        currentProfit =
-          (longRatio * longHolding.positionAmt) / 2 / LEVERAGE -
-          (0.038 * 0.01 * longHolding.positionAmt) / 2;
-      } else {
-        currentProfit =
-          (shortRatio * shortHolding.positionAmt) / 2 / LEVERAGE -
-          (0.038 * 0.01 * shortHolding.positionAmt) / 2;
-      }
-      totalProfit += currentProfit;
-      totalCapital += currentProfit;
+    //   if (direction == "LONG") {
+    //     currentProfit =
+    //       (longRatio * longHolding.positionAmt) / 2 / LEVERAGE -
+    //       (0.038 * 0.01 * longHolding.positionAmt) / 2;
+    //   } else {
+    //     currentProfit =
+    //       (shortRatio * shortHolding.positionAmt) / 2 / LEVERAGE -
+    //       (0.038 * 0.01 * shortHolding.positionAmt) / 2;
+    //   }
+    //   totalProfit += currentProfit;
+    //   totalCapital += currentProfit;
 
-      if (direction == "LONG") {
-        longPosition = {
-          positionSide: direction,
-          leverage: LEVERAGE,
-          entryPrice: price,
-          positionAmt,
-          time: macdList[macdList.length - 1].time,
-        };
-      } else {
-        shortPosition = {
-          positionSide: direction,
-          leverage: LEVERAGE,
-          entryPrice: price,
-          positionAmt,
-          time: macdList[macdList.length - 1].time,
-        };
-      }
+    //   if (direction == "LONG") {
+    //     longPosition = {
+    //       positionSide: direction,
+    //       leverage: LEVERAGE,
+    //       entryPrice: price,
+    //       positionAmt,
+    //       time: macdList[macdList.length - 1].time,
+    //     };
+    //   } else {
+    //     shortPosition = {
+    //       positionSide: direction,
+    //       leverage: LEVERAGE,
+    //       entryPrice: price,
+    //       positionAmt,
+    //       time: macdList[macdList.length - 1].time,
+    //     };
+    //   }
 
-      const dealDetail = {
-        side: "CLOSE",
-        positionSide: direction,
-        entryPrice: price,
-        positionAmt,
-        time: macdList[macdList.length - 1].time,
-        totalProfit,
-        currentProfit,
-        macd: macdList[macdList.length - 1],
-        rsi: rsiList[rsiList.length - 1],
-        MODE,
-        isCloseHalf: true,
-      };
-      dealDetailList.push(dealDetail);
+    //   const dealDetail = {
+    //     side: "CLOSE",
+    //     positionSide: direction,
+    //     entryPrice: price,
+    //     positionAmt,
+    //     time: macdList[macdList.length - 1].time,
+    //     totalProfit,
+    //     currentProfit,
+    //     macd: macdList[macdList.length - 1],
+    //     rsi: rsiList[rsiList.length - 1],
+    //     MODE,
+    //     isCloseHalf: true,
+    //   };
+    //   dealDetailList.push(dealDetail);
 
-      if (direction == "LONG") {
-        longPatchNum -= 1;
-      } else {
-        shortPatchNum -= 1;
-      }
-    };
+    //   if (direction == "LONG") {
+    //     longPatchNum -= 1;
+    //   } else {
+    //     shortPatchNum -= 1;
+    //   }
+    // };
 
     // if (longRatio > LOSS_MAX / 4 && longPatchNum > 0) {
     //   closeHalfPosition(longHolding, "LONG");
@@ -1166,6 +1166,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     //平空仓条件
     if (closeShortCondition) {
       try {
+        console.log("lastWinOrLoss", lastWinOrLoss);
+        console.log(increasePosition);
         closeShort();
         // if(shortRatio > WIN_MAX * 2) MODE = DEFAULT_MODE
       } catch (e) {
@@ -1188,8 +1190,6 @@ const checkDeal = async (data, isAutoReset = true) => {
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
-          console.log("lastWinOrLoss", lastWinOrLoss);
-          console.log(increasePosition);
           if (lastWinOrLoss < LOSS_MAX) {
             openPositionAmt = increasePosition;
           }
