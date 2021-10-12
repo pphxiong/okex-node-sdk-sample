@@ -52,6 +52,7 @@ const INIT_POSITION = INCREASE_FI_LIST[0];
 let continuous_win = 0;
 let continuous_loss = 0;
 let lastWinOrLoss = 0; // 0: loss, 1: win
+let lastPosition = INIT_POSITION;
 let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
 let baoNumTotal = 0;
@@ -572,6 +573,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
         shortPosition,
         baoNumTotal,
         lastWinOrLoss,
+        lastPosition,
       },
     });
   } catch (e) {
@@ -623,6 +625,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         shortPosition,
         baoNumTotal,
         lastWinOrLoss,
+        lastPosition,
       },
     });
   } catch (e) {
@@ -865,6 +868,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     ) {
       holding = shortHolding;
       lastWinOrLoss = shortRatio;
+      lastPosition = holding.positionAmt;
     } else if (
       closeLongCondition &&
       longHolding &&
@@ -872,10 +876,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     ) {
       holding = longHolding;
       lastWinOrLoss = longRatio;
+      lastPosition = holding.positionAmt;
     }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
-      (item) => holding && item == Number(holding.positionAmt)
+      (item) => holding && item == Number(lastPosition)
     );
 
     fiIndex =
@@ -1168,8 +1173,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       try {
         closeShort();
         const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-        console.log("lastWinOrLoss", lastWinOrLoss, LOSS_MAX);
-        console.log(increasePosition);
         // if(shortRatio > WIN_MAX * 2) MODE = DEFAULT_MODE
       } catch (e) {
         console.log(e);
