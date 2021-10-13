@@ -483,8 +483,13 @@ const checkDeal = async (data) => {
     console.log("************************************", currentTime);
     console.log("------------------");
     console.log("mark_price", mark_price);
-    console.log("macdList", macdList.slice(-1));
-    console.log("rsiList", rsiList.slice(-1));
+    console.log("closeShortCondition", closeShortCondition);
+    console.log(
+      "shortHolding",
+      shortHolding && Math.abs(Number(shortHolding.positionAmt))
+    );
+    // console.log("macdList", macdList.slice(-1));
+    // console.log("rsiList", rsiList.slice(-1));
     console.log("------------------");
 
     const patchPosition = async (holding, direction) => {
