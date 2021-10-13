@@ -35,7 +35,7 @@ const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 1 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1 * 10;
-const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 5);
+const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
@@ -787,14 +787,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_CLOSE_LONG_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
       (Number(macdList[macdList.length - 1].column) < 0 &&
-        rsiList[rsiList.length - 1].RSI3 < shortCondition &&
         longRatio < LOSS_MAX);
     // || longRatio < LOSS_MAX;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
       (Number(macdList[macdList.length - 1].column) > 0 &&
-        rsiList[rsiList.length - 1].RSI3 > longCondition &&
         shortRatio < LOSS_MAX);
     // || shortRatio < LOSS_MAX;
 
@@ -806,9 +804,15 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_CLOSE_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION2 ||
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        longRatio < LOSS_MAX);
 
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_CLOSE_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION2 ||
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        shortRatio < LOSS_MAX);
 
     modeChange = false;
     let openLongCondition =
@@ -819,6 +823,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
+
+    if (
+      (closeLongCondition && longRatio < LOSS_MAX) ||
+      (closeShortCondition && shortRatio < LOSS_MAX)
+    ) {
+      MODE = MODE == 1 ? 2 : 1;
+    }
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
@@ -868,23 +879,23 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   }
     // }
 
-    if (
-      closeShortCondition &&
-      shortHolding &&
-      Number(shortHolding.positionAmt)
-    ) {
-      holding = shortHolding;
-      lastWinOrLoss = shortRatio;
-      lastPosition = holding.positionAmt;
-    } else if (
-      closeLongCondition &&
-      longHolding &&
-      Number(longHolding.positionAmt)
-    ) {
-      holding = longHolding;
-      lastWinOrLoss = longRatio;
-      lastPosition = holding.positionAmt;
-    }
+    // if (
+    //   closeShortCondition &&
+    //   shortHolding &&
+    //   Number(shortHolding.positionAmt)
+    // ) {
+    //   holding = shortHolding;
+    //   lastWinOrLoss = shortRatio;
+    //   lastPosition = holding.positionAmt;
+    // } else if (
+    //   closeLongCondition &&
+    //   longHolding &&
+    //   Number(longHolding.positionAmt)
+    // ) {
+    //   holding = longHolding;
+    //   lastWinOrLoss = longRatio;
+    //   lastPosition = holding.positionAmt;
+    // }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(lastPosition)
