@@ -446,18 +446,8 @@ const checkDeal = async (data) => {
       (Number(macdList[macdList.length - 1].column) > 0 &&
         shortRatio < LOSS_MAX);
 
-    const MAIN_OPEN_LONG_CONDITION2 =
-      (Number(macdList[macdList.length - 1].column) < 0 &&
-        Number(macdList[macdList.length - 2].column) <
-          Number(macdList[macdList.length - 1].column)) ||
-      ifMacdPositiveContinuity;
-
-    const MAIN_OPEN_SHORT_CONDITION2 =
-      (Number(macdList[macdList.length - 1].column) > 0 &&
-        Number(macdList[macdList.length - 2].column) >
-          Number(macdList[macdList.length - 1].column)) ||
-      ifMacdNegativeContinuity;
-
+    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
     const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
@@ -492,9 +482,11 @@ const checkDeal = async (data) => {
 
     console.log("************************************", currentTime);
     console.log("------------------");
-    console.log("mark_price", mark_price);
-    console.log("macdList", macdList.slice(-1));
-    console.log("rsiList", rsiList.slice(-1));
+    // console.log("mark_price", mark_price);
+    // console.log("macdList", macdList.slice(-1));
+    // console.log("rsiList", rsiList.slice(-1));
+    console.log("shortRatio", shortRatio);
+    console.log("LOSS_MAX", LOSS_MAX);
     console.log("------------------");
 
     const patchPosition = async (holding, direction) => {
