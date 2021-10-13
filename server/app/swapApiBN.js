@@ -482,11 +482,9 @@ const checkDeal = async (data) => {
 
     console.log("************************************", currentTime);
     console.log("------------------");
-    // console.log("mark_price", mark_price);
-    // console.log("macdList", macdList.slice(-1));
-    // console.log("rsiList", rsiList.slice(-1));
-    console.log("shortRatio", shortRatio);
-    console.log("LOSS_MAX", LOSS_MAX);
+    console.log("mark_price", mark_price);
+    console.log("macdList", macdList.slice(-1));
+    console.log("rsiList", rsiList.slice(-1));
     console.log("------------------");
 
     const patchPosition = async (holding, direction) => {
@@ -500,7 +498,7 @@ const checkDeal = async (data) => {
     };
 
     const closeLongPosition = async () => {
-      if (longHolding && Number(longHolding.positionAmt)) {
+      if (longHolding && Math.abs(Number(longHolding.positionAmt))) {
         const patchNum = getPowByNum(
           Number(longHolding.positionAmt),
           INIT_POSITION
@@ -520,13 +518,11 @@ const checkDeal = async (data) => {
     };
 
     const closeShortPosition = async () => {
-      console.log(shortHolding);
-      if (shortHolding && Number(shortHolding.positionAmt)) {
+      if (shortHolding && Math.abs(Number(shortHolding.positionAmt))) {
         const patchNum = getPowByNum(
           Number(shortHolding.positionAmt),
           INIT_POSITION
         );
-        console.log("patchNum", patchNum);
         if (shortRatio < LOSS_MAX && patchNum < 3 && false) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
