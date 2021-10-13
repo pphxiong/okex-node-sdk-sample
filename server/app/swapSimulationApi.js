@@ -822,17 +822,17 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      longRatio < LOSS_MAX
-    ) {
-      openShortCondition = true;
-    } else if (
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      shortRatio < LOSS_MAX
-    ) {
-      openLongCondition = true;
-    }
+    // if (
+    //   Number(macdList[macdList.length - 1].column) < 0 &&
+    //   longRatio < LOSS_MAX
+    // ) {
+    //   openShortCondition = true;
+    // } else if (
+    //   Number(macdList[macdList.length - 1].column) > 0 &&
+    //   shortRatio < LOSS_MAX
+    // ) {
+    //   openLongCondition = true;
+    // }
 
     // openLongCondition = false;
     // openShortCondition = false;
