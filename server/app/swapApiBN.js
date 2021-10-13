@@ -520,6 +520,7 @@ const checkDeal = async (data) => {
     };
 
     const closeShortPosition = async () => {
+      console.log(shortHolding);
       if (shortHolding && Number(shortHolding.positionAmt)) {
         const patchNum = getPowByNum(
           Number(shortHolding.positionAmt),
