@@ -28,9 +28,9 @@ const INCREASE_FI_LIST = generatePositionList(1, 0).map((item) =>
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
-let rsi1 = 5;
-let rsi2 = 10;
-let rsi3 = 20;
+let rsi1 = 6;
+let rsi2 = 12;
+let rsi3 = 24;
 
 const INIT_MOST_LOSS = {
   profit: 0,
