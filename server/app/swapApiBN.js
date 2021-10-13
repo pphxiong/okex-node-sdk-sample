@@ -505,7 +505,7 @@ const checkDeal = async (data) => {
     const closeLongPosition = async () => {
       if (longHolding && Math.abs(Number(longHolding.positionAmt))) {
         const patchNum = getPowByNum(
-          Number(longHolding.positionAmt),
+          Math.abs(Number(longHolding.positionAmt)),
           INIT_POSITION
         );
         if (longRatio < LOSS_MAX && patchNum < 3 && false) {
@@ -525,7 +525,7 @@ const checkDeal = async (data) => {
     const closeShortPosition = async () => {
       if (shortHolding && Math.abs(Number(shortHolding.positionAmt))) {
         const patchNum = getPowByNum(
-          Number(shortHolding.positionAmt),
+          Math.abs(Number(shortHolding.positionAmt)),
           INIT_POSITION
         );
         if (shortRatio < LOSS_MAX && patchNum < 3 && false) {
