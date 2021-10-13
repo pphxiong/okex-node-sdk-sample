@@ -525,6 +525,7 @@ const checkDeal = async (data) => {
           Number(shortHolding.positionAmt),
           INIT_POSITION
         );
+        console.log("patchNum", patchNum);
         if (shortRatio < LOSS_MAX && patchNum < 3 && false) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
