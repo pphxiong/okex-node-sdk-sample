@@ -788,10 +788,12 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      rsiList[rsiList.length - 1].RSI1 < shortCondition;
     // || longRatio < LOSS_MAX;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      rsiList[rsiList.length - 1].RSI1 > longCondition;
     // || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
