@@ -778,7 +778,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_SHORT_CONDITION =
       rsiList[rsiList.length - 1].RSI1 < shortCondition &&
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < 20;
+      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -20;
     // Number(macdList[macdList.length - 1].column) < 0 &&
     // rsiList[rsiList.length - 2].RSI3 > longCondition;
     // ||
