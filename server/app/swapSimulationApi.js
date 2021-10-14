@@ -771,14 +771,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      rsiList[rsiList.length - 1].RSI1 > longCondition &&
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 20;
+      // rsiList[rsiList.length - 1].RSI1 > longCondition &&
+      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 40;
     // Number(macdList[macdList.length - 1].column) > 0 &&
     // rsiList[rsiList.length - 2].RSI3 < shortCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      rsiList[rsiList.length - 1].RSI1 < shortCondition &&
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -20;
+      // rsiList[rsiList.length - 1].RSI1 < shortCondition &&
+      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -40;
     // Number(macdList[macdList.length - 1].column) < 0 &&
     // rsiList[rsiList.length - 2].RSI3 > longCondition;
     // ||
