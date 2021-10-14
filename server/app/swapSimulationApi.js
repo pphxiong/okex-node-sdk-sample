@@ -28,7 +28,7 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const LEVERAGE = 10;
+const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
@@ -79,13 +79,13 @@ let totalProfit = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
-let rsi1 = 2;
+let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
 const DEFAULT_CONDITION = 48;
-let longCondition = 80;
-let shortCondition = 20;
+let longCondition = 60;
+let shortCondition = 40;
 
 let lastMode = 0;
 
@@ -772,28 +772,26 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION =
       // rsiList[rsiList.length - 1].RSI1 > longCondition &&
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 40;
-    // Number(macdList[macdList.length - 1].column) > 0 &&
-    // rsiList[rsiList.length - 2].RSI3 < shortCondition;
+      // rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 40;
+      // Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
       // rsiList[rsiList.length - 1].RSI1 < shortCondition &&
-      rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -40;
-    // Number(macdList[macdList.length - 1].column) < 0 &&
-    // rsiList[rsiList.length - 2].RSI3 > longCondition;
-    // ||
-    // rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      // rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -40;
+      // Number(macdList[macdList.length - 1].column) < 0 &&
+      // rsiList[rsiList.length - 2].RSI3 > longCondition;
+      // ||
+      rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longRatio > WIN_MAX || longRatio < LOSS_MAX;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
     // || longRatio < LOSS_MAX;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
     // || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
