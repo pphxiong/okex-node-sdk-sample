@@ -79,7 +79,7 @@ let totalProfit = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
-let rsi1 = 6;
+let rsi1 = 2;
 let rsi2 = 12;
 let rsi3 = 24;
 
@@ -771,12 +771,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 2].RSI3 < shortCondition;
+      rsiList[rsiList.length - 1].RSI1 > longCondition;
+    // Number(macdList[macdList.length - 1].column) > 0 &&
+    // rsiList[rsiList.length - 2].RSI3 < shortCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 2].RSI3 > longCondition;
+      rsiList[rsiList.length - 1].RSI1 < shortCondition;
+    // Number(macdList[macdList.length - 1].column) < 0 &&
+    // rsiList[rsiList.length - 2].RSI3 > longCondition;
     // ||
     // rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
@@ -786,14 +788,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
-      (Number(macdList[macdList.length - 1].column) < 0 &&
-        longRatio < LOSS_MAX);
+      Number(macdList[macdList.length - 1].column) <
+        Number(macdList[macdList.length - 2].column);
     // || longRatio < LOSS_MAX;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
-      (Number(macdList[macdList.length - 1].column) > 0 &&
-        shortRatio < LOSS_MAX);
+      Number(macdList[macdList.length - 1].column) >
+        Number(macdList[macdList.length - 2].column);
     // || shortRatio < LOSS_MAX;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
@@ -824,12 +826,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (
-      (closeLongCondition && longRatio < LOSS_MAX) ||
-      (closeShortCondition && shortRatio < LOSS_MAX)
-    ) {
-      MODE = MODE == 1 ? 2 : 1;
-    }
+    // if (
+    //   (closeLongCondition && longRatio < LOSS_MAX) ||
+    //   (closeShortCondition && shortRatio < LOSS_MAX)
+    // ) {
+    //   MODE = MODE == 1 ? 2 : 1;
+    // }
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
