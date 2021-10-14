@@ -84,8 +84,8 @@ let rsi2 = 12;
 let rsi3 = 24;
 
 const DEFAULT_CONDITION = 48;
-let longCondition = 60;
-let shortCondition = 40;
+let longCondition = DEFAULT_CONDITION;
+let shortCondition = DEFAULT_CONDITION;
 
 let lastMode = 0;
 
