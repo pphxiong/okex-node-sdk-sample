@@ -774,13 +774,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       // rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 2].RSI1 &&
       // rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 40;
       // Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 2].RSI1 &&
+      rsiList[rsiList.length - 2].RSI3 < longCondition &&
       rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
       // rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 2].RSI1 &&
       // rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -40;
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 2].RSI1 &&
+      rsiList[rsiList.length - 2].RSI3 > shortCondition &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
