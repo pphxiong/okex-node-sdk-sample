@@ -63,7 +63,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = 3 * CAPITAL_RATIO;
+let totalCapital = (INIT_POSITION / LEVERAGE) * 2;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
@@ -771,13 +771,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 2].RSI1 &&
+      // rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 2].RSI1 &&
       // rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 > 40;
       // Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 2].RSI1 &&
+      // rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 2].RSI1 &&
       // rsiList[rsiList.length - 1].RSI1 - rsiList[rsiList.length - 2].RSI1 < -40;
       // Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
@@ -1216,7 +1216,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // }
           // if(modeChange) openPositionAmt = INIT_POSITION;
 
-          if (totalCapital < openPositionAmt) openPositionAmt = 0;
+          if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
           totalCapital += -0.038 * 0.01 * openPositionAmt;
           totalProfit += -0.038 * 0.01 * openPositionAmt;
           totalPosition += openPositionAmt;
@@ -1279,7 +1279,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // }
           // if(modeChange) openPositionAmt = INIT_POSITION;
 
-          if (totalCapital < openPositionAmt) openPositionAmt = 0;
+          if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
           totalCapital += -0.038 * 0.01 * openPositionAmt;
           totalProfit += -0.038 * 0.01 * openPositionAmt;
           totalPosition += openPositionAmt;
