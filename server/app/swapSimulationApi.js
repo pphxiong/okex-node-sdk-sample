@@ -35,7 +35,7 @@ const LOSS_MAX = (-0.1 * 2 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 2 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const DEFAULT_POSITION_RATIO_LIST = generatePositionList(10, 0);
+const DEFAULT_POSITION_RATIO_LIST = generatePositionList(3, 0);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
@@ -1195,7 +1195,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    INIT_POSITION = Math.min((totalCapital * LEVERAGE) / 10, 50);
+    INIT_POSITION = Math.min((totalCapital * LEVERAGE) / 10, 10);
 
     //开多仓条件
     if (openLongCondition) {
