@@ -63,7 +63,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = (INIT_POSITION / LEVERAGE) * 10;
+let totalCapital = (INIT_POSITION / LEVERAGE) * 5;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
@@ -79,7 +79,7 @@ let totalProfit = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
-let rsi1 = 6;
+let rsi1 = 7;
 let rsi2 = 12;
 let rsi3 = 24;
 

@@ -28,7 +28,7 @@ const INCREASE_FI_LIST = generatePositionList(1, 0).map((item) =>
 const INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
-let rsi1 = 6;
+let rsi1 = 7;
 let rsi2 = 12;
 let rsi3 = 24;
 
