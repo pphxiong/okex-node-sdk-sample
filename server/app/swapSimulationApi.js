@@ -34,14 +34,14 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = (-0.1 * 2 * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
-const CAPITAL_RATIO = 1;
+const CAPITAL_RATIO = 10;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 10;
+const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
