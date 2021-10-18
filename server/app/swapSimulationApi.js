@@ -34,7 +34,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = (-0.1 * 2 * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
-const CAPITAL_RATIO = 0.4;
+const CAPITAL_RATIO = 1;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(1, 0);
 // const DEFAULT_POSITION_RATIO_LIST = [2];
 const MODE_RATIO = {
@@ -1245,6 +1245,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             rsiList,
             MODE,
             totalProfit,
+            totalCapital,
           };
           dealDetailList.push(dealDetail);
           // shortHolding = {};
@@ -1308,6 +1309,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             rsiList,
             MODE,
             totalProfit,
+            totalCapital,
           };
           dealDetailList.push(dealDetail);
           // longHolding = {};
