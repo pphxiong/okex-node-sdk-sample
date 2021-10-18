@@ -63,7 +63,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = (INIT_POSITION / LEVERAGE) * 8;
+let totalCapital = (INIT_POSITION / LEVERAGE) * 10;
 let totalPosition = 0;
 let minTotalCapital = totalCapital;
 let maxOpenPosition = 0;
