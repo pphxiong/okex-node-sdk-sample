@@ -1195,10 +1195,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    INIT_POSITION = Math.min(
-      (totalCapital * LEVERAGE) / 10,
-      CAPITAL_RATIO * LEVERAGE
-    );
+    INIT_POSITION = Math.min((totalCapital * LEVERAGE) / 10, 50);
 
     //开多仓条件
     if (openLongCondition) {
