@@ -83,7 +83,7 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const DEFAULT_CONDITION = 48;
+const DEFAULT_CONDITION = 47.8;
 let longCondition = DEFAULT_CONDITION;
 let shortCondition = DEFAULT_CONDITION;
 
