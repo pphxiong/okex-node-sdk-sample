@@ -1104,7 +1104,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           dealDetailList.push(dealDetail);
           if (longRatio < mostLoss.profit) {
             mostLoss = {
-              profit: longRatio * longHolding.positionAmt,
+              profit: (longRatio * longHolding.positionAmt) / LEVERAGE,
               time: macdList[macdList.length - 1].time,
             };
           }
@@ -1158,7 +1158,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           dealDetailList.push(dealDetail);
           if (shortRatio < mostLoss.profit) {
             mostLoss = {
-              profit: shortRatio * shortHolding.positionAmt,
+              profit: (shortRatio * shortHolding.positionAmt) / LEVERAGE,
               time: macdList[macdList.length - 1].time,
             };
           }
