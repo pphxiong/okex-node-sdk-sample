@@ -808,6 +808,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       (Number(macdList[macdList.length - 1].column) < 0 &&
         shortRatio < LOSS_MAX);
 
+    console.log(INCREASE_FI_LIST[1]);
+
     modeChange = false;
     let openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
