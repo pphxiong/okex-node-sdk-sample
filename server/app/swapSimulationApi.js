@@ -1209,10 +1209,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     // if (longRatio < LOSS_MAX || shortRatio < LOSS_MAX) {
     //   INIT_POSITION = (totalCapital * LEVERAGE) / 10;
     // } else {
-    INIT_POSITION = Math.min(
-      (totalCapital * LEVERAGE) / POSITION_RATIO,
-      ORIGIN_INIT_POSITION * 4
-    );
+
+    // INIT_POSITION = Math.min(
+    //   (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //   ORIGIN_INIT_POSITION * 4
+    // );
+
+    INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
     // }
 
     //开多仓条件
