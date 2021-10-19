@@ -1200,10 +1200,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    if ((totalCapital * LEVERAGE) / 10 > ORIGIN_INIT_POSITION * 4) {
-      receiveCapital += totalCapital - (ORIGIN_INIT_POSITION * 4) / LEVERAGE;
-      totalCapital = totalCapital - receiveCapital;
-    }
+    // if ((totalCapital * LEVERAGE) / 10 > ORIGIN_INIT_POSITION * 4) {
+    //   receiveCapital += totalCapital - (ORIGIN_INIT_POSITION * 4) / LEVERAGE;
+    //   totalCapital = totalCapital - receiveCapital;
+    // }
 
     INIT_POSITION = Math.min(
       (totalCapital * LEVERAGE) / 10,
