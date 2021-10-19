@@ -1212,7 +1212,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     INIT_POSITION = Math.min(
       (totalCapital * LEVERAGE) / POSITION_RATIO,
-      ORIGIN_INIT_POSITION * POSITION_RATIO
+      ORIGIN_INIT_POSITION * ORIGIN_INIT_POSITION
     );
 
     // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
