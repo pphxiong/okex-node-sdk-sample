@@ -67,7 +67,8 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-let totalCapital = (INIT_POSITION / LEVERAGE) * 10;
+const POSITION_RATIO = 5;
+let totalCapital = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalPosition = 0;
 let receiveCapital = 0;
 let minTotalCapital = totalCapital;
@@ -1209,7 +1210,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   INIT_POSITION = (totalCapital * LEVERAGE) / 10;
     // } else {
     INIT_POSITION = Math.min(
-      (totalCapital * LEVERAGE) / 10,
+      (totalCapital * LEVERAGE) / POSITION_RATIO,
       ORIGIN_INIT_POSITION * 4
     );
     // }
