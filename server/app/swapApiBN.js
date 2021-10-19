@@ -349,12 +349,14 @@ const checkDeal = async (data) => {
 
     if (positionChange || !globalHolding || !globalHolding.length) {
       try {
-        const { positions: holding } = await cAuthClientBN.swap.getPosition();
+        const { positions: holding, availableBalance } =
+          await cAuthClientBN.swap.getPosition();
         globalHolding =
           holding.filter(
             (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
           ) || [];
         positionChange = false;
+        console.log(availableBalance);
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
         restart("getPosition");
@@ -476,12 +478,12 @@ const checkDeal = async (data) => {
     const hmsArr = currentTime.split(" ")[1].split(":");
     if (hmsArr[0] == "00" && hmsArr[1] == "00") isForceDeal = true;
 
-    console.log("************************************", currentTime);
-    console.log("------------------");
-    console.log("mark_price", mark_price);
-    // console.log("macdList", macdList.slice(-1));
-    console.log("rsiList", rsiList.slice(-1));
-    console.log("------------------");
+    // console.log("************************************", currentTime);
+    // console.log("------------------");
+    // console.log("mark_price", mark_price);
+    // // console.log("macdList", macdList.slice(-1));
+    // console.log("rsiList", rsiList.slice(-1));
+    // console.log("------------------");
 
     const patchPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) * 2;
