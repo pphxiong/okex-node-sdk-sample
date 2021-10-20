@@ -25,7 +25,8 @@ const CAPITAL_RATIO = 0.4;
 const INCREASE_FI_LIST = generatePositionList(1, 0).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
-const INIT_POSITION = INCREASE_FI_LIST[0];
+let INIT_POSITION = INCREASE_FI_LIST[0];
+const ORIGIN_INIT_POSITION = INCREASE_FI_LIST[0];
 let MODE = 1;
 
 let rsi1 = 7;
@@ -356,6 +357,18 @@ const checkDeal = async (data) => {
             (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
           ) || [];
         positionChange = false;
+
+        const availPosition = (
+          (Number(availableBalance) * LEVERAGE) /
+          mark_price /
+          10
+        ).toFixed(3);
+
+        INIT_POSITION = Math.min(
+          Number(availPosition),
+          ORIGIN_INIT_POSITION * ORIGIN_INIT_POSITION
+        );
+
         console.log(availableBalance);
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
