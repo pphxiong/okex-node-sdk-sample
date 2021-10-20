@@ -35,7 +35,7 @@ const LOSS_MAX = (-0.1 * 1 * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 2 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 5;
+const ORIGIN_INIT_POSITION = 10;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(
   ORIGIN_INIT_POSITION,
   0
@@ -67,7 +67,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO = 10;
+const POSITION_RATIO = 8;
 let totalCapital = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalPosition = 0;
 let receiveCapital = 0;
@@ -1212,7 +1212,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     INIT_POSITION = Math.min(
       (totalCapital * LEVERAGE) / POSITION_RATIO,
-      ORIGIN_INIT_POSITION * ORIGIN_INIT_POSITION
+      ORIGIN_INIT_POSITION * 3
     );
 
     // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
