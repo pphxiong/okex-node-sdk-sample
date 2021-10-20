@@ -1210,10 +1210,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   INIT_POSITION = (totalCapital * LEVERAGE) / 10;
     // } else {
 
-    // INIT_POSITION = Math.min(
-    //   (totalCapital * LEVERAGE) / POSITION_RATIO,
-    //   ORIGIN_INIT_POSITION * 2
-    // );
+    INIT_POSITION = Math.min(
+      (totalCapital * LEVERAGE) / POSITION_RATIO,
+      ORIGIN_INIT_POSITION * 2
+    );
 
     // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
     // }
