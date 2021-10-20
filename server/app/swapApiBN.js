@@ -21,7 +21,7 @@ const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 1 * LEVERAGE) / 10;
-const CAPITAL_RATIO = 0.4;
+const CAPITAL_RATIO = 3;
 const INCREASE_FI_LIST = generatePositionList(1, 0).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(1))
 );
@@ -366,7 +366,7 @@ const checkDeal = async (data) => {
 
         INIT_POSITION = Math.min(
           Number(availPosition),
-          ORIGIN_INIT_POSITION * ORIGIN_INIT_POSITION
+          ORIGIN_INIT_POSITION * 2
         );
 
         console.log(availableBalance);
