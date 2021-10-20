@@ -67,7 +67,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO = 8;
+const POSITION_RATIO = 10;
 let totalCapital = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalPosition = 0;
 let receiveCapital = 0;
