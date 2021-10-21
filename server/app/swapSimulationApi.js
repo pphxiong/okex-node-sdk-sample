@@ -831,6 +831,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       closeShortCondition = true;
     }
 
+    console.log('MODE', MODE);
+
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
     //   longRatio < LOSS_MAX
