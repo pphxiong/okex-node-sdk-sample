@@ -734,8 +734,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-20);
-    const latestRsiList = rsiList.slice(-20);
+    const latestMacdList = macdList.slice(-10);
+    const latestRsiList = rsiList.slice(-10);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return latestRsiList[index].RSI3 > longCondition;
     });
@@ -831,8 +831,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE = 1;
       closeLongCondition = true;
       closeShortCondition = true;
-      // openLongCondition = !openLongCondition;
-      // openShortCondition = !openShortCondition;
     }
 
     // if (
