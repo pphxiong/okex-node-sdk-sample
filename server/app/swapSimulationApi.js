@@ -47,6 +47,7 @@ const MODE_RATIO = {
 };
 const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
+console.log('MODE', MODE);
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(3))
