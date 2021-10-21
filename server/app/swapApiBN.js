@@ -494,9 +494,9 @@ const checkDeal = async (data) => {
     console.log('longRatio', longRatio, 'shortRatio', shortRatio);
     console.log(
       'longPositionAmt',
-      longHolding.positionAmt,
+      longHolding && longHolding.positionAmt,
       'shortPositionAmt',
-      shortHolding.positionAmt
+      shortHolding && shortHolding.positionAmt
     );
     console.log('------------------');
 
