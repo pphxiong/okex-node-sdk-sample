@@ -734,8 +734,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-10);
-    const latestRsiList = rsiList.slice(-10);
+    const latestMacdList = macdList.slice(-20);
+    const latestRsiList = rsiList.slice(-20);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return latestRsiList[index].RSI3 > longCondition;
     });
@@ -815,23 +815,23 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (
-      (closeLongCondition && longRatio > WIN_MAX) ||
-      (closeShortCondition && shortRatio > WIN_MAX)
-    ) {
-      MODE = 2;
-      openLongCondition = !openLongCondition;
-      openShortCondition = !openShortCondition;
-    }
+    // if (
+    //   (closeLongCondition && longRatio > WIN_MAX) ||
+    //   (closeShortCondition && shortRatio > WIN_MAX)
+    // ) {
+    //   MODE = 2;
+    //   openLongCondition = !openLongCondition;
+    //   openShortCondition = !openShortCondition;
+    // }
 
-    if (
-      (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
-      (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
-    ) {
-      MODE = 1;
-      closeLongCondition = true;
-      closeShortCondition = true;
-    }
+    // if (
+    //   (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
+    //   (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
+    // ) {
+    //   MODE = 1;
+    //   closeLongCondition = true;
+    //   closeShortCondition = true;
+    // }
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
