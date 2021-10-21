@@ -27,7 +27,7 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = "BTCUSDT";
+const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
@@ -777,17 +777,25 @@ const checkDeal = async (data, isAutoReset = true) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 > longCondition) ||
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 > longCondition);
     // ||shortRatio < BAO_RATIO;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      (Number(macdList[macdList.length - 1].column) < 0 &&
+        rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 < shortCondition) ||
+      (Number(macdList[macdList.length - 1].column) > 0 &&
+        rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+        rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+        rsiList[rsiList.length - 1].RSI3 < shortCondition);
     // ||longRatio < BAO_RATIO;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
