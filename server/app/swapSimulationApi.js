@@ -28,7 +28,7 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const LEVERAGE = 20;
+const LEVERAGE = 30;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = (-0.1 * 1 * LEVERAGE) / 10;
@@ -68,7 +68,8 @@ const INIT_MOST_LOSS = {
   time: null,
 };
 const POSITION_RATIO = 10;
-let totalCapital = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
+const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
+let totalCapital = ORIGIN_TOTAL_CAPITAL;
 let totalPosition = 0;
 let receiveCapital = 0;
 let minTotalCapital = totalCapital;
