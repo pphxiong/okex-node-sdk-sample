@@ -807,15 +807,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION2 =
-      MAIN_OPEN_SHORT_CONDITION2 ||
-      (Number(macdList[macdList.length - 1].column) > 0 &&
-        longRatio < LOSS_MAX);
+    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
 
-    const MAIN_CLOSE_SHORT_CONDITION2 =
-      MAIN_OPEN_LONG_CONDITION2 ||
-      (Number(macdList[macdList.length - 1].column) < 0 &&
-        shortRatio < LOSS_MAX);
+    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
     modeChange = false;
     let openLongCondition =
@@ -827,12 +821,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // if (
-    //   (closeLongCondition && longRatio < LOSS_MAX) ||
-    //   (closeShortCondition && shortRatio < LOSS_MAX)
-    // ) {
-    //   MODE = MODE == 1 ? 2 : 1;
-    // }
+    if (
+      (closeLongCondition && longRatio < 0) ||
+      (closeShortCondition && shortRatio < 0)
+    ) {
+      MODE = MODE == 1 ? 2 : 1;
+    }
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
