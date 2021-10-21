@@ -646,12 +646,12 @@ const checkDeal = async (data) => {
       }
     }
 
-    if (
-      (closeLongCondition && longRatio > WIN_MAX * 4) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 4)
-    ) {
-      stop();
-    }
+    // if (
+    //   (closeLongCondition && longRatio > WIN_MAX * 4) ||
+    //   (closeShortCondition && shortRatio > WIN_MAX * 4)
+    // ) {
+    //   stop();
+    // }
   }
 };
 
