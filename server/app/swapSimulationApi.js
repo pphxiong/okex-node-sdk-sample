@@ -28,14 +28,14 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
-const LEVERAGE = 30;
+const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * 2 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * 4 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 15;
+const ORIGIN_INIT_POSITION = 10;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(
   ORIGIN_INIT_POSITION,
   0
@@ -821,12 +821,12 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // if (
-    //   (closeLongCondition && longRatio < LOSS_MAX) ||
-    //   (closeShortCondition && shortRatio < LOSS_MAX)
-    // ) {
-    //   MODE = MODE == 1 ? 2 : 1;
-    // }
+    if (
+      (closeLongCondition && longRatio > WIN_MAX) ||
+      (closeShortCondition && shortRatio > WIN_MAX)
+    ) {
+      MODE = MODE == 1 ? 2 : 1;
+    }
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
