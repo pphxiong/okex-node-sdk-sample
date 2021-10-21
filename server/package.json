@@ -25,7 +25,7 @@
     "log": "pm2 log 0",
     "log:product": "pm2 log 1",
     "log:bn": "pm2 log 2",
-    "fix-memory-limit": "cross-env LIMIT=8096 increase-memory-limit"
+    "fix-memory-limit": "cross-env LIMIT=32768 increase-memory-limit"
   },
   "dependencies": {
     "@okfe/okex-node": "0.0.52",
