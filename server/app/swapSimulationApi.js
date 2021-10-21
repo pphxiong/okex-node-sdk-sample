@@ -45,7 +45,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 2;
+const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
@@ -815,23 +815,23 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (
-      (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
-      (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
-    ) {
-      MODE = 2;
-      openLongCondition = !openLongCondition;
-      openShortCondition = !openShortCondition;
-    } else if (
-      (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
-      (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
-    ) {
-      MODE = 1;
-      closeLongCondition = true;
-      closeShortCondition = true;
-    }
+    // if (
+    //   (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
+    //   (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
+    // ) {
+    //   MODE = 2;
+    //   openLongCondition = !openLongCondition;
+    //   openShortCondition = !openShortCondition;
+    // } else if (
+    //   (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
+    //   (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
+    // ) {
+    //   MODE = 1;
+    //   closeLongCondition = true;
+    //   closeShortCondition = true;
+    // }
 
-    console.log('MODE', MODE);
+    // console.log('MODE', MODE);
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
