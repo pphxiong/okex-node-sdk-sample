@@ -47,7 +47,6 @@ const MODE_RATIO = {
 };
 const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
-console.log('MODE', MODE);
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(3))
@@ -823,9 +822,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE = 2;
       openLongCondition = !openLongCondition;
       openShortCondition = !openShortCondition;
-    }
-
-    if (
+    } else if (
       (MODE == 2 && ifRSIPositiveContinuity) ||
       (MODE == 2 && ifRSINegativeContinuity)
     ) {
