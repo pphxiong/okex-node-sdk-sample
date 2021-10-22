@@ -580,7 +580,7 @@ const checkDeal = async (data) => {
         console.log(e);
       }
     }
-    closeShortCondition = true;
+
     //平空仓条件
     if (closeShortCondition) {
       try {
