@@ -45,7 +45,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 2;
+const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
@@ -821,76 +821,25 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (
-      (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
-      (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
-    ) {
-      MODE = 2;
-      openLongCondition = !openLongCondition;
-      openShortCondition = !openShortCondition;
-    } else if (
-      (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
-      (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
-    ) {
-      MODE = 1;
-      if (longRatio < 0) {
-        closeLongCondition = true;
-        openShortCondition = true;
-      } else if (shortRatio < 0) {
-        closeShortCondition = true;
-        openLongCondition = true;
-      }
-    }
-
     // if (
-    //   (closeLongCondition && longRatio > WIN_MAX) ||
-    //   (closeShortCondition && shortRatio > WIN_MAX) ||
-    //   (longRatio == 0 && shortRatio == 0)
+    //   (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
+    //   (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
     // ) {
-    //   // if (longRatio > 0) {
-    //   //   openLongCondition = true;
-    //   // } else if (shortRatio > 0) {
-    //   //   openShortCondition = true;
-    //   // } else {
-    //   const random = getRandomNumberByRange(0, 2);
-    //   if (random == 0) {
-    //     openLongCondition = true;
-    //   } else {
-    //     openShortCondition = true;
-    //   }
-    //   // }
-    // }
-
-    // if (closeLongCondition || closeShortCondition) {
-    //   if (longRatio > 0 || shortRatio > 0) {
-    //     continuous_win = lastWinOrLoss ? continuous_win + 1 : 1;
-    //     continuous_loss = 0;
-    //     lastWinOrLoss = 1;
-    //     maxContinuousWin = Math.max(continuous_win, maxContinuousWin);
-    //   } else if (longRatio < 0 || shortRatio < 0) {
-    //     continuous_loss = lastWinOrLoss ? 1 : continuous_loss + 1;
-    //     continuous_win = 0;
-    //     lastWinOrLoss = 0;
-    //     maxContinuousLoss = Math.max(continuous_loss, maxContinuousLoss);
-    //   }
-    // }
-
-    // if (
-    //   closeShortCondition &&
-    //   shortHolding &&
-    //   Number(shortHolding.positionAmt)
-    // ) {
-    //   holding = shortHolding;
-    //   lastWinOrLoss = shortRatio;
-    //   lastPosition = holding.positionAmt;
+    //   MODE = 2;
+    //   openLongCondition = !openLongCondition;
+    //   openShortCondition = !openShortCondition;
     // } else if (
-    //   closeLongCondition &&
-    //   longHolding &&
-    //   Number(longHolding.positionAmt)
+    //   (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
+    //   (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
     // ) {
-    //   holding = longHolding;
-    //   lastWinOrLoss = longRatio;
-    //   lastPosition = holding.positionAmt;
+    //   MODE = 1;
+    //   if (longRatio < 0) {
+    //     closeLongCondition = true;
+    //     openShortCondition = true;
+    //   } else if (shortRatio < 0) {
+    //     closeShortCondition = true;
+    //     openLongCondition = true;
+    //   }
     // }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
