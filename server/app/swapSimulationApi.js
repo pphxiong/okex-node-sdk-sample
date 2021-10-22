@@ -734,8 +734,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-4);
-    const latestRsiList = rsiList.slice(-4);
+    const latestMacdList = macdList.slice(-7);
+    const latestRsiList = rsiList.slice(-7);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
