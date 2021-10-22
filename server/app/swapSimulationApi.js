@@ -831,14 +831,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       openShortCondition = !openShortCondition;
     } else if (
       MODE == 2 &&
-      ((ifRSIPositiveContinuity && shortRatio < 0) ||
-        (ifRSINegativeContinuity && longRatio < 0))
+      (ifRSIPositiveContinuity || ifRSINegativeContinuity)
     ) {
       MODE = 1;
-      if (shortRatio < 0) {
+      if (ifRSIPositiveContinuity) {
         closeShortCondition = true;
         openLongCondition = true;
-      } else if (longRatio < 0) {
+      } else if (ifRSINegativeContinuity) {
         closeLongCondition = true;
         openShortCondition = true;
       }
