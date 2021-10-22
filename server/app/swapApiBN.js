@@ -29,7 +29,7 @@ const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
 let INIT_POSITION = INCREASE_FI_LIST[0];
 const POSITION_RATIO = 8;
 
-let MODE = 2;
+let MODE = 1;
 
 let rsi1 = 7;
 let rsi2 = 12;
@@ -371,7 +371,8 @@ const checkDeal = async (data) => {
           ORIGIN_INIT_POSITION * 2
         );
 
-        console.log(availableBalance);
+        await readData();
+        console.log(`availableBalance`, availableBalance, "MODE", MODE);
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
         restart("getPosition");
@@ -476,6 +477,7 @@ const checkDeal = async (data) => {
       (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
     ) {
       MODE = 2;
+      await writeData();
       openLongCondition = !openLongCondition;
       openShortCondition = !openShortCondition;
     } else if (
@@ -483,6 +485,7 @@ const checkDeal = async (data) => {
       (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
     ) {
       MODE = 1;
+      await writeData();
       if (longRatio < 0) {
         closeLongCondition = true;
         openShortCondition = true;
@@ -692,6 +695,35 @@ const startInterval = async () => {
   } catch (e) {
     restart();
   }
+};
+
+const readData = async () => {
+  let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
+  MODE = dataConfig.MODE;
+
+  console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
+};
+
+const writeData = async () => {
+  //将修改后的配置写入文件前需要先转成json字符串格式
+  let dataConfig = {
+    MODE: MODE.toString(),
+  };
+  let jsonStr = JSON.stringify(dataConfig);
+
+  const result = await new Promise((resolve) => {
+    //将修改后的内容写入文件
+    fs.writeFile("./app/config.json", jsonStr, function (err) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("----------修改成功-------------");
+        resolve(true);
+      }
+    });
+  });
+
+  return result;
 };
 
 // 定时获取交割合约账户信息
