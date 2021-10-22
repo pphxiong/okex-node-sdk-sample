@@ -835,13 +835,13 @@ const checkDeal = async (data, isAutoReset = true) => {
         (ifRSINegativeContinuity && shortRatio < 0))
     ) {
       MODE = 1;
-      if (longRatio < 0) {
-        closeLongCondition = true;
-        openShortCondition = true;
-      } else if (shortRatio < 0) {
-        closeShortCondition = true;
-        openLongCondition = true;
-      }
+      // if (longRatio < 0) {
+      //   closeLongCondition = true;
+      //   openShortCondition = true;
+      // } else if (shortRatio < 0) {
+      //   closeShortCondition = true;
+      //   openLongCondition = true;
+      // }
     }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
