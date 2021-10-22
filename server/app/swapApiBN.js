@@ -538,7 +538,7 @@ const checkDeal = async (data) => {
         //   Math.abs(Number(longHolding.positionAmt)),
         //   INIT_POSITION
         // );
-        if (longRatio < LOSS_MAX && patchNum < 3 && false) {
+        if (longRatio < LOSS_MAX && false) {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
           const payload = {
@@ -558,7 +558,7 @@ const checkDeal = async (data) => {
         //   Math.abs(Number(shortHolding.positionAmt)),
         //   INIT_POSITION
         // );
-        if (shortRatio < LOSS_MAX && patchNum < 3 && false) {
+        if (shortRatio < LOSS_MAX && false) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
           const payload = {
@@ -572,8 +572,6 @@ const checkDeal = async (data) => {
       }
     };
 
-    closeShortCondition = true;
-    openLongCondition = true;
     //平多仓条件
     if (closeLongCondition) {
       try {
@@ -582,7 +580,7 @@ const checkDeal = async (data) => {
         console.log(e);
       }
     }
-
+    closeShortCondition = true;
     //平空仓条件
     if (closeShortCondition) {
       try {
