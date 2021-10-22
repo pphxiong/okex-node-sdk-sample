@@ -45,7 +45,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 1;
+const DEFAULT_MODE = 2;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
@@ -734,13 +734,19 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-20);
-    const latestRsiList = rsiList.slice(-20);
+    const latestMacdList = macdList.slice(-10);
+    const latestRsiList = rsiList.slice(-10);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      return latestRsiList[index].RSI3 > longCondition;
+      return (
+        latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
+        latestRsiList[index].RSI2 > latestRsiList[index].RSI3
+      );
     });
     let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
-      return latestRsiList[index].RSI3 < shortCondition;
+      return (
+        latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
+        latestRsiList[index].RSI2 < latestRsiList[index].RSI3
+      );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
       if (index == 0) return true;
@@ -815,38 +821,21 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // if (
-    //   (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
-    //   (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
-    // ) {
-    //   MODE = 2;
-    //   openLongCondition = !openLongCondition;
-    //   openShortCondition = !openShortCondition;
-    // } else if (
-    //   (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
-    //   (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
-    // ) {
-    //   MODE = 1;
-    //   closeLongCondition = true;
-    //   closeShortCondition = true;
-    // }
-
-    // console.log('MODE', MODE);
-
-    // if (
-    //   Number(macdList[macdList.length - 1].column) < 0 &&
-    //   longRatio < LOSS_MAX
-    // ) {
-    //   openShortCondition = true;
-    // } else if (
-    //   Number(macdList[macdList.length - 1].column) > 0 &&
-    //   shortRatio < LOSS_MAX
-    // ) {
-    //   openLongCondition = true;
-    // }
-
-    // openLongCondition = false;
-    // openShortCondition = false;
+    if (
+      (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
+      (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
+    ) {
+      MODE = 2;
+      openLongCondition = !openLongCondition;
+      openShortCondition = !openShortCondition;
+    } else if (
+      (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
+      (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
+    ) {
+      MODE = 1;
+      closeLongCondition = true;
+      closeShortCondition = true;
+    }
 
     // if (
     //   (closeLongCondition && longRatio > WIN_MAX) ||
@@ -1214,7 +1203,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       longRatio > WIN_MAX || shortRatio > WIN_MAX
         ? Math.min(
             (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
+            ORIGIN_INIT_POSITION
           )
         : Math.min(
             (totalCapital * LEVERAGE) / POSITION_RATIO,
