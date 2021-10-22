@@ -1,4 +1,5 @@
 import moment from "moment";
+const fs = require("fs");
 
 const customAuthClientBN = require("./customAuthClientBN");
 
