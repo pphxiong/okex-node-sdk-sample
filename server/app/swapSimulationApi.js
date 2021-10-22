@@ -32,7 +32,7 @@ const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * 4 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * 2 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 12.5;
@@ -822,15 +822,17 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (
-      (MODE == 1 && closeLongCondition && longRatio > WIN_MAX) ||
-      (MODE == 1 && closeShortCondition && shortRatio > WIN_MAX)
+      MODE == 1 &&
+      ((closeLongCondition && longRatio > WIN_MAX) ||
+        (closeShortCondition && shortRatio > WIN_MAX))
     ) {
       MODE = 2;
       openLongCondition = !openLongCondition;
       openShortCondition = !openShortCondition;
     } else if (
-      (MODE == 2 && ifRSIPositiveContinuity && longRatio < 0) ||
-      (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
+      MODE == 2 &&
+      ((ifRSIPositiveContinuity && longRatio < 0) ||
+        (ifRSINegativeContinuity && shortRatio < 0))
     ) {
       MODE = 1;
       if (longRatio < 0) {
