@@ -494,13 +494,13 @@ const checkDeal = async (data) => {
     ) {
       MODE = 1;
       await writeData();
-      if (longRatio < 0) {
-        closeLongCondition = true;
-        openShortCondition = true;
-      } else if (shortRatio < 0) {
-        closeShortCondition = true;
-        openLongCondition = true;
-      }
+      // if (longRatio < 0) {
+      //   closeLongCondition = true;
+      //   openShortCondition = true;
+      // } else if (shortRatio < 0) {
+      //   closeShortCondition = true;
+      //   openLongCondition = true;
+      // }
     }
 
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");

@@ -827,8 +827,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         (closeShortCondition && shortRatio > WIN_MAX))
     ) {
       MODE = 2;
-      openLongCondition = !openLongCondition;
-      openShortCondition = !openShortCondition;
+      // openLongCondition = !openLongCondition;
+      // openShortCondition = !openShortCondition;
     } else if (
       MODE == 2 &&
       ((ifRSIPositiveContinuity && longRatio < 0) ||
