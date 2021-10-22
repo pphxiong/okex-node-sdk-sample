@@ -512,7 +512,6 @@ const checkDeal = async (data) => {
       "shortPositionAmt",
       shortHolding && shortHolding.positionAmt
     );
-    await readData();
     console.log("MODE", MODE);
     console.log("------------------");
 
