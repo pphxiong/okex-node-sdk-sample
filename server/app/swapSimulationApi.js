@@ -734,8 +734,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-7);
-    const latestRsiList = rsiList.slice(-7);
+    const latestMacdList = macdList.slice(-6);
+    const latestRsiList = rsiList.slice(-6);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
@@ -1149,23 +1149,18 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   totalCapital = totalCapital - receiveCapital;
     // }
 
-    // if (longRatio < LOSS_MAX || shortRatio < LOSS_MAX) {
-    //   INIT_POSITION = (totalCapital * LEVERAGE) / 10;
-    // } else {
+    // INIT_POSITION =
+    //   longRatio > WIN_MAX || shortRatio > WIN_MAX
+    //     ? Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       )
+    //     : Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       );
 
-    INIT_POSITION =
-      longRatio > WIN_MAX || shortRatio > WIN_MAX
-        ? Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          )
-        : Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          );
-
-    // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
-    // }
+    INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
 
     //开多仓条件
     if (openLongCondition) {
