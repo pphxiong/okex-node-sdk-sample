@@ -1214,7 +1214,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       longRatio > WIN_MAX || shortRatio > WIN_MAX
         ? Math.min(
             (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION
+            ORIGIN_INIT_POSITION * 2
           )
         : Math.min(
             (totalCapital * LEVERAGE) / POSITION_RATIO,
