@@ -23,7 +23,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 4 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 0.25;
+const ORIGIN_INIT_POSITION = 3;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
@@ -374,7 +374,12 @@ const checkDeal = async (data) => {
 
         await readData();
         console.log("------------------");
-        console.log(`availableBalance`, availableBalance, "MODE", MODE);
+        console.log(
+          `availableBalance`,
+          availableBalance,
+          "INIT_POSITION",
+          INIT_POSITION
+        );
         console.log("------------------");
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
