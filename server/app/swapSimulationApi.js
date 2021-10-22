@@ -32,7 +32,7 @@ const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * 4 * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * 2 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 12.5;
@@ -734,8 +734,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-2);
-    const latestRsiList = rsiList.slice(-2);
+    const latestMacdList = macdList.slice(-6);
+    const latestRsiList = rsiList.slice(-6);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
