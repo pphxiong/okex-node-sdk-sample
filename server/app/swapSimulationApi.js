@@ -838,7 +838,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         openShortCondition = true;
       } else if (shortRatio < 0) {
         closeShortCondition = true;
-        openLongCondition = ture;
+        openLongCondition = true;
       }
     }
 
