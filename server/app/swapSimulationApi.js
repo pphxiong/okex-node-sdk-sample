@@ -34,8 +34,8 @@ const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 4 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
-const CAPITAL_RATIO = 12.5;
-const ORIGIN_INIT_POSITION = 20;
+const CAPITAL_RATIO = 1;
+const ORIGIN_INIT_POSITION = 12.5;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(
   ORIGIN_INIT_POSITION,
   0
