@@ -364,7 +364,7 @@ const checkDeal = async (data) => {
         const availPosition = (
           (Number(availableBalance) * LEVERAGE) /
           mark_price /
-          10
+          POSITION_RATIO
         ).toFixed(3);
 
         INIT_POSITION = Math.min(
@@ -504,7 +504,7 @@ const checkDeal = async (data) => {
     console.log("------------------");
     // console.log("mark_price", mark_price);
     // console.log("macdList", macdList.slice(-1));
-    // console.log("rsiList", rsiList.slice(-1));
+    console.log("rsiList", rsiList.slice(-1));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
       "longPositionAmt",
@@ -513,6 +513,12 @@ const checkDeal = async (data) => {
       shortHolding && shortHolding.positionAmt
     );
     console.log("MODE", MODE);
+    console.log(
+      "closeLongCondition",
+      closeLongCondition,
+      "closeShortCondition",
+      closeShortCondition
+    );
     console.log("------------------");
 
     const patchPosition = async (holding, direction) => {

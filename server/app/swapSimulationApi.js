@@ -821,28 +821,28 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // if (
-    //   MODE == 1 &&
-    //   ((closeLongCondition && longRatio > WIN_MAX) ||
-    //     (closeShortCondition && shortRatio > WIN_MAX))
-    // ) {
-    //   MODE = 2;
-    //   openLongCondition = !openLongCondition;
-    //   openShortCondition = !openShortCondition;
-    // } else if (
-    //   MODE == 2 &&
-    //   ((ifRSIPositiveContinuity && longRatio < 0) ||
-    //     (ifRSINegativeContinuity && shortRatio < 0))
-    // ) {
-    //   MODE = 1;
-    //   if (longRatio < 0) {
-    //     closeLongCondition = true;
-    //     openShortCondition = true;
-    //   } else if (shortRatio < 0) {
-    //     closeShortCondition = true;
-    //     openLongCondition = true;
-    //   }
-    // }
+    if (
+      MODE == 1 &&
+      ((closeLongCondition && longRatio > WIN_MAX) ||
+        (closeShortCondition && shortRatio > WIN_MAX))
+    ) {
+      MODE = 2;
+      openLongCondition = !openLongCondition;
+      openShortCondition = !openShortCondition;
+    } else if (
+      MODE == 2 &&
+      ((ifRSIPositiveContinuity && longRatio < 0) ||
+        (ifRSINegativeContinuity && shortRatio < 0))
+    ) {
+      MODE = 1;
+      if (longRatio < 0) {
+        closeLongCondition = true;
+        openShortCondition = true;
+      } else if (shortRatio < 0) {
+        closeShortCondition = true;
+        openLongCondition = true;
+      }
+    }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
