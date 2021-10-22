@@ -833,8 +833,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       (MODE == 2 && ifRSINegativeContinuity && shortRatio < 0)
     ) {
       MODE = 1;
-      closeLongCondition = true;
-      closeShortCondition = true;
+      if (longRatio < 0) {
+        closeLongCondition = true;
+        openShortCondition = true;
+      } else if (shortRatio < 0) {
+        closeShortCondition = true;
+        openLongCondition = ture;
+      }
     }
 
     // if (
@@ -1203,7 +1208,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       longRatio > WIN_MAX || shortRatio > WIN_MAX
         ? Math.min(
             (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION
+            ORIGIN_INIT_POSITION * 2
           )
         : Math.min(
             (totalCapital * LEVERAGE) / POSITION_RATIO,
