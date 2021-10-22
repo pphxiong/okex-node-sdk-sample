@@ -373,7 +373,9 @@ const checkDeal = async (data) => {
         );
 
         await readData();
+        console.log("------------------");
         console.log(`availableBalance`, availableBalance, "MODE", MODE);
+        console.log("------------------");
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
         restart("getPosition");
@@ -501,10 +503,9 @@ const checkDeal = async (data) => {
     if (hmsArr[0] == "00" && hmsArr[1] == "00") isForceDeal = true;
 
     console.log("************************************", currentTime);
-    console.log("------------------");
     // console.log("mark_price", mark_price);
     // console.log("macdList", macdList.slice(-1));
-    console.log("rsiList", rsiList.slice(-1));
+    // console.log("rsiList", rsiList.slice(-1));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
       "longPositionAmt",
@@ -519,7 +520,6 @@ const checkDeal = async (data) => {
       "closeShortCondition",
       closeShortCondition
     );
-    console.log("------------------");
     console.log("************************************");
 
     const patchPosition = async (holding, direction) => {
