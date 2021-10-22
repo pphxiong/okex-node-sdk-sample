@@ -709,7 +709,7 @@ const readData = async () => {
 const writeData = async () => {
   //将修改后的配置写入文件前需要先转成json字符串格式
   let dataConfig = {
-    MODE: MODE.toString(),
+    MODE: String(MODE),
   };
   let jsonStr = JSON.stringify(dataConfig);
 
