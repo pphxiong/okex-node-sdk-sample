@@ -738,14 +738,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     const latestRsiList = rsiList.slice(-6);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
-        latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        latestRsiList[index].RSI2 > latestRsiList[index].RSI3
+        // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
+        latestRsiList[index].RSI1 > latestRsiList[index].RSI3
       );
     });
     let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
       return (
-        latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
-        latestRsiList[index].RSI2 < latestRsiList[index].RSI3
+        // latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
+        latestRsiList[index].RSI1 < latestRsiList[index].RSI3
       );
     });
     let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
@@ -840,8 +840,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     } else if (
       MODE == 2 &&
-      ((ifRSIPositiveContinuity && longRatio < LOSS_MAX) ||
-        (ifRSINegativeContinuity && shortRatio < LOSS_MAX))
+      ((ifRSIPositiveContinuity && longRatio < 0) ||
+        (ifRSINegativeContinuity && shortRatio < 0))
     ) {
       MODE = 1;
       // if (longRatio < 0) {
