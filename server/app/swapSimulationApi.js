@@ -27,7 +27,7 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = "ETHUSDT";
+const BN_SYMBOL = "BTCUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
@@ -822,15 +822,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (MODE == 1) {
-      if (ifRSIPositiveContinuity && shortRatio < 0) {
-        closeShortCondition = true;
-        openLongCondition = true;
-        MODE = 2;
-      } else if (ifRSINegativeContinuity && longRatio < 0) {
-        closeLongCondition = true;
-        openShortCondition = true;
-        MODE = 2;
-      }
+      // if (ifRSIPositiveContinuity && shortRatio < 0) {
+      //   closeShortCondition = true;
+      //   openLongCondition = true;
+      // } else if (ifRSINegativeContinuity && longRatio < 0) {
+      //   closeLongCondition = true;
+      //   openShortCondition = true;
+      // }
 
       if (
         (closeLongCondition && longRatio > WIN_MAX) ||
