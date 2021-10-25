@@ -822,13 +822,15 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (MODE == 1) {
-      // if (ifRSIPositiveContinuity && shortRatio < 0) {
-      //   closeShortCondition = true;
-      //   openLongCondition = true;
-      // } else if (ifRSINegativeContinuity && longRatio < 0) {
-      //   closeLongCondition = true;
-      //   openShortCondition = true;
-      // }
+      if (closeLongCondition && longRatio < 0) {
+        MODE = 2;
+        openLongCondition = false;
+        openShortCondition = false;
+      } else if (closeShortCondition && shortRatio < 0) {
+        MODE = 2;
+        openLongCondition = false;
+        openShortCondition = false;
+      }
 
       if (
         (closeLongCondition && longRatio > WIN_MAX) ||
