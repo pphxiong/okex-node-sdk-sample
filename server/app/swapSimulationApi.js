@@ -840,6 +840,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         // openShortCondition = !openShortCondition;
         closeLongCondition = false;
         closeShortCondition = false;
+        openLongCondition = false;
+        openShortCondition = false;
       }
     } else if (
       MODE == 2 &&
