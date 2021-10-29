@@ -836,12 +836,12 @@ const checkDeal = async (data, isAutoReset = true) => {
         (closeShortCondition && shortRatio > WIN_MAX)
       ) {
         MODE = 2;
-        // openLongCondition = !openLongCondition;
-        // openShortCondition = !openShortCondition;
-        closeLongCondition = false;
-        closeShortCondition = false;
-        openLongCondition = false;
-        openShortCondition = false;
+        openLongCondition = !openLongCondition;
+        openShortCondition = !openShortCondition;
+        // closeLongCondition = false;
+        // closeShortCondition = false;
+        // openLongCondition = false;
+        // openShortCondition = false;
       }
     } else if (
       MODE == 2 &&
