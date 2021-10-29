@@ -841,8 +841,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     } else if (
       MODE == 2 &&
-      ((ifRSIPositiveContinuity && longRatio < LOSS_MAX) ||
-        (ifRSINegativeContinuity && shortRatio < LOSS_MAX))
+      ((ifRSIPositiveContinuity && longRatio < 0) ||
+        (ifRSINegativeContinuity && shortRatio < 0))
     ) {
       MODE = 1;
       // if (longRatio < 0) {
