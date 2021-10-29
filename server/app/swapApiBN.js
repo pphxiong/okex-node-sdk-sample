@@ -480,19 +480,26 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
+    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
+    const hmsArr = currentTime.split(" ")[1].split(":");
+    const lastCharacter = hmsArr[1].slice(-1);
+    const isFiveM = lastCharacter == 0 || lastCharacter == 5;
+
     if (
       MODE == 1 &&
       ((closeLongCondition && longRatio > WIN_MAX) ||
         (closeShortCondition && shortRatio > WIN_MAX))
     ) {
+      // if (hmsArr[0] == "00" && hmsArr[1] == "00") isForceDeal = true;
+
       MODE = 2;
       await writeData();
       openLongCondition = !openLongCondition;
       openShortCondition = !openShortCondition;
     } else if (
       MODE == 2 &&
-      ((ifRSIPositiveContinuity && longRatio < 0) ||
-        (ifRSINegativeContinuity && shortRatio < 0))
+      ((ifRSIPositiveContinuity && longRatio < 0 && isFiveM) ||
+        (ifRSINegativeContinuity && shortRatio < 0 && isFiveM))
     ) {
       MODE = 1;
       await writeData();
@@ -504,10 +511,6 @@ const checkDeal = async (data) => {
       //   openLongCondition = true;
       // }
     }
-
-    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
-    const hmsArr = currentTime.split(" ")[1].split(":");
-    if (hmsArr[0] == "00" && hmsArr[1] == "00") isForceDeal = true;
 
     console.log("************************************", currentTime);
     // console.log("mark_price", mark_price);
