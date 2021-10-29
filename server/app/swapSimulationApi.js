@@ -794,9 +794,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION1 || longRatio > WIN_MAX * 3;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION1 || shortRatio > WIN_MAX * 3;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
@@ -806,9 +808,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
+    const MAIN_CLOSE_LONG_CONDITION2 =
+      MAIN_OPEN_SHORT_CONDITION2 || longRatio > WIN_MAX * 3;
 
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+    const MAIN_CLOSE_SHORT_CONDITION2 =
+      MAIN_OPEN_LONG_CONDITION2 || shortRatio > WIN_MAX * 3;
 
     modeChange = false;
     let openLongCondition =
