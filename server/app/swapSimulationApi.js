@@ -821,16 +821,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (MODE == 1) {
-      // if (closeLongCondition && longRatio < 0) {
-      //   MODE = 2;
-      //   openLongCondition = !openLongCondition;
-      //   openShortCondition = !openShortCondition;
-      // } else if (closeShortCondition && shortRatio < 0) {
-      //   MODE = 2;
-      //   openLongCondition = !openLongCondition;
-      //   openShortCondition = !openShortCondition;
-      // }
-
       if (
         (closeLongCondition && longRatio > WIN_MAX) ||
         (closeShortCondition && shortRatio > WIN_MAX)
@@ -843,12 +833,26 @@ const checkDeal = async (data, isAutoReset = true) => {
         // openLongCondition = false;
         // openShortCondition = false;
       }
-    } else if (
-      MODE == 2 &&
-      ((ifRSIPositiveContinuity && longRatio < 0) ||
-        (ifRSINegativeContinuity && shortRatio < 0))
-    ) {
-      MODE = 1;
+    } else if (MODE == 2) {
+      if (
+        (ifRSIPositiveContinuity && longRatio < 0) ||
+        (ifRSINegativeContinuity && shortRatio < 0)
+      ) {
+        MODE = 1;
+      }
+
+      if (openLongCondition && longRatio < 0) {
+        MODE = 1;
+        closeLongCondition = true;
+        openShortCondition = true;
+        openLongCondition = false;
+      } else if (openShortCondition && shortRatio < 0) {
+        MODE = 1;
+        closeShortCondition = true;
+        openLongCondition = true;
+        openShortCondition = false;
+      }
+
       // if (longRatio < 0) {
       //   closeLongCondition = true;
       //   openShortCondition = true;
