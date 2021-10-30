@@ -780,14 +780,14 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 2].RSI3 > longCondition;
+      rsiList[rsiList.length - 1].RSI3 > longCondition;
     // ||shortRatio < BAO_RATIO;
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 2].RSI3 < shortCondition;
+      rsiList[rsiList.length - 1].RSI3 < shortCondition;
     // ||longRatio < BAO_RATIO;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
@@ -800,10 +800,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 2].RSI3 < shortCondition;
     // || (ifRSIPositiveContinuity && shortRatio > WIN_MAX * 2);
 
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 2].RSI3 > longCondition;
     // ||(ifRSINegativeContinuity && longRatio > WIN_MAX * 2);
 
     const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
