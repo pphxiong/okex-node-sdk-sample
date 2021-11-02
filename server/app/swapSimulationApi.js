@@ -855,8 +855,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       longCondition = DEFAULT_CONDITION;
       shortCondition = DEFAULT_CONDITION;
     } else if (MODE == 2) {
-      longCondition = DEFAULT_CONDITION + 3;
-      shortCondition = DEFAULT_CONDITION + 3;
+      longCondition = DEFAULT_CONDITION + 8;
+      shortCondition = DEFAULT_CONDITION - 8;
     }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
