@@ -67,7 +67,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO = 100 / ORIGIN_INIT_POSITION;
+const POSITION_RATIO = 100 / 2 / ORIGIN_INIT_POSITION;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalCapital = ORIGIN_TOTAL_CAPITAL;
 let totalPosition = 0;
@@ -786,7 +786,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > longCondition &&
-      (shortRatio == 0 || shortRatio > WIN_MAX / 3 || shortRatio < LOSS_MAX);
+      (shortRatio >= 0 || shortRatio < LOSS_MAX);
     // ||shortRatio < BAO_RATIO;
 
     const MAIN_OPEN_SHORT_CONDITION =
@@ -794,7 +794,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition &&
-      (longRatio == 0 || longRatio > WIN_MAX / 3 || longRatio < LOSS_MAX);
+      (longRatio >= 0 || longRatio < LOSS_MAX);
     // ||longRatio < BAO_RATIO;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
