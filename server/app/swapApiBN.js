@@ -20,7 +20,7 @@ const LONG_CONDITION = 47.8;
 const SHORT_CONDITION = 47.8;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
-const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 3;
@@ -453,13 +453,15 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].column) > 0 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 3].RSI1 > rsiList[rsiList.length - 3].RSI3 &&
-      rsiList[rsiList.length - 2].RSI3 > LONG_CONDITION;
+      rsiList[rsiList.length - 2].RSI3 > LONG_CONDITION &&
+      (shortRatio >= 0 || shortRatio < LOSS_MAX);
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].column) < 0 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 3].RSI1 < rsiList[rsiList.length - 3].RSI3 &&
-      rsiList[rsiList.length - 2].RSI3 < SHORT_CONDITION;
+      rsiList[rsiList.length - 2].RSI3 < SHORT_CONDITION &&
+      (longRatio >= 0 || longRatio < LOSS_MAX);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
