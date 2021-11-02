@@ -215,6 +215,7 @@ function getMacd(params) {
     high,
     low,
     time,
+    week,
     quantity,
     open,
   } = params;
@@ -248,6 +249,7 @@ function getMacd(params) {
     low,
     quantity,
     time,
+    week,
   };
 
   return result;
