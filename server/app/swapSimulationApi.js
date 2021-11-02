@@ -825,31 +825,39 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    const { week } = macdList[macdList.length - 1];
+    // const { week } = macdList[macdList.length - 1];
 
-    if (week == 6 || week == 0) {
-      MODE = 2;
-    } else {
-      MODE = 1;
+    // if (week == 6 || week == 0) {
+    //   MODE = 2;
+    // } else {
+    //   MODE = 1;
+    // }
+
+    if (MODE == 1) {
+      if (
+        (closeLongCondition && longRatio > WIN_MAX) ||
+        (closeShortCondition && shortRatio > WIN_MAX)
+      ) {
+        MODE = 2;
+        openLongCondition = !openLongCondition;
+        openShortCondition = !openShortCondition;
+      }
+    } else if (MODE == 2) {
+      if (
+        (ifRSIPositiveContinuity && longRatio < 0) ||
+        (ifRSINegativeContinuity && shortRatio < 0)
+      ) {
+        MODE = 1;
+      }
     }
 
-    // if (MODE == 1) {
-    //   if (
-    //     (closeLongCondition && longRatio > WIN_MAX) ||
-    //     (closeShortCondition && shortRatio > WIN_MAX)
-    //   ) {
-    //     MODE = 2;
-    //     openLongCondition = !openLongCondition;
-    //     openShortCondition = !openShortCondition;
-    //   }
-    // } else if (MODE == 2) {
-    //   if (
-    //     (ifRSIPositiveContinuity && longRatio < 0) ||
-    //     (ifRSINegativeContinuity && shortRatio < 0)
-    //   ) {
-    //     MODE = 1;
-    //   }
-    // }
+    if (MODE == 1) {
+      longCondition = DEFAULT_CONDITION;
+      shortCondition = DEFAULT_CONDITION;
+    } else if (MODE == 2) {
+      longCondition = DEFAULT_CONDITION + 3;
+      shortCondition = DEFAULT_CONDITION + 3;
+    }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
