@@ -827,9 +827,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const { week } = macdList[macdList.length - 1];
 
-    console.log("time", macdList[macdList.length - 1].time);
-    console.log("week", week);
-    if (week == 6 || week == 0 || week == 1) {
+    if (week == 6 || week == 0) {
       MODE = 2;
     } else {
       MODE = 1;
