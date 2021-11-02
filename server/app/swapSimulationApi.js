@@ -151,6 +151,7 @@ function getCurrentMacd(list, last) {
         close: Number(item[4]),
         quantity: Number(item[5]),
         time: moment(parseInt(item[0])).format("YYYY-MM-DD HH:mm:ss"),
+        week: moment(parseInt(item[0])).day(),
       };
     } else {
       const lastResult = macdList[macdList.length - 1];
@@ -164,6 +165,7 @@ function getCurrentMacd(list, last) {
         close: Number(item[4]),
         quantity: Number(item[5]),
         time: moment(parseInt(item[0])).format("YYYY-MM-DD HH:mm:ss"),
+        week: moment(parseInt(item[0])).day(),
       };
       result = getMacd(payload);
     }
@@ -319,6 +321,7 @@ function getRSI(time, price, list, last) {
 
   const result = {
     time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
+    week: moment(parseInt(time)).day(),
     price,
     RSI1,
     RSI2,
@@ -820,47 +823,31 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (MODE == 1) {
-      if (
-        (closeLongCondition && longRatio > WIN_MAX) ||
-        (closeShortCondition && shortRatio > WIN_MAX)
-      ) {
-        MODE = 2;
-        openLongCondition = !openLongCondition;
-        openShortCondition = !openShortCondition;
-        // closeLongCondition = false;
-        // closeShortCondition = false;
-        // openLongCondition = false;
-        // openShortCondition = false;
-      }
-    } else if (MODE == 2) {
-      if (
-        (ifRSIPositiveContinuity && longRatio < 0) ||
-        (ifRSINegativeContinuity && shortRatio < 0)
-      ) {
-        MODE = 1;
-      }
+    const { week } = macdList[macdList.length - 1];
 
-      // if (openLongCondition && longRatio < 0) {
-      //   MODE = 1;
-      //   closeLongCondition = true;
-      //   openShortCondition = true;
-      //   openLongCondition = false;
-      // } else if (openShortCondition && shortRatio < 0) {
-      //   MODE = 1;
-      //   closeShortCondition = true;
-      //   openLongCondition = true;
-      //   openShortCondition = false;
-      // }
-
-      // if (longRatio < 0) {
-      //   closeLongCondition = true;
-      //   openShortCondition = true;
-      // } else if (shortRatio < 0) {
-      //   closeShortCondition = true;
-      //   openLongCondition = true;
-      // }
+    if (week == 6 || week == 0 || week == 1) {
+      MODE = 2;
+    } else {
+      MODE = 1;
     }
+
+    // if (MODE == 1) {
+    //   if (
+    //     (closeLongCondition && longRatio > WIN_MAX) ||
+    //     (closeShortCondition && shortRatio > WIN_MAX)
+    //   ) {
+    //     MODE = 2;
+    //     openLongCondition = !openLongCondition;
+    //     openShortCondition = !openShortCondition;
+    //   }
+    // } else if (MODE == 2) {
+    //   if (
+    //     (ifRSIPositiveContinuity && longRatio < 0) ||
+    //     (ifRSINegativeContinuity && shortRatio < 0)
+    //   ) {
+    //     MODE = 1;
+    //   }
+    // }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
@@ -1004,6 +991,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           entryPrice: price,
           positionAmt,
           time: macdList[macdList.length - 1].time,
+          week: macdList[macdList.length - 1].week,
         };
       } else {
         shortPosition = {
@@ -1012,6 +1000,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           entryPrice: price,
           positionAmt,
           time: macdList[macdList.length - 1].time,
+          week: macdList[macdList.length - 1].week,
         };
       }
       const dealDetail = {
@@ -1064,6 +1053,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             entryPrice: mark_price,
             positionAmt: longHolding.positionAmt,
             time: macdList[macdList.length - 1].time,
+            week: macdList[macdList.length - 1].week,
             totalProfit,
             totalCapital,
             currentProfit: (longRatio * longHolding.positionAmt) / LEVERAGE,
@@ -1119,6 +1109,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             entryPrice: mark_price,
             positionAmt: shortHolding.positionAmt,
             time: macdList[macdList.length - 1].time,
+            week: macdList[macdList.length - 1].week,
             totalProfit,
             totalCapital,
             currentProfit: (shortRatio * shortHolding.positionAmt) / LEVERAGE,
@@ -1228,6 +1219,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             entryPrice: mark_price,
             positionAmt: openPositionAmt,
             time: macdList[macdList.length - 1].time,
+            week: macdList[macdList.length - 1].week,
             macdList,
             rsiList,
             MODE,
@@ -1292,6 +1284,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             entryPrice: mark_price,
             positionAmt: openPositionAmt,
             time: macdList[macdList.length - 1].time,
+            week: macdList[macdList.length - 1].week,
             macdList,
             rsiList,
             MODE,
