@@ -844,6 +844,15 @@ const checkDeal = async (data, isAutoReset = true) => {
         openLongCondition = !openLongCondition;
         openShortCondition = !openShortCondition;
       }
+
+      if (
+        (closeLongCondition && longRatio < 0) ||
+        (closeShortCondition && shortRatio < 0)
+      ) {
+        MODE = 2;
+        openLongCondition = !openLongCondition;
+        openShortCondition = !openShortCondition;
+      }
     } else if (MODE == 2) {
       if (
         (ifRSIPositiveContinuity && longRatio < 0) ||
@@ -851,17 +860,15 @@ const checkDeal = async (data, isAutoReset = true) => {
       ) {
         MODE = 1;
       }
-    }
 
-    if (
-      (openLongCondition && longRatio < 0) ||
-      (openShortCondition && shortRatio < 0)
-    ) {
-      closeLongCondition = true;
-      closeShortCondition = true;
-      openLongCondition = !openLongCondition;
-      openShortCondition = !openShortCondition;
-      MODE = MODE == 1 ? 2 : 1;
+      if (
+        (openLongCondition && longRatio < 0) ||
+        (openShortCondition && shortRatio < 0)
+      ) {
+        MODE = 1;
+        openLongCondition = !openLongCondition;
+        openShortCondition = !openShortCondition;
+      }
     }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
