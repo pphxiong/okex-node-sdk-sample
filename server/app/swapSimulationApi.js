@@ -837,17 +837,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     if (MODE == 1) {
       if (
-        (closeLongCondition && longRatio > WIN_MAX) ||
-        (closeShortCondition && shortRatio > WIN_MAX)
-      ) {
-        MODE = 2;
-        openLongCondition = !openLongCondition;
-        openShortCondition = !openShortCondition;
-      }
-
-      if (
-        (closeLongCondition && longRatio < LOSS_MAX) ||
-        (closeShortCondition && shortRatio < LOSS_MAX)
+        (closeLongCondition &&
+          (longRatio > WIN_MAX || (longRatio < 0 && longRatio > LOSS_MAX))) ||
+        (closeShortCondition &&
+          (shortRatio > WIN_MAX || (shortRatio < 0 && shortRatio > LOSS_MAX)))
       ) {
         MODE = 2;
         openLongCondition = !openLongCondition;
@@ -859,15 +852,6 @@ const checkDeal = async (data, isAutoReset = true) => {
         (ifRSINegativeContinuity && shortRatio < 0)
       ) {
         MODE = 1;
-      }
-
-      if (
-        (openLongCondition && longRatio < 0) ||
-        (openShortCondition && shortRatio < 0)
-      ) {
-        MODE = 1;
-        openLongCondition = !openLongCondition;
-        openShortCondition = !openShortCondition;
       }
     }
 
