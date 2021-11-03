@@ -850,8 +850,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       } else if (
         (MAIN_LONG_BASIC_CONDITION &&
           shortRatio < 0 &&
-          shortRatio > LOSS_MAX) ||
-        (MAIN_SHORT_BASIC_CONDITION && longRatio > 0 && longRatio > LOSS_MAX)
+          shortRatio > LOSS_MAX / 2) ||
+        (MAIN_SHORT_BASIC_CONDITION &&
+          longRatio > 0 &&
+          longRatio > LOSS_MAX / 2)
       ) {
         MODE = 2;
       }
