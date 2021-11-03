@@ -782,16 +782,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     // });
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+      Number(macdList[macdList.length - 2].column) > 0 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 3].RSI1 > rsiList[rsiList.length - 3].RSI3 &&
+      rsiList[rsiList.length - 2].RSI3 > longCondition;
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      Number(macdList[macdList.length - 2].column) < 0 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 3].RSI1 < rsiList[rsiList.length - 3].RSI3 &&
+      rsiList[rsiList.length - 2].RSI3 < shortCondition;
 
     const MAIN_OPEN_LONG_CONDITION =
       MAIN_LONG_BASIC_CONDITION && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
@@ -1177,9 +1177,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     // }
 
     INIT_POSITION =
-      totalCapital < ORIGIN_TOTAL_CAPITAL * 0.9
+      longRatio > WIN_MAX || shortRatio > WIN_MAX
         ? Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO / 0.9,
+            (totalCapital * LEVERAGE) / POSITION_RATIO,
             ORIGIN_INIT_POSITION * 2
           )
         : Math.min(
