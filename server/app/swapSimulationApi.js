@@ -853,22 +853,14 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    // if (
-    //   (closeLongCondition && longRatio < 0) ||
-    //   (closeShortCondition && shortRatio < 0)
-    // ) {
-    //   openLongCondition = !openLongCondition;
-    //   openShortCondition = !openShortCondition;
-    //   MODE = MODE == 1 ? 2 : 1;
-    // }
-
-    // if (MODE == 1) {
-    //   longCondition = DEFAULT_CONDITION;
-    //   shortCondition = DEFAULT_CONDITION;
-    // } else if (MODE == 2) {
-    //   longCondition = DEFAULT_CONDITION + 8;
-    //   shortCondition = DEFAULT_CONDITION - 8;
-    // }
+    if (
+      (closeLongCondition && longRatio < 0) ||
+      (closeShortCondition && shortRatio < 0)
+    ) {
+      openLongCondition = !openLongCondition;
+      openShortCondition = !openShortCondition;
+      MODE = MODE == 1 ? 2 : 1;
+    }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
