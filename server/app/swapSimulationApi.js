@@ -847,15 +847,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         MODE = 2;
         openLongCondition = !openLongCondition;
         openShortCondition = !openShortCondition;
-      } else if (
-        (MAIN_LONG_BASIC_CONDITION &&
-          shortRatio < 0 &&
-          shortRatio > LOSS_MAX / 2) ||
-        (MAIN_SHORT_BASIC_CONDITION &&
-          longRatio > 0 &&
-          longRatio > LOSS_MAX / 2)
+      }
+      if (
+        (closeLongCondition && longRatio < 0) ||
+        (closeShortCondition && shortRatio < 0)
       ) {
         MODE = 2;
+        openLongCondition = !openLongCondition;
+        openShortCondition = !openShortCondition;
       }
     } else if (MODE == 2) {
       if (
