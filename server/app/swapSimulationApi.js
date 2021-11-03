@@ -848,14 +848,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         openLongCondition = !openLongCondition;
         openShortCondition = !openShortCondition;
       }
-      if (
-        (closeLongCondition && longRatio < 0) ||
-        (closeShortCondition && shortRatio < 0)
-      ) {
-        MODE = 2;
-        openLongCondition = !openLongCondition;
-        openShortCondition = !openShortCondition;
-      }
+      // if (
+      //   (closeLongCondition && longRatio < LOSS_MAX) ||
+      //   (closeShortCondition && shortRatio < LOSS_MAX)
+      // ) {
+      //   MODE = 2;
+      //   openLongCondition = !openLongCondition;
+      //   openShortCondition = !openShortCondition;
+      // }
     } else if (MODE == 2) {
       if (
         (ifRSIPositiveContinuity && longRatio < 0) ||
@@ -1176,16 +1176,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   totalCapital = totalCapital - receiveCapital;
     // }
 
-    INIT_POSITION =
-      longRatio > WIN_MAX || shortRatio > WIN_MAX
-        ? Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          )
-        : Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          );
+    // INIT_POSITION =
+    //   longRatio > WIN_MAX || shortRatio > WIN_MAX
+    //     ? Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       )
+    //     : Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       );
 
     // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
 
