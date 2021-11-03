@@ -35,7 +35,7 @@ const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 12.5;
+const ORIGIN_INIT_POSITION = 2;
 const DEFAULT_POSITION_RATIO_LIST = generatePositionList(
   ORIGIN_INIT_POSITION,
   0
@@ -67,7 +67,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO = 100 / ORIGIN_INIT_POSITION;
+const POSITION_RATIO = 10;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalCapital = ORIGIN_TOTAL_CAPITAL;
 let totalPosition = 0;
