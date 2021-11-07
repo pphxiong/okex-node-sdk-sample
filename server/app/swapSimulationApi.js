@@ -1181,16 +1181,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   totalCapital = totalCapital - receiveCapital;
     // }
 
-    INIT_POSITION =
-      longRatio > WIN_MAX || shortRatio > WIN_MAX
-        ? Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          )
-        : Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          );
+    // INIT_POSITION =
+    //   longRatio > WIN_MAX || shortRatio > WIN_MAX
+    //     ? Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       )
+    //     : Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       );
 
     // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
 
