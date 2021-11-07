@@ -796,12 +796,12 @@ const checkDeal = async (data, isAutoReset = true) => {
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
-    const MAIN_OPEN_LONG_CONDITION =
-      MAIN_LONG_BASIC_CONDITION && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+    const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
+    // && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
     // ||shortRatio < BAO_RATIO;
 
-    const MAIN_OPEN_SHORT_CONDITION =
-      MAIN_SHORT_BASIC_CONDITION && (longRatio >= 0 || longRatio <= LOSS_MAX);
+    const MAIN_OPEN_SHORT_CONDITION = MAIN_SHORT_BASIC_CONDITION;
+    // && (longRatio >= 0 || longRatio <= LOSS_MAX);
     // ||longRatio < BAO_RATIO;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
@@ -1181,16 +1181,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   totalCapital = totalCapital - receiveCapital;
     // }
 
-    // INIT_POSITION =
-    //   longRatio > WIN_MAX || shortRatio > WIN_MAX
-    //     ? Math.min(
-    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
-    //         ORIGIN_INIT_POSITION * 2
-    //       )
-    //     : Math.min(
-    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
-    //         ORIGIN_INIT_POSITION * 2
-    //       );
+    INIT_POSITION =
+      longRatio > WIN_MAX || shortRatio > WIN_MAX
+        ? Math.min(
+            (totalCapital * LEVERAGE) / POSITION_RATIO,
+            ORIGIN_INIT_POSITION * 2
+          )
+        : Math.min(
+            (totalCapital * LEVERAGE) / POSITION_RATIO,
+            ORIGIN_INIT_POSITION * 2
+          );
 
     // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
 
