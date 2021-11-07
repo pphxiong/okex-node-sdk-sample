@@ -653,11 +653,11 @@ function fibonacci(n) {
 }
 
 const checkDeal = async (data, isAutoReset = true) => {
-  for (let i = 0; i < data.macdList.length - 49; i++) {
+  for (let i = 0; i < data.macdList.length - 9; i++) {
     checkByStep(
       {
-        macdList: data.macdList.slice(i, i + 50),
-        rsiList: data.rsiList.slice(i, i + 50),
+        macdList: data.macdList.slice(i, i + 10),
+        rsiList: data.rsiList.slice(i, i + 10),
       },
       isAutoReset
       // && i == data.macdList.length - 10

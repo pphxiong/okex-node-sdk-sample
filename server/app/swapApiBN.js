@@ -517,7 +517,7 @@ const checkDeal = async (data) => {
     console.log('************************************', currentTime);
     // console.log("mark_price", mark_price);
     // console.log("macdList", macdList.slice(-1));
-    // console.log("rsiList", rsiList.slice(-1));
+    console.log('rsiList', rsiList.slice(-1));
     console.log('longRatio', longRatio, 'shortRatio', shortRatio);
     console.log(
       'longPositionAmt',
