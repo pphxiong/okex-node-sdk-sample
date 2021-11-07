@@ -1076,6 +1076,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
             MODE,
+            longRatio,
           };
           dealDetailList.push(dealDetail);
           if (longRatio < mostLoss.profit) {
@@ -1132,6 +1133,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
             MODE,
+            shortRatio,
           };
           dealDetailList.push(dealDetail);
           if (shortRatio < mostLoss.profit) {
