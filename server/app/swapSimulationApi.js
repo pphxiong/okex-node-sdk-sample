@@ -1054,7 +1054,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           const currentProfit =
             (longRatio * longHolding.positionAmt) / LEVERAGE -
-            0.04 * 0.01 * longHolding.positionAmt;
+            0.04 * 0 * 0.01 * longHolding.positionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1111,7 +1111,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           if (shortRatio < 0) modeChange = true;
           const currentProfit =
             (shortRatio * shortHolding.positionAmt) / LEVERAGE -
-            0.04 * 0.01 * shortHolding.positionAmt;
+            0.04 * 0 * 0.01 * shortHolding.positionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
