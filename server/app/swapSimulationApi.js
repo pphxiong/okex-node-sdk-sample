@@ -45,7 +45,7 @@ const MODE_RATIO = {
   1: DEFAULT_POSITION_RATIO_LIST,
   2: DEFAULT_POSITION_RATIO_LIST,
 };
-const DEFAULT_MODE = 2;
+const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
 const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
@@ -991,8 +991,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           Number(holding.entryPrice) * Number(holding.positionAmt)) /
         positionAmt;
 
-      totalProfit += (-0.04 * 0.01 * positionAmt) / 2;
-      totalCapital += (-0.04 * 0.01 * positionAmt) / 2;
+      totalProfit += (-0.04 * 0 * 0.01 * positionAmt) / 2;
+      totalCapital += (-0.04 * 0 * 0.01 * positionAmt) / 2;
       if (totalCapital < positionAmt / 2) positionAmt = 0;
       maxOpenPosition = Math.max(maxOpenPosition, positionAmt);
       if (direction == "LONG") {
@@ -1212,8 +1212,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           // if(modeChange) openPositionAmt = INIT_POSITION;
 
           if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-          totalCapital += -0.04 * 0.01 * openPositionAmt;
-          totalProfit += -0.04 * 0.01 * openPositionAmt;
+          totalCapital += -0.04 * 0 * 0.01 * openPositionAmt;
+          totalProfit += -0.04 * 0 * 0.01 * openPositionAmt;
           totalPosition += openPositionAmt;
 
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1277,8 +1277,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           // if(modeChange) openPositionAmt = INIT_POSITION;
 
           if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-          totalCapital += -0.04 * 0.01 * openPositionAmt;
-          totalProfit += -0.04 * 0.01 * openPositionAmt;
+          totalCapital += -0.04 * 0 * 0.01 * openPositionAmt;
+          totalProfit += -0.04 * 0 * 0.01 * openPositionAmt;
           totalPosition += openPositionAmt;
 
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
