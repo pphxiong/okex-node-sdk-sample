@@ -191,8 +191,8 @@ const openPosition = async (params = {}) => {
       quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
-      type: 'LIMIT',
-      timeInForce: 'GTC',
+      type: 'LIMIT_MAKER',
+      // timeInForce: 'GTC',
       price: mark_price,
     };
     try {
@@ -235,8 +235,8 @@ const closePosition = async (holding) => {
       quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
-      type: 'LIMIT',
-      timeInForce: 'GTC',
+      type: 'LIMIT_MAKER',
+      // timeInForce: 'GTC',
       price: mark_price,
     };
     try {
@@ -649,7 +649,7 @@ const checkDeal = async (data) => {
     }
 
     //开多仓条件
-    if (openLongCondition) {
+    if (openLongCondition || true) {
       try {
         if (
           !longHolding ||
