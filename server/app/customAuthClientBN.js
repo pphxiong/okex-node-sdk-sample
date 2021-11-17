@@ -82,7 +82,7 @@ function customAuthClient(
       },
       openOrder: function (symbol, origClientOrderId) {
         return get(
-          `/dapi/v1/openOrder?symbol=${symbol}&origClientOrderId=${origClientOrderId}`
+          `/fapi/v1/openOrder?symbol=${symbol}&origClientOrderId=${origClientOrderId}`
         );
       },
     },
