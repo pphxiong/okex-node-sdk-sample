@@ -192,7 +192,7 @@ const openPosition = async (params = {}) => {
       positionSide: openSide == "long" ? "LONG" : "SHORT",
       quantity: Math.abs(size),
       recvWindow: 5000,
-      // newClientOrderId,
+      newClientOrderId,
       type: "MARKET",
       // type: "LIMIT",
       // timeInForce: "GTC",
@@ -232,10 +232,9 @@ const closePosition = async (holding) => {
       quantity: Math.abs(size),
       recvWindow: 5000,
       newClientOrderId,
-      // type: "MARKET",
-      type: "LIMIT",
-      timeInForce: "GTC",
-      // timestamp: moment(new Date()).valueOf(),
+      type: "MARKET",
+      // type: "LIMIT",
+      // timeInForce: "GTC",
     };
     try {
       await cAuthClientBN.swap.postOrder(payload);
@@ -622,7 +621,7 @@ const checkDeal = async (data) => {
         }
       }
     };
-
+    closeLongCondition = true;
     //平多仓条件
     if (closeLongCondition) {
       try {
@@ -640,7 +639,7 @@ const checkDeal = async (data) => {
         console.log(e);
       }
     }
-    openLongCondition = true;
+
     //开多仓条件
     if (openLongCondition) {
       try {
