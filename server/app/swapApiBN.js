@@ -629,7 +629,7 @@ const checkDeal = async (data) => {
         }
       }
     };
-    closeLongCondition = true;
+
     //平多仓条件
     if (closeLongCondition) {
       try {
