@@ -193,9 +193,9 @@ const openPosition = async (params = {}) => {
       quantity: Math.abs(size),
       recvWindow: 5000,
       // newClientOrderId,
-      // type: "MARKET",
-      type: "LIMIT",
-      timeInForce: "GTC",
+      type: "MARKET",
+      // type: "LIMIT",
+      // timeInForce: "GTC",
     };
     try {
       await cAuthClientBN.swap.postOrder(payload);
