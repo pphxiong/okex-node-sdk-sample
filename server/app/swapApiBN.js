@@ -190,7 +190,7 @@ const openPosition = async (params = {}) => {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
-      quantity: Math.abs(size),
+      quantity: Math.abs(size) / 50,
       recvWindow: 5000,
       // newClientOrderId,
       // type: "MARKET",
@@ -199,14 +199,9 @@ const openPosition = async (params = {}) => {
       price: mark_price,
     };
     try {
-      await cAuthClientBN.swap.postOrder(payload);
+      const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
 
-      // 查询挂单
-      const result = await cAuthClientBN.swap.openOrder(
-        BN_SYMBOL,
-        openOrigClientOrderId
-      );
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
       console.log("after-result", result);
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
