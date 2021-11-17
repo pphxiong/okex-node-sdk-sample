@@ -179,6 +179,7 @@ const openPosition = async (params = {}) => {
       BN_SYMBOL,
       openOrigClientOrderId
     );
+    console.log("result", result);
 
     // 存在挂单
     if (result.orderId) return;
@@ -639,7 +640,7 @@ const checkDeal = async (data) => {
         console.log(e);
       }
     }
-
+    openLongCondition = true;
     //开多仓条件
     if (openLongCondition) {
       try {
