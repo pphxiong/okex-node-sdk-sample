@@ -190,7 +190,7 @@ const openPosition = async (params = {}) => {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
-      quantity: Math.abs(size) / 50,
+      quantity: Math.abs(size) / 10,
       recvWindow: 5000,
       // newClientOrderId,
       // type: "MARKET",
