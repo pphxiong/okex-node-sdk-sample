@@ -236,7 +236,7 @@ const closePosition = async (holding) => {
       recvWindow: 5000,
       // type: "MARKET",
       type: 'LIMIT',
-      timeInForce: 'FOK',
+      timeInForce: 'GTC',
       price: mark_price,
     };
     try {
@@ -631,7 +631,7 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (closeLongCondition || true) {
+    if (closeLongCondition) {
       try {
         await closeLongPosition();
       } catch (e) {
