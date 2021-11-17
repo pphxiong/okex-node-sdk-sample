@@ -184,15 +184,12 @@ const openPosition = async (params = {}) => {
     // 存在挂单
     if (result.orderId) return;
 
-    const newClientOrderId = getUUID();
-    openOrigClientOrderId = newClientOrderId;
     const payload = {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
-      quantity: 0.01,
+      quantity: Math.abs(size),
       recvWindow: 5000,
-      // newClientOrderId,
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
@@ -203,7 +200,8 @@ const openPosition = async (params = {}) => {
       positionChange = true;
 
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-      console.log("after-result", result);
+      openOrigClientOrderId = result.clientOrderId;
+      console.log("openOrigClientOrderId", openOrigClientOrderId);
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     } catch (e) {
       // throw new Error('Error');
@@ -236,15 +234,19 @@ const closePosition = async (holding) => {
       positionSide: side == "long" ? "LONG" : "SHORT",
       quantity: Math.abs(size),
       recvWindow: 5000,
-      newClientOrderId,
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
       price: mark_price,
     };
     try {
-      await cAuthClientBN.swap.postOrder(payload);
+      const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
+
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+      closeOrigClientOrderId = result.clientOrderId;
+      console.log("closeOrigClientOrderId", closeOrigClientOrderId);
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     } catch (e) {
       // throw new Error('Error');
       restart("close");
@@ -627,7 +629,7 @@ const checkDeal = async (data) => {
         }
       }
     };
-
+    closeLongCondition = true;
     //平多仓条件
     if (closeLongCondition) {
       try {
@@ -645,7 +647,7 @@ const checkDeal = async (data) => {
         console.log(e);
       }
     }
-    openLongCondition = true;
+
     //开多仓条件
     if (openLongCondition) {
       try {
