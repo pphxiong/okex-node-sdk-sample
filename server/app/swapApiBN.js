@@ -169,9 +169,11 @@ const openPosition = async (params = {}) => {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
-      type: "MARKET",
       quantity: Math.abs(size),
       recvWindow: 5000,
+      // type: "MARKET",
+      type: "LIMIT",
+      timeInForce: "GTC",
     };
     try {
       await cAuthClientBN.swap.postOrder(payload);
@@ -193,9 +195,11 @@ const closePosition = async (holding) => {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: side == "long" ? "LONG" : "SHORT",
-      type: "MARKET",
       quantity: Math.abs(size),
       recvWindow: 5000,
+      // type: "MARKET",
+      type: "LIMIT",
+      timeInForce: "GTC",
       // timestamp: moment(new Date()).valueOf(),
     };
     try {
