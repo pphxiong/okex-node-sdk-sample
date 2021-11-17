@@ -148,7 +148,16 @@ app.get("/test", function (req, res) {
   send(res, { errcode: 0, errmsg: "ok" });
 });
 
-let cancelInterval;
+function getUUID() {
+  function S4() {
+    // eslint-disable-next-line no-bitwise
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  }
+  return `${S4() + S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
+}
+
+let openOrigClientOrderId = "";
+let closeOrigClientOrderId = "";
 const openPosition = async (params = {}) => {
   const {
     openSide = "long",
@@ -165,12 +174,24 @@ const openPosition = async (params = {}) => {
     );
     console.log("position", position, "type", type, "side", openSide);
 
+    // 查询挂单
+    const result = await cAuthClientBN.swap.openOrder(
+      BN_SYMBOL,
+      openOrigClientOrderId
+    );
+
+    // 存在挂单
+    if (result.orderId) return;
+
+    const newClientOrderId = getUUID();
+    openOrigClientOrderId = newClientOrderId;
     const payload = {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
       quantity: Math.abs(size),
       recvWindow: 5000,
+      newClientOrderId,
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
@@ -190,6 +211,18 @@ const openPosition = async (params = {}) => {
 const closePosition = async (holding) => {
   const { position = INIT_POSITION, side, mark_price, time } = holding;
   async function postOrder(size, price) {
+    // 查询挂单
+    const result = await cAuthClientBN.swap.openOrder(
+      BN_SYMBOL,
+      closeOrigClientOrderId
+    );
+
+    // 存在挂单
+    if (result.orderId) return;
+
+    const newClientOrderId = getUUID();
+    closeOrigClientOrderId = newClientOrderId;
+
     const type = side == "long" ? "SELL" : "BUY";
     const payload = {
       symbol: BN_SYMBOL,
@@ -197,6 +230,7 @@ const closePosition = async (holding) => {
       positionSide: side == "long" ? "LONG" : "SHORT",
       quantity: Math.abs(size),
       recvWindow: 5000,
+      newClientOrderId,
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
