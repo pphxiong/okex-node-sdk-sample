@@ -192,7 +192,7 @@ const openPosition = async (params = {}) => {
       positionSide: openSide == "long" ? "LONG" : "SHORT",
       quantity: Math.abs(size),
       recvWindow: 5000,
-      newClientOrderId,
+      // newClientOrderId,
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
