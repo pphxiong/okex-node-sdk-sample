@@ -174,7 +174,7 @@ const openPosition = async (params = {}) => {
     );
     console.log("position", position, "type", type, "side", openSide);
 
-    const result = await cAuthClientBN.swap.openOrder(
+    const result = await cAuthClientBN.swap.openOrders(
       BN_SYMBOL,
       openOrigClientOrderId
     );

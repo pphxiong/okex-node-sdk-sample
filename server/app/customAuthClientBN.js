@@ -85,6 +85,9 @@ function customAuthClient(
           `/fapi/v1/openOrder?symbol=${symbol}&origClientOrderId=${origClientOrderId}`
         );
       },
+      openOrders: function () {
+        return get(`/fapi/v1/openOrders`);
+      },
     },
     common: {
       getMarkPrice: function (symbol) {
