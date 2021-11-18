@@ -861,14 +861,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
-    if (closeLongCondition || closeShortCondition) {
-      if (longRatio > WIN_MAX || shortRatio > WIN_MAX) {
-        POSITION_RATIO = POSITION_RATIO_DEFAULT * 10;
-      } else {
-        POSITION_RATIO = POSITION_RATIO_DEFAULT;
-      }
-    }
-
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
     );
@@ -1180,6 +1172,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     // if ((totalCapital * LEVERAGE) / 10 > ORIGIN_INIT_POSITION * 4) {
     //   receiveCapital += totalCapital - (ORIGIN_INIT_POSITION * 4) / LEVERAGE;
     //   totalCapital = totalCapital - receiveCapital;
+    // }
+
+    // if (closeLongCondition || closeShortCondition) {
+    //   if (longRatio > WIN_MAX || shortRatio > WIN_MAX) {
+    //     POSITION_RATIO = POSITION_RATIO_DEFAULT * 10;
+    //   } else {
+    //     POSITION_RATIO = POSITION_RATIO_DEFAULT;
+    //   }
     // }
 
     INIT_POSITION =
