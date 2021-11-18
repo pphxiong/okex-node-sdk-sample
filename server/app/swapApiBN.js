@@ -643,7 +643,7 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (closeLongCondition) {
+    if (closeLongCondition || true) {
       try {
         await closeLongPosition();
       } catch (e) {
@@ -661,7 +661,7 @@ const checkDeal = async (data) => {
     }
 
     //开多仓条件
-    if (openLongCondition || true) {
+    if (openLongCondition) {
       try {
         if (
           !longHolding ||
