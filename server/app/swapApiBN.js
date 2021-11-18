@@ -190,9 +190,9 @@ const openPosition = async (params = {}) => {
 
     let price = mark_price;
     if (openSide == "long") {
-      price = mark_price * (1 - 0.05 / LEVERAGE);
+      price = mark_price * (1 - 0.025 / LEVERAGE);
     } else {
-      price = mark_price * (1 + 0.05 / LEVERAGE);
+      price = mark_price * (1 + 0.025 / LEVERAGE);
     }
     const payload = {
       symbol: BN_SYMBOL,
@@ -242,9 +242,9 @@ const closePosition = async (holding) => {
     const type = side == "long" ? "SELL" : "BUY";
     let price = mark_price;
     if (side == "long") {
-      price = mark_price * (1 + 0.05 / LEVERAGE);
+      price = mark_price * (1 + 0.025 / LEVERAGE);
     } else {
-      price = mark_price * (1 - 0.05 / LEVERAGE);
+      price = mark_price * (1 - 0.025 / LEVERAGE);
     }
     const payload = {
       symbol: BN_SYMBOL,
@@ -668,7 +668,7 @@ const checkDeal = async (data) => {
     }
 
     //开多仓条件
-    if (openLongCondition || true) {
+    if (openLongCondition) {
       try {
         if (
           !longHolding ||
