@@ -165,7 +165,7 @@ const openPosition = async (params = {}) => {
     mark_price,
   } = params;
 
-  async function postOrder(size, price) {
+  async function postOrder(size) {
     const type = openSide == "long" ? "BUY" : "SELL";
     console.log(
       "openOtherOrderMoment",
@@ -220,7 +220,7 @@ const openPosition = async (params = {}) => {
 // 平仓
 const closePosition = async (holding) => {
   const { position = INIT_POSITION, side, mark_price, time } = holding;
-  async function postOrder(size, price) {
+  async function postOrder(size) {
     // 查询挂单
     const result = await cAuthClientBN.swap.openOrder(
       BN_SYMBOL,
