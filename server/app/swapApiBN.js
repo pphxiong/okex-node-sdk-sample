@@ -178,11 +178,15 @@ const openPosition = async (params = {}) => {
       BN_SYMBOL,
       openOrigClientOrderId
     );
+    if (result && result.length) {
+      const index = result.findIndex(
+        (item) => item.clientOrderId == openOrigClientOrderId
+      );
+      if (index != -1) return;
+    }
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    console.log("result", result);
+    console.log("openresult", result);
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    return;
-    if (result.orderId) return;
 
     let price = mark_price;
     if (openSide == "long") {
@@ -217,12 +221,20 @@ const openPosition = async (params = {}) => {
 const closePosition = async (holding) => {
   const { position = INIT_POSITION, side, mark_price, time } = holding;
   async function postOrder(size) {
-    const result = await cAuthClientBN.swap.openOrder(
+    const result = await cAuthClientBN.swap.openOrders(
       BN_SYMBOL,
       closeOrigClientOrderId
     );
 
-    if (result.orderId) return;
+    if (result && result.length) {
+      const index = result.findIndex(
+        (item) => item.clientOrderId == closeOrigClientOrderId
+      );
+      if (index != -1) return;
+    }
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    console.log("closeresult", result);
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
