@@ -181,7 +181,7 @@ const openPosition = async (params = {}) => {
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     console.log("result", result);
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
+    return;
     if (result.orderId) return;
 
     let price = mark_price;
