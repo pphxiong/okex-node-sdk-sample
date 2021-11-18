@@ -67,7 +67,8 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO = 10;
+const POSITION_RATIO_DEFAULT = 10;
+let POSITION_RATIO = POSITION_RATIO_DEFAULT;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalCapital = ORIGIN_TOTAL_CAPITAL;
 let totalPosition = 0;
@@ -857,6 +858,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         (ifRSINegativeContinuity && shortRatio < 0)
       ) {
         MODE = 1;
+      }
+    }
+
+    if (closeLongCondition || closeShortCondition) {
+      if (longRatio > WIN_MAX || shortRatio > WIN_MAX) {
+        POSITION_RATIO = POSITION_RATIO_DEFAULT * 10;
+      } else {
+        POSITION_RATIO = POSITION_RATIO_DEFAULT;
       }
     }
 
