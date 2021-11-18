@@ -178,7 +178,9 @@ const openPosition = async (params = {}) => {
       BN_SYMBOL,
       openOrigClientOrderId
     );
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     console.log("result", result);
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     if (result.orderId) return;
 
@@ -203,10 +205,7 @@ const openPosition = async (params = {}) => {
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
 
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
       openOrigClientOrderId = result.clientOrderId;
-      console.log("openOrigClientOrderId", openOrigClientOrderId);
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     } catch (e) {
       // throw new Error('Error');
       restart("open");
