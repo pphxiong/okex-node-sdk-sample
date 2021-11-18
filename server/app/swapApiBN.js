@@ -197,7 +197,7 @@ const openPosition = async (params = {}) => {
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price,
+      price: price.toFixed(2),
     };
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
@@ -244,7 +244,7 @@ const closePosition = async (holding) => {
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price: mark_price,
+      price: price.toFixed(2),
     };
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
@@ -639,7 +639,7 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (closeLongCondition || true) {
+    if (closeLongCondition) {
       try {
         await closeLongPosition();
       } catch (e) {
@@ -657,7 +657,7 @@ const checkDeal = async (data) => {
     }
 
     //开多仓条件
-    if (openLongCondition) {
+    if (openLongCondition || true) {
       try {
         if (
           !longHolding ||
