@@ -199,7 +199,7 @@ const openPosition = async (params = {}) => {
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price,
+      price: mark_price,
     };
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
