@@ -194,12 +194,12 @@ const openPosition = async (params = {}) => {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
-      quantity: 0.02,
+      quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price: mark_price,
+      price,
     };
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
