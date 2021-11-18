@@ -174,14 +174,12 @@ const openPosition = async (params = {}) => {
     );
     console.log("position", position, "type", type, "side", openSide);
 
-    // 查询挂单
     const result = await cAuthClientBN.swap.openOrder(
       BN_SYMBOL,
       openOrigClientOrderId
     );
     console.log("result", result);
 
-    // 存在挂单
     if (result.orderId) return;
 
     let price = mark_price;
@@ -217,17 +215,14 @@ const openPosition = async (params = {}) => {
   await postOrder(position, mark_price);
 };
 
-// 平仓
 const closePosition = async (holding) => {
   const { position = INIT_POSITION, side, mark_price, time } = holding;
   async function postOrder(size) {
-    // 查询挂单
     const result = await cAuthClientBN.swap.openOrder(
       BN_SYMBOL,
       closeOrigClientOrderId
     );
 
-    // 存在挂单
     if (result.orderId) return;
 
     const newClientOrderId = getUUID();
@@ -249,7 +244,7 @@ const closePosition = async (holding) => {
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price,
+      price: mark_price,
     };
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
@@ -258,6 +253,7 @@ const closePosition = async (holding) => {
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
       closeOrigClientOrderId = result.clientOrderId;
       console.log("closeOrigClientOrderId", closeOrigClientOrderId);
+      console.log("price", mark_price);
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     } catch (e) {
       // throw new Error('Error');
