@@ -32,7 +32,7 @@ const POSITION_RATIO = 10;
 
 let MODE = 1;
 
-let rsi1 = 7;
+let rsi1 = 8;
 let rsi2 = 12;
 let rsi3 = 24;
 

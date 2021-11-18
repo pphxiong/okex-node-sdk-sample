@@ -86,7 +86,7 @@ let totalProfit = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
-let rsi1 = 7;
+let rsi1 = 8;
 let rsi2 = 12;
 let rsi3 = 24;
 
