@@ -557,8 +557,6 @@ const checkDeal = async (data) => {
       ((closeLongCondition && longRatio > WIN_MAX) ||
         (closeShortCondition && shortRatio > WIN_MAX))
     ) {
-      // if (hmsArr[0] == "00" && hmsArr[1] == "00") isForceDeal = true;
-
       MODE = 2;
       await writeData();
       openLongCondition = !openLongCondition;
@@ -570,13 +568,6 @@ const checkDeal = async (data) => {
     ) {
       MODE = 1;
       await writeData();
-      // if (longRatio < 0) {
-      //   closeLongCondition = true;
-      //   openShortCondition = true;
-      // } else if (shortRatio < 0) {
-      //   closeShortCondition = true;
-      //   openLongCondition = true;
-      // }
     }
 
     console.log("************************************", currentTime);
