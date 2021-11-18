@@ -197,8 +197,8 @@ const openPosition = async (params = {}) => {
       quantity: 0.01,
       recvWindow: 5000,
       // type: "MARKET",
-      type: "LIMIT_MAKER",
-      // timeInForce: 'GTC',
+      type: "LIMIT",
+      timeInForce: "GTC",
       price,
     };
     try {
@@ -247,8 +247,8 @@ const closePosition = async (holding) => {
       quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
-      type: "LIMIT_MAKER",
-      // timeInForce: 'GTC',
+      type: "LIMIT",
+      timeInForce: "GTC",
       price,
     };
     try {
