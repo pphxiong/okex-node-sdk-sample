@@ -29,6 +29,7 @@ const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
 );
 let INIT_POSITION = INCREASE_FI_LIST[0];
 const POSITION_RATIO = 10;
+let RESTART_TIME = 0;
 
 let MODE = 1;
 
@@ -179,9 +180,7 @@ const openPosition = async (params = {}) => {
       openOrigClientOrderId
     );
     if (result && result.length) {
-      const index = result.findIndex(
-        (item) => item.clientOrderId == openOrigClientOrderId
-      );
+      const index = result.findIndex((item) => !item.reduceOnly);
       if (index != -1) return;
     }
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -227,9 +226,7 @@ const closePosition = async (holding) => {
     );
 
     if (result && result.length) {
-      const index = result.findIndex(
-        (item) => item.clientOrderId == closeOrigClientOrderId
-      );
+      const index = result.findIndex((item) => !!item.reduceOnly);
       if (index != -1) return;
     }
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -746,6 +743,11 @@ const checkDeal = async (data) => {
 };
 
 const startInterval = async () => {
+  RESTART_TIME += 1;
+  if (RESTART_TIME >= 80) {
+    restart();
+    return;
+  }
   try {
     const time = moment().valueOf();
     const payload = {
