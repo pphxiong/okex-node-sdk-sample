@@ -639,7 +639,7 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (closeLongCondition || true) {
+    if (closeLongCondition) {
       try {
         await closeLongPosition();
       } catch (e) {
