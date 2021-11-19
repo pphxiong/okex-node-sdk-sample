@@ -229,6 +229,7 @@ const closePosition = async (holding) => {
       const index = result.findIndex((item) => !!item.reduceOnly);
       if (index != -1) return;
     }
+
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     console.log("closeresult", result);
     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -743,6 +744,11 @@ const checkDeal = async (data) => {
 };
 
 const startInterval = async () => {
+  const result = await cAuthClientBN.swap.openOrders();
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  console.log("closeresult", result);
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
