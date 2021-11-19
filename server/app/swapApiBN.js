@@ -179,13 +179,14 @@ const openPosition = async (params = {}) => {
       BN_SYMBOL,
       openOrigClientOrderId
     );
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    console.log("openresult", result);
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
     if (result && result.length) {
       const index = result.findIndex((item) => !item.reduceOnly);
       if (index != -1) return;
     }
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    console.log("openresult", result);
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     let price = mark_price;
     if (openSide == "long") {
@@ -224,15 +225,14 @@ const closePosition = async (holding) => {
       BN_SYMBOL,
       closeOrigClientOrderId
     );
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    console.log("closeresult", result);
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     if (result && result.length) {
       const index = result.findIndex((item) => !!item.reduceOnly);
       if (index != -1) return;
     }
-
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    console.log("closeresult", result);
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
