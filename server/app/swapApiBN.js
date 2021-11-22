@@ -435,7 +435,7 @@ const checkDeal = async (data) => {
         //   ORIGIN_INIT_POSITION * 2
         // );
 
-        INIT_POSITION = availPosition;
+        INIT_POSITION = Number(availPosition);
 
         await readData();
         console.log("------------------");
