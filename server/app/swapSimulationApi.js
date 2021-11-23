@@ -786,13 +786,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     // });
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 1 &&
+      Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > longCondition;
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) < -1 &&
+      Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < shortCondition;
