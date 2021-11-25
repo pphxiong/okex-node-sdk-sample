@@ -80,12 +80,11 @@ function customAuthClient(
     const headers = {
       "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
       // "Content-Type": "application/json;charset=UTF-8",
-      "content-type": "application/x-www-form-urlencoded",
+      // "content-type": "application/x-www-form-urlencoded",
     };
-    return request(apiUri + url, {
+    return request(apiUri + url + "?" + querystring.stringify(body), {
       method: "DELETE",
       headers,
-      data: body,
     });
   };
 

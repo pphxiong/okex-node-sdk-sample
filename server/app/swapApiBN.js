@@ -798,6 +798,7 @@ const startInterval = async () => {
   const payload = {
     symbol: BN_SYMBOL,
     orderId: result[0].orderId,
+    recvWindow: 5000,
   };
   await cAuthClientBN.swap.cancelOrder(payload);
 
