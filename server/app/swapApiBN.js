@@ -185,16 +185,24 @@ const openPosition = async (params = {}) => {
 
     if (result && result.length) {
       const index = result.findIndex((item) => !item.reduceOnly);
-      if (index != -1) return;
+      if (index != -1) {
+        const ratio =
+          ((Number(mark_price) - Number(result.price)) * Number(LEVERAGE)) /
+          Number(mark_price);
+        if (Math.abs(ratio) > 0.2) {
+          await cAuthClientBN.swap.cancelOrder(BN_SYMBOL, result.orderId);
+        }
+        return;
+      }
     }
 
     let price = mark_price;
     if (openSide == "long") {
-      price = mark_price * (1 - 0.07 / LEVERAGE);
+      price = mark_price * (1 - 0.08 / LEVERAGE);
     } else {
-      price = mark_price * (1 + 0.07 / LEVERAGE);
+      price = mark_price * (1 + 0.08 / LEVERAGE);
     }
-    const payload = {
+    let payload = {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: openSide == "long" ? "LONG" : "SHORT",
@@ -205,6 +213,16 @@ const openPosition = async (params = {}) => {
       timeInForce: "GTC",
       price: price.toFixed(2),
     };
+    if (MODE == 2) {
+      payload = {
+        symbol: BN_SYMBOL,
+        side: type,
+        positionSide: openSide == "long" ? "LONG" : "SHORT",
+        quantity: Math.abs(size),
+        recvWindow: 5000,
+        type: "MARKET",
+      };
+    }
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
@@ -231,7 +249,14 @@ const closePosition = async (holding) => {
 
     if (result && result.length) {
       const index = result.findIndex((item) => !!item.reduceOnly);
-      if (index != -1) return;
+      if (index != -1) {
+        const ratio =
+          ((Number(mark_price) - Number(result.price)) * Number(LEVERAGE)) /
+          Number(mark_price);
+        if (Math.abs(ratio) > 0.2) {
+          await cAuthClientBN.swap.cancelOrder(BN_SYMBOL, result.orderId);
+        }
+      }
     }
 
     const newClientOrderId = getUUID();
@@ -240,11 +265,11 @@ const closePosition = async (holding) => {
     const type = side == "long" ? "SELL" : "BUY";
     let price = mark_price;
     if (side == "long") {
-      price = mark_price * (1 + 0.07 / LEVERAGE);
+      price = mark_price * (1 + 0.08 / LEVERAGE);
     } else {
-      price = mark_price * (1 - 0.07 / LEVERAGE);
+      price = mark_price * (1 - 0.08 / LEVERAGE);
     }
-    const payload = {
+    let payload = {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: side == "long" ? "LONG" : "SHORT",
@@ -255,6 +280,16 @@ const closePosition = async (holding) => {
       timeInForce: "GTC",
       price: price.toFixed(2),
     };
+    if (MODE == 2) {
+      payload = {
+        symbol: BN_SYMBOL,
+        side: type,
+        positionSide: side == "long" ? "LONG" : "SHORT",
+        quantity: Math.abs(size),
+        recvWindow: 5000,
+        type: "MARKET",
+      };
+    }
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
@@ -750,6 +785,9 @@ const checkDeal = async (data) => {
 };
 
 const startInterval = async () => {
+  const result = await cAuthClientBN.swap.openOrders();
+  await cAuthClientBN.swap.cancelOrder(BN_SYMBOL, result.orderId);
+
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
