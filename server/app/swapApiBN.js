@@ -794,8 +794,7 @@ const checkDeal = async (data) => {
 
 const startInterval = async () => {
   const result = await cAuthClientBN.swap.openOrders();
-  console.log("result", result[0]);
-  await cAuthClientBN.swap.cancelOrder(BN_SYMBOL, result[0].orderId);
+  await cAuthClientBN.swap.cancelOrderDelete(BN_SYMBOL, result[0].orderId);
 
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
