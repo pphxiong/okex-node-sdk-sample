@@ -186,16 +186,16 @@ const openPosition = async (params = {}) => {
     if (result && result.length) {
       const index = result.findIndex((item) => !item.reduceOnly);
       if (index != -1) {
-        const ratio =
-          ((Number(mark_price) - Number(result[index].price)) *
-            Number(LEVERAGE)) /
-          Number(mark_price);
-        if (Math.abs(ratio) > 0.2) {
-          await cAuthClientBN.swap.cancelOrder(
-            BN_SYMBOL,
-            result[index].orderId
-          );
-        }
+        // const ratio =
+        //   ((Number(mark_price) - Number(result[index].price)) *
+        //     Number(LEVERAGE)) /
+        //   Number(mark_price);
+        // if (Math.abs(ratio) > 0.2) {
+        //   await cAuthClientBN.swap.cancelOrder(
+        //     BN_SYMBOL,
+        //     result[index].orderId
+        //   );
+        // }
         return;
       }
     }
@@ -254,16 +254,17 @@ const closePosition = async (holding) => {
     if (result && result.length) {
       const index = result.findIndex((item) => !!item.reduceOnly);
       if (index != -1) {
-        const ratio =
-          ((Number(mark_price) - Number(result[index].price)) *
-            Number(LEVERAGE)) /
-          Number(mark_price);
-        if (Math.abs(ratio) > 0.2) {
-          await cAuthClientBN.swap.cancelOrder(
-            BN_SYMBOL,
-            result[index].orderId
-          );
-        }
+        // const ratio =
+        //   ((Number(mark_price) - Number(result[index].price)) *
+        //     Number(LEVERAGE)) /
+        //   Number(mark_price);
+        // if (Math.abs(ratio) > 0.2) {
+        //   await cAuthClientBN.swap.cancelOrder(
+        //     BN_SYMBOL,
+        //     result[index].orderId
+        //   );
+        // }
+        return;
       }
     }
 
@@ -793,10 +794,6 @@ const checkDeal = async (data) => {
 };
 
 const startInterval = async () => {
-  const result = await cAuthClientBN.swap.openOrders();
-  console.log("result", result);
-  await cAuthClientBN.swap.cancelOrder(BN_SYMBOL, result[0].orderId);
-
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
