@@ -72,18 +72,19 @@ function customAuthClient(
     });
   };
 
-  const deleteApi = function (url, body, params) {
-    const bodyJson = querystring.stringify(body);
-    const signObj = getSignature("POST", url, { body: bodyJson });
-    body["signature"] = signObj.signature;
-    body["timestamp"] = signObj.timestamp;
+  const deleteApi = function (url, params) {
+    const signObj = getSignature("DELETE", url);
+    const { timestamp, signature } = signObj;
     const headers = {
       "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
     };
-    return request(apiUri + url + "?" + querystring.stringify(body), {
-      method: "DELETE",
-      headers,
-    });
+    return request(
+      apiUri + url + `?timestamp=${timestamp}&signature=${signature}`,
+      {
+        method: "DELETE",
+        headers,
+      }
+    );
   };
 
   return {
