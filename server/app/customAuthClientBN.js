@@ -72,19 +72,21 @@ function customAuthClient(
     });
   };
 
-  const deleteApi = function (url, params) {
-    const signObj = getSignature("DELETE", url);
-    const { timestamp, signature } = signObj;
+  const deleteApi = function (url, body, params) {
+    const bodyJson = querystring.stringify(body);
+    const signObj = getSignature("DELETE", url, { body: bodyJson });
+    body["signature"] = signObj.signature;
+    body["timestamp"] = signObj.timestamp;
     const headers = {
       "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
+      "Content-Type": "application/json;charset=UTF-8",
+      // 'content-type': 'application/x-www-form-urlencoded'
     };
-    return request(
-      apiUri + url + `?timestamp=${timestamp}&signature=${signature}`,
-      {
-        method: "DELETE",
-        headers,
-      }
-    );
+    return request(apiUri + url, {
+      method: "DELETE",
+      headers,
+      data: JSON.stringify(body),
+    });
   };
 
   return {
@@ -103,11 +105,8 @@ function customAuthClient(
       openOrders: function () {
         return get(`/fapi/v1/openOrders`);
       },
-      cancelOrder: function (symbol, orderId) {
-        return deleteApi(`/fapi/v1/order?symbol=${symbol}&orderId=${orderId}`);
-      },
-      cancelOrderDelete: function (params) {
-        return deleteApi(`/fapi/v1/order`, params);
+      cancelOrder: function (data) {
+        return deleteApi(`/fapi/v1/order`, data);
       },
       cancelAllOrder: function (symbol) {
         return deleteApi(`/fapi/v1/allOpenOrders?symbol=${symbol}`);
