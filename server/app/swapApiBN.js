@@ -600,6 +600,7 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     if (
+      Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
@@ -616,11 +617,12 @@ const checkDeal = async (data) => {
       if (isHasLongOrder) {
         const time = 1000 * 2;
         await countdownCancelAll(time);
-        await waitTime(time);
+        await waitTime(time * 3);
         openLongCondition = true;
         closeShortCondition = true;
       }
     } else if (
+      Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
@@ -637,7 +639,7 @@ const checkDeal = async (data) => {
       if (isHasShortOrder) {
         const time = 1000 * 2;
         await countdownCancelAll(time);
-        await waitTime(time);
+        await waitTime(time * 3);
         openShortCondition = true;
         closeLongCondition = true;
       }
