@@ -602,7 +602,8 @@ const checkDeal = async (data) => {
     if (
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+      MODE == 1
     ) {
       let isHasLongOrder = false;
       const result = await cAuthClientBN.swap.openOrders();
@@ -622,7 +623,8 @@ const checkDeal = async (data) => {
     } else if (
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
+      MODE == 1
     ) {
       let isHasShortOrder = false;
       const result = await cAuthClientBN.swap.openOrders();
