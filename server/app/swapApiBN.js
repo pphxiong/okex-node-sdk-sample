@@ -798,7 +798,7 @@ const startInterval = async () => {
     symbol: BN_SYMBOL,
     countdownTime: 1000 * 3,
   };
-  const result = await cAuthClientBN.swap.postOrder(payload);
+  const result = await cAuthClientBN.swap.countdownCancelAll(payload);
   console.log(result);
   return;
   RESTART_TIME += 1;
