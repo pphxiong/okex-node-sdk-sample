@@ -794,6 +794,12 @@ const checkDeal = async (data) => {
 };
 
 const startInterval = async () => {
+  const payload = {
+    symbol: BN_SYMBOL,
+    countdownTime: 1000 * 3,
+  };
+  const result = await cAuthClientBN.swap.postOrder(payload);
+  console.log(result);
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();

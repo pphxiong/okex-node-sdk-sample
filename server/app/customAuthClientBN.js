@@ -111,6 +111,9 @@ function customAuthClient(
       cancelAllOrder: function (symbol) {
         return deleteApi(`/fapi/v1/allOpenOrders?symbol=${symbol}`);
       },
+      countdownCancelAll: function (params) {
+        return post("/fapi/v1/countdownCancelAll", params);
+      },
     },
     common: {
       getMarkPrice: function (symbol) {
