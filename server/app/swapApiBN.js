@@ -437,6 +437,14 @@ const waitTime = (time = 1000 * 4) => {
   });
 };
 
+const countdownCancelAll = async (time) => {
+  const payload = {
+    symbol: BN_SYMBOL,
+    countdownTime: time,
+  };
+  await cAuthClientBN.swap.countdownCancelAll(payload);
+};
+
 const checkDeal = async (data) => {
   await checkByStep({
     macdList: data.macdList.slice(-10),
@@ -590,6 +598,48 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
+
+    if (
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION
+    ) {
+      let isHasLongOrder = false;
+      const result = await cAuthClientBN.swap.openOrders();
+      if (result && result.length) {
+        const index = result.findIndex(
+          (item) => item.positionSide == "LONG" && !item.reduceOnly
+        );
+        if (index != -1) isHasLongOrder = true;
+      }
+      if (isHasLongOrder) {
+        const time = 1000 * 2;
+        await countdownCancelAll(time);
+        await waitTime(time);
+        openLongCondition = true;
+        closeShortCondition = true;
+      }
+    } else if (
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION
+    ) {
+      let isHasShortOrder = false;
+      const result = await cAuthClientBN.swap.openOrders();
+      if (result && result.length) {
+        const index = result.findIndex(
+          (item) => item.positionSide == "SHORT" && !item.reduceOnly
+        );
+        if (index != -1) isHasShortOrder = true;
+      }
+      if (isHasShortOrder) {
+        const time = 1000 * 2;
+        await countdownCancelAll(time);
+        await waitTime(time);
+        openShortCondition = true;
+        closeLongCondition = true;
+      }
+    }
 
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
     const hmsArr = currentTime.split(" ")[1].split(":");
@@ -794,13 +844,6 @@ const checkDeal = async (data) => {
 };
 
 const startInterval = async () => {
-  const payload = {
-    symbol: BN_SYMBOL,
-    countdownTime: 1000 * 3,
-  };
-  const result = await cAuthClientBN.swap.countdownCancelAll(payload);
-  console.log(result);
-  return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
