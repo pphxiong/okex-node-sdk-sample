@@ -159,7 +159,7 @@ function getUUID() {
 
 let openOrigClientOrderId = "";
 let closeOrigClientOrderId = "";
-const openPosition = async (params = {}) => {
+const openPosition = async (params = {}, isMarketDeal = false) => {
   const {
     openSide = "long",
     position = Number(INIT_POSITION),
@@ -217,7 +217,7 @@ const openPosition = async (params = {}) => {
       timeInForce: "GTC",
       price: price.toFixed(2),
     };
-    if (MODE == 2) {
+    if (MODE == 2 || isMarketDeal) {
       payload = {
         symbol: BN_SYMBOL,
         side: type,
@@ -240,7 +240,7 @@ const openPosition = async (params = {}) => {
   await postOrder(position, mark_price);
 };
 
-const closePosition = async (holding) => {
+const closePosition = async (holding, isMarketDeal = false) => {
   const { position = INIT_POSITION, side, mark_price, time } = holding;
   async function postOrder(size) {
     const result = await cAuthClientBN.swap.openOrders(
@@ -289,7 +289,7 @@ const closePosition = async (holding) => {
       timeInForce: "GTC",
       price: price.toFixed(2),
     };
-    if (MODE == 2) {
+    if (MODE == 2 || isMarketDeal) {
       payload = {
         symbol: BN_SYMBOL,
         side: type,
@@ -604,6 +604,7 @@ const checkDeal = async (data) => {
       await countdownCancelAll(time);
     }
 
+    let isMarketDeal = false;
     if (
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
@@ -625,6 +626,7 @@ const checkDeal = async (data) => {
         await waitTime(time * 3);
         openLongCondition = true;
         closeShortCondition = true;
+        isMarketDeal = true;
       }
     } else if (
       Number(macdList[macdList.length - 1].column) < 0 &&
@@ -647,6 +649,7 @@ const checkDeal = async (data) => {
         await waitTime(time * 3);
         openShortCondition = true;
         closeLongCondition = true;
+        isMarketDeal = true;
       }
     }
 
@@ -722,7 +725,7 @@ const checkDeal = async (data) => {
             mark_price,
             time: macdList[macdList.length - 1].time,
           };
-          await closePosition(payload);
+          await closePosition(payload, isMarketDeal);
         }
       }
     };
@@ -742,7 +745,7 @@ const checkDeal = async (data) => {
             mark_price,
             time: macdList[macdList.length - 1].time,
           };
-          await closePosition(payload);
+          await closePosition(payload, isMarketDeal);
         }
       }
     };
@@ -792,12 +795,15 @@ const checkDeal = async (data) => {
           console.log("shortHolding", shortHolding);
           console.log("ratio", ratio);
           console.log("openPositionAmt", openPositionAmt);
-          await openPosition({
-            position: openPositionAmt,
-            openSide: "long",
-            mark_price,
-            time: macdList[macdList.length - 1].time,
-          });
+          await openPosition(
+            {
+              position: openPositionAmt,
+              openSide: "long",
+              mark_price,
+              time: macdList[macdList.length - 1].time,
+            },
+            isMarketDeal
+          );
         }
       } catch (e) {
         console.log(e);
@@ -831,12 +837,15 @@ const checkDeal = async (data) => {
           // if (ratio < WIN_MAX * 2) {
           //   openPositionAmt = increasePosition;
           // }
-          await openPosition({
-            position: openPositionAmt,
-            openSide: "short",
-            mark_price,
-            time: macdList[macdList.length - 1].time,
-          });
+          await openPosition(
+            {
+              position: openPositionAmt,
+              openSide: "short",
+              mark_price,
+              time: macdList[macdList.length - 1].time,
+            },
+            isMarketDeal
+          );
         }
       } catch (e) {
         console.log(e);
