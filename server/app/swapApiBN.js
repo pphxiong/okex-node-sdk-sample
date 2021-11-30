@@ -202,9 +202,9 @@ const openPosition = async (params = {}) => {
 
     let price = mark_price;
     if (openSide == "long") {
-      price = mark_price * (1 - 0.1 / LEVERAGE);
+      price = mark_price * (1 - 0.075 / LEVERAGE);
     } else {
-      price = mark_price * (1 + 0.1 / LEVERAGE);
+      price = mark_price * (1 + 0.075 / LEVERAGE);
     }
     let payload = {
       symbol: BN_SYMBOL,
@@ -274,9 +274,9 @@ const closePosition = async (holding) => {
     const type = side == "long" ? "SELL" : "BUY";
     let price = mark_price;
     if (side == "long") {
-      price = mark_price * (1 + 0.1 / LEVERAGE);
+      price = mark_price * (1 + 0.075 / LEVERAGE);
     } else {
-      price = mark_price * (1 - 0.1 / LEVERAGE);
+      price = mark_price * (1 - 0.075 / LEVERAGE);
     }
     let payload = {
       symbol: BN_SYMBOL,
@@ -598,6 +598,11 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
+
+    if (openLongCondition || openShortCondition) {
+      const time = 1000 * 1;
+      await countdownCancelAll(time);
+    }
 
     if (
       Number(macdList[macdList.length - 1].column) > 0 &&
