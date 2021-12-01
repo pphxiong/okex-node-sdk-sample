@@ -202,9 +202,9 @@ const openPosition = async (params = {}, isMarketDeal = false) => {
 
     let price = mark_price;
     if (openSide == "long") {
-      price = mark_price * (1 - 0.075 / LEVERAGE);
+      price = mark_price * (1 - 0.1 / LEVERAGE);
     } else {
-      price = mark_price * (1 + 0.075 / LEVERAGE);
+      price = mark_price * (1 + 0.1 / LEVERAGE);
     }
     let payload = {
       symbol: BN_SYMBOL,
@@ -274,9 +274,9 @@ const closePosition = async (holding, isMarketDeal = false) => {
     const type = side == "long" ? "SELL" : "BUY";
     let price = mark_price;
     if (side == "long") {
-      price = mark_price * (1 + 0.075 / LEVERAGE);
+      price = mark_price * (1 + 0.1 / LEVERAGE);
     } else {
-      price = mark_price * (1 - 0.075 / LEVERAGE);
+      price = mark_price * (1 - 0.1 / LEVERAGE);
     }
     let payload = {
       symbol: BN_SYMBOL,
@@ -489,7 +489,8 @@ const checkDeal = async (data) => {
 
         INIT_POSITION = Number(availPosition);
 
-        await readData();
+        // await readData();
+        MODE = 1;
         console.log("------------------");
         console.log(
           `availableBalance`,
@@ -567,14 +568,14 @@ const checkDeal = async (data) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
+      // Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
     // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
+      // Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
@@ -606,9 +607,9 @@ const checkDeal = async (data) => {
 
     let isMarketDeal = false;
     if (
-      Number(macdList[macdList.length - 1].column) > 0 &&
+      // Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      // rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
       MODE == 1
     ) {
@@ -629,9 +630,9 @@ const checkDeal = async (data) => {
         isMarketDeal = true;
       }
     } else if (
-      Number(macdList[macdList.length - 1].column) < 0 &&
+      // Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
       MODE == 1
     ) {
