@@ -153,14 +153,14 @@ const checkDeal = async (data) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      // Number(macdList[macdList.length - 1].column) > 0 &&
+      Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
     // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
     const MAIN_OPEN_SHORT_CONDITION =
-      // Number(macdList[macdList.length - 1].column) < 0 &&
+      Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
@@ -593,9 +593,9 @@ const openPosition = async (params = {}, isMarketDeal = false) => {
 
     let price = mark_price;
     if (openSide == "long") {
-      price = mark_price * (1 - 0.075 / LEVERAGE);
+      price = mark_price * (1 - 0.025 / LEVERAGE);
     } else {
-      price = mark_price * (1 + 0.075 / LEVERAGE);
+      price = mark_price * (1 + 0.025 / LEVERAGE);
     }
     let payload = {
       symbol: BN_SYMBOL,
@@ -665,9 +665,9 @@ const closePosition = async (holding, isMarketDeal = false) => {
     const type = side == "long" ? "SELL" : "BUY";
     let price = mark_price;
     if (side == "long") {
-      price = mark_price * (1 + 0.075 / LEVERAGE);
+      price = mark_price * (1 + 0.025 / LEVERAGE);
     } else {
-      price = mark_price * (1 - 0.075 / LEVERAGE);
+      price = mark_price * (1 - 0.025 / LEVERAGE);
     }
     let payload = {
       symbol: BN_SYMBOL,
