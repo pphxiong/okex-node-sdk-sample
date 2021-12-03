@@ -192,7 +192,7 @@ const checkDeal = async (data) => {
 
     let isMarketDeal = false;
     if (
-      // Number(macdList[macdList.length - 1].column) > 0 &&
+      Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       // rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
@@ -215,7 +215,7 @@ const checkDeal = async (data) => {
         // isMarketDeal = true;
       }
     } else if (
-      // Number(macdList[macdList.length - 1].column) < 0 &&
+      Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
