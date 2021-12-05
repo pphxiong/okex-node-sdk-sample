@@ -239,7 +239,7 @@ const checkDeal = async (data) => {
       }
     }
 
-    let dealRatio = 0.025;
+    let dealRatio = 0.035;
     if (
       // Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
@@ -247,7 +247,7 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
       MODE == 1
     ) {
-      dealRatio = 0.125;
+      dealRatio = 0.135;
       closeLongCondition = true;
     } else if (
       // Number(macdList[macdList.length - 1].column) < 0 &&
@@ -256,7 +256,29 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
       MODE == 1
     ) {
-      dealRatio = 0.125;
+      dealRatio = 0.135;
+      closeShortCondition = true;
+    }
+
+    if (
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+      MODE == 1 &&
+      longRatio < 0
+    ) {
+      dealRatio = 0.035;
+      closeLongCondition = true;
+    } else if (
+      Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
+      MODE == 1 &&
+      shortRatio < 0
+    ) {
+      dealRatio = 0.035;
       closeShortCondition = true;
     }
 
