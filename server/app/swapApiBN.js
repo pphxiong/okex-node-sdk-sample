@@ -247,7 +247,7 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
       MODE == 1
     ) {
-      dealRatio = 0.135;
+      dealRatio = 0.15;
       await cancelReduceOnly("LONG");
       closeLongCondition = true;
     } else if (
@@ -257,7 +257,7 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
       MODE == 1
     ) {
-      dealRatio = 0.135;
+      dealRatio = 0.15;
       await cancelReduceOnly("SHORT");
       closeShortCondition = true;
     }
