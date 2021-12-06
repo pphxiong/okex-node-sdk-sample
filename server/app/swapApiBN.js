@@ -262,13 +262,19 @@ const checkDeal = async (data) => {
       closeShortCondition = true;
     }
 
+    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
+    const hmsArr = currentTime.split(" ")[1].split(":");
+    const lastCharacter = hmsArr[1].slice(-1);
+    const isFiveM = lastCharacter == 0 || lastCharacter == 5;
+
     if (
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
       MODE == 1 &&
-      longRatio < 0
+      longRatio < 0 &&
+      isFiveM
     ) {
       dealRatio = 0.035;
       await cancelReduceOnly("LONG");
@@ -279,17 +285,13 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
       MODE == 1 &&
-      shortRatio < 0
+      shortRatio < 0 &&
+      isFiveM
     ) {
       dealRatio = 0.035;
       await cancelReduceOnly("SHORT");
       closeShortCondition = true;
     }
-
-    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
-    const hmsArr = currentTime.split(" ")[1].split(":");
-    const lastCharacter = hmsArr[1].slice(-1);
-    const isFiveM = lastCharacter == 0 || lastCharacter == 5;
 
     if (
       MODE == 1 &&
