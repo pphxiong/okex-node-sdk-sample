@@ -239,7 +239,7 @@ const checkDeal = async (data) => {
       }
     }
 
-    let dealRatio = 0.03;
+    let dealRatio = 0.035;
     if (
       // Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
@@ -247,7 +247,7 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
       MODE == 1
     ) {
-      dealRatio = 0.15;
+      dealRatio = 0.2;
       // await cancelReduceOnly("LONG");
       closeLongCondition = true;
     } else if (
@@ -257,7 +257,7 @@ const checkDeal = async (data) => {
       rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
       MODE == 1
     ) {
-      dealRatio = 0.15;
+      dealRatio = 0.2;
       // await cancelReduceOnly("SHORT");
       closeShortCondition = true;
     }
