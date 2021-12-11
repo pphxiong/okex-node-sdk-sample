@@ -787,9 +787,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   );
     // });
 
-    const MAIN_LONG_BASIC_CONDITION = ifRSIPositiveContinuity;
+    const MAIN_LONG_BASIC_CONDITION = ifRSINegativeContinuity;
 
-    const MAIN_SHORT_BASIC_CONDITION = ifRSINegativeContinuity;
+    const MAIN_SHORT_BASIC_CONDITION = ifRSIPositiveContinuity;
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
     // && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
