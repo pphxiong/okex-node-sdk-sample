@@ -747,14 +747,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        Math.abs(latestRsiList[index].RSI1 - latestRsiList[index].RSI3) < 4 &&
+        Math.abs(latestRsiList[index].RSI1 - latestRsiList[index].RSI3) < 3 &&
         latestRsiList[index].RSI3 < shortCondition
       );
     });
     let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
       return (
         // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        Math.abs(latestRsiList[index].RSI1 - latestRsiList[index].RSI3) < 4 &&
+        Math.abs(latestRsiList[index].RSI1 - latestRsiList[index].RSI3) < 3 &&
         latestRsiList[index].RSI3 > longCondition
       );
     });
