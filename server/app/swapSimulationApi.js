@@ -791,11 +791,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_SHORT_BASIC_CONDITION = ifRSINegativeContinuity;
 
-    const MAIN_OPEN_LONG_CONDITION =
-      MAIN_LONG_BASIC_CONDITION && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+    const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
+    // && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
-    const MAIN_OPEN_SHORT_CONDITION =
-      MAIN_SHORT_BASIC_CONDITION && (longRatio >= 0 || longRatio <= LOSS_MAX);
+    const MAIN_OPEN_SHORT_CONDITION = MAIN_SHORT_BASIC_CONDITION;
+    // && (longRatio >= 0 || longRatio <= LOSS_MAX);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
