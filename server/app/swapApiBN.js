@@ -263,10 +263,10 @@ const checkDeal = async (data) => {
     //   closeShortCondition = true;
     // }
 
-    // const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    // const hmsArr = currentTime.split(' ')[1].split(':');
-    // const lastCharacter = hmsArr[1].slice(-1);
-    // const isFiveM = lastCharacter == 0 || lastCharacter == 5;
+    const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const hmsArr = currentTime.split(' ')[1].split(':');
+    const lastCharacter = hmsArr[1].slice(-1);
+    const isFiveM = lastCharacter == 0 || lastCharacter == 5;
 
     // if (
     //   Number(macdList[macdList.length - 1].column) < 0 &&
