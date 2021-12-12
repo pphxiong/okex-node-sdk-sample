@@ -191,105 +191,104 @@ const checkDeal = async (data) => {
     // }
 
     let isMarketDeal = false;
-    if (
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
-      MODE == 1
-    ) {
-      let isHasLongOrder = false;
-      const result = await cAuthClientBN.swap.openOrders();
-      if (result && result.length) {
-        const index = result.findIndex(
-          (item) => item.positionSide == 'LONG' && !item.reduceOnly
-        );
-        if (index != -1) isHasLongOrder = true;
-      }
-      if (isHasLongOrder) {
-        const time = 1000 * 2;
-        await countdownCancelAll(time);
-        // await waitTime(time * 3);
-        // openLongCondition = true;
-        // closeShortCondition = true;
-        // isMarketDeal = true;
-      }
-    } else if (
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-      MODE == 1
-    ) {
-      let isHasShortOrder = false;
-      const result = await cAuthClientBN.swap.openOrders();
-      if (result && result.length) {
-        const index = result.findIndex(
-          (item) => item.positionSide == 'SHORT' && !item.reduceOnly
-        );
-        if (index != -1) isHasShortOrder = true;
-      }
-      if (isHasShortOrder) {
-        const time = 1000 * 2;
-        await countdownCancelAll(time);
-        // await waitTime(time * 3);
-        // openShortCondition = true;
-        // closeLongCondition = true;
-        // isMarketDeal = true;
-      }
-    }
+    // if (
+    //   Number(macdList[macdList.length - 1].column) > 0 &&
+    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+    //   rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+    //   MODE == 1
+    // ) {
+    //   let isHasLongOrder = false;
+    //   const result = await cAuthClientBN.swap.openOrders();
+    //   if (result && result.length) {
+    //     const index = result.findIndex(
+    //       (item) => item.positionSide == 'LONG' && !item.reduceOnly
+    //     );
+    //     if (index != -1) isHasLongOrder = true;
+    //   }
+    //   if (isHasLongOrder) {
+    //     const time = 1000 * 2;
+    //     await countdownCancelAll(time);
+    //     // await waitTime(time * 3);
+    //     // openLongCondition = true;
+    //     // closeShortCondition = true;
+    //     // isMarketDeal = true;
+    //   }
+    // } else if (
+    //   Number(macdList[macdList.length - 1].column) < 0 &&
+    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+    //   // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+    //   rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
+    //   MODE == 1
+    // ) {
+    //   let isHasShortOrder = false;
+    //   const result = await cAuthClientBN.swap.openOrders();
+    //   if (result && result.length) {
+    //     const index = result.findIndex(
+    //       (item) => item.positionSide == 'SHORT' && !item.reduceOnly
+    //     );
+    //     if (index != -1) isHasShortOrder = true;
+    //   }
+    //   if (isHasShortOrder) {
+    //     const time = 1000 * 2;
+    //     await countdownCancelAll(time);
+    //     // await waitTime(time * 3);
+    //     // openShortCondition = true;
+    //     // closeLongCondition = true;
+    //     // isMarketDeal = true;
+    //   }
+    // }
 
     let dealRatio = 0.035;
-    if (
-      // Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
-      MODE == 1
-    ) {
-      dealRatio = 0.2;
-      // await cancelReduceOnly("LONG");
-      closeLongCondition = true;
-    } else if (
-      // Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-      MODE == 1
-    ) {
-      dealRatio = 0.2;
-      // await cancelReduceOnly("SHORT");
-      closeShortCondition = true;
-    }
+    // if (
+    //   // Number(macdList[macdList.length - 1].column) > 0 &&
+    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+    //   rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+    //   rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+    //   MODE == 1
+    // ) {
+    //   dealRatio = 0.2;
+    //   // await cancelReduceOnly("LONG");
+    //   closeLongCondition = true;
+    // } else if (
+    //   // Number(macdList[macdList.length - 1].column) < 0 &&
+    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+    //   rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+    //   rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
+    //   MODE == 1
+    // ) {
+    //   dealRatio = 0.2;
+    //   // await cancelReduceOnly("SHORT");
+    //   closeShortCondition = true;
+    // }
 
-    const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    const hmsArr = currentTime.split(' ')[1].split(':');
-    const lastCharacter = hmsArr[1].slice(-1);
-    const isFiveM = lastCharacter == 0 || lastCharacter == 5;
+    // const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    // const hmsArr = currentTime.split(' ')[1].split(':');
+    // const lastCharacter = hmsArr[1].slice(-1);
+    // const isFiveM = lastCharacter == 0 || lastCharacter == 5;
 
-    if (
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
-      MODE == 1 &&
-      longRatio < 0
-    ) {
-      dealRatio = 0.03;
-      await cancelReduceOnly('LONG');
-      closeLongCondition = true;
-    } else if (
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-      MODE == 1 &&
-      shortRatio < 0
-    ) {
-      dealRatio = 0.03;
-      await cancelReduceOnly('SHORT');
-      closeShortCondition = true;
-    }
+    // if (
+    //   Number(macdList[macdList.length - 1].column) < 0 &&
+    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+    //   rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+    //   rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+    //   MODE == 1 &&
+    //   longRatio < 0
+    // ) {
+    //   dealRatio = 0.03;
+    //   await cancelReduceOnly('LONG');
+    //   closeLongCondition = true;
+    // } else if (
+    //   Number(macdList[macdList.length - 1].column) > 0 &&
+    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+    //   rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+    //   rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
+    //   MODE == 1 &&
+    //   shortRatio < 0
+    // ) {
+    //   dealRatio = 0.03;
+    //   await cancelReduceOnly('SHORT');
+    //   closeShortCondition = true;
+    // }
 
     if (
       MODE == 1 &&
