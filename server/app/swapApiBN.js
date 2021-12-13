@@ -292,23 +292,23 @@ const checkDeal = async (data) => {
     //   closeShortCondition = true;
     // }
 
-    if (
-      MODE == 1 &&
-      ((closeLongCondition && longRatio > WIN_MAX) ||
-        (closeShortCondition && shortRatio > WIN_MAX))
-    ) {
-      MODE = 2;
-      await writeData();
-      openLongCondition = !openLongCondition;
-      openShortCondition = !openShortCondition;
-    } else if (
-      MODE == 2 &&
-      ((ifRSIPositiveContinuity && longRatio < 0 && isFiveM) ||
-        (ifRSINegativeContinuity && shortRatio < 0 && isFiveM))
-    ) {
-      MODE = 1;
-      await writeData();
-    }
+    // if (
+    //   MODE == 1 &&
+    //   ((closeLongCondition && longRatio > WIN_MAX) ||
+    //     (closeShortCondition && shortRatio > WIN_MAX))
+    // ) {
+    //   MODE = 2;
+    //   await writeData();
+    //   openLongCondition = !openLongCondition;
+    //   openShortCondition = !openShortCondition;
+    // } else if (
+    //   MODE == 2 &&
+    //   ((ifRSIPositiveContinuity && longRatio < 0 && isFiveM) ||
+    //     (ifRSINegativeContinuity && shortRatio < 0 && isFiveM))
+    // ) {
+    //   MODE = 1;
+    //   await writeData();
+    // }
 
     console.log("************************************", currentTime);
     // console.log("mark_price", mark_price);
