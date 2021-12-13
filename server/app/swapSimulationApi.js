@@ -742,20 +742,18 @@ const checkDeal = async (data, isAutoReset = true) => {
         return arr[index].column > arr[index - 1].column;
       });
 
-    const latestMacdList = macdList.slice(-3);
-    const latestRsiList = rsiList.slice(-3);
+    const latestMacdList = macdList.slice(-6);
+    const latestRsiList = rsiList.slice(-6);
     let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
       return (
         // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        Math.abs(latestRsiList[index].RSI1 - latestRsiList[index].RSI3) < 3 &&
-        latestRsiList[index].RSI3 < shortCondition
+        latestRsiList[index].RSI1 > latestRsiList[index].RSI3
       );
     });
     let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
       return (
-        // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        Math.abs(latestRsiList[index].RSI1 - latestRsiList[index].RSI3) < 3 &&
-        latestRsiList[index].RSI3 > longCondition
+        // latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
+        latestRsiList[index].RSI1 < latestRsiList[index].RSI3
       );
     });
     // let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
@@ -787,15 +785,23 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   );
     // });
 
-    const MAIN_LONG_BASIC_CONDITION = ifRSIPositiveContinuity;
+    const MAIN_LONG_BASIC_CONDITION =
+      Number(macdList[macdList.length - 1].column) > 0 &&
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > longCondition;
 
-    const MAIN_SHORT_BASIC_CONDITION = ifRSINegativeContinuity;
+    const MAIN_SHORT_BASIC_CONDITION =
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < shortCondition;
 
-    const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
-    // && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+    const MAIN_OPEN_LONG_CONDITION =
+      MAIN_LONG_BASIC_CONDITION && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
-    const MAIN_OPEN_SHORT_CONDITION = MAIN_SHORT_BASIC_CONDITION;
-    // && (longRatio >= 0 || longRatio <= LOSS_MAX);
+    const MAIN_OPEN_SHORT_CONDITION =
+      MAIN_SHORT_BASIC_CONDITION && (longRatio >= 0 || longRatio <= LOSS_MAX);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
