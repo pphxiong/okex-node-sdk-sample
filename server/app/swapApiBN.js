@@ -156,14 +156,14 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
       (rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION ||
-        rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION);
+        rsiList[rsiList.length - 1].RSI3 < LONG_CONDITION);
     // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
       rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
       (rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION ||
-        rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION);
+        rsiList[rsiList.length - 1].RSI3 > SHORT_CONDITION);
     // (longRatio >= 0 || longRatio <= LOSS_MAX);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
