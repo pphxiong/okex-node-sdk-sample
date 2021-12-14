@@ -92,8 +92,8 @@ let rsi2 = 12;
 let rsi3 = 24;
 
 const DEFAULT_CONDITION = 47.8;
-let longCondition = DEFAULT_CONDITION;
-let shortCondition = DEFAULT_CONDITION;
+let LONG_CONDITION = DEFAULT_CONDITION;
+let SHORT_CONDITION = DEFAULT_CONDITION;
 
 let lastMode = 0;
 
@@ -484,12 +484,12 @@ app.get("/swap/setConditionParams", async (req, response) => {
   const { query = {} } = req;
   const { longCondition: longConditionP, shortCondition: shortConditionP } =
     query;
-  longCondition = longConditionP;
-  shortCondition = shortConditionP;
+  LONG_CONDITION = longConditionP;
+  SHORT_CONDITION = shortConditionP;
   send(response, {
     errcode: 0,
     errmsg: "ok",
-    data: { longCondition, shortCondition },
+    data: { LONG_CONDITION, SHORT_CONDITION },
   });
 });
 
@@ -771,7 +771,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     //     Number(latestMacdList[index].column) > 0 &&
     //     latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
     //     latestRsiList[index - 1].RSI1 > latestRsiList[index - 1].RSI3 &&
-    //     latestRsiList[index].RSI3 > longCondition
+    //     latestRsiList[index].RSI3 > LONG_CONDITION
     //   );
     // });
 
@@ -781,35 +781,35 @@ const checkDeal = async (data, isAutoReset = true) => {
     //     Number(latestMacdList[index].column) < 0 &&
     //     latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
     //     latestRsiList[index - 1].RSI1 < latestRsiList[index - 1].RSI3 &&
-    //     latestRsiList[index].RSI3 < shortCondition
+    //     latestRsiList[index].RSI3 < SHORT_CONDITION
     //   );
     // });
 
     const MAIN_LONG_BASIC_CONDITION =
       Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 > longCondition;
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      (rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION ||
+        rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION);
 
     const MAIN_SHORT_BASIC_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < shortCondition;
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      (rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION ||
+        rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION);
 
-    const MAIN_OPEN_LONG_CONDITION =
-      MAIN_LONG_BASIC_CONDITION && (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+    const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION =
-      MAIN_SHORT_BASIC_CONDITION && (longRatio >= 0 || longRatio <= LOSS_MAX);
+    const MAIN_OPEN_SHORT_CONDITION = MAIN_SHORT_BASIC_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      Number(macdList[macdList.length - 1].column) < 0;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      Number(macdList[macdList.length - 1].column) > 0;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
@@ -839,23 +839,23 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   MODE = 1;
     // }
 
-    if (MODE == 1) {
-      if (
-        (closeLongCondition && longRatio > WIN_MAX) ||
-        (closeShortCondition && shortRatio > WIN_MAX)
-      ) {
-        MODE = 2;
-        openLongCondition = !openLongCondition;
-        openShortCondition = !openShortCondition;
-      }
-    } else if (MODE == 2) {
-      if (
-        (ifRSIPositiveContinuity && longRatio < 0) ||
-        (ifRSINegativeContinuity && shortRatio < 0)
-      ) {
-        MODE = 1;
-      }
-    }
+    // if (MODE == 1) {
+    //   if (
+    //     (closeLongCondition && longRatio > WIN_MAX) ||
+    //     (closeShortCondition && shortRatio > WIN_MAX)
+    //   ) {
+    //     MODE = 2;
+    //     openLongCondition = !openLongCondition;
+    //     openShortCondition = !openShortCondition;
+    //   }
+    // } else if (MODE == 2) {
+    //   if (
+    //     (ifRSIPositiveContinuity && longRatio < 0) ||
+    //     (ifRSINegativeContinuity && shortRatio < 0)
+    //   ) {
+    //     MODE = 1;
+    //   }
+    // }
 
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
