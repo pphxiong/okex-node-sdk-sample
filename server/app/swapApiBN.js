@@ -23,7 +23,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 3;
+const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
@@ -86,7 +86,7 @@ const checkDeal = async (data) => {
         //   ORIGIN_INIT_POSITION * 2
         // );
 
-        INIT_POSITION = Number(availPosition);
+        // INIT_POSITION = Number(availPosition);
 
         // await readData();
         MODE = 1;
