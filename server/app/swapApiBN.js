@@ -28,7 +28,7 @@ const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
 let INIT_POSITION = INCREASE_FI_LIST[0];
-const POSITION_RATIO = 5;
+const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
 
 let MODE = 1;
@@ -911,7 +911,7 @@ const startInterval = async () => {
     const list = data;
 
     const newList = JSON.parse(JSON.stringify(list));
-    newList.pop();
+    // newList.pop();
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
 
