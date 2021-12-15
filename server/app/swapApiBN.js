@@ -240,7 +240,7 @@ const checkDeal = async (data) => {
     //   }
     // }
 
-    let dealRatio = 0.015;
+    let dealRatio = 0.025;
     // if (
     //   // Number(macdList[macdList.length - 1].column) > 0 &&
     //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
