@@ -23,7 +23,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 3;
+const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
@@ -193,54 +193,47 @@ const checkDeal = async (data) => {
     // }
 
     let isMarketDeal = false;
-    // if (
-    //   Number(macdList[macdList.length - 1].column) > 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
-    //   MODE == 1
-    // ) {
-    //   let isHasLongOrder = false;
-    //   const result = await cAuthClientBN.swap.openOrders();
-    //   if (result && result.length) {
-    //     const index = result.findIndex(
-    //       (item) => item.positionSide == 'LONG' && !item.reduceOnly
-    //     );
-    //     if (index != -1) isHasLongOrder = true;
-    //   }
-    //   if (isHasLongOrder) {
-    //     const time = 1000 * 2;
-    //     await countdownCancelAll(time);
-    //     // await waitTime(time * 3);
-    //     // openLongCondition = true;
-    //     // closeShortCondition = true;
-    //     // isMarketDeal = true;
-    //   }
-    // } else if (
-    //   Number(macdList[macdList.length - 1].column) < 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-    //   // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-    //   MODE == 1
-    // ) {
-    //   let isHasShortOrder = false;
-    //   const result = await cAuthClientBN.swap.openOrders();
-    //   if (result && result.length) {
-    //     const index = result.findIndex(
-    //       (item) => item.positionSide == 'SHORT' && !item.reduceOnly
-    //     );
-    //     if (index != -1) isHasShortOrder = true;
-    //   }
-    //   if (isHasShortOrder) {
-    //     const time = 1000 * 2;
-    //     await countdownCancelAll(time);
-    //     // await waitTime(time * 3);
-    //     // openShortCondition = true;
-    //     // closeLongCondition = true;
-    //     // isMarketDeal = true;
-    //   }
-    // }
+    if (openLongCondition || openShortCondition) {
+      let isHasOrder = false;
+      const result = await cAuthClientBN.swap.openOrders();
+      const side = openLongCondition ? 'LONG' : 'SHORT';
+      let index = -1;
+      if (result && result.length) {
+        index = result.findIndex(
+          (item) => item.positionSide == side && !item.reduceOnly
+        );
+        if (index != -1) isHasOrder = true;
+      }
+      if (isHasOrder) {
+        const order = result[index];
+        const diff = moment().diff(order.time, 'minute');
+        if (diff >= 3) {
+          const time = 1000 * 2;
+          await countdownCancelAll(time);
+        }
+      }
+    } else if (closeLongCondition || closeShortCondition) {
+      let isHasOrder = false;
+      const result = await cAuthClientBN.swap.openOrders();
+      const side = closeLongCondition ? 'LONG' : 'SHORT';
+      let index = -1;
+      if (result && result.length) {
+        index = result.findIndex(
+          (item) => item.positionSide == side && item.reduceOnly
+        );
+        if (index != -1) isHasOrder = true;
+      }
+      if (isHasOrder) {
+        const order = result[index];
+        const diff = moment().diff(order.time, 'minute');
+        if (diff >= 3) {
+          const time = 1000 * 2;
+          await countdownCancelAll(time);
+        }
+      }
+    }
 
-    let dealRatio = 0.025;
+    let dealRatio = 0.015;
     // if (
     //   // Number(macdList[macdList.length - 1].column) > 0 &&
     //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
@@ -918,7 +911,7 @@ const startInterval = async () => {
     const list = data;
 
     const newList = JSON.parse(JSON.stringify(list));
-    newList.pop();
+    // newList.pop();
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
 
@@ -928,7 +921,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 10);
+    await waitTime(1000 * 5);
     await startInterval();
   } catch (e) {
     restart();
