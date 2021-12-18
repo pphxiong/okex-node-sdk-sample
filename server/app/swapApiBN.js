@@ -16,8 +16,8 @@ const generatePositionList = (init, num) => {
 
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "5m";
-const LONG_CONDITION = 47.8;
-const SHORT_CONDITION = 47.8;
+const LONG_CONDITION = 50;
+const SHORT_CONDITION = 50;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
@@ -153,18 +153,12 @@ const checkDeal = async (data) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3;
-    // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-    // rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
-    // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+      rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      // rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
       rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
-    // (longRatio >= 0 || longRatio <= LOSS_MAX);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
@@ -193,47 +187,50 @@ const checkDeal = async (data) => {
     // }
 
     let isMarketDeal = false;
-    if (openLongCondition || openShortCondition) {
-      let isHasOrder = false;
-      const result = await cAuthClientBN.swap.openOrders();
-      const side = openLongCondition ? "LONG" : "SHORT";
+
+    const result = await cAuthClientBN.swap.openOrders();
+    if (result && result.length) {
+      const side =
+        rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION ? "LONG" : "SHORT";
+
       let index = -1;
-      if (result && result.length) {
-        index = result.findIndex(
-          (item) => item.positionSide == side && !item.reduceOnly
-        );
-        if (index != -1) isHasOrder = true;
-      }
-      if (isHasOrder) {
+      index = result.findIndex(
+        (item) => item.positionSide == side && !item.reduceOnly
+      );
+      if (index != -1) {
         const order = result[index];
         const diff = moment().diff(order.time, "minute");
         if (diff >= 5) {
           const time = 1000 * 2;
           await countdownCancelAll(time);
+          if (side == "LONG") {
+            openLongCondition = true;
+          } else {
+            openShortCondition = true;
+          }
         }
       }
-    } else if (closeLongCondition || closeShortCondition) {
-      let isHasOrder = false;
-      const result = await cAuthClientBN.swap.openOrders();
-      const side = closeLongCondition ? "LONG" : "SHORT";
-      let index = -1;
-      if (result && result.length) {
-        index = result.findIndex(
-          (item) => item.positionSide == side && item.reduceOnly
-        );
-        if (index != -1) isHasOrder = true;
-      }
-      if (isHasOrder) {
-        const order = result[index];
+
+      let closeIndex = -1;
+      closeIndex = result.findIndex(
+        (item) => item.positionSide == side && item.reduceOnly
+      );
+      if (closeIndex != -1) {
+        const order = result[closeIndex];
         const diff = moment().diff(order.time, "minute");
         if (diff >= 5) {
           const time = 1000 * 2;
           await countdownCancelAll(time);
+          if (side == "LONG") {
+            closeLongCondition = true;
+          } else {
+            closeShortCondition = true;
+          }
         }
       }
     }
 
-    let dealRatio = 0.03;
+    let dealRatio = 0.01;
     // if (
     //   // Number(macdList[macdList.length - 1].column) > 0 &&
     //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
