@@ -162,8 +162,10 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -906,7 +908,7 @@ const startInterval = async () => {
     const list = data;
 
     const newList = JSON.parse(JSON.stringify(list));
-    newList.pop();
+    // newList.pop();
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
 
