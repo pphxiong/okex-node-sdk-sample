@@ -892,6 +892,8 @@ const countdownCancelAll = async (time) => {
 };
 
 const startInterval = async () => {
+  const orders = await cAuthClientBN.swap.allOrders(BN_SYMBOL, 5);
+  console.log(orders);
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
@@ -919,7 +921,7 @@ const startInterval = async () => {
     await checkDeal(result);
 
     await waitTime(1000 * 8);
-    await startInterval();
+    // await startInterval();
   } catch (e) {
     restart();
   }

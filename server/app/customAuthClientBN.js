@@ -114,6 +114,9 @@ function customAuthClient(
       countdownCancelAll: function (params) {
         return post("/fapi/v1/countdownCancelAll", params);
       },
+      allOrders: function ({ symbol, limit }) {
+        return get(`/fapi/v1/allOrders?symbol=${symbol}&limit=${limit}`);
+      },
     },
     common: {
       getMarkPrice: function (symbol) {
