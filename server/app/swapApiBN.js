@@ -892,7 +892,8 @@ const countdownCancelAll = async (time) => {
 };
 
 const startInterval = async () => {
-  const orders = await cAuthClientBN.swap.allOrders(BN_SYMBOL, 5);
+  const params = { symbol: BN_SYMBOL, limit: 5 };
+  const orders = await cAuthClientBN.swap.allOrders(params);
   console.log("orders::", orders);
   return;
   RESTART_TIME += 1;

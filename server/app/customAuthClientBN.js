@@ -46,7 +46,11 @@ function customAuthClient(
       "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
     };
     return request(
-      apiUri + url + `?timestamp=${timestamp}&signature=${signature}`,
+      apiUri +
+        url +
+        `?timestamp=${timestamp}&signature=${signature}&${querystring.stringify(
+          params
+        )}`,
       {
         method: "GET",
         headers,
@@ -95,10 +99,9 @@ function customAuthClient(
       getPosition: function (instrument_id, instType) {
         return get(`/fapi/v2/account`);
       },
-      openOrder: function (symbol, origClientOrderId) {
-        return get(
-          `/fapi/v1/openOrder?symbol=${symbol}&origClientOrderId=${origClientOrderId}`
-        );
+      openOrder: function (params) {
+        console.log(symbol, origClientOrderId);
+        return get(`/fapi/v1/openOrder`, params);
       },
       openOrders: function () {
         return get(`/fapi/v1/openOrders`);
@@ -114,8 +117,8 @@ function customAuthClient(
       countdownCancelAll: function (params) {
         return post("/fapi/v1/countdownCancelAll", params);
       },
-      allOrders: function (symbol, limit) {
-        return get(`/fapi/v1/allOrders?symbol=${symbol}&limit=${limit}`);
+      allOrders: function (params) {
+        return get(`/fapi/v1/allOrders`, params);
       },
     },
     common: {
