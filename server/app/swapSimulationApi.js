@@ -31,8 +31,8 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
-const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 1) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 0.5) * LEVERAGE) / 10;
+const WIN_MAX = ((0.1 / 0.5) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
@@ -91,9 +91,9 @@ let rsi1 = 6;
 let rsi2 = 12;
 let rsi3 = 24;
 
-const DEFAULT_CONDITION = 47.8;
+const DEFAULT_CONDITION = 50;
 let LONG_CONDITION = DEFAULT_CONDITION;
-let SHORT_CONDITION = 40;
+let SHORT_CONDITION = DEFAULT_CONDITION;
 
 let lastMode = 0;
 
