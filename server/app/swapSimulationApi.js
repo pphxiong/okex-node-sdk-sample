@@ -31,8 +31,8 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
-const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
+const WIN_MAX = ((0.1 / 1) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
@@ -786,18 +786,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     // });
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) >
-        Number(macdList[macdList.length - 2].column) &&
-      Number(macdList[macdList.length - 2].column) > 0;
+      Number(macdList[macdList.length - 1].column) > 0;
     // rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
     // rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
     // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) <
-        Number(macdList[macdList.length - 2].column) &&
-      Number(macdList[macdList.length - 2].column) < 0;
+      Number(macdList[macdList.length - 1].column) < 0;
     // rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
     // rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
     // (longRatio >= 0 || longRatio <= LOSS_MAX);
@@ -812,15 +808,15 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       (longRatio > WIN_MAX &&
-        Number(macdList[macdList.length - 1].column) <
-          Number(macdList[macdList.length - 2].column)) ||
-      longRatio < LOSS_MAX;
+        Number(macdList[macdList.length - 1].column) < 0) ||
+      (longRatio < LOSS_MAX &&
+        Number(macdList[macdList.length - 1].column) > 0);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       (shortRatio > WIN_MAX &&
-        Number(macdList[macdList.length - 1].column) >
-          Number(macdList[macdList.length - 2].column)) ||
-      shortRatio < LOSS_MAX;
+        Number(macdList[macdList.length - 1].column) > 0) ||
+      (shortRatio < LOSS_MAX &&
+        Number(macdList[macdList.length - 1].column) < 0);
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
