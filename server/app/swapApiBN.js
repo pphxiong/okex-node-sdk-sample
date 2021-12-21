@@ -893,7 +893,8 @@ const countdownCancelAll = async (time) => {
 
 const startInterval = async () => {
   const orders = await cAuthClientBN.swap.allOrders(BN_SYMBOL, 5);
-  console.log(orders);
+  console.log("orders::", orders);
+  return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
