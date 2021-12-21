@@ -892,10 +892,10 @@ const countdownCancelAll = async (time) => {
 };
 
 const startInterval = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 5 };
-  const orders = await cAuthClientBN.swap.allOrders(params);
-  console.log("orders::", orders);
-  return;
+  // const params = { symbol: BN_SYMBOL, limit: 5 };
+  // const orders = await cAuthClientBN.swap.allOrders(params);
+  // console.log("orders::", orders);
+  // return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
@@ -923,7 +923,7 @@ const startInterval = async () => {
     await checkDeal(result);
 
     await waitTime(1000 * 8);
-    // await startInterval();
+    await startInterval();
   } catch (e) {
     restart();
   }
