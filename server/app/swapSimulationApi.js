@@ -91,9 +91,9 @@ let rsi1 = 6;
 let rsi2 = 14;
 let rsi3 = 24;
 
-const DEFAULT_CONDITION = 50;
-let LONG_CONDITION = 80;
-let SHORT_CONDITION = 20;
+const DEFAULT_CONDITION = 47.8;
+let LONG_CONDITION = DEFAULT_CONDITION;
+let SHORT_CONDITION = DEFAULT_CONDITION;
 
 let lastMode = 0;
 
@@ -787,9 +787,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_LONG_BASIC_CONDITION =
       // Number(macdList[macdList.length - 1].column) > 0;
-      rsiList[rsiList.length - 1].RSI1 < SHORT_CONDITION;
-    // Number(macdList[macdList.length - 2].column) < 0 &&
-    // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
+      // Number(macdList[macdList.length - 2].column) < 0 &&
+      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
 
@@ -800,7 +800,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_SHORT_BASIC_CONDITION =
       // Number(macdList[macdList.length - 1].column) < 0 &&
       // Number(macdList[macdList.length - 2].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > LONG_CONDITION;
+      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
     // Number(macdList[macdList.length - 1].column) < 0 &&
     // rsiList[rsiList.length - 1].RSI3 < rsiList[rsiList.length - 2].RSI3 &&
     // rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
