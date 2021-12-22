@@ -31,8 +31,8 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
-const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 1) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 0.5) * LEVERAGE) / 10;
+const WIN_MAX = ((0.1 / 0.5) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
@@ -1186,18 +1186,18 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   }
     // }
 
-    INIT_POSITION =
-      longRatio > WIN_MAX || shortRatio > WIN_MAX
-        ? Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          )
-        : Math.min(
-            (totalCapital * LEVERAGE) / POSITION_RATIO,
-            ORIGIN_INIT_POSITION * 2
-          );
+    // INIT_POSITION =
+    //   longRatio > WIN_MAX || shortRatio > WIN_MAX
+    //     ? Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       )
+    //     : Math.min(
+    //         (totalCapital * LEVERAGE) / POSITION_RATIO,
+    //         ORIGIN_INIT_POSITION * 2
+    //       );
 
-    // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
+    INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
 
     //开多仓条件
     if (openLongCondition) {
