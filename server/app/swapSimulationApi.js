@@ -1200,7 +1200,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     //         ORIGIN_INIT_POSITION * 2
     //       );
 
-    INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
+    // INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
 
     //开多仓条件
     if (openLongCondition) {
