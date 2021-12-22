@@ -92,8 +92,8 @@ let rsi2 = 14;
 let rsi3 = 24;
 
 const DEFAULT_CONDITION = 50;
-let LONG_CONDITION = 60;
-let SHORT_CONDITION = 40;
+let LONG_CONDITION = 80;
+let SHORT_CONDITION = 20;
 
 let lastMode = 0;
 
@@ -788,7 +788,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_LONG_BASIC_CONDITION =
       // Number(macdList[macdList.length - 1].column) > 0 &&
       // Number(macdList[macdList.length - 2].column) < 0;
-      rsiList[rsiList.length - 1].RSI1 > LONG_CONDITION;
+      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
     // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
@@ -800,7 +800,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       // Number(macdList[macdList.length - 2].column) > 0;
       // Number(macdList[macdList.length - 1].column) < 0 &&
       // rsiList[rsiList.length - 1].RSI3 < rsiList[rsiList.length - 2].RSI3 &&
-      rsiList[rsiList.length - 1].RSI1 < SHORT_CONDITION;
+      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
     // rsiList[rsiList.length - 2].RSI1 > SHORT_CONDITION;
     // (longRatio >= 0 || longRatio <= LOSS_MAX);
 
@@ -813,10 +813,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longRatio > WIN_MAX || longRatio > LOSS_MAX;
+      (longRatio > 0 || longRatio < LOSS_MAX) && MAIN_OPEN_SHORT_CONDITION1;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
+      (shortRatio > 0 || shortRatio < LOSS_MAX) && MAIN_OPEN_LONG_CONDITION1;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
