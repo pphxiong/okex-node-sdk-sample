@@ -27,7 +27,7 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = "ETHUSDT";
+const BN_SYMBOL = "BTCUSDT";
 const LEVERAGE = 20;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
@@ -786,9 +786,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     // });
 
     const MAIN_LONG_BASIC_CONDITION =
-      // Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+      Number(macdList[macdList.length - 1].column) > 0 &&
       rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
+    // Number(macdList[macdList.length - 1].column) > 0 &&
+    // rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
+    // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
     // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
 
@@ -797,9 +799,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      // Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-      rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
+      Number(macdList[macdList.length - 1].column) < 0 &&
+      rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
+    // rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
+    // rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
     // Number(macdList[macdList.length - 1].column) < 0 &&
     // rsiList[rsiList.length - 1].RSI3 < rsiList[rsiList.length - 2].RSI3 &&
     // rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
