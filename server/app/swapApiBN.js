@@ -919,23 +919,25 @@ const startInterval = async () => {
     console.log('##########################################');
 
     let isHasNoDeal = false;
-    // const noDealOrders = await cAuthClientBN.swap.openOrders();
-    // if (noDealOrders && noDealOrders.length) {
-    //   noDealOrders.forEach((item) => {
-    //     const mark_price = item.price;
+    const noDealOrders = await cAuthClientBN.swap.openOrders();
+    console.log(noDealOrders);
+    console.log(noDealOrders.length);
+    if (noDealOrders && noDealOrders.length) {
+      noDealOrders.forEach((item) => {
+        const mark_price = item.price;
 
-    //     if (latestOpenOrder) {
-    //       let ratio =
-    //         ((Number(mark_price) - Number(latestOpenOrder.avgPrice)) *
-    //           Number(LEVERAGE)) /
-    //         Number(mark_price);
-    //       if (latestOpenOrder.positionSide == 'SHORT') ratio = -ratio;
-    //       if (ratio > WIN_MAX) {
-    //         isHasNoDeal = true;
-    //       }
-    //     }
-    //   });
-    // }
+        if (latestOpenOrder) {
+          let ratio =
+            ((Number(mark_price) - Number(latestOpenOrder.avgPrice)) *
+              Number(LEVERAGE)) /
+            Number(mark_price);
+          if (latestOpenOrder.positionSide == 'SHORT') ratio = -ratio;
+          if (ratio > WIN_MAX) {
+            isHasNoDeal = true;
+          }
+        }
+      });
+    }
 
     if (!isHasNoDeal) {
       let future_price;
