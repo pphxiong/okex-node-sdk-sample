@@ -849,7 +849,7 @@ const startInterval = async () => {
     // const latestShortOrder = shortOrders[0];
 
     const latestOpenOrder = orders.find(
-      (item) => !item.reduceOnly && !Number(item.executedQty)
+      (item) => !item.reduceOnly && Number(item.executedQty)
     );
 
     console.log('##########################################');
