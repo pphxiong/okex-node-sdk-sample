@@ -848,7 +848,9 @@ const startInterval = async () => {
     // const latestLongOrder = longOrders[0];
     // const latestShortOrder = shortOrders[0];
 
-    const latestOpenOrder = orders.find((item) => !item.reduceOnly);
+    const latestOpenOrder = orders.find(
+      (item) => !item.reduceOnly && !Number(item.executedQty)
+    );
 
     console.log('##########################################');
     console.log(
@@ -872,7 +874,7 @@ const startInterval = async () => {
               Number(LEVERAGE)) /
             Number(mark_price);
           if (latestOpenOrder.positionSide == 'SHORT') ratio = -ratio;
-          if (ratio > WIN_MAX) {
+          if (ratio > WIN_MAX * 0.8) {
             isHasNoDeal = true;
           }
         }
@@ -881,10 +883,14 @@ const startInterval = async () => {
 
     if (!isHasNoDeal) {
       let future_price;
+      const high_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) - WIN_MAX);
+      const low_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) + WIN_MAX);
       if (latestOpenOrder.positionSide == 'LONG') {
-        future_price =
-          (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
-          (Number(LEVERAGE) - WIN_MAX);
+        future_price = high_future_price;
         const closePayload = {
           mark_price: future_price,
           side: 'long',
@@ -895,10 +901,14 @@ const startInterval = async () => {
           openSide: 'short',
         };
         await openPosition(openPayload);
+        const batch_price = low_future_price;
+        const batchPayload = {
+          mark_price: batch_price,
+          openSide: 'long',
+        };
+        await openPosition(batchPayload);
       } else if (latestOpenOrder.positionSide == 'SHORT') {
-        future_price =
-          (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
-          (Number(LEVERAGE) + WIN_MAX);
+        future_price = low_future_price;
         const closePayload = {
           mark_price: future_price,
           side: 'short',
@@ -909,6 +919,12 @@ const startInterval = async () => {
           openSide: 'long',
         };
         await openPosition(openPayload);
+        const batch_price = hight_future_price;
+        const batchPayload = {
+          mark_price: batch_price,
+          openSide: 'short',
+        };
+        await openPosition(batchPayload);
       }
     }
 
