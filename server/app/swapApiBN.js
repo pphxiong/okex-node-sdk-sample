@@ -919,9 +919,9 @@ const startInterval = async () => {
     console.log('##########################################');
 
     let isHasNoDeal = false;
-    const noDealOrders = await cAuthClientBN.swap.openOrders();
-    console.log(noDealOrders);
-    console.log(noDealOrders.length);
+    const noDealOrders = await cAuthClientBN.swap.openOrders({
+      symbol: BN_SYMBOL,
+    });
     if (noDealOrders && noDealOrders.length) {
       noDealOrders.forEach((item) => {
         const mark_price = item.price;
