@@ -27,7 +27,7 @@ const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
-let INIT_POSITION = INCREASE_FI_LIST[0];
+let INIT_POSITION = 0.01;
 const POSITION_RATIO = 100;
 let RESTART_TIME = 0;
 
@@ -604,7 +604,6 @@ function getUUID() {
 let openOrigClientOrderId = '';
 let closeOrigClientOrderId = '';
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
-  isMarketDeal = true;
   const {
     openSide = 'long',
     position = Number(INIT_POSITION),
@@ -686,7 +685,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 };
 
 const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
-  isMarketDeal = true;
   const {position = INIT_POSITION, side, mark_price, time} = holding;
   async function postOrder(size) {
     const result = await cAuthClientBN.swap.openOrders(
