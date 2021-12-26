@@ -898,7 +898,7 @@ const startInterval = async () => {
   try {
     const params = {symbol: BN_SYMBOL, limit: 10};
     const orders = await cAuthClientBN.swap.allOrders(params);
-
+    orders.reverse();
     // const longOrders = orders.filter(
     //   (item) => item.positionSide == 'LONG' && !item.reduceOnly
     // );
