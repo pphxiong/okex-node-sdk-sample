@@ -117,8 +117,8 @@ function customAuthClient(
         console.log(symbol, origClientOrderId);
         return getWithSign(`/fapi/v1/openOrder`, params);
       },
-      openOrders: function () {
-        return getWithSign(`/fapi/v1/openOrders`);
+      openOrders: function (params) {
+        return getWithSign(`/fapi/v1/openOrders`, params);
       },
       cancelOrder: function (symbol, orderId) {
         return deleteApi(
