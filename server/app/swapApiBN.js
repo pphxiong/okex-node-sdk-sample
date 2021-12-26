@@ -912,6 +912,14 @@ const startInterval = async () => {
 
     const latestOpenOrder = orders.find((item) => !item.reduceOnly);
 
+    console.log('##########################################');
+    console.log(
+      'latestOpenOrder::',
+      latestOpenOrder.positionSide,
+      latestOpenOrder.avgPrice
+    );
+    console.log('##########################################');
+
     let isHasNoDeal = false;
     const noDealOrders = await cAuthClientBN.swap.openOrders();
     if (noDealOrders && noDealOrders.length) {
