@@ -21,14 +21,14 @@ const SHORT_CONDITION = 50;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
 let INIT_POSITION = INCREASE_FI_LIST[0];
-const POSITION_RATIO = 100;
+const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
 
 let MODE = 1;
@@ -898,73 +898,25 @@ const startInterval = async () => {
     return;
   }
   try {
-    const params = {symbol: BN_SYMBOL, limit: 10};
-    const orders = await cAuthClientBN.swap.allOrders(params);
+    const time = moment().valueOf();
+    const payload = {
+      interval: DEFAULT_INTERVAL,
+      limit: 500,
+      endTime: time,
+    };
+    const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
+    const list = data;
 
-    // const longOrders = orders.filter(
-    //   (item) => item.positionSide == 'LONG' && !item.reduceOnly
-    // );
-    // const shortOrders = orders.filter(
-    //   (item) => item.positionSide == 'SHORT' && !item.reduceOnly
-    // );
-    // const latestLongOrder = longOrders[0];
-    // const latestShortOrder = shortOrders[0];
+    const newList = JSON.parse(JSON.stringify(list));
+    newList.pop();
+    const macdList = getCurrentMacd(newList);
+    const rsiList = getCurrentRSI(newList);
 
-    const latestOpenOrder = orders.find((item) => !item.reduceOnly);
-
-    let isHasNoDeal = false;
-    const noDealOrders = await cAuthClientBN.swap.openOrders();
-    if (noDealOrders && noDealOrders.length) {
-      noDealOrders.forEach((item) => {
-        const mark_price = item.price;
-
-        if (latestOpenOrder) {
-          const ratio =
-            ((Number(mark_price) - Number(latestOpenOrder.avgPrice)) *
-              Number(LEVERAGE)) /
-            Number(mark_price);
-          if (latestOpenOrder.positionSide == 'SHORT') ratio = -ratio;
-          if (ratio > WIN_MAX) {
-            isHasNoDeal = true;
-          }
-        }
-      });
-    }
-
-    if (!isHasNoDeal) {
-      let future_price;
-      if (latestOpenOrder.positionSide == 'LONG') {
-        future_price =
-          (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
-          (Number(LEVERAGE) - WIN_MAX);
-        const closePayload = {
-          mark_price: future_price,
-          side: 'long',
-        };
-        await closePosition(closePayload);
-        const openPayload = {
-          mark_price: future_price,
-          openSide: 'short',
-        };
-        await openPosition(openPayload);
-      } else if (latestOpenOrder.positionSide == 'SHORT') {
-        future_price =
-          (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
-          (Number(LEVERAGE) + WIN_MAX);
-        const closePayload = {
-          mark_price: future_price,
-          side: 'short',
-        };
-        await closePosition(closePayload);
-        const openPayload = {
-          mark_price: future_price,
-          openSide: 'long',
-        };
-        await openPosition(openPayload);
-      }
-    }
-
-    // await checkDeal(result);
+    const result = {
+      macdList,
+      rsiList,
+    };
+    await checkDeal(result);
 
     await waitTime(1000 * 8);
     await startInterval();
