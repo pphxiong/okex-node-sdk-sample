@@ -704,6 +704,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       };
     }
     try {
+      console.log(payload);
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
 
