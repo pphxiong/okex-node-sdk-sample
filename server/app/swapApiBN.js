@@ -627,29 +627,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
     console.log('openresult', result);
     console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 
-    if (result && result.length) {
-      const index = result.findIndex((item) => !item.reduceOnly);
-      if (index != -1) {
-        // const ratio =
-        //   ((Number(mark_price) - Number(result[index].price)) *
-        //     Number(LEVERAGE)) /
-        //   Number(mark_price);
-        // if (Math.abs(ratio) > 0.2) {
-        //   await cAuthClientBN.swap.cancelOrder(
-        //     BN_SYMBOL,
-        //     result[index].orderId
-        //   );
-        // }
-        return;
-      }
-    }
-
-    let price = mark_price;
-    if (openSide == 'long') {
-      price = mark_price * (1 - dealRatio / LEVERAGE);
-    } else {
-      price = mark_price * (1 + dealRatio / LEVERAGE);
-    }
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
@@ -659,7 +636,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
       // type: "MARKET",
       type: 'LIMIT',
       timeInForce: 'GTC',
-      price: price.toFixed(2),
+      price: mark_price.toFixed(2),
     };
     if (MODE == 2 || isMarketDeal) {
       payload = {
@@ -695,33 +672,16 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
     console.log('closeresult', result);
     console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 
-    if (result && result.length) {
-      const index = result.findIndex((item) => !!item.reduceOnly);
-      if (index != -1) {
-        // const ratio =
-        //   ((Number(mark_price) - Number(result[index].price)) *
-        //     Number(LEVERAGE)) /
-        //   Number(mark_price);
-        // if (Math.abs(ratio) > 0.2) {
-        //   await cAuthClientBN.swap.cancelOrder(
-        //     BN_SYMBOL,
-        //     result[index].orderId
-        //   );
-        // }
-        return;
-      }
-    }
-
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
 
     const type = side == 'long' ? 'SELL' : 'BUY';
-    let price = mark_price;
-    if (side == 'long') {
-      price = mark_price * (1 + dealRatio / LEVERAGE);
-    } else {
-      price = mark_price * (1 - dealRatio / LEVERAGE);
-    }
+    // let price = mark_price;
+    // if (side == 'long') {
+    //   price = mark_price * (1 + dealRatio / LEVERAGE);
+    // } else {
+    //   price = mark_price * (1 - dealRatio / LEVERAGE);
+    // }
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
@@ -731,7 +691,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       // type: "MARKET",
       type: 'LIMIT',
       timeInForce: 'GTC',
-      price: price.toFixed(2),
+      price: mark_price.toFixed(2),
     };
     if (MODE == 2 || isMarketDeal) {
       payload = {
