@@ -617,16 +617,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
       openSide,
       moment().format('YYYY-MM-DD HH:mm:ss')
     );
-    console.log('position', position, 'type', type, 'side', openSide);
-
-    const result = await cAuthClientBN.swap.openOrders(
-      BN_SYMBOL,
-      openOrigClientOrderId
-    );
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-    console.log('openresult', result);
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
@@ -664,17 +654,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   const {position = INIT_POSITION, side, mark_price, time} = holding;
   async function postOrder(size) {
-    const result = await cAuthClientBN.swap.openOrders(
-      BN_SYMBOL,
-      closeOrigClientOrderId
-    );
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-    console.log('closeresult', result);
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-
-    const newClientOrderId = getUUID();
-    closeOrigClientOrderId = newClientOrderId;
-
     const type = side == 'long' ? 'SELL' : 'BUY';
     // let price = mark_price;
     // if (side == 'long') {
