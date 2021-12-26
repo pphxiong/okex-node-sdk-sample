@@ -927,7 +927,7 @@ const startInterval = async () => {
         const mark_price = item.price;
 
         if (latestOpenOrder) {
-          const ratio =
+          let ratio =
             ((Number(mark_price) - Number(latestOpenOrder.avgPrice)) *
               Number(LEVERAGE)) /
             Number(mark_price);
