@@ -853,11 +853,7 @@ const startInterval = async () => {
     );
 
     console.log('##########################################');
-    console.log(
-      'latestOpenOrder::',
-      latestOpenOrder.positionSide,
-      latestOpenOrder.avgPrice
-    );
+    console.log('latestOpenOrder::', latestOpenOrder);
     console.log('##########################################');
 
     let isHasNoDeal = false;
