@@ -876,7 +876,7 @@ const startInterval = async () => {
               Number(LEVERAGE)) /
             Number(mark_price);
           if (latestOpenOrder.positionSide == "SHORT") ratio = -ratio;
-          if (ratio > WIN_MAX * 0.5 && ratio < WIN_MAX * 0.7) {
+          if (ratio > WIN_MAX * 0.9 && ratio < WIN_MAX * 1.1) {
             isHasNoDeal = true;
           }
         }
