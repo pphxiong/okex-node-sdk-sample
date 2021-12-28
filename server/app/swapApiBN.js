@@ -20,7 +20,7 @@ const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
-const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
 const WIN_MAX = (((0.1 * 0.6) / 2) * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
@@ -885,14 +885,20 @@ const startInterval = async () => {
 
     if (!isHasNoDeal) {
       let future_price;
-      const high_future_price =
+      const long_high_future_price =
         (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
         (Number(LEVERAGE) - WIN_MAX);
-      const low_future_price =
+      const long_low_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) + LOSS_MAX);
+      const short_high_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) - LOSS_MAX);
+      const short_low_future_price =
         (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
         (Number(LEVERAGE) + WIN_MAX);
       if (latestOpenOrder.positionSide == "LONG") {
-        future_price = high_future_price;
+        future_price = long_high_future_price;
         const closePayload = {
           mark_price: future_price,
           side: "long",
@@ -903,14 +909,14 @@ const startInterval = async () => {
           openSide: "short",
         };
         await openPosition(openPayload);
-        const batch_price = low_future_price;
+        const batch_price = long_low_future_price;
         const batchPayload = {
           mark_price: batch_price,
           openSide: "long",
         };
         await openPosition(batchPayload);
       } else if (latestOpenOrder.positionSide == "SHORT") {
-        future_price = low_future_price;
+        future_price = short_low_future_price;
         const closePayload = {
           mark_price: future_price,
           side: "short",
@@ -921,7 +927,7 @@ const startInterval = async () => {
           openSide: "long",
         };
         await openPosition(openPayload);
-        const batch_price = hight_future_price;
+        const batch_price = short_high_future_price;
         const batchPayload = {
           mark_price: batch_price,
           openSide: "short",
