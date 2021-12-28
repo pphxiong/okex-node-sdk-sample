@@ -21,13 +21,13 @@ const SHORT_CONDITION = 50;
 const LEVERAGE = 20;
 const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
+const WIN_MAX = (((0.1 * 0.6) / 2) * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
-let INIT_POSITION = 0.5;
+let INIT_POSITION = 0.3;
 const POSITION_RATIO = 100;
 let RESTART_TIME = 0;
 
@@ -876,7 +876,7 @@ const startInterval = async () => {
               Number(LEVERAGE)) /
             Number(mark_price);
           if (latestOpenOrder.positionSide == "SHORT") ratio = -ratio;
-          if (ratio > WIN_MAX * 0.9 && ratio < WIN_MAX * 1.1) {
+          if (ratio > WIN_MAX * 0.5 && ratio < WIN_MAX * 0.7) {
             isHasNoDeal = true;
           }
         }
