@@ -27,7 +27,7 @@ const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
-let INIT_POSITION = 0.3;
+let INIT_POSITION = 0.1;
 const POSITION_RATIO = 100;
 let RESTART_TIME = 0;
 
@@ -836,7 +836,7 @@ const startInterval = async () => {
     return;
   }
   try {
-    const params = { symbol: BN_SYMBOL, limit: 10 };
+    const params = { symbol: BN_SYMBOL, limit: 30 };
     const orders = await cAuthClientBN.swap.allOrders(params);
     orders.reverse();
     // const longOrders = orders.filter(
@@ -876,7 +876,7 @@ const startInterval = async () => {
               Number(LEVERAGE)) /
             Number(mark_price);
           if (latestOpenOrder.positionSide == "SHORT") ratio = -ratio;
-          if (ratio > WIN_MAX * 0.9 && ratio < WIN_MAX * 1.1) {
+          if (ratio > WIN_MAX * 0.8 && ratio < WIN_MAX * 1.2) {
             isHasNoDeal = true;
           }
         }
@@ -938,7 +938,7 @@ const startInterval = async () => {
 
     // await checkDeal(result);
 
-    await waitTime(1000 * 8);
+    await waitTime(1000 * 10);
     await startInterval();
   } catch (e) {
     restart();
