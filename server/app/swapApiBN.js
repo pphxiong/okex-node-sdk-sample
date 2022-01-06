@@ -830,7 +830,7 @@ const countdownCancelAll = async (time) => {
 };
 
 const startInterval = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 100, period: "30m" };
+  const params = { symbol: BN_SYMBOL, limit: 100, period: "1d" };
   const result = await cAuthClientBN.swap.topLongShortPositionRatio(params);
   console.log(
     result.map((item) => {
