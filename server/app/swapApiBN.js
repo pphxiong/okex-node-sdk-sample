@@ -833,10 +833,10 @@ const startInterval = async () => {
   const params = { symbol: BN_SYMBOL, limit: 100, period: "30m" };
   const result = await cAuthClientBN.swap.topLongShortPositionRatio(params);
   console.log(
-    result.map((item) => ({
-      ...item,
-      timestamp: moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-    }))
+    result.map((item) => {
+      item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+      return item;
+    })
   );
   return;
   RESTART_TIME += 1;
