@@ -834,21 +834,17 @@ const startInterval = async () => {
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
-  console.log(
-    "topLongShortAccountRatio::",
-    accountResult.map((item) => {
-      item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
-      return item;
-    })
-  );
   const result = await cAuthClientBN.swap.topLongShortPositionRatio(params);
-  console.log(
-    "topLongShortPositionRatio::",
-    result.map((item) => {
-      item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
-      return item;
-    })
-  );
+  const newResult = [];
+  accountResult.forEach((item, index) => {
+    item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+    const obj = {
+      account: item,
+      position: result[index],
+    };
+    newResult.push(obj);
+  });
+  console.log("accountAndPosition::", accountResult);
   // const globalResult = await cAuthClientBN.swap.globalLongShortAccountRatio(
   //   params
   // );
