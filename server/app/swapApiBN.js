@@ -830,6 +830,10 @@ const countdownCancelAll = async (time) => {
 };
 
 const startInterval = async () => {
+  const params = { symbol: BN_SYMBOL, limit: 30, period: "15m" };
+  const result = await cAuthClientBN.swap.topLongShortPositionRatio(params);
+  console.log(result);
+  return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();

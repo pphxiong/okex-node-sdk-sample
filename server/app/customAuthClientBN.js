@@ -1,11 +1,11 @@
-import request from '../utils/request';
-import * as crypto from 'crypto';
-import * as querystring from 'querystring';
+import request from "../utils/request";
+import * as crypto from "crypto";
+import * as querystring from "querystring";
 
 function customAuthClient(
   key,
   secret,
-  apiUri = 'https://fapi.binance.com',
+  apiUri = "https://fapi.binance.com",
   timeout = 3000,
   axiosConfig = {}
 ) {
@@ -13,9 +13,9 @@ function customAuthClient(
     const timestamp = Date.now();
     // const what = timestamp + method.toUpperCase() + path + (options.body || '');
     const what =
-      (options.body ? `${options.body}&` : '') + 'timestamp=' + timestamp;
-    const hmac = crypto.createHmac('sha256', secret);
-    const signature = hmac.update(what).digest('hex').toString('base64');
+      (options.body ? `${options.body}&` : "") + "timestamp=" + timestamp;
+    const hmac = crypto.createHmac("sha256", secret);
+    const signature = hmac.update(what).digest("hex").toString("base64");
     // const signature=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' + '/users/self/verify', SecretKey))
     return {
       key,
@@ -27,7 +27,7 @@ function customAuthClient(
   const getSignature = (method, relativeURI, opts = {}) => {
     const sig = signRequest(method, relativeURI, opts);
     return {
-      'X-MBX-APIKEY': sig.key,
+      "X-MBX-APIKEY": sig.key,
       signature: sig.signature,
       timestamp: sig.timestamp,
     };
@@ -35,15 +35,15 @@ function customAuthClient(
 
   const commonGet = function (url, params) {
     return request(apiUri + url, {
-      method: 'GET',
+      method: "GET",
     });
   };
 
   const get = function (url, params) {
-    const signObj = getSignature('GET', url);
-    const {timestamp, signature} = signObj;
+    const signObj = getSignature("GET", url);
+    const { timestamp, signature } = signObj;
     const headers = {
-      'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
+      "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
     };
     return request(
       apiUri +
@@ -52,7 +52,7 @@ function customAuthClient(
           params
         )}`,
       {
-        method: 'GET',
+        method: "GET",
         headers,
       }
     );
@@ -60,14 +60,14 @@ function customAuthClient(
 
   const getWithSign = function (url, body, params) {
     const bodyJson = querystring.stringify(body);
-    const signObj = getSignature('POST', url, {body: bodyJson});
-    body['signature'] = signObj.signature;
-    body['timestamp'] = signObj.timestamp;
+    const signObj = getSignature("POST", url, { body: bodyJson });
+    body["signature"] = signObj.signature;
+    body["timestamp"] = signObj.timestamp;
     const headers = {
-      'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
+      "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
     };
-    return request(apiUri + url + '?' + querystring.stringify(body), {
-      method: 'GET',
+    return request(apiUri + url + "?" + querystring.stringify(body), {
+      method: "GET",
       headers,
     });
   };
@@ -75,31 +75,31 @@ function customAuthClient(
   const post = function (url, body, params) {
     // const bodyJson = JSON.stringify(body);
     const bodyJson = querystring.stringify(body);
-    const signObj = getSignature('POST', url, {body: bodyJson});
-    body['signature'] = signObj.signature;
-    body['timestamp'] = signObj.timestamp;
+    const signObj = getSignature("POST", url, { body: bodyJson });
+    body["signature"] = signObj.signature;
+    body["timestamp"] = signObj.timestamp;
     const headers = {
-      'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
+      "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
       // 'Content-Type': 'application/json;charset=UTF-8',
       // 'content-type': 'application/x-www-form-urlencoded'
     };
-    return request(apiUri + url + '?' + querystring.stringify(body), {
-      method: 'POST',
+    return request(apiUri + url + "?" + querystring.stringify(body), {
+      method: "POST",
       headers,
       // data: body
     });
   };
 
   const deleteApi = function (url, params) {
-    const signObj = getSignature('DELETE', url);
-    const {timestamp, signature} = signObj;
+    const signObj = getSignature("DELETE", url);
+    const { timestamp, signature } = signObj;
     const headers = {
-      'X-MBX-APIKEY': signObj['X-MBX-APIKEY'],
+      "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
     };
     return request(
       apiUri + url + `?timestamp=${timestamp}&signature=${signature}`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         headers,
       }
     );
@@ -108,7 +108,7 @@ function customAuthClient(
   return {
     swap: {
       postOrder: function (params) {
-        return post('/fapi/v1/order', params);
+        return post("/fapi/v1/order", params);
       },
       getPosition: function (instrument_id, instType) {
         return get(`/fapi/v2/account`);
@@ -129,10 +129,13 @@ function customAuthClient(
         return deleteApi(`/fapi/v1/allOpenOrders?symbol=${symbol}`);
       },
       countdownCancelAll: function (params) {
-        return post('/fapi/v1/countdownCancelAll', params);
+        return post("/fapi/v1/countdownCancelAll", params);
       },
       allOrders: function (params) {
         return getWithSign(`/fapi/v1/allOrders`, params);
+      },
+      topLongShortPositionRatio: function (params) {
+        return getWithSign(`/futures/data/topLongShortPositionRatio`, params);
       },
     },
     common: {
