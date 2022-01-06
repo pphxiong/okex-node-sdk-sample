@@ -844,7 +844,7 @@ const startInterval = async () => {
     };
     newResult.push(obj);
   });
-  console.log("accountAndPosition::", accountResult);
+  console.log("accountAndPosition::", newResult);
   // const globalResult = await cAuthClientBN.swap.globalLongShortAccountRatio(
   //   params
   // );
