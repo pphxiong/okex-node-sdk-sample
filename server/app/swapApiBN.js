@@ -830,10 +830,31 @@ const countdownCancelAll = async (time) => {
 };
 
 const startInterval = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 100, period: "1d" };
+  const params = { symbol: BN_SYMBOL, limit: 30, period: "1d" };
   const result = await cAuthClientBN.swap.topLongShortPositionRatio(params);
   console.log(
+    "topLongShortPositionRatio::",
     result.map((item) => {
+      item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+      return item;
+    })
+  );
+  const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+    params
+  );
+  console.log(
+    "topLongShortAccountRatio::",
+    accountResult.map((item) => {
+      item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+      return item;
+    })
+  );
+  const globalResult = await cAuthClientBN.swap.globalLongShortAccountRatio(
+    params
+  );
+  console.log(
+    "globalResult::",
+    globalResult.map((item) => {
       item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
       return item;
     })
