@@ -134,8 +134,14 @@ function customAuthClient(
       allOrders: function (params) {
         return getWithSign(`/fapi/v1/allOrders`, params);
       },
+      topLongShortAccountRatio: function (params) {
+        return getWithSign(`/futures/data/topLongShortAccountRatio`, params);
+      },
       topLongShortPositionRatio: function (params) {
         return getWithSign(`/futures/data/topLongShortPositionRatio`, params);
+      },
+      globalLongShortAccountRatio: function (params) {
+        return getWithSign(`/futures/data/globalLongShortAccountRatio`, params);
       },
     },
     common: {
