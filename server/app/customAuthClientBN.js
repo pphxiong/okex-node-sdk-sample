@@ -58,7 +58,7 @@ function customAuthClient(
     );
   };
 
-  const getWithSign = function (url, body, params) {
+  const getWithSign = function (url, body = {}, params) {
     const bodyJson = querystring.stringify(body);
     const signObj = getSignature("POST", url, { body: bodyJson });
     body["signature"] = signObj.signature;
@@ -110,8 +110,8 @@ function customAuthClient(
       postOrder: function (params) {
         return post("/fapi/v1/order", params);
       },
-      getPosition: function (instrument_id, instType) {
-        return get(`/fapi/v2/account`);
+      getPosition: function (params) {
+        return getWithSign(`/fapi/v2/account`);
       },
       openOrder: function (params) {
         console.log(symbol, origClientOrderId);

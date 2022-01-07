@@ -817,9 +817,9 @@ const dealOrderHandler = async () => {
     const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
     const mark_price = Number(data.markPrice);
 
-    const { positions: holdings, availableBalance } =
+    const { positions, availableBalance } =
       await cAuthClientBN.swap.getPosition();
-    const holding = holdings.find(
+    const holding = positions.find(
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
@@ -915,6 +915,11 @@ const startInterval = async () => {
     return cur;
   });
   console.log("newResult", newResult);
+
+  const { positions, availableBalance } =
+    await cAuthClientBN.swap.getPosition();
+  console.log("positions::", positions);
+  console.log("availableBalance::", availableBalance);
   return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 15) {
