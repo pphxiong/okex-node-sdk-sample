@@ -28,7 +28,7 @@ const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
 let INIT_POSITION = 0.5;
-const POSITION_RATIO = 2;
+const POSITION_RATIO = 3;
 let RESTART_TIME = 0;
 
 let MODE = 1;
@@ -889,7 +889,7 @@ const dealOrderHandler = async () => {
 };
 
 const startInterval = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 10, period: "4h" };
+  const params = { symbol: BN_SYMBOL, limit: 10, period: "2h" };
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
