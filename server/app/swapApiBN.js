@@ -963,10 +963,10 @@ const startInterval = async () => {
     const minute = date.getMinutes();
 
     const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-    if (minute == 0 && hourList.includes(Number(hour))) {
+    if (Number(minute) == 0 && hourList.includes(Number(hour))) {
       await dealOrderHandler();
     } else {
-      await fnConsoleDealOrder();
+      // await fnConsoleDealOrder();
     }
 
     await waitTime(1000 * 50);

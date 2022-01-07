@@ -599,8 +599,15 @@ app.get("/swap/startHearBeat", async (req, response) => {
 
 app.get("/swap/getLatestProfit", async (req, response) => {
   const { query = {} } = req;
-  const { time, interval = INTERVAL, limit = 500 } = query;
+  const { time, interval = INTERVAL, limit = 1440 } = query;
   try {
+    const payload = {
+      interval,
+      limit,
+      endTime: time,
+    };
+    const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
+    const list = data;
     totalProfit = 0;
     currentPosition = {};
     longPosition = {};
@@ -610,39 +617,15 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     maxWinRatio = 0;
     dealDetailList = [];
 
-    const payload = { symbol: BN_SYMBOL, limit, period: interval };
-    const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
-      params
-    );
-    const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
-      params
-    );
-    const newResult = [];
-    accountResult.reduce((pre, cur, index) => {
-      const obj = {
-        originAccount: cur,
-        originPosition: positionResult[index],
-        account: cur.longShortRatio / pre.longShortRatio,
-        position:
-          positionResult[index].longShortRatio /
-          positionResult[index - 1].longShortRatio,
-        ratio:
-          positionResult[index].longShortRatio /
-          positionResult[index - 1].longShortRatio /
-          (cur.longShortRatio / pre.longShortRatio),
-        timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      };
+    const newList = JSON.parse(JSON.stringify(list));
+    const macdList = getCurrentMacd(newList).slice(-1400);
+    const rsiList = getCurrentRSI(newList).slice(-1400);
 
-      if (obj.account < 1 && obj.position > 1) {
-        obj.long = true;
-      } else if (obj.account > 1 && obj.position < 1) {
-        obj.short = true;
-      }
-      newResult.push(obj);
-      return cur;
-    });
-
-    await checkDeal(newResult);
+    const result = {
+      macdList,
+      rsiList,
+    };
+    await checkDeal(result);
     send(response, {
       errcode: 0,
       errmsg: "ok",
@@ -673,10 +656,13 @@ function fibonacci(n) {
   return fibonacci(n - 2) + fibonacci(n - 1);
 }
 
-const checkDeal = async (list, isAutoReset = true) => {
-  for (let i = 0; i < list.length; i++) {
+const checkDeal = async (data, isAutoReset = true) => {
+  for (let i = 0; i < data.macdList.length - 9; i++) {
     checkByStep(
-      list[i],
+      {
+        macdList: data.macdList.slice(i, i + 10),
+        rsiList: data.rsiList.slice(i, i + 10),
+      },
       isAutoReset
       // && i == data.macdList.length - 10
     );
