@@ -899,10 +899,8 @@ const startInterval = async () => {
   const newResult = [];
   accountResult.reduce((pre, cur, index) => {
     const obj = {
-      current: {
-        account: cur,
-        position: positionResult[index],
-      },
+      originAccount: cur,
+      originPosition: positionResult[index],
       account: cur.longShortRatio / pre.longShortRatio,
       position:
         positionResult[index].longShortRatio /
