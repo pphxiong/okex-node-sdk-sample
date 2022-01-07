@@ -889,6 +889,31 @@ const dealOrderHandler = async () => {
 };
 
 const startInterval = async () => {
+  const params = { symbol: BN_SYMBOL, limit: 10, period: "4h" };
+  const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+    params
+  );
+  const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
+    params
+  );
+  const newResult = [];
+  accountResult.reduce((pre, cur, index) => {
+    const obj = {
+      account: cur.longShortRatio / pre.longShortRatio,
+      position:
+        positionResult[index].longShortRatio /
+        positionResult[index - 1].longShortRatio,
+      ratio:
+        positionResult[index].longShortRatio /
+        positionResult[index - 1].longShortRatio /
+        (cur.longShortRatio / pre.longShortRatio),
+      timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    };
+    newResult.push(obj);
+    return cur;
+  });
+  console.log("newResult", newResult);
+  return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 15) {
     restart();
