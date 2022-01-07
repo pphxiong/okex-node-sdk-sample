@@ -834,17 +834,42 @@ const startInterval = async () => {
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
-  const result = await cAuthClientBN.swap.topLongShortPositionRatio(params);
+  const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
+    params
+  );
   const newResult = [];
-  accountResult.forEach((item, index) => {
-    item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+  // accountResult.forEach((item, index) => {
+  //   item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+  //   const obj = {
+  //     account: item,
+  //     position: result[index],
+  //   };
+  //   newResult.push(obj);
+  // });
+  console.log("accountAndPosition::", newResult);
+
+  accountResult.reduce((pre, cur, index) => {
+    // if (index == 1) {
+    //   return {
+    //     account: accountResult[0].longShortRatio,
+    //     position: positionResult[0].longShortRatio,
+    //     ratio: 1,
+    //   };
+    // }
     const obj = {
-      account: item,
-      position: result[index],
+      account: pre.longShortRatio / cur.longShortRatio,
+      position:
+        positionResult[index - 1].longShortRatio /
+        positionResult[index].longShortRatio,
+      ratio:
+        positionResult[index - 1].longShortRatio /
+        positionResult[index].longShortRatio /
+        (pre.longShortRatio / cur.longShortRatio),
+      timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
     newResult.push(obj);
+    return cur;
   });
-  console.log("accountAndPosition::", newResult);
   // const globalResult = await cAuthClientBN.swap.globalLongShortAccountRatio(
   //   params
   // );
