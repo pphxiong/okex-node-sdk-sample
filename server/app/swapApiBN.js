@@ -848,14 +848,14 @@ const startInterval = async () => {
   // });
   accountResult.reduce((pre, cur, index) => {
     const obj = {
-      account: pre.longShortRatio / cur.longShortRatio,
+      account: cur.longShortRatio / pre.longShortRatio,
       position:
-        positionResult[index - 1].longShortRatio /
-        positionResult[index].longShortRatio,
-      ratio:
-        positionResult[index - 1].longShortRatio /
         positionResult[index].longShortRatio /
-        (pre.longShortRatio / cur.longShortRatio),
+        positionResult[index - 1].longShortRatio,
+      ratio:
+        positionResult[index].longShortRatio /
+        positionResult[index - 1].longShortRatio /
+        (cur.longShortRatio / pre.longShortRatio),
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
     newResult.push(obj);
