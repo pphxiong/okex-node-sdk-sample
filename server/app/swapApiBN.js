@@ -18,7 +18,7 @@ const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "5m";
 const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
-const LEVERAGE = 20;
+const LEVERAGE = 10;
 const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
 const WIN_MAX = (((0.1 * 0.6) / 2) * LEVERAGE) / 10;
@@ -27,8 +27,8 @@ const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
-let INIT_POSITION = 0.1;
-const POSITION_RATIO = 100;
+let INIT_POSITION = 0.5;
+const POSITION_RATIO = 2;
 let RESTART_TIME = 0;
 
 let MODE = 1;
@@ -88,15 +88,8 @@ const checkDeal = async (data) => {
 
         INIT_POSITION = Number(availPosition);
 
-        // await readData();
-        MODE = 1;
         console.log("------------------");
-        console.log(
-          `availableBalance`,
-          availableBalance,
-          "INIT_POSITION",
-          INIT_POSITION
-        );
+        console.log(`availableBalance`, availableBalance);
         console.log("------------------");
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
@@ -604,23 +597,19 @@ function getUUID() {
 let openOrigClientOrderId = "";
 let closeOrigClientOrderId = "";
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
-  const {
-    openSide = "long",
-    position = Number(INIT_POSITION),
-    mark_price,
-  } = params;
+  const { positionSide, position = Number(INIT_POSITION), mark_price } = params;
 
   async function postOrder(size) {
-    const type = openSide == "long" ? "BUY" : "SELL";
+    const type = positionSide == "LONG" ? "BUY" : "SELL";
     console.log(
       "openOtherOrderMoment",
-      openSide,
+      side,
       moment().format("YYYY-MM-DD HH:mm:ss")
     );
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
-      positionSide: openSide == "long" ? "LONG" : "SHORT",
+      positionSide,
       quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
@@ -632,7 +621,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
       payload = {
         symbol: BN_SYMBOL,
         side: type,
-        positionSide: openSide == "long" ? "LONG" : "SHORT",
+        positionSide,
         quantity: Math.abs(size),
         recvWindow: 5000,
         type: "MARKET",
@@ -652,19 +641,13 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 };
 
 const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
-  const { position = INIT_POSITION, side, mark_price, time } = holding;
+  const { position = INIT_POSITION, positionSide, mark_price } = holding;
   async function postOrder(size) {
-    const type = side == "long" ? "SELL" : "BUY";
-    // let price = mark_price;
-    // if (side == 'long') {
-    //   price = mark_price * (1 + dealRatio / LEVERAGE);
-    // } else {
-    //   price = mark_price * (1 - dealRatio / LEVERAGE);
-    // }
+    const type = positionSide == "LONG" ? "SELL" : "BUY";
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
-      positionSide: side == "long" ? "LONG" : "SHORT",
+      positionSide,
       quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
@@ -676,7 +659,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       payload = {
         symbol: BN_SYMBOL,
         side: type,
-        positionSide: side == "long" ? "LONG" : "SHORT",
+        positionSide,
         quantity: Math.abs(size),
         recvWindow: 5000,
         type: "MARKET",
@@ -830,35 +813,84 @@ const countdownCancelAll = async (time) => {
 };
 
 const dealOrderHandler = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 100, period: "4h" };
-  const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
-    params
-  );
-  const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
-    params
-  );
-  const newResult = [];
-  accountResult.reduce((pre, cur, index) => {
-    const obj = {
-      account: cur.longShortRatio / pre.longShortRatio,
-      position:
-        positionResult[index].longShortRatio /
-        positionResult[index - 1].longShortRatio,
-      ratio:
-        positionResult[index].longShortRatio /
-        positionResult[index - 1].longShortRatio /
-        (cur.longShortRatio / pre.longShortRatio),
-      timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+  try {
+    const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
+    const mark_price = Number(data.markPrice);
+
+    const { positions: holdings, availableBalance } =
+      await cAuthClientBN.swap.getPosition();
+    const holding = holdings.find(
+      (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+    );
+
+    if (holding) {
+      const closePayload = {
+        position: Math.abs(Number(holding.positionAmt)),
+        positionSide: holding.positionSide,
+        mark_price,
+        time: moment().format("YYYY-MM-DD HH:mm:ss"),
+      };
+      await closePosition(closePayload, true);
+    }
+
+    const params = { symbol: BN_SYMBOL, limit: 10, period: "4h" };
+    const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+      params
+    );
+    const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
+      params
+    );
+    const newResult = [];
+    accountResult.reduce((pre, cur, index) => {
+      const obj = {
+        account: cur.longShortRatio / pre.longShortRatio,
+        position:
+          positionResult[index].longShortRatio /
+          positionResult[index - 1].longShortRatio,
+        ratio:
+          positionResult[index].longShortRatio /
+          positionResult[index - 1].longShortRatio /
+          (cur.longShortRatio / pre.longShortRatio),
+        timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      };
+      newResult.push(obj);
+      return cur;
+    });
+
+    const latestResult = newResult[newResult.length - 1];
+    const ratio = Number(latestResult.ratio);
+    const positionSide = ratio >= 1 ? "LONG" : "SHORT";
+
+    const availPosition = (
+      (Number(availableBalance) * LEVERAGE) /
+      mark_price /
+      POSITION_RATIO
+    ).toFixed(3);
+
+    INIT_POSITION = Number(availPosition);
+    let position;
+    if (ratio >= 1) {
+      position = (INIT_POSITION * ratio).toFixed(3);
+    } else {
+      position = (INIT_POSITION * (2 - ratio)).toFixed(3);
+    }
+
+    const openPayload = {
+      position: Number(position),
+      positionSide,
+      mark_price,
+      time: moment().format("YYYY-MM-DD HH:mm:ss"),
     };
-    newResult.push(obj);
-    return cur;
-  });
-  console.log("accountAndPosition::", newResult);
+    await openPosition(openPayload, true);
+    console.log("accountAndPosition::", latestResult);
+  } catch (e) {
+    restart();
+  }
 };
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 80) {
+  if (RESTART_TIME >= 15) {
     restart();
     return;
   }
@@ -866,10 +898,14 @@ const startInterval = async () => {
   try {
     const date = new Date();
     const hour = date.getHours();
-    console.log("hour", hour);
-    // await dealOrderHandler();
+    const minute = date.getMinutes();
 
-    await waitTime(1000 * 10);
+    const hourList = [0, 4, 8, 12, 16, 20, 24];
+    if (minute == 0 && hourList.includes(Number(hour))) {
+      await dealOrderHandler();
+    }
+
+    await waitTime(1000 * 50);
     await startInterval();
   } catch (e) {
     restart();

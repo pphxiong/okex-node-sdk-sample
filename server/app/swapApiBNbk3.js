@@ -867,12 +867,14 @@ const startInterval = async () => {
   //     return item;
   //   })
   // );
-  return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
     return;
   }
+  await dealOrderHandler();
+  return;
+
   try {
     const params = { symbol: BN_SYMBOL, limit: 30 };
     const orders = await cAuthClientBN.swap.allOrders(params);
