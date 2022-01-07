@@ -846,7 +846,8 @@ const fnConsoleDealOrder = async () => {
   });
   console.log(
     "newResult::",
-    newResult.filter((item) => item.long || item.short)
+    newResult
+    // newResult.filter((item) => item.long || item.short)
   );
 };
 
