@@ -812,6 +812,35 @@ const countdownCancelAll = async (time) => {
   await cAuthClientBN.swap.countdownCancelAll(payload);
 };
 
+const fnConsoleDealOrder = async () => {
+  const params = { symbol: BN_SYMBOL, limit: 10, period: "2h" };
+  const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+    params
+  );
+  const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
+    params
+  );
+  const newResult = [];
+  accountResult.reduce((pre, cur, index) => {
+    const obj = {
+      originAccount: cur,
+      originPosition: positionResult[index],
+      account: cur.longShortRatio / pre.longShortRatio,
+      position:
+        positionResult[index].longShortRatio /
+        positionResult[index - 1].longShortRatio,
+      ratio:
+        positionResult[index].longShortRatio /
+        positionResult[index - 1].longShortRatio /
+        (cur.longShortRatio / pre.longShortRatio),
+      timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    };
+    newResult.push(obj);
+    return cur;
+  });
+  console.log("newResult::", newResult);
+};
+
 const dealOrderHandler = async () => {
   try {
     const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
@@ -918,9 +947,11 @@ const startInterval = async () => {
     const hour = date.getHours();
     const minute = date.getMinutes();
 
-    const hourList = [0, 4, 8, 12, 16, 20, 24];
+    const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
     if (minute == 0 && hourList.includes(Number(hour))) {
       await dealOrderHandler();
+    } else {
+      await fnConsoleDealOrder();
     }
 
     await waitTime(1000 * 50);
