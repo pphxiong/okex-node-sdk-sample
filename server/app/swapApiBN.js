@@ -829,12 +829,18 @@ const fnConsoleDealOrder = async () => {
       position:
         positionResult[index].longShortRatio /
         positionResult[index - 1].longShortRatio,
-      ratio:
-        positionResult[index].longShortRatio /
-        positionResult[index - 1].longShortRatio /
-        (cur.longShortRatio / pre.longShortRatio),
+      // ratio:
+      //   positionResult[index].longShortRatio /
+      //   positionResult[index - 1].longShortRatio /
+      //   (cur.longShortRatio / pre.longShortRatio),
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
+
+    if (obj.account < 1 && obj.position > 1) {
+      obj.long = true;
+    } else if (obj.account > 1 && obj.position < 1) {
+      obj.short = true;
+    }
     newResult.push(obj);
     return cur;
   });
