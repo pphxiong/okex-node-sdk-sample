@@ -867,7 +867,7 @@ const startInterval = async () => {
     const date = new Date();
     const hour = date.getHours();
     console.log("hour", hour);
-    await dealOrderHandler();
+    // await dealOrderHandler();
 
     await waitTime(1000 * 10);
     await startInterval();
