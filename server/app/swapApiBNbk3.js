@@ -857,17 +857,124 @@ const dealOrderHandler = async () => {
 };
 
 const startInterval = async () => {
+  // const globalResult = await cAuthClientBN.swap.globalLongShortAccountRatio(
+  //   params
+  // );
+  // console.log(
+  //   "globalResult::",
+  //   globalResult.map((item) => {
+  //     item.timestamp = moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss");
+  //     return item;
+  //   })
+  // );
+  return;
   RESTART_TIME += 1;
   if (RESTART_TIME >= 80) {
     restart();
     return;
   }
-
   try {
-    const date = new Date();
-    const hour = date.getHours();
-    console.log("hour", hour);
-    await dealOrderHandler();
+    const params = { symbol: BN_SYMBOL, limit: 30 };
+    const orders = await cAuthClientBN.swap.allOrders(params);
+    orders.reverse();
+    // const longOrders = orders.filter(
+    //   (item) => item.positionSide == 'LONG' && !item.reduceOnly
+    // );
+    // const shortOrders = orders.filter(
+    //   (item) => item.positionSide == 'SHORT' && !item.reduceOnly
+    // );
+    // const latestLongOrder = longOrders[0];
+    // const latestShortOrder = shortOrders[0];
+
+    const latestOpenOrder = orders.find(
+      (item) => !item.reduceOnly && Number(item.executedQty)
+    );
+
+    console.log("##########################################");
+    console.log(
+      "latestOpenOrder::",
+      latestOpenOrder.positionSide,
+      latestOpenOrder.avgPrice,
+      latestOpenOrder.executedQty,
+      moment(latestOpenOrder.time).format("YYYY-MM-DD HH:mm:ss")
+    );
+    console.log("##########################################");
+
+    let isHasNoDeal = false;
+    const noDealOrders = await cAuthClientBN.swap.openOrders({
+      symbol: BN_SYMBOL,
+    });
+    if (noDealOrders && noDealOrders.length) {
+      noDealOrders.forEach((item) => {
+        const mark_price = item.price;
+
+        if (latestOpenOrder) {
+          let ratio =
+            ((Number(mark_price) - Number(latestOpenOrder.avgPrice)) *
+              Number(LEVERAGE)) /
+            Number(mark_price);
+          if (latestOpenOrder.positionSide == "SHORT") ratio = -ratio;
+          if (ratio > WIN_MAX * 0.8 && ratio < WIN_MAX * 1.2) {
+            isHasNoDeal = true;
+          }
+        }
+      });
+    }
+
+    if (!isHasNoDeal) {
+      let future_price;
+      const long_high_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) - WIN_MAX);
+      const long_low_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) + LOSS_MAX);
+      const short_high_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) - LOSS_MAX);
+      const short_low_future_price =
+        (Number(latestOpenOrder.avgPrice) * Number(LEVERAGE)) /
+        (Number(LEVERAGE) + WIN_MAX);
+      if (latestOpenOrder.positionSide == "LONG") {
+        future_price = long_high_future_price;
+        const closePayload = {
+          mark_price: future_price,
+          side: "long",
+        };
+        await closePosition(closePayload);
+        const openPayload = {
+          mark_price: future_price,
+          openSide: "short",
+        };
+        await openPosition(openPayload);
+        const batch_price = long_low_future_price;
+        const batchPayload = {
+          mark_price: batch_price,
+          openSide: "long",
+        };
+        await openPosition(batchPayload);
+      } else if (latestOpenOrder.positionSide == "SHORT") {
+        future_price = short_low_future_price;
+        const closePayload = {
+          mark_price: future_price,
+          side: "short",
+        };
+        await closePosition(closePayload);
+        const openPayload = {
+          mark_price: future_price,
+          openSide: "long",
+        };
+        await openPosition(openPayload);
+        const batch_price = short_high_future_price;
+        const batchPayload = {
+          mark_price: batch_price,
+          openSide: "short",
+        };
+        await openPosition(batchPayload);
+      }
+    }
+
+    // await checkDeal(result);
 
     await waitTime(1000 * 10);
     await startInterval();
