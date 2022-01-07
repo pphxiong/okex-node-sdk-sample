@@ -846,16 +846,7 @@ const startInterval = async () => {
   //   };
   //   newResult.push(obj);
   // });
-  console.log("accountAndPosition::", newResult);
-
   accountResult.reduce((pre, cur, index) => {
-    // if (index == 1) {
-    //   return {
-    //     account: accountResult[0].longShortRatio,
-    //     position: positionResult[0].longShortRatio,
-    //     ratio: 1,
-    //   };
-    // }
     const obj = {
       account: pre.longShortRatio / cur.longShortRatio,
       position:
@@ -870,6 +861,7 @@ const startInterval = async () => {
     newResult.push(obj);
     return cur;
   });
+  console.log("accountAndPosition::", newResult);
   // const globalResult = await cAuthClientBN.swap.globalLongShortAccountRatio(
   //   params
   // );
