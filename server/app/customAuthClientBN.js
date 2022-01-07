@@ -39,18 +39,14 @@ function customAuthClient(
     });
   };
 
-  const get = function (url, params) {
+  const get = function (url) {
     const signObj = getSignature("GET", url);
     const { timestamp, signature } = signObj;
     const headers = {
       "X-MBX-APIKEY": signObj["X-MBX-APIKEY"],
     };
     return request(
-      apiUri +
-        url +
-        `?timestamp=${timestamp}&signature=${signature}&${querystring.stringify(
-          params
-        )}`,
+      apiUri + url + `?timestamp=${timestamp}&signature=${signature}`,
       {
         method: "GET",
         headers,
@@ -110,8 +106,8 @@ function customAuthClient(
       postOrder: function (params) {
         return post("/fapi/v1/order", params);
       },
-      getPosition: function (params) {
-        return getWithSign(`/fapi/v2/account`);
+      getPosition: function () {
+        return get(`/fapi/v2/account`);
       },
       openOrder: function (params) {
         console.log(symbol, origClientOrderId);
