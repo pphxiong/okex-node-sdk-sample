@@ -813,7 +813,7 @@ const countdownCancelAll = async (time) => {
 };
 
 const fnConsoleDealOrder = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 30, period: "1d" };
+  const params = { symbol: BN_SYMBOL, limit: 30, period: "4h" };
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
@@ -829,10 +829,10 @@ const fnConsoleDealOrder = async () => {
       position:
         positionResult[index].longShortRatio /
         positionResult[index - 1].longShortRatio,
-      // ratio:
-      //   positionResult[index].longShortRatio /
-      //   positionResult[index - 1].longShortRatio /
-      //   (cur.longShortRatio / pre.longShortRatio),
+      ratio:
+        positionResult[index].longShortRatio /
+        positionResult[index - 1].longShortRatio /
+        (cur.longShortRatio / pre.longShortRatio),
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
@@ -903,10 +903,10 @@ const dealOrderHandler = async () => {
         position:
           positionResult[index].longShortRatio /
           positionResult[index - 1].longShortRatio,
-        // ratio:
-        //   positionResult[index].longShortRatio /
-        //   positionResult[index - 1].longShortRatio /
-        //   (cur.longShortRatio / pre.longShortRatio),
+        ratio:
+          positionResult[index].longShortRatio /
+          positionResult[index - 1].longShortRatio /
+          (cur.longShortRatio / pre.longShortRatio),
         timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
       if (obj.account < 1 && obj.position > 1) {
