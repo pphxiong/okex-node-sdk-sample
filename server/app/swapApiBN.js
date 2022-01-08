@@ -910,6 +910,10 @@ const dealOrderHandler = async () => {
         originAccount: cur,
         originPosition: positionResult[index],
         account: cur.longShortRatio / pre.longShortRatio,
+        accountLongShortRatioChange: cur.longShortRatio - pre.longShortRatio,
+        positionLongShortRatioChange:
+          positionResult[index].longShortRatio -
+          positionResult[index - 1].longShortRatio,
         position:
           positionResult[index].longShortRatio /
           positionResult[index - 1].longShortRatio,
@@ -919,9 +923,15 @@ const dealOrderHandler = async () => {
           (cur.longShortRatio / pre.longShortRatio),
         timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
-      if (obj.account < 1 && obj.position > 1) {
+      if (
+        obj.accountLongShortRatioChange < 0 &&
+        obj.positionLongShortRatioChange > 0
+      ) {
         obj.long = true;
-      } else if (obj.account > 1 && obj.position < 1) {
+      } else if (
+        obj.accountLongShortRatioChange > 0 &&
+        obj.positionLongShortRatioChange < 0
+      ) {
         obj.short = true;
       }
       newResult.push(obj);
