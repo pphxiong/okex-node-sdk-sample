@@ -825,6 +825,10 @@ const fnConsoleDealOrder = async () => {
     const obj = {
       originAccount: cur,
       originPosition: positionResult[index],
+      accountLongShortRatioChange: cur.longShortRatio - pre.longShortRatio,
+      positionLongShortRatioChange:
+        positionResult[index].longShortRatio -
+        positionResult[index - 1].longShortRatio,
       account: cur.longShortRatio / pre.longShortRatio,
       position:
         positionResult[index].longShortRatio /
@@ -837,13 +841,13 @@ const fnConsoleDealOrder = async () => {
     };
 
     if (
-      obj.originAccount.longShortRatio < 1 &&
-      obj.originPosition.longShortRatio > 1
+      obj.accountLongShortRatioChange < 0 &&
+      obj.positionLongShortRatioChange > 0
     ) {
       obj.long = true;
     } else if (
-      obj.originAccount.longShortRatio > 1 &&
-      obj.originPosition.longShortRatio < 1
+      obj.accountLongShortRatioChange > 0 &&
+      obj.positionLongShortRatioChange < 0
     ) {
       obj.short = true;
     }
