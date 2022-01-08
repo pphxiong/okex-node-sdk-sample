@@ -975,7 +975,7 @@ const startInterval = async () => {
   }
 
   try {
-    // const date = new Date();
+    const date = new Date();
     // const hour = date.getHours();
     // const minute = date.getMinutes();
 
