@@ -868,12 +868,12 @@ const dealOrderHandler = async () => {
 
     const { positions, availableBalance } =
       await cAuthClientBN.swap.getPosition();
-    // const holding = positions.find(
-    //   (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-    // );
+    const holdings = positions.filter(
+      (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+    );
 
     const pList = [];
-    positions.forEach((holding) => {
+    holdings.forEach((holding) => {
       const { leverage, entryPrice, positionAmt, positionSide } = holding;
       console.log(leverage, entryPrice, positionAmt, positionSide);
       if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
