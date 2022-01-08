@@ -945,12 +945,13 @@ const dealOrderHandler = async () => {
     ).toFixed(3);
 
     INIT_POSITION = Number(availPosition);
-    let position;
-    if (ratio >= 1) {
-      position = (INIT_POSITION * ratio).toFixed(3);
-    } else {
-      position = (INIT_POSITION * (2 - ratio)).toFixed(3);
-    }
+    const position = INIT_POSITION;
+    // let position;
+    // if (ratio >= 1) {
+    //   position = (INIT_POSITION * ratio).toFixed(3);
+    // } else {
+    //   position = (INIT_POSITION * (2 - ratio)).toFixed(3);
+    // }
 
     const openPayload = {
       position: Number(position),
