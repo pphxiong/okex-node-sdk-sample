@@ -37,6 +37,100 @@ let rsi1 = 8;
 let rsi2 = 12;
 let rsi3 = 24;
 
+let openOrigClientOrderId = "";
+let closeOrigClientOrderId = "";
+const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
+  const { positionSide, position = Number(INIT_POSITION), mark_price } = params;
+
+  async function postOrder(size) {
+    const type = positionSide == "LONG" ? "BUY" : "SELL";
+    console.log(
+      "openOtherOrderMoment",
+      side,
+      moment().format("YYYY-MM-DD HH:mm:ss")
+    );
+    let payload = {
+      symbol: BN_SYMBOL,
+      side: type,
+      positionSide,
+      quantity: Math.abs(size),
+      recvWindow: 5000,
+      // type: "MARKET",
+      type: "LIMIT",
+      timeInForce: "GTC",
+      price: mark_price.toFixed(2),
+    };
+    if (MODE == 2 || isMarketDeal) {
+      payload = {
+        symbol: BN_SYMBOL,
+        side: type,
+        positionSide,
+        quantity: Math.abs(size),
+        recvWindow: 5000,
+        type: "MARKET",
+      };
+    }
+    try {
+      const result = await cAuthClientBN.swap.postOrder(payload);
+      positionChange = true;
+
+      openOrigClientOrderId = result.clientOrderId;
+    } catch (e) {
+      // throw new Error('Error');
+      restart("open");
+    }
+  }
+  await postOrder(position, mark_price);
+};
+
+const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
+  const { position = INIT_POSITION, positionSide, mark_price } = holding;
+  async function postOrder(size) {
+    const type = positionSide == "LONG" ? "SELL" : "BUY";
+    let payload = {
+      symbol: BN_SYMBOL,
+      side: type,
+      positionSide,
+      quantity: Math.abs(size),
+      recvWindow: 5000,
+      // type: "MARKET",
+      type: "LIMIT",
+      timeInForce: "GTC",
+      price: mark_price.toFixed(2),
+    };
+    if (MODE == 2 || isMarketDeal) {
+      payload = {
+        symbol: BN_SYMBOL,
+        side: type,
+        positionSide,
+        quantity: Math.abs(size),
+        recvWindow: 5000,
+        type: "MARKET",
+      };
+    }
+    try {
+      console.log(payload);
+      const result = await cAuthClientBN.swap.postOrder(payload);
+      positionChange = true;
+
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+      closeOrigClientOrderId = result.clientOrderId;
+      console.log("closeOrigClientOrderId", closeOrigClientOrderId);
+      console.log("price", mark_price);
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
+      return result;
+    } catch (e) {
+      // throw new Error('Error');
+      restart("close");
+    }
+  }
+  console.log("###################################");
+  console.log("closePositionMoment", moment().format("YYYY-MM-DD HH:mm:ss"));
+  console.log("###################################");
+  return await postOrder(position, mark_price);
+};
+
 const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
@@ -593,100 +687,6 @@ function getUUID() {
   }
   return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
 }
-
-let openOrigClientOrderId = "";
-let closeOrigClientOrderId = "";
-const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
-  const { positionSide, position = Number(INIT_POSITION), mark_price } = params;
-
-  async function postOrder(size) {
-    const type = positionSide == "LONG" ? "BUY" : "SELL";
-    console.log(
-      "openOtherOrderMoment",
-      side,
-      moment().format("YYYY-MM-DD HH:mm:ss")
-    );
-    let payload = {
-      symbol: BN_SYMBOL,
-      side: type,
-      positionSide,
-      quantity: Math.abs(size),
-      recvWindow: 5000,
-      // type: "MARKET",
-      type: "LIMIT",
-      timeInForce: "GTC",
-      price: mark_price.toFixed(2),
-    };
-    if (MODE == 2 || isMarketDeal) {
-      payload = {
-        symbol: BN_SYMBOL,
-        side: type,
-        positionSide,
-        quantity: Math.abs(size),
-        recvWindow: 5000,
-        type: "MARKET",
-      };
-    }
-    try {
-      const result = await cAuthClientBN.swap.postOrder(payload);
-      positionChange = true;
-
-      openOrigClientOrderId = result.clientOrderId;
-    } catch (e) {
-      // throw new Error('Error');
-      restart("open");
-    }
-  }
-  await postOrder(position, mark_price);
-};
-
-const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
-  const { position = INIT_POSITION, positionSide, mark_price } = holding;
-  async function postOrder(size) {
-    const type = positionSide == "LONG" ? "SELL" : "BUY";
-    let payload = {
-      symbol: BN_SYMBOL,
-      side: type,
-      positionSide,
-      quantity: Math.abs(size),
-      recvWindow: 5000,
-      // type: "MARKET",
-      type: "LIMIT",
-      timeInForce: "GTC",
-      price: mark_price.toFixed(2),
-    };
-    if (MODE == 2 || isMarketDeal) {
-      payload = {
-        symbol: BN_SYMBOL,
-        side: type,
-        positionSide,
-        quantity: Math.abs(size),
-        recvWindow: 5000,
-        type: "MARKET",
-      };
-    }
-    try {
-      console.log(payload);
-      const result = await cAuthClientBN.swap.postOrder(payload);
-      positionChange = true;
-
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-      closeOrigClientOrderId = result.clientOrderId;
-      console.log("closeOrigClientOrderId", closeOrigClientOrderId);
-      console.log("price", mark_price);
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
-      return result;
-    } catch (e) {
-      // throw new Error('Error');
-      restart("close");
-    }
-  }
-  console.log("###################################");
-  console.log("closePositionMoment", moment().format("YYYY-MM-DD HH:mm:ss"));
-  console.log("###################################");
-  return await postOrder(position, mark_price);
-};
 
 let positionChange = true;
 let globalHolding = null;
