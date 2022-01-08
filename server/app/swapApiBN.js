@@ -892,12 +892,12 @@ const dealOrderHandler = async () => {
             time: moment().format("YYYY-MM-DD HH:mm:ss"),
           };
           pList.push(closePosition(closePayload, true));
-          await closePosition(closePayload, true);
+          // await closePosition(closePayload, true);
         }
       }
     });
 
-    // if (pList.length) await Promise.all(pList);
+    if (pList.length) await Promise.all(pList);
 
     // const params = { symbol: BN_SYMBOL, limit: 10, period: "2h" };
     // const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
