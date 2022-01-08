@@ -989,7 +989,7 @@ const startInterval = async () => {
     await waitTime(1000 * 40);
     await startInterval();
   } catch (e) {
-    restart();
+    restart("date");
   }
 };
 
@@ -1037,8 +1037,8 @@ process.on("uncaughtException", function (err) {
 });
 
 let exec = require("child_process").exec;
-function restart() {
-  console.log("restarting......");
+function restart(source) {
+  console.log("restarting......", source);
   setTimeout(() => {
     exec("npm run restart", function (err, stdout, stderr) {
       if (err) {
