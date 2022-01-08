@@ -836,11 +836,14 @@ const fnConsoleDealOrder = async () => {
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
-    if (originAccount.longShortRatio < 1 && originPosition.longShortRatio > 1) {
+    if (
+      obj.originAccount.longShortRatio < 1 &&
+      obj.originPosition.longShortRatio > 1
+    ) {
       obj.long = true;
     } else if (
-      originAccount.longShortRatio > 1 &&
-      originPosition.longShortRatio < 1
+      obj.originAccount.longShortRatio > 1 &&
+      obj.originPosition.longShortRatio < 1
     ) {
       obj.short = true;
     }
