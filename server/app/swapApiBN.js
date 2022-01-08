@@ -875,6 +875,7 @@ const dealOrderHandler = async () => {
     const pList = [];
     positions.forEach((holding) => {
       const { leverage, entryPrice, positionAmt, positionSide } = holding;
+      console.log(leverage, entryPrice, positionAmt, positionSide);
       if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
         let positionRatio =
           ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
@@ -987,7 +988,7 @@ const startInterval = async () => {
     }
 
     await waitTime(1000 * 40);
-    await startInterval();
+    // await startInterval();
   } catch (e) {
     restart("date");
   }
