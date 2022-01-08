@@ -872,31 +872,30 @@ const dealOrderHandler = async () => {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
-    const pList = [];
-    holdings.forEach((holding) => {
-      const { leverage, entryPrice, positionAmt, positionSide } = holding;
-      console.log(leverage, entryPrice, positionAmt, positionSide);
-      if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
-        let positionRatio =
-          ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
-          Number(mark_price);
+    // const pList = [];
+    // holdings.forEach((holding) => {
+    //   const { leverage, entryPrice, positionAmt, positionSide } = holding;
+    //   if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
+    //     let positionRatio =
+    //       ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
+    //       Number(mark_price);
 
-        positionRatio = positionSide == "LONG" ? positionRatio : -positionRatio;
+    //     positionRatio = positionSide == "LONG" ? positionRatio : -positionRatio;
 
-        if (positionRatio > 0) {
-          const closePayload = {
-            position: Math.abs(Number(positionAmt)),
-            positionSide,
-            mark_price,
-            time: moment().format("YYYY-MM-DD HH:mm:ss"),
-          };
-          pList.push(closePosition(closePayload, true));
-          // await closePosition(closePayload, true);
-        }
-      }
-    });
+    //     if (positionRatio > 0) {
+    //       const closePayload = {
+    //         position: Math.abs(Number(positionAmt)),
+    //         positionSide,
+    //         mark_price,
+    //         time: moment().format("YYYY-MM-DD HH:mm:ss"),
+    //       };
+    //       pList.push(closePosition(closePayload, true));
+    //       // await closePosition(closePayload, true);
+    //     }
+    //   }
+    // });
 
-    if (pList.length) await Promise.all(pList);
+    // if (pList.length) await Promise.all(pList);
 
     const params = { symbol: BN_SYMBOL, limit: 10, period: "2h" };
     const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
