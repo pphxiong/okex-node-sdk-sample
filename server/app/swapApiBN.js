@@ -675,6 +675,8 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       console.log("closeOrigClientOrderId", closeOrigClientOrderId);
       console.log("price", mark_price);
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
+      return result;
     } catch (e) {
       // throw new Error('Error');
       restart("close");
@@ -683,7 +685,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   console.log("###################################");
   console.log("closePositionMoment", moment().format("YYYY-MM-DD HH:mm:ss"));
   console.log("###################################");
-  await postOrder(position, mark_price);
+  return await postOrder(position, mark_price);
 };
 
 let positionChange = true;
@@ -890,7 +892,7 @@ const dealOrderHandler = async () => {
             time: moment().format("YYYY-MM-DD HH:mm:ss"),
           };
           pList.push(closePosition(closePayload, true));
-          // await closePosition(closePayload, true);
+          await closePosition(closePayload, true);
         }
       }
     });
