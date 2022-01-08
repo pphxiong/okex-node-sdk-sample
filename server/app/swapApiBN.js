@@ -961,7 +961,7 @@ const dealOrderHandler = async () => {
       mark_price,
       time: moment().format("YYYY-MM-DD HH:mm:ss"),
     };
-    // await openPosition(openPayload, true);
+    await openPosition(openPayload, true);
     console.log("pList::", pList);
     console.log("accountAndPosition::", latestResult);
   } catch (e) {
