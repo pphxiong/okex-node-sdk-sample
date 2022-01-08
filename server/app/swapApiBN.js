@@ -813,7 +813,7 @@ const countdownCancelAll = async (time) => {
 };
 
 const fnConsoleDealOrder = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 30, period: "4h" };
+  const params = { symbol: BN_SYMBOL, limit: 30, period: "1d" };
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
@@ -966,7 +966,7 @@ const startInterval = async () => {
     if (Number(minute) == 0 && hourList.includes(Number(hour))) {
       await dealOrderHandler();
     } else {
-      // await fnConsoleDealOrder();
+      await fnConsoleDealOrder();
     }
 
     await waitTime(1000 * 50);
