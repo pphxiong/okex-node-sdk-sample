@@ -976,8 +976,8 @@ const startInterval = async () => {
 
   try {
     const date = new Date();
-    // const hour = date.getHours();
-    // const minute = date.getMinutes();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
 
     // const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
     // if (true || (Number(minute) == 0 && hourList.includes(Number(hour)))) {
