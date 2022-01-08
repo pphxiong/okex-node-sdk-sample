@@ -923,14 +923,10 @@ const dealOrderHandler = async () => {
           (cur.longShortRatio / pre.longShortRatio),
         timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
-      if (
-        obj.accountLongShortRatioChange < 0 &&
-        obj.positionLongShortRatioChange > 0
-      ) {
+      if (obj.positionLongShortRatioChange > obj.accountLongShortRatioChange) {
         obj.long = true;
       } else if (
-        obj.accountLongShortRatioChange > 0 &&
-        obj.positionLongShortRatioChange < 0
+        obj.positionLongShortRatioChange < obj.accountLongShortRatioChange
       ) {
         obj.short = true;
       }
@@ -983,13 +979,13 @@ const startInterval = async () => {
     const minute = date.getMinutes();
 
     const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-    if (Number(minute) == 0 && hourList.includes(Number(hour))) {
+    if (true || (Number(minute) == 0 && hourList.includes(Number(hour)))) {
       await dealOrderHandler();
     } else {
-      await fnConsoleDealOrder();
+      // await fnConsoleDealOrder();
     }
 
-    await waitTime(1000 * 50);
+    await waitTime(1000 * 40);
     await startInterval();
   } catch (e) {
     restart();
