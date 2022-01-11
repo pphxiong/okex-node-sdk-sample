@@ -811,7 +811,7 @@ const countdownCancelAll = async (time) => {
 };
 
 const fnConsoleDealOrder = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 100, period: "2h" };
+  const params = { symbol: BN_SYMBOL, limit: 50, period: "2h" };
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
@@ -960,7 +960,7 @@ const dealOrderHandler = async () => {
     await openPosition(openPayload, true);
     // console.log("pList::", pList);
     // console.log("accountAndPosition::", latestResult);
-    console.log(openPayload);
+    // console.log(openPayload);
   } catch (e) {
     restart("dealOrder...");
   }
@@ -979,7 +979,7 @@ const startInterval = async () => {
     const minute = date.getMinutes();
 
     const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-    if (true || (Number(minute) == 0 && hourList.includes(Number(hour)))) {
+    if (Number(minute) == 0 && hourList.includes(Number(hour))) {
       await dealOrderHandler();
     } else {
       await fnConsoleDealOrder();
