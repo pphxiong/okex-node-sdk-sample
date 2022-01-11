@@ -44,11 +44,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "BUY" : "SELL";
-    console.log(
-      "openOtherOrderMoment",
-      side,
-      moment().format("YYYY-MM-DD HH:mm:ss")
-    );
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
