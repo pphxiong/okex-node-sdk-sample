@@ -839,13 +839,13 @@ const fnConsoleDealOrder = async () => {
     };
 
     if (
-      obj.originAccount.longShortRatio > 1 &&
-      obj.originPosition.longShortRatio > 1
+      Number(obj.originAccount.longShortRatio) > 1 &&
+      Number(obj.originPosition.longShortRatio) > 1
     ) {
       obj.long = true;
     } else if (
-      obj.originAccount.longShortRatio < 1 &&
-      obj.originPosition.longShortRatio < 1
+      Number(obj.originAccount.longShortRatio) < 1 &&
+      Number(obj.originPosition.longShortRatio) < 1
     ) {
       obj.short = true;
     }
