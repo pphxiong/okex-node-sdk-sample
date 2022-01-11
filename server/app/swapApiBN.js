@@ -976,11 +976,11 @@ const startInterval = async () => {
       await fnConsoleDealOrder();
     }
 
-    await waitTime(1000 * 50);
-    await startInterval();
     console.log("================================");
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
+    await waitTime(1000 * 50);
+    await startInterval();
   } catch (e) {
     restart("date");
   }
