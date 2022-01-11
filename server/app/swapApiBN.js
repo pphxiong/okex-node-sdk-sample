@@ -838,9 +838,9 @@ const fnConsoleDealOrder = async () => {
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
-    if (obj.account > 1 && obj.position > 1 && obj.ratio > 1) {
+    if (obj.account > 1 && obj.position > 1) {
       obj.long = true;
-    } else if (obj.account < 1 && obj.position < 1 && obj.ratio < 1) {
+    } else if (obj.account < 1 && obj.position < 1) {
       obj.short = true;
     }
     newResult.push(obj);
@@ -848,8 +848,8 @@ const fnConsoleDealOrder = async () => {
   });
   console.log(
     "newResult::",
-    newResult
-    // newResult.filter((item) => item.long || item.short)
+    // newResult
+    newResult.filter((item) => item.long || item.short)
   );
 };
 
