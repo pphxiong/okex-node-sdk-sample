@@ -71,6 +71,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
       };
     }
     try {
+      console.log("payload", payload);
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
 
