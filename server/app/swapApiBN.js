@@ -70,18 +70,18 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
         type: "MARKET",
       };
     }
-    console.log("payload", payload);
-    // try {
-    //   const result = await cAuthClientBN.swap.postOrder(payload);
-    //   positionChange = true;
+    try {
+      const result = await cAuthClientBN.swap.postOrder(payload);
+      positionChange = true;
 
-    //   openOrigClientOrderId = result.clientOrderId;
-    // } catch (e) {
-    //   // throw new Error('Error');
-    //   restart("open");
-    // }
+      openOrigClientOrderId = result.clientOrderId;
+      return result;
+    } catch (e) {
+      // throw new Error('Error');
+      restart("open");
+    }
   }
-  await postOrder(position, mark_price);
+  return await postOrder(position, mark_price);
 };
 
 const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
