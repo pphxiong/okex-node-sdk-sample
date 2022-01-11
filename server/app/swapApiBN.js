@@ -858,8 +858,7 @@ const dealOrderHandler = async () => {
     const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
     const mark_price = Number(data.markPrice);
 
-    const { positions, availableBalance } =
-      await cAuthClientBN.swap.getPosition();
+    const { positions } = await cAuthClientBN.swap.getPosition();
     const holdings = positions.filter(
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
@@ -930,6 +929,8 @@ const dealOrderHandler = async () => {
     if (latestResult.long || latestResult.short) {
       // const ratio = Number(latestResult.ratio);
       const positionSide = latestResult.long ? "LONG" : "SHORT";
+
+      const { availableBalance } = await cAuthClientBN.swap.getPosition();
 
       const availPosition = (
         (Number(availableBalance) * LEVERAGE) /
