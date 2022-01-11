@@ -976,7 +976,7 @@ const startInterval = async () => {
     }
 
     await waitTime(1000 * 50);
-    // await startInterval();
+    await startInterval();
   } catch (e) {
     restart("date");
   }
