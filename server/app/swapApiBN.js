@@ -961,7 +961,7 @@ const dealOrderHandler = async () => {
       mark_price,
       time: moment().format("YYYY-MM-DD HH:mm:ss"),
     };
-    await openPosition(openPayload, true);
+    // await openPosition(openPayload, true);
     console.log("pList::", pList);
     console.log("accountAndPosition::", latestResult);
   } catch (e) {
@@ -985,7 +985,7 @@ const startInterval = async () => {
     if (true || (Number(minute) == 0 && hourList.includes(Number(hour)))) {
       await dealOrderHandler();
     } else {
-      // await fnConsoleDealOrder();
+      await fnConsoleDealOrder();
     }
 
     await waitTime(1000 * 40);
