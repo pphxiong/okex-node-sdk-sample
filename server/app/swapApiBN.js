@@ -70,16 +70,16 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
         type: "MARKET",
       };
     }
-    try {
-      console.log("payload", payload);
-      const result = await cAuthClientBN.swap.postOrder(payload);
-      positionChange = true;
+    console.log("payload", payload);
+    // try {
+    //   const result = await cAuthClientBN.swap.postOrder(payload);
+    //   positionChange = true;
 
-      openOrigClientOrderId = result.clientOrderId;
-    } catch (e) {
-      // throw new Error('Error');
-      restart("open");
-    }
+    //   openOrigClientOrderId = result.clientOrderId;
+    // } catch (e) {
+    //   // throw new Error('Error');
+    //   restart("open");
+    // }
   }
   await postOrder(position, mark_price);
 };
