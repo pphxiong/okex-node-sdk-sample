@@ -839,13 +839,13 @@ const fnConsoleDealOrder = async () => {
     };
 
     if (
-      obj.accountLongShortRatioChange < 0 &&
-      obj.positionLongShortRatioChange > 0
+      obj.originAccount.longShortRatio > 1 &&
+      obj.originPosition.longShortRatio > 1
     ) {
       obj.long = true;
     } else if (
-      obj.accountLongShortRatioChange > 0 &&
-      obj.positionLongShortRatioChange < 0
+      obj.originAccount.longShortRatio < 1 &&
+      obj.originPosition.longShortRatio < 1
     ) {
       obj.short = true;
     }
@@ -854,8 +854,8 @@ const fnConsoleDealOrder = async () => {
   });
   console.log(
     "newResult::",
-    newResult
-    // newResult.filter((item) => item.long || item.short)
+    // newResult
+    newResult.filter((item) => item.long || item.short)
   );
 };
 
