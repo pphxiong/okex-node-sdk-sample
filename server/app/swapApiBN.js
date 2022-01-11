@@ -42,45 +42,45 @@ let closeOrigClientOrderId = "";
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
   const { positionSide, position = Number(INIT_POSITION), mark_price } = params;
 
-  // async function postOrder(size) {
-  //   const type = positionSide == "LONG" ? "BUY" : "SELL";
-  //   console.log(
-  //     "openOtherOrderMoment",
-  //     side,
-  //     moment().format("YYYY-MM-DD HH:mm:ss")
-  //   );
-  //   let payload = {
-  //     symbol: BN_SYMBOL,
-  //     side: type,
-  //     positionSide,
-  //     quantity: Math.abs(size),
-  //     recvWindow: 5000,
-  //     // type: "MARKET",
-  //     type: "LIMIT",
-  //     timeInForce: "GTC",
-  //     price: mark_price.toFixed(2),
-  //   };
-  //   if (MODE == 2 || isMarketDeal) {
-  //     payload = {
-  //       symbol: BN_SYMBOL,
-  //       side: type,
-  //       positionSide,
-  //       quantity: Math.abs(size),
-  //       recvWindow: 5000,
-  //       type: "MARKET",
-  //     };
-  //   }
-  //   try {
-  //     const result = await cAuthClientBN.swap.postOrder(payload);
-  //     positionChange = true;
+  async function postOrder(size) {
+    const type = positionSide == "LONG" ? "BUY" : "SELL";
+    console.log(
+      "openOtherOrderMoment",
+      side,
+      moment().format("YYYY-MM-DD HH:mm:ss")
+    );
+    let payload = {
+      symbol: BN_SYMBOL,
+      side: type,
+      positionSide,
+      quantity: Math.abs(size),
+      recvWindow: 5000,
+      // type: "MARKET",
+      type: "LIMIT",
+      timeInForce: "GTC",
+      price: mark_price.toFixed(2),
+    };
+    if (MODE == 2 || isMarketDeal) {
+      payload = {
+        symbol: BN_SYMBOL,
+        side: type,
+        positionSide,
+        quantity: Math.abs(size),
+        recvWindow: 5000,
+        type: "MARKET",
+      };
+    }
+    try {
+      const result = await cAuthClientBN.swap.postOrder(payload);
+      positionChange = true;
 
-  //     openOrigClientOrderId = result.clientOrderId;
-  //   } catch (e) {
-  //     // throw new Error('Error');
-  //     restart("open");
-  //   }
-  // }
-  // await postOrder(position, mark_price);
+      openOrigClientOrderId = result.clientOrderId;
+    } catch (e) {
+      // throw new Error('Error');
+      restart("open");
+    }
+  }
+  await postOrder(position, mark_price);
 };
 
 const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
