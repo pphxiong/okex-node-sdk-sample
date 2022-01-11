@@ -864,32 +864,7 @@ const dealOrderHandler = async () => {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
-    const pList = [];
-    holdings.forEach((holding) => {
-      const { leverage, entryPrice, positionAmt, positionSide } = holding;
-      if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
-        let positionRatio =
-          ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
-          Number(mark_price);
-
-        positionRatio = positionSide == "LONG" ? positionRatio : -positionRatio;
-
-        if (positionRatio > 0) {
-          const closePayload = {
-            position: Math.abs(Number(positionAmt)),
-            positionSide,
-            mark_price,
-            time: moment().format("YYYY-MM-DD HH:mm:ss"),
-          };
-          pList.push(closePosition(closePayload, true));
-          // await closePosition(closePayload, true);
-        }
-      }
-    });
-
-    if (pList.length) await Promise.all(pList);
-
-    const params = { symbol: BN_SYMBOL, limit: 10, period: "2h" };
+    const params = { symbol: BN_SYMBOL, limit: 10, period: "30m" };
     const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
       params
     );
@@ -901,11 +876,11 @@ const dealOrderHandler = async () => {
       const obj = {
         originAccount: cur,
         originPosition: positionResult[index],
-        account: cur.longShortRatio / pre.longShortRatio,
         accountLongShortRatioChange: cur.longShortRatio - pre.longShortRatio,
         positionLongShortRatioChange:
           positionResult[index].longShortRatio -
           positionResult[index - 1].longShortRatio,
+        account: cur.longShortRatio / pre.longShortRatio,
         position:
           positionResult[index].longShortRatio /
           positionResult[index - 1].longShortRatio,
@@ -915,11 +890,9 @@ const dealOrderHandler = async () => {
           (cur.longShortRatio / pre.longShortRatio),
         timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
-      if (obj.positionLongShortRatioChange > obj.accountLongShortRatioChange) {
+      if (obj.account > 1 && obj.position > 1) {
         obj.long = true;
-      } else if (
-        obj.positionLongShortRatioChange < obj.accountLongShortRatioChange
-      ) {
+      } else if (obj.account < 1 && obj.position < 1) {
         obj.short = true;
       }
       newResult.push(obj);
@@ -927,34 +900,54 @@ const dealOrderHandler = async () => {
     });
 
     const latestResult = newResult[newResult.length - 1];
-    const ratio = Number(latestResult.ratio);
-    const positionSide = ratio >= 1 ? "LONG" : "SHORT";
+    if (latestResult.long || latestResult.short) {
+      const pList = [];
+      holdings.forEach((holding) => {
+        const { leverage, entryPrice, positionAmt, positionSide } = holding;
+        if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
+          let positionRatio =
+            ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
+            Number(mark_price);
 
-    const availPosition = (
-      (Number(availableBalance) * LEVERAGE) /
-      mark_price /
-      POSITION_RATIO
-    ).toFixed(3);
+          positionRatio =
+            positionSide == "LONG" ? positionRatio : -positionRatio;
 
-    INIT_POSITION = Number(availPosition);
-    const position = INIT_POSITION;
-    // let position;
-    // if (ratio >= 1) {
-    //   position = (INIT_POSITION * ratio).toFixed(3);
-    // } else {
-    //   position = (INIT_POSITION * (2 - ratio)).toFixed(3);
-    // }
+          // if (positionRatio > 0) {
+          const closePayload = {
+            position: Math.abs(Number(positionAmt)),
+            positionSide,
+            mark_price,
+            time: moment().format("YYYY-MM-DD HH:mm:ss"),
+          };
+          pList.push(closePosition(closePayload, true));
+          // }
+        }
+      });
 
-    const openPayload = {
-      position: Number(position),
-      positionSide,
-      mark_price,
-      time: moment().format("YYYY-MM-DD HH:mm:ss"),
-    };
-    await openPosition(openPayload, true);
-    // console.log("pList::", pList);
-    // console.log("accountAndPosition::", latestResult);
-    // console.log(openPayload);
+      if (pList.length) await Promise.all(pList);
+    }
+
+    if (latestResult.long || latestResult.short) {
+      // const ratio = Number(latestResult.ratio);
+      const positionSide = latestResult.long ? "LONG" : "SHORT";
+
+      const availPosition = (
+        (Number(availableBalance) * LEVERAGE) /
+        mark_price /
+        POSITION_RATIO
+      ).toFixed(3);
+
+      INIT_POSITION = Number(availPosition);
+      const position = INIT_POSITION;
+
+      const openPayload = {
+        position: Number(position),
+        positionSide,
+        mark_price,
+        time: moment().format("YYYY-MM-DD HH:mm:ss"),
+      };
+      await openPosition(openPayload, true);
+    }
   } catch (e) {
     restart("dealOrder...");
   }
@@ -969,17 +962,20 @@ const startInterval = async () => {
 
   try {
     const date = new Date();
-    const hour = date.getHours();
+    // const hour = date.getHours();
     const minute = date.getMinutes();
 
-    const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-    if (Number(minute) == 0 && hourList.includes(Number(hour))) {
+    // const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
+    if (
+      Number(minute) == 0 ||
+      Number(minute) == 30 /* && hourList.includes(Number(hour)) */
+    ) {
       await dealOrderHandler();
     } else {
       await fnConsoleDealOrder();
     }
 
-    await waitTime(1000 * 40);
+    await waitTime(1000 * 50);
     // await startInterval();
   } catch (e) {
     restart("date");
