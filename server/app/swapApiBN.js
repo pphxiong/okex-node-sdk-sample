@@ -978,6 +978,9 @@ const startInterval = async () => {
 
     await waitTime(1000 * 50);
     await startInterval();
+    console.log("================================");
+    console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
+    console.log("================================");
   } catch (e) {
     restart("date");
   }
