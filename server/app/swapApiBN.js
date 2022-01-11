@@ -962,8 +962,9 @@ const dealOrderHandler = async () => {
       time: moment().format("YYYY-MM-DD HH:mm:ss"),
     };
     // await openPosition(openPayload, true);
-    console.log("pList::", pList);
-    console.log("accountAndPosition::", latestResult);
+    // console.log("pList::", pList);
+    // console.log("accountAndPosition::", latestResult);
+    console.log(openPayload);
   } catch (e) {
     restart("dealOrder...");
   }
