@@ -983,9 +983,9 @@ const startInterval = async () => {
 
     // const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
     if (
-      minute == 1 ||
-      minute == "01" ||
-      minute == 31 /* && hourList.includes(Number(hour)) */
+      minute == 0 ||
+      minute == "00" ||
+      minute == 30 /* && hourList.includes(Number(hour)) */
     ) {
       await dealOrderHandler();
     } else {
