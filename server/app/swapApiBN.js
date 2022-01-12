@@ -911,15 +911,19 @@ const dealOrderHandler = async () => {
           positionRatio =
             positionSide == "LONG" ? positionRatio : -positionRatio;
 
-          // if (positionRatio > 0) {
-          const closePayload = {
-            position: Math.abs(Number(positionAmt)),
-            positionSide,
-            mark_price,
-            time: moment().format("YYYY-MM-DD HH:mm:ss"),
-          };
-          pList.push(closePosition(closePayload, true));
-          // }
+          if (
+            (latestResult.long && positionSide == "SHORT") ||
+            (latestResult.short &&
+              positionSide == "LONG") /* positionRatio > 0 */
+          ) {
+            const closePayload = {
+              position: Math.abs(Number(positionAmt)),
+              positionSide,
+              mark_price,
+              time: moment().format("YYYY-MM-DD HH:mm:ss"),
+            };
+            pList.push(closePosition(closePayload, true));
+          }
         }
       });
 
