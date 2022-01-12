@@ -825,7 +825,7 @@ const fnGetAverage = (arr) => {
       sum = 0;
     }
   }
-  console.log(newArr); // [6, 16, 26, 36, 46, 56]
+  // console.log(newArr); // [6, 16, 26, 36, 46, 56]
   return newArr;
 };
 
@@ -864,7 +864,7 @@ const fnConsoleDealOrder = async () => {
   //   // newResult.filter((item) => item.long || item.short)
   // );
   console.log("5m********************");
-  console.log("newResult", newResult[newResult.length - 1]);
+  console.log("newResult", newResult);
   console.log("End 5m********************");
 };
 
@@ -1007,7 +1007,7 @@ const startInterval = async () => {
       return cur;
     });
     console.log("30m********************");
-    console.log("newResult", newResult[newResult.length - 1]);
+    console.log("newResult", newResult);
     console.log("End 30m********************");
 
     const date = new Date();
