@@ -864,7 +864,7 @@ const fnConsoleDealOrder = async () => {
   //   // newResult.filter((item) => item.long || item.short)
   // );
   console.log("5m********************");
-  console.log("newResult", newResult);
+  console.log("newResult", newResult[newResult.length - 1]);
   console.log("End 5m********************");
 };
 
@@ -1007,7 +1007,7 @@ const startInterval = async () => {
       return cur;
     });
     console.log("30m********************");
-    console.log("newResult", newResult);
+    console.log("newResult", newResult[newResult.length - 1]);
     console.log("End 30m********************");
 
     const date = new Date();
