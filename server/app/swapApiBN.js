@@ -811,7 +811,7 @@ const countdownCancelAll = async (time) => {
 };
 
 const fnConsoleDealOrder = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 30, period: "30m" };
+  const params = { symbol: BN_SYMBOL, limit: 30, period: "3m" };
   const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
     params
   );
@@ -863,7 +863,7 @@ const dealOrderHandler = async () => {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
-    const params = { symbol: BN_SYMBOL, limit: 10, period: "3m" };
+    const params = { symbol: BN_SYMBOL, limit: 10, period: "30m" };
     const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
       params
     );
