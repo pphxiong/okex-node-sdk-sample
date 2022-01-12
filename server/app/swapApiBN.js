@@ -813,7 +813,7 @@ const countdownCancelAll = async (time) => {
 const fnGetAverage = (arr) => {
   const newArr = []; // 新数组，用来放平局值的
   let sum = 0; // 计算每五个数的和，用来计算平均值
-  for (const i = 0; i < arr.length; i += 1) {
+  for (let i = 0; i < arr.length; i += 1) {
     // console.log(i); // 0~29
     // console.log(arr[i]); //arr[0]~arr[29]
     // 把数组中的所有数字累加
