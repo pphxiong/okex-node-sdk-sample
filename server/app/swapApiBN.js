@@ -810,31 +810,43 @@ const countdownCancelAll = async (time) => {
   await cAuthClientBN.swap.countdownCancelAll(payload);
 };
 
+const fnGetAverage = (arr) => {
+  const newArr = []; // 新数组，用来放平局值的
+  let sum = 0; // 计算每五个数的和，用来计算平均值
+  for (const i = 0; i < arr.length; i += 1) {
+    // console.log(i); // 0~29
+    // console.log(arr[i]); //arr[0]~arr[29]
+    // 把数组中的所有数字累加
+    sum += arr[i];
+    if ((i + 1) % 6 == 0) {
+      // 已经加够6个数字，要计算平均值，并且放到新数组
+      newArr.push(sum / 6); // 计算出的平均值放到新数组中
+      // 计算平均值结束将sum清0
+      sum = 0;
+    }
+  }
+  console.log(newArr); // [6, 16, 26, 36, 46, 56]
+  return newArr;
+};
+
 const fnConsoleDealOrder = async () => {
   const params = { symbol: BN_SYMBOL, limit: 30, period: "5m" };
-  const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+  let accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(params);
+  let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
     params
   );
-  const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
-    params
+  accountResult = fnGetAverage(
+    accountResult.map((item) => Number(item.longShortRatio))
+  );
+  positionResult = fnGetAverage(
+    positionResult.map((item) => Number(item.longShortRatio))
   );
   const newResult = [];
   accountResult.reduce((pre, cur, index) => {
     const obj = {
-      originAccount: cur,
-      originPosition: positionResult[index],
-      accountLongShortRatioChange: cur.longShortRatio - pre.longShortRatio,
-      positionLongShortRatioChange:
-        positionResult[index].longShortRatio -
-        positionResult[index - 1].longShortRatio,
-      account: cur.longShortRatio / pre.longShortRatio,
-      position:
-        positionResult[index].longShortRatio /
-        positionResult[index - 1].longShortRatio,
-      ratio:
-        positionResult[index].longShortRatio /
-        positionResult[index - 1].longShortRatio /
-        (cur.longShortRatio / pre.longShortRatio),
+      account: cur / pre,
+      position: positionResult[index] / positionResult[index - 1],
+      ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
@@ -863,32 +875,28 @@ const dealOrderHandler = async () => {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
-    const params = { symbol: BN_SYMBOL, limit: 10, period: "30m" };
-    const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+    const params = { symbol: BN_SYMBOL, limit: 30, period: "5m" };
+    let accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
       params
     );
-    const positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
+    let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
       params
+    );
+    accountResult = fnGetAverage(
+      accountResult.map((item) => Number(item.longShortRatio))
+    );
+    positionResult = fnGetAverage(
+      positionResult.map((item) => Number(item.longShortRatio))
     );
     const newResult = [];
     accountResult.reduce((pre, cur, index) => {
       const obj = {
-        originAccount: cur,
-        originPosition: positionResult[index],
-        accountLongShortRatioChange: cur.longShortRatio - pre.longShortRatio,
-        positionLongShortRatioChange:
-          positionResult[index].longShortRatio -
-          positionResult[index - 1].longShortRatio,
-        account: cur.longShortRatio / pre.longShortRatio,
-        position:
-          positionResult[index].longShortRatio /
-          positionResult[index - 1].longShortRatio,
-        ratio:
-          positionResult[index].longShortRatio /
-          positionResult[index - 1].longShortRatio /
-          (cur.longShortRatio / pre.longShortRatio),
+        account: cur / pre,
+        position: positionResult[index] / positionResult[index - 1],
+        ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
         timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
+
       if (obj.account > 1 && obj.position > 1) {
         obj.long = true;
       } else if (obj.account < 1 && obj.position < 1) {
