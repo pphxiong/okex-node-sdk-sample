@@ -863,7 +863,7 @@ const dealOrderHandler = async () => {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
-    const params = { symbol: BN_SYMBOL, limit: 10, period: "30m" };
+    const params = { symbol: BN_SYMBOL, limit: 10, period: "3m" };
     const accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
       params
     );
@@ -952,6 +952,9 @@ const dealOrderHandler = async () => {
         time: moment().format("YYYY-MM-DD HH:mm:ss"),
       };
       await openPosition(openPayload, true);
+      console.log("+++++++++++++++++++++++++");
+      console.log("latesetResult: ", latestResult);
+      console.log("+++++++++++++++++++++++++");
     }
   } catch (e) {
     restart("dealOrder...");
@@ -972,8 +975,9 @@ const startInterval = async () => {
 
     // const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
     if (
-      Number(minute) == 0 ||
-      Number(minute) == 30 /* && hourList.includes(Number(hour)) */
+      minute == 1 ||
+      minute == "01" ||
+      minute == 31 /* && hourList.includes(Number(hour)) */
     ) {
       await dealOrderHandler();
     } else {
