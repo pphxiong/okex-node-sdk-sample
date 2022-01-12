@@ -858,11 +858,14 @@ const fnConsoleDealOrder = async () => {
     newResult.push(obj);
     return cur;
   });
-  console.log(
-    "newResult::",
-    newResult
-    // newResult.filter((item) => item.long || item.short)
-  );
+  // console.log(
+  //   "newResult::",
+  //   newResult
+  //   // newResult.filter((item) => item.long || item.short)
+  // );
+  console.log("5m********************");
+  console.log("newResult", newResult);
+  console.log("End 5m********************");
 };
 
 const dealOrderHandler = async () => {
@@ -977,6 +980,36 @@ const startInterval = async () => {
   }
 
   try {
+    const params = { symbol: BN_SYMBOL, limit: 5, period: "30m" };
+    let accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
+      params
+    );
+    let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
+      params
+    );
+    accountResult = accountResult.map((item) => Number(item.longShortRatio));
+    positionResult = positionResult.map((item) => Number(item.longShortRatio));
+    const newResult = [];
+    accountResult.reduce((pre, cur, index) => {
+      const obj = {
+        account: cur / pre,
+        position: positionResult[index] / positionResult[index - 1],
+        ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
+        timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      };
+
+      if (obj.account > 1 && obj.position > 1) {
+        obj.long = true;
+      } else if (obj.account < 1 && obj.position < 1) {
+        obj.short = true;
+      }
+      newResult.push(obj);
+      return cur;
+    });
+    console.log("30m********************");
+    console.log("newResult", newResult);
+    console.log("End 30m********************");
+
     const date = new Date();
     // const hour = date.getHours();
     const minute = date.getMinutes();
