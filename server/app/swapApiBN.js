@@ -44,7 +44,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "BUY" : "SELL";
-    const dealRatio = 0.05;
+    const dealRatio = 0.025;
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 - dealRatio / LEVERAGE);
@@ -90,7 +90,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   const { position = INIT_POSITION, positionSide, mark_price } = holding;
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "SELL" : "BUY";
-    const dealRatio = 0.05;
+    const dealRatio = 0.025;
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 + dealRatio / LEVERAGE);
