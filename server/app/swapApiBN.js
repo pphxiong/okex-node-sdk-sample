@@ -832,7 +832,7 @@ const fnGetAverage = (arr) => {
 };
 
 const fnConsoleDealOrder = async () => {
-  const params = { symbol: BN_SYMBOL, limit: 150, period: "5m" };
+  const params = { symbol: BN_SYMBOL, limit: 450, period: "5m" };
   let accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(params);
   let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
     params
@@ -992,7 +992,7 @@ const startInterval = async () => {
   }
 
   try {
-    const params = { symbol: BN_SYMBOL, limit: 25, period: "30m" };
+    const params = { symbol: BN_SYMBOL, limit: 75, period: "30m" };
     let accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
       params
     );
