@@ -810,7 +810,7 @@ const countdownCancelAll = async (time) => {
   await cAuthClientBN.swap.countdownCancelAll(payload);
 };
 
-const fnGetAverage = (arr, timestamp) => {
+const fnGetAverage = (arr) => {
   const newArr = []; // 新数组，用来放平局值的
   let sum = 0; // 计算每五个数的和，用来计算平均值
   for (let i = 0; i < arr.length; i += 1) {
@@ -826,7 +826,7 @@ const fnGetAverage = (arr, timestamp) => {
     }
   }
   // console.log(newArr); // [6, 16, 26, 36, 46, 56]
-  return { average: newArr, timestamp };
+  return { average: newArr, timestamp: arr.map((item) => item.timestamp) };
 };
 
 const fnConsoleDealOrder = async () => {
@@ -836,12 +836,12 @@ const fnConsoleDealOrder = async () => {
     params
   );
   accountResult = fnGetAverage(
-    accountResult,
-    accountResult[accountResult.length - 1].timestamp
+    accountResult
+    // accountResult[accountResult.length - 1].timestamp
   );
   positionResult = fnGetAverage(
-    positionResult,
-    positionResult[positionResult.length - 1].timestamp
+    positionResult
+    // positionResult[positionResult.length - 1].timestamp
   );
   const newResult = [];
   accountResult.average.reduce((pre, cur, index) => {
@@ -853,7 +853,9 @@ const fnConsoleDealOrder = async () => {
         positionResult.average[index] /
         positionResult.average[index - 1] /
         (cur / pre),
-      timestamp: moment(accountResult.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      timestamp: moment(accountResult.timestamp[index]).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
     };
 
     if (obj.account > 1 && obj.position > 1) {
