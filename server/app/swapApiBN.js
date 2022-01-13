@@ -837,15 +837,11 @@ const fnConsoleDealOrder = async () => {
   );
   accountResult = fnGetAverage(
     accountResult.map((item) => Number(item.longShortRatio)),
-    accountResult[accountResult.length - 1].timestamp.format(
-      "YYYY-MM-DD HH:mm:ss"
-    )
+    accountResult[accountResult.length - 1].timestamp
   );
   positionResult = fnGetAverage(
     positionResult.map((item) => Number(item.longShortRatio)),
-    positionResult[positionResult.length - 1].timestamp.format(
-      "YYYY-MM-DD HH:mm:ss"
-    )
+    positionResult[positionResult.length - 1].timestamp
   );
   const newResult = [];
   accountResult.reduce((pre, cur, index) => {
@@ -897,15 +893,11 @@ const dealOrderHandler = async () => {
     );
     accountResult = fnGetAverage(
       accountResult.map((item) => Number(item.longShortRatio)),
-      accountResult[accountResult.length - 1].timestamp.format(
-        "YYYY-MM-DD HH:mm:ss"
-      )
+      accountResult[accountResult.length - 1].timestamp
     );
     positionResult = fnGetAverage(
       positionResult.map((item) => Number(item.longShortRatio)),
-      positionResult[positionResult.length - 1].timestamp.format(
-        "YYYY-MM-DD HH:mm:ss"
-      )
+      positionResult[positionResult.length - 1].timestamp
     );
     const newResult = [];
     accountResult.reduce((pre, cur, index) => {
