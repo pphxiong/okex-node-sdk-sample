@@ -1003,16 +1003,21 @@ const startInterval = async () => {
     let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
       params
     );
-    const timestamp = accountResult[accountResult.length - 1].timestamp;
-    accountResult = accountResult.map((item) => Number(item.longShortRatio));
-    positionResult = positionResult.map((item) => Number(item.longShortRatio));
+    // const timestamp = accountResult[accountResult.length - 1].timestamp;
+    // accountResult = accountResult.map((item) => Number(item.longShortRatio));
+    // positionResult = positionResult.map((item) => Number(item.longShortRatio));
     const newResult = [];
     accountResult.reduce((pre, cur, index) => {
       const obj = {
-        account: cur / pre,
-        position: positionResult[index] / positionResult[index - 1],
-        ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
-        timestamp: moment(timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        account: cur.longShortRatio / pre.longShortRatio,
+        position:
+          positionResult[index].longShortRatio /
+          positionResult[index - 1].longShortRatio,
+        ratio:
+          positionResult[index].longShortRatio /
+          positionResult[index - 1].longShortRatio /
+          (cur.longShortRatio / pre.longShortRatio),
+        timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
 
       if (obj.account > 1 && obj.position > 1) {
