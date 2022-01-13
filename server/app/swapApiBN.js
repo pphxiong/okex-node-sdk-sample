@@ -840,7 +840,7 @@ const fnConsoleDealOrder = async () => {
     accountResult[accountResult.length - 1].timestamp
   );
   positionResult = fnGetAverage(
-    accountResult,
+    positionResult,
     positionResult[positionResult.length - 1].timestamp
   );
   const newResult = [];
