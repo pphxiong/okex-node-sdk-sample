@@ -822,7 +822,7 @@ const fnGetAverage = (arr) => {
     if ((i + 1) % 6 == 0) {
       // 已经加够6个数字，要计算平均值，并且放到新数组
       newArr.push(sum / 6); // 计算出的平均值放到新数组中
-      timestampArr.push(arr.timestamp);
+      timestampArr.push(arr[i].timestamp);
       // 计算平均值结束将sum清0
       sum = 0;
     }
