@@ -835,7 +835,6 @@ const fnConsoleDealOrder = async () => {
   let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
     params
   );
-  console.log("accountResult", accountResult);
   accountResult = fnGetAverage(
     accountResult,
     accountResult[accountResult.length - 1].timestamp
@@ -845,16 +844,12 @@ const fnConsoleDealOrder = async () => {
     positionResult[positionResult.length - 1].timestamp
   );
   const newResult = [];
-  accountResult.reduce((pre, cur, index) => {
+  accountResult.average.reduce((pre, cur, index) => {
     const obj = {
-      account: cur.average / pre.average,
-      position:
-        positionResult[index].average / positionResult[index - 1].average,
-      ratio:
-        positionResult[index].average /
-        positionResult[index - 1].average /
-        (cur.average / pre.average),
-      timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      account: cur / pre,
+      position: positionResult[index] / positionResult[index - 1],
+      ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
+      // timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
     if (obj.account > 1 && obj.position > 1) {
@@ -872,6 +867,10 @@ const fnConsoleDealOrder = async () => {
   // );
   console.log("5m********************");
   console.log("newResult", newResult);
+  console.log(
+    "timestamp",
+    moment(accountResult.timestamp).format("YYYY-MM-DD HH:mm:ss")
+  );
   console.log("End 5m********************");
 };
 
