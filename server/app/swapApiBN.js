@@ -44,6 +44,13 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "BUY" : "SELL";
+    const dealRatio = 0.05;
+    let price = mark_price;
+    if (positionSide == "LONG") {
+      price = mark_price * (1 - dealRatio / LEVERAGE);
+    } else {
+      price = mark_price * (1 + dealRatio / LEVERAGE);
+    }
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
@@ -53,7 +60,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price: mark_price.toFixed(2),
+      price: price.toFixed(2),
     };
     if (MODE == 2 || isMarketDeal) {
       payload = {
@@ -83,6 +90,13 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   const { position = INIT_POSITION, positionSide, mark_price } = holding;
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "SELL" : "BUY";
+    const dealRatio = 0.05;
+    let price = mark_price;
+    if (positionSide == "LONG") {
+      price = mark_price * (1 + dealRatio / LEVERAGE);
+    } else {
+      price = mark_price * (1 - dealRatio / LEVERAGE);
+    }
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
@@ -92,7 +106,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       // type: "MARKET",
       type: "LIMIT",
       timeInForce: "GTC",
-      price: mark_price.toFixed(2),
+      price: price.toFixed(2),
     };
     if (MODE == 2 || isMarketDeal) {
       payload = {
@@ -945,7 +959,7 @@ const dealOrderHandler = async () => {
               mark_price,
               time: moment().format("YYYY-MM-DD HH:mm:ss"),
             };
-            pList.push(closePosition(closePayload, true));
+            pList.push(closePosition(closePayload, false));
           }
         }
       });
@@ -968,13 +982,16 @@ const dealOrderHandler = async () => {
       INIT_POSITION = Number(availPosition);
       const position = INIT_POSITION;
 
-      const openPayload = {
-        position: Number(position),
-        positionSide,
-        mark_price,
-        time: moment().format("YYYY-MM-DD HH:mm:ss"),
-      };
-      await openPosition(openPayload, true);
+      if (Number(position)) {
+        const openPayload = {
+          position: Number(position),
+          positionSide,
+          mark_price,
+          time: moment().format("YYYY-MM-DD HH:mm:ss"),
+        };
+        await openPosition(openPayload, false);
+      }
+
       console.log("+++++++++++++++++++++++++");
       console.log("latesetResult: ", latestResult);
       console.log("+++++++++++++++++++++++++");
@@ -986,7 +1003,7 @@ const dealOrderHandler = async () => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 15) {
+  if (RESTART_TIME >= 15 / 5) {
     restart();
     return;
   }
@@ -1033,20 +1050,22 @@ const startInterval = async () => {
     const minute = date.getMinutes();
 
     // const hourList = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-    if (
-      minute == 0 ||
-      minute == "00" ||
-      minute == 30 /* && hourList.includes(Number(hour)) */
-    ) {
-      await dealOrderHandler();
-    } else {
-      await fnConsoleDealOrder();
-    }
+    // if (
+    //   minute == 0 ||
+    //   minute == "00" ||
+    //   minute == 30 /* && hourList.includes(Number(hour)) */
+    // ) {
+    //   await dealOrderHandler();
+    // } else {
+    //   await fnConsoleDealOrder();
+    // }
+
+    await dealOrderHandler();
 
     console.log("================================");
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
-    await waitTime(1000 * 55);
+    await waitTime(1000 * 55 * 5);
     await startInterval();
   } catch (e) {
     restart("date");
