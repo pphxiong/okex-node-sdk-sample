@@ -895,25 +895,21 @@ const dealOrderHandler = async () => {
     let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
       params
     );
-    accountResult = fnGetAverage(
-      accountResult,
-      accountResult[accountResult.length - 1].timestamp
-    );
-    positionResult = fnGetAverage(
-      positionResult,
-      positionResult[positionResult.length - 1].timestamp
-    );
+    accountResult = fnGetAverage(accountResult);
+    positionResult = fnGetAverage(positionResult);
     const newResult = [];
-    accountResult.reduce((pre, cur, index) => {
+    accountResult.average.reduce((pre, cur, index) => {
       const obj = {
-        account: cur.average / pre.average,
+        account: cur / pre,
         position:
           positionResult[index].average / positionResult[index - 1].average,
         ratio:
           positionResult[index].average /
           positionResult[index - 1].average /
-          (cur.average / pre.average),
-        timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          (cur / pre),
+        timestamp: moment(accountResult.timestamp[index]).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
       };
 
       if (obj.account > 1 && obj.position > 1) {
