@@ -810,7 +810,7 @@ const countdownCancelAll = async (time) => {
   await cAuthClientBN.swap.countdownCancelAll(payload);
 };
 
-const fnGetAverage = (arr) => {
+const fnGetAverage = (arr, timestamp) => {
   const newArr = []; // 新数组，用来放平局值的
   let sum = 0; // 计算每五个数的和，用来计算平均值
   for (let i = 0; i < arr.length; i += 1) {
@@ -826,7 +826,7 @@ const fnGetAverage = (arr) => {
     }
   }
   // console.log(newArr); // [6, 16, 26, 36, 46, 56]
-  return newArr;
+  return { average: newArr, timestamp };
 };
 
 const fnConsoleDealOrder = async () => {
@@ -836,17 +836,27 @@ const fnConsoleDealOrder = async () => {
     params
   );
   accountResult = fnGetAverage(
-    accountResult.map((item) => Number(item.longShortRatio))
+    accountResult.map((item) => Number(item.longShortRatio)),
+    accountResult[accountResult.length - 1].timestamp.format(
+      "YYYY-MM-DD HH:mm:ss"
+    )
   );
   positionResult = fnGetAverage(
-    positionResult.map((item) => Number(item.longShortRatio))
+    positionResult.map((item) => Number(item.longShortRatio)),
+    positionResult[positionResult.length - 1].timestamp.format(
+      "YYYY-MM-DD HH:mm:ss"
+    )
   );
   const newResult = [];
   accountResult.reduce((pre, cur, index) => {
     const obj = {
-      account: cur / pre,
-      position: positionResult[index] / positionResult[index - 1],
-      ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
+      account: cur.average / pre.average,
+      position:
+        positionResult[index].average / positionResult[index - 1].average,
+      ratio:
+        positionResult[index].average /
+        positionResult[index - 1].average /
+        (cur.average / pre.average),
       timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
@@ -886,17 +896,27 @@ const dealOrderHandler = async () => {
       params
     );
     accountResult = fnGetAverage(
-      accountResult.map((item) => Number(item.longShortRatio))
+      accountResult.map((item) => Number(item.longShortRatio)),
+      accountResult[accountResult.length - 1].timestamp.format(
+        "YYYY-MM-DD HH:mm:ss"
+      )
     );
     positionResult = fnGetAverage(
-      positionResult.map((item) => Number(item.longShortRatio))
+      positionResult.map((item) => Number(item.longShortRatio)),
+      positionResult[positionResult.length - 1].timestamp.format(
+        "YYYY-MM-DD HH:mm:ss"
+      )
     );
     const newResult = [];
     accountResult.reduce((pre, cur, index) => {
       const obj = {
-        account: cur / pre,
-        position: positionResult[index] / positionResult[index - 1],
-        ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
+        account: cur.average / pre.average,
+        position:
+          positionResult[index].average / positionResult[index - 1].average,
+        ratio:
+          positionResult[index].average /
+          positionResult[index - 1].average /
+          (cur.average / pre.average),
         timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
 
