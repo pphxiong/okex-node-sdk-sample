@@ -817,7 +817,7 @@ const fnGetAverage = (arr, timestamp) => {
     // console.log(i); // 0~29
     // console.log(arr[i]); //arr[0]~arr[29]
     // 把数组中的所有数字累加
-    sum += arr[i].longShortRatio;
+    sum += Number(arr[i].longShortRatio);
     if ((i + 1) % 6 == 0) {
       // 已经加够6个数字，要计算平均值，并且放到新数组
       newArr.push(sum / 6); // 计算出的平均值放到新数组中
