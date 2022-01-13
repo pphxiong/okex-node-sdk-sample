@@ -967,34 +967,34 @@ const dealOrderHandler = async () => {
     //   if (pList.length) await Promise.all(pList);
     // }
 
-    if (latestResult.long || latestResult.short) {
-      const positionSide = latestResult.long ? "LONG" : "SHORT";
+    // if (latestResult.long || latestResult.short) {
+    //   const positionSide = latestResult.long ? "LONG" : "SHORT";
 
-      // const { availableBalance } = await cAuthClientBN.swap.getPosition();
+    //   // const { availableBalance } = await cAuthClientBN.swap.getPosition();
 
-      // const availPosition = (
-      //   (Number(availableBalance) * LEVERAGE) /
-      //   mark_price /
-      //   POSITION_RATIO
-      // ).toFixed(3);
+    //   // const availPosition = (
+    //   //   (Number(availableBalance) * LEVERAGE) /
+    //   //   mark_price /
+    //   //   POSITION_RATIO
+    //   // ).toFixed(3);
 
-      // INIT_POSITION = Number(availPosition);
-      // const position = INIT_POSITION;
+    //   // INIT_POSITION = Number(availPosition);
+    //   // const position = INIT_POSITION;
 
-      // if (Number(position)) {
-      //   const openPayload = {
-      //     position: Number(position),
-      //     positionSide,
-      //     mark_price,
-      //     time: moment().format("YYYY-MM-DD HH:mm:ss"),
-      //   };
-      //   await openPosition(openPayload, false);
-      // }
+    //   // if (Number(position)) {
+    //   //   const openPayload = {
+    //   //     position: Number(position),
+    //   //     positionSide,
+    //   //     mark_price,
+    //   //     time: moment().format("YYYY-MM-DD HH:mm:ss"),
+    //   //   };
+    //   //   await openPosition(openPayload, false);
+    //   // }
 
-      console.log("+++++++++++++++++++++++++");
-      console.log("latesetResult: ", latestResult);
-      console.log("+++++++++++++++++++++++++");
-    }
+    //   console.log("+++++++++++++++++++++++++");
+    //   console.log("latesetResult: ", latestResult);
+    //   console.log("+++++++++++++++++++++++++");
+    // }
   } catch (e) {
     restart("dealOrder...");
   }
