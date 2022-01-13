@@ -888,7 +888,7 @@ const dealOrderHandler = async () => {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
 
-    const params = { symbol: BN_SYMBOL, limit: 30, period: "5m" };
+    const params = { symbol: BN_SYMBOL, limit: 150, period: "5m" };
     let accountResult = await cAuthClientBN.swap.topLongShortAccountRatio(
       params
     );
@@ -1046,7 +1046,7 @@ const startInterval = async () => {
     console.log("================================");
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
-    await waitTime(1000 * 60);
+    await waitTime(1000 * 55);
     await startInterval();
   } catch (e) {
     restart("date");
