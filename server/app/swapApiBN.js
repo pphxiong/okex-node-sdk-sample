@@ -860,9 +860,9 @@ const fnConsoleDealOrder = async () => {
       ),
     };
 
-    if (obj.account > 1 && obj.position > 1) {
+    if (obj.account < 1 && obj.ratio > 1) {
       obj.long = true;
-    } else if (obj.account < 1 && obj.position < 1) {
+    } else if (obj.account > 1 && obj.ratio < 1) {
       obj.short = true;
     }
     newResult.push(obj);
