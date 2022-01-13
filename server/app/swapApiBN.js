@@ -968,7 +968,6 @@ const dealOrderHandler = async () => {
     // }
 
     if (latestResult.long || latestResult.short) {
-      // const ratio = Number(latestResult.ratio);
       const positionSide = latestResult.long ? "LONG" : "SHORT";
 
       const { availableBalance } = await cAuthClientBN.swap.getPosition();
@@ -982,15 +981,15 @@ const dealOrderHandler = async () => {
       INIT_POSITION = Number(availPosition);
       const position = INIT_POSITION;
 
-      if (Number(position)) {
-        const openPayload = {
-          position: Number(position),
-          positionSide,
-          mark_price,
-          time: moment().format("YYYY-MM-DD HH:mm:ss"),
-        };
-        await openPosition(openPayload, false);
-      }
+      // if (Number(position)) {
+      //   const openPayload = {
+      //     position: Number(position),
+      //     positionSide,
+      //     mark_price,
+      //     time: moment().format("YYYY-MM-DD HH:mm:ss"),
+      //   };
+      //   await openPosition(openPayload, false);
+      // }
 
       console.log("+++++++++++++++++++++++++");
       console.log("latesetResult: ", latestResult);
