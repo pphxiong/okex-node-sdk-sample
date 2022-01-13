@@ -853,7 +853,7 @@ const fnConsoleDealOrder = async () => {
         positionResult.average[index] /
         positionResult.average[index - 1] /
         (cur / pre),
-      // timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      timestamp: moment(accountResult.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
     if (obj.account > 1 && obj.position > 1) {
@@ -871,10 +871,6 @@ const fnConsoleDealOrder = async () => {
   // );
   console.log("5m********************");
   console.log("newResult", newResult);
-  console.log(
-    "timestamp",
-    moment(accountResult.timestamp).format("YYYY-MM-DD HH:mm:ss")
-  );
   console.log("End 5m********************");
 };
 
