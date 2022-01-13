@@ -812,6 +812,7 @@ const countdownCancelAll = async (time) => {
 
 const fnGetAverage = (arr) => {
   const newArr = []; // 新数组，用来放平局值的
+  const timestampArr = [];
   let sum = 0; // 计算每五个数的和，用来计算平均值
   for (let i = 0; i < arr.length; i += 1) {
     // console.log(i); // 0~29
@@ -821,12 +822,13 @@ const fnGetAverage = (arr) => {
     if ((i + 1) % 6 == 0) {
       // 已经加够6个数字，要计算平均值，并且放到新数组
       newArr.push(sum / 6); // 计算出的平均值放到新数组中
+      timestampArr.push(arr.timestamp);
       // 计算平均值结束将sum清0
       sum = 0;
     }
   }
   // console.log(newArr); // [6, 16, 26, 36, 46, 56]
-  return { average: newArr, timestamp: arr.map((item) => item.timestamp) };
+  return { average: newArr, timestamp: timestampArr };
 };
 
 const fnConsoleDealOrder = async () => {
