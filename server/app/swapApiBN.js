@@ -947,6 +947,9 @@ const dealOrderHandler = async () => {
             (latestResult.short &&
               positionSide == "LONG") /* positionRatio > 0 */
           ) {
+            const time = 1000 * 2;
+            await countdownCancelAll(time);
+
             const closePayload = {
               position: Math.abs(Number(positionAmt)),
               positionSide,
