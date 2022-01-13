@@ -835,6 +835,7 @@ const fnConsoleDealOrder = async () => {
   let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
     params
   );
+  console.log("accountResult", accountResult);
   accountResult = fnGetAverage(
     accountResult,
     accountResult[accountResult.length - 1].timestamp
