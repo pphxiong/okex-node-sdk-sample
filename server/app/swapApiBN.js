@@ -847,8 +847,12 @@ const fnConsoleDealOrder = async () => {
   accountResult.average.reduce((pre, cur, index) => {
     const obj = {
       account: cur / pre,
-      position: positionResult[index] / positionResult[index - 1],
-      ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
+      position:
+        positionResult.average[index] / positionResult.average[index - 1],
+      ratio:
+        positionResult.average[index] /
+        positionResult.average[index - 1] /
+        (cur / pre),
       // timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     };
 
@@ -999,6 +1003,7 @@ const startInterval = async () => {
     let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
       params
     );
+    const timestamp = accountResult[accountResult.length - 1].timestamp;
     accountResult = accountResult.map((item) => Number(item.longShortRatio));
     positionResult = positionResult.map((item) => Number(item.longShortRatio));
     const newResult = [];
@@ -1007,7 +1012,7 @@ const startInterval = async () => {
         account: cur / pre,
         position: positionResult[index] / positionResult[index - 1],
         ratio: positionResult[index] / positionResult[index - 1] / (cur / pre),
-        timestamp: moment(cur.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        timestamp: moment(timestamp).format("YYYY-MM-DD HH:mm:ss"),
       };
 
       if (obj.account > 1 && obj.position > 1) {
