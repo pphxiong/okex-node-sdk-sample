@@ -991,7 +991,7 @@ const dealOrderHandler = async () => {
       }
 
       console.log("+++++++++++++++++++++++++");
-      console.log("latesetResult: ", latestResult);
+      console.log("newResult: ", newResult.slice(-30));
       console.log("+++++++++++++++++++++++++");
     }
   } catch (e) {
