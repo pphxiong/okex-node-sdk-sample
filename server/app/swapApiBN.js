@@ -912,28 +912,28 @@ const dealOrderHandler = async () => {
     accountResult = fnGetAverage(accountResult);
     positionResult = fnGetAverage(positionResult);
     const newResult = [];
-    accountResult.average.reduce((pre, cur, index) => {
-      const obj = {
-        account: cur / pre,
-        position:
-          positionResult[index].average / positionResult[index - 1].average,
-        ratio:
-          positionResult[index].average /
-          positionResult[index - 1].average /
-          (cur / pre),
-        timestamp: moment(accountResult.timestamp[index]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        ),
-      };
+    // accountResult.average.reduce((pre, cur, index) => {
+    //   const obj = {
+    //     account: cur / pre,
+    //     position:
+    //       positionResult[index].average / positionResult[index - 1].average,
+    //     ratio:
+    //       positionResult[index].average /
+    //       positionResult[index - 1].average /
+    //       (cur / pre),
+    //     timestamp: moment(accountResult.timestamp[index]).format(
+    //       "YYYY-MM-DD HH:mm:ss"
+    //     ),
+    //   };
 
-      if (obj.account < 1 && obj.ratio > 1) {
-        obj.long = true;
-      } else if (obj.account > 1 && obj.ratio < 1) {
-        obj.short = true;
-      }
-      newResult.push(obj);
-      return cur;
-    });
+    //   if (obj.account < 1 && obj.ratio > 1) {
+    //     obj.long = true;
+    //   } else if (obj.account > 1 && obj.ratio < 1) {
+    //     obj.short = true;
+    //   }
+    //   newResult.push(obj);
+    //   return cur;
+    // });
 
     const latestResult = newResult[newResult.length - 1];
     // if (latestResult.long || latestResult.short) {
@@ -970,16 +970,16 @@ const dealOrderHandler = async () => {
     if (latestResult.long || latestResult.short) {
       const positionSide = latestResult.long ? "LONG" : "SHORT";
 
-      const { availableBalance } = await cAuthClientBN.swap.getPosition();
+      // const { availableBalance } = await cAuthClientBN.swap.getPosition();
 
-      const availPosition = (
-        (Number(availableBalance) * LEVERAGE) /
-        mark_price /
-        POSITION_RATIO
-      ).toFixed(3);
+      // const availPosition = (
+      //   (Number(availableBalance) * LEVERAGE) /
+      //   mark_price /
+      //   POSITION_RATIO
+      // ).toFixed(3);
 
-      INIT_POSITION = Number(availPosition);
-      const position = INIT_POSITION;
+      // INIT_POSITION = Number(availPosition);
+      // const position = INIT_POSITION;
 
       // if (Number(position)) {
       //   const openPayload = {
