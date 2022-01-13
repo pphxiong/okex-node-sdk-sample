@@ -912,89 +912,90 @@ const dealOrderHandler = async () => {
     accountResult = fnGetAverage(accountResult);
     positionResult = fnGetAverage(positionResult);
     const newResult = [];
-    // accountResult.average.reduce((pre, cur, index) => {
-    //   const obj = {
-    //     account: cur / pre,
-    //     position:
-    //       positionResult[index].average / positionResult[index - 1].average,
-    //     ratio:
-    //       positionResult[index].average /
-    //       positionResult[index - 1].average /
-    //       (cur / pre),
-    //     timestamp: moment(accountResult.timestamp[index]).format(
-    //       "YYYY-MM-DD HH:mm:ss"
-    //     ),
-    //   };
+    accountResult.average.reduce((pre, cur, index) => {
+      const obj = {
+        account: cur / pre,
+        position:
+          positionResult[index].average / positionResult[index - 1].average,
+        ratio:
+          positionResult[index].average /
+          positionResult[index - 1].average /
+          (cur / pre),
+        timestamp: moment(accountResult.timestamp[index]).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      };
 
-    //   if (obj.account < 1 && obj.ratio > 1) {
-    //     obj.long = true;
-    //   } else if (obj.account > 1 && obj.ratio < 1) {
-    //     obj.short = true;
-    //   }
-    //   newResult.push(obj);
-    //   return cur;
-    // });
+      if (obj.account < 1 && obj.ratio > 1) {
+        obj.long = true;
+      } else if (obj.account > 1 && obj.ratio < 1) {
+        obj.short = true;
+      }
+      newResult.push(obj);
+      return cur;
+    });
 
-    const latestResult = newResult[newResult.length - 1];
-    // if (latestResult.long || latestResult.short) {
-    //   const pList = [];
-    //   holdings.forEach((holding) => {
-    //     const { leverage, entryPrice, positionAmt, positionSide } = holding;
-    //     if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
-    //       let positionRatio =
-    //         ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
-    //         Number(mark_price);
+    const latestResult = newResult[newResult.length - 1] || {};
+    if (latestResult.long || latestResult.short) {
+      const pList = [];
+      holdings.forEach((holding) => {
+        const { leverage, entryPrice, positionAmt, positionSide } = holding;
+        if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
+          let positionRatio =
+            ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
+            Number(mark_price);
 
-    //       positionRatio =
-    //         positionSide == "LONG" ? positionRatio : -positionRatio;
+          positionRatio =
+            positionSide == "LONG" ? positionRatio : -positionRatio;
 
-    //       if (
-    //         (latestResult.long && positionSide == "SHORT") ||
-    //         (latestResult.short &&
-    //           positionSide == "LONG") /* positionRatio > 0 */
-    //       ) {
-    //         const closePayload = {
-    //           position: Math.abs(Number(positionAmt)),
-    //           positionSide,
-    //           mark_price,
-    //           time: moment().format("YYYY-MM-DD HH:mm:ss"),
-    //         };
-    //         pList.push(closePosition(closePayload, false));
-    //       }
-    //     }
-    //   });
+          if (
+            (latestResult.long && positionSide == "SHORT") ||
+            (latestResult.short &&
+              positionSide == "LONG") /* positionRatio > 0 */
+          ) {
+            const closePayload = {
+              position: Math.abs(Number(positionAmt)),
+              positionSide,
+              mark_price,
+              time: moment().format("YYYY-MM-DD HH:mm:ss"),
+            };
+            pList.push(closePosition(closePayload, false));
+          }
+        }
+      });
 
-    //   if (pList.length) await Promise.all(pList);
-    // }
+      if (pList.length) await Promise.all(pList);
+    }
 
-    // if (latestResult.long || latestResult.short) {
-    //   const positionSide = latestResult.long ? "LONG" : "SHORT";
+    if (latestResult.long || latestResult.short) {
+      // const ratio = Number(latestResult.ratio);
+      const positionSide = latestResult.long ? "LONG" : "SHORT";
 
-    //   // const { availableBalance } = await cAuthClientBN.swap.getPosition();
+      const { availableBalance } = await cAuthClientBN.swap.getPosition();
 
-    //   // const availPosition = (
-    //   //   (Number(availableBalance) * LEVERAGE) /
-    //   //   mark_price /
-    //   //   POSITION_RATIO
-    //   // ).toFixed(3);
+      const availPosition = (
+        (Number(availableBalance) * LEVERAGE) /
+        mark_price /
+        POSITION_RATIO
+      ).toFixed(3);
 
-    //   // INIT_POSITION = Number(availPosition);
-    //   // const position = INIT_POSITION;
+      INIT_POSITION = Number(availPosition);
+      const position = INIT_POSITION;
 
-    //   // if (Number(position)) {
-    //   //   const openPayload = {
-    //   //     position: Number(position),
-    //   //     positionSide,
-    //   //     mark_price,
-    //   //     time: moment().format("YYYY-MM-DD HH:mm:ss"),
-    //   //   };
-    //   //   await openPosition(openPayload, false);
-    //   // }
+      if (Number(position)) {
+        const openPayload = {
+          position: Number(position),
+          positionSide,
+          mark_price,
+          time: moment().format("YYYY-MM-DD HH:mm:ss"),
+        };
+        await openPosition(openPayload, false);
+      }
 
-    //   console.log("+++++++++++++++++++++++++");
-    //   console.log("latesetResult: ", latestResult);
-    //   console.log("+++++++++++++++++++++++++");
-    // }
+      console.log("+++++++++++++++++++++++++");
+      console.log("latesetResult: ", latestResult);
+      console.log("+++++++++++++++++++++++++");
+    }
   } catch (e) {
     restart("dealOrder...");
   }
