@@ -833,9 +833,9 @@ const fnGetAverage = (arr) => {
     // console.log(arr[i]); //arr[0]~arr[29]
     // 把数组中的所有数字累加
     sum += Number(arr[i].longShortRatio);
-    if ((i + 1) % 6 == 0) {
+    if ((i + 1) % 3 == 0) {
       // 已经加够6个数字，要计算平均值，并且放到新数组
-      newArr.push(sum / 6); // 计算出的平均值放到新数组中
+      newArr.push(sum / 3); // 计算出的平均值放到新数组中
       timestampArr.push(arr[i].timestamp);
       // 计算平均值结束将sum清0
       sum = 0;
