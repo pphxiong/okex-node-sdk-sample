@@ -959,8 +959,8 @@ const dealOrderHandler = async () => {
       });
 
       if (pList.length) {
-        const time = 1000 * 2;
-        await countdownCancelAll(time);
+        // const time = 1000 * 2;
+        // await countdownCancelAll(time);
         await Promise.all(pList);
       }
     }
