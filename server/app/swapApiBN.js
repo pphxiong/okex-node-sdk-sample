@@ -953,7 +953,7 @@ const dealOrderHandler = async () => {
               mark_price,
               time: moment().format("YYYY-MM-DD HH:mm:ss"),
             };
-            pList.push(closePosition(closePayload, false));
+            pList.push(closePosition(closePayload, true));
           }
         }
       });
@@ -987,7 +987,7 @@ const dealOrderHandler = async () => {
           mark_price,
           time: moment().format("YYYY-MM-DD HH:mm:ss"),
         };
-        await openPosition(openPayload, false);
+        await openPosition(openPayload, true);
       }
 
       console.log("+++++++++++++++++++++++++");
