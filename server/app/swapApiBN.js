@@ -351,16 +351,16 @@ const dealOrderHandler = async () => {
 
       const { availableBalance } = await cAuthClientBN.swap.getPosition();
 
-      // const availPosition = (
-      //   (Number(availableBalance) * LEVERAGE) /
-      //   mark_price /
-      //   POSITION_RATIO
-      // ).toFixed(3);
+      const availPosition = (
+        (Number(availableBalance) * LEVERAGE) /
+        mark_price /
+        POSITION_RATIO
+      ).toFixed(3);
 
       // INIT_POSITION = Number(availPosition);
       const position = INIT_POSITION;
 
-      if (Number(position)) {
+      if (Number(position) && Number(availPosition) > Number(position)) {
         const openPayload = {
           position: Number(position),
           positionSide,
