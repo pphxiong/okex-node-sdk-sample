@@ -381,7 +381,7 @@ const dealOrderHandler = async () => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 15 / 5) {
+  if (RESTART_TIME >= 15) {
     restart();
     return;
   }
