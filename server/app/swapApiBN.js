@@ -371,7 +371,7 @@ const dealOrderHandler = async () => {
       }
 
       console.log("+++++++++++++++++++++++++");
-      console.log("newResult: ", newResult.slice(-30));
+      console.log("newResult: ", newResult.slice(-2));
       console.log("+++++++++++++++++++++++++");
     }
   } catch (e) {
@@ -417,7 +417,7 @@ const startInterval = async () => {
       return cur;
     });
     console.log("30m********************");
-    console.log("newResult", newResult);
+    console.log("newResult", newResult.slice(-2));
     console.log("End 30m********************");
 
     const date = new Date();
