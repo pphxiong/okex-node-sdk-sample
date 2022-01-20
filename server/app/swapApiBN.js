@@ -394,9 +394,6 @@ const startInterval = async () => {
     let positionResult = await cAuthClientBN.swap.topLongShortPositionRatio(
       params
     );
-    // const timestamp = accountResult[accountResult.length - 1].timestamp;
-    // accountResult = accountResult.map((item) => Number(item.longShortRatio));
-    // positionResult = positionResult.map((item) => Number(item.longShortRatio));
     const newResult = [];
     accountResult.reduce((pre, cur, index) => {
       const obj = {
@@ -443,8 +440,8 @@ const startInterval = async () => {
     console.log("================================");
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
-    await waitTime(1000 * 55 * 5);
-    await startInterval();
+    const result = await waitTime(1000 * 55 * 5);
+    if (result) await startInterval();
   } catch (e) {
     restart("date");
   }
