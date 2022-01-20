@@ -440,8 +440,9 @@ const startInterval = async () => {
     console.log("================================");
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
-    const result = await waitTime(1000 * 55 * 5);
-    if (result) await startInterval();
+    waitTime(1000 * 55 * 5).then((result) => {
+      if (result) startInterval();
+    });
   } catch (e) {
     restart("date");
   }
