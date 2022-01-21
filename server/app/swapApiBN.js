@@ -26,7 +26,7 @@ const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
 let INIT_POSITION = 0.1;
-const POSITION_RATIO = 1;
+const POSITION_RATIO = 2;
 let RESTART_TIME = 0;
 
 let MODE = 1;
@@ -68,9 +68,13 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
     }
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
-      positionChange = true;
-
       openOrigClientOrderId = result.clientOrderId;
+
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+      console.log("openPositionMoment", moment().format("YYYY-MM-DD HH:mm:ss"));
+      console.log("price", price);
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
       return result;
     } catch (e) {
       // throw new Error('Error');
@@ -113,14 +117,15 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       };
     }
     try {
-      console.log(payload);
       const result = await cAuthClientBN.swap.postOrder(payload);
-      positionChange = true;
+      closeOrigClientOrderId = result.clientOrderId;
 
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-      closeOrigClientOrderId = result.clientOrderId;
-      console.log("closeOrigClientOrderId", closeOrigClientOrderId);
-      console.log("price", mark_price);
+      console.log(
+        "closePositionMoment",
+        moment().format("YYYY-MM-DD HH:mm:ss")
+      );
+      console.log("price", price);
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
       return result;
@@ -129,9 +134,6 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
       restart("close");
     }
   }
-  console.log("###################################");
-  console.log("closePositionMoment", moment().format("YYYY-MM-DD HH:mm:ss"));
-  console.log("###################################");
   return await postOrder(position, mark_price);
 };
 
@@ -448,9 +450,13 @@ const startInterval = async () => {
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
 
-    waitTime(1000 * 55 * 5).then(async (result) => {
-      if (result) await startInterval();
-    });
+    // waitTime(1000 * 55 * 5).then(async (result) => {
+    //   if (result) await startInterval();
+    // });
+
+    setTimeout(async () => {
+      await startInterval();
+    }, 1000 * 55 * 5);
   } catch (e) {
     restart("date");
   }
