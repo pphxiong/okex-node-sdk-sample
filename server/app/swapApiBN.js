@@ -34,11 +34,17 @@ let MODE = 1;
 let openOrigClientOrderId = "";
 let closeOrigClientOrderId = "";
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
-  const { positionSide, position = Number(INIT_POSITION), mark_price } = params;
+  const {
+    positionSide,
+    position = Number(INIT_POSITION),
+    mark_price,
+    hasPositionAmt,
+  } = params;
 
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "BUY" : "SELL";
-    const dealRatio = 0.008;
+    let dealRatio = 0.02;
+    if (hasPositionAmt) dealRatio = (dealRatio * hasPositionAmt * 2) / size;
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 - dealRatio / LEVERAGE);
@@ -88,7 +94,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   const { position = INIT_POSITION, positionSide, mark_price } = holding;
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "SELL" : "BUY";
-    const dealRatio = 0.008;
+    const dealRatio = 0.02;
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 + dealRatio / LEVERAGE);
@@ -311,12 +317,14 @@ const dealOrderHandler = async () => {
       return cur;
     });
 
+    let hasPositionAmt = 0;
     const latestResult = newResult[newResult.length - 1] || {};
     if (latestResult.long || latestResult.short) {
       const pList = [];
       holdings.forEach((holding) => {
         const { leverage, entryPrice, positionAmt, positionSide } = holding;
         if (positionAmt && Math.abs(Number(positionAmt)) > 0) {
+          hasPositionAmt = Math.abs(Number(positionAmt));
           let positionRatio =
             ((Number(mark_price) - Number(entryPrice)) * Number(leverage)) /
             Number(mark_price);
@@ -368,6 +376,7 @@ const dealOrderHandler = async () => {
           positionSide,
           mark_price,
           time: moment().format("YYYY-MM-DD HH:mm:ss"),
+          hasPositionAmt: Number(hasPositionAmt),
         };
         await openPosition(openPayload, false);
       } else if (RESTART_TIME >= 4) {
@@ -391,7 +400,7 @@ const dealOrderHandler = async () => {
 const startInterval = async () => {
   RESTART_TIME += 1;
   if (RESTART_TIME >= 6) {
-    restart();
+    restart("normal");
     return;
   }
 
