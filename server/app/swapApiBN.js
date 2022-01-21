@@ -480,7 +480,7 @@ function restart(source) {
         console.log("restarting success");
       }
     });
-  }, 1000 * 10);
+  }, 1000 * 1);
 }
 function start() {
   console.log("starting......");
@@ -492,7 +492,7 @@ function start() {
         console.log("starting success");
       }
     });
-  }, 1000 * 10);
+  }, 1000 * 1);
 }
 function stop() {
   console.log("stopping......");
@@ -507,5 +507,5 @@ function stop() {
         start();
       }, 1000 * 60 * 60 * 24 * 1);
     });
-  }, 1000 * 10);
+  }, 1000 * 1);
 }
