@@ -26,7 +26,7 @@ const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
 let INIT_POSITION = 0.1;
-const POSITION_RATIO = 3;
+const POSITION_RATIO = 1;
 let RESTART_TIME = 0;
 
 let MODE = 1;
@@ -38,7 +38,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "BUY" : "SELL";
-    const dealRatio = 0.01;
+    const dealRatio = 0.02;
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 - dealRatio / LEVERAGE);
@@ -84,7 +84,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   const { position = INIT_POSITION, positionSide, mark_price } = holding;
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "SELL" : "BUY";
-    const dealRatio = 0.01;
+    const dealRatio = 0.02;
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 + dealRatio / LEVERAGE);
@@ -360,7 +360,7 @@ const dealOrderHandler = async () => {
       // INIT_POSITION = Number(availPosition);
       const position = INIT_POSITION;
 
-      if (Number(position) && Number(availPosition) > Number(position)) {
+      if (Number(availPosition) > Number(position)) {
         const openPayload = {
           position: Number(position),
           positionSide,
@@ -368,12 +368,18 @@ const dealOrderHandler = async () => {
           time: moment().format("YYYY-MM-DD HH:mm:ss"),
         };
         await openPosition(openPayload, false);
+      } else {
+        const result = await cAuthClientBN.swap.openOrders();
+        if (result && result.length) {
+          const time = 1000 * 2;
+          await countdownCancelAll(time);
+        }
       }
-
-      console.log("+++++++++++++++++++++++++");
-      console.log("newResult: ", newResult.slice(-2));
-      console.log("+++++++++++++++++++++++++");
     }
+
+    console.log("5m+++++++++++++++++++++++++");
+    console.log(newResult.slice(-2));
+    console.log("+++++++++++++++++++++++++");
   } catch (e) {
     restart("dealOrder...");
   }
@@ -381,7 +387,7 @@ const dealOrderHandler = async () => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 15) {
+  if (RESTART_TIME >= 3) {
     restart();
     return;
   }
@@ -417,7 +423,7 @@ const startInterval = async () => {
       return cur;
     });
     console.log("30m********************");
-    console.log("newResult", newResult.slice(-2));
+    console.log(newResult.slice(-2));
     console.log("End 30m********************");
 
     const date = new Date();
@@ -440,8 +446,9 @@ const startInterval = async () => {
     console.log("================================");
     console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
     console.log("================================");
-    waitTime(1000 * 55 * 5).then((result) => {
-      if (result) startInterval();
+
+    waitTime(1000 * 55 * 5).then(async (result) => {
+      if (result) await startInterval();
     });
   } catch (e) {
     restart("date");
