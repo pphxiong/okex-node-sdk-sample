@@ -370,13 +370,13 @@ const dealOrderHandler = async () => {
           time: moment().format("YYYY-MM-DD HH:mm:ss"),
         };
         await openPosition(openPayload, false);
-      } else {
-        const payload = { symbol: BN_SYMBOL };
-        const result = await cAuthClientBN.swap.openOrders(payload);
-        if (result && result.length) {
-          const time = 1000 * 2;
-          await countdownCancelAll(time);
-        }
+      } else if (RESTART_TIME >= 4) {
+        // const payload = { symbol: BN_SYMBOL };
+        // const result = await cAuthClientBN.swap.openOrders(payload);
+        // if (result && result.length) {
+        //   const time = 1000 * 2;
+        //   await countdownCancelAll(time);
+        // }
       }
     }
 
@@ -390,7 +390,7 @@ const dealOrderHandler = async () => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 3) {
+  if (RESTART_TIME >= 6) {
     restart();
     return;
   }
