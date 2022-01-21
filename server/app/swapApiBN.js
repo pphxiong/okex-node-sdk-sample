@@ -369,7 +369,8 @@ const dealOrderHandler = async () => {
         };
         await openPosition(openPayload, false);
       } else {
-        const result = await cAuthClientBN.swap.openOrders();
+        const payload = { symbol: BN_SYMBOL };
+        const result = await cAuthClientBN.swap.openOrders(payload);
         if (result && result.length) {
           const time = 1000 * 2;
           await countdownCancelAll(time);
