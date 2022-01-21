@@ -44,7 +44,8 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
   async function postOrder(size) {
     const type = positionSide == "LONG" ? "BUY" : "SELL";
     let dealRatio = 0.02;
-    if (hasPositionAmt) dealRatio = (dealRatio * hasPositionAmt * 2) / size;
+    if (hasPositionAmt)
+      dealRatio = (dealRatio * hasPositionAmt * 2) / Math.abs(size);
     let price = mark_price;
     if (positionSide == "LONG") {
       price = mark_price * (1 - dealRatio / LEVERAGE);
