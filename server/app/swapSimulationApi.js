@@ -799,7 +799,7 @@ const checkDeal = async (list, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].open) >
         Number(macdList[macdList.length - 1].close);
 
-    console.log(macdList);
+    // console.log(macdList);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
@@ -1442,7 +1442,7 @@ const writeData = async (data) => {
 
 // 定时获取交割合约账户信息
 (async () => {
-  // await startInterval()
+  await startInterval();
 })();
 app.listen(8092);
 
