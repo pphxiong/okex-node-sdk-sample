@@ -70,7 +70,7 @@ const INIT_MOST_LOSS = {
 const POSITION_RATIO_DEFAULT = 2;
 let POSITION_RATIO = POSITION_RATIO_DEFAULT;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
-let totalCapital = ORIGIN_TOTAL_CAPITAL * 5;
+let totalCapital = ORIGIN_TOTAL_CAPITAL;
 let totalPosition = 0;
 let receiveCapital = 0;
 let minTotalCapital = totalCapital;
@@ -996,7 +996,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
       totalProfit += (-0.018 * 0.01 * positionAmt) / 2;
       totalCapital += (-0.018 * 0.01 * positionAmt) / 2;
-      if (totalCapital < positionAmt / 2) positionAmt = 0;
+      // if (totalCapital < positionAmt / 2) positionAmt = 0;
       maxOpenPosition = Math.max(maxOpenPosition, positionAmt);
       if (direction == "LONG") {
         longPosition = {
