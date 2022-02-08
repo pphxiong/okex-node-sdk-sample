@@ -542,7 +542,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
     // const list = mock.mockData
 
     const payload = {
-      interval,
+      interval: "2h",
       // endTime: moment(Number(time)).add(1, "days").valueOf(),
       limit,
       startTime: time,
@@ -602,7 +602,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
   const { time, interval = INTERVAL, limit = 500 } = query;
   try {
     const payload = {
-      interval,
+      interval: "2h",
       limit,
       endTime: time,
     };
@@ -673,8 +673,6 @@ const checkDeal = async (data, isAutoReset = true) => {
     const { macdList, rsiList } = data;
 
     macdList.slice(-3);
-    console.log(macdList);
-
     const mark_price = macdList[macdList.length - 1].close;
 
     let longHolding;
