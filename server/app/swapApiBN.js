@@ -309,7 +309,7 @@ const checkDeal = async (data) => {
     console.log("************************************", currentTime);
     // console.log("mark_price", mark_price);
     console.log("macdList", macdList.slice(-1)[0]);
-    console.log("rsiList", rsiList.slice(-1)[0]);
+    // console.log("rsiList", rsiList.slice(-1)[0]);
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
       "longPositionAmt",
@@ -317,7 +317,6 @@ const checkDeal = async (data) => {
       "shortPositionAmt",
       shortHolding && shortHolding.positionAmt
     );
-    console.log("MODE", MODE);
     console.log(
       "closeLongCondition",
       closeLongCondition,
