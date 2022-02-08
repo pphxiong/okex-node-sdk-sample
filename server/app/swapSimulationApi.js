@@ -800,28 +800,20 @@ const checkDeal = async (list, isAutoReset = true) => {
     // });
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) > 0 &&
-      rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
-    // Number(macdList[macdList.length - 1].column) > 0 &&
-    // rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-    // rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
-    // rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
-    // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-
-    // rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-    // rsiList[rsiList.length - 2].RSI1 < LONG_CONDITION;
-    // (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+      Number(macdList[macdList.length - 3].open) >
+        Number(macdList[macdList.length - 3].close) &&
+      Number(macdList[macdList.length - 2].open) >
+        Number(macdList[macdList.length - 2].close) &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(macdList[macdList.length - 1].close);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].column) < 0 &&
-      rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
-    // rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-    // rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
-    // Number(macdList[macdList.length - 1].column) < 0 &&
-    // rsiList[rsiList.length - 1].RSI3 < rsiList[rsiList.length - 2].RSI3 &&
-    // rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-
-    // (longRatio >= 0 || longRatio <= LOSS_MAX);
+      Number(macdList[macdList.length - 3].open) <
+        Number(macdList[macdList.length - 3].close) &&
+      Number(macdList[macdList.length - 2].open) <
+        Number(macdList[macdList.length - 2].close) &&
+      Number(macdList[macdList.length - 1].open) >
+        Number(macdList[macdList.length - 1].close);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
