@@ -67,7 +67,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO_DEFAULT = 10;
+const POSITION_RATIO_DEFAULT = 5;
 let POSITION_RATIO = POSITION_RATIO_DEFAULT;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalCapital = ORIGIN_TOTAL_CAPITAL;
@@ -542,7 +542,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
     // const list = mock.mockData
 
     const payload = {
-      interval,
+      interval: "2h",
       // endTime: moment(Number(time)).add(1, "days").valueOf(),
       limit,
       startTime: time,
@@ -602,7 +602,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
   const { time, interval = INTERVAL, limit = 500 } = query;
   try {
     const payload = {
-      interval,
+      interval: "2h",
       limit,
       endTime: time,
     };
