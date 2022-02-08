@@ -777,7 +777,8 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
 let positionChange = true;
 let globalHolding = null;
 function getMacd(params) {
-  const { price, lastEma12, lastEma26, lastDea, high, low, time } = params;
+  const { open, price, lastEma12, lastEma26, lastDea, high, low, time } =
+    params;
 
   const ema12 = toFixedAndToNumber(
     (2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
@@ -797,6 +798,7 @@ function getMacd(params) {
   const column = toFixedAndToNumber(2 * (diff - dea), 2);
 
   const result = {
+    open,
     price,
     ema12,
     ema26,
