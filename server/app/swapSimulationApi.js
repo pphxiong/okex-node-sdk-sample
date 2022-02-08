@@ -608,7 +608,6 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     };
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
     const list = data;
-    console.log(list);
     totalProfit = 0;
     currentPosition = {};
     longPosition = {};
@@ -657,10 +656,13 @@ function fibonacci(n) {
   return fibonacci(n - 2) + fibonacci(n - 1);
 }
 
-const checkDeal = async (list, isAutoReset = true) => {
-  for (let i = 0; i < list.length; i++) {
+const checkDeal = async (data, isAutoReset = true) => {
+  for (let i = 0; i < data.macdList.length - 9; i++) {
     checkByStep(
-      list[i],
+      {
+        macdList: data.macdList.slice(i, i + 10),
+        rsiList: data.rsiList.slice(i, i + 10),
+      },
       isAutoReset
       // && i == data.macdList.length - 10
     );
