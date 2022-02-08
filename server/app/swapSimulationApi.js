@@ -782,6 +782,7 @@ const checkDeal = async (list, isAutoReset = true) => {
     //   );
     // });
 
+    macdList.slice(-3);
     const MAIN_LONG_BASIC_CONDITION =
       Number(macdList[macdList.length - 3].open) >
         Number(macdList[macdList.length - 3].close) &&
@@ -797,6 +798,8 @@ const checkDeal = async (list, isAutoReset = true) => {
         Number(macdList[macdList.length - 2].close) &&
       Number(macdList[macdList.length - 1].open) >
         Number(macdList[macdList.length - 1].close);
+
+    console.log(macdList);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
