@@ -70,7 +70,7 @@ const INIT_MOST_LOSS = {
 const POSITION_RATIO_DEFAULT = 2;
 let POSITION_RATIO = POSITION_RATIO_DEFAULT;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
-let totalCapital = ORIGIN_TOTAL_CAPITAL;
+let totalCapital = ORIGIN_TOTAL_CAPITAL * 5;
 let totalPosition = 0;
 let receiveCapital = 0;
 let minTotalCapital = totalCapital;
@@ -863,14 +863,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   }
     // }
 
-    let fiIndex = INCREASE_FI_LIST.findIndex(
-      (item) => holding && item == Number(holding.positionAmt)
-    );
+    // let fiIndex = INCREASE_FI_LIST.findIndex(
+    //   (item) => holding && item == Number(holding.positionAmt)
+    // );
 
-    fiIndex =
-      fiIndex == INCREASE_FI_LIST.length - 1
-        ? INCREASE_FI_LIST.length - 2
-        : fiIndex;
+    // fiIndex =
+    //   fiIndex == INCREASE_FI_LIST.length - 1
+    //     ? INCREASE_FI_LIST.length - 2
+    //     : fiIndex;
 
     // if (!isForceDeal && MODE == 2) {
     //   if (closeShortCondition && shortRatio < LOSS_MAX) {
