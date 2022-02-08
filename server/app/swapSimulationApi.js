@@ -668,6 +668,10 @@ const checkDeal = async (list, isAutoReset = true) => {
   function checkByStep(data, isForceDeal) {
     isForceDeal = false;
     const { macdList, rsiList } = data;
+
+    macdList.slice(-3);
+    console.log(macdList);
+
     const mark_price = macdList[macdList.length - 1].close;
 
     let longHolding;
@@ -782,7 +786,6 @@ const checkDeal = async (list, isAutoReset = true) => {
     //   );
     // });
 
-    macdList.slice(-3);
     const MAIN_LONG_BASIC_CONDITION =
       Number(macdList[macdList.length - 3].open) >
         Number(macdList[macdList.length - 3].close) &&
@@ -798,8 +801,6 @@ const checkDeal = async (list, isAutoReset = true) => {
         Number(macdList[macdList.length - 2].close) &&
       Number(macdList[macdList.length - 1].open) >
         Number(macdList[macdList.length - 1].close);
-
-    // console.log(macdList);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
@@ -1442,7 +1443,7 @@ const writeData = async (data) => {
 
 // 定时获取交割合约账户信息
 (async () => {
-  await startInterval();
+  // await startInterval();
 })();
 app.listen(8092);
 
