@@ -608,6 +608,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     };
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
     const list = data;
+    console.log(list);
     totalProfit = 0;
     currentPosition = {};
     longPosition = {};
