@@ -555,7 +555,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
     }
 
     const newList = JSON.parse(JSON.stringify(list));
-
+    newList.pop();
     const macdList = getCurrentMacd(newList, lastMacd).slice(-limit);
     const rsiList = getCurrentRSI(newList, lastRSI).slice(-limit);
 
@@ -618,6 +618,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     dealDetailList = [];
 
     const newList = JSON.parse(JSON.stringify(list));
+    newList.pop();
     const macdList = getCurrentMacd(newList).slice(-1400);
     const rsiList = getCurrentRSI(newList).slice(-1400);
 
