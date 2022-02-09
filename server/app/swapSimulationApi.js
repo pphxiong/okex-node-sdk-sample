@@ -542,7 +542,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
     // const list = mock.mockData
 
     const payload = {
-      interval: "2h",
+      interval,
       // endTime: moment(Number(time)).add(1, "days").valueOf(),
       limit,
       startTime: time,
@@ -602,7 +602,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
   const { time, interval = INTERVAL, limit = 500 } = query;
   try {
     const payload = {
-      interval: "2h",
+      interval,
       limit,
       endTime: time,
     };
