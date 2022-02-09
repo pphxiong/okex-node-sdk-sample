@@ -839,6 +839,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
+    if (longRatio < 0 && shortRatio < 0) {
+      closeLongCondition = true;
+      closeShortCondition = true;
+    }
+
     // const { week } = macdList[macdList.length - 1];
 
     // if (week == 6 || week == 0) {

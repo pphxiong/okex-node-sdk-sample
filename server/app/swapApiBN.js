@@ -158,7 +158,8 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].open) >
         Number(macdList[macdList.length - 2].price) &&
       Number(macdList[macdList.length - 1].open) <
-        Number(macdList[macdList.length - 1].price);
+        Number(macdList[macdList.length - 1].price) &&
+      rsiList[rsiList.length - 1].RSI3 < 50;
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 3].open) <
@@ -166,12 +167,15 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].open) <
         Number(macdList[macdList.length - 2].price) &&
       Number(macdList[macdList.length - 1].open) >
-        Number(macdList[macdList.length - 1].price);
+        Number(macdList[macdList.length - 1].price) &&
+      rsiList[rsiList.length - 1].RSI3 > 50;
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION1 && longRatio > 0;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION1 && shortRatio > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
