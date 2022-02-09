@@ -30,7 +30,7 @@ function getRandomNumberByRange(start, end) {
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 10;
 const INTERVAL = "5m";
-const BAO_RATIO = (-1 * LEVERAGE) / 10;
+const BAO_RATIO = (-0.5 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
@@ -839,10 +839,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (longRatio < BAO_RATIO && shortRatio < BAO_RATIO) {
-      closeLongCondition = true;
-      closeShortCondition = true;
-    }
+    // if (longRatio < BAO_RATIO && shortRatio < BAO_RATIO) {
+    //   closeLongCondition = true;
+    //   closeShortCondition = true;
+    // }
 
     // const { week } = macdList[macdList.length - 1];
 
