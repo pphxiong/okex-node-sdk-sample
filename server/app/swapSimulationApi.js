@@ -839,7 +839,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    if (longRatio < 0 && shortRatio < 0) {
+    if (longRatio < BAO_RATIO && shortRatio < BAO_RATIO) {
       closeLongCondition = true;
       closeShortCondition = true;
     }
