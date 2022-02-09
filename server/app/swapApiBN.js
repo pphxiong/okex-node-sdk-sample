@@ -629,31 +629,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
     );
     console.log("position", position, "type", type, "side", openSide);
 
-    const result = await cAuthClientBN.swap.openOrders(
-      BN_SYMBOL,
-      openOrigClientOrderId
-    );
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    console.log("openresult", result);
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
-    if (result && result.length) {
-      const index = result.findIndex((item) => !item.reduceOnly);
-      if (index != -1) {
-        // const ratio =
-        //   ((Number(mark_price) - Number(result[index].price)) *
-        //     Number(LEVERAGE)) /
-        //   Number(mark_price);
-        // if (Math.abs(ratio) > 0.2) {
-        //   await cAuthClientBN.swap.cancelOrder(
-        //     BN_SYMBOL,
-        //     result[index].orderId
-        //   );
-        // }
-        return;
-      }
-    }
-
     let price = mark_price;
     if (openSide == "long") {
       price = mark_price * (1 - dealRatio / LEVERAGE);
@@ -698,31 +673,6 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   isMarketDeal = true;
   const { position = INIT_POSITION, side, mark_price, time } = holding;
   async function postOrder(size) {
-    const result = await cAuthClientBN.swap.openOrders(
-      BN_SYMBOL,
-      closeOrigClientOrderId
-    );
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    console.log("closeresult", result);
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
-    if (result && result.length) {
-      const index = result.findIndex((item) => !!item.reduceOnly);
-      if (index != -1) {
-        // const ratio =
-        //   ((Number(mark_price) - Number(result[index].price)) *
-        //     Number(LEVERAGE)) /
-        //   Number(mark_price);
-        // if (Math.abs(ratio) > 0.2) {
-        //   await cAuthClientBN.swap.cancelOrder(
-        //     BN_SYMBOL,
-        //     result[index].orderId
-        //   );
-        // }
-        return;
-      }
-    }
-
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
 
