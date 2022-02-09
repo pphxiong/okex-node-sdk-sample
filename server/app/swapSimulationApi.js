@@ -794,15 +794,16 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].open) >
         Number(macdList[macdList.length - 2].close) &&
       Number(macdList[macdList.length - 1].open) <
-        Number(macdList[macdList.length - 1].close);
-
+        Number(macdList[macdList.length - 1].close) &&
+      rsiList[rsiList.length - 1].RSI3 < 50;
     const MAIN_SHORT_BASIC_CONDITION =
       Number(macdList[macdList.length - 3].open) <
         Number(macdList[macdList.length - 3].close) &&
       Number(macdList[macdList.length - 2].open) <
         Number(macdList[macdList.length - 2].close) &&
       Number(macdList[macdList.length - 1].open) >
-        Number(macdList[macdList.length - 1].close);
+        Number(macdList[macdList.length - 1].close) &&
+      rsiList[rsiList.length - 1].RSI3 > 50;
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
@@ -812,13 +813,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      Number(macdList[macdList.length - 1].open) >
-      Number(macdList[macdList.length - 1].close);
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      Number(macdList[macdList.length - 1].open) <
-      Number(macdList[macdList.length - 1].close);
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
