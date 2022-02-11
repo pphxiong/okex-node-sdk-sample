@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
 };
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "30m";
+const DEFAULT_INTERVAL = "15m";
 const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
