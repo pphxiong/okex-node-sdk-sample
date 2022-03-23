@@ -35,8 +35,8 @@ export default props => {
   const [tPnl, setTPnl] = useState(0);
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month,setMonth] = useState('06');
-  const [year,setYear] = useState('2021');
-  const [interval,setInterval] = useState('5m');
+  const [year,setYear] = useState('2022');
+  const [interval,setInterval] = useState('2h');
   const [latestInterval,setLatestInterval] = useState(20);
   const [rsi1,setRsi1] = useState(6);
   const [rsi2,setRsi2] = useState(12);
@@ -48,8 +48,8 @@ export default props => {
   const [dayStep, setDayStep] = useState(0);
   const [date,setDate] = useState("");
 
-  const yearMap = ['2015','2016','2017','2018','2019','2020','2021']
-  const intervalMap = ['1m','3m','5m','15m','30m']
+  const yearMap = ['2015','2016','2017','2018','2019','2020','2021','2022']
+  const intervalMap = ['1m','3m','5m','15m','30m','1h','2h','4h','6h','12h','1d']
   const latestIntervalMap = [10, 20, 40, 80, 240, 480, 960, 1440]
   const monthMap = ['01','02','03','04','05','06','07','08','09','10','11','12'];
   const dayMonthMap = {
@@ -221,7 +221,13 @@ export default props => {
           const p = new Promise(async resolve => {
             const getDayData = async (date,isInit) => {
               const time = moment(`${date} 00:00:00`).valueOf()
-              const limit = 60 * 24 / Number(interval.split('m')[0])
+              let limit;
+              if (Number(interval.split('m')[0])) {
+                limit = 60 * 24 / Number(interval.split('m')[0])
+              } else {
+                limit = 24 / Number(interval.split('h')[0])
+              }
+
               const payload = { date, time, interval, limit, isAutoReset: true, isInit }
               const { data } = await startHearBeat(payload);
               if(data){
@@ -292,7 +298,12 @@ export default props => {
       const p = new Promise(async resolve => {
         const getDayData = async (date, isInit) => {
           const time = moment(`${date} 00:00:00`).valueOf()
-          const limit = 60 * 24 / Number(interval.split('m')[0])
+          let limit;
+          if (Number(interval.split('m')[0])) {
+             limit = 60 * 24 / Number(interval.split('m')[0])
+          } else {
+             limit = 24 / Number(interval.split('h')[0])
+          }
           const payload = { date, time, interval, limit, isAutoReset: true, isInit }
           const { data } = await startHearBeat(payload);
           if(data){
