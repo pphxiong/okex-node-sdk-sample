@@ -15,24 +15,24 @@ export default {
       },
     },
     '/okex/': {
-      // target: 'http://8.210.214.167:8090',
-      target: 'http://localhost:8090',
+      target: 'http://8.218.11.23:8090',
+      // target: 'http://localhost:8090',
       changeOrigin: true,
       pathRewrite: {
         '/okex/': '/',
       },
     },
     '/okexSwap/': {
-      // target: 'http://8.210.214.167:8091',
-      target: 'http://localhost:8091',
+      target: 'http://8.218.11.23:8091',
+      // target: 'http://localhost:8091',
       changeOrigin: true,
       pathRewrite: {
         '/okexSwap/': '/',
       },
     },
     '/bn/': {
-      // target: 'https://fapi.binance.com',
-      target: 'http://localhost:8092',
+      target: 'http://8.218.11.23:8092',
+      // target: 'http://localhost:8092',
       changeOrigin: true,
       pathRewrite: {
         '^/bn/': '/',
@@ -40,7 +40,7 @@ export default {
       secure: false,
     },
     // '/swap/':{
-    //   target: 'http://8.210.214.167:8092',
+    //   target: 'http://8.218.11.23:8092',
     //   changeOrigin: true,
     // }
   },
