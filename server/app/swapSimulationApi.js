@@ -223,6 +223,7 @@ function getBOLL(list) {
   const newList = list.slice(-N);
 
   const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / 20;
+  console.log('boll::', MA);
   const MD = Math.sqrt(
     newList.reduce(
       (pre, cur) =>
@@ -233,7 +234,6 @@ function getBOLL(list) {
   const UP = MA + k * MD;
   const DN = MA - k * MD;
 
-  console.log('boll::', MA, UP);
   return {
     MA,
     UP,
