@@ -1,7 +1,7 @@
-require("babel-register")({
-  presets: ["env"],
+require('babel-register')({
+  presets: ['env'],
 });
-require("babel-polyfill");
+require('babel-polyfill');
 
-module.exports = require("./app/swapSimulationApi.js");
-module.exports = require("./app/customAuthClientBN.js");
+module.exports = require('./app/swapSimulationApi.js');
+// module.exports = require("./app/customAuthClientBN.js");
