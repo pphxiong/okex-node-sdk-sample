@@ -216,39 +216,39 @@ UP=MB+k×MD
 DN=MB－k×MD
 （K为参数，可根据股票的特性来做相应的调整，一般默认为2）
  */
-function getBOLL(list) {
-  const N = 20;
-  const k = 2;
+// function getBOLL(list) {
+//   const N = 20;
+//   const k = 2;
 
-  const newList = list.slice(-N);
+//   const newList = list.slice(-N);
 
-  const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / 20;
-  const MD = Math.sqrt(
-    newList.reduce(
-      (pre, cur) =>
-        Math.pow(Number(pre[4]) - MA, 2) + Math.pow(Number(cur[4]) - MA, 2)
-    ) / N
-  );
+//   const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / 20;
+//   const MD = Math.sqrt(
+//     newList.reduce(
+//       (pre, cur) =>
+//         Math.pow(Number(pre[4]) - MA, 2) + Math.pow(Number(cur[4]) - MA, 2)
+//     ) / N
+//   );
 
-  const UP = MA + k * MD;
-  const DN = MA - k * MD;
+//   const UP = MA + k * MD;
+//   const DN = MA - k * MD;
 
-  return {
-    MA,
-    UP,
-    DN,
-  };
-}
+//   return {
+//     MA,
+//     UP,
+//     DN,
+//   };
+// }
 
-function getCurrentBOLL(list) {
-  const result = [];
-  for (let i = list.length - 1; i >= 20; i -= 1) {
-    const currentBOLL = getBOLL(list.slice(i - 20, i));
-    result.push(currentBOLL);
-  }
-  result.reverse();
-  return result;
-}
+// function getCurrentBOLL(list) {
+//   const result = [];
+//   for (let i = list.length - 1; i >= 20; i -= 1) {
+//     const currentBOLL = getBOLL(list.slice(i - 20, i));
+//     result.push(currentBOLL);
+//   }
+//   result.reverse();
+//   return result;
+// }
 
 app.get('/test', function (req, res) {
   send(res, {errcode: 0, errmsg: 'ok'});
@@ -605,7 +605,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     newList.pop();
     const macdList = getCurrentMacd(newList, lastMacd).slice(-limit);
     const rsiList = getCurrentRSI(newList, lastRSI).slice(-limit);
-    const bollList = getCurrentBOLL(newList).slice(-limit);
+    // const bollList = getCurrentBOLL(newList).slice(-limit);
 
     lastMacd = macdList[macdList.length - 1];
     lastRSI = rsiList[rsiList.length - 1];
@@ -613,7 +613,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     const result = {
       macdList,
       rsiList,
-      bollList,
+      // bollList,
     };
 
     await checkDeal(result, isAutoReset);
