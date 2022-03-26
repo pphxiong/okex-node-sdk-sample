@@ -233,6 +233,7 @@ function getBOLL(list) {
   const UP = MB + k * MD;
   const DN = MB - k * MD;
 
+  console.log('boll::', MA, UP);
   return {
     MA,
     UP,
