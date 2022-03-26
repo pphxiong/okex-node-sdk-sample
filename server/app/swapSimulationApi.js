@@ -606,6 +606,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     newList.pop();
     const macdList = getCurrentMacd(newList, lastMacd).slice(-limit);
     const rsiList = getCurrentRSI(newList, lastRSI).slice(-limit);
+    const bollList = getCurrentBOLL(newList).slice(-limit);
 
     lastMacd = macdList[macdList.length - 1];
     lastRSI = rsiList[rsiList.length - 1];
@@ -613,6 +614,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     const result = {
       macdList,
       rsiList,
+      bollList,
     };
 
     await checkDeal(result, isAutoReset);
