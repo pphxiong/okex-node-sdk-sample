@@ -1502,7 +1502,7 @@ const writeData = async (data) => {
 
 // 定时获取交割合约账户信息
 (async () => {
-  await startInterval();
+  // await startInterval();
 })();
 app.listen(8092);
 
