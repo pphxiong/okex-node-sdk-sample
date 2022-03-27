@@ -613,11 +613,11 @@ app.get('/swap/startHearBeat', async (req, response) => {
     const newList = JSON.parse(JSON.stringify(list));
     newList.pop();
     const macdList = getCurrentMacd(newList, lastMacd).slice(-limit);
-    const rsiList = getCurrentRSI(newList, lastRSI).slice(-limit);
+    const rsiList = [];
     const bollList = getCurrentBOLL(newList).slice(-limit);
 
     lastMacd = macdList[macdList.length - 1];
-    lastRSI = rsiList[rsiList.length - 1];
+    lastRSI = {};
 
     const result = {
       macdList,
@@ -720,6 +720,7 @@ function fibonacci(n) {
 
 const checkDeal = async (data, isAutoReset = true) => {
   data.bollList = data.bollList || [];
+  console.log('data.bollList', data.bollList.length);
   for (let i = 0; i < data.macdList.length - 9; i++) {
     checkByStep(
       {
