@@ -726,7 +726,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       {
         macdList: data.macdList.slice(i, i + 10),
         rsiList: data.rsiList.slice(i, i + 10),
-        bollList: data.bollList.slice(i, i + 10),
+        bollList: data.bollList,
       },
       isAutoReset
       // && i == data.macdList.length - 10
@@ -832,14 +832,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         ? INCREASE_FI_LIST.length - 2
         : fiIndex;
 
-    console.log(
-      '************************************',
-      moment().format('YYYY-MM-DD HH:mm:ss')
-    );
-    console.log('------------------');
-    console.log('mark_price', mark_price);
-    console.log('bollList', bollList.slice(-2));
-    console.log('------------------');
+    // console.log(
+    //   '************************************',
+    //   moment().format('YYYY-MM-DD HH:mm:ss')
+    // );
+    // console.log('------------------');
+    // console.log('mark_price', mark_price);
+    // console.log('bollList', bollList.slice(-2));
+    // console.log('------------------');
 
     const patchPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) * 2;
