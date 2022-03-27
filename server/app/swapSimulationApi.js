@@ -736,7 +736,6 @@ const checkDeal = async (data, isAutoReset = true) => {
   function checkByStep(data, isForceDeal) {
     isForceDeal = false;
     const {macdList, rsiList, bollList} = data;
-    console.log('data.bollList', data.bollList.length);
 
     macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
@@ -777,15 +776,15 @@ const checkDeal = async (data, isAutoReset = true) => {
     const latestRsiList = rsiList.slice(-6);
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-      Number(bollList[bollList.length - 2].DN);
+      Number(macdList[macdList.length - 1].close) <
+      Number(bollList[bollList.length - 1].DN);
     // &&
     // Number(macdList[macdList.length - 1].close) >
     //   Number(bollList[bollList.length - 1].MA);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-      Number(bollList[bollList.length - 2].UP);
+      Number(macdList[macdList.length - 1].close) >
+      Number(bollList[bollList.length - 1].UP);
     // &&
     // Number(macdList[macdList.length - 1].close) <
     //   Number(bollList[bollList.length - 1].MA);
@@ -833,14 +832,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         ? INCREASE_FI_LIST.length - 2
         : fiIndex;
 
-    // console.log(
-    //   '************************************',
-    //   moment().format('YYYY-MM-DD HH:mm:ss')
-    // );
-    // console.log('------------------');
-    // console.log('mark_price', mark_price);
-    // console.log('bollList', bollList.slice(-2));
-    // console.log('------------------');
+    console.log(
+      '************************************',
+      moment().format('YYYY-MM-DD HH:mm:ss')
+    );
+    console.log('------------------');
+    console.log('mark_price', mark_price);
+    console.log('bollList', bollList.slice(-1));
+    console.log('------------------');
 
     const patchPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) * 2;
