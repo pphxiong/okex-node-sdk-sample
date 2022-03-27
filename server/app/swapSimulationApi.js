@@ -924,6 +924,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         time: macdList[macdList.length - 1].time,
         macdList,
         rsiList,
+        bollList,
       };
 
       dealDetailList.push(dealDetail);
@@ -971,6 +972,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             currentProfit: (longRatio * longHolding.positionAmt) / LEVERAGE,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
+            bollList: bollList[bollList.length - 1],
             MODE,
             longRatio,
           };
@@ -1028,6 +1030,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             currentProfit: (shortRatio * shortHolding.positionAmt) / LEVERAGE,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
+            bollList: bollList[bollList.length - 1],
             MODE,
             shortRatio,
           };
@@ -1144,6 +1147,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             week: macdList[macdList.length - 1].week,
             macdList,
             rsiList,
+            bollList,
             MODE,
             totalProfit,
             totalCapital,
@@ -1209,6 +1213,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             week: macdList[macdList.length - 1].week,
             macdList,
             rsiList,
+            bollList,
             MODE,
             totalProfit,
             totalCapital,
