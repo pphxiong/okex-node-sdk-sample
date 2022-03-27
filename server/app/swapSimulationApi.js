@@ -725,7 +725,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       {
         macdList: data.macdList.slice(i, i + 10),
         rsiList: data.rsiList.slice(i, i + 10),
-        bollList: data.bollList,
+        bollList: data.bollList.slice(-6),
       },
       isAutoReset
       // && i == data.macdList.length - 10
@@ -735,8 +735,6 @@ const checkDeal = async (data, isAutoReset = true) => {
   function checkByStep(data, isForceDeal) {
     isForceDeal = false;
     const {macdList, rsiList, bollList} = data;
-
-    console.log('bollList', bollList.length);
 
     macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
