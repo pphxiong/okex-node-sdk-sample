@@ -222,8 +222,8 @@ function getBOLL(list) {
 
   const newList = list.slice(-N);
 
-  console.log(newList[newList.length - 1]);
-  const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / 20;
+  console.log(newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])));
+  const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / N;
   const MD = Math.sqrt(
     newList.reduce(
       (pre, cur) =>
