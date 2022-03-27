@@ -721,11 +721,7 @@ function fibonacci(n) {
 const checkDeal = async (data, isAutoReset = true) => {
   data.bollList = data.bollList || [];
 
-  for (
-    let i = 0;
-    i < data.macdList.length - 9 && data.bollList.length > 6;
-    i++
-  ) {
+  for (let i = 0; i < data.bollList.length - 9; i++) {
     checkByStep(
       {
         macdList: data.macdList.slice(i, i + 10),
