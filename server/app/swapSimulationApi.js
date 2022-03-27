@@ -256,7 +256,6 @@ function getCurrentBOLL(list) {
     result.push(currentBOLL);
   }
   result.reverse();
-  console.log(result.slice(-3));
   return result;
 }
 
@@ -615,7 +614,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     newList.pop();
     const macdList = getCurrentMacd(newList, lastMacd).slice(-limit);
     const rsiList = getCurrentRSI(newList, lastRSI).slice(-limit);
-    // const bollList = getCurrentBOLL(newList).slice(-limit);
+    const bollList = getCurrentBOLL(newList).slice(-limit);
 
     lastMacd = macdList[macdList.length - 1];
     lastRSI = rsiList[rsiList.length - 1];
@@ -623,7 +622,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
     const result = {
       macdList,
       rsiList,
-      // bollList,
+      bollList,
     };
 
     await checkDeal(result, isAutoReset);
@@ -825,49 +824,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         latestRsiList[index].RSI1 < latestRsiList[index].RSI3
       );
     });
-    // let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
-    //   if (index == 0) return true;
-    //   return latestMacdList[index].column > latestMacdList[index - 1].column;
-    // });
-    // let ifMacdNegativeContinuity = latestMacdList.every((item, index, arr) => {
-    //   if (index == 0) return true;
-    //   return latestMacdList[index].column < latestMacdList[index - 1].column;
-    // });
-
-    // const isHasLongCondition = latestMacdList.some((item, index) => {
-    //   if (index == 0) return false;
-    //   return (
-    //     Number(latestMacdList[index].column) > 0 &&
-    //     latestRsiList[index].RSI1 < latestRsiList[index].RSI3 &&
-    //     latestRsiList[index - 1].RSI1 > latestRsiList[index - 1].RSI3 &&
-    //     latestRsiList[index].RSI3 > LONG_CONDITION
-    //   );
-    // });
-
-    // const isHasShortCondition = latestMacdList.some((item, index) => {
-    //   if (index == 0) return false;
-    //   return (
-    //     Number(latestMacdList[index].column) < 0 &&
-    //     latestRsiList[index].RSI1 > latestRsiList[index].RSI3 &&
-    //     latestRsiList[index - 1].RSI1 < latestRsiList[index - 1].RSI3 &&
-    //     latestRsiList[index].RSI3 < SHORT_CONDITION
-    //   );
-    // });
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 3].open) >
-        Number(macdList[macdList.length - 3].close) &&
-      Number(macdList[macdList.length - 2].open) >
-        Number(macdList[macdList.length - 2].close) &&
-      Number(macdList[macdList.length - 1].open) <
-        Number(macdList[macdList.length - 1].close);
+      Number(macdList[macdList.length - 1].close) <
+      Number(bollList[bollList.length - 1].DN);
+
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 3].open) <
-        Number(macdList[macdList.length - 3].close) &&
-      Number(macdList[macdList.length - 2].open) <
-        Number(macdList[macdList.length - 2].close) &&
-      Number(macdList[macdList.length - 1].open) >
-        Number(macdList[macdList.length - 1].close);
+      Number(macdList[macdList.length - 1].close) >
+      Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
@@ -903,37 +867,6 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // if (longRatio < BAO_RATIO && shortRatio < BAO_RATIO) {
-    //   closeLongCondition = true;
-    //   closeShortCondition = true;
-    // }
-
-    // const { week } = macdList[macdList.length - 1];
-
-    // if (week == 6 || week == 0) {
-    //   MODE = 2;
-    // } else {
-    //   MODE = 1;
-    // }
-
-    // if (MODE == 1) {
-    //   if (
-    //     (closeLongCondition && longRatio > WIN_MAX) ||
-    //     (closeShortCondition && shortRatio > WIN_MAX)
-    //   ) {
-    //     MODE = 2;
-    //     openLongCondition = !openLongCondition;
-    //     openShortCondition = !openShortCondition;
-    //   }
-    // } else if (MODE == 2) {
-    //   if (
-    //     (ifRSIPositiveContinuity && longRatio < 0) ||
-    //     (ifRSINegativeContinuity && shortRatio < 0)
-    //   ) {
-    //     MODE = 1;
-    //   }
-    // }
-
     let fiIndex = INCREASE_FI_LIST.findIndex(
       (item) => holding && item == Number(holding.positionAmt)
     );
@@ -943,119 +876,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         ? INCREASE_FI_LIST.length - 2
         : fiIndex;
 
-    // if (!isForceDeal && MODE == 2) {
-    //   if (closeShortCondition && shortRatio < LOSS_MAX) {
-    //     openLongCondition = false;
-    //     openShortCondition = true;
-    //     // fiIndex = -1;
-    //     if (fiIndex >= 2) {
-    //       MODE = 1;
-    //     }
-    //   } else if (closeLongCondition && longRatio < LOSS_MAX) {
-    //     openLongCondition = true;
-    //     openShortCondition = false;
-    //     // fiIndex = -1;
-    //     if (fiIndex >= 2) {
-    //       MODE = 1;
-    //     }
-    //   }
-    // }
-
-    // if (MODE == 1 && (longRatio > WIN_MAX || shortRatio > WIN_MAX)) {
-    //   MODE = 2;
-    // }
-
-    if (
-      (MODE == 1 && closeLongCondition && longRatio > WIN_MAX * 2) ||
-      (closeShortCondition && shortRatio > WIN_MAX * 2)
-    ) {
-      // ifIgnore = true;
-    }
-
-    if (ifIgnore) {
-      openLongCondition = false;
-      openShortCondition = false;
-
-      ignoreNum++;
-      if (ignoreNum >= 72) {
-        ifIgnore = false;
-        ignoreNum = 0;
-      }
-    }
-
-    // console.log('************************************', moment().format('YYYY-MM-DD HH:mm:ss'))
-    // console.log('------------------')
-    // console.log('mark_price',mark_price)
-    // console.log('macdList',macdList.slice(-2))
-    // console.log('latestColumnsObjList',rsiList.slice(-2))
-    // console.log('------------------')
-
-    // const closeHalfPosition = async (holding, direction) => {
-    //   let positionAmt = Number(holding.positionAmt) / 2;
-    //   const price =
-    //     (Number(holding.entryPrice) * Number(holding.positionAmt) -
-    //       (Number(mark_price) * Number(holding.positionAmt)) / 2) /
-    //     positionAmt;
-
-    //   let currentProfit = 0;
-
-    //   if (direction == "LONG") {
-    //     currentProfit =
-    //       (longRatio * longHolding.positionAmt) / 2 / LEVERAGE -
-    //       (0  * 0.01 * longHolding.positionAmt) / 2;
-    //   } else {
-    //     currentProfit =
-    //       (shortRatio * shortHolding.positionAmt) / 2 / LEVERAGE -
-    //       (0  * 0.01 * shortHolding.positionAmt) / 2;
-    //   }
-    //   totalProfit += currentProfit;
-    //   totalCapital += currentProfit;
-
-    //   if (direction == "LONG") {
-    //     longPosition = {
-    //       positionSide: direction,
-    //       leverage: LEVERAGE,
-    //       entryPrice: price,
-    //       positionAmt,
-    //       time: macdList[macdList.length - 1].time,
-    //     };
-    //   } else {
-    //     shortPosition = {
-    //       positionSide: direction,
-    //       leverage: LEVERAGE,
-    //       entryPrice: price,
-    //       positionAmt,
-    //       time: macdList[macdList.length - 1].time,
-    //     };
-    //   }
-
-    //   const dealDetail = {
-    //     side: "CLOSE",
-    //     positionSide: direction,
-    //     entryPrice: price,
-    //     positionAmt,
-    //     time: macdList[macdList.length - 1].time,
-    //     totalProfit,
-    //     currentProfit,
-    //     macd: macdList[macdList.length - 1],
-    //     rsi: rsiList[rsiList.length - 1],
-    //     MODE,
-    //     isCloseHalf: true,
-    //   };
-    //   dealDetailList.push(dealDetail);
-
-    //   if (direction == "LONG") {
-    //     longPatchNum -= 1;
-    //   } else {
-    //     shortPatchNum -= 1;
-    //   }
-    // };
-
-    // if (longRatio > LOSS_MAX / 4 && longPatchNum > 0) {
-    //   closeHalfPosition(longHolding, "LONG");
-    // } else if (shortRatio > LOSS_MAX / 4 && shortPatchNum > 0) {
-    //   closeHalfPosition(shortHolding, "SHORT");
-    // }
+    console.log(
+      '************************************',
+      moment().format('YYYY-MM-DD HH:mm:ss')
+    );
+    console.log('------------------');
+    console.log('mark_price', mark_price);
+    console.log('bollList', bollList.slice(-2));
+    console.log('------------------');
 
     const patchPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) * 2;
