@@ -725,7 +725,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       {
         macdList: data.macdList.slice(i, i + 10),
         rsiList: data.rsiList.slice(i, i + 10),
-        bollList: data.bollList.slice(i, i + 10),
+        bollList: data.bollList,
       },
       isAutoReset
       // && i == data.macdList.length - 10
