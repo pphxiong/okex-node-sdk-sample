@@ -773,65 +773,20 @@ const checkDeal = async (data, isAutoReset = true) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    const getMinIndex = (arr, key) => {
-      let i = 0;
-      arr.reduce((pre, cur, index) => {
-        if (cur[key] < pre[key]) i = index;
-        return cur;
-      });
-      return i;
-    };
-
-    const getMaxIndex = (arr, key) => {
-      let i = 0;
-      arr.reduce((pre, cur, index) => {
-        if (cur[key] > pre[key]) i = index;
-        return cur;
-      });
-      return i;
-    };
-
-    const minPriceIndex = getMinIndex(macdList, 'low');
-    const minMacdIndex = getMinIndex(macdList, 'column');
-
-    const maxPriceIndex = getMaxIndex(macdList, 'high');
-    const maxMacdIndex = getMaxIndex(macdList, 'column');
-
-    const ifMacdWeakenContinuity = macdList
-      .slice(-6)
-      .every((item, index, arr) => {
-        if (index == 0) return true;
-        return arr[index].column < arr[index - 1].column;
-      });
-    const ifMacdEnhanceContinuity = macdList
-      .slice(-6)
-      .every((item, index, arr) => {
-        if (index == 0) return true;
-        return arr[index].column > arr[index - 1].column;
-      });
-
     const latestMacdList = macdList.slice(-6);
     const latestRsiList = rsiList.slice(-6);
-    let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      return (
-        // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        latestRsiList[index].RSI1 > latestRsiList[index].RSI3
-      );
-    });
-    let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
-      return (
-        // latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
-        latestRsiList[index].RSI1 < latestRsiList[index].RSI3
-      );
-    });
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
-      Number(bollList[bollList.length - 1].DN);
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].MA) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 1].close) >
-      Number(bollList[bollList.length - 1].UP);
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].MA) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
