@@ -222,6 +222,7 @@ function getBOLL(list) {
 
   const newList = list.slice(-N);
 
+  console.log('leng', newList.length);
   newList.reduce((pre, cur) => {
     console.log('11', pre, cur);
     return Number(pre[4]) + Number(cur[4]);
