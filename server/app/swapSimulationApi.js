@@ -224,7 +224,7 @@ function getBOLL(list) {
 
   console.log('leng', newList.length);
   newList.reduce((pre, cur) => {
-    console.log('11', pre, cur);
+    // console.log('11', pre, cur);
     return Number(pre[4]) + Number(cur[4]);
   });
   const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / N;
