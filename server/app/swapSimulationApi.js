@@ -244,6 +244,7 @@ function getBOLL(list) {
 
 function getCurrentBOLL(list) {
   const result = [];
+  console.log('list::', list.length);
   for (let i = list.length; i >= 20; i -= 1) {
     const currentBOLL = getBOLL(list.slice(i - 20, i));
     result.push(currentBOLL);
