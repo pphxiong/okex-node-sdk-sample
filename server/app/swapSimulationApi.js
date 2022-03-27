@@ -720,13 +720,13 @@ function fibonacci(n) {
 
 const checkDeal = async (data, isAutoReset = true) => {
   data.bollList = data.bollList || [];
-  console.log('data.bollList', data.bollList.length);
+
   for (let i = 0; i < data.macdList.length - 9; i++) {
     checkByStep(
       {
         macdList: data.macdList.slice(i, i + 10),
         rsiList: data.rsiList.slice(i, i + 10),
-        bollList: data.bollList,
+        bollList: data.bollList.slice(i, i + 10),
       },
       isAutoReset
       // && i == data.macdList.length - 10
@@ -736,6 +736,7 @@ const checkDeal = async (data, isAutoReset = true) => {
   function checkByStep(data, isForceDeal) {
     isForceDeal = false;
     const {macdList, rsiList, bollList} = data;
+    console.log('data.bollList', data.bollList.length);
 
     macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
