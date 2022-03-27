@@ -222,11 +222,16 @@ function getBOLL(list) {
 
   const newList = list.slice(-N);
 
-  const MA = newList.reduce((total, cur) => Number(total) + Number(cur[4])) / N;
+  const MA =
+    newList.reduce((pre, cur, index) => {
+      if (index === 0) return pre;
+      return Number(pre) + Number(cur[4]);
+    }, Number(newList[0][4])) / N;
   const MD = Math.sqrt(
-    newList.reduce(
-      (total, cur) => Number(total) + Math.pow(Number(cur[4]) - MA, 2)
-    ) / N
+    newList.reduce((pre, cur, index) => {
+      if (index === 0) return pre;
+      return pre + Math.pow(Number(cur[4]) - MA, 2);
+    }, Math.pow(Number(newList[0][4]) - MA, 2)) / N
   );
 
   const UP = MA + k * MD;
