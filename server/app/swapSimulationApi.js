@@ -233,6 +233,8 @@ function getBOLL(list) {
   const UP = MA + k * MD;
   const DN = MA - k * MD;
 
+  console.log('MA::', MA, UP, DN);
+
   return {
     MA,
     UP,
@@ -726,7 +728,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     isForceDeal = false;
     const {macdList, rsiList, bollList} = data;
 
-    console.log('bollList', bollList[bollList.length - 1]);
+    // console.log('bollList', bollList[bollList.length - 1]);
 
     macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
