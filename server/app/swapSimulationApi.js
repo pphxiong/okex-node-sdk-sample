@@ -237,12 +237,23 @@ function getBOLL(list) {
   const UP = MA + k * MD;
   const DN = MA - k * MD;
 
-  console.log('MA::', MA, UP, DN);
+  console.log(
+    'MA::',
+    MA,
+    UP,
+    DN,
+    moment(parseInt(newList[newList.length - 1][0])).format(
+      'YYYY-MM-DD HH:mm:ss'
+    )
+  );
 
   return {
     MA,
     UP,
     DN,
+    time: moment(parseInt(newList[newList.length - 1][0])).format(
+      'YYYY-MM-DD HH:mm:ss'
+    ),
   };
 }
 
