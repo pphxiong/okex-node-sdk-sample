@@ -736,7 +736,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     isForceDeal = false;
     const {macdList, rsiList, bollList} = data;
 
-    // console.log('bollList', bollList[bollList.length - 1]);
+    console.log('bollList', bollList.length);
 
     macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
