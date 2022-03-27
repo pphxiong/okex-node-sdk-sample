@@ -237,16 +237,6 @@ function getBOLL(list) {
   const UP = MA + k * MD;
   const DN = MA - k * MD;
 
-  console.log(
-    'MA::',
-    MA,
-    UP,
-    DN,
-    moment(parseInt(newList[newList.length - 1][0])).format(
-      'YYYY-MM-DD HH:mm:ss'
-    )
-  );
-
   return {
     MA,
     UP,
@@ -266,6 +256,7 @@ function getCurrentBOLL(list) {
     result.push(currentBOLL);
   }
   result.reverse();
+  console.log(result.slice(-3));
   return result;
 }
 
