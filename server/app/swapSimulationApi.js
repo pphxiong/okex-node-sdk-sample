@@ -222,6 +222,7 @@ function getBOLL(list) {
 
   const newList = list.slice(-N);
 
+  console.log(newList[newList.length - 1]);
   const MA = newList.reduce((pre, cur) => Number(pre[4]) + Number(cur[4])) / 20;
   const MD = Math.sqrt(
     newList.reduce(
@@ -674,7 +675,6 @@ app.get('/swap/getLatestProfit', async (req, response) => {
     const newList = JSON.parse(JSON.stringify(list));
     newList.pop();
 
-    console.log('newList::', newList.length);
     const bollList = getCurrentBOLL(newList).slice(-1400);
     const macdList = getCurrentMacd(newList).slice(-1400);
     const rsiList = getCurrentRSI(newList).slice(-1400);
