@@ -250,12 +250,11 @@ function getCurrentBOLL(list) {
   const newList = JSON.parse(JSON.stringify(list));
   const result = [];
 
-  console.log('list::', newList.length);
   for (let i = newList.length; i >= 20; i -= 1) {
     const currentBOLL = getBOLL(newList.slice(i - 20, i));
     result.push(currentBOLL);
   }
-  // result.reverse();
+  result.reverse();
   return result;
 }
 
