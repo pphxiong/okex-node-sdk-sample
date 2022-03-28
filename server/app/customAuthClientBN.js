@@ -107,7 +107,7 @@ function customAuthClient(
         return post("/fapi/v1/order", params);
       },
       getPosition: function () {
-        return get(`/fapi/v2/account`);
+        return getWithSign(`/fapi/v2/account`);
       },
       openOrder: function (params) {
         console.log(symbol, origClientOrderId);
