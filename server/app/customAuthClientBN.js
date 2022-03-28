@@ -142,10 +142,10 @@ function customAuthClient(
     },
     common: {
       getMarkPrice: function (symbol) {
-        return commonGet(`/fapi/v1/premiumIndex?symbol=${symbol}`);
+        return getWithSign(`/fapi/v1/premiumIndex?symbol=${symbol}`);
       },
       getHistory: function (symbol, params) {
-        return commonGet(
+        return getWithSign(
           `/fapi/v1/klines?symbol=${symbol}&` + querystring.stringify(params)
         );
       },
