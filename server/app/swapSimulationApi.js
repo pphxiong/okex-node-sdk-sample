@@ -251,7 +251,7 @@ function getCurrentBOLL(list) {
   const newList = JSON.parse(JSON.stringify(list));
   const result = [];
 
-  for (let i = newList.length; i >= 0; i -= 1) {
+  for (let i = newList.length; i >= 1; i -= 1) {
     let currentBOLL = {};
     if (i >= 20) {
       currentBOLL = getBOLL(newList.slice(i - 20, i));
