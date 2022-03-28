@@ -1134,6 +1134,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // !longHolding ||
           // !Number(longHolding.positionAmt)
           // &&
+          true ||
           !shortHolding ||
           !Number(shortHolding.positionAmt)
           // &&
