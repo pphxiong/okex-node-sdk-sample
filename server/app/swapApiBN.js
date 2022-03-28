@@ -27,7 +27,7 @@ const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
-let INIT_POSITION = 0.1;
+let INIT_POSITION = 0.2;
 const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
 
@@ -154,16 +154,16 @@ const checkDeal = async (data) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].UP);
-
-    const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
-      Number(macdList[macdList.length - 1].close) <
+      Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].DN);
+
+    const MAIN_OPEN_SHORT_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
@@ -398,6 +398,7 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         if (
+          true ||
           !longHolding ||
           !Number(longHolding.positionAmt)
           // && (!shortHolding || !Number(shortHolding.positionAmt))
@@ -443,6 +444,7 @@ const checkDeal = async (data) => {
         if (
           // (!longHolding || !Number(longHolding.positionAmt))
           // &&
+          true ||
           !shortHolding ||
           !Number(shortHolding.positionAmt)
         ) {
