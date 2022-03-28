@@ -1075,7 +1075,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         ) {
           // closeShort()
           // const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-          let openPositionAmt = INIT_POSITION + (longPosition.positionAmt || 0);
+          let openPositionAmt = INIT_POSITION;
           const ratio = shortRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
@@ -1098,7 +1098,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             positionSide: "LONG",
             leverage: LEVERAGE,
             entryPrice: mark_price,
-            positionAmt: openPositionAmt,
+            positionAmt: openPositionAmt + (longPosition.positionAmt || 0),
             time: macdList[macdList.length - 1].time,
           };
           const dealDetail = {
@@ -1142,8 +1142,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         ) {
           // closeLong()
           // const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-          let openPositionAmt =
-            INIT_POSITION + (shortPosition.positionAmt || 0);
+          let openPositionAmt = INIT_POSITION;
           const ratio = longRatio;
           const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
           const decreasePosition = INCREASE_FI_LIST[0];
@@ -1166,7 +1165,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             positionSide: "SHORT",
             leverage: LEVERAGE,
             entryPrice: mark_price,
-            positionAmt: openPositionAmt,
+            positionAmt: openPositionAmt + (shortPosition.positionAmt || 0),
             time: macdList[macdList.length - 1].time,
           };
           const dealDetail = {
