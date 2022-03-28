@@ -252,7 +252,10 @@ function getCurrentBOLL(list) {
   const result = [];
 
   for (let i = newList.length; i >= 0; i -= 1) {
-    const currentBOLL = getBOLL(newList.slice(i - 20, i));
+    let currentBOLL = {};
+    if (i >= 20) {
+      currentBOLL = getBOLL(newList.slice(i - 20, i));
+    }
     result.push(currentBOLL);
   }
   result.reverse();
