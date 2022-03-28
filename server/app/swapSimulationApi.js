@@ -781,8 +781,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_LONG_BASIC_CONDITION =
       // Number(macdList[macdList.length - 2].close) <
       //   Number(bollList[bollList.length - 2].MA) &&
-      Number(macdList[macdList.length - 1].close) >
-      Number(bollList[bollList.length - 1].UP);
+      Number(macdList[macdList.length - 1].close) <
+      Number(bollList[bollList.length - 1].DN);
     // &&
     // Number(macdList[macdList.length - 1].close) >
     //   Number(bollList[bollList.length - 1].MA);
@@ -790,8 +790,8 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_SHORT_BASIC_CONDITION =
       // Number(macdList[macdList.length - 2].close) >
       //   Number(bollList[bollList.length - 2].MA) &&
-      Number(macdList[macdList.length - 1].close) <
-      Number(bollList[bollList.length - 1].DN);
+      Number(macdList[macdList.length - 1].close) >
+      Number(bollList[bollList.length - 1].UP);
     // &&
     // Number(macdList[macdList.length - 1].close) <
     //   Number(bollList[bollList.length - 1].MA);
