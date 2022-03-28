@@ -154,19 +154,21 @@ const checkDeal = async (data) => {
     });
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-      Number(bollList[bollList.length - 2].DN);
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-      Number(bollList[bollList.length - 2].UP);
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION1 && longRatio > 0;
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION1 && shortRatio > 0;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
