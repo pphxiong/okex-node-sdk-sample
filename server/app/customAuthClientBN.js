@@ -146,7 +146,7 @@ function customAuthClient(
       },
       getHistory: function (symbol, params) {
         params.symbol = symbol;
-        return getWithSign(`/fapi/v1/klines?`, params);
+        return getWithSign(`/fapi/v1/klines`, params);
       },
     },
   };
