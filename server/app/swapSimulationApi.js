@@ -251,7 +251,7 @@ function getCurrentBOLL(list) {
   const newList = JSON.parse(JSON.stringify(list));
   const result = [];
 
-  for (let i = newList.length; i >= 20; i -= 1) {
+  for (let i = newList.length; i >= 0; i -= 1) {
     const currentBOLL = getBOLL(newList.slice(i - 20, i));
     result.push(currentBOLL);
   }
@@ -680,7 +680,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
 
     const bollList = getCurrentBOLL(newList).slice(-1400);
     const macdList = getCurrentMacd(newList).slice(-1400);
-    const rsiList = [];
+    const rsiList = getCurrentRSI(newList).slice(-1400);
 
     const result = {
       macdList,
