@@ -721,6 +721,7 @@ function fibonacci(n) {
 const checkDeal = async (data, isAutoReset = true) => {
   data.bollList = data.bollList || [];
 
+  console.log(data.bollList.length, data.macdList.length);
   for (let i = 0; i < data.bollList.length - 9; i++) {
     checkByStep(
       {
@@ -836,14 +837,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         ? INCREASE_FI_LIST.length - 2
         : fiIndex;
 
-    console.log(
-      "************************************",
-      moment().format("YYYY-MM-DD HH:mm:ss")
-    );
-    console.log("------------------");
-    console.log("mark_price", mark_price);
-    console.log("bollList", bollList.slice(-1));
-    console.log("------------------");
+    // console.log(
+    //   "************************************",
+    //   moment().format("YYYY-MM-DD HH:mm:ss")
+    // );
+    // console.log("------------------");
+    // console.log("mark_price", mark_price);
+    // console.log("bollList", bollList.slice(-1));
+    // console.log("------------------");
 
     const patchPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) * 2;
