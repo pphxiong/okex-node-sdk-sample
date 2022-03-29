@@ -142,10 +142,8 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION1 && longRatio > 0;
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION1 && shortRatio > 0;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -216,6 +214,7 @@ const checkDeal = async (data) => {
             side: "long",
             mark_price,
             time: macdList[macdList.length - 1].time,
+            ratio: longRatio,
           };
           await closePosition(payload, isMarketDeal, dealRatio);
         }
@@ -236,6 +235,7 @@ const checkDeal = async (data) => {
             side: "short",
             mark_price,
             time: macdList[macdList.length - 1].time,
+            ratio: shortRatio,
           };
           await closePosition(payload, isMarketDeal, dealRatio);
         }
@@ -538,7 +538,8 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
 const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   isMarketDeal = true;
-  const { position = INIT_POSITION, side, mark_price, time } = holding;
+  let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
+  if (ratio < 0) position = INIT_POSITION;
   async function postOrder(size) {
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
