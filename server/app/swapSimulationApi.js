@@ -525,8 +525,8 @@ const waitTime = (time = 1000 * 4) => {
 app.get("/swap/reset", async (req, response) => {
   totalProfit = 0;
   currentPosition = {};
-  longPosition = {};
-  shortPosition = {};
+  longPosition = { entryPrice: 0, positionAmt: 0 };
+  shortPosition = { entryPrice: 0, positionAmt: 0 };
   dealDetailList = [];
   mostLoss = {};
   send(response, {
@@ -677,8 +677,8 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     const list = data;
     totalProfit = 0;
     currentPosition = {};
-    longPosition = {};
-    shortPosition = {};
+    longPosition = { entryPrice: 0, positionAmt: 0 };
+    shortPosition = { entryPrice: 0, positionAmt: 0 };
     dealDetailList = [];
     mostLoss = INIT_MOST_LOSS;
     maxWinRatio = 0;
