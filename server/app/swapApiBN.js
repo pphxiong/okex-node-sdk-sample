@@ -27,7 +27,7 @@ const ORIGIN_INIT_POSITION = 2;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 0).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(1))
 );
-let INIT_POSITION = 0.2;
+let INIT_POSITION = 0.1;
 const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
 
