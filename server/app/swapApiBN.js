@@ -722,7 +722,7 @@ const countdownCancelAll = async (time) => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 1.5 * 10) {
+  if (RESTART_TIME >= 1 * 10) {
     restart();
     return;
   }
@@ -749,7 +749,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 40);
+    await waitTime(1000 * 60);
     await startInterval();
   } catch (e) {
     restart();
