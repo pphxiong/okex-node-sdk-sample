@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
 };
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "15m";
+const DEFAULT_INTERVAL = "5m";
 const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
@@ -168,7 +168,7 @@ const checkDeal = async (data) => {
     const isFiveM = lastCharacter == 0 || lastCharacter == 5;
 
     console.log("************************************", currentTime);
-    // console.log("mark_price", mark_price);
+    console.log("isFiveM", isFiveM, lastCharacter);
     console.log("macdList", macdList.slice(-1));
     console.log("bollList", bollList.slice(-1));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
@@ -261,21 +261,7 @@ const checkDeal = async (data) => {
     //开多仓条件
     if (openLongCondition) {
       try {
-        if (
-          true ||
-          !longHolding ||
-          !Number(longHolding.positionAmt)
-          // && (!shortHolding || !Number(shortHolding.positionAmt))
-        ) {
-          let fiIndex;
-          fiIndex = INCREASE_FI_LIST.findIndex(
-            (item) =>
-              shortHolding && item == Math.abs(Number(shortHolding.positionAmt))
-          );
-          fiIndex =
-            fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
-              : fiIndex;
+        if (avail > INIT_POSITION) {
           let openPositionAmt = INIT_POSITION;
           await openPosition(
             {
@@ -296,22 +282,7 @@ const checkDeal = async (data) => {
     //开空仓条件
     if (openShortCondition) {
       try {
-        if (
-          // (!longHolding || !Number(longHolding.positionAmt))
-          // &&
-          true ||
-          !shortHolding ||
-          !Number(shortHolding.positionAmt)
-        ) {
-          let fiIndex;
-          fiIndex = INCREASE_FI_LIST.findIndex(
-            (item) =>
-              longHolding && item == Math.abs(Number(longHolding.positionAmt))
-          );
-          fiIndex =
-            fiIndex == INCREASE_FI_LIST.length - 1
-              ? INCREASE_FI_LIST.length - 2
-              : fiIndex;
+        if (avail > INIT_POSITION) {
           let openPositionAmt = INIT_POSITION;
           await openPosition(
             {
@@ -746,7 +717,7 @@ const countdownCancelAll = async (time) => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 4 * 10) {
+  if (RESTART_TIME >= 1.5 * 10) {
     restart();
     return;
   }
@@ -773,7 +744,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 15);
+    await waitTime(1000 * 40);
     await startInterval();
   } catch (e) {
     restart();
