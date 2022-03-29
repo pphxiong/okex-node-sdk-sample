@@ -110,6 +110,7 @@ function customAuthClient(
         return get(`/fapi/v2/account`);
       },
       openOrder: function (params) {
+        console.log(symbol, origClientOrderId);
         return getWithSign(`/fapi/v1/openOrder`, params);
       },
       openOrders: function (params) {
@@ -144,8 +145,9 @@ function customAuthClient(
         return commonGet(`/fapi/v1/premiumIndex?symbol=${symbol}`);
       },
       getHistory: function (symbol, params) {
-        params.symbol = symbol;
-        return getWithSign(`/fapi/v1/klines`, params);
+        return commonGet(
+          `/fapi/v1/klines?symbol=${symbol}&` + querystring.stringify(params)
+        );
       },
     },
   };
