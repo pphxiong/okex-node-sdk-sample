@@ -76,20 +76,6 @@ const checkDeal = async (data) => {
           ) || [];
         positionChange = false;
 
-        const availPosition = (
-          (Number(availableBalance) * LEVERAGE) /
-          mark_price /
-          POSITION_RATIO
-        ).toFixed(3);
-
-        // INIT_POSITION = Math.min(
-        //   Number(availPosition),
-        //   ORIGIN_INIT_POSITION * 2
-        // );
-
-        // INIT_POSITION = Number(availPosition);
-
-        // await readData();
         MODE = 1;
         console.log("------------------");
         console.log(
@@ -138,20 +124,7 @@ const checkDeal = async (data) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    const latestMacdList = macdList.slice(-3);
-    const latestRsiList = rsiList.slice(-3);
-    let ifRSIPositiveContinuity = latestMacdList.every((item, index, arr) => {
-      return (
-        // latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-        latestRsiList[index].RSI1 > latestRsiList[index].RSI3
-      );
-    });
-    let ifRSINegativeContinuity = latestMacdList.every((item, index, arr) => {
-      return (
-        // latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
-        latestRsiList[index].RSI1 < latestRsiList[index].RSI3
-      );
-    });
+    console.log("bollList", bollList.length);
 
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].close) <
@@ -184,129 +157,19 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    // if (openLongCondition || openShortCondition) {
-    //   const time = 1000 * 1;
-    //   await countdownCancelAll(time);
-    // }
-
     let isMarketDeal = true;
 
-    // const result = await cAuthClientBN.swap.openOrders();
-    // if (result && result.length) {
-    //   const side =
-    //     rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION ? "LONG" : "SHORT";
-
-    //   let index = -1;
-    //   index = result.findIndex(
-    //     (item) => item.positionSide == side && !item.reduceOnly
-    //   );
-    //   if (index != -1) {
-    //     const order = result[index];
-    //     const diff = moment().diff(order.time, "minute");
-    //     if (diff >= 5) {
-    //       const time = 1000 * 2;
-    //       await countdownCancelAll(time);
-    //       if (side == "LONG") {
-    //         openLongCondition = true;
-    //       } else {
-    //         openShortCondition = true;
-    //       }
-    //     }
-    //   }
-
-    //   let closeIndex = -1;
-    //   closeIndex = result.findIndex(
-    //     (item) => item.positionSide == side && item.reduceOnly
-    //   );
-    //   if (closeIndex != -1) {
-    //     const order = result[closeIndex];
-    //     const diff = moment().diff(order.time, "minute");
-    //     if (diff >= 5) {
-    //       const time = 1000 * 2;
-    //       await countdownCancelAll(time);
-    //       if (side == "LONG") {
-    //         closeLongCondition = true;
-    //       } else {
-    //         closeShortCondition = true;
-    //       }
-    //     }
-    //   }
-    // }
-
     let dealRatio = 0.01;
-    // if (
-    //   // Number(macdList[macdList.length - 1].column) > 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
-    //   MODE == 1
-    // ) {
-    //   dealRatio = 0.2;
-    //   // await cancelReduceOnly("LONG");
-    //   closeLongCondition = true;
-    // } else if (
-    //   // Number(macdList[macdList.length - 1].column) < 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-    //   MODE == 1
-    // ) {
-    //   dealRatio = 0.2;
-    //   // await cancelReduceOnly("SHORT");
-    //   closeShortCondition = true;
-    // }
 
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
     const hmsArr = currentTime.split(" ")[1].split(":");
     const lastCharacter = hmsArr[1].slice(-1);
     const isFiveM = lastCharacter == 0 || lastCharacter == 5;
 
-    // if (
-    //   Number(macdList[macdList.length - 1].column) < 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 2].RSI1 < rsiList[rsiList.length - 2].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION &&
-    //   MODE == 1 &&
-    //   longRatio < 0
-    // ) {
-    //   dealRatio = 0.03;
-    //   await cancelReduceOnly('LONG');
-    //   closeLongCondition = true;
-    // } else if (
-    //   Number(macdList[macdList.length - 1].column) > 0 &&
-    //   rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-    //   rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-    //   rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-    //   MODE == 1 &&
-    //   shortRatio < 0
-    // ) {
-    //   dealRatio = 0.03;
-    //   await cancelReduceOnly('SHORT');
-    //   closeShortCondition = true;
-    // }
-
-    // if (
-    //   MODE == 1 &&
-    //   ((closeLongCondition && longRatio > WIN_MAX) ||
-    //     (closeShortCondition && shortRatio > WIN_MAX))
-    // ) {
-    //   MODE = 2;
-    //   await writeData();
-    //   openLongCondition = !openLongCondition;
-    //   openShortCondition = !openShortCondition;
-    // } else if (
-    //   MODE == 2 &&
-    //   ((ifRSIPositiveContinuity && longRatio < 0 && isFiveM) ||
-    //     (ifRSINegativeContinuity && shortRatio < 0 && isFiveM))
-    // ) {
-    //   MODE = 1;
-    //   await writeData();
-    // }
-
     console.log("************************************", currentTime);
     // console.log("mark_price", mark_price);
-    console.log("macdList", macdList.slice(-1)[0]);
-    // console.log("rsiList", rsiList.slice(-1)[0]);
+    console.log("macdList", macdList.slice(-1));
+    console.log("bollList", bollList.slice(-1));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
       "longPositionAmt",
@@ -899,7 +762,7 @@ const countdownCancelAll = async (time) => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 6 * 10) {
+  if (RESTART_TIME >= 4 * 10) {
     restart();
     return;
   }
@@ -926,7 +789,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 10);
+    await waitTime(1000 * 15);
     await startInterval();
   } catch (e) {
     restart();
