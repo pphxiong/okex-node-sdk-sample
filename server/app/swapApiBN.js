@@ -65,6 +65,7 @@ const checkDeal = async (data) => {
     let shortHolding;
     let longRatio = 0;
     let shortRatio = 0;
+    let avail = 0;
 
     if (positionChange || !globalHolding || !globalHolding.length || true) {
       try {
@@ -75,12 +76,15 @@ const checkDeal = async (data) => {
             (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
           ) || [];
         positionChange = false;
-
         MODE = 1;
+        avail = (availableBalance * LEVERAGE) / mark_price;
+
         console.log("------------------");
         console.log(
           `availableBalance`,
           availableBalance,
+          "avail",
+          avail,
           "INIT_POSITION",
           INIT_POSITION
         );
@@ -124,8 +128,6 @@ const checkDeal = async (data) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    console.log("bollList", bollList.length);
-
     const MAIN_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
@@ -158,7 +160,6 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     let isMarketDeal = true;
-
     let dealRatio = 0.01;
 
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -266,7 +267,6 @@ const checkDeal = async (data) => {
           !Number(longHolding.positionAmt)
           // && (!shortHolding || !Number(shortHolding.positionAmt))
         ) {
-          // await closeShortPosition()
           let fiIndex;
           fiIndex = INCREASE_FI_LIST.findIndex(
             (item) =>
@@ -277,14 +277,6 @@ const checkDeal = async (data) => {
               ? INCREASE_FI_LIST.length - 2
               : fiIndex;
           let openPositionAmt = INIT_POSITION;
-          const ratio = shortRatio;
-          const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-          // if (ratio < WIN_MAX * 2) {
-          //   openPositionAmt = increasePosition;
-          // }
-          console.log("shortHolding", shortHolding);
-          console.log("ratio", ratio);
-          console.log("openPositionAmt", openPositionAmt);
           await openPosition(
             {
               position: openPositionAmt,
@@ -311,7 +303,6 @@ const checkDeal = async (data) => {
           !shortHolding ||
           !Number(shortHolding.positionAmt)
         ) {
-          // await closeLongPosition();
           let fiIndex;
           fiIndex = INCREASE_FI_LIST.findIndex(
             (item) =>
@@ -322,13 +313,6 @@ const checkDeal = async (data) => {
               ? INCREASE_FI_LIST.length - 2
               : fiIndex;
           let openPositionAmt = INIT_POSITION;
-          const ratio = longRatio;
-          const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-          console.log("longHolding", longHolding);
-          console.log("ratio", ratio);
-          // if (ratio < WIN_MAX * 2) {
-          //   openPositionAmt = increasePosition;
-          // }
           await openPosition(
             {
               position: openPositionAmt,
