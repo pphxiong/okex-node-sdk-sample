@@ -777,9 +777,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    const latestMacdList = macdList.slice(-6);
-    const latestRsiList = rsiList.slice(-6);
-
     const MAIN_LONG_BASIC_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
