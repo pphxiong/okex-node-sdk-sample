@@ -168,9 +168,9 @@ const checkDeal = async (data) => {
     const isFiveM = lastCharacter == 0 || lastCharacter == 5;
 
     console.log("************************************", currentTime);
-    console.log("isFiveM", isFiveM, lastCharacter);
-    console.log("macdList", macdList.slice(-1));
-    console.log("bollList", bollList.slice(-1));
+    // console.log("isFiveM", isFiveM, lastCharacter);
+    // console.log("macdList", macdList.slice(-2));
+    console.log("bollList", bollList.slice(-2));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
       "longPositionAmt",
@@ -241,7 +241,7 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (closeLongCondition) {
+    if (closeLongCondition && isFiveM) {
       try {
         await closeLongPosition();
       } catch (e) {
@@ -250,7 +250,7 @@ const checkDeal = async (data) => {
     }
 
     //平空仓条件
-    if (closeShortCondition) {
+    if (closeShortCondition && isFiveM) {
       try {
         await closeShortPosition();
       } catch (e) {
@@ -261,7 +261,7 @@ const checkDeal = async (data) => {
     //开多仓条件
     if (openLongCondition) {
       try {
-        if (avail > INIT_POSITION) {
+        if (isFiveM && avail > INIT_POSITION) {
           let openPositionAmt = INIT_POSITION;
           await openPosition(
             {
@@ -282,7 +282,7 @@ const checkDeal = async (data) => {
     //开空仓条件
     if (openShortCondition) {
       try {
-        if (avail > INIT_POSITION) {
+        if (isFiveM && avail > INIT_POSITION) {
           let openPositionAmt = INIT_POSITION;
           await openPosition(
             {
@@ -359,6 +359,7 @@ function getCurrentMacd(list) {
       result = {
         open: Number(item[1]),
         price: Number(item[4]),
+        close: Number(item[4]),
         ema12: Number(item[4]),
         ema26: Number(item[4]),
         diff: 0,
@@ -373,6 +374,7 @@ function getCurrentMacd(list) {
       const payload = {
         open: Number(item[1]),
         price: Number(item[4]),
+        close: Number(item[4]),
         lastEma12: lastResult.ema12,
         lastEma26: lastResult.ema26,
         lastDea: lastResult.dea,
@@ -590,7 +592,7 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
 let positionChange = true;
 let globalHolding = null;
 function getMacd(params) {
-  const { open, price, lastEma12, lastEma26, lastDea, high, low, time } =
+  const { open, close, price, lastEma12, lastEma26, lastDea, high, low, time } =
     params;
 
   const ema12 = toFixedAndToNumber(
@@ -612,6 +614,7 @@ function getMacd(params) {
 
   const result = {
     open,
+    close,
     price,
     ema12,
     ema26,

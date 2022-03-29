@@ -781,13 +781,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     const latestRsiList = rsiList.slice(-6);
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].low) <
+      Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].DN);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].high) >
+      Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].UP);
