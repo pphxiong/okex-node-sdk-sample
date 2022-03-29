@@ -951,8 +951,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
           // if (isForceDeal || ifIgnore) {
-          longHolding = {};
-          longPosition = {};
+          longHolding = { entryPrice: 0, positionAmt: 0 };
+          longPosition = { entryPrice: 0, positionAmt: 0 };
           // }
           maxWinRatio = 0;
           longPatchNum = 0;
@@ -1009,8 +1009,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
           // if (isForceDeal || ifIgnore) {
-          shortHolding = {};
-          shortPosition = {};
+          shortHolding = { entryPrice: 0, positionAmt: 0 };
+          shortPosition = { entryPrice: 0, positionAmt: 0 };
           // }
           maxWinRatio = 0;
           shortPatchNum = 0;
