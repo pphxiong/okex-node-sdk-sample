@@ -677,6 +677,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     mostLoss = INIT_MOST_LOSS;
     maxWinRatio = 0;
     dealDetailList = [];
+    maxOpenPosition = 0;
 
     const newList = JSON.parse(JSON.stringify(list));
     newList.pop();
@@ -706,6 +707,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         baoNumTotal,
         lastWinOrLoss,
         lastPosition,
+        maxOpenPosition,
       },
     });
   } catch (e) {
