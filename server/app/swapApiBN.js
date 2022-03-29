@@ -778,9 +778,9 @@ const startInterval = async () => {
 
     const newList = JSON.parse(JSON.stringify(list));
     newList.pop();
+    const bollList = getCurrentBOLL(newList);
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
-    const bollList = getCurrentBOLL(newList);
 
     const result = {
       macdList,
