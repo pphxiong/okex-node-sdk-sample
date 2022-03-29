@@ -110,7 +110,6 @@ function customAuthClient(
         return getWithSign(`/fapi/v2/account`);
       },
       openOrder: function (params) {
-        console.log(symbol, origClientOrderId);
         return getWithSign(`/fapi/v1/openOrder`, params);
       },
       openOrders: function (params) {
