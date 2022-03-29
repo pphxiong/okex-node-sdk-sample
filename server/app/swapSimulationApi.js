@@ -850,7 +850,11 @@ const checkDeal = async (data, isAutoReset = true) => {
       totalProfit += (-0.018 * 0.01 * positionAmt) / 2;
       totalCapital += (-0.018 * 0.01 * positionAmt) / 2;
       // if (totalCapital < positionAmt / 2) positionAmt = 0;
-      maxOpenPosition = Math.max(maxOpenPosition, positionAmt);
+      maxOpenPosition = Math.max(
+        maxOpenPosition,
+        longPosition.positionAmt || 0,
+        shortPosition.positionAmt || 0
+      );
       if (direction == "LONG") {
         longPosition = {
           positionSide: direction,
@@ -1085,7 +1089,11 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalPosition += openPositionAmt;
 
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
-          maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
+          maxOpenPosition = Math.max(
+            maxOpenPosition,
+            longPosition.positionAmt || 0,
+            shortPosition.positionAmt || 0
+          );
           longPosition = {
             positionSide: "LONG",
             leverage: LEVERAGE,
@@ -1152,7 +1160,11 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalPosition += openPositionAmt;
 
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
-          maxOpenPosition = Math.max(maxOpenPosition, openPositionAmt);
+          maxOpenPosition = Math.max(
+            maxOpenPosition,
+            longPosition.positionAmt || 0,
+            shortPosition.positionAmt || 0
+          );
           shortPosition = {
             positionSide: "SHORT",
             leverage: LEVERAGE,
