@@ -169,7 +169,7 @@ const checkDeal = async (data) => {
 
     console.log("************************************", currentTime);
     // console.log("isFiveM", isFiveM, lastCharacter);
-    // console.log("macdList", macdList.slice(-2));
+    console.log("macdList", macdList.map((item) => item.close).slice(-2));
     console.log("bollList", bollList.slice(-2));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
