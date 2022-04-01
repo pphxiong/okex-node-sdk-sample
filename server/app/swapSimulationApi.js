@@ -919,9 +919,13 @@ const checkDeal = async (data, isAutoReset = true) => {
             // openLongCondition = false;
             // openShortCondition = true;
           }
+
+          let closePositionAmt = longHolding.positionAmt;
+          if (longRatio < 0)
+            closePositionAmt = Math.min(INIT_POSITION * 2, closePositionAmt);
           const currentProfit =
-            (longRatio * longHolding.positionAmt) / LEVERAGE -
-            0.018 * 0.01 * longHolding.positionAmt;
+            (longRatio * closePositionAmt) / LEVERAGE -
+            0.018 * 0.01 * closePositionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -929,12 +933,12 @@ const checkDeal = async (data, isAutoReset = true) => {
             side: "CLOSE",
             positionSide: "LONG",
             entryPrice: mark_price,
-            positionAmt: longHolding.positionAmt,
+            positionAmt: closePositionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
             totalProfit,
             totalCapital,
-            currentProfit: (longRatio * longHolding.positionAmt) / LEVERAGE,
+            currentProfit: (longRatio * closePositionAmt) / LEVERAGE,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
             bollList: bollList[bollList.length - 1],
@@ -944,14 +948,20 @@ const checkDeal = async (data, isAutoReset = true) => {
           dealDetailList.push(dealDetail);
           if (longRatio < mostLoss.profit) {
             mostLoss = {
-              profit: (longRatio * longHolding.positionAmt) / LEVERAGE,
+              profit: (longRatio * closePositionAmt) / LEVERAGE,
               time: macdList[macdList.length - 1].time,
             };
           }
-          // if (isForceDeal || ifIgnore) {
-          longHolding = { entryPrice: 0, positionAmt: 0 };
-          longPosition = { entryPrice: 0, positionAmt: 0 };
-          // }
+
+          longHolding = {
+            entryPrice: longRatio < 0 ? longHolding.entryPrice : 0,
+            positionAmt: longHolding.positionAmt - closePositionAmt,
+          };
+          longPosition = {
+            entryPrice: longRatio < 0 ? longHolding.entryPrice : 0,
+            positionAmt: longHolding.positionAmt - closePositionAmt,
+          };
+
           maxWinRatio = 0;
           longPatchNum = 0;
         }
@@ -977,9 +987,12 @@ const checkDeal = async (data, isAutoReset = true) => {
             // openShortCondition = false;
           }
           if (shortRatio < 0) modeChange = true;
+          let closePositionAmt = shortHolding.positionAmt;
+          if (longRatio < 0)
+            closePositionAmt = Math.min(INIT_POSITION * 2, closePositionAmt);
           const currentProfit =
-            (shortRatio * shortHolding.positionAmt) / LEVERAGE -
-            0.018 * 0.01 * shortHolding.positionAmt;
+            (shortRatio * closePositionAmt) / LEVERAGE -
+            0.018 * 0.01 * closePositionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -987,12 +1000,12 @@ const checkDeal = async (data, isAutoReset = true) => {
             side: "CLOSE",
             positionSide: "SHORT",
             entryPrice: mark_price,
-            positionAmt: shortHolding.positionAmt,
+            positionAmt: closePositionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
             totalProfit,
             totalCapital,
-            currentProfit: (shortRatio * shortHolding.positionAmt) / LEVERAGE,
+            currentProfit: (shortRatio * closePositionAmt) / LEVERAGE,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
             bollList: bollList[bollList.length - 1],
@@ -1006,10 +1019,16 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-          // if (isForceDeal || ifIgnore) {
-          shortHolding = { entryPrice: 0, positionAmt: 0 };
-          shortPosition = { entryPrice: 0, positionAmt: 0 };
-          // }
+
+          shortHolding = {
+            entryPrice: shortRatio < 0 ? shortHolding.entryPrice : 0,
+            positionAmt: shortHolding.positionAmt - closePositionAmt,
+          };
+          shortPosition = {
+            entryPrice: shortRatio < 0 ? shortHolding.entryPrice : 0,
+            positionAmt: shortHolding.positionAmt - closePositionAmt,
+          };
+
           maxWinRatio = 0;
           shortPatchNum = 0;
         }
