@@ -67,7 +67,7 @@ const INIT_MOST_LOSS = {
   profit: 0,
   time: null,
 };
-const POSITION_RATIO_DEFAULT = 5;
+const POSITION_RATIO_DEFAULT = 30;
 let POSITION_RATIO = POSITION_RATIO_DEFAULT;
 const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
 let totalCapital = ORIGIN_TOTAL_CAPITAL;
@@ -921,8 +921,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
 
           let closePositionAmt = longHolding.positionAmt;
-          // if (longRatio < 0)
-          //   closePositionAmt = Math.min(INIT_POSITION * 2, closePositionAmt);
+          if (longRatio < 0)
+            closePositionAmt = Math.min(INIT_POSITION * 2, closePositionAmt);
           const currentProfit =
             (longRatio * closePositionAmt) / LEVERAGE -
             0.018 * 0.01 * closePositionAmt;
@@ -994,8 +994,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           if (shortRatio < 0) modeChange = true;
           let closePositionAmt = shortHolding.positionAmt;
-          // if (shortRatio < 0)
-          //   closePositionAmt = Math.min(INIT_POSITION * 2, closePositionAmt);
+          if (shortRatio < 0)
+            closePositionAmt = Math.min(INIT_POSITION * 2, closePositionAmt);
           const currentProfit =
             (shortRatio * closePositionAmt) / LEVERAGE -
             0.018 * 0.01 * closePositionAmt;
