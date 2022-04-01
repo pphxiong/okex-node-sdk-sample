@@ -954,11 +954,17 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
 
           longHolding = {
-            entryPrice: longRatio < 0 ? longHolding.entryPrice : 0,
+            entryPrice:
+              closePositionAmt == longHolding.positionAmt
+                ? 0
+                : longHolding.entryPrice,
             positionAmt: longHolding.positionAmt - closePositionAmt,
           };
           longPosition = {
-            entryPrice: longRatio < 0 ? longHolding.entryPrice : 0,
+            entryPrice:
+              closePositionAmt == longHolding.positionAmt
+                ? 0
+                : longHolding.entryPrice,
             positionAmt: longHolding.positionAmt - closePositionAmt,
           };
 
@@ -1021,11 +1027,17 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
 
           shortHolding = {
-            entryPrice: shortRatio < 0 ? shortHolding.entryPrice : 0,
+            entryPrice:
+              closePositionAmt == shortHolding.positionAmt
+                ? 0
+                : shortHolding.entryPrice,
             positionAmt: shortHolding.positionAmt - closePositionAmt,
           };
           shortPosition = {
-            entryPrice: shortRatio < 0 ? shortHolding.entryPrice : 0,
+            entryPrice:
+              closePositionAmt == shortHolding.positionAmt
+                ? 0
+                : shortHolding.entryPrice,
             positionAmt: shortHolding.positionAmt - closePositionAmt,
           };
 
