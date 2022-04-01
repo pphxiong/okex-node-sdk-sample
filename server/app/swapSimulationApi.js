@@ -953,18 +953,17 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
 
+          const entryPrice =
+            closePositionAmt == longHolding.positionAmt
+              ? 0
+              : longHolding.entryPrice;
+
           longHolding = {
-            entryPrice:
-              closePositionAmt == longHolding.positionAmt
-                ? 0
-                : longHolding.entryPrice,
+            entryPrice,
             positionAmt: longHolding.positionAmt - closePositionAmt,
           };
           longPosition = {
-            entryPrice:
-              closePositionAmt == longHolding.positionAmt
-                ? 0
-                : longHolding.entryPrice,
+            entryPrice,
             positionAmt: longHolding.positionAmt - closePositionAmt,
           };
 
@@ -1026,18 +1025,17 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
 
+          const entryPrice =
+            closePositionAmt == shortHolding.positionAmt
+              ? 0
+              : shortHolding.entryPrice;
+
           shortHolding = {
-            entryPrice:
-              closePositionAmt == shortHolding.positionAmt
-                ? 0
-                : shortHolding.entryPrice,
+            entryPrice,
             positionAmt: shortHolding.positionAmt - closePositionAmt,
           };
           shortPosition = {
-            entryPrice:
-              closePositionAmt == shortHolding.positionAmt
-                ? 0
-                : shortHolding.entryPrice,
+            entryPrice,
             positionAmt: shortHolding.positionAmt - closePositionAmt,
           };
 
