@@ -31,7 +31,7 @@ const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 10;
 const INTERVAL = "5m";
 const BAO_RATIO = (-0.5 * LEVERAGE) / 10;
-const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
+const LOSS_MAX = (-0.382 * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -788,14 +788,14 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].DN) &&
-      shortRatio == 0;
+      (longRatio < LOSS_MAX || longRatio >= 0);
 
     const MAIN_SHORT_BASIC_CONDITION =
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].UP) &&
-      longRatio == 0;
+      (shortRatio < LOSS_MAX || shortRatio >= 0);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
