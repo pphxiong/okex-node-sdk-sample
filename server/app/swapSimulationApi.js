@@ -960,10 +960,12 @@ const checkDeal = async (data, isAutoReset = true) => {
           const positionAmt = longHolding.positionAmt - closePositionAmt;
 
           longHolding = {
+            ...longHolding,
             entryPrice,
             positionAmt,
           };
           longPosition = {
+            ...longPosition,
             entryPrice,
             positionAmt,
           };
@@ -1033,10 +1035,12 @@ const checkDeal = async (data, isAutoReset = true) => {
           const positionAmt = shortHolding.positionAmt - closePositionAmt;
 
           shortHolding = {
+            ...longHolding,
             entryPrice,
             positionAmt,
           };
           shortPosition = {
+            ...shortPosition,
             entryPrice,
             positionAmt,
           };
