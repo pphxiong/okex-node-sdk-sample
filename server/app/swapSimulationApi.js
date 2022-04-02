@@ -784,13 +784,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
+      Number(macdList[macdList.length - 2].low) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].DN);
 
     const MAIN_SHORT_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 2].high) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].UP);
@@ -921,8 +921,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
 
           let closePositionAmt = longHolding.positionAmt;
-          // if (longRatio < 0)
-          //   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
+          if (longRatio < 0)
+            closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
           const currentProfit =
             (longRatio * closePositionAmt) / LEVERAGE -
             0.018 * 0.01 * closePositionAmt;
@@ -990,8 +990,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           if (shortRatio < 0) modeChange = true;
           let closePositionAmt = shortHolding.positionAmt;
-          // if (shortRatio < 0)
-          //   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
+          if (shortRatio < 0)
+            closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
           const currentProfit =
             (shortRatio * closePositionAmt) / LEVERAGE -
             0.018 * 0.01 * closePositionAmt;
