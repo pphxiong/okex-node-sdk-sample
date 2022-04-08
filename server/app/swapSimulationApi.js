@@ -810,12 +810,20 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MAIN_CLOSE_LONG_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION1 ||
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].DN);
+        Number(bollList[bollList.length - 1].DN) ||
+      (Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA) &&
+        Number(macdList[macdList.length - 1].open) >
+          Number(bollList[bollList.length - 1].MA));
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION1 ||
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].UP);
+        Number(bollList[bollList.length - 1].UP) ||
+      (Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA) &&
+        Number(macdList[macdList.length - 1].open) <
+          Number(bollList[bollList.length - 1].MA));
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
 
