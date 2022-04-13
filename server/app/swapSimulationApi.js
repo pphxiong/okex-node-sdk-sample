@@ -90,6 +90,7 @@ let shortPosition = {
 let longPatchNum = 0;
 let shortPatchNum = 0;
 let totalProfit = 0;
+let currentMarketPrice = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
@@ -635,6 +636,15 @@ app.get("/swap/startHearBeat", async (req, response) => {
     };
 
     await checkDeal(result, isAutoReset);
+    const longActualProfit =
+      ((currentMarketPrice - longPosition.entryPrice) *
+        longPosition.positionAmt) /
+      LEVERAGE;
+    const shortActualProfit =
+      (-(currentMarketPrice - shortPosition.entryPrice) *
+        shortPosition.positionAmt) /
+      LEVERAGE;
+    const actualProfit = totalProfit + longActualProfit + shortActualProfit;
     send(response, {
       errcode: 0,
       errmsg: "ok",
@@ -656,6 +666,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
         baoNumTotal,
         lastWinOrLoss,
         lastPosition,
+        actualProfit,
       },
     });
   } catch (e) {
@@ -698,6 +709,15 @@ app.get("/swap/getLatestProfit", async (req, response) => {
       bollList,
     };
     await checkDeal(result);
+    const longActualProfit =
+      ((currentMarketPrice - longPosition.entryPrice) *
+        longPosition.positionAmt) /
+      LEVERAGE;
+    const shortActualProfit =
+      (-(currentMarketPrice - shortPosition.entryPrice) *
+        shortPosition.positionAmt) /
+      LEVERAGE;
+    const actualProfit = totalProfit + longActualProfit + shortActualProfit;
     send(response, {
       errcode: 0,
       errmsg: "ok",
@@ -714,6 +734,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         lastWinOrLoss,
         lastPosition,
         maxOpenPosition,
+        actualProfit,
       },
     });
   } catch (e) {
@@ -750,6 +771,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
+    currentMarketPrice = mark_price;
 
     let longHolding;
     let shortHolding;
