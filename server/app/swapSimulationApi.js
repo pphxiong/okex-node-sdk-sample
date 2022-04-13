@@ -636,6 +636,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
     };
 
     await checkDeal(result, isAutoReset);
+    console.log("currentMarketPrice", currentMarketPrice);
     const longActualProfit =
       ((currentMarketPrice - longPosition.entryPrice) *
         longPosition.positionAmt) /
@@ -718,6 +719,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
         shortPosition.positionAmt) /
       LEVERAGE;
     const actualProfit = totalProfit + longActualProfit + shortActualProfit;
+    console.log("currentMarketPrice", currentMarketPrice);
     send(response, {
       errcode: 0,
       errmsg: "ok",
