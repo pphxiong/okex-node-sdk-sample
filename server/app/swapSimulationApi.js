@@ -651,7 +651,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
       data: {
         // history: list,
         // index: result,
-        totalProfit: actualProfit || totalProfit || -0.0000001,
+        totalProfit: totalProfit || -0.0000001,
         totalPosition,
         totalCapital,
         minTotalCapital,
@@ -807,24 +807,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     const MAIN_LONG_BASIC_CONDITION =
-      // Number(macdList[macdList.length - 2].close) <
-      //   Number(bollList[bollList.length - 2].DN) &&
-      // Number(macdList[macdList.length - 1].close) >
-      //   Number(bollList[bollList.length - 1].DN);
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
-
-    const MAIN_SHORT_BASIC_CONDITION =
-      // Number(macdList[macdList.length - 2].close) >
-      //   Number(bollList[bollList.length - 2].UP) &&
-      // Number(macdList[macdList.length - 1].close) <
-      // Number(bollList[bollList.length - 1].UP);
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].DN);
+
+    const MAIN_SHORT_BASIC_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
