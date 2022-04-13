@@ -651,7 +651,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
       data: {
         // history: list,
         // index: result,
-        totalProfit: totalProfit || -0.0000001,
+        totalProfit: actualProfit || totalProfit || -0.0000001,
         totalPosition,
         totalCapital,
         minTotalCapital,
@@ -724,7 +724,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
       errmsg: "ok",
       data: {
         // index: result,
-        totalProfit,
+        totalProfit: actualProfit || totalProfit,
         dealDetailList,
         mostLoss,
         maxContinuousWin,
