@@ -807,16 +807,24 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     const MAIN_LONG_BASIC_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].DN) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
-
-    const MAIN_SHORT_BASIC_CONDITION =
+      // Number(macdList[macdList.length - 2].close) <
+      //   Number(bollList[bollList.length - 2].DN) &&
+      // Number(macdList[macdList.length - 1].close) >
+      //   Number(bollList[bollList.length - 1].DN);
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].UP);
+
+    const MAIN_SHORT_BASIC_CONDITION =
+      // Number(macdList[macdList.length - 2].close) >
+      //   Number(bollList[bollList.length - 2].UP) &&
+      // Number(macdList[macdList.length - 1].close) <
+      // Number(bollList[bollList.length - 1].UP);
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION = MAIN_LONG_BASIC_CONDITION;
 
@@ -963,11 +971,18 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
+
+          const entryPrice =
+            closePositionAmt == longHolding.positionAmt
+              ? 0
+              : longHolding.entryPrice;
+          const positionAmt = longHolding.positionAmt - closePositionAmt;
+
           const dealDetail = {
             side: "CLOSE",
             positionSide: "LONG",
-            entryPrice: mark_price,
-            positionAmt: closePositionAmt,
+            entryPrice,
+            positionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
             totalProfit,
@@ -986,12 +1001,6 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-
-          const entryPrice =
-            closePositionAmt == longHolding.positionAmt
-              ? 0
-              : longHolding.entryPrice;
-          const positionAmt = longHolding.positionAmt - closePositionAmt;
 
           longHolding.entryPrice = entryPrice;
           longHolding.positionAmt = positionAmt;
@@ -1033,11 +1042,18 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
+
+          const entryPrice =
+            closePositionAmt == shortHolding.positionAmt
+              ? 0
+              : shortHolding.entryPrice;
+          const positionAmt = shortHolding.positionAmt - closePositionAmt;
+
           const dealDetail = {
             side: "CLOSE",
             positionSide: "SHORT",
-            entryPrice: mark_price,
-            positionAmt: closePositionAmt,
+            entryPrice,
+            positionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
             totalProfit,
@@ -1056,12 +1072,6 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-
-          const entryPrice =
-            closePositionAmt == shortHolding.positionAmt
-              ? 0
-              : shortHolding.entryPrice;
-          const positionAmt = shortHolding.positionAmt - closePositionAmt;
 
           shortHolding.entryPrice = entryPrice;
           shortHolding.positionAmt = positionAmt;
