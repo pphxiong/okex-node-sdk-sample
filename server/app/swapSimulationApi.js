@@ -15,7 +15,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = Number((init + init * 0.06).toFixed(3));
+    init = Number((init + init * 0.14).toFixed(3));
     arr.push(init);
     i++;
   }
@@ -48,10 +48,11 @@ const MODE_RATIO = {
 const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
-const INCREASE_FI_LIST = MODE_RATIO[MODE].map((item) =>
-  Number((item * CAPITAL_RATIO).toFixed(3))
-);
 let INIT_POSITION = INCREASE_FI_LIST[0];
+const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
+  Number((item * CAPITAL_RATIO).toFixed(2))
+);
+console.log(INCREASE_FI_LIST);
 
 let continuous_win = 0;
 let continuous_loss = 0;
