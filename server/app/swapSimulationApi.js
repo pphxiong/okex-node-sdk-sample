@@ -724,7 +724,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
       errmsg: "ok",
       data: {
         // index: result,
-        totalProfit: actualProfit || totalProfit,
+        totalProfit,
         dealDetailList,
         mostLoss,
         maxContinuousWin,
