@@ -7,7 +7,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = Number((init + init * 0.14).toFixed(1));
+    init = Number((init + init * 0.15).toFixed(3));
     arr.push(init);
     i++;
   }
@@ -28,7 +28,7 @@ const ORIGIN_INIT_POSITION = INIT_POSITION;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 20).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(2))
 );
-console.log(INCREASE_FI_LIST);
+
 const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
 
@@ -212,8 +212,14 @@ const checkDeal = async (data) => {
         if (longRatio < LOSS_MAX && false) {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
+          let closePositionAmt = Math.abs(Number(longHolding.positionAmt));
+          if (closePositionAmt > INIT_POSITION)
+            closePositionAmt = Number(
+              ((closePositionAmt / 2.15) * 1.15).toFixed(2)
+            );
+
           const payload = {
-            position: Math.abs(Number(longHolding.positionAmt)),
+            position: closePositionAmt,
             side: "long",
             mark_price,
             time: macdList[macdList.length - 1].time,
@@ -233,8 +239,13 @@ const checkDeal = async (data) => {
         if (shortRatio < LOSS_MAX && false) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
+          let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+          if (closePositionAmt > INIT_POSITION)
+            closePositionAmt = Number(
+              ((closePositionAmt / 2.15) * 1.15).toFixed(2)
+            );
           const payload = {
-            position: Math.abs(Number(shortHolding.positionAmt)),
+            position: closePositionAmt,
             side: "short",
             mark_price,
             time: macdList[macdList.length - 1].time,
@@ -266,8 +277,12 @@ const checkDeal = async (data) => {
     //开多仓条件
     if (openLongCondition) {
       try {
-        if (isFiveM && avail > INIT_POSITION) {
-          let openPositionAmt = INIT_POSITION;
+        let openPositionAmt = INIT_POSITION;
+        const index = INCREASE_FI_LIST.findIndex(
+          (item) => item == Math.abs(longHolding.positionAmt)
+        );
+        if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
+        if (isFiveM && avail > openPositionAmt) {
           await openPosition(
             {
               position: openPositionAmt,
@@ -287,8 +302,12 @@ const checkDeal = async (data) => {
     //开空仓条件
     if (openShortCondition) {
       try {
-        if (isFiveM && avail > INIT_POSITION) {
-          let openPositionAmt = INIT_POSITION;
+        let openPositionAmt = INIT_POSITION;
+        const index = INCREASE_FI_LIST.findIndex(
+          (item) => item == Math.abs(shortHolding.positionAmt)
+        );
+        if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
+        if (isFiveM && avail > openPositionAmt) {
           await openPosition(
             {
               position: openPositionAmt,
