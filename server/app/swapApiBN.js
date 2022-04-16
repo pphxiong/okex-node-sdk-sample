@@ -279,7 +279,7 @@ const checkDeal = async (data) => {
       try {
         let openPositionAmt = INIT_POSITION;
         const index = INCREASE_FI_LIST.findIndex(
-          (item) => item == Math.abs(longHolding.positionAmt)
+          (item) => item == longHolding && Math.abs(longHolding.positionAmt)
         );
         if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
         if (isFiveM && avail > openPositionAmt) {
@@ -304,7 +304,7 @@ const checkDeal = async (data) => {
       try {
         let openPositionAmt = INIT_POSITION;
         const index = INCREASE_FI_LIST.findIndex(
-          (item) => item == Math.abs(shortHolding.positionAmt)
+          (item) => item == shortHolding && Math.abs(shortHolding.positionAmt)
         );
         if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
         if (isFiveM && avail > openPositionAmt) {
