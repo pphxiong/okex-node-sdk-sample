@@ -278,9 +278,10 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        const index = INCREASE_FI_LIST.findIndex(
-          (item) => item == longHolding && Math.abs(longHolding.positionAmt)
-        );
+        const index = INCREASE_FI_LIST.findIndex((item) => {
+          if (!longHolding) return false;
+          return item == Math.abs(longHolding.positionAmt);
+        });
         if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
         if (isFiveM && avail > openPositionAmt) {
           await openPosition(
@@ -303,9 +304,10 @@ const checkDeal = async (data) => {
     if (openShortCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        const index = INCREASE_FI_LIST.findIndex(
-          (item) => item == shortHolding && Math.abs(shortHolding.positionAmt)
-        );
+        const index = INCREASE_FI_LIST.findIndex((item) => {
+          if (!shortHolding) return false;
+          return item == Math.abs(shortHolding.positionAmt);
+        });
         if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
         if (isFiveM && avail > openPositionAmt) {
           await openPosition(
