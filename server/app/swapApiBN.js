@@ -7,7 +7,7 @@ const generatePositionList = (init, num) => {
   const arr = [init];
   let i = 0;
   while (i < num) {
-    init = Number((init + init * 0.15).toFixed(3));
+    init = Number((init + init * 0.15).toFixed(2));
     arr.push(init);
     i++;
   }
@@ -282,7 +282,9 @@ const checkDeal = async (data) => {
           if (!longHolding) return false;
           return item == Math.abs(longHolding.positionAmt);
         });
-        if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
+        if (index != -1)
+          openPositionAmt =
+            INCREASE_FI_LIST[index + 1] - Math.abs(longHolding.positionAmt);
         if (isFiveM && avail > openPositionAmt) {
           await openPosition(
             {
@@ -308,7 +310,9 @@ const checkDeal = async (data) => {
           if (!shortHolding) return false;
           return item == Math.abs(shortHolding.positionAmt);
         });
-        if (index != -1) openPositionAmt = INCREASE_FI_LIST[index + 1];
+        if (index != -1)
+          openPositionAmt =
+            INCREASE_FI_LIST[index + 1] - Math.abs(shortHolding.positionAmt);
         if (isFiveM && avail > openPositionAmt) {
           await openPosition(
             {
