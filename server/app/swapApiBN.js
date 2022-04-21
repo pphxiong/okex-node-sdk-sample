@@ -23,7 +23,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 0.15;
+let INIT_POSITION = 0.18;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 20).map(
   (item) => Number((item * CAPITAL_RATIO).toFixed(2))
@@ -167,7 +167,7 @@ const checkDeal = async (data) => {
     const hmsArr = currentTime.split(" ")[1].split(":");
     const lastCharacter = hmsArr[1];
     // const lastCharacter = hmsArr[1].slice(-1);
-    const minuteList = ["0", "15", "30", "45"];
+    const minuteList = ["0", "00", "15", "30", "45"];
     const isFiveM = minuteList.includes(lastCharacter);
 
     console.log("************************************", currentTime);
