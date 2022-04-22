@@ -5,13 +5,15 @@ const customAuthClientBN = require("./customAuthClientBN");
 
 const generatePositionList = (init, num) => {
   const arr = [init];
+  const holding = [init];
   let i = 0;
   while (i < num) {
     init = Number((init + init * 0.15).toFixed(2));
     arr.push(init);
+    holding.push(holding[i] + init);
     i++;
   }
-  return arr;
+  return [arr, holding];
 };
 
 const BN_SYMBOL = "ETHUSDT";
@@ -23,11 +25,11 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 0.18;
+let INIT_POSITION = 0.2;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
-const INCREASE_FI_LIST = generatePositionList(ORIGIN_INIT_POSITION, 20).map(
-  (item) => Number((item * CAPITAL_RATIO).toFixed(2))
-);
+const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
+const INCREASE_FI_LIST = generate_position[0];
+const INCREASE_FI_LIST_HOLDING = generate_position[1];
 
 const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
@@ -278,7 +280,7 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        const index = INCREASE_FI_LIST.findIndex((item) => {
+        const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
           if (!longHolding) return false;
           return item == Math.abs(longHolding.positionAmt);
         });
@@ -306,7 +308,7 @@ const checkDeal = async (data) => {
     if (openShortCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        const index = INCREASE_FI_LIST.findIndex((item) => {
+        const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
           if (!shortHolding) return false;
           return item == Math.abs(shortHolding.positionAmt);
         });
