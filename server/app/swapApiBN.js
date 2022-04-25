@@ -229,7 +229,7 @@ const checkDeal = async (data) => {
             ratio: longRatio,
           };
           if (
-            longRatio < 0 &&
+            shortRatio < 0 &&
             shortHolding &&
             Math.abs(Number(shortHolding.positionAmt))
           ) {
@@ -266,7 +266,7 @@ const checkDeal = async (data) => {
             ratio: shortRatio,
           };
           if (
-            shortRatio < 0 &&
+            longRatio < 0 &&
             longHolding &&
             Math.abs(Number(longHolding.positionAmt))
           ) {
