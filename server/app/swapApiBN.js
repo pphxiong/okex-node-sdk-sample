@@ -231,7 +231,8 @@ const checkDeal = async (data) => {
           if (
             shortRatio < 0 &&
             shortHolding &&
-            Math.abs(Number(shortHolding.positionAmt))
+            Math.abs(Number(shortHolding.positionAmt)) &&
+            Math.abs(Number(longHolding.positionAmt)) < INIT_POSITION * 3
           ) {
             const negativePositionAmt = Math.abs(
               Number(shortHolding.positionAmt)
@@ -268,7 +269,8 @@ const checkDeal = async (data) => {
           if (
             longRatio < 0 &&
             longHolding &&
-            Math.abs(Number(longHolding.positionAmt))
+            Math.abs(Number(longHolding.positionAmt)) &&
+            Math.abs(Number(shortHolding.positionAmt)) < INIT_POSITION * 3
           ) {
             const negativePositionAmt = Math.abs(
               Number(longHolding.positionAmt)
