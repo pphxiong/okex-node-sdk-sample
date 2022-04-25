@@ -594,7 +594,9 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   // if (ratio < 0) position = Math.min(INIT_POSITION * 3, Math.abs(position));
   position = INIT_POSITION;
   const totalPosition = Math.abs(Number(holding.positionAmt));
-  if (ratio > 0 && totalPosition >= 3 * INIT_POSITION) position = totalPosition;
+  if (ratio > 0 && totalPosition >= 3 * INIT_POSITION) {
+    position = totalPosition;
+  }
   async function postOrder(size) {
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
