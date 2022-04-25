@@ -221,12 +221,23 @@ const checkDeal = async (data) => {
             );
 
           const payload = {
+            positionAmt: longHolding.positionAmt,
             position: closePositionAmt,
             side: "long",
             mark_price,
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
+          if (
+            longRatio < 0 &&
+            shortHolding &&
+            Math.abs(Number(shortHolding.positionAmt))
+          ) {
+            const negativePositionAmt = Math.abs(
+              Number(shortHolding.positionAmt)
+            );
+            if (negativePositionAmt >= INIT_POSITION * 3) return false;
+          }
           await closePosition(payload, isMarketDeal, dealRatio);
         }
       }
@@ -247,12 +258,23 @@ const checkDeal = async (data) => {
               ((closePositionAmt / 2.15) * 1.15).toFixed(2)
             );
           const payload = {
+            positionAmt: shortHolding.positionAmt,
             position: closePositionAmt,
             side: "short",
             mark_price,
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
+          if (
+            shortRatio < 0 &&
+            longHolding &&
+            Math.abs(Number(longHolding.positionAmt))
+          ) {
+            const negativePositionAmt = Math.abs(
+              Number(longHolding.positionAmt)
+            );
+            if (negativePositionAmt >= INIT_POSITION * 3) return false;
+          }
           await closePosition(payload, isMarketDeal, dealRatio);
         }
       }
@@ -280,13 +302,13 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
-          if (!longHolding) return false;
-          return item == Math.abs(longHolding.positionAmt);
-        });
-        if (index != -1)
-          openPositionAmt =
-            INCREASE_FI_LIST[index + 1] - Math.abs(longHolding.positionAmt);
+        // const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
+        //   if (!longHolding) return false;
+        //   return item == Math.abs(longHolding.positionAmt);
+        // });
+        // if (index != -1)
+        //   openPositionAmt =
+        //     INCREASE_FI_LIST[index + 1] - Math.abs(longHolding.positionAmt);
         if (isFiveM && avail > openPositionAmt) {
           await openPosition(
             {
@@ -308,13 +330,13 @@ const checkDeal = async (data) => {
     if (openShortCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
-          if (!shortHolding) return false;
-          return item == Math.abs(shortHolding.positionAmt);
-        });
-        if (index != -1)
-          openPositionAmt =
-            INCREASE_FI_LIST[index + 1] - Math.abs(shortHolding.positionAmt);
+        // const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
+        //   if (!shortHolding) return false;
+        //   return item == Math.abs(shortHolding.positionAmt);
+        // });
+        // if (index != -1)
+        //   openPositionAmt =
+        //     INCREASE_FI_LIST[index + 1] - Math.abs(shortHolding.positionAmt);
         if (isFiveM && avail > openPositionAmt) {
           await openPosition(
             {
@@ -571,6 +593,8 @@ const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
   // if (ratio < 0) position = Math.min(INIT_POSITION * 3, Math.abs(position));
   position = INIT_POSITION;
+  const totalPosition = Math.abs(Number(holding.positionAmt));
+  if (ratio > 0 && totalPosition >= 3 * INIT_POSITION) position = totalPosition;
   async function postOrder(size) {
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
