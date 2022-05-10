@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 0.5;
+let INIT_POSITION = 0.375;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -158,13 +158,13 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (!longHolding ||
-        Math.abs(Number(longHolding.positionAmt)) <= INIT_POSITION * 3) &&
-      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION);
+      // (!longHolding ||
+      //   Math.abs(Number(longHolding.positionAmt)) <= INIT_POSITION * 3) &&
+      MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION;
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (!shortHolding ||
-        Math.abs(Number(shortHolding.positionAmt)) <= INIT_POSITION * 3) &&
-      (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION);
+      // (!shortHolding ||
+      //   Math.abs(Number(shortHolding.positionAmt)) <= INIT_POSITION * 3) &&
+      MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
