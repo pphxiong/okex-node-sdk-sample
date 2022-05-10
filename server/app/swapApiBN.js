@@ -135,40 +135,36 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
-      (!longHolding ||
-        Math.abs(Number(longHolding.positionAmt)) <= INIT_POSITION * 3);
+        Number(bollList[bollList.length - 1].DN);
 
     const EXTRA_OPEN_LONG_CONDITION =
       shortRatio < 0 &&
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].UP) &&
-      (!longHolding ||
-        Math.abs(Number(longHolding.positionAmt)) <= INIT_POSITION * 3);
+        Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      (!shortHolding ||
-        Math.abs(Number(shortHolding.positionAmt)) <= INIT_POSITION * 3);
+        Number(bollList[bollList.length - 1].UP);
 
     const EXTRA_OPEN_SHORT_CONDITION =
       longRatio < 0 &&
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].DN) &&
-      (!shortHolding ||
-        Math.abs(Number(shortHolding.positionAmt)) <= INIT_POSITION * 3);
+        Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION;
+      (!longHolding ||
+        Math.abs(Number(longHolding.positionAmt)) <= INIT_POSITION * 3) &&
+      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION);
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
+      (!shortHolding ||
+        Math.abs(Number(shortHolding.positionAmt)) <= INIT_POSITION * 3) &&
+      (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION);
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
     const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
