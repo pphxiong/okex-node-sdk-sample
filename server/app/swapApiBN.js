@@ -148,10 +148,10 @@ const checkDeal = async (data) => {
           Number(bollList[bollList.length - 1].DN));
 
     const EXTRA_OPEN_LONG_CONDITION =
-      shortHolding &&
-      Math.abs(Number(shortHolding.positionAmt)) >= INIT_POSITION * 3 &&
+      // shortHolding &&
+      // Math.abs(Number(shortHolding.positionAmt)) >= INIT_POSITION * 2 &&
       shortRatio < 0 &&
-      Number(macdList[macdList.length - 2].close) <
+      Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].UP);
@@ -173,10 +173,10 @@ const checkDeal = async (data) => {
           Number(bollList[bollList.length - 1].UP));
 
     const EXTRA_OPEN_SHORT_CONDITION =
-      longHolding &&
-      Math.abs(Number(longHolding.positionAmt)) >= INIT_POSITION * 3 &&
+      // longHolding &&
+      // Math.abs(Number(longHolding.positionAmt)) >= INIT_POSITION * 2 &&
       longRatio < 0 &&
-      Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].DN);
