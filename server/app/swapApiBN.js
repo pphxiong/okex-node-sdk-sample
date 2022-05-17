@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 0.5;
+let INIT_POSITION = 0.65;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -132,45 +132,47 @@ const checkDeal = async (data) => {
     }
 
     const MAIN_OPEN_LONG_CONDITION =
-      (Number(macdList[macdList.length - 2].close) <
+      Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
-        Number(macdList[macdList.length - 1].close) >
-          Number(bollList[bollList.length - 1].DN)) ||
-      (longRatio > 0 &&
-        Number(macdList[macdList.length - 3].close) >
-          Number(bollList[bollList.length - 3].DN) &&
-        Number(macdList[macdList.length - 2].low) <
-          Number(bollList[bollList.length - 2].DN) &&
-        Number(macdList[macdList.length - 1].close) >
-          Number(bollList[bollList.length - 1].DN));
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
+    // ||
+    // (longRatio > 0 &&
+    //   Number(macdList[macdList.length - 3].close) >
+    //     Number(bollList[bollList.length - 3].DN) &&
+    //   Number(macdList[macdList.length - 2].low) <
+    //     Number(bollList[bollList.length - 2].DN) &&
+    //   Number(macdList[macdList.length - 1].close) >
+    //     Number(bollList[bollList.length - 1].DN));
 
     const EXTRA_OPEN_LONG_CONDITION =
-      // shortHolding &&
-      // Math.abs(Number(shortHolding.positionAmt)) >= INIT_POSITION * 2 &&
+      shortHolding &&
+      Math.abs(Number(shortHolding.positionAmt)) >= INIT_POSITION * 2 &&
       shortRatio < 0 &&
-      Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_SHORT_CONDITION =
-      (Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(bollList[bollList.length - 1].UP)) ||
-      (shortRatio > 0 &&
-        Number(macdList[macdList.length - 3].close) <
-          Number(bollList[bollList.length - 3].UP) &&
-        Number(macdList[macdList.length - 2].high) >
-          Number(bollList[bollList.length - 2].UP) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(bollList[bollList.length - 1].UP));
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
+    // ||
+    // (shortRatio > 0 &&
+    //   Number(macdList[macdList.length - 3].close) <
+    //     Number(bollList[bollList.length - 3].UP) &&
+    //   Number(macdList[macdList.length - 2].high) >
+    //     Number(bollList[bollList.length - 2].UP) &&
+    //   Number(macdList[macdList.length - 1].close) <
+    //     Number(bollList[bollList.length - 1].UP));
 
     const EXTRA_OPEN_SHORT_CONDITION =
-      // longHolding &&
-      // Math.abs(Number(longHolding.positionAmt)) >= INIT_POSITION * 2 &&
+      longHolding &&
+      Math.abs(Number(longHolding.positionAmt)) >= INIT_POSITION * 2 &&
       longRatio < 0 &&
-      Number(macdList[macdList.length - 2].close) <
+      Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].DN);
