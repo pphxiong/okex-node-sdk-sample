@@ -178,21 +178,11 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION &&
-        (!longHolding ||
-          (Math.abs(Number(longHolding.positionAmt)) <= INIT_POSITION * 2 &&
-            longRatio < 0))) ||
-      EXTRA_OPEN_LONG_CONDITION;
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      (MAIN_OPEN_SHORT_CONDITION &&
-        (!shortHolding ||
-          (Math.abs(Number(shortHolding.positionAmt)) <= INIT_POSITION * 2 &&
-            shortRatio < 0))) ||
-      EXTRA_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
-    const MAIN_CLOSE_SHORT_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
