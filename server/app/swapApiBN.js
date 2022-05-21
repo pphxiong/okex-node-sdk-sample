@@ -252,10 +252,14 @@ const checkDeal = async (data) => {
     console.log("bollList", bollList.slice(-2));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
     console.log(
-      "longPositionAmt",
-      longHolding && longHolding.positionAmt,
-      "shortPositionAmt",
-      shortHolding && shortHolding.positionAmt
+      "MAIN_OPEN_LONG_CONDITION",
+      MAIN_OPEN_LONG_CONDITION,
+      "MAIN_OPEN_SHORT_CONDITION",
+      MAIN_OPEN_SHORT_CONDITION,
+      "IS_HAS_LONG_BETWEEN",
+      IS_HAS_LONG_BETWEEN,
+      "IS_HAS_SHORT_BETWEEN",
+      IS_HAS_SHORT_BETWEEN
     );
     console.log(
       "closeLongCondition",
