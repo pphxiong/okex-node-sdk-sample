@@ -251,7 +251,9 @@ const checkDeal = async (data) => {
       "IS_HAS_LONG_BETWEEN",
       IS_HAS_LONG_BETWEEN,
       "IS_HAS_SHORT_BETWEEN",
-      IS_HAS_SHORT_BETWEEN
+      IS_HAS_SHORT_BETWEEN,
+      "lastOpenLongIndex",
+      lastOpenLongIndex
     );
     console.log(
       "closeLongCondition",
