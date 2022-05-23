@@ -319,28 +319,13 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
-          // if (
-          //   shortRatio < 0 &&
-          //   shortHolding &&
-          //   Math.abs(Number(shortHolding.positionAmt)) &&
-          //   Math.abs(Number(longHolding.positionAmt)) < INIT_POSITION * 3
-          // ) {
-          //   const negativePositionAmt = Math.abs(
-          //     Number(shortHolding.positionAmt)
-          //   );
-          //   if (negativePositionAmt >= INIT_POSITION * 3) return false;
-          // }
-          await closePosition(payload, isMarketDeal, dealRatio);
+          await closePosition(payload, EXTRA_CLOSE_LONG_CONDITION);
         }
       }
     };
 
     const closeShortPosition = async () => {
       if (shortHolding && Math.abs(Number(shortHolding.positionAmt))) {
-        // const patchNum = getPowByNum(
-        //   Math.abs(Number(shortHolding.positionAmt)),
-        //   INIT_POSITION
-        // );
         if (shortRatio < LOSS_MAX && false) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
@@ -357,18 +342,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
-          // if (
-          //   longRatio < 0 &&
-          //   longHolding &&
-          //   Math.abs(Number(longHolding.positionAmt)) &&
-          //   Math.abs(Number(shortHolding.positionAmt)) < INIT_POSITION * 3
-          // ) {
-          //   const negativePositionAmt = Math.abs(
-          //     Number(longHolding.positionAmt)
-          //   );
-          //   if (negativePositionAmt >= INIT_POSITION * 3) return false;
-          // }
-          await closePosition(payload, isMarketDeal, dealRatio);
+          await closePosition(payload, EXTRA_CLOSE_SHORT_CONDITION);
         }
       }
     };
@@ -681,47 +655,24 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
   await postOrder(position, mark_price);
 };
 
-const closePosition = async (holding, isMarketDeal = false, dealRatio) => {
-  isMarketDeal = true;
+const closePosition = async (holding, isCloseAll = false) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
-  // if (ratio < 0) position = Math.min(INIT_POSITION * 3, Math.abs(position));
-  position = INIT_POSITION;
-  // const totalPosition = Math.abs(Number(holding.positionAmt));
-  // if (ratio > 0 && totalPosition >= 3 * INIT_POSITION) {
-  //   position = totalPosition;
-  // }
+  position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
+
   async function postOrder(size) {
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
 
     const type = side == "long" ? "SELL" : "BUY";
-    let price = mark_price;
-    if (side == "long") {
-      price = mark_price * (1 + dealRatio / LEVERAGE);
-    } else {
-      price = mark_price * (1 - dealRatio / LEVERAGE);
-    }
-    let payload = {
+
+    const payload = {
       symbol: BN_SYMBOL,
       side: type,
       positionSide: side == "long" ? "LONG" : "SHORT",
       quantity: Math.abs(size),
       recvWindow: 5000,
-      // type: "MARKET",
-      type: "LIMIT",
-      timeInForce: "GTC",
-      price: price.toFixed(2),
+      type: "MARKET",
     };
-    if (MODE == 2 || isMarketDeal) {
-      payload = {
-        symbol: BN_SYMBOL,
-        side: type,
-        positionSide: side == "long" ? "LONG" : "SHORT",
-        quantity: Math.abs(size),
-        recvWindow: 5000,
-        type: "MARKET",
-      };
-    }
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
