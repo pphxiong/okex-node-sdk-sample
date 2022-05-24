@@ -657,7 +657,8 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
 const closePosition = async (holding, isCloseAll = false) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
-  position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
+  // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
+  position = INIT_POSITION;
 
   async function postOrder(size) {
     const newClientOrderId = getUUID();
