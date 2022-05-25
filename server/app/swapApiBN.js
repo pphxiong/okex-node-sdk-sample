@@ -166,6 +166,8 @@ const checkDeal = async (data) => {
         }
 
         if (is_center_long) IS_HAS_LONG_BETWEEN = true;
+      } else {
+        IS_HAS_LONG_BETWEEN = true;
       }
     }
 
@@ -210,6 +212,8 @@ const checkDeal = async (data) => {
         }
 
         if (is_center_short) IS_HAS_SHORT_BETWEEN = true;
+      } else {
+        IS_HAS_SHORT_BETWEEN = true;
       }
     }
 
@@ -225,9 +229,11 @@ const checkDeal = async (data) => {
       !longHolding;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION && IS_HAS_LONG_BETWEEN;
+      (MAIN_OPEN_LONG_CONDITION && IS_HAS_LONG_BETWEEN) ||
+      (MAIN_OPEN_SHORT_CONDITION && !IS_HAS_SHORT_BETWEEN);
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN;
+      (MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN) ||
+      (MAIN_OPEN_LONG_CONDITION && !IS_HAS_LONG_BETWEEN);
     const MAIN_CLOSE_LONG_CONDITION1 =
       (MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN) ||
       EXTRA_CLOSE_LONG_CONDITION;
