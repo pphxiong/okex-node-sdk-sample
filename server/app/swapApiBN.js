@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 0.8;
+let INIT_POSITION = 0.9;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -278,7 +278,11 @@ const checkDeal = async (data) => {
       "IS_HAS_LONG_BETWEEN",
       IS_HAS_LONG_BETWEEN,
       "IS_HAS_SHORT_BETWEEN",
-      IS_HAS_SHORT_BETWEEN
+      IS_HAS_SHORT_BETWEEN,
+      "longPositionAmt",
+      longHolding.positionAmt,
+      "shortPositionAmt",
+      shortHolding.positionAmt
     );
     console.log(
       "closeLongCondition",
