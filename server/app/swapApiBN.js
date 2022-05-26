@@ -280,9 +280,9 @@ const checkDeal = async (data) => {
       "IS_HAS_SHORT_BETWEEN",
       IS_HAS_SHORT_BETWEEN,
       "longPositionAmt",
-      longHolding.positionAmt,
+      longHolding ? longHolding.positionAmt : 0,
       "shortPositionAmt",
-      shortHolding.positionAmt
+      shortHolding ? shortHolding.positionAmt : 0
     );
     console.log(
       "closeLongCondition",
