@@ -234,6 +234,12 @@ const checkDeal = async (data) => {
         !(
           longRatio < 0 &&
           Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3
+        ) &&
+        !(
+          longRatio > 0 &&
+          shortRatio < 0 &&
+          Math.abs(longHolding.positionAmt) >=
+            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3
         )) ||
       (MAIN_OPEN_SHORT_CONDITION &&
         !IS_HAS_SHORT_BETWEEN &&
@@ -247,6 +253,12 @@ const checkDeal = async (data) => {
         !(
           shortRatio < 0 &&
           Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3
+        ) &&
+        !(
+          shortRatio > 0 &&
+          longRatio < 0 &&
+          Math.abs(shortHolding.positionAmt) >=
+            Math.abs(longHolding.positionAmt) + INIT_POSITION * 3
         )) ||
       (MAIN_OPEN_LONG_CONDITION &&
         !IS_HAS_LONG_BETWEEN &&
