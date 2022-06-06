@@ -228,6 +228,18 @@ const checkDeal = async (data) => {
       longRatio == 0 &&
       !longHolding;
 
+    const EXTRA_CLOSE_ALL_LONG_CONDITION =
+      longRatio > 0 &&
+      shortRatio < 0 &&
+      Math.abs(longHolding.positionAmt) >=
+        Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3;
+
+    const EXTRA_CLOSE_ALL_SHORT_CONDITION =
+      shortRatio > 0 &&
+      longRatio < 0 &&
+      Math.abs(shortHolding.positionAmt) >=
+        Math.abs(longHolding.positionAmt) + INIT_POSITION * 3;
+
     const MAIN_OPEN_LONG_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION &&
         IS_HAS_LONG_BETWEEN &&
@@ -373,7 +385,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
-          await closePosition(payload, EXTRA_CLOSE_LONG_CONDITION);
+          await closePosition(payload, EXTRA_CLOSE_ALL_LONG_CONDITION);
         }
       }
     };
@@ -396,7 +408,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
-          await closePosition(payload, EXTRA_CLOSE_SHORT_CONDITION);
+          await closePosition(payload, EXTRA_CLOSE_ALL_SHORT_CONDITION);
         }
       }
     };
