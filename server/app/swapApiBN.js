@@ -140,6 +140,8 @@ const checkDeal = async (data) => {
     const EXTRA_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].low) <
         Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].low) >
         Number(bollList[bollList.length - 1].DN);
 
@@ -184,10 +186,12 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].UP);
 
     const EXTRA_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].high) <
-        Number(bollList[bollList.length - 2].DN) &&
-      Number(macdList[macdList.length - 1].high) >
-        Number(bollList[bollList.length - 1].DN);
+      Number(macdList[macdList.length - 2].high) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].high) <
+        Number(bollList[bollList.length - 1].UP);
 
     let IS_HAS_SHORT_BETWEEN = false;
     if (MAIN_OPEN_SHORT_CONDITION) {
