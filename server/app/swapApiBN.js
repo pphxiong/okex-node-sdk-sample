@@ -138,12 +138,16 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].DN);
 
     const EXTRA_OPEN_LONG_CONDITION =
+      Number(macdList[macdList.length - 3].close) >
+        Number(bollList[bollList.length - 3].DN) &&
       Number(macdList[macdList.length - 2].low) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].low) >
-        Number(bollList[bollList.length - 1].DN);
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
 
     let IS_HAS_LONG_BETWEEN = false;
     if (MAIN_OPEN_LONG_CONDITION) {
@@ -180,10 +184,16 @@ const checkDeal = async (data) => {
     }
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 3].close) <
+        Number(bollList[bollList.length - 3].UP) &&
+      Number(macdList[macdList.length - 2].high) >
         Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].high) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
 
     const EXTRA_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].high) >
@@ -276,6 +286,7 @@ const checkDeal = async (data) => {
             Math.abs(longHolding.positionAmt) <=
               Math.abs(shortHolding.positionAmt)))) ||
       EXTRA_OPEN_LONG_CONDITION;
+
     const MAIN_OPEN_SHORT_CONDITION1 =
       (MAIN_OPEN_SHORT_CONDITION &&
         IS_HAS_SHORT_BETWEEN &&
@@ -296,6 +307,7 @@ const checkDeal = async (data) => {
             Math.abs(shortHolding.positionAmt) <=
               Math.abs(longHolding.positionAmt)))) ||
       EXTRA_OPEN_SHORT_CONDITION;
+
     const MAIN_CLOSE_LONG_CONDITION1 =
       (MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN) ||
       EXTRA_CLOSE_LONG_CONDITION ||
@@ -306,6 +318,7 @@ const checkDeal = async (data) => {
         Math.abs(longHolding.positionAmt) >=
           Math.abs(shortHolding.positionAmt) + INIT_POSITION) ||
       EXTRA_OPEN_SHORT_CONDITION;
+
     const MAIN_CLOSE_SHORT_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION && IS_HAS_LONG_BETWEEN) ||
       EXTRA_CLOSE_SHORT_CONDITION ||
