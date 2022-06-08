@@ -245,12 +245,12 @@ const checkDeal = async (data) => {
 
     const EXTRA_CLOSE_LONG_CONDITION =
       longRatio > 0 &&
-      Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2 &&
+      Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3 &&
       shortRatio == 0 &&
       !shortHolding;
     const EXTRA_CLOSE_SHORT_CONDITION =
       shortRatio > 0 &&
-      Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 2 &&
+      Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3 &&
       longRatio == 0 &&
       !longHolding;
 
