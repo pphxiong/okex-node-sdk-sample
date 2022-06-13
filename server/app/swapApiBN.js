@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 1.2;
+let INIT_POSITION = 1.4;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -150,12 +150,17 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     let IS_HAS_LONG_BETWEEN = false;
-    if (MAIN_OPEN_LONG_CONDITION) {
+    if (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) {
       let lastOpenLongIndex = -1;
       for (let i = macdList.length - 1; i > 1; i--) {
         const is_long =
-          Number(macdList[i - 2].close) < Number(bollList[i - 2].DN) &&
-          Number(macdList[i - 1].close) > Number(bollList[i - 1].DN);
+          (Number(macdList[i - 2].close) < Number(bollList[i - 2].DN) &&
+            Number(macdList[i - 1].close) > Number(bollList[i - 1].DN)) ||
+          (Number(macdList[i - 3].close) > Number(bollList[i - 3].DN) &&
+            Number(macdList[i - 2].low) < Number(bollList[i - 2].DN) &&
+            Number(macdList[i - 2].close) > Number(bollList[i - 2].DN) &&
+            Number(macdList[i - 1].low) > Number(bollList[i - 1].DN) &&
+            Number(macdList[i - 1].close) < Number(bollList[i - 1].MA));
         if (is_long) {
           lastOpenLongIndex = i;
           break;
@@ -176,7 +181,6 @@ const checkDeal = async (data) => {
             break;
           }
         }
-
         if (is_center_long) IS_HAS_LONG_BETWEEN = true;
       } else {
         IS_HAS_LONG_BETWEEN = true;
@@ -202,12 +206,17 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     let IS_HAS_SHORT_BETWEEN = false;
-    if (MAIN_OPEN_SHORT_CONDITION) {
+    if (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) {
       let lastOpenShortIndex = -1;
       for (let i = macdList.length - 1; i > 1; i--) {
         const is_short =
-          Number(macdList[i - 2].close) > Number(bollList[i - 2].UP) &&
-          Number(macdList[i - 1].close) < Number(bollList[i - 1].UP);
+          (Number(macdList[i - 2].close) > Number(bollList[i - 2].UP) &&
+            Number(macdList[i - 1].close) < Number(bollList[i - 1].UP)) ||
+          (Number(macdList[i - 3].close) < Number(bollList[i - 3].UP) &&
+            Number(macdList[i - 2].high) > Number(bollList[i - 2].UP) &&
+            Number(macdList[i - 2].close) < Number(bollList[i - 2].UP) &&
+            Number(macdList[i - 1].high) < Number(bollList[i - 1].UP) &&
+            Number(macdList[i - 1].close) > Number(bollList[i - 1].MA));
         if (is_short) {
           lastOpenShortIndex = i;
           break;
@@ -265,7 +274,7 @@ const checkDeal = async (data) => {
         Math.abs(longHolding.positionAmt) + INIT_POSITION * 3;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION &&
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
         IS_HAS_LONG_BETWEEN &&
         !(
           longRatio < 0 &&
@@ -277,16 +286,15 @@ const checkDeal = async (data) => {
           Math.abs(longHolding.positionAmt) >=
             Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3
         )) ||
-      (MAIN_OPEN_SHORT_CONDITION &&
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         !IS_HAS_SHORT_BETWEEN &&
         (!longHolding ||
           (shortHolding &&
             Math.abs(longHolding.positionAmt) <=
-              Math.abs(shortHolding.positionAmt)))) ||
-      EXTRA_OPEN_LONG_CONDITION;
+              Math.abs(shortHolding.positionAmt))));
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (MAIN_OPEN_SHORT_CONDITION &&
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         IS_HAS_SHORT_BETWEEN &&
         !(
           shortRatio < 0 &&
@@ -298,35 +306,34 @@ const checkDeal = async (data) => {
           Math.abs(shortHolding.positionAmt) >=
             Math.abs(longHolding.positionAmt) + INIT_POSITION * 3
         )) ||
-      (MAIN_OPEN_LONG_CONDITION &&
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
         !IS_HAS_LONG_BETWEEN &&
         (!shortHolding ||
           (longHolding &&
             Math.abs(shortHolding.positionAmt) <=
-              Math.abs(longHolding.positionAmt)))) ||
-      EXTRA_OPEN_SHORT_CONDITION;
+              Math.abs(longHolding.positionAmt))));
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      (MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN) ||
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
+        IS_HAS_SHORT_BETWEEN) ||
       EXTRA_CLOSE_LONG_CONDITION ||
-      (MAIN_OPEN_SHORT_CONDITION &&
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         !IS_HAS_SHORT_BETWEEN &&
         longHolding &&
         shortHolding &&
         Math.abs(longHolding.positionAmt) >=
-          Math.abs(shortHolding.positionAmt) + INIT_POSITION) ||
-      EXTRA_OPEN_SHORT_CONDITION;
+          Math.abs(shortHolding.positionAmt) + INIT_POSITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION && IS_HAS_LONG_BETWEEN) ||
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
+        IS_HAS_LONG_BETWEEN) ||
       EXTRA_CLOSE_SHORT_CONDITION ||
-      (MAIN_OPEN_LONG_CONDITION &&
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
         !IS_HAS_LONG_BETWEEN &&
         shortHolding &&
         longHolding &&
         Math.abs(shortHolding.positionAmt) >=
-          Math.abs(longHolding.positionAmt) + INIT_POSITION) ||
-      EXTRA_OPEN_LONG_CONDITION;
+          Math.abs(longHolding.positionAmt) + INIT_POSITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
