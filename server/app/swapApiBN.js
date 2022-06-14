@@ -167,7 +167,7 @@ const checkDeal = async (data) => {
         }
       }
 
-      if (lastOpenLongIndex != -1) {
+      if (lastOpenLongIndex != -1 && lastOpenShortIndex < macdList.length - 3) {
         const tempMacdList = macdList.slice(lastOpenLongIndex, macdList.length);
         const tempBollList = bollList.slice(lastOpenLongIndex, bollList.length);
         let is_center_long = false;
@@ -223,7 +223,10 @@ const checkDeal = async (data) => {
         }
       }
 
-      if (lastOpenShortIndex != -1) {
+      if (
+        lastOpenShortIndex != -1 &&
+        lastOpenShortIndex < macdList.length - 3
+      ) {
         const tempMacdList = macdList.slice(
           lastOpenShortIndex,
           macdList.length
@@ -367,8 +370,12 @@ const checkDeal = async (data) => {
     console.log(
       "MAIN_OPEN_LONG_CONDITION",
       MAIN_OPEN_LONG_CONDITION,
+      "EXTRA_OPEN_LONG_CONDITION",
+      EXTRA_OPEN_LONG_CONDITION,
       "MAIN_OPEN_SHORT_CONDITION",
       MAIN_OPEN_SHORT_CONDITION,
+      "EXTRA_OPEN_SHORT_CONDITION",
+      EXTRA_OPEN_SHORT_CONDITION,
       "IS_HAS_LONG_BETWEEN",
       IS_HAS_LONG_BETWEEN,
       "IS_HAS_SHORT_BETWEEN",
