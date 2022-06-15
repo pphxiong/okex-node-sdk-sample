@@ -167,7 +167,7 @@ const checkDeal = async (data) => {
         }
       }
 
-      if (lastOpenLongIndex != -1 && lastOpenLongIndex < macdList.length - 3) {
+      if (lastOpenLongIndex != -1 && lastOpenLongIndex < macdList.length - 2) {
         const tempMacdList = macdList.slice(lastOpenLongIndex, macdList.length);
         const tempBollList = bollList.slice(lastOpenLongIndex, bollList.length);
         let is_center_long = false;
@@ -225,7 +225,7 @@ const checkDeal = async (data) => {
 
       if (
         lastOpenShortIndex != -1 &&
-        lastOpenShortIndex < macdList.length - 3
+        lastOpenShortIndex < macdList.length - 2
       ) {
         const tempMacdList = macdList.slice(
           lastOpenShortIndex,
