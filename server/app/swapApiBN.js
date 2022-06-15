@@ -167,7 +167,7 @@ const checkDeal = async (data) => {
         }
       }
 
-      if (lastOpenLongIndex != -1 && lastOpenShortIndex < macdList.length - 3) {
+      if (lastOpenLongIndex != -1 && lastOpenLongIndex < macdList.length - 3) {
         const tempMacdList = macdList.slice(lastOpenLongIndex, macdList.length);
         const tempBollList = bollList.slice(lastOpenLongIndex, bollList.length);
         let is_center_long = false;
@@ -279,15 +279,19 @@ const checkDeal = async (data) => {
     const MAIN_OPEN_LONG_CONDITION1 =
       ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
         IS_HAS_LONG_BETWEEN &&
-        !(
-          longRatio < 0 &&
-          Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3
-        ) &&
+        // !(
+        //   longRatio < 0 &&
+        //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3
+        // ) &&
         !(
           longRatio > 0 &&
           shortRatio < 0 &&
-          Math.abs(longHolding.positionAmt) >=
-            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3
+          (Math.abs(longHolding.positionAmt) >=
+            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3 ||
+            (Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(longHolding.positionAmt) >=
+                Math.abs(shortHolding.positionAmt) + INIT_POSITION))
         )) ||
       ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         !IS_HAS_SHORT_BETWEEN &&
@@ -299,15 +303,19 @@ const checkDeal = async (data) => {
     const MAIN_OPEN_SHORT_CONDITION1 =
       ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         IS_HAS_SHORT_BETWEEN &&
-        !(
-          shortRatio < 0 &&
-          Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3
-        ) &&
+        // !(
+        //   shortRatio < 0 &&
+        //   Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3
+        // ) &&
         !(
           shortRatio > 0 &&
           longRatio < 0 &&
-          Math.abs(shortHolding.positionAmt) >=
-            Math.abs(longHolding.positionAmt) + INIT_POSITION * 3
+          (Math.abs(shortHolding.positionAmt) >=
+            Math.abs(longHolding.positionAmt) + INIT_POSITION * 3 ||
+            (Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(shortHolding.positionAmt) >=
+                Math.abs(longHolding.positionAmt) + INIT_POSITION))
         )) ||
       ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
         !IS_HAS_LONG_BETWEEN &&
