@@ -271,14 +271,16 @@ const checkDeal = async (data) => {
     const EXTRA_CLOSE_ALL_LONG_CONDITION =
       longRatio > 0 &&
       shortRatio < 0 &&
-      Math.abs(longHolding.positionAmt) >=
-        Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3;
+      longRatio * Math.abs(shortHolding.positionAmt) +
+        shortRatio * Math.abs(longHolding.positionAmt) >
+        0;
 
     const EXTRA_CLOSE_ALL_SHORT_CONDITION =
       shortRatio > 0 &&
       longRatio < 0 &&
-      Math.abs(shortHolding.positionAmt) >=
-        Math.abs(longHolding.positionAmt) + INIT_POSITION * 3;
+      shortRatio * Math.abs(shortHolding.positionAmt) +
+        longRatio * Math.abs(longHolding.positionAmt) >
+        0;
 
     const MAIN_OPEN_LONG_CONDITION1 =
       ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
@@ -781,7 +783,11 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 const closePosition = async (holding, isCloseAll = false) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
-  position = INIT_POSITION;
+  if (isCloseAll) {
+    position = Math.abs(Number(holding.positionAmt));
+  } else {
+    position = INIT_POSITION;
+  }
 
   async function postOrder(size) {
     const newClientOrderId = getUUID();
