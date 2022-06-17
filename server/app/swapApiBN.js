@@ -190,13 +190,12 @@ const checkDeal = async (data) => {
     }
 
     const MAIN_OPEN_SHORT_CONDITION =
-      true ||
-      (Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(bollList[bollList.length - 1].UP) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(macdList[macdList.length - 1].open));
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(macdList[macdList.length - 1].open);
 
     const EXTRA_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 3].close) <
@@ -306,7 +305,6 @@ const checkDeal = async (data) => {
               Math.abs(shortHolding.positionAmt))));
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION ||
       ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         IS_HAS_SHORT_BETWEEN &&
         // !(
