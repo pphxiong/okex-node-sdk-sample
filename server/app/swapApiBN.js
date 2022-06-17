@@ -306,6 +306,7 @@ const checkDeal = async (data) => {
               Math.abs(shortHolding.positionAmt))));
 
     const MAIN_OPEN_SHORT_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION ||
       ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
         IS_HAS_SHORT_BETWEEN &&
         // !(
