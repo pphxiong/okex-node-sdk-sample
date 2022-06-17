@@ -190,12 +190,13 @@ const checkDeal = async (data) => {
     }
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
+      true ||
+      (Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(macdList[macdList.length - 1].open);
+        Number(macdList[macdList.length - 1].close) <
+          Number(bollList[bollList.length - 1].UP) &&
+        Number(macdList[macdList.length - 1].close) <
+          Number(macdList[macdList.length - 1].open));
 
     const EXTRA_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 3].close) <
