@@ -190,13 +190,12 @@ const checkDeal = async (data) => {
     }
 
     const MAIN_OPEN_SHORT_CONDITION =
-      true ||
-      (Number(macdList[macdList.length - 2].close) >
+      Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(bollList[bollList.length - 1].UP) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(macdList[macdList.length - 1].open));
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(macdList[macdList.length - 1].open);
 
     const EXTRA_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 3].close) <
@@ -337,7 +336,7 @@ const checkDeal = async (data) => {
     const lastCharacter = hmsArr[1];
     // const lastCharacter = hmsArr[1].slice(-1);
     const minuteList = ['0', '00', '15', '30', '45'];
-    const isFiveM = true || minuteList.includes(lastCharacter);
+    const isFiveM = minuteList.includes(lastCharacter);
 
     console.log('************************************', currentTime);
     // console.log("isFiveM", isFiveM, lastCharacter);
