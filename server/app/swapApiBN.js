@@ -271,6 +271,7 @@ const checkDeal = async (data) => {
       !longHolding;
 
     const EXTRA_CLOSE_ALL_LONG_CONDITION =
+      false &&
       longRatio > 0 &&
       shortRatio < 0 &&
       longRatio * Math.abs(shortHolding.positionAmt) +
@@ -278,6 +279,7 @@ const checkDeal = async (data) => {
         0;
 
     const EXTRA_CLOSE_ALL_SHORT_CONDITION =
+      false &&
       shortRatio > 0 &&
       longRatio < 0 &&
       shortRatio * Math.abs(shortHolding.positionAmt) +
