@@ -438,8 +438,14 @@ const checkDeal = async (data) => {
     //开多仓条件
     if (openLongCondition) {
       try {
-        let openPositionAmt = INIT_POSITION * 4;
-        if (shortHolding) openPositionAmt = Math.abs(shortHolding.positionAmt);
+        let openPositionAmt = INIT_POSITION;
+        if (!longHolding) {
+          if (shortHolding) {
+            openPositionAmt = Math.abs(shortHolding.positionAmt);
+          } else {
+            openPositionAmt = INIT_POSITION * 4;
+          }
+        }
         // const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
         //   if (!longHolding) return false;
         //   return item == Math.abs(longHolding.positionAmt);
@@ -467,8 +473,14 @@ const checkDeal = async (data) => {
     //开空仓条件
     if (openShortCondition) {
       try {
-        let openPositionAmt = INIT_POSITION * 4;
-        if (longHolding) openPositionAmt = Math.abs(longHolding.positionAmt);
+        let openPositionAmt = INIT_POSITION;
+        if (!shortHolding) {
+          if (longHolding) {
+            openPositionAmt = Math.abs(longHolding.positionAmt);
+          } else {
+            openPositionAmt = INIT_POSITION * 4;
+          }
+        }
         // const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
         //   if (!shortHolding) return false;
         //   return item == Math.abs(shortHolding.positionAmt);
