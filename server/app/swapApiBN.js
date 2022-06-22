@@ -285,11 +285,11 @@ const checkDeal = async (data) => {
         0;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) && !longHolding;
+      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) && longRatio == 0;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
-      !shortHolding;
+      shortRatio == 0;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
