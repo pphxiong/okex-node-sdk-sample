@@ -285,17 +285,74 @@ const checkDeal = async (data) => {
         0;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) && !longHolding;
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
+        IS_HAS_LONG_BETWEEN &&
+        // !(
+        //   longRatio < 0 &&
+        //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3
+        // ) &&
+        !(
+          longRatio > 0 &&
+          shortRatio < 0 &&
+          (Math.abs(longHolding.positionAmt) >=
+            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3 ||
+            (Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(longHolding.positionAmt) >=
+                Math.abs(shortHolding.positionAmt) + INIT_POSITION))
+        )) ||
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
+        !IS_HAS_SHORT_BETWEEN &&
+        (!longHolding ||
+          (shortHolding &&
+            Math.abs(longHolding.positionAmt) <=
+              Math.abs(shortHolding.positionAmt))));
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
-      !shortHolding;
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
+        IS_HAS_SHORT_BETWEEN &&
+        // !(
+        //   shortRatio < 0 &&
+        //   Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3
+        // ) &&
+        !(
+          shortRatio > 0 &&
+          longRatio < 0 &&
+          (Math.abs(shortHolding.positionAmt) >=
+            Math.abs(longHolding.positionAmt) + INIT_POSITION * 3 ||
+            (Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(shortHolding.positionAmt) >=
+                Math.abs(longHolding.positionAmt) + INIT_POSITION))
+        )) ||
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
+        !IS_HAS_LONG_BETWEEN &&
+        (!shortHolding ||
+          (longHolding &&
+            Math.abs(shortHolding.positionAmt) <=
+              Math.abs(longHolding.positionAmt))));
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
+        IS_HAS_SHORT_BETWEEN) ||
+      EXTRA_CLOSE_LONG_CONDITION ||
+      ((MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
+        !IS_HAS_SHORT_BETWEEN &&
+        longHolding &&
+        shortHolding &&
+        Math.abs(longHolding.positionAmt) >=
+          Math.abs(shortHolding.positionAmt) + INIT_POSITION * 3);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION;
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
+        IS_HAS_LONG_BETWEEN) ||
+      EXTRA_CLOSE_SHORT_CONDITION ||
+      ((MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
+        !IS_HAS_LONG_BETWEEN &&
+        shortHolding &&
+        longHolding &&
+        Math.abs(shortHolding.positionAmt) >=
+          Math.abs(longHolding.positionAmt) + INIT_POSITION * 3);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -439,7 +496,6 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        if (shortHolding) openPositionAmt = Math.abs(shortHolding.positionAmt);
         // const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
         //   if (!longHolding) return false;
         //   return item == Math.abs(longHolding.positionAmt);
@@ -468,7 +524,6 @@ const checkDeal = async (data) => {
     if (openShortCondition) {
       try {
         let openPositionAmt = INIT_POSITION;
-        if (longHolding) openPositionAmt = Math.abs(longHolding.positionAmt);
         // const index = INCREASE_FI_LIST_HOLDING.findIndex((item) => {
         //   if (!shortHolding) return false;
         //   return item == Math.abs(shortHolding.positionAmt);
