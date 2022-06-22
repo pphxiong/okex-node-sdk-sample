@@ -337,7 +337,7 @@ const checkDeal = async (data) => {
     const lastCharacter = hmsArr[1];
     // const lastCharacter = hmsArr[1].slice(-1);
     const minuteList = ['0', '00', '15', '30', '45'];
-    const isFiveM = minuteList.includes(lastCharacter);
+    const isFiveM = true || minuteList.includes(lastCharacter);
 
     console.log('************************************', currentTime);
     // console.log("isFiveM", isFiveM, lastCharacter);
