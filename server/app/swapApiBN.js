@@ -156,14 +156,13 @@ const checkDeal = async (data) => {
       let lastOpenLongIndex = -1;
       for (let i = macdList.length - 1; i > 1; i--) {
         const is_long =
-          Number(macdList[i - 2].close) < Number(bollList[i - 2].DN) &&
-          Number(macdList[i - 1].close) > Number(bollList[i - 1].DN);
-        // ||
-        // (Number(macdList[i - 3].close) > Number(bollList[i - 3].DN) &&
-        //   Number(macdList[i - 2].low) < Number(bollList[i - 2].DN) &&
-        //   Number(macdList[i - 2].close) > Number(bollList[i - 2].DN) &&
-        //   Number(macdList[i - 1].low) > Number(bollList[i - 1].DN) &&
-        //   Number(macdList[i - 1].close) < Number(bollList[i - 1].MA));
+          (Number(macdList[i - 2].close) < Number(bollList[i - 2].DN) &&
+            Number(macdList[i - 1].close) > Number(bollList[i - 1].DN)) ||
+          (Number(macdList[i - 3].close) > Number(bollList[i - 3].DN) &&
+            Number(macdList[i - 2].low) < Number(bollList[i - 2].DN) &&
+            Number(macdList[i - 2].close) > Number(bollList[i - 2].DN) &&
+            Number(macdList[i - 1].low) > Number(bollList[i - 1].DN) &&
+            Number(macdList[i - 1].close) < Number(bollList[i - 1].MA));
         if (is_long) {
           lastOpenLongIndex = i;
           break;
@@ -215,14 +214,13 @@ const checkDeal = async (data) => {
       let lastOpenShortIndex = -1;
       for (let i = macdList.length - 1; i > 1; i--) {
         const is_short =
-          Number(macdList[i - 2].close) > Number(bollList[i - 2].UP) &&
-          Number(macdList[i - 1].close) < Number(bollList[i - 1].UP);
-        // ||
-        // (Number(macdList[i - 3].close) < Number(bollList[i - 3].UP) &&
-        //   Number(macdList[i - 2].high) > Number(bollList[i - 2].UP) &&
-        //   Number(macdList[i - 2].close) < Number(bollList[i - 2].UP) &&
-        //   Number(macdList[i - 1].high) < Number(bollList[i - 1].UP) &&
-        //   Number(macdList[i - 1].close) > Number(bollList[i - 1].MA));
+          (Number(macdList[i - 2].close) > Number(bollList[i - 2].UP) &&
+            Number(macdList[i - 1].close) < Number(bollList[i - 1].UP)) ||
+          (Number(macdList[i - 3].close) < Number(bollList[i - 3].UP) &&
+            Number(macdList[i - 2].high) > Number(bollList[i - 2].UP) &&
+            Number(macdList[i - 2].close) < Number(bollList[i - 2].UP) &&
+            Number(macdList[i - 1].high) < Number(bollList[i - 1].UP) &&
+            Number(macdList[i - 1].close) > Number(bollList[i - 1].MA));
         if (is_short) {
           lastOpenShortIndex = i;
           break;
@@ -288,17 +286,21 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
-      shortRatio == 0;
+      IS_HAS_LONG_BETWEEN &&
+      !shortHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
-      longRatio == 0;
+      IS_HAS_SHORT_BETWEEN &&
+      !longHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION;
+      (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
+      IS_HAS_SHORT_BETWEEN;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION;
+      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) &&
+      IS_HAS_LONG_BETWEEN;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
