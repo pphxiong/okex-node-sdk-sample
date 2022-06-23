@@ -170,7 +170,7 @@ const checkDeal = async (data) => {
         }
       }
 
-      if (lastOpenLongIndex != -1 && lastOpenLongIndex < macdList.length - 2) {
+      if (lastOpenLongIndex != -1) {
         const tempMacdList = macdList.slice(lastOpenLongIndex, macdList.length);
         const tempBollList = bollList.slice(lastOpenLongIndex, bollList.length);
         let is_center_long = false;
@@ -184,7 +184,8 @@ const checkDeal = async (data) => {
             break;
           }
         }
-        if (is_center_long) IS_HAS_LONG_BETWEEN = true;
+        if (is_center_long && lastOpenLongIndex < macdList.length - 3)
+          IS_HAS_LONG_BETWEEN = true;
       } else {
         IS_HAS_LONG_BETWEEN = true;
       }
@@ -229,10 +230,7 @@ const checkDeal = async (data) => {
         }
       }
 
-      if (
-        lastOpenShortIndex != -1 &&
-        lastOpenShortIndex < macdList.length - 2
-      ) {
+      if (lastOpenShortIndex != -1) {
         const tempMacdList = macdList.slice(
           lastOpenShortIndex,
           macdList.length
@@ -253,7 +251,8 @@ const checkDeal = async (data) => {
           }
         }
 
-        if (is_center_short) IS_HAS_SHORT_BETWEEN = true;
+        if (is_center_short && lastOpenShortIndex < macdList.length - 3)
+          IS_HAS_SHORT_BETWEEN = true;
       } else {
         IS_HAS_SHORT_BETWEEN = true;
       }
