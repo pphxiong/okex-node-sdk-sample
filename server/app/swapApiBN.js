@@ -362,7 +362,11 @@ const checkDeal = async (data) => {
       "longPositionAmt",
       longHolding ? longHolding.positionAmt : 0,
       "shortPositionAmt",
-      shortHolding ? shortHolding.positionAmt : 0
+      shortHolding ? shortHolding.positionAmt : 0,
+      "BATCH_LONG_CONDITION",
+      BATCH_LONG_CONDITION,
+      "BATCH_SHORT_CONDITION",
+      BATCH_SHORT_CONDITION
     );
     console.log(
       "closeLongCondition",
