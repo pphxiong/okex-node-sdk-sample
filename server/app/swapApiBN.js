@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 3;
+let INIT_POSITION = 1.5;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -285,29 +285,37 @@ const checkDeal = async (data) => {
         longRatio * Math.abs(longHolding.positionAmt) >
         0;
 
+    const BATCH_LONG_CONDITION =
+      MAIN_OPEN_SHORT_CONDITION &&
+      !longHolding &&
+      shortHolding &&
+      Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 5;
+
+    const BATCH_SHORT_CONDITION =
+      MAIN_OPEN_LONG_CONDITION &&
+      !shortHolding &&
+      longHolding &&
+      Math.abs(longHolding.positionAmt) >= INIT_POSITION * 5;
+
     const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION && IS_HAS_LONG_BETWEEN;
+      (MAIN_OPEN_LONG_CONDITION &&
+        (!longHolding ||
+          (!shortHolding &&
+            Math.abs(longHolding.positionAmt) < INIT_POSITION * 5))) ||
+      BATCH_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN;
+      (MAIN_OPEN_SHORT_CONDITION &&
+        (!shortHolding ||
+          (longHolding &&
+            Math.abs(shortHolding.positionAmt) < INIT_POSITION * 5))) ||
+      BATCH_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION ||
-      EXTRA_OPEN_SHORT_CONDITION ||
-      (MAIN_OPEN_LONG_CONDITION &&
-        !IS_HAS_LONG_BETWEEN &&
-        longHolding &&
-        shortHolding &&
-        Math.abs(longHolding.positionAmt) > Math.abs(shortHolding.positionAmt));
+      MAIN_OPEN_SHORT_CONDITION || BATCH_SHORT_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION ||
-      EXTRA_OPEN_LONG_CONDITION ||
-      (MAIN_OPEN_SHORT_CONDITION &&
-        !IS_HAS_SHORT_BETWEEN &&
-        longHolding &&
-        shortHolding &&
-        Math.abs(shortHolding.positionAmt) > Math.abs(longHolding.positionAmt));
+      MAIN_OPEN_LONG_CONDITION || BATCH_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
