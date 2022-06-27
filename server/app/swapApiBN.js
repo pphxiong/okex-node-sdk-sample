@@ -458,7 +458,11 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (closeLongCondition && isFiveM) {
+    if (
+      (closeLongCondition && isFiveM) ||
+      EXTRA_CLOSE_ALL_LONG_CONDITION ||
+      EXTRA_CLOSE_ALL_SHORT_CONDITION
+    ) {
       try {
         await closeLongPosition();
       } catch (e) {
@@ -467,7 +471,11 @@ const checkDeal = async (data) => {
     }
 
     //平空仓条件
-    if (closeShortCondition && isFiveM) {
+    if (
+      (closeShortCondition && isFiveM) ||
+      EXTRA_CLOSE_ALL_LONG_CONDITION ||
+      EXTRA_CLOSE_ALL_SHORT_CONDITION
+    ) {
       try {
         await closeShortPosition();
       } catch (e) {
