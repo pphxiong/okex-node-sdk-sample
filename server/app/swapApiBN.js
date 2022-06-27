@@ -372,7 +372,11 @@ const checkDeal = async (data) => {
       "BATCH_LONG_CONDITION",
       BATCH_LONG_CONDITION,
       "BATCH_SHORT_CONDITION",
-      BATCH_SHORT_CONDITION
+      BATCH_SHORT_CONDITION,
+      "EXTRA_CLOSE_ALL_LONG_CONDITION",
+      EXTRA_CLOSE_ALL_LONG_CONDITION,
+      "EXTRA_CLOSE_ALL_SHORT_CONDITION",
+      EXTRA_CLOSE_ALL_SHORT_CONDITION
     );
     console.log(
       "closeLongCondition",
