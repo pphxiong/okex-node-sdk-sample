@@ -270,6 +270,7 @@ const checkDeal = async (data) => {
       !longHolding;
 
     const EXTRA_CLOSE_ALL_LONG_CONDITION =
+      MAIN_OPEN_SHORT_CONDITION &&
       longRatio > 0 &&
       ((shortRatio < 0 &&
         longRatio * Math.abs(longHolding.positionAmt) +
@@ -279,6 +280,7 @@ const checkDeal = async (data) => {
           Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3));
 
     const EXTRA_CLOSE_ALL_SHORT_CONDITION =
+      MAIN_OPEN_LONG_CONDITION &&
       shortRatio > 0 &&
       ((longRatio < 0 &&
         shortRatio * Math.abs(shortHolding.positionAmt) +
@@ -291,13 +293,13 @@ const checkDeal = async (data) => {
       MAIN_OPEN_SHORT_CONDITION &&
       !longHolding &&
       shortHolding &&
-      Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3;
+      Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 4;
 
     const BATCH_SHORT_CONDITION =
       MAIN_OPEN_LONG_CONDITION &&
       !shortHolding &&
       longHolding &&
-      Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3;
+      Math.abs(longHolding.positionAmt) >= INIT_POSITION * 4;
 
     const MAIN_OPEN_LONG_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION &&
@@ -458,11 +460,7 @@ const checkDeal = async (data) => {
     };
 
     //平多仓条件
-    if (
-      (closeLongCondition && isFiveM) ||
-      EXTRA_CLOSE_ALL_LONG_CONDITION ||
-      EXTRA_CLOSE_ALL_SHORT_CONDITION
-    ) {
+    if (closeLongCondition && isFiveM) {
       try {
         await closeLongPosition();
       } catch (e) {
@@ -471,11 +469,7 @@ const checkDeal = async (data) => {
     }
 
     //平空仓条件
-    if (
-      (closeShortCondition && isFiveM) ||
-      EXTRA_CLOSE_ALL_LONG_CONDITION ||
-      EXTRA_CLOSE_ALL_SHORT_CONDITION
-    ) {
+    if (closeShortCondition && isFiveM) {
       try {
         await closeShortPosition();
       } catch (e) {
