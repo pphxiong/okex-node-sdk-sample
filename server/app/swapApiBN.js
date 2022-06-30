@@ -291,15 +291,21 @@ const checkDeal = async (data) => {
 
     const BATCH_LONG_CONDITION =
       MAIN_OPEN_SHORT_CONDITION &&
-      !longHolding &&
       shortHolding &&
-      Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 4;
+      ((!longHolding &&
+        Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 4) ||
+        (longHolding &&
+          Math.abs(shortHolding.positionAmt) >=
+            Math.abs(longHolding.positionAmt) + INIT_POSITION * 4));
 
     const BATCH_SHORT_CONDITION =
       MAIN_OPEN_LONG_CONDITION &&
-      !shortHolding &&
       longHolding &&
-      Math.abs(longHolding.positionAmt) >= INIT_POSITION * 4;
+      ((!shortHolding &&
+        Math.abs(longHolding.positionAmt) >= INIT_POSITION * 4) ||
+        (shortHolding &&
+          Math.abs(longHolding.positionAmt) >=
+            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 4));
 
     const MAIN_OPEN_LONG_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION &&
@@ -314,15 +320,11 @@ const checkDeal = async (data) => {
       BATCH_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION ||
-      BATCH_SHORT_CONDITION ||
-      EXTRA_CLOSE_ALL_LONG_CONDITION ||
-      EXTRA_CLOSE_ALL_SHORT_CONDITION;
+      (MAIN_OPEN_SHORT_CONDITION && !BATCH_LONG_CONDITION) ||
+      EXTRA_CLOSE_ALL_LONG_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION ||
-      BATCH_LONG_CONDITION ||
-      EXTRA_CLOSE_ALL_LONG_CONDITION ||
+      (MAIN_OPEN_LONG_CONDITION && !BATCH_SHORT_CONDITION) ||
       EXTRA_CLOSE_ALL_SHORT_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
@@ -425,10 +427,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
-          await closePosition(
-            payload,
-            EXTRA_CLOSE_ALL_LONG_CONDITION || EXTRA_CLOSE_ALL_SHORT_CONDITION
-          );
+          await closePosition(payload, EXTRA_CLOSE_ALL_LONG_CONDITION);
         }
       }
     };
@@ -451,10 +450,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
-          await closePosition(
-            payload,
-            EXTRA_CLOSE_ALL_LONG_CONDITION || EXTRA_CLOSE_ALL_SHORT_CONDITION
-          );
+          await closePosition(payload, EXTRA_CLOSE_ALL_SHORT_CONDITION);
         }
       }
     };
