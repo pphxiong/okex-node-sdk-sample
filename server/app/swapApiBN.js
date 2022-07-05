@@ -295,8 +295,11 @@ const checkDeal = async (data) => {
       ((!longHolding &&
         Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 2) ||
         (longHolding &&
-          Math.abs(shortHolding.positionAmt) >=
-            Math.abs(longHolding.positionAmt) + INIT_POSITION * 2));
+          (Math.abs(shortHolding.positionAmt) >=
+            Math.abs(longHolding.positionAmt) + INIT_POSITION * 2 ||
+            (Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(shortHolding.positionAmt) >
+                Math.abs(longHolding.positionAmt)))));
 
     const BATCH_SHORT_CONDITION =
       MAIN_OPEN_LONG_CONDITION &&
@@ -304,8 +307,11 @@ const checkDeal = async (data) => {
       ((!shortHolding &&
         Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2) ||
         (shortHolding &&
-          Math.abs(longHolding.positionAmt) >=
-            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 2));
+          (Math.abs(longHolding.positionAmt) >=
+            Math.abs(shortHolding.positionAmt) + INIT_POSITION * 2 ||
+            (Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3 &&
+              Math.abs(longHolding.positionAmt) >
+                Math.abs(shortHolding.positionAmt)))));
 
     const MAIN_OPEN_LONG_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION &&
