@@ -439,7 +439,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
-          await closePosition(payload, EXTRA_CLOSE_ALL_LONG_CONDITION && false);
+          await closePosition(payload, EXTRA_CLOSE_ALL_LONG_CONDITION);
         }
       }
     };
@@ -462,10 +462,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
-          await closePosition(
-            payload,
-            EXTRA_CLOSE_ALL_SHORT_CONDITION && false
-          );
+          await closePosition(payload, EXTRA_CLOSE_ALL_SHORT_CONDITION);
         }
       }
     };
