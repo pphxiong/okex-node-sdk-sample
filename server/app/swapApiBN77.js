@@ -328,16 +328,24 @@ const checkDeal = async (data) => {
                 Math.abs(shortHolding.positionAmt)))));
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      MAIN_OPEN_LONG_CONDITION ||
-      (shortRatio < 0 && CENTER_CROSS_LONG_CONDITION);
+      (MAIN_OPEN_LONG_CONDITION &&
+        (!longHolding ||
+          Math.abs(longHolding.positionAmt) <= INIT_POSITION * 2)) ||
+      BATCH_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MAIN_OPEN_SHORT_CONDITION ||
-      (longRatio < 0 && CENTER_CROSS_SHORT_CONDITION);
+      (MAIN_OPEN_SHORT_CONDITION &&
+        (!shortHolding ||
+          Math.abs(shortHolding.positionAmt) <= INIT_POSITION * 2)) ||
+      BATCH_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      (MAIN_OPEN_SHORT_CONDITION && !BATCH_LONG_CONDITION) ||
+      EXTRA_CLOSE_ALL_LONG_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      (MAIN_OPEN_LONG_CONDITION && !BATCH_SHORT_CONDITION) ||
+      EXTRA_CLOSE_ALL_SHORT_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -439,7 +447,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
-          await closePosition(payload, EXTRA_CLOSE_ALL_LONG_CONDITION && false);
+          await closePosition(payload, EXTRA_CLOSE_ALL_LONG_CONDITION);
         }
       }
     };
@@ -462,10 +470,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
-          await closePosition(
-            payload,
-            EXTRA_CLOSE_ALL_SHORT_CONDITION && false
-          );
+          await closePosition(payload, EXTRA_CLOSE_ALL_SHORT_CONDITION);
         }
       }
     };
