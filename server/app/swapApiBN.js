@@ -329,11 +329,17 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       MAIN_OPEN_LONG_CONDITION ||
-      (shortRatio < 0 && CENTER_CROSS_LONG_CONDITION);
+      (longHolding &&
+        shortRatio < 0 &&
+        CENTER_CROSS_LONG_CONDITION &&
+        Math.abs(longHolding.positionAmt) < Math.abs(shortHolding.positionAmt));
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION ||
-      (longRatio < 0 && CENTER_CROSS_SHORT_CONDITION);
+      (shortHolding &&
+        longRatio < 0 &&
+        CENTER_CROSS_SHORT_CONDITION &&
+        Math.abs(shortHolding.positionAmt) < Math.abs(longHolding.positionAmt));
 
     const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
 
