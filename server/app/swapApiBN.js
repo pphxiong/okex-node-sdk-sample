@@ -958,6 +958,7 @@ const countdownCancelAll = async (time) => {
 const startInterval = async () => {
   RESTART_TIME += 1;
   if (RESTART_TIME >= 1 * 14) {
+    RESTART_TIME = 0;
     restart();
     return;
   }
@@ -1045,7 +1046,7 @@ function restart() {
         console.log("restarting success");
       }
     });
-  }, 1000 * 10);
+  }, 1000 * 2);
 }
 function start() {
   console.log("starting......");
@@ -1057,7 +1058,7 @@ function start() {
         console.log("starting success");
       }
     });
-  }, 1000 * 10);
+  }, 1000 * 2);
 }
 function stop() {
   console.log("stopping......");
@@ -1072,5 +1073,5 @@ function stop() {
         start();
       }, 1000 * 60 * 60 * 24 * 1);
     });
-  }, 1000 * 10);
+  }, 1000 * 2);
 }
