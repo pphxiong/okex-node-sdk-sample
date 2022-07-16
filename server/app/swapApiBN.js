@@ -166,7 +166,9 @@ const checkDeal = async (data) => {
       for (let i = macdList.length - 1; i > 1; i--) {
         const is_long =
           Number(macdList[i - 2].close) < Number(bollList[i - 2].DN) &&
-          Number(macdList[i - 1].close) > Number(bollList[i - 1].DN);
+          Number(macdList[i - 1].close) > Number(bollList[i - 1].DN) &&
+          Number(macdList[macdList.length - 1].close) <
+            Number(bollList[bollList.length - 1].UP);
         if (is_long) {
           lastOpenLongIndex = i;
           break;
@@ -178,6 +180,14 @@ const checkDeal = async (data) => {
         const tempBollList = bollList.slice(lastOpenLongIndex, bollList.length);
         let is_center_long = false;
         for (let i = tempMacdList.length - 1; i > 1; i--) {
+          if (
+            Number(tempMacdList[i - 2].close) >
+              Number(tempBollList[i - 2].UP) &&
+            Number(tempMacdList[i - 1].close) < Number(tempBollList[i - 1].UP)
+          ) {
+            is_center_long = false;
+            break;
+          }
           is_center_long =
             Number(tempMacdList[i - 2].close) <
               Number(tempBollList[i - 2].MA) &&
@@ -226,7 +236,9 @@ const checkDeal = async (data) => {
       for (let i = macdList.length - 1; i > 1; i--) {
         const is_short =
           Number(macdList[i - 2].close) > Number(bollList[i - 2].UP) &&
-          Number(macdList[i - 1].close) < Number(bollList[i - 1].UP);
+          Number(macdList[i - 1].close) < Number(bollList[i - 1].UP) &&
+          Number(macdList[macdList.length - 1].close) >
+            Number(bollList[bollList.length - 1].DN);
         if (is_short) {
           lastOpenShortIndex = i;
           break;
@@ -244,6 +256,14 @@ const checkDeal = async (data) => {
         );
         let is_center_short = false;
         for (let i = tempMacdList.length - 1; i > 1; i--) {
+          if (
+            Number(tempMacdList[i - 2].close) <
+              Number(tempBollList[i - 2].DN) &&
+            Number(tempMacdList[i - 1].close) > Number(tempBollList[i - 1].DN)
+          ) {
+            is_center_short = false;
+            break;
+          }
           is_center_short =
             Number(tempMacdList[i - 2].close) >
               Number(tempBollList[i - 2].MA) &&
@@ -322,9 +342,11 @@ const checkDeal = async (data) => {
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION && IS_HAS_SHORT_BETWEEN;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION1;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      MAIN_OPEN_SHORT_CONDITION1 && longRatio >= 0;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = MAIN_OPEN_LONG_CONDITION1;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION1 && shortRatio >= 0;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
