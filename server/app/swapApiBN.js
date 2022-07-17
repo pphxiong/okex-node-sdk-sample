@@ -167,8 +167,7 @@ const checkDeal = async (data) => {
         const is_long =
           Number(macdList[i - 2].close) < Number(bollList[i - 2].DN) &&
           Number(macdList[i - 1].close) > Number(bollList[i - 1].DN) &&
-          Number(macdList[macdList.length - 1].close) <
-            Number(bollList[bollList.length - 1].UP);
+          Number(macdList[i - 1].close) < Number(bollList[i - 1].UP);
         if (is_long) {
           lastOpenLongIndex = i;
           break;
@@ -200,7 +199,7 @@ const checkDeal = async (data) => {
         if (is_center_long && lastOpenLongIndex < macdList.length - 3)
           IS_HAS_LONG_BETWEEN = true;
       } else {
-        IS_HAS_LONG_BETWEEN = true;
+        IS_HAS_LONG_BETWEEN = false;
       }
     }
 
@@ -237,8 +236,7 @@ const checkDeal = async (data) => {
         const is_short =
           Number(macdList[i - 2].close) > Number(bollList[i - 2].UP) &&
           Number(macdList[i - 1].close) < Number(bollList[i - 1].UP) &&
-          Number(macdList[macdList.length - 1].close) >
-            Number(bollList[bollList.length - 1].DN);
+          Number(macdList[i - 1].close) > Number(bollList[i - 1].DN);
         if (is_short) {
           lastOpenShortIndex = i;
           break;
@@ -277,7 +275,7 @@ const checkDeal = async (data) => {
         if (is_center_short && lastOpenShortIndex < macdList.length - 3)
           IS_HAS_SHORT_BETWEEN = true;
       } else {
-        IS_HAS_SHORT_BETWEEN = true;
+        IS_HAS_SHORT_BETWEEN = false;
       }
     }
 
