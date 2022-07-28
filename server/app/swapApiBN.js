@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 3;
+let INIT_POSITION = 7;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -364,13 +364,21 @@ const checkDeal = async (data) => {
 
     const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
     const hmsArr = currentTime.split(" ")[1].split(":");
-    const lastCharacter = hmsArr[1];
-    // const lastCharacter = hmsArr[1].slice(-1);
+    const lastMinuteCharacter = hmsArr[1];
+    const lastSecondCharacter = hmsArr[2];
     const minuteList = ["0", "00", "15", "30", "45"];
-    const isFiveM = minuteList.includes(lastCharacter);
+    const secondList = ["0", "00"];
+    const minuteDiff = moment(currentTime).diff(
+      moment(macdList[macdList.length - 1].time),
+      "minute"
+    );
+    const isFiveM =
+      minuteDiff < 20 &&
+      minuteList.includes(lastMinuteCharacter) &&
+      !secondList.includes(lastSecondCharacter);
 
     console.log("************************************", currentTime);
-    console.log("isFiveM", isFiveM, lastCharacter);
+    console.log("isFiveM", isFiveM, lastMinuteCharacter);
     console.log("macdList", macdList.map((item) => item.close).slice(-2));
     console.log("bollList", bollList.slice(-2));
     console.log("longRatio", longRatio, "shortRatio", shortRatio);
