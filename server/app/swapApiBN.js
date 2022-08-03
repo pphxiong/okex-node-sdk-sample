@@ -131,21 +131,9 @@ const checkDeal = async (data) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
+    const currentMacd = macdList[macdList.length - 1];
+
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
-
-    const CENTER_CROSS_LONG_CONDITION =
-        Number(macdList[macdList.length - 2].close) <
-          Number(bollList[bollList.length - 2].MA) &&
-        Number(macdList[macdList.length - 1].close) >
-          Number(bollList[bollList.length - 1].MA); 
-
-    const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
@@ -153,22 +141,56 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].UP);
 
+    const OUT_LOW_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].DN);
+
+    const CENTER_CROSS_LONG_CONDITION =
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].MA) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
+
+    const MAIN_OPEN_SHORT_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
+
+    const OUT_HIGH_CONDITION =
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].UP);
+
     const CENTER_CROSS_SHORT_CONDITION =
-        Number(macdList[macdList.length - 2].close) >
-          Number(bollList[bollList.length - 2].MA) &&
-        Number(macdList[macdList.length - 1].close) <
-          Number(bollList[bollList.length - 1].MA);    
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].MA) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_LONG_CONDITION && !longHolding;
+    // && currentMacd.close > currentMacd.ema60;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       MAIN_OPEN_SHORT_CONDITION && !shortHolding;
+    // && currentMacd.close < currentMacd.ema60;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (MAIN_OPEN_SHORT_CONDITION || MAIN_OPEN_LONG_CONDITION || CENTER_CROSS_SHORT_CONDITION);
+      longHolding &&
+      (MAIN_OPEN_SHORT_CONDITION ||
+        MAIN_OPEN_LONG_CONDITION ||
+        OUT_LOW_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (MAIN_OPEN_LONG_CONDITION || MAIN_OPEN_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION);
+      shortHolding &&
+      (MAIN_OPEN_LONG_CONDITION ||
+        MAIN_OPEN_SHORT_CONDITION ||
+        OUT_HIGH_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -426,6 +448,7 @@ function getCurrentMacd(list) {
         close: Number(item[4]),
         ema12: Number(item[4]),
         ema26: Number(item[4]),
+        ema60: Number(item[4]),
         diff: 0,
         dea: 0,
         column: 0,
@@ -441,6 +464,7 @@ function getCurrentMacd(list) {
         close: Number(item[4]),
         lastEma12: lastResult.ema12,
         lastEma26: lastResult.ema26,
+        lastEma60: lastResult.ema60,
         lastDea: lastResult.dea,
         high: Number(item[2]),
         low: Number(item[3]),
@@ -640,8 +664,18 @@ const closePosition = async (holding, isCloseAll = false) => {
 let positionChange = true;
 let globalHolding = null;
 function getMacd(params) {
-  const { open, close, price, lastEma12, lastEma26, lastDea, high, low, time } =
-    params;
+  const {
+    open,
+    close,
+    price,
+    lastEma12,
+    lastEma26,
+    lastEma60,
+    lastDea,
+    high,
+    low,
+    time,
+  } = params;
 
   const ema12 = toFixedAndToNumber(
     (2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
@@ -649,6 +683,10 @@ function getMacd(params) {
   );
   const ema26 = toFixedAndToNumber(
     (2 / (26 + 1)) * price + (25 / (26 + 1)) * lastEma26,
+    4
+  );
+  const ema60 = toFixedAndToNumber(
+    (2 / (60 + 1)) * price + (59 / (60 + 1)) * lastEma26,
     4
   );
 
@@ -666,6 +704,7 @@ function getMacd(params) {
     price,
     ema12,
     ema26,
+    ema60,
     diff,
     dea,
     column,
