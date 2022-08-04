@@ -173,6 +173,26 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
 
+    const EXTRA_CLOSE_LONG_CONDITION =
+      Number(macdList[macdList.length - 2].high) <
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].high) >
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(macdList[macdList.length - 1].open);
+
+    const EXTRA_CLOSE_SHORT_CONDITION =
+      Number(macdList[macdList.length - 2].low) >
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].low) <
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].open) >
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(macdList[macdList.length - 1].open);
+
     const MAIN_OPEN_LONG_CONDITION1 =
       (MAIN_OPEN_LONG_CONDITION || OUT_HIGH_CONDITION) && !longHolding;
 
@@ -180,10 +200,16 @@ const checkDeal = async (data) => {
       (MAIN_OPEN_SHORT_CONDITION || OUT_LOW_CONDITION) && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (MAIN_OPEN_SHORT_CONDITION || MAIN_OPEN_LONG_CONDITION);
+      longHolding &&
+      (MAIN_OPEN_SHORT_CONDITION ||
+        MAIN_OPEN_LONG_CONDITION ||
+        EXTRA_CLOSE_LONG_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (MAIN_OPEN_LONG_CONDITION || MAIN_OPEN_SHORT_CONDITION);
+      shortHolding &&
+      (MAIN_OPEN_LONG_CONDITION ||
+        MAIN_OPEN_SHORT_CONDITION ||
+        EXTRA_CLOSE_SHORT_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
