@@ -195,23 +195,23 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       CENTER_CROSS_SHORT_CONDITION &&
-      macdList[macdList.length - 1].diff > 0 &&
+      macdList[macdList.length - 1].column > 0 &&
       !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       CENTER_CROSS_LONG_CONDITION &&
-      macdList[macdList.length - 1].diff < 0 &&
+      macdList[macdList.length - 1].column < 0 &&
       !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
       CENTER_CROSS_LONG_CONDITION &&
-      macdList[macdList.length - 1].diff < 0;
+      macdList[macdList.length - 1].column < 0;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
       CENTER_CROSS_SHORT_CONDITION &&
-      macdList[macdList.length - 1].diff > 0;
+      macdList[macdList.length - 1].column > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
