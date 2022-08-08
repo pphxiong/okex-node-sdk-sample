@@ -48,11 +48,11 @@ const MODE_RATIO = {
 const DEFAULT_MODE = 1;
 let MODE = DEFAULT_MODE;
 let MODE2_NUM = 0;
-let INIT_POSITION = INCREASE_FI_LIST[0];
+
 const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(2))
 );
-console.log(INCREASE_FI_LIST);
+let INIT_POSITION = 1;
 
 let continuous_win = 0;
 let continuous_loss = 0;
