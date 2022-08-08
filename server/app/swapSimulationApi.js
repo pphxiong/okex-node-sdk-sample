@@ -879,11 +879,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
-      (MAIN_OPEN_SHORT_CONDITION || macdList[macdList.length - 1].diff < 0);
+      CENTER_CROSS_LONG_CONDITION &&
+      macdList[macdList.length - 1].diff < 0;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
-      (MAIN_OPEN_LONG_CONDITION || macdList[macdList.length - 1].diff > 0);
+      CENTER_CROSS_SHORT_CONDITION &&
+      macdList[macdList.length - 1].diff > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
