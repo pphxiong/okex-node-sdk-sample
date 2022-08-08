@@ -134,12 +134,12 @@ const checkDeal = async (data) => {
     const currentMacd = macdList[macdList.length - 1];
 
     const MAIN_OPEN_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].DN) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
 
     const OUT_LOW_CONDITION =
       Number(macdList[macdList.length - 2].close) >
@@ -154,12 +154,12 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
 
     const OUT_HIGH_CONDITION =
       Number(macdList[macdList.length - 2].close) <
@@ -173,17 +173,7 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
 
-    const EXTRA_CLOSE_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].high) <
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].high) >
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].open) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(macdList[macdList.length - 1].open);
-
-    const EXTRA_CLOSE_SHORT_CONDITION =
+    const EXTRA_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].low) >
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].low) <
@@ -193,23 +183,34 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) >
         Number(macdList[macdList.length - 1].open);
 
+    const EXTRA_OPEN_SHORT_CONDITION =
+      Number(macdList[macdList.length - 2].high) <
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].high) >
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(macdList[macdList.length - 1].open);
+
     const MAIN_OPEN_LONG_CONDITION1 =
-      (MAIN_OPEN_LONG_CONDITION ||
-        EXTRA_CLOSE_SHORT_CONDITION ||
-        OUT_HIGH_CONDITION) &&
-      !longHolding;
+      (MAIN_OPEN_LONG_CONDITION || EXTRA_OPEN_LONG_CONDITION) && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (MAIN_OPEN_SHORT_CONDITION ||
-        EXTRA_CLOSE_LONG_CONDITION ||
-        OUT_LOW_CONDITION) &&
+      (MAIN_OPEN_SHORT_CONDITION || EXTRA_OPEN_SHORT_CONDITION) &&
       !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (MAIN_OPEN_SHORT_CONDITION || EXTRA_CLOSE_LONG_CONDITION);
+      longHolding &&
+      (MAIN_OPEN_LONG_CONDITION ||
+        MAIN_OPEN_SHORT_CONDITION ||
+        EXTRA_OPEN_SHORT_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (MAIN_OPEN_LONG_CONDITION || EXTRA_CLOSE_SHORT_CONDITION);
+      shortHolding &&
+      (MAIN_OPEN_LONG_CONDITION ||
+        MAIN_OPEN_SHORT_CONDITION ||
+        EXTRA_OPEN_LONG_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
