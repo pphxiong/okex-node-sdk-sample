@@ -829,7 +829,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].close) <
@@ -853,7 +855,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
 
     const EXTRA_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].low) >
