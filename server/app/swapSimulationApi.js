@@ -875,9 +875,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) <
         Number(macdList[macdList.length - 1].open);
 
-    const MAIN_OPEN_LONG_CONDITION1 = OUT_LOW_CONDITION && !longHolding;
+    const MAIN_OPEN_LONG_CONDITION1 = MAIN_OPEN_SHORT_CONDITION && !longHolding;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = OUT_HIGH_CONDITION && !shortHolding;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      MAIN_OPEN_LONG_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
