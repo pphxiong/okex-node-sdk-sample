@@ -876,10 +876,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(macdList[macdList.length - 1].open);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (CENTER_CROSS_LONG_CONDITION || OUT_HIGH_CONDITION) && !longHolding;
+      CENTER_CROSS_LONG_CONDITION && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION) && !shortHolding;
+      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding && (OUT_LOW_CONDITION || CENTER_CROSS_LONG_CONDITION);
