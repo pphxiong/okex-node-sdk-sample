@@ -240,14 +240,14 @@ const checkDeal = async (data) => {
     const hmsArr = currentTime.split(' ')[1].split(':');
     const lastMinuteCharacter = hmsArr[1];
     const lastSecondCharacter = hmsArr[2];
-    const minuteList = ['0', '00', '15', '30', '45'];
+    const minuteList = ['0', '00'];
     const secondList = ['0', '00'];
     const minuteDiff = moment(currentTime).diff(
       moment(macdList[macdList.length - 1].time),
       'minute'
     );
     const isFiveM =
-      minuteDiff < 40 &&
+      minuteDiff < 80 &&
       minuteList.includes(lastMinuteCharacter) &&
       !secondList.includes(lastSecondCharacter);
 
@@ -850,7 +850,7 @@ const startInterval = async () => {
     const list = data;
 
     const newList = JSON.parse(JSON.stringify(list));
-    // newList.pop();
+    newList.pop();
     const bollList = getCurrentBOLL(newList);
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
