@@ -240,7 +240,7 @@ const checkDeal = async (data) => {
     const hmsArr = currentTime.split(' ')[1].split(':');
     const lastMinuteCharacter = hmsArr[1];
     const lastSecondCharacter = hmsArr[2];
-    const minuteList = ['0', '00', '15', '30', '45'];
+    const minuteList = ['0', '00', '10', '20', '30', '40', '50'];
     const secondList = ['0', '00'];
     const minuteDiff = moment(currentTime).diff(
       moment(macdList[macdList.length - 1].time),
