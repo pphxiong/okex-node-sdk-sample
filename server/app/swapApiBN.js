@@ -212,10 +212,10 @@ const checkDeal = async (data) => {
       CENTER_CROSS_SHORT_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION;
+      longHolding && (CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION;
+      shortHolding && (CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -245,9 +245,10 @@ const checkDeal = async (data) => {
       "minute"
     );
     const isFiveM =
-      minuteDiff < 80 &&
-      minuteList.includes(lastMinuteCharacter) &&
-      !secondList.includes(lastSecondCharacter);
+      true ||
+      (minuteDiff < 80 &&
+        minuteList.includes(lastMinuteCharacter) &&
+        !secondList.includes(lastSecondCharacter));
 
     console.log("************************************", currentTime);
     console.log("isFiveM", isFiveM, lastMinuteCharacter);
@@ -832,7 +833,7 @@ const countdownCancelAll = async (time) => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= 1 * 14) {
+  if (RESTART_TIME >= (1 * 14) / 2) {
     RESTART_TIME = 0;
     restart();
     return;
@@ -848,7 +849,7 @@ const startInterval = async () => {
     const list = data;
 
     const newList = JSON.parse(JSON.stringify(list));
-    newList.pop();
+    // newList.pop();
     const bollList = getCurrentBOLL(newList);
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
@@ -860,7 +861,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 55);
+    await waitTime(1000 * 55 * 2);
     await startInterval();
   } catch (e) {
     restart();
