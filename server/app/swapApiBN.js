@@ -251,10 +251,9 @@ const checkDeal = async (data) => {
       "minute"
     );
     const isFiveM =
-      true ||
-      (minuteDiff < 80 &&
-        minuteList.includes(lastMinuteCharacter) &&
-        !secondList.includes(lastSecondCharacter));
+      minuteDiff < 80 &&
+      minuteList.includes(lastMinuteCharacter) &&
+      !secondList.includes(lastSecondCharacter);
 
     console.log("************************************", currentTime);
     console.log("isFiveM", isFiveM, lastMinuteCharacter);
@@ -839,7 +838,7 @@ const countdownCancelAll = async (time) => {
 
 const startInterval = async () => {
   RESTART_TIME += 1;
-  if (RESTART_TIME >= (1 * 14) / 2) {
+  if (RESTART_TIME >= 1 * 14) {
     RESTART_TIME = 0;
     restart();
     return;
@@ -855,7 +854,7 @@ const startInterval = async () => {
     const list = data;
 
     const newList = JSON.parse(JSON.stringify(list));
-    // newList.pop();
+    newList.pop();
     const bollList = getCurrentBOLL(newList);
     const macdList = getCurrentMacd(newList);
     const rsiList = getCurrentRSI(newList);
@@ -867,7 +866,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 55 * 2);
+    await waitTime(1000 * 55);
     await startInterval();
   } catch (e) {
     restart();
