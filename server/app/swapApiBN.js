@@ -209,7 +209,7 @@ const checkDeal = async (data) => {
       (CENTER_CROSS_LONG_CONDITION || UP_CONVERSE_CONDITION) && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (CENTER_CROSS_SHORT_CONDITION || UP_LOW_CONDITION) && !shortHolding;
+      (CENTER_CROSS_SHORT_CONDITION || LOW_CONVERSE_CONDITION) && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
