@@ -807,7 +807,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    const MAIN_OPEN_LONG_CONDITION =
+    const UP_CONVERSE_CONDITION =
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
@@ -821,17 +821,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].DN);
 
-    const MACD_UP_CONDITION =
-      Number(bollList[bollList.length - 2].MA) <
-      Number(bollList[bollList.length - 1].MA);
-
     const CENTER_CROSS_LONG_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].MA);
 
-    const MAIN_OPEN_SHORT_CONDITION =
+    const LOW_CONVERSE_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
@@ -844,10 +840,6 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].UP);
-
-    const MACD_DOWN_CONDITION =
-      Number(bollList[bollList.length - 2].MA) >
-      Number(bollList[bollList.length - 1].MA);
 
     const CENTER_CROSS_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].close) >
@@ -888,10 +880,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION && !longHolding;
+      (CENTER_CROSS_LONG_CONDITION || UP_CONVERSE_CONDITION) && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
+      (CENTER_CROSS_SHORT_CONDITION || LOW_CONVERSE_CONDITION) && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
