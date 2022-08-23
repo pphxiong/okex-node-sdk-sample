@@ -880,21 +880,21 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (CENTER_CROSS_LONG_CONDITION || UP_CONVERSE_CONDITION) && !longHolding;
+      CENTER_CROSS_LONG_CONDITION && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (CENTER_CROSS_SHORT_CONDITION || LOW_CONVERSE_CONDITION) && !shortHolding;
+      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
       (CENTER_CROSS_SHORT_CONDITION ||
-        OUT_HIGH_CONDITION ||
+        // OUT_HIGH_CONDITION ||
         CONTINOUS_SHORT_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
       (CENTER_CROSS_LONG_CONDITION ||
-        OUT_LOW_CONDITION ||
+        // OUT_LOW_CONDITION ||
         CONTINOUS_LONG_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
