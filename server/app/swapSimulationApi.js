@@ -827,6 +827,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].MA);
 
+    const UP_BOLL_CONDITION =
+      Number(bollList[bollList.length - 2].MA) <
+      Number(bollList[bollList.length - 1].MA);
+
     const LOW_CONVERSE_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
@@ -846,6 +850,10 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
+
+    const DOWN_BOLL_CONDITION =
+      Number(bollList[bollList.length - 2].MA) >
+      Number(bollList[bollList.length - 1].MA);
 
     const EXTRA_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].low) >
@@ -954,22 +962,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION && !longHolding;
+      CENTER_CROSS_LONG_CONDITION && UP_BOLL_CONDITION && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
+      CENTER_CROSS_SHORT_CONDITION && DOWN_BOLL_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding &&
-      // OUT_LOW_CONDITION ||
-      CENTER_CROSS_SHORT_CONDITION &&
-      IS_HAS_OUT_LONG_BETWEEN;
+      longHolding && CENTER_CROSS_SHORT_CONDITION && DOWN_BOLL_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding &&
-      // OUT_HIGH_CONDITION ||
-      CENTER_CROSS_LONG_CONDITION &&
-      IS_HAS_OUT_SHORT_BETWEEN;
+      shortHolding && CENTER_CROSS_LONG_CONDITION && UP_BOLL_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
