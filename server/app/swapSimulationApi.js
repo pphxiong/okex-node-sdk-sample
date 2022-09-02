@@ -885,15 +885,89 @@ const checkDeal = async (data, isAutoReset = true) => {
     const MACD_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0;
 
-    const MAIN_OPEN_LONG_CONDITION1 = UP_CONVERSE_CONDITION && !longHolding;
+    let IS_HAS_OUT_SHORT_BETWEEN = false;
+    if (CENTER_CROSS_LONG_CONDITION) {
+      let lastCenterShortIndex = -1;
+      for (let i = macdList.length - 1; i > 1; i--) {
+        const is_center_short =
+          Number(macdList[i - 2].close) > Number(bollList[i - 2].MA) &&
+          Number(macdList[i - 1].close) < Number(bollList[i - 1].MA);
+        if (is_center_short) {
+          lastCenterShortIndex = i;
+          break;
+        }
+      }
 
-    const MAIN_OPEN_SHORT_CONDITION1 = LOW_CONVERSE_CONDITION && !shortHolding;
+      if (lastCenterShortIndex != -1) {
+        const tempMacdList = macdList.slice(
+          lastCenterShortIndex,
+          macdList.length
+        );
+        const tempBollList = bollList.slice(
+          lastCenterShortIndex,
+          bollList.length
+        );
+        let is_out_short = false;
+        for (let i = tempMacdList.length - 1; i > 1; i--) {
+          is_out_short =
+            Number(tempMacdList[i - 2].close) >
+              Number(tempBollList[i - 2].DN) &&
+            Number(tempMacdList[i - 1].close) < Number(tempBollList[i - 1].DN);
+          if (is_out_short) break;
+        }
+        if (is_out_short) IS_HAS_OUT_SHORT_BETWEEN = true;
+      }
+    }
+
+    let IS_HAS_OUT_LONG_BETWEEN = false;
+    if (CENTER_CROSS_SHORT_CONDITION) {
+      let lastCenterLongIndex = -1;
+      for (let i = macdList.length - 1; i > 1; i--) {
+        const is_center_long =
+          Number(macdList[i - 2].close) < Number(bollList[i - 2].MA) &&
+          Number(macdList[i - 1].close) > Number(bollList[i - 1].MA);
+        if (is_center_long) {
+          lastCenterLongIndex = i;
+          break;
+        }
+      }
+
+      if (lastCenterLongIndex != -1) {
+        const tempMacdList = macdList.slice(
+          lastCenterLongIndex,
+          macdList.length
+        );
+        const tempBollList = bollList.slice(
+          lastCenterLongIndex,
+          bollList.length
+        );
+        let is_out_long = false;
+        for (let i = tempMacdList.length - 1; i > 1; i--) {
+          is_out_long =
+            Number(tempMacdList[i - 2].close) <
+              Number(tempBollList[i - 2].UP) &&
+            Number(tempMacdList[i - 1].close) > Number(tempBollList[i - 1].UP);
+          if (is_out_long) break;
+        }
+        if (is_out_long) IS_HAS_OUT_LONG_BETWEEN = true;
+      }
+    }
+
+    const MAIN_OPEN_LONG_CONDITION1 =
+      CENTER_CROSS_LONG_CONDITION && IS_HAS_OUT_SHORT_BETWEEN && !longHolding;
+
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      CENTER_CROSS_SHORT_CONDITION && IS_HAS_OUT_LONG_BETWEEN && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (UP_CONVERSE_CONDITION || CENTER_CROSS_SHORT_CONDITION);
+      longHolding &&
+      (OUT_LOW_CONDITION ||
+        (CENTER_CROSS_SHORT_CONDITION && IS_HAS_OUT_LONG_BETWEEN));
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (LOW_CONVERSE_CONDITION || CENTER_CROSS_LONG_CONDITION);
+      shortHolding &&
+      (OUT_HIGH_CONDITION ||
+        (CENTER_CROSS_LONG_CONDITION && IS_HAS_OUT_SHORT_BETWEEN));
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
