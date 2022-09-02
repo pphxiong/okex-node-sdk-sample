@@ -954,10 +954,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     }
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION && IS_HAS_OUT_SHORT_BETWEEN && !longHolding;
+      CENTER_CROSS_LONG_CONDITION && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION && IS_HAS_OUT_LONG_BETWEEN && !shortHolding;
+      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
