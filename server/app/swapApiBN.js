@@ -26,6 +26,7 @@ const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 let INIT_POSITION = 7;
+let NEW_POSITION_RATIO = 1;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -238,6 +239,11 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
+    NEW_POSITION_RATIO =
+      50 /
+      (Number(bollList[bollList.length - 1].UP) -
+        Number(bollList[bollList.length - 1].DN));
+
     let isMarketDeal = true;
     let dealRatio = 0.01;
 
@@ -361,7 +367,7 @@ const checkDeal = async (data) => {
     //开多仓条件
     if (openLongCondition) {
       try {
-        let openPositionAmt = INIT_POSITION;
+        let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
         // if (!longHolding) {
         //   if (shortHolding) {
         //     openPositionAmt = Math.abs(shortHolding.positionAmt);
@@ -389,7 +395,7 @@ const checkDeal = async (data) => {
     //开空仓条件
     if (openShortCondition) {
       try {
-        let openPositionAmt = INIT_POSITION;
+        let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
         // if (!shortHolding) {
         //   if (longHolding) {
         //     openPositionAmt = Math.abs(longHolding.positionAmt);
