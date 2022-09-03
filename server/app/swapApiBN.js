@@ -240,7 +240,7 @@ const checkDeal = async (data) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     NEW_POSITION_RATIO =
-      50 /
+      60 /
       (Number(bollList[bollList.length - 1].UP) -
         Number(bollList[bollList.length - 1].DN));
 
@@ -368,6 +368,7 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
+        openPositionAmt = toFixedAndToNumber(openPositionAmt, 2);
         // if (!longHolding) {
         //   if (shortHolding) {
         //     openPositionAmt = Math.abs(shortHolding.positionAmt);
@@ -396,6 +397,7 @@ const checkDeal = async (data) => {
     if (openShortCondition) {
       try {
         let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
+        openPositionAmt = toFixedAndToNumber(openPositionAmt, 2);
         // if (!shortHolding) {
         //   if (longHolding) {
         //     openPositionAmt = Math.abs(longHolding.positionAmt);
