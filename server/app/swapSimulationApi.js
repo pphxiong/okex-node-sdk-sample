@@ -992,7 +992,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     NEW_POSITION_RATIO =
-      50 /
+      60 /
       (Number(bollList[bollList.length - 1].UP) -
         Number(bollList[bollList.length - 1].DN));
 
