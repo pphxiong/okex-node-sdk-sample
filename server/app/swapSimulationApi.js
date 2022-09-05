@@ -763,13 +763,12 @@ const checkDeal = async (data, isAutoReset = true) => {
         rsiList: data.rsiList.slice(i, i + 10),
         bollList: data.bollList.slice(i, i + 10),
       },
-      isAutoReset
-      // && i == data.macdList.length - 10
+      isAutoReset && i == data.macdList.length - 10
     );
   }
 
   function checkByStep(data, isForceDeal) {
-    isForceDeal = false;
+    // isForceDeal = false;
     const { macdList, rsiList, bollList } = data;
 
     macdList.slice(-3);
@@ -989,6 +988,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
+    if (isForceDeal) {
+      closeLongCondition = true;
+      closeShortCondition = true;
+    }
+
     // NEW_POSITION_RATIO =
     //   60 /
     //   (Number(bollList[bollList.length - 1].UP) -
@@ -1089,6 +1093,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           // let closePositionAmt = longHolding.positionAmt;
           let closePositionAmt = INIT_POSITION;
+          if (isForceDeal) closePositionAmt = longHolding.positionAmt;
           // let closePositionAmt =
           //   longHolding.positionAmt == INIT_POSITION
           //     ? INIT_POSITION
@@ -1163,6 +1168,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           }
           if (shortRatio < 0) modeChange = true;
           let closePositionAmt = INIT_POSITION;
+          if (isForceDeal) closePositionAmt = shortHolding.positionAmt;
           // let closePositionAmt =
           //   shortHolding.positionAmt == INIT_POSITION
           //     ? INIT_POSITION
