@@ -25,7 +25,7 @@ const BAO_RATIO = -0.95;
 const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-let INIT_POSITION = 7;
+let INIT_POSITION = 1;
 let NEW_POSITION_RATIO = 1;
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
@@ -212,18 +212,15 @@ const checkDeal = async (data) => {
     const MACD_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION && !longHolding;
+    const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
+    // && !longHolding;
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
+    const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
+    // && !shortHolding;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding &&
-      (CENTER_CROSS_SHORT_CONDITION || CONTINOUS_SHORT_CONDITION);
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && UP_CONVERSE_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CENTER_CROSS_LONG_CONDITION || CONTINOUS_LONG_CONDITION);
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LOW_CONVERSE_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
