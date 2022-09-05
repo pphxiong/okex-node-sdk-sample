@@ -27,6 +27,9 @@ const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 let INIT_POSITION = 1;
 let NEW_POSITION_RATIO = 1;
+let IS_CLOSE_SAME_POSITION = false;
+const CLOSE_SAME_POSITION_RATIO = 5;
+
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
 const INCREASE_FI_LIST = generate_position[0];
@@ -240,6 +243,21 @@ const checkDeal = async (data) => {
     //   35 /
     //   (Number(bollList[bollList.length - 1].UP) -
     //     Number(bollList[bollList.length - 1].DN));
+
+    IS_CLOSE_SAME_POSITION = false;
+    if (closeLongCondition || closeShortCondition) {
+      if (
+        longHolding &&
+        Math.abs(Number(longHolding.positionAmt)) >=
+          CLOSE_SAME_POSITION_RATIO &&
+        shortHolding &&
+        Math.abs(Number(shortHolding.positionAmt)) >= CLOSE_SAME_POSITION_RATIO
+      ) {
+        IS_CLOSE_SAME_POSITION = true;
+        closeLongCondition = true;
+        closeShortCondition = true;
+      }
+    }
 
     let isMarketDeal = true;
     let dealRatio = 0.01;
@@ -659,6 +677,9 @@ const closePosition = async (holding, isCloseAll = false) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
   position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
   // position = INIT_POSITION;
+
+  if (IS_CLOSE_SAME_POSITION)
+    position = INIT_POSITION * CLOSE_SAME_POSITION_RATIO;
 
   async function postOrder(size) {
     const newClientOrderId = getUUID();
