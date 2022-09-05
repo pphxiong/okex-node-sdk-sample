@@ -55,7 +55,7 @@ const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
 let INIT_POSITION = 1;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_SAME_POSITION = false;
-const CLOSE_SAME_POSITION_RATIO = 7;
+const CLOSE_SAME_POSITION_RATIO = 6;
 
 let continuous_win = 0;
 let continuous_loss = 0;
