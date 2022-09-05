@@ -212,18 +212,15 @@ const checkDeal = async (data) => {
     const MACD_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION && !longHolding;
+    const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
+    // && !longHolding;
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION && !shortHolding;
+    const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
+    // && !shortHolding;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding &&
-      (CENTER_CROSS_SHORT_CONDITION || CONTINOUS_SHORT_CONDITION);
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && UP_CONVERSE_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CENTER_CROSS_LONG_CONDITION || CONTINOUS_LONG_CONDITION);
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LOW_CONVERSE_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -239,10 +236,10 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    NEW_POSITION_RATIO =
-      60 /
-      (Number(bollList[bollList.length - 1].UP) -
-        Number(bollList[bollList.length - 1].DN));
+    // NEW_POSITION_RATIO =
+    //   35 /
+    //   (Number(bollList[bollList.length - 1].UP) -
+    //     Number(bollList[bollList.length - 1].DN));
 
     let isMarketDeal = true;
     let dealRatio = 0.01;
@@ -368,7 +365,7 @@ const checkDeal = async (data) => {
     if (openLongCondition) {
       try {
         let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
-        openPositionAmt = toFixedAndToNumber(openPositionAmt, 2);
+        // openPositionAmt = Number(openPositionAmt.toFixed(2));
         // if (!longHolding) {
         //   if (shortHolding) {
         //     openPositionAmt = Math.abs(shortHolding.positionAmt);
@@ -397,7 +394,7 @@ const checkDeal = async (data) => {
     if (openShortCondition) {
       try {
         let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
-        openPositionAmt = toFixedAndToNumber(openPositionAmt, 2);
+        // openPositionAmt = Number(openPositionAmt.toFixed(2));
         // if (!shortHolding) {
         //   if (longHolding) {
         //     openPositionAmt = Math.abs(longHolding.positionAmt);
