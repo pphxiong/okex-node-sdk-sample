@@ -221,9 +221,11 @@ const checkDeal = async (data) => {
     const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
     // && !shortHolding;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && UP_CONVERSE_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      longHolding && CENTER_CROSS_SHORT_CONDITION && longRatio > 0;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LOW_CONVERSE_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      shortHolding && CENTER_CROSS_LONG_CONDITION && shortRatio > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -247,11 +249,12 @@ const checkDeal = async (data) => {
     IS_CLOSE_SAME_POSITION = false;
     if (closeLongCondition || closeShortCondition) {
       if (
-        longHolding &&
-        Math.abs(Number(longHolding.positionAmt)) >=
-          CLOSE_SAME_POSITION_RATIO &&
-        shortHolding &&
-        Math.abs(Number(shortHolding.positionAmt)) >= CLOSE_SAME_POSITION_RATIO
+        (longHolding &&
+          Math.abs(Number(longHolding.positionAmt)) >=
+            CLOSE_SAME_POSITION_RATIO) ||
+        (shortHolding &&
+          Math.abs(Number(shortHolding.positionAmt)) >=
+            CLOSE_SAME_POSITION_RATIO)
       ) {
         IS_CLOSE_SAME_POSITION = true;
         closeLongCondition = true;
@@ -678,8 +681,7 @@ const closePosition = async (holding, isCloseAll = false) => {
   position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
   // position = INIT_POSITION;
 
-  if (IS_CLOSE_SAME_POSITION)
-    position = INIT_POSITION * CLOSE_SAME_POSITION_RATIO;
+  if (IS_CLOSE_SAME_POSITION) position = Math.abs(Number(holding.positionAmt));
 
   async function postOrder(size) {
     const newClientOrderId = getUUID();
