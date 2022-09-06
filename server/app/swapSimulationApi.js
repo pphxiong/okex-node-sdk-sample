@@ -1000,7 +1000,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     if (isForceDeal) {
       closeLongCondition = true;
       closeShortCondition = true;
-    } else if (closeLongCondition || closeShortCondition) {
+    } else if (openLongCondition || openShortCondition) {
       if (
         (longHolding &&
           Math.abs(Number(longHolding.positionAmt)) >=
