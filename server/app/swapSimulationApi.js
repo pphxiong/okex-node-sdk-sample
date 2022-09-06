@@ -54,7 +54,7 @@ const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
 );
 let INIT_POSITION = 1;
 let NEW_POSITION_RATIO = 1;
-let IS_CLOSE_SAME_POSITION = false;
+let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
 
 let continuous_win = 0;
@@ -996,7 +996,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    IS_CLOSE_SAME_POSITION = false;
+    IS_CLOSE_ALL_POSITION = false;
     if (isForceDeal) {
       closeLongCondition = true;
       closeShortCondition = true;
@@ -1115,7 +1115,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           // let closePositionAmt = longHolding.positionAmt;
           let closePositionAmt = INIT_POSITION;
-          if (IS_CLOSE_SAME_POSITION)
+          if (IS_CLOSE_ALL_POSITION)
             closePositionAmt = INIT_POSITION * CLOSE_SAME_POSITION_RATIO;
           if (isForceDeal) closePositionAmt = longHolding.positionAmt;
           // let closePositionAmt =
@@ -1193,7 +1193,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           if (shortRatio < 0) modeChange = true;
           // let closePositionAmt = shortHolding.positionAmt;
           let closePositionAmt = INIT_POSITION;
-          if (IS_CLOSE_SAME_POSITION)
+          if (IS_CLOSE_ALL_POSITION)
             closePositionAmt = INIT_POSITION * CLOSE_SAME_POSITION_RATIO;
           if (isForceDeal) closePositionAmt = shortHolding.positionAmt;
           // let closePositionAmt =

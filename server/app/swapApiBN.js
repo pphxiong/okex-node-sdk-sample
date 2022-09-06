@@ -27,7 +27,7 @@ const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 let INIT_POSITION = 1;
 let NEW_POSITION_RATIO = 1;
-let IS_CLOSE_SAME_POSITION = false;
+let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
 
 const ORIGIN_INIT_POSITION = INIT_POSITION;
@@ -155,7 +155,9 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
 
     const LOW_CONVERSE_CONDITION =
       Number(macdList[macdList.length - 2].close) <
@@ -175,7 +177,9 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
 
     const EXTRA_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 2].low) >
@@ -246,8 +250,8 @@ const checkDeal = async (data) => {
     //   (Number(bollList[bollList.length - 1].UP) -
     //     Number(bollList[bollList.length - 1].DN));
 
-    IS_CLOSE_SAME_POSITION = false;
-    if (closeLongCondition || closeShortCondition) {
+    IS_CLOSE_ALL_POSITION = false;
+    if (openLongCondition || openShortCondition) {
       if (
         (longHolding &&
           Math.abs(Number(longHolding.positionAmt)) >=
@@ -256,7 +260,7 @@ const checkDeal = async (data) => {
           Math.abs(Number(shortHolding.positionAmt)) >=
             CLOSE_SAME_POSITION_RATIO)
       ) {
-        IS_CLOSE_SAME_POSITION = true;
+        IS_CLOSE_ALL_POSITION = true;
         closeLongCondition = true;
         closeShortCondition = true;
       }
@@ -678,10 +682,10 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
 const closePosition = async (holding, isCloseAll = false) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
-  position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
-  // position = INIT_POSITION;
+  // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
+  position = INIT_POSITION;
 
-  if (IS_CLOSE_SAME_POSITION) position = Math.abs(Number(holding.positionAmt));
+  if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
 
   async function postOrder(size) {
     const newClientOrderId = getUUID();
