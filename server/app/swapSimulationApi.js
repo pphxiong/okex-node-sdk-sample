@@ -815,7 +815,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].UP) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].DN);
 
     const OUT_LOW_CONDITION =
       Number(macdList[macdList.length - 2].close) >
@@ -827,9 +827,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
+        Number(bollList[bollList.length - 1].MA);
 
     const UP_BOLL_CONDITION =
       Number(bollList[bollList.length - 2].MA) <
@@ -841,7 +839,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) >
         Number(bollList[bollList.length - 1].DN) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].UP);
 
     const OUT_HIGH_CONDITION =
       Number(macdList[macdList.length - 2].close) <
@@ -853,9 +851,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
+        Number(bollList[bollList.length - 1].MA);
 
     const DOWN_BOLL_CONDITION =
       Number(bollList[bollList.length - 2].MA) >
