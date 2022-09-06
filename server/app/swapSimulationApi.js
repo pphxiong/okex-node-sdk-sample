@@ -1011,9 +1011,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       //   shortHolding &&
       //   Math.abs(Number(shortHolding.positionAmt)) >= CLOSE_SAME_POSITION_RATIO
       // ) {
-      IS_CLOSE_SAME_POSITION = true;
-      closeLongCondition = true;
-      closeShortCondition = true;
+      // IS_CLOSE_SAME_POSITION = true;
+      // closeLongCondition = true;
+      // closeShortCondition = true;
       // }
     }
 
