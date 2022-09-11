@@ -969,17 +969,25 @@ const checkDeal = async (data, isAutoReset = true) => {
       }
     }
 
+    const longWinRatio = longHolding
+      ? longRatio * Math.abs(Number(longHolding.positionAmt))
+      : 0;
+
+    const shortWinRatio = shortHolding
+      ? shortRatio * Math.abs(Number(shortHolding.positionAmt))
+      : 0;
+
+    const totalWin = longWinRatio + shortWinRatio;
+
     const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
     // && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
     // && !shortHolding;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION && longRatio > 0;
+    const MAIN_CLOSE_LONG_CONDITION1 = totalWin > 0.01;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION && shortRatio > 0;
+    const MAIN_CLOSE_SHORT_CONDITION1 = totalWin > 0.01;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -996,24 +1004,24 @@ const checkDeal = async (data, isAutoReset = true) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    IS_CLOSE_ALL_POSITION = false;
-    if (isForceDeal) {
-      closeLongCondition = true;
-      closeShortCondition = true;
-    } else if (openLongCondition || openShortCondition) {
-      if (
-        (longHolding &&
-          Math.abs(Number(longHolding.positionAmt)) >=
-            CLOSE_SAME_POSITION_RATIO) ||
-        (shortHolding &&
-          Math.abs(Number(shortHolding.positionAmt)) >=
-            CLOSE_SAME_POSITION_RATIO)
-      ) {
-        isForceDeal = true;
-        closeLongCondition = true;
-        closeShortCondition = true;
-      }
-    }
+    // IS_CLOSE_ALL_POSITION = false;
+    // if (isForceDeal) {
+    //   closeLongCondition = true;
+    //   closeShortCondition = true;
+    // } else if (openLongCondition || openShortCondition) {
+    //   if (
+    //     (longHolding &&
+    //       Math.abs(Number(longHolding.positionAmt)) >=
+    //         CLOSE_SAME_POSITION_RATIO) ||
+    //     (shortHolding &&
+    //       Math.abs(Number(shortHolding.positionAmt)) >=
+    //         CLOSE_SAME_POSITION_RATIO)
+    //   ) {
+    //     isForceDeal = true;
+    //     closeLongCondition = true;
+    //     closeShortCondition = true;
+    //   }
+    // }
 
     // NEW_POSITION_RATIO =
     //   60 /
