@@ -1,7 +1,7 @@
-import moment from "moment";
-const fs = require("fs");
+import moment from 'moment';
+const fs = require('fs');
 
-const customAuthClientBN = require("./customAuthClientBN");
+const customAuthClientBN = require('./customAuthClientBN');
 
 const generatePositionList = (init, num) => {
   const arr = [init];
@@ -16,8 +16,8 @@ const generatePositionList = (init, num) => {
   return [arr, holding];
 };
 
-const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "1h";
+const BN_SYMBOL = 'ETHUSDT';
+const DEFAULT_INTERVAL = '1h';
 const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
@@ -59,13 +59,13 @@ const checkDeal = async (data) => {
   });
 
   async function checkByStep(data, isForceDeal) {
-    const { macdList, rsiList, bollList } = data;
+    const {macdList, rsiList, bollList} = data;
     let mark_price;
     try {
       const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
       mark_price = Number(data.markPrice);
     } catch (e) {
-      restart("getMarkPrice");
+      restart('getMarkPrice');
     }
 
     let longHolding;
@@ -76,7 +76,7 @@ const checkDeal = async (data) => {
 
     if (positionChange || !globalHolding || !globalHolding.length || true) {
       try {
-        const { positions: holding, availableBalance } =
+        const {positions: holding, availableBalance} =
           await cAuthClientBN.swap.getPosition();
         globalHolding =
           holding.filter(
@@ -86,19 +86,19 @@ const checkDeal = async (data) => {
         MODE = 1;
         avail = (availableBalance * LEVERAGE) / mark_price;
 
-        console.log("------------------");
+        console.log('------------------');
         console.log(
           `availableBalance`,
           availableBalance,
-          "avail",
+          'avail',
           avail,
-          "INIT_POSITION",
+          'INIT_POSITION',
           INIT_POSITION
         );
-        console.log("------------------");
+        console.log('------------------');
       } catch (e) {
         // if(result.error_message) throw new Error('Cannot get position!');
-        restart("getPosition");
+        restart('getPosition');
       }
     }
 
@@ -107,19 +107,19 @@ const checkDeal = async (data) => {
       longHolding = holding.find(
         (item) =>
           item.positionSide &&
-          item.positionSide.toUpperCase() == "LONG" &&
+          item.positionSide.toUpperCase() == 'LONG' &&
           Math.abs(Number(item.positionAmt)) > 0
       );
       shortHolding = holding.find(
         (item) =>
           item.positionSide &&
-          item.positionSide.toUpperCase() == "SHORT" &&
+          item.positionSide.toUpperCase() == 'SHORT' &&
           Math.abs(Number(item.positionAmt)) > 0
       );
     }
 
     if (longHolding) {
-      const { leverage, entryPrice: avg_cost } = longHolding;
+      const {leverage, entryPrice: avg_cost} = longHolding;
       longRatio =
         ((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
         Number(mark_price);
@@ -127,7 +127,7 @@ const checkDeal = async (data) => {
     }
 
     if (shortHolding) {
-      const { leverage, entryPrice: avg_cost } = shortHolding;
+      const {leverage, entryPrice: avg_cost} = shortHolding;
       shortRatio =
         ((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
         Number(mark_price);
@@ -219,17 +219,25 @@ const checkDeal = async (data) => {
     const MACD_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].column) < 0;
 
+    const longWinRatio = longHolding
+      ? longRatio * Math.abs(Number(longHolding.positionAmt))
+      : 0;
+
+    const shortWinRatio = shortHolding
+      ? shortRatio * Math.abs(Number(shortHolding.positionAmt))
+      : 0;
+
+    const totalWin = longWinRatio + shortWinRatio;
+
     const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
     // && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
     // && !shortHolding;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION && longRatio > 0;
+    const MAIN_CLOSE_LONG_CONDITION1 = totalWin > 0.01;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION && shortRatio > 0;
+    const MAIN_CLOSE_SHORT_CONDITION1 = totalWin > 0.01;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -250,62 +258,62 @@ const checkDeal = async (data) => {
     //   (Number(bollList[bollList.length - 1].UP) -
     //     Number(bollList[bollList.length - 1].DN));
 
-    IS_CLOSE_ALL_POSITION = false;
-    if (openLongCondition || openShortCondition) {
-      if (
-        (longHolding &&
-          Math.abs(Number(longHolding.positionAmt)) >=
-            CLOSE_SAME_POSITION_RATIO) ||
-        (shortHolding &&
-          Math.abs(Number(shortHolding.positionAmt)) >=
-            CLOSE_SAME_POSITION_RATIO)
-      ) {
-        IS_CLOSE_ALL_POSITION = true;
-        closeLongCondition = true;
-        closeShortCondition = true;
-      }
-    }
+    // IS_CLOSE_ALL_POSITION = false;
+    // if (openLongCondition || openShortCondition) {
+    //   if (
+    //     (longHolding &&
+    //       Math.abs(Number(longHolding.positionAmt)) >=
+    //         CLOSE_SAME_POSITION_RATIO) ||
+    //     (shortHolding &&
+    //       Math.abs(Number(shortHolding.positionAmt)) >=
+    //         CLOSE_SAME_POSITION_RATIO)
+    //   ) {
+    //     IS_CLOSE_ALL_POSITION = true;
+    //     closeLongCondition = true;
+    //     closeShortCondition = true;
+    //   }
+    // }
 
     let isMarketDeal = true;
     let dealRatio = 0.01;
 
-    const currentTime = moment().format("YYYY-MM-DD HH:mm:ss");
-    const hmsArr = currentTime.split(" ")[1].split(":");
+    const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const hmsArr = currentTime.split(' ')[1].split(':');
     const lastMinuteCharacter = hmsArr[1];
     const lastSecondCharacter = hmsArr[2];
-    const minuteList = ["0", "00"];
-    const secondList = ["0", "00"];
+    const minuteList = ['0', '00'];
+    const secondList = ['0', '00'];
     const minuteDiff = moment(currentTime).diff(
       moment(macdList[macdList.length - 1].time),
-      "minute"
+      'minute'
     );
     const isFiveM =
       minuteDiff < 80 &&
       minuteList.includes(lastMinuteCharacter) &&
       !secondList.includes(lastSecondCharacter);
 
-    console.log("************************************", currentTime);
-    console.log("isFiveM", isFiveM, lastMinuteCharacter);
-    console.log("macdList", macdList.slice(-2));
-    console.log("bollList", bollList.slice(-2));
-    console.log("longRatio", longRatio, "shortRatio", shortRatio);
+    console.log('************************************', currentTime);
+    console.log('isFiveM', isFiveM, lastMinuteCharacter);
+    console.log('macdList', macdList.slice(-2));
+    console.log('bollList', bollList.slice(-2));
+    console.log('longRatio', longRatio, 'shortRatio', shortRatio);
     console.log(
-      "longPositionAmt",
+      'longPositionAmt',
       longHolding ? longHolding.positionAmt : 0,
-      "shortPositionAmt",
+      'shortPositionAmt',
       shortHolding ? shortHolding.positionAmt : 0
     );
     console.log(
-      "closeLongCondition",
+      'closeLongCondition',
       closeLongCondition,
-      "closeShortCondition",
+      'closeShortCondition',
       closeShortCondition,
-      "openLongCondition",
+      'openLongCondition',
       openLongCondition,
-      "openShortCondition",
+      'openShortCondition',
       openShortCondition
     );
-    console.log("************************************");
+    console.log('************************************');
 
     const patchPosition = async (holding, direction) => {
       let positionAmt = Number(holding.positionAmt) * 2;
@@ -324,7 +332,7 @@ const checkDeal = async (data) => {
         //   INIT_POSITION
         // );
         if (longRatio < LOSS_MAX && false) {
-          await patchPosition(longHolding, "long");
+          await patchPosition(longHolding, 'long');
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
           let closePositionAmt = Math.abs(Number(longHolding.positionAmt));
           if (closePositionAmt > INIT_POSITION)
@@ -335,7 +343,7 @@ const checkDeal = async (data) => {
           const payload = {
             positionAmt: longHolding.positionAmt,
             position: closePositionAmt,
-            side: "long",
+            side: 'long',
             mark_price,
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
@@ -348,7 +356,7 @@ const checkDeal = async (data) => {
     const closeShortPosition = async () => {
       if (shortHolding && Math.abs(Number(shortHolding.positionAmt))) {
         if (shortRatio < LOSS_MAX && false) {
-          await patchPosition(shortHolding, "long");
+          await patchPosition(shortHolding, 'long');
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
           let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           if (closePositionAmt > INIT_POSITION)
@@ -358,7 +366,7 @@ const checkDeal = async (data) => {
           const payload = {
             positionAmt: shortHolding.positionAmt,
             position: closePositionAmt,
-            side: "short",
+            side: 'short',
             mark_price,
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
@@ -402,7 +410,7 @@ const checkDeal = async (data) => {
           await openPosition(
             {
               position: openPositionAmt,
-              openSide: "long",
+              openSide: 'long',
               mark_price,
               time: macdList[macdList.length - 1].time,
             },
@@ -431,7 +439,7 @@ const checkDeal = async (data) => {
           await openPosition(
             {
               position: openPositionAmt,
-              openSide: "short",
+              openSide: 'short',
               mark_price,
               time: macdList[macdList.length - 1].time,
             },
@@ -468,24 +476,24 @@ const cancelReduceOnly = async (direction) => {
   }
 };
 
-var configBN = require("./configBN2");
+var configBN = require('./configBN2');
 const cAuthClientBN = new customAuthClientBN(
   configBN.httpkey,
   configBN.httpsecret,
   configBN.urlHost
 );
 
-var express = require("express");
+var express = require('express');
 var app = express();
 
-app.all("*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "content-type");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By", " 3.2.1");
-  res.header("Content-Type", "application/json;charset=utf-8");
-  if (req.method.toLowerCase() == "options") res.send(200);
+app.all('*', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  res.header('Access-Control-Allow-Headers', 'content-type');
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+  res.header('X-Powered-By', ' 3.2.1');
+  res.header('Content-Type', 'application/json;charset=utf-8');
+  if (req.method.toLowerCase() == 'options') res.send(200);
   //让options尝试请求快速结束
   else next();
 });
@@ -512,7 +520,7 @@ function getCurrentMacd(list) {
         column: 0,
         high: Number(item[2]),
         low: Number(item[3]),
-        time: moment(parseInt(item[0])).format("YYYY-MM-DD HH:mm:ss"),
+        time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
       };
     } else {
       const lastResult = macdList[macdList.length - 1];
@@ -526,7 +534,7 @@ function getCurrentMacd(list) {
         lastDea: lastResult.dea,
         high: Number(item[2]),
         low: Number(item[3]),
-        time: moment(parseInt(item[0])).format("YYYY-MM-DD HH:mm:ss"),
+        time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
       };
       result = getMacd(payload);
     }
@@ -589,7 +597,7 @@ function getBOLL(list) {
     UP,
     DN,
     time: moment(parseInt(newList[newList.length - 1][0])).format(
-      "YYYY-MM-DD HH:mm:ss"
+      'YYYY-MM-DD HH:mm:ss'
     ),
   };
 }
@@ -609,8 +617,8 @@ function getCurrentBOLL(list) {
   return result;
 }
 
-app.get("/test", function (req, res) {
-  send(res, { errcode: 0, errmsg: "ok" });
+app.get('/test', function (req, res) {
+  send(res, {errcode: 0, errmsg: 'ok'});
 });
 
 function getUUID() {
@@ -621,27 +629,27 @@ function getUUID() {
   return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
 }
 
-let openOrigClientOrderId = "";
-let closeOrigClientOrderId = "";
+let openOrigClientOrderId = '';
+let closeOrigClientOrderId = '';
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
   isMarketDeal = true;
   const {
-    openSide = "long",
+    openSide = 'long',
     position = Number(INIT_POSITION),
     mark_price,
   } = params;
 
   async function postOrder(size) {
-    const type = openSide == "long" ? "BUY" : "SELL";
+    const type = openSide == 'long' ? 'BUY' : 'SELL';
     console.log(
-      "openOtherOrderMoment",
+      'openOtherOrderMoment',
       openSide,
-      moment().format("YYYY-MM-DD HH:mm:ss")
+      moment().format('YYYY-MM-DD HH:mm:ss')
     );
-    console.log("position", position, "type", type, "side", openSide);
+    console.log('position', position, 'type', type, 'side', openSide);
 
     let price = mark_price;
-    if (openSide == "long") {
+    if (openSide == 'long') {
       price = mark_price * (1 - dealRatio / LEVERAGE);
     } else {
       price = mark_price * (1 + dealRatio / LEVERAGE);
@@ -649,22 +657,22 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
     let payload = {
       symbol: BN_SYMBOL,
       side: type,
-      positionSide: openSide == "long" ? "LONG" : "SHORT",
+      positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
       quantity: Math.abs(size),
       recvWindow: 5000,
       // type: "MARKET",
-      type: "LIMIT",
-      timeInForce: "GTC",
+      type: 'LIMIT',
+      timeInForce: 'GTC',
       price: price.toFixed(2),
     };
     if (MODE == 2 || isMarketDeal) {
       payload = {
         symbol: BN_SYMBOL,
         side: type,
-        positionSide: openSide == "long" ? "LONG" : "SHORT",
+        positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
         quantity: Math.abs(size),
         recvWindow: 5000,
-        type: "MARKET",
+        type: 'MARKET',
       };
     }
     try {
@@ -674,14 +682,14 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
       openOrigClientOrderId = result.clientOrderId;
     } catch (e) {
       // throw new Error('Error');
-      restart("open");
+      restart('open');
     }
   }
   await postOrder(position, mark_price);
 };
 
 const closePosition = async (holding, isCloseAll = false) => {
-  let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
+  let {position = INIT_POSITION, side, mark_price, time, ratio} = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
   position = INIT_POSITION;
 
@@ -691,33 +699,33 @@ const closePosition = async (holding, isCloseAll = false) => {
     const newClientOrderId = getUUID();
     closeOrigClientOrderId = newClientOrderId;
 
-    const type = side == "long" ? "SELL" : "BUY";
+    const type = side == 'long' ? 'SELL' : 'BUY';
 
     const payload = {
       symbol: BN_SYMBOL,
       side: type,
-      positionSide: side == "long" ? "LONG" : "SHORT",
+      positionSide: side == 'long' ? 'LONG' : 'SHORT',
       quantity: Math.abs(size),
       recvWindow: 5000,
-      type: "MARKET",
+      type: 'MARKET',
     };
     try {
       const result = await cAuthClientBN.swap.postOrder(payload);
       positionChange = true;
 
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
       closeOrigClientOrderId = result.clientOrderId;
-      console.log("closeOrigClientOrderId", closeOrigClientOrderId);
-      console.log("price", mark_price);
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+      console.log('closeOrigClientOrderId', closeOrigClientOrderId);
+      console.log('price', mark_price);
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
     } catch (e) {
       // throw new Error('Error');
-      restart("close");
+      restart('close');
     }
   }
-  console.log("###################################");
-  console.log("closePositionMoment", moment().format("YYYY-MM-DD HH:mm:ss"));
-  console.log("###################################");
+  console.log('###################################');
+  console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
+  console.log('###################################');
   await postOrder(position, mark_price);
 };
 
@@ -814,7 +822,7 @@ function getRSIAverage(list, i, n) {
 }
 function getRSIByPeriod(newList, period) {
   const result = getRSIAverage(newList, newList.length - 1, period);
-  const { gainAverageI, lossAverageI } = result;
+  const {gainAverageI, lossAverageI} = result;
   // const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
   const RS = gainAverageI / (lossAverageI || 1);
   const RSI = 100 - 100 / (1 + RS);
@@ -826,12 +834,12 @@ function getRSIByPeriod(newList, period) {
   return newResult;
 }
 function getRSI(time, price, list) {
-  const { RSI: RSI1 } = getRSIByPeriod(list, rsi1);
-  const { RSI: RSI2 } = getRSIByPeriod(list, rsi2);
-  const { RSI: RSI3 } = getRSIByPeriod(list, rsi3);
+  const {RSI: RSI1} = getRSIByPeriod(list, rsi1);
+  const {RSI: RSI2} = getRSIByPeriod(list, rsi2);
+  const {RSI: RSI3} = getRSIByPeriod(list, rsi3);
 
   const result = {
-    time: moment(parseInt(time)).format("YYYY-MM-DD HH:mm:ss"),
+    time: moment(parseInt(time)).format('YYYY-MM-DD HH:mm:ss'),
     price,
     RSI1,
     RSI2,
@@ -903,10 +911,10 @@ const startInterval = async () => {
 };
 
 const readData = async () => {
-  let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
+  let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
   MODE = dataConfig.MODE;
 
-  console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
+  console.log('read::MODE', MODE, moment().format('YYYY-MM-DD HH:mm:ss'));
 };
 
 const writeData = async () => {
@@ -918,11 +926,11 @@ const writeData = async () => {
 
   const result = await new Promise((resolve) => {
     //将修改后的内容写入文件
-    fs.writeFile("./app/config.json", jsonStr, function (err) {
+    fs.writeFile('./app/config.json', jsonStr, function (err) {
       if (err) {
         console.error(err);
       } else {
-        console.log("----------修改成功-------------");
+        console.log('----------修改成功-------------');
         resolve(true);
       }
     });
@@ -937,47 +945,47 @@ const writeData = async () => {
 })();
 app.listen(8093);
 
-console.log("8093 server start");
+console.log('8093 server start');
 
-process.on("uncaughtException", function (err) {
+process.on('uncaughtException', function (err) {
   //打印出错误
   // console.log('uncaughtException',err);
   restart();
 });
 
-let exec = require("child_process").exec;
+let exec = require('child_process').exec;
 function restart() {
-  console.log("restarting......");
+  console.log('restarting......');
   setTimeout(() => {
-    exec("npm run restart", function (err, stdout, stderr) {
+    exec('npm run restart', function (err, stdout, stderr) {
       if (err) {
-        console.log("restarting failed");
+        console.log('restarting failed');
       } else {
-        console.log("restarting success");
+        console.log('restarting success');
       }
     });
   }, 1000 * 2);
 }
 function start() {
-  console.log("starting......");
+  console.log('starting......');
   setTimeout(() => {
-    exec("npm run start", function (err, stdout, stderr) {
+    exec('npm run start', function (err, stdout, stderr) {
       if (err) {
-        console.log("starting failed");
+        console.log('starting failed');
       } else {
-        console.log("starting success");
+        console.log('starting success');
       }
     });
   }, 1000 * 2);
 }
 function stop() {
-  console.log("stopping......");
+  console.log('stopping......');
   setTimeout(() => {
-    exec("npm run stop", function (err, stdout, stderr) {
+    exec('npm run stop', function (err, stdout, stderr) {
       if (err) {
-        console.log("stopping failed");
+        console.log('stopping failed');
       } else {
-        console.log("stopping success");
+        console.log('stopping success');
       }
       setTimeout(() => {
         start();
