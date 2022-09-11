@@ -235,9 +235,13 @@ const checkDeal = async (data) => {
     const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
     // && !shortHolding;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) && totalWin > 0;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
+      totalWin > 0;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&  totalWin > 0;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
+      totalWin > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -691,7 +695,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 const closePosition = async (holding, isCloseAll = false) => {
   let {position = INIT_POSITION, side, mark_price, time, ratio} = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
-  position = Math.abs(Number(holding.positionAmt);
+  position = Math.abs(Number(holding.positionAmt));
 
   if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
 
