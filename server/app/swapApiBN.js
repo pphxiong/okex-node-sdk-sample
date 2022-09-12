@@ -229,11 +229,19 @@ const checkDeal = async (data) => {
 
     const totalWin = longWinRatio + shortWinRatio;
 
-    const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
-    // && !longHolding;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      CENTER_CROSS_LONG_CONDITION &&
+      (!longHolding ||
+        (shortHolding &&
+          Math.abs(Number(longHolding.positionAmt)) <
+            Math.abs(Number(shortHolding.positionAmt))));
 
-    const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
-    // && !shortHolding;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      CENTER_CROSS_SHORT_CONDITION &&
+      (!shortHolding ||
+        (longHolding &&
+          Math.abs(Number(shortHolding.positionAmt)) <
+            Math.abs(Number(longHolding.positionAmt))));
 
     const CLOSE_CONDITION =
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
