@@ -308,6 +308,16 @@ const checkDeal = async (data) => {
       minuteList.includes(lastMinuteCharacter) &&
       !secondList.includes(lastSecondCharacter);
 
+    if (isFiveM && avail < INIT_POSITION * NEW_POSITION_RATIO) {
+      if (openLongCondition) {
+        openLongCondition = false;
+        closeShortCondition = true;
+      } else if (openShortCondition) {
+        openShortCondition = false;
+        closeLongCondition = true;
+      }
+    }
+
     console.log('************************************', currentTime);
     console.log('isFiveM', isFiveM, lastMinuteCharacter);
     console.log('macdList', macdList.slice(-2));
@@ -364,7 +374,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: longRatio,
           };
-          await closePosition(payload, false);
+          await closePosition(payload, false, avail);
         }
       }
     };
@@ -387,7 +397,7 @@ const checkDeal = async (data) => {
             time: macdList[macdList.length - 1].time,
             ratio: shortRatio,
           };
-          await closePosition(payload, false);
+          await closePosition(payload, false, avail);
         }
       }
     };
@@ -704,12 +714,14 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
   await postOrder(position, mark_price);
 };
 
-const closePosition = async (holding, isCloseAll = false) => {
+const closePosition = async (holding, isCloseAll = false, avail) => {
   let {position = INIT_POSITION, side, mark_price, time, ratio} = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
   position = Math.abs(Number(holding.positionAmt));
 
   if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
+  if (avail < INIT_POSITION * NEW_POSITION_RATIO)
+    position = INIT_POSITION * NEW_POSITION_RATIO;
 
   async function postOrder(size) {
     const newClientOrderId = getUUID();
