@@ -979,17 +979,27 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const totalWin = longWinRatio + shortWinRatio;
 
-    const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
-    // && !longHolding;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      CENTER_CROSS_LONG_CONDITION &&
+      (!longHolding ||
+        (shortHolding &&
+          Math.abs(Number(longHolding.positionAmt)) <
+            Math.abs(Number(shortHolding.positionAmt))));
 
-    const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
-    // && !shortHolding;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      CENTER_CROSS_SHORT_CONDITION &&
+      (!shortHolding ||
+        (longHolding &&
+          Math.abs(Number(shortHolding.positionAmt)) <
+            Math.abs(Number(longHolding.positionAmt))));
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      (UP_CONVERSE_CONDITION || LOW_CONVERSE_CONDITION) && totalWin > 0;
+    const CLOSE_CONDITION =
+      (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
+      totalWin > 0;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      (UP_CONVERSE_CONDITION || LOW_CONVERSE_CONDITION) && totalWin > 0;
+    const MAIN_CLOSE_LONG_CONDITION1 = CLOSE_CONDITION;
+
+    const MAIN_CLOSE_SHORT_CONDITION1 = CLOSE_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -1005,6 +1015,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
+
+    NEW_POSITION_RATIO = 1;
+    if (longHolding && shortHolding) NEW_POSITION_RATIO = 2;
+    if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
 
     // IS_CLOSE_ALL_POSITION = false;
     // if (isForceDeal) {
@@ -1323,9 +1337,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // const openPositionAmt =
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + longPosition.positionAmt;
-          let openPositionAmt = longPosition.positionAmt
-            ? INIT_POSITION + longPosition.positionAmt
-            : INIT_POSITION * NEW_POSITION_RATIO;
+          let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = shortRatio;
           // const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
@@ -1404,9 +1416,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // const openPositionAmt =
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + shortPosition.positionAmt;
-          let openPositionAmt = shortPosition.positionAmt
-            ? INIT_POSITION + shortPosition.positionAmt
-            : INIT_POSITION * NEW_POSITION_RATIO;
+          let openPositionAmt = INIT_POSITION * NEW_POSITION_RATIO;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = longRatio;
           // const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
