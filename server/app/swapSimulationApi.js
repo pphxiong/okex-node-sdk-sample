@@ -994,8 +994,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             Math.abs(Number(longHolding.positionAmt))));
 
     const CLOSE_CONDITION =
-      (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
-      totalWin > 0;
+      (UP_CONVERSE_CONDITION || LOW_CONVERSE_CONDITION) && totalWin > 0;
 
     const MAIN_CLOSE_LONG_CONDITION1 = CLOSE_CONDITION;
 
