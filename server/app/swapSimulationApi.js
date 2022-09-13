@@ -1338,8 +1338,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           // const openPositionAmt =
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + longPosition.positionAmt;
-          let openPositionAmt =
-            INIT_POSITION * NEW_POSITION_RATIO + longPosition.positionAmt;
+          let openPositionAmt = longHolding
+            ? INIT_POSITION * NEW_POSITION_RATIO + longHolding.positionAmt
+            : INIT_POSITION;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = shortRatio;
           // const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
@@ -1418,9 +1419,10 @@ const checkDeal = async (data, isAutoReset = true) => {
           // const openPositionAmt =
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + shortPosition.positionAmt;
-          let openPositionAmt =
-            INIT_POSITION * NEW_POSITION_RATIO +
-            Math.abs(Number(shortPosition.positionAmt));
+          let openPositionAmt = shortHolding
+            ? INIT_POSITION * NEW_POSITION_RATIO +
+              Math.abs(Number(shortHolding.positionAmt))
+            : INIT_POSITION;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = longRatio;
           // const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
