@@ -1018,7 +1018,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     NEW_POSITION_RATIO = 1;
     if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
-    // if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
+    if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
 
     console.log("************************************");
 
@@ -1364,6 +1364,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           let openPositionAmt = longHolding
             ? INIT_POSITION * NEW_POSITION_RATIO +
               Number(longHolding.positionAmt)
+            : shortHolding
+            ? INIT_POSITION * NEW_POSITION_RATIO
             : INIT_POSITION;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = shortRatio;
@@ -1446,6 +1448,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           let openPositionAmt = shortHolding
             ? INIT_POSITION * NEW_POSITION_RATIO +
               Math.abs(Number(shortHolding.positionAmt))
+            : longHolding
+            ? INIT_POSITION * NEW_POSITION_RATIO
             : INIT_POSITION;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = longRatio;
