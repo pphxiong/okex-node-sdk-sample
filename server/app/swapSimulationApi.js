@@ -979,26 +979,27 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const totalWin = longWinRatio + shortWinRatio;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION &&
-      (!longHolding ||
-        (shortHolding &&
-          Math.abs(Number(longHolding.positionAmt)) <=
-            Math.abs(Number(shortHolding.positionAmt))));
+    const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
+    // &&
+    // (!longHolding ||
+    //   (shortHolding &&
+    //     Math.abs(Number(longHolding.positionAmt)) <=
+    //       Math.abs(Number(shortHolding.positionAmt))));
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION &&
-      (!shortHolding ||
-        (longHolding &&
-          Math.abs(Number(shortHolding.positionAmt)) <=
-            Math.abs(Number(longHolding.positionAmt))));
+    const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
+    // &&
+    // (!shortHolding ||
+    //   (longHolding &&
+    //     Math.abs(Number(shortHolding.positionAmt)) <=
+    //       Math.abs(Number(longHolding.positionAmt))));
 
     const CLOSE_CONDITION =
-      (UP_CONVERSE_CONDITION || LOW_CONVERSE_CONDITION) && totalWin > 0;
+      (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
+      totalWin > 0;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = CLOSE_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = CLOSE_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
