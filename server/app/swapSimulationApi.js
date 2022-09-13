@@ -1017,8 +1017,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     NEW_POSITION_RATIO = 1;
-    if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
-    if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
+    // if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
+    // if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
 
     console.log("************************************");
 
