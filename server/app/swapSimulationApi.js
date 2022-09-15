@@ -979,27 +979,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const totalWin = longWinRatio + shortWinRatio;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION &&
-      (!longHolding ||
-        (shortHolding &&
-          Math.abs(Number(longHolding.positionAmt)) <=
-            Math.abs(Number(shortHolding.positionAmt))));
-
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION &&
-      (!shortHolding ||
-        (longHolding &&
-          Math.abs(Number(shortHolding.positionAmt)) <=
-            Math.abs(Number(longHolding.positionAmt))));
-
     const CLOSE_CONDITION =
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
       totalWin > 0;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = CLOSE_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 = LOW_CONVERSE_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = CLOSE_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 = UP_CONVERSE_CONDITION;
+
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      LOW_CONVERSE_CONDITION || CENTER_CROSS_SHORT_CONDITION;
+
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      UP_CONVERSE_CONDITION || CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -1017,8 +1009,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
     NEW_POSITION_RATIO = 1;
-    if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
-    if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
+    // if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
+    // if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
 
     console.log("************************************");
 
@@ -1160,8 +1152,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             // openShortCondition = true;
           }
 
-          let closePositionAmt = longHolding.positionAmt;
-          // let closePositionAmt = INIT_POSITION;
+          // let closePositionAmt = longHolding.positionAmt;
+          let closePositionAmt = INIT_POSITION;
           if (IS_CLOSE_ALL_POSITION)
             closePositionAmt = INIT_POSITION * CLOSE_SAME_POSITION_RATIO;
           if (isForceDeal) closePositionAmt = longHolding.positionAmt;
@@ -1238,8 +1230,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             // openShortCondition = false;
           }
           if (shortRatio < 0) modeChange = true;
-          let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
-          // let closePositionAmt = INIT_POSITION;
+          // let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+          let closePositionAmt = INIT_POSITION;
           if (IS_CLOSE_ALL_POSITION)
             closePositionAmt = INIT_POSITION * CLOSE_SAME_POSITION_RATIO;
           if (isForceDeal)
@@ -1362,10 +1354,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + longPosition.positionAmt;
           let openPositionAmt = longHolding
-            ? INIT_POSITION * NEW_POSITION_RATIO +
-              Number(longHolding.positionAmt)
-            : shortHolding
-            ? INIT_POSITION * NEW_POSITION_RATIO
+            ? INIT_POSITION + Number(longHolding.positionAmt)
             : INIT_POSITION;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = shortRatio;
@@ -1446,10 +1435,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + shortPosition.positionAmt;
           let openPositionAmt = shortHolding
-            ? INIT_POSITION * NEW_POSITION_RATIO +
-              Math.abs(Number(shortHolding.positionAmt))
-            : longHolding
-            ? INIT_POSITION * NEW_POSITION_RATIO
+            ? INIT_POSITION + Math.abs(Number(shortHolding.positionAmt))
             : INIT_POSITION;
           // openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
           // const ratio = longRatio;
