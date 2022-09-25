@@ -1092,8 +1092,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           Number(holding.entryPrice) * Number(holding.positionAmt)) /
         positionAmt;
 
-      totalProfit += (-0 * 0.01 * positionAmt) / 2;
-      totalCapital += (-0 * 0.01 * positionAmt) / 2;
+      totalProfit += (-0.01 * positionAmt) / 2;
+      totalCapital += (-0.01 * positionAmt) / 2;
       // if (totalCapital < positionAmt / 2) positionAmt = 0;
       maxOpenPosition = Math.max(
         maxOpenPosition,
@@ -1172,8 +1172,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // if (longRatio < 0)
           //   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
           const currentProfit =
-            (longRatio * closePositionAmt) / LEVERAGE -
-            0 * 0.01 * closePositionAmt;
+            (longRatio * closePositionAmt) / LEVERAGE - 0.01 * closePositionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1252,7 +1251,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
           const currentProfit =
             (shortRatio * closePositionAmt) / LEVERAGE -
-            0 * 0.01 * closePositionAmt;
+            0.01 * closePositionAmt;
           totalProfit += currentProfit;
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1377,8 +1376,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           // if(modeChange) openPositionAmt = INIT_POSITION;
 
           // if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-          totalCapital += -0 * 0.01 * INIT_POSITION;
-          totalProfit += -0 * 0.01 * INIT_POSITION;
+          totalCapital += -0.01 * INIT_POSITION;
+          totalProfit += -0.01 * INIT_POSITION;
           totalPosition += INIT_POSITION;
 
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1458,8 +1457,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           // if(modeChange) openPositionAmt = INIT_POSITION;
 
           // if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-          totalCapital += -0 * 0.01 * INIT_POSITION;
-          totalProfit += -0 * 0.01 * INIT_POSITION;
+          totalCapital += -0.01 * INIT_POSITION;
+          totalProfit += -0.01 * INIT_POSITION;
           totalPosition += INIT_POSITION;
 
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
