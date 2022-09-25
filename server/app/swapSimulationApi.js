@@ -983,9 +983,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
       totalWin > 0;
 
-    const MAIN_OPEN_LONG_CONDITION1 = LOW_CONVERSE_CONDITION(
-      !longHolding || Math.abs(longHolding.positionAmt) < INIT_POSITION * 2
-    );
+    const MAIN_OPEN_LONG_CONDITION1 =
+      LOW_CONVERSE_CONDITION &&
+      (!longHolding || Math.abs(longHolding.positionAmt) < INIT_POSITION * 2);
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       UP_CONVERSE_CONDITION &&
