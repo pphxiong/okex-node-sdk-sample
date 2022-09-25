@@ -940,7 +940,7 @@ const startInterval = async () => {
     };
     await checkDeal(result);
 
-    await waitTime(1000 * 55);
+    await waitTime(1000 * 57);
     await startInterval();
   } catch (e) {
     restart();
