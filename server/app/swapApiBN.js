@@ -240,13 +240,13 @@ const checkDeal = async (data) => {
     // (!shortHolding || Math.abs(shortHolding.positionAmt) < INIT_POSITION * 2);
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (CENTER_CROSS_LONG_CONDITION || LOW_CONVERSE_CONDITION);
+      longHolding && CENTER_CROSS_LONG_CONDITION;
     // ||
     // (LOW_CONVERSE_CONDITION &&
     //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2)
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CENTER_CROSS_SHORT_CONDITION || UP_CONVERSE_CONDITION);
+      shortHolding && CENTER_CROSS_SHORT_CONDITION;
     // ||
     // (UP_CONVERSE_CONDITION &&
     //   Math.abs(shortHolding.positionAmt) <= INIT_POSITION * 2)
