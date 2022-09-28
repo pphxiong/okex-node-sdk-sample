@@ -983,20 +983,20 @@ const checkDeal = async (data, isAutoReset = true) => {
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
       totalWin > 0;
 
-    const MAIN_OPEN_LONG_CONDITION1 = LOW_CONVERSE_CONDITION && !longHolding;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      (CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION) && !longHolding;
     // (!longHolding || Math.abs(longHolding.positionAmt) < INIT_POSITION * 2);
 
-    const MAIN_OPEN_SHORT_CONDITION1 = UP_CONVERSE_CONDITION && !shortHolding;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      (CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION) && !shortHolding;
     // (!shortHolding || Math.abs(shortHolding.positionAmt) < INIT_POSITION * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION);
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LOW_CONVERSE_CONDITION;
     // ||
     // (LOW_CONVERSE_CONDITION &&
     //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2)
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION);
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && UP_CONVERSE_CONDITION;
     // ||
     // (UP_CONVERSE_CONDITION &&
     //   Math.abs(shortHolding.positionAmt) <= INIT_POSITION * 2)
