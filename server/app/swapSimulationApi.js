@@ -991,12 +991,12 @@ const checkDeal = async (data, isAutoReset = true) => {
       (CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION) && !shortHolding;
     // (!shortHolding || Math.abs(shortHolding.positionAmt) < INIT_POSITION * 2);
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LOW_CONVERSE_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && UP_CONVERSE_CONDITION;
     // ||
     // (LOW_CONVERSE_CONDITION &&
     //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2)
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && UP_CONVERSE_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LOW_CONVERSE_CONDITION;
     // ||
     // (UP_CONVERSE_CONDITION &&
     //   Math.abs(shortHolding.positionAmt) <= INIT_POSITION * 2)
