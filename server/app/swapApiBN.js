@@ -395,7 +395,7 @@ const checkDeal = async (data) => {
           let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           const curIndex = fiList.findIndex(
             (positionAmt) =>
-              positionAmt == Math.abs(Number(longHolding.positionAmt))
+              positionAmt == Math.abs(Number(shortHolding.positionAmt))
           );
           if (curIndex) {
             closePositionAmt = fiList[curIndex - 1];
