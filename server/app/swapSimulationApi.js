@@ -1002,13 +1002,13 @@ const checkDeal = async (data, isAutoReset = true) => {
     // (!shortHolding || Math.abs(shortHolding.positionAmt) < INIT_POSITION * 2);
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && MACD_DOWN_CONDITION && CENTER_CLOSE_SHORT_CONDITION;
+      longHolding && MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION;
     // ||
     // (LOW_CONVERSE_CONDITION &&
     //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2)
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && MACD_UP_CONDITION && CENTER_CLOSE_LONG_CONDITION;
+      shortHolding && MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION;
     // ||
     // (UP_CONVERSE_CONDITION &&
     //   Math.abs(shortHolding.positionAmt) <= INIT_POSITION * 2)
