@@ -893,16 +893,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
 
-    const MACD_UP_CONDITION =
-      Number(macdList[macdList.length - 1].close) >
-        Number(macdList[macdList.length - 1].open) &&
-      Number(macdList[macdList.length - 1].column) > 0;
-
-    const MACD_DOWN_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
-        Number(macdList[macdList.length - 1].open) &&
-      Number(macdList[macdList.length - 1].column) < 0;
-
     let IS_HAS_OUT_SHORT_BETWEEN = false;
     if (CENTER_CROSS_LONG_CONDITION) {
       let lastCenterShortIndex = -1;
@@ -984,6 +974,16 @@ const checkDeal = async (data, isAutoReset = true) => {
     const CLOSE_CONDITION =
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
       totalWin > 0;
+
+    const MACD_UP_CONDITION =
+      Number(macdList[macdList.length - 1].close) >
+        Number(macdList[macdList.length - 1].open) &&
+      Number(macdList[macdList.length - 1].column) > 0;
+
+    const MACD_DOWN_CONDITION =
+      Number(macdList[macdList.length - 1].close) <
+        Number(macdList[macdList.length - 1].open) &&
+      Number(macdList[macdList.length - 1].column) < 0;
 
     const CENTER_OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].open) <

@@ -234,20 +234,40 @@ const checkDeal = async (data) => {
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
       totalWin > 0;
 
-    const MAIN_OPEN_LONG_CONDITION1 = LOW_CONVERSE_CONDITION;
+    const MACD_UP_CONDITION =
+      Number(macdList[macdList.length - 1].close) >
+        Number(macdList[macdList.length - 1].open) &&
+      Number(macdList[macdList.length - 1].column) > 0;
+
+    const MACD_DOWN_CONDITION =
+      Number(macdList[macdList.length - 1].close) <
+        Number(macdList[macdList.length - 1].open) &&
+      Number(macdList[macdList.length - 1].column) < 0;
+
+    const CENTER_OPEN_LONG_CONDITION =
+      Number(macdList[macdList.length - 1].open) <
+      Number(bollList[bollList.length - 1].MA);
+
+    const CENTER_OPEN_SHORT_CONDITION =
+      Number(macdList[macdList.length - 1].open) >
+      Number(bollList[bollList.length - 1].MA);
+
+    const MAIN_OPEN_LONG_CONDITION1 =
+      MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION && !longHolding;
     // (!longHolding || Math.abs(longHolding.positionAmt) < INIT_POSITION * 2);
 
-    const MAIN_OPEN_SHORT_CONDITION1 = UP_CONVERSE_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION && !shortHolding;
     // (!shortHolding || Math.abs(shortHolding.positionAmt) < INIT_POSITION * 2);
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_LONG_CONDITION;
+      longHolding && MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION;
     // ||
     // (LOW_CONVERSE_CONDITION &&
     //   Math.abs(longHolding.positionAmt) >= INIT_POSITION * 2)
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_SHORT_CONDITION;
+      shortHolding && MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION;
     // ||
     // (UP_CONVERSE_CONDITION &&
     //   Math.abs(shortHolding.positionAmt) <= INIT_POSITION * 2)
@@ -362,13 +382,13 @@ const checkDeal = async (data) => {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
           let closePositionAmt = Math.abs(Number(longHolding.positionAmt));
-          const curIndex = fiList.findIndex(
-            (positionAmt) =>
-              positionAmt == Math.abs(Number(longHolding.positionAmt))
-          );
-          if (curIndex) {
-            closePositionAmt = fiList[curIndex - 1];
-          }
+          // const curIndex = fiList.findIndex(
+          //   (positionAmt) =>
+          //     positionAmt == Math.abs(Number(longHolding.positionAmt))
+          // );
+          // if (curIndex) {
+          //   closePositionAmt = fiList[curIndex - 1];
+          // }
           // if (closePositionAmt > INIT_POSITION)
           //   closePositionAmt = Number(
           //     ((closePositionAmt / 2.15) * 1.15).toFixed(2)
@@ -393,13 +413,13 @@ const checkDeal = async (data) => {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
           let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
-          const curIndex = fiList.findIndex(
-            (positionAmt) =>
-              positionAmt == Math.abs(Number(shortHolding.positionAmt))
-          );
-          if (curIndex) {
-            closePositionAmt = fiList[curIndex - 1];
-          }
+          // const curIndex = fiList.findIndex(
+          //   (positionAmt) =>
+          //     positionAmt == Math.abs(Number(shortHolding.positionAmt))
+          // );
+          // if (curIndex) {
+          //   closePositionAmt = fiList[curIndex - 1];
+          // }
           // if (closePositionAmt > INIT_POSITION)
           //   closePositionAmt = Number(
           //     ((closePositionAmt / 2.15) * 1.15).toFixed(2)
