@@ -985,20 +985,20 @@ const checkDeal = async (data, isAutoReset = true) => {
       (CENTER_CROSS_SHORT_CONDITION || CENTER_CROSS_LONG_CONDITION) &&
       totalWin > 0;
 
-    const CENTER_CLOSE_LONG_CONDITION =
-      Number(macdList[macdList.length - 1].close) >
+    const CENTER_OPEN_LONG_CONDITION =
+      Number(macdList[macdList.length - 1].open) <
       Number(bollList[bollList.length - 1].MA);
 
-    const CENTER_CLOSE_SHORT_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
+    const CENTER_OPEN_SHORT_CONDITION =
+      Number(macdList[macdList.length - 1].open) >
       Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      MACD_UP_CONDITION && CENTER_CLOSE_LONG_CONDITION && !longHolding;
+      MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION && !longHolding;
     // (!longHolding || Math.abs(longHolding.positionAmt) < INIT_POSITION * 2);
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      MACD_DOWN_CONDITION && CENTER_CLOSE_SHORT_CONDITION && !shortHolding;
+      MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION && !shortHolding;
     // (!shortHolding || Math.abs(shortHolding.positionAmt) < INIT_POSITION * 2);
 
     const MAIN_CLOSE_LONG_CONDITION1 =
