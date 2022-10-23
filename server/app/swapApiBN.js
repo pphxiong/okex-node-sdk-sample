@@ -252,43 +252,37 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].open) >
       Number(bollList[bollList.length - 1].MA);
 
-    const CENTER_OPEN_LONG_CONDITION_LAST =
+    const OPEN_LONG_CONDITION_LAST =
       Number(macdList[macdList.length - 2].open) <
-      Number(bollList[bollList.length - 2].MA);
-
-    const CENTER_OPEN_SHORT_CONDITION_LAST =
-      Number(macdList[macdList.length - 2].open) >
-      Number(bollList[bollList.length - 2].MA);
-
-    const MACD_UP_CONDITION_LAST =
+        Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 2].close) >
         Number(macdList[macdList.length - 2].open) &&
-      Number(macdList[macdList.length - 2].column) > 0;
+      Number(macdList[macdList.length - 2].column) < 0 &&
+      Number(macdList[macdList.length - 1].open) >
+        Number(bollList[bollList.length - 1].MA) &&
+      MACD_UP_CONDITION;
 
-    const MACD_DOWN_CONDITION_LAST =
+    const OPEN_SHORT_CONDITION_LAST =
+      Number(macdList[macdList.length - 2].open) >
+        Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 2].close) <
         Number(macdList[macdList.length - 2].open) &&
-      Number(macdList[macdList.length - 2].column) < 0;
+      Number(macdList[macdList.length - 2].column) > 0 &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(bollList[bollList.length - 1].MA) &&
+      MACD_DOWN_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      ((MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION) ||
-        (MACD_UP_CONDITION_LAST && CENTER_OPEN_LONG_CONDITION_LAST)) &&
-      !longHolding;
+      MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION && !longHolding;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      ((MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION) ||
-        (MACD_DOWN_CONDITION_LAST && CENTER_OPEN_SHORT_CONDITION_LAST)) &&
-      !shortHolding;
+      MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION && !shortHolding;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding &&
-      ((MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION) ||
-        (MACD_DOWN_CONDITION_LAST && CENTER_OPEN_SHORT_CONDITION_LAST));
+      longHolding && MACD_DOWN_CONDITION && CENTER_OPEN_SHORT_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding &&
-      ((MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION) ||
-        (MACD_UP_CONDITION_LAST && CENTER_OPEN_LONG_CONDITION_LAST));
+      shortHolding && MACD_UP_CONDITION && CENTER_OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
