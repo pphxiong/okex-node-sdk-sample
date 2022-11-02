@@ -863,7 +863,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
+
     const LOW_CONVERSE_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
@@ -876,7 +879,9 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION1 = !longHolding && UP_CONVERSE_CONDITION;
 
