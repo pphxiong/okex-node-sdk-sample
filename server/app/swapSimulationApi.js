@@ -29,7 +29,7 @@ function getRandomNumberByRange(start, end) {
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = "ETHUSDT";
 const LEVERAGE = 10;
-const INTERVAL = "5m";
+const INTERVAL = "1h";
 const BAO_RATIO = (-0.5 * LEVERAGE) / 10;
 const LOSS_MAX = (-1 * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
@@ -971,31 +971,25 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const totalWin = longWinRatio + shortWinRatio;
 
-    const CONVERSE_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].DN) &&
+    const OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].open) >
+        Number(bollList[bollList.length - 1].MA);
+
+    const OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(bollList[bollList.length - 1].MA);
 
-    const CONVERSE_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && OPEN_LONG_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && CONVERSE_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && OPEN_SHORT_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && CONVERSE_LONG_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (CONVERSE_LONG_CONDITION || CONVERSE_SHORT_CONDITION);
-
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CONVERSE_LONG_CONDITION || CONVERSE_SHORT_CONDITION);
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;

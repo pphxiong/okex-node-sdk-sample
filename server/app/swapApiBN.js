@@ -17,7 +17,7 @@ const generatePositionList = (init, num) => {
 };
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "15m";
+const DEFAULT_INTERVAL = "1h";
 const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
@@ -26,7 +26,7 @@ const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const fiList = [1, 2, 4, 8, 16, 24];
-let INIT_POSITION = 1;
+let INIT_POSITION = 2;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -136,29 +136,25 @@ const checkDeal = async (data) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    const CONVERSE_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].DN) &&
+    const OPEN_LONG_CONDITION =
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].open) >
+        Number(bollList[bollList.length - 1].MA);
+
+    const OPEN_SHORT_CONDITION =
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(bollList[bollList.length - 1].MA);
 
-    const CONVERSE_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && OPEN_LONG_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION1 = CONVERSE_LONG_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && OPEN_SHORT_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = CONVERSE_SHORT_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && OPEN_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_SHORT_CONDITION;
-
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_LONG_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && OPEN_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -206,14 +202,14 @@ const checkDeal = async (data) => {
     const hmsArr = currentTime.split(" ")[1].split(":");
     const lastMinuteCharacter = hmsArr[1];
     const lastSecondCharacter = hmsArr[2];
-    const minuteList = ["0", "00", "15", "30", "45"];
+    const minuteList = ["0", "00"];
     const secondList = ["0", "00"];
     const minuteDiff = moment(currentTime).diff(
       moment(macdList[macdList.length - 1].time),
       "minute"
     );
     const isFiveM =
-      minuteDiff < 20 &&
+      minuteDiff < 80 &&
       minuteList.includes(lastMinuteCharacter) &&
       !secondList.includes(lastSecondCharacter);
 
