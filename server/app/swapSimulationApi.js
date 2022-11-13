@@ -594,16 +594,16 @@ app.get('/swap/startHearBeat', async (req, response) => {
     dealDetailList = [];
     mostLoss = INIT_MOST_LOSS;
 
-    if (isAutoReset) {
-     totalProfit = 0;
-     currentPosition = {};
-     longPosition = {entryPrice: 0, positionAmt: 0};
-     shortPosition = {entryPrice: 0, positionAmt: 0};
-     dealDetailList = [];
-     mostLoss = INIT_MOST_LOSS;
-     maxWinRatio = 0;
-     dealDetailList = [];
-     maxOpenPosition = 0;
+    if (isInit) {
+      totalProfit = 0;
+      currentPosition = {};
+      longPosition = {entryPrice: 0, positionAmt: 0};
+      shortPosition = {entryPrice: 0, positionAmt: 0};
+      dealDetailList = [];
+      mostLoss = INIT_MOST_LOSS;
+      maxWinRatio = 0;
+      dealDetailList = [];
+      maxOpenPosition = 0;
     }
 
     // const mock = require(`./mock/${date}.js`);
