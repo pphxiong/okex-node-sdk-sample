@@ -595,17 +595,15 @@ app.get('/swap/startHearBeat', async (req, response) => {
     mostLoss = INIT_MOST_LOSS;
 
     if (isAutoReset) {
-      totalProfit = 0;
-      maxWinRatio = 0;
-      totalPosition = 0;
-      // longPatchNum = 0;
-      // shortPatchNum = 0;
-      // currentPosition = {};
-      // longPosition = {};
-      // shortPosition = {};
-      // totalCapital = 0;
-      // maxOpenPosition = 0;
-      // minTotalCapital = 0;
+     totalProfit = 0;
+     currentPosition = {};
+     longPosition = {entryPrice: 0, positionAmt: 0};
+     shortPosition = {entryPrice: 0, positionAmt: 0};
+     dealDetailList = [];
+     mostLoss = INIT_MOST_LOSS;
+     maxWinRatio = 0;
+     dealDetailList = [];
+     maxOpenPosition = 0;
     }
 
     // const mock = require(`./mock/${date}.js`);
