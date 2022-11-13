@@ -40,7 +40,8 @@ export default props => {
   const [latestInterval,setLatestInterval] = useState(20);
   const [rsi1,setRsi1] = useState(6);
   const [rsi2,setRsi2] = useState(12);
-  const [rsi3,setRsi3] = useState(24);
+  const [rsi3, setRsi3] = useState(24);
+  const [lastStep, setLastStep] = useState(1)
   const [longCondition,setLongCondition] = useState(50);
   const [shortCondition,setShortCondition] = useState(48.5);
   const [leverage,setLeverage] = useState(10);
@@ -443,6 +444,13 @@ export default props => {
           RSI2: <InputNumber step={1} value={rsi2} onChange={v=>setRsi2(v)} />
           RSI3: <InputNumber step={1} value={rsi3} onChange={v=>setRsi3(v)} />
           <Button onClick={()=>fnSetRSI()} style={{ marginLeft: 10 }}>RSI设置</Button>
+        </Col>
+      </Row>
+
+       <Row style={{ marginTop: 10 }} gutter={12}>
+        <Col>
+          前期: <InputNumber step={1} value={lastStep} onChange={v=>setLastStep(v)} />
+
         </Col>
       </Row>
 
