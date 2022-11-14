@@ -842,8 +842,8 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(macdList[macdList.length - 1].open);
 
     const OUT_LOW_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].open) <
         Number(bollList[bollList.length - 1].DN) &&
       Number(macdList[macdList.length - 1].close) >
@@ -888,7 +888,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       !shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION;
+      longHolding &&
+      (CENTER_CROSS_SHORT_CONDITION || (shortHolding && OUT_LOW_CONDITION));
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding && CENTER_CROSS_LONG_CONDITION;
