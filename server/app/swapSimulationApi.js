@@ -884,11 +884,9 @@ const checkDeal = async (data, isAutoReset = true) => {
     // Number(macdList[macdList.length - 1].close) >
     //   Number(bollList[bollList.length - 1].DN);
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && UP_CONVERSE_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LOW_CONVERSE_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding && CENTER_CROSS_SHORT_CONDITION;
