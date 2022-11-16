@@ -884,15 +884,17 @@ const checkDeal = async (data, isAutoReset = true) => {
     // Number(macdList[macdList.length - 1].close) >
     //   Number(bollList[bollList.length - 1].DN);
 
-    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && LOW_CONVERSE_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      !longHolding && CENTER_CROSS_LONG_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && UP_CONVERSE_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (LOW_CONVERSE_CONDITION || UP_CONVERSE_CONDITION);
+      longHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (LOW_CONVERSE_CONDITION || UP_CONVERSE_CONDITION);
+      shortHolding && CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
@@ -1086,7 +1088,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             week: macdList[macdList.length - 1].week,
             totalProfit,
             totalCapital,
-            currentProfit: (longRatio * closePositionAmt) / LEVERAGE,
+            currentProfit,
+            currentRMB: currentProfit * entryPrice,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
             bollList: bollList[bollList.length - 1],
@@ -1165,7 +1168,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             week: macdList[macdList.length - 1].week,
             totalProfit,
             totalCapital,
-            currentProfit: (shortRatio * closePositionAmt) / LEVERAGE,
+            currentProfit,
+            currentRMB: currentProfit * entryPrice,
             macd: macdList[macdList.length - 1],
             rsi: rsiList[rsiList.length - 1],
             bollList: bollList[bollList.length - 1],
