@@ -862,6 +862,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(bollList[bollList.length - 2].MA) <
         Number(bollList[bollList.length - 1].MA);
     // &&
     // Number(macdList[macdList.length - 1].close) <
@@ -879,6 +881,8 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(bollList[bollList.length - 2].MA) >
         Number(bollList[bollList.length - 1].MA);
     // &&
     // Number(macdList[macdList.length - 1].close) >
