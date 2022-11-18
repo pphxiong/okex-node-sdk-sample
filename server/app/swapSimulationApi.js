@@ -27,7 +27,8 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = "ETHUSDT";
+// const BN_SYMBOL = "ETHUSDT";
+const BN_SYMBOL = "BTCUSDT";
 const LEVERAGE = 10;
 const INTERVAL = "1h";
 const BAO_RATIO = (-0.5 * LEVERAGE) / 10;
@@ -994,8 +995,8 @@ const checkDeal = async (data, isAutoReset = true) => {
           Number(holding.entryPrice) * Number(holding.positionAmt)) /
         positionAmt;
 
-      totalProfit += (-0.01 * 0.02 * positionAmt) / 2;
-      totalCapital += (-0.01 * 0.02 * positionAmt) / 2;
+      // totalProfit += (-0.01 * 0.02 * positionAmt) / 2;
+      // totalCapital += (-0.01 * 0.02 * positionAmt) / 2;
       // if (totalCapital < positionAmt / 2) positionAmt = 0;
       maxOpenPosition = Math.max(
         maxOpenPosition,
