@@ -145,10 +145,10 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     const CENTER_CROSS_LONG_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].MA) &&
+      // Number(macdList[macdList.length - 2].close) <
+      //   Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+      Number(bollList[bollList.length - 1].MA);
     // &&
     // Number(macdList[macdList.length - 1].close) <
     //   Number(bollList[bollList.length - 1].UP);
@@ -162,10 +162,10 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     const CENTER_CROSS_SHORT_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].MA) &&
+      // Number(macdList[macdList.length - 2].close) >
+      //   Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+      Number(bollList[bollList.length - 1].MA);
     // &&
     // Number(macdList[macdList.length - 1].close) >
     //   Number(bollList[bollList.length - 1].DN);
