@@ -47,18 +47,30 @@ export default (props) => {
   const [tPnlRatio, setTPnlRatio] = useState(0);
   const [month, setMonth] = useState('06');
   const [year, setYear] = useState('2022');
-  const [interval, setInterval] = useState('2h');
-  const [latestInterval, setLatestInterval] = useState(20);
+  const [interval, setInterval] = useState('1h');
+  const [latestInterval, setLatestInterval] = useState(1440);
   const [rsi1, setRsi1] = useState(6);
   const [rsi2, setRsi2] = useState(12);
   const [rsi3, setRsi3] = useState(24);
-  const [lastStep, setLastStep] = useState(1);
+  const [lastStep, setLastStep] = useState(18);
   const [longCondition, setLongCondition] = useState(50);
   const [shortCondition, setShortCondition] = useState(48.5);
   const [leverage, setLeverage] = useState(10);
   const [duration, setDuration] = useState(11);
   const [dayStep, setDayStep] = useState(0);
   const [date, setDate] = useState('');
+  const [yearPeriodStep, setYearPeriodStep] = useState(3);
+
+  const intervalDaysMap = {
+    '15m': 15,
+    '30m': 30,
+    '1h': 60,
+    '2h': 120,
+    '4h': 240,
+    '6h': 360,
+    '12h': 720,
+    '1d': 1440,
+  };
 
   const yearMap = ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'];
   const intervalMap = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '12h', '1d'];
@@ -588,7 +600,9 @@ export default (props) => {
               return profitList;
             }
 
-            const newTime = moment().subtract(60, 'days').valueOf();
+            const newTime = moment()
+              .subtract(intervalDaysMap[interval] * y, 'days')
+              .valueOf();
             fnGetP(newTime);
 
             return false;
@@ -898,6 +912,8 @@ export default (props) => {
             value={interval}
             onChange={(v) => {
               setInterval(v);
+              const period = (360 * yearPeriodStep) / intervalDaysMap[v];
+              setLastStep(period);
             }}
             style={{ width: 120 }}
           >
@@ -976,6 +992,10 @@ export default (props) => {
         <Row style={{ marginTop: 10 }} gutter={12}>
           <Col>
             期数: <InputNumber step={1} value={lastStep} onChange={(v) => setLastStep(v)} />
+          </Col>
+          <Col>
+            年数:{' '}
+            <InputNumber step={1} value={yearPeriodStep} onChange={(v) => setYearPeriodStep(v)} />
           </Col>
         </Row>
 
