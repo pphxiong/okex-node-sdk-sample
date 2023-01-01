@@ -955,6 +955,11 @@ const checkDeal = async (data, isAutoReset = true) => {
     );
     console.log("************************************");
 
+    if (isForceDeal) {
+      closeLongCondition = true;
+      closeShortCondition = true;
+    }
+
     // IS_CLOSE_ALL_POSITION = false;
     // if (isForceDeal) {
     //   closeLongCondition = true;
