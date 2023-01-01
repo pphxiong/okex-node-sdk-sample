@@ -26,7 +26,7 @@ const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const fiList = [1, 2, 4, 8, 16, 24];
-let INIT_POSITION = 5.5;
+let INIT_POSITION = 1.5;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -177,10 +177,10 @@ const checkDeal = async (data) => {
       !shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION;
+      longHolding && CENTER_CROSS_SHORT_CONDITION && longRatio < 0.618;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION;
+      shortHolding && CENTER_CROSS_LONG_CONDITION && shortRatio < 0.618;
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
