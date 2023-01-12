@@ -26,7 +26,7 @@ const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const fiList = [1, 2, 4, 8, 16, 24];
-let INIT_POSITION = 3;
+let INIT_POSITION = 2.5;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -136,29 +136,10 @@ const checkDeal = async (data) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
-    const UP_CONVERSE_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
-
     const CENTER_CROSS_LONG_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
-    // &&
-    // Number(macdList[macdList.length - 1].close) <
-    //   Number(bollList[bollList.length - 1].UP);
-
-    const LOW_CONVERSE_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].DN) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
-      Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
 
     const CENTER_CROSS_SHORT_CONDITION =
@@ -166,21 +147,44 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
-    // &&
-    // Number(macdList[macdList.length - 1].close) >
-    //   Number(bollList[bollList.length - 1].DN);
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding && CENTER_CROSS_LONG_CONDITION;
+    const OUT_HIGH_CONDITION =
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].open) >
+        Number(bollList[bollList.length - 1].UP);
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
+    const OUT_LOW_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].open) <
+        Number(bollList[bollList.length - 1].DN);
+
+    const CONVERSE_UP_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
+
+    const CONVERSE_LOW_CONDITION =
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
+
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && CONVERSE_LOW_CONDITION;
+
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && CONVERSE_UP_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION && longRatio < 0.618;
+      longHolding && (CONVERSE_LOW_CONDITION || OUT_LOW_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION && shortRatio < 0.618;
+      shortHolding && (CONVERSE_UP_CONDITION || OUT_HIGH_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
     const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
