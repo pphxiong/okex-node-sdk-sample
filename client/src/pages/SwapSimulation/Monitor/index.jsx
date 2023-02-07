@@ -934,7 +934,7 @@ export default (props) => {
         </Row>
 
         <Row style={{ marginTop: 10 }} gutter={12}>
-          <Col>
+          {/* <Col>
             LONGCONDITION:{' '}
             <InputNumber step={0.1} value={longCondition} onChange={(v) => setLongCondition(v)} />
             SHORTCONDITION:{' '}
@@ -942,20 +942,30 @@ export default (props) => {
             <Button onClick={() => fnSetCondition()} style={{ marginLeft: 10 }}>
               CONDITION设置
             </Button>
+          </Col> */}
+        
+        </Row>
+
+        {/* <Row style={{ marginTop: 10 }} gutter={12}>
+          <Col>
+            RSI1: <InputNumber step={1} value={rsi1} onChange={(v) => setRsi1(v)} />
+            RSI2: <InputNumber step={1} value={rsi2} onChange={(v) => setRsi2(v)} />
+            RSI3: <InputNumber step={1} value={rsi3} onChange={(v) => setRsi3(v)} />
+            <Button onClick={() => fnSetRSI()} style={{ marginLeft: 10 }}>
+              RSI设置
+            </Button>
+          </Col>
+        </Row> */}
+
+        <Row style={{ marginTop: 10 }} gutter={12}>
+          <Col>
+            期数: <InputNumber step={1} value={lastStep} onChange={(v) => setLastStep(v)} />
           </Col>
           <Col>
-            <Button onClick={() => fnGetProfitByMonth()} type="primary" style={{ marginLeft: 10 }}>
-              月总计
-            </Button>
-
-            <Button onClick={() => fnGetProfitByDay()} type="primary" style={{ marginLeft: 10 }}>
-              天总计
-            </Button>
-
-            <Button onClick={() => fnGetProfitByYear()} style={{ marginLeft: 10 }}>
-              年总计
-            </Button>
-
+            年数:{' '}
+            <InputNumber step={1} value={yearPeriodStep} onChange={(v) => setYearPeriodStep(v)} />
+          </Col>
+            <Col>
             <Select
               value={latestInterval}
               onChange={(v) => {
@@ -978,30 +988,9 @@ export default (props) => {
           </Col>
         </Row>
 
-        <Row style={{ marginTop: 10 }} gutter={12}>
-          <Col>
-            RSI1: <InputNumber step={1} value={rsi1} onChange={(v) => setRsi1(v)} />
-            RSI2: <InputNumber step={1} value={rsi2} onChange={(v) => setRsi2(v)} />
-            RSI3: <InputNumber step={1} value={rsi3} onChange={(v) => setRsi3(v)} />
-            <Button onClick={() => fnSetRSI()} style={{ marginLeft: 10 }}>
-              RSI设置
-            </Button>
-          </Col>
-        </Row>
-
-        <Row style={{ marginTop: 10 }} gutter={12}>
-          <Col>
-            期数: <InputNumber step={1} value={lastStep} onChange={(v) => setLastStep(v)} />
-          </Col>
-          <Col>
-            年数:{' '}
-            <InputNumber step={1} value={yearPeriodStep} onChange={(v) => setYearPeriodStep(v)} />
-          </Col>
-        </Row>
-
-        <Button onClick={() => fnReset()} style={{ marginLeft: 10 }}>
+        {/* <Button onClick={() => fnReset()} style={{ marginLeft: 10 }}>
           重置
-        </Button>
+        </Button> */}
 
         <Divider />
 
