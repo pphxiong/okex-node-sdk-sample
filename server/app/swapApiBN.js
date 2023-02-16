@@ -3,6 +3,11 @@ const fs = require("fs");
 
 const customAuthClientBN = require("./customAuthClientBN");
 
+const BN_SYMBOL = "ETHUSDT";
+const DEFAULT_INTERVAL = "4h";
+const INIT_POSITION = 0.8;
+const MODE = 2;
+
 const generatePositionList = (init, num) => {
   const arr = [init];
   const holding = [init];
@@ -16,8 +21,6 @@ const generatePositionList = (init, num) => {
   return [arr, holding];
 };
 
-const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "1h";
 const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
@@ -26,10 +29,6 @@ const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
 const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
 const fiList = [1, 2, 4, 8, 16, 24];
-let INIT_POSITION = 1.6;
-let NEW_POSITION_RATIO = 1;
-let IS_CLOSE_ALL_POSITION = false;
-const CLOSE_SAME_POSITION_RATIO = 6;
 
 const ORIGIN_INIT_POSITION = INIT_POSITION;
 const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
@@ -38,8 +37,6 @@ const INCREASE_FI_LIST_HOLDING = generate_position[1];
 
 const POSITION_RATIO = 10;
 let RESTART_TIME = 0;
-
-let MODE = 1;
 
 let rsi1 = 8;
 let rsi2 = 12;
@@ -177,24 +174,27 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      (!longHolding && CONVERSE_LOW_CONDITION) ||
-      (shortHolding && OUT_HIGH_CONDITION);
+      !longHolding && CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      (!shortHolding && CONVERSE_UP_CONDITION) ||
-      (longHolding && OUT_LOW_CONDITION);
+      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (CONVERSE_UP_CONDITION || OUT_LOW_CONDITION);
+      longHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CONVERSE_LOW_CONDITION || OUT_HIGH_CONDITION);
+      shortHolding && CENTER_CROSS_LONG_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
-    const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
-    const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
-    const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      !longHolding && CENTER_CROSS_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      !shortHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION2 =
+      longHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION2 =
+      shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
+    modeChange = false;
     let openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
     let openShortCondition =
@@ -914,34 +914,34 @@ const startInterval = async () => {
   }
 };
 
-const readData = async () => {
-  let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
-  MODE = dataConfig.MODE;
+// const readData = async () => {
+//   let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
+//   MODE = dataConfig.MODE;
 
-  console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
-};
+//   console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
+// };
 
-const writeData = async () => {
-  //将修改后的配置写入文件前需要先转成json字符串格式
-  let dataConfig = {
-    MODE: String(MODE),
-  };
-  let jsonStr = JSON.stringify(dataConfig);
+// const writeData = async () => {
+//   //将修改后的配置写入文件前需要先转成json字符串格式
+//   let dataConfig = {
+//     MODE: String(MODE),
+//   };
+//   let jsonStr = JSON.stringify(dataConfig);
 
-  const result = await new Promise((resolve) => {
-    //将修改后的内容写入文件
-    fs.writeFile("./app/config.json", jsonStr, function (err) {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("----------修改成功-------------");
-        resolve(true);
-      }
-    });
-  });
+//   const result = await new Promise((resolve) => {
+//     //将修改后的内容写入文件
+//     fs.writeFile("./app/config.json", jsonStr, function (err) {
+//       if (err) {
+//         console.error(err);
+//       } else {
+//         console.log("----------修改成功-------------");
+//         resolve(true);
+//       }
+//     });
+//   });
 
-  return result;
-};
+//   return result;
+// };
 
 // 定时获取交割合约账户信息
 (async () => {
