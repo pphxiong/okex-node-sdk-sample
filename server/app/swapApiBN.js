@@ -5,8 +5,8 @@ const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "4h";
-const INIT_POSITION = 1.2;
-const MODE = 2;
+const INIT_POSITION = 1;
+let MODE = 1;
 
 const generatePositionList = (init, num) => {
   const arr = [init];
