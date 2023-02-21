@@ -891,10 +891,10 @@ const startInterval = async () => {
       limit: 100,
       endTime: time,
     };
-    console.log(111);
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
-    console.log(222);
     const list = data;
+    console.log(222);
+    console.log(data[data.length - 1]);
 
     const newList = JSON.parse(JSON.stringify(list));
     newList.pop();
