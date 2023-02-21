@@ -204,7 +204,6 @@ const checkDeal = async (data) => {
     let closeShortCondition =
       MODE == 1 ? MAIN_CLOSE_SHORT_CONDITION1 : MAIN_CLOSE_SHORT_CONDITION2;
 
-    NEW_POSITION_RATIO = 1;
     // if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
     // if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
 
@@ -893,8 +892,6 @@ const startInterval = async () => {
     };
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
     const list = data;
-    console.log(222);
-    console.log(data[data.length - 1]);
 
     const newList = JSON.parse(JSON.stringify(list));
     newList.pop();
