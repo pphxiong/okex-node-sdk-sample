@@ -194,7 +194,6 @@ const checkDeal = async (data) => {
     const MAIN_CLOSE_SHORT_CONDITION2 =
       shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
-    modeChange = false;
     let openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
     let openShortCondition =
