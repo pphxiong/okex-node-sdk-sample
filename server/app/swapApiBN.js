@@ -888,7 +888,7 @@ const startInterval = async () => {
     const time = moment().valueOf();
     const payload = {
       interval: DEFAULT_INTERVAL,
-      limit: 100,
+      limit: 30,
       endTime: time,
     };
     const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
