@@ -638,15 +638,15 @@ app.get("/swap/startHearBeat", async (req, response) => {
     };
 
     await checkDeal(result, isAutoReset);
-    const longActualProfit =
-      ((currentMarketPrice - longPosition.entryPrice) *
-        longPosition.positionAmt) /
-      currentMarketPrice;
-    const shortActualProfit =
-      (-(currentMarketPrice - shortPosition.entryPrice) *
-        shortPosition.positionAmt) /
-      currentMarketPrice;
-    const actualProfit = totalProfit + longActualProfit + shortActualProfit;
+    // const longActualProfit =
+    //   ((currentMarketPrice - longPosition.entryPrice) *
+    //     longPosition.positionAmt) /
+    //   currentMarketPrice;
+    // const shortActualProfit =
+    //   (-(currentMarketPrice - shortPosition.entryPrice) *
+    //     shortPosition.positionAmt) /
+    //   currentMarketPrice;
+    // const actualProfit = totalProfit + longActualProfit + shortActualProfit;
     send(response, {
       errcode: 0,
       errmsg: "ok",
@@ -668,7 +668,7 @@ app.get("/swap/startHearBeat", async (req, response) => {
         baoNumTotal,
         lastWinOrLoss,
         lastPosition,
-        actualProfit,
+        // actualProfit,
       },
     });
   } catch (e) {
@@ -827,13 +827,17 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP);
 
     const CENTER_CROSS_SHORT_CONDITION =
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].MA) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].MA) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN);
 
     const OUT_HIGH_CONDITION =
       Number(macdList[macdList.length - 2].close) <
