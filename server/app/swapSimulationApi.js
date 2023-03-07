@@ -863,14 +863,6 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
 
-    const CLOSE_HIGH_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
-      Number(bollList[bollList.length - 1].UP);
-
-    const CLOSE_LOW_CONDITION =
-      Number(macdList[macdList.length - 1].close) >
-      Number(bollList[bollList.length - 1].DN);
-
     // const MAIN_OPEN_LONG_CONDITION1 =
     //   (!longHolding && CONVERSE_LOW_CONDITION) ||
     //   (shortHolding && OUT_HIGH_CONDITION);
@@ -885,19 +877,31 @@ const checkDeal = async (data, isAutoReset = true) => {
     // const MAIN_CLOSE_SHORT_CONDITION1 =
     //   shortHolding && (CONVERSE_LOW_CONDITION || OUT_HIGH_CONDITION);
 
-    const MAIN_OPEN_LONG_CONDITION1 = OUT_LOW_CONDITION;
+    const CLOSE_MORE_HIGH_CONDITION =
+      Number(macdList[macdList.length - 1].close) >
+      Number(bollList[bollList.length - 1].UP);
 
-    const MAIN_OPEN_SHORT_CONDITION1 = OUT_HIGH_CONDITION;
+    const CLOSE_LESS_HIGH_CONDITION =
+      Number(macdList[macdList.length - 1].close) <
+      Number(bollList[bollList.length - 1].UP);
+
+    const CLOSE_MORE_LOW_CONDITION =
+      Number(macdList[macdList.length - 1].close) >
+      Number(bollList[bollList.length - 1].DN);
+
+    const CLOSE_LESS_LOW_CONDITION =
+      Number(macdList[macdList.length - 1].close) <
+      Number(bollList[bollList.length - 1].DN);
+
+    const MAIN_OPEN_LONG_CONDITION1 = CLOSE_LESS_LOW_CONDITION;
+
+    const MAIN_OPEN_SHORT_CONDITION1 = CLOSE_MORE_HIGH_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding &&
-      (CONVERSE_LOW_CONDITION || CLOSE_LOW_CONDITION) &&
-      longRatio > 0;
+      longHolding && CLOSE_MORE_LOW_CONDITION && longRatio > 0;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding &&
-      (CONVERSE_UP_CONDITION || CLOSE_HIGH_CONDITION) &&
-      shortRatio > 0;
+      shortHolding && CLOSE_LESS_HIGH_CONDITION && shortRatio > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
