@@ -81,7 +81,7 @@ const checkDeal = async (data) => {
             (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
           ) || [];
         positionChange = false;
-        MODE = 1;
+        // MODE = 1;
         avail = (availableBalance * LEVERAGE) / mark_price;
 
         console.log("------------------");
