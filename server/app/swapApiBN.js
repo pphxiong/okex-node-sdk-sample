@@ -625,6 +625,7 @@ const queryLatestOpenOrders = async () => {
   const params = { symbol: BN_SYMBOL, limit: 30 };
   const orders = await cAuthClientBN.swap.allOrders(params);
   orders.reverse();
+  console.log(orders);
   const latestLongOrder = orders.find(
     (item) =>
       item.positionSide == "LONG" &&
