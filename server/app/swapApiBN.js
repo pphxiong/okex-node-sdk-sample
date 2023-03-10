@@ -157,8 +157,10 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].DN);
 
-    const [latestLongOrder, latestShortOrder] = await queryLatestOpenOrders();
-    console.log(latestLongOrder);
+    const result = await queryLatestOpenOrders();
+    console.log(result);
+    const [latestLongOrder, latestShortOrder] = result;
+
     const isLatestLongWin =
       Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice));
     const isLatestShortWin =
@@ -623,12 +625,17 @@ const queryLatestOpenOrders = async () => {
   const params = { symbol: BN_SYMBOL, limit: 30 };
   const orders = await cAuthClientBN.swap.allOrders(params);
   orders.reverse();
-  console.log(orders);
   const latestLongOrder = orders.find(
-    (item) => item.positionSide == "LONG" && !item.reduceOnly
+    (item) =>
+      item.positionSide == "LONG" &&
+      !item.reduceOnly &&
+      Number(item.executedQty)
   );
   const latestShortOrder = orders.find(
-    (item) => item.positionSide == "SHORT" && !item.reduceOnly
+    (item) =>
+      item.positionSide == "SHORT" &&
+      !item.reduceOnly &&
+      Number(item.executedQty)
   );
 
   return [latestLongOrder, latestShortOrder];
