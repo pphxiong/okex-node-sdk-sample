@@ -625,16 +625,10 @@ const queryLatestOpenOrders = async () => {
   orders.reverse();
   console.log(orders);
   const latestLongOrder = orders.find(
-    (item) =>
-      item.positionSide == "LONG" &&
-      !item.reduceOnly &&
-      Number(item.executedQty)
+    (item) => item.positionSide == "LONG" && !item.reduceOnly
   );
   const latestShortOrder = orders.find(
-    (item) =>
-      item.positionSide == "SHORT" &&
-      !item.reduceOnly &&
-      Number(item.executedQty)
+    (item) => item.positionSide == "SHORT" && !item.reduceOnly
   );
 
   return [latestLongOrder, latestShortOrder];
