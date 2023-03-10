@@ -4,8 +4,8 @@ const fs = require("fs");
 const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "4h";
-const INIT_POSITION = 1;
+const DEFAULT_INTERVAL = "1h";
+const INIT_POSITION = 0.1;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -190,16 +190,16 @@ const checkDeal = async (data) => {
       Number(bollList[bollList.length - 1].DN);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding && CENTER_CROSS_LONG_CONDITION;
+      CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
+      CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION;
+      longHolding && CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION;
+      shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -257,10 +257,9 @@ const checkDeal = async (data) => {
       "minute"
     );
     const isFiveM =
-      true ||
-      (minuteDiff < 80 &&
-        minuteList.includes(lastMinuteCharacter) &&
-        !secondList.includes(lastSecondCharacter));
+      minuteDiff < 80 &&
+      minuteList.includes(lastMinuteCharacter) &&
+      !secondList.includes(lastSecondCharacter);
 
     // if (isFiveM && avail < INIT_POSITION * NEW_POSITION_RATIO) {
     //   if (openLongCondition) {
@@ -643,6 +642,8 @@ function getUUID() {
   return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
 }
 
+const queryOrders = async () => {};
+
 let openOrigClientOrderId = "";
 let closeOrigClientOrderId = "";
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
@@ -707,7 +708,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
   // position = Math.abs(Number(holding.positionAmt));
   position = INIT_POSITION;
-  if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
+  // if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
 
   // if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
   // if (avail < INIT_POSITION * NEW_POSITION_RATIO)
