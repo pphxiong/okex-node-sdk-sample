@@ -158,6 +158,7 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].DN);
 
     const [latestLongOrder, latestShortOrder] = await queryLatestOpenOrders();
+    console.log(latestLongOrder);
     const isLatestLongWin =
       Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice));
     const isLatestShortWin =
