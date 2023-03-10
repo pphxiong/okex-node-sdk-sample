@@ -157,49 +157,23 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].DN);
 
-    const CONVERSE_UP_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].UP) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
-
-    const CONVERSE_LOW_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].DN) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
-
-    const CLOSE_MORE_HIGH_CONDITION =
-      Number(macdList[macdList.length - 1].close) >
-      Number(bollList[bollList.length - 1].UP);
-
-    const CLOSE_LESS_HIGH_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
-      Number(bollList[bollList.length - 1].UP);
-
-    const CLOSE_MORE_LOW_CONDITION =
-      Number(macdList[macdList.length - 1].close) >
-      Number(bollList[bollList.length - 1].DN);
-
-    const CLOSE_LESS_LOW_CONDITION =
-      Number(macdList[macdList.length - 1].close) <
-      Number(bollList[bollList.length - 1].DN);
+    const [latestLongOrder, latestShortOrder] = await queryLatestOpenOrders();
+    const isLatestLongWin =
+      Number(mark_price) > Math.abs(Number(latestLongOrder.entryPrice));
+    const isLatestShortWin =
+      Number(mark_price) < Math.abs(Number(latestShortOrder.entryPrice));
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION || (OUT_HIGH_CONDITION && shortRatio < 0);
+      CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION || (OUT_LOW_CONDITION && longRatio < 0);
+      CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_LONG_CONDITION && longRatio > 0;
+      longHolding && CENTER_CROSS_LONG_CONDITION && isLatestLongWin;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_SHORT_CONDITION && shortRatio > 0;
+      shortHolding && CENTER_CROSS_SHORT_CONDITION && isLatestShortWin;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -292,6 +266,8 @@ const checkDeal = async (data) => {
       "openShortCondition",
       openShortCondition
     );
+    console.log("latestLongOrder", latestLongOrder);
+    console.log("latestShortOrder", latestShortOrder);
     console.log("************************************");
 
     const patchPosition = async (holding, direction) => {
@@ -642,7 +618,29 @@ function getUUID() {
   return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
 }
 
-const queryOrders = async () => {};
+const queryLatestOpenOrders = async () => {
+  const params = { symbol: BN_SYMBOL, limit: 30 };
+  const orders = await cAuthClientBN.swap.allOrders(params);
+  orders.reverse();
+  const latestLongOrder = orders.find(
+    (item) =>
+      item.positionSide == "LONG" &&
+      !item.reduceOnly &&
+      Number(item.executedQty)
+  );
+  const latestShortOrder = orders.find(
+    (item) =>
+      item.positionSide == "SHORT" &&
+      !item.reduceOnly &&
+      Number(item.executedQty)
+  );
+
+  return [latestLongOrder, latestShortOrder];
+
+  // const latestOpenOrder = orders.find(
+  //   (item) => !item.reduceOnly && Number(item.executedQty)
+  // );
+};
 
 let openOrigClientOrderId = "";
 let closeOrigClientOrderId = "";
