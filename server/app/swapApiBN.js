@@ -622,9 +622,9 @@ function getUUID() {
 }
 
 const queryLatestOpenOrders = async () => {
-  const params = {symbol: BN_SYMBOL, limit: 30};
+  const params = {symbol: BN_SYMBOL};
   const orders = await cAuthClientBN.swap.allOrders(params);
-  // orders.reverse();
+  orders.reverse();
   console.log(orders, orders.length);
   const latestLongOrder = orders.find(
     (item) =>

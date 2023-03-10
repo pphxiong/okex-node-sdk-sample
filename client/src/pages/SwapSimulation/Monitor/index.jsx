@@ -868,7 +868,7 @@ export default (props) => {
 
   return (
     <Spin spinning={pageLoading}>
-      <iframe src="https://api.binance.com" width="1000" height="800" />
+      {/* <iframe src="https://api.binance.com" width="1000" height="800" /> */}
       <Card title="概况">
         <Row>
           年份：
