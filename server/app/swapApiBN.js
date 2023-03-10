@@ -159,9 +159,9 @@ const checkDeal = async (data) => {
 
     const [latestLongOrder, latestShortOrder] = await queryLatestOpenOrders();
     const isLatestLongWin =
-      Number(mark_price) > Math.abs(Number(latestLongOrder.entryPrice));
+      Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice));
     const isLatestShortWin =
-      Number(mark_price) < Math.abs(Number(latestShortOrder.entryPrice));
+      Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice));
 
     const MAIN_OPEN_LONG_CONDITION1 =
       CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION;
@@ -621,7 +621,6 @@ function getUUID() {
 const queryLatestOpenOrders = async () => {
   const params = { symbol: BN_SYMBOL, limit: 30 };
   const orders = await cAuthClientBN.swap.allOrders(params);
-  console.log(orders);
   orders.reverse();
   const latestLongOrder = orders.find(
     (item) =>
