@@ -158,13 +158,14 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].DN);
 
     const result = await queryLatestOpenOrders();
-    console.log(result);
     const [latestLongOrder, latestShortOrder] = result;
 
-    const isLatestLongWin =
-      Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice));
-    const isLatestShortWin =
-      Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice));
+    const isLatestLongWin = latestLongOrder
+      ? Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice))
+      : true;
+    const isLatestShortWin = latestShortOrder
+      ? Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice))
+      : true;
 
     const MAIN_OPEN_LONG_CONDITION1 =
       CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION;
@@ -622,9 +623,7 @@ function getUUID() {
 }
 
 const queryLatestOpenOrders = async () => {
-  const endTime = moment().valueOf();
-  const startTime = moment().subtract(10, 'day').valueOf();
-  const params = {symbol: BN_SYMBOL, limit: 30, timestamp: endTime};
+  const params = {symbol: BN_SYMBOL, limit: 30};
   const orders = await cAuthClientBN.swap.allOrders(params);
   orders.reverse();
   console.log(orders, orders.length);
