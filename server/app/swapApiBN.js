@@ -624,7 +624,7 @@ function getUUID() {
 const queryLatestOpenOrders = async () => {
   const endTime = moment().valueOf();
   const startTime = moment().subtract(10, 'day').valueOf();
-  const params = {symbol: BN_SYMBOL, limit: 30, startTime, endTime};
+  const params = {symbol: BN_SYMBOL, limit: 30, timestamp: endTime};
   const orders = await cAuthClientBN.swap.allOrders(params);
   orders.reverse();
   console.log(orders, orders.length);
