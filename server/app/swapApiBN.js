@@ -133,6 +133,18 @@ const checkDeal = async (data) => {
       maxWinRatio = Math.max(maxWinRatio, shortRatio);
     }
 
+      let totalRatio = 0;
+    if (longHolding && !shortHolding) {
+      totalRatio = longRatio;
+    } else if (!longHolding && shortHolding) {
+      totalRatio = shortRatio;
+    } else if (longHolding && shortHolding) {
+      totalRatio =
+        (longRatio * Math.abs(longHolding.positionAmt) +
+          shortRatio * Math.abs(shortHolding.positionAmt)) /
+        (Math.abs(longHolding.positionAmt) +
+          Math.abs(shortHolding.positionAmt));
+
     const CENTER_CROSS_LONG_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].MA) &&
@@ -174,10 +186,10 @@ const checkDeal = async (data) => {
       CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_LONG_CONDITION && isLatestLongWin;
+      longHolding && CENTER_CROSS_LONG_CONDITION && (isLatestLongWin || totalRatio > 0);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_SHORT_CONDITION && isLatestShortWin;
+      shortHolding && CENTER_CROSS_SHORT_CONDITION && (isLatestShortWin || totalRatio > 0);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
