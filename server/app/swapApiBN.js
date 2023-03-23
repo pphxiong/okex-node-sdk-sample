@@ -5,7 +5,7 @@ const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "1h";
-const INIT_POSITION = 0.1;
+const INIT_POSITION = 0.4;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -170,6 +170,22 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].DN);
 
+    const CONVERSE_UP_CONDITION =
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
+
+    const CONVERSE_LOW_CONDITION =
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
+
     const result = await queryLatestOpenOrders();
     const [latestLongOrder, latestShortOrder] = result;
 
@@ -181,19 +197,19 @@ const checkDeal = async (data) => {
       : true;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION;
+      (CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION) && longRatio <= 0;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION;
+      (CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION) && shortRatio <= 0;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
-      CENTER_CROSS_LONG_CONDITION &&
+      (CENTER_CROSS_LONG_CONDITION || CONVERSE_UP_CONDITION) &&
       (isLatestLongWin || totalRatio > 0);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
-      CENTER_CROSS_SHORT_CONDITION &&
+      (CENTER_CROSS_SHORT_CONDITION || CONVERSE_LOW_CONDITION) &&
       (isLatestShortWin || totalRatio > 0);
 
     const MAIN_OPEN_LONG_CONDITION2 =
