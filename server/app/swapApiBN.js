@@ -159,16 +159,16 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     const OUT_HIGH_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].UP) &&
+      // Number(macdList[macdList.length - 2].close) <
+      //   Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].UP);
+      Number(bollList[bollList.length - 1].UP);
 
     const OUT_LOW_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].DN) &&
+      // Number(macdList[macdList.length - 2].close) >
+      //   Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].DN);
+      Number(bollList[bollList.length - 1].DN);
 
     const CONVERSE_UP_CONDITION =
       Number(macdList[macdList.length - 2].close) >
@@ -186,31 +186,25 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
         Number(bollList[bollList.length - 1].MA);
 
-    const result = await queryLatestOpenOrders();
-    const [latestLongOrder, latestShortOrder] = result;
+    // const result = await queryLatestOpenOrders();
+    // const [latestLongOrder, latestShortOrder] = result;
 
-    const isLatestLongWin = latestLongOrder
-      ? Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice))
-      : true;
-    const isLatestShortWin = latestShortOrder
-      ? Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice))
-      : true;
+    // const isLatestLongWin = latestLongOrder
+    //   ? Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice))
+    //   : true;
+    // const isLatestShortWin = latestShortOrder
+    //   ? Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice))
+    //   : true;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      (CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION) && longRatio <= 0;
+    const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      (CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION) && shortRatio <= 0;
+    const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding &&
-      (CENTER_CROSS_LONG_CONDITION || CONVERSE_UP_CONDITION) &&
-      (isLatestLongWin || totalRatio > 0);
+      longHolding && OUT_HIGH_CONDITION && totalRatio > 0;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding &&
-      (CENTER_CROSS_SHORT_CONDITION || CONVERSE_LOW_CONDITION) &&
-      (isLatestShortWin || totalRatio > 0);
+      shortHolding && OUT_LOW_CONDITION && totalRatio > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -408,6 +402,9 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
+        if (shortHolding) {
+          openPositionAmt = 2 * INIT_POSITION;
+        }
         // if (longHolding) {
         //   const curIndex = fiList.findIndex(
         //     (positionAmt) => positionAmt == Math.abs(longHolding.positionAmt)
@@ -447,6 +444,9 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
+        if (longHolding) {
+          openPositionAmt = 2 * INIT_POSITION;
+        }
         // if (shortHolding) {
         //   const curIndex = fiList.findIndex(
         //     (positionAmt) => positionAmt == Math.abs(shortHolding.positionAmt)
@@ -742,8 +742,8 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 const closePosition = async (holding, isCloseAll = false, avail) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
-  // position = Math.abs(Number(holding.positionAmt));
-  position = INIT_POSITION;
+  position = Math.abs(Number(holding.positionAmt));
+  // position = INIT_POSITION;
   // if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
 
   // if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
