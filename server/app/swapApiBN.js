@@ -297,8 +297,6 @@ const checkDeal = async (data) => {
       "openShortCondition",
       openShortCondition
     );
-    console.log("latestLongOrder", latestLongOrder);
-    console.log("latestShortOrder", latestShortOrder);
     console.log("************************************");
 
     const patchPosition = async (holding, direction) => {
