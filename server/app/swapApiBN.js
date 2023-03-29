@@ -5,7 +5,7 @@ const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "1h";
-const INIT_POSITION = 0.1;
+const INIT_POSITION = 0.2;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -200,11 +200,19 @@ const checkDeal = async (data) => {
 
     const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
+    let MAIN_CLOSE_LONG_CONDITION1 =
       longHolding && OUT_HIGH_CONDITION && totalRatio > 0;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
+    let MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding && OUT_LOW_CONDITION && totalRatio > 0;
+
+    if (
+      (avail < 2 * INIT_POSITION && MAIN_OPEN_LONG_CONDITION1) ||
+      MAIN_OPEN_LONG_CONDITION1
+    ) {
+      MAIN_CLOSE_LONG_CONDITION1 = true;
+      MAIN_CLOSE_SHORT_CONDITION1 = true;
+    }
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -417,7 +425,7 @@ const checkDeal = async (data) => {
         //     openPositionAmt = INIT_POSITION * 4;
         //   }
         // }
-        if (isFiveM && avail > openPositionAmt) {
+        if (isFiveM /* && avail >= openPositionAmt */) {
           await openPosition(
             {
               position: openPositionAmt,
@@ -459,7 +467,7 @@ const checkDeal = async (data) => {
         //     openPositionAmt = INIT_POSITION * 4;
         //   }
         // }
-        if (isFiveM && avail > openPositionAmt) {
+        if (isFiveM /* && avail >= openPositionAmt */) {
           await openPosition(
             {
               position: openPositionAmt,
