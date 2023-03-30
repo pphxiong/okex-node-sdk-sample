@@ -207,8 +207,8 @@ const checkDeal = async (data) => {
       shortHolding && OUT_LOW_CONDITION && totalRatio > 0;
 
     if (
-      (avail < 2 * INIT_POSITION && MAIN_OPEN_LONG_CONDITION1) ||
-      MAIN_OPEN_LONG_CONDITION1
+      avail < 2 * INIT_POSITION &&
+      (MAIN_OPEN_LONG_CONDITION1 || MAIN_OPEN_LONG_CONDITION1)
     ) {
       MAIN_CLOSE_LONG_CONDITION1 = true;
       MAIN_CLOSE_SHORT_CONDITION1 = true;
