@@ -1095,7 +1095,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
           const entryPrice = longHolding ? longHolding.entryPrice : 0;
-          // const positionAmt = longHolding.positionAmt - closePositionAmt;
+          const positionAmt = longHolding.positionAmt - closePositionAmt;
 
           const dealDetail = {
             side: "CLOSE",
