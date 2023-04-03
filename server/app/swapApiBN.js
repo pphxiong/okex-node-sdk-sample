@@ -4,7 +4,7 @@ const fs = require("fs");
 const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "15m";
+const DEFAULT_INTERVAL = "1h";
 const INIT_POSITION = 1.5;
 let MODE = 1;
 
@@ -204,18 +204,26 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 1].close) <
       Number(macdList[macdList.length - 1].open);
 
-    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && LAST_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      !longHolding && CENTER_CROSS_LONG_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LAST_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LAST_SHORT_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      longHolding && CENTER_CROSS_SHORT_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LAST_LONG_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      shortHolding && CENTER_CROSS_LONG_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION2 = !longHolding && LAST_SHORT_CONDITION;
-    const MAIN_OPEN_SHORT_CONDITION2 = !shortHolding && LAST_LONG_CONDITION;
-    const MAIN_CLOSE_LONG_CONDITION2 = longHolding && LAST_LONG_CONDITION;
-    const MAIN_CLOSE_SHORT_CONDITION2 = shortHolding && LAST_SHORT_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION2 =
+      !longHolding && CENTER_CROSS_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION2 =
+      !shortHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION2 =
+      longHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION2 =
+      shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     let openLongCondition =
       MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
