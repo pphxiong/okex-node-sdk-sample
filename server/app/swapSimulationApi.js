@@ -907,10 +907,10 @@ const checkDeal = async (data, isAutoReset = true) => {
       !shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION && longRatio > 0;
+      longHolding && CENTER_CROSS_SHORT_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION && shortRatio > 0;
+      shortHolding && CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -1098,7 +1098,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
-          const entryPrice = longHolding ? longHolding.entryPrice : 0;
+          const entryPrice = Number(mark_price);
           const positionAmt = longHolding.positionAmt - closePositionAmt;
 
           const dealDetail = {
@@ -1175,7 +1175,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           totalCapital += currentProfit;
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
-          const entryPrice = shortHolding ? shortHolding.entryPrice : 0;
+          const entryPrice = Number(mark_price);
           const positionAmt = shortHolding.positionAmt - closePositionAmt;
 
           const dealDetail = {
