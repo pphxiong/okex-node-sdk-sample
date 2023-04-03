@@ -4,7 +4,7 @@ const fs = require("fs");
 const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "1h";
+const DEFAULT_INTERVAL = "15m";
 const INIT_POSITION = 1.5;
 let MODE = 1;
 
@@ -264,9 +264,10 @@ const checkDeal = async (data) => {
       "minute"
     );
     const isFiveM =
-      minuteDiff < 80 &&
-      minuteList.includes(lastMinuteCharacter) &&
-      !secondList.includes(lastSecondCharacter);
+      true ||
+      (minuteDiff < 80 &&
+        minuteList.includes(lastMinuteCharacter) &&
+        !secondList.includes(lastSecondCharacter));
 
     // if (isFiveM && avail < INIT_POSITION * NEW_POSITION_RATIO) {
     //   if (openLongCondition) {
