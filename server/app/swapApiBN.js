@@ -218,7 +218,7 @@ const checkDeal = async (data) => {
       longHolding && (OUT_HIGH_CONDITION || OUT_LOW_CONDITION);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      longHolding && (OUT_HIGH_CONDITION || OUT_LOW_CONDITION);
+      shortHolding && (OUT_HIGH_CONDITION || OUT_LOW_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
