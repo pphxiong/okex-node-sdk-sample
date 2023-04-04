@@ -933,10 +933,14 @@ const checkDeal = async (data, isAutoReset = true) => {
       BOLL_CONTINOUS_SHORT;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (OUT_HIGH_CONDITION || OUT_LOW_CONDITION);
+      longHolding &&
+      (OUT_HIGH_CONDITION || OUT_LOW_CONDITION) &&
+      totalRatio > 0;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (OUT_HIGH_CONDITION || OUT_LOW_CONDITION);
+      shortHolding &&
+      (OUT_HIGH_CONDITION || OUT_LOW_CONDITION) &&
+      totalRatio > 0;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
