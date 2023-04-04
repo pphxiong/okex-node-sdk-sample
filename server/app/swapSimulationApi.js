@@ -904,15 +904,33 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].open) <
         Number(bollList[bollList.length - 2].MA);
 
+    const BOLL_CONTINOUS_LONG =
+      Number(bollList[bollList.length - 3].MA) >
+        Number(bollList[bollList.length - 2].MA) &&
+      Number(bollList[bollList.length - 4].MA) >
+        Number(bollList[bollList.length - 3].MA) &&
+      Number(bollList[bollList.length - 5].MA) >
+        Number(bollList[bollList.length - 4].MA);
+
+    const BOLL_CONTINOUS_SHORT =
+      Number(bollList[bollList.length - 3].MA) <
+        Number(bollList[bollList.length - 2].MA) &&
+      Number(bollList[bollList.length - 4].MA) <
+        Number(bollList[bollList.length - 3].MA) &&
+      Number(bollList[bollList.length - 5].MA) <
+        Number(bollList[bollList.length - 4].MA);
+
     const MAIN_OPEN_LONG_CONDITION1 =
       !longHolding &&
       LAST_SECOND_LONG_CONDITION &&
-      CENTER_CROSS_SHORT_CONDITION;
+      CENTER_CROSS_SHORT_CONDITION &&
+      BOLL_CONTINOUS_LONG;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       !shortHolding &&
       LAST_SECOND_SHORT_CONDITION &&
-      CENTER_CROSS_LONG_CONDITION;
+      CENTER_CROSS_LONG_CONDITION &&
+      BOLL_CONTINOUS_SHORT;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding && (OUT_HIGH_CONDITION || OUT_LOW_CONDITION);
