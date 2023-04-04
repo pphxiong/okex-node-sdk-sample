@@ -52,7 +52,7 @@ let MODE2_NUM = 0;
 const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(2))
 );
-let INIT_POSITION = 3;
+let INIT_POSITION = 1;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -921,16 +921,22 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 4].MA);
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding && CENTER_CROSS_LONG_CONDITION;
+      !longHolding &&
+      (CONVERSE_LOW_CONDITION || (shortHolding && OUT_HIGH_CONDITION));
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
+      !shortHolding &&
+      (CONVERSE_UP_CONDITION || (longHolding && OUT_LOW_CONDITION));
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION);
+      longHolding &&
+      ((!shortHolding && CONVERSE_UP_CONDITION) ||
+        (shortHolding && CENTER_CROSS_LONG_CONDITION));
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (OUT_HIGH_CONDITION || CENTER_CROSS_LONG_CONDITION);
+      shortHolding &&
+      ((!longHolding && CONVERSE_LOW_CONDITION) ||
+        (longHolding && CENTER_CROSS_SHORT_CONDITION));
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
