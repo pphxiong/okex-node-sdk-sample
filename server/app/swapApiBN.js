@@ -421,9 +421,9 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
-        if (shortHolding && !closeShortCondition) {
-          openPositionAmt = 2 * INIT_POSITION;
-        }
+        // if (shortHolding && !closeShortCondition) {
+        //   openPositionAmt = 2 * INIT_POSITION;
+        // }
         // if (longHolding) {
         //   const curIndex = fiList.findIndex(
         //     (positionAmt) => positionAmt == Math.abs(longHolding.positionAmt)
@@ -463,9 +463,9 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
-        if (longHolding && !closeLongCondition) {
-          openPositionAmt = 2 * INIT_POSITION;
-        }
+        // if (longHolding && !closeLongCondition) {
+        //   openPositionAmt = 2 * INIT_POSITION;
+        // }
         // if (shortHolding) {
         //   const curIndex = fiList.findIndex(
         //     (positionAmt) => positionAmt == Math.abs(shortHolding.positionAmt)
