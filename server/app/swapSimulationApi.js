@@ -851,17 +851,19 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP) &&
-      Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].UP);
+    // &&
+    // Number(macdList[macdList.length - 1].close) >
+    //   Number(bollList[bollList.length - 1].MA);
 
     const CONVERSE_LOW_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN) &&
-      Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].DN);
+    // &&
+    // Number(macdList[macdList.length - 1].close) <
+    //   Number(bollList[bollList.length - 1].MA);
 
     const CLOSE_MORE_HIGH_CONDITION =
       Number(macdList[macdList.length - 1].close) >
@@ -1312,7 +1314,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + longPosition.positionAmt;
           let openPositionAmt = longHolding
-            ? Math.abs(longHolding.positionAmt)
+            ? Math.abs(longHolding.positionAmt) * 2
             : INIT_POSITION * 1;
           // if (shortHolding) {
           //   openPositionAmt = 2 * INIT_POSITION;
@@ -1398,7 +1400,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + shortPosition.positionAmt;
           let openPositionAmt = shortHolding
-            ? Math.abs(shortHolding.positionAmt)
+            ? Math.abs(shortHolding.positionAmt) * 2
             : INIT_POSITION * 1;
           // if (longHolding) {
           //   openPositionAmt = 2 * INIT_POSITION;
