@@ -1210,8 +1210,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             // openShortCondition = false;
           }
           if (shortRatio < 0) modeChange = true;
-          let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
-          // let closePositionAmt = INIT_POSITION;
+          // let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+          let closePositionAmt = INIT_POSITION;
           if (IS_CLOSE_ALL_POSITION /* || shortRatio > 0 */)
             closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           if (isForceDeal)
