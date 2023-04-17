@@ -953,13 +953,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       longHolding &&
       (CONVERSE_UP_CONDITION ||
         (OUT_LOW_CONDITION &&
-          Math.abs(longHolding.positionAmt) > INIT_POSITION * 3));
+          Math.abs(longHolding.positionAmt) >= INIT_POSITION * 3));
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
       (CONVERSE_LOW_CONDITION ||
         (OUT_HIGH_CONDITION &&
-          Math.abs(shortHolding.positionAmt) > INIT_POSITION * 3));
+          Math.abs(shortHolding.positionAmt) >= INIT_POSITION * 3));
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
