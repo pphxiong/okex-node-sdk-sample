@@ -53,7 +53,7 @@ const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(2))
 );
 let INIT_POSITION = 1;
-const MAX_OPEN_POSITION_RATIO = 1;
+const MAX_OPEN_POSITION_RATIO = 2;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -852,19 +852,17 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(macdList[macdList.length - 2].close) >
         Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].UP);
-    // &&
-    // Number(macdList[macdList.length - 1].close) >
-    //   Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].UP) &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
 
     const CONVERSE_LOW_CONDITION =
       Number(macdList[macdList.length - 2].close) <
         Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].DN);
-    // &&
-    // Number(macdList[macdList.length - 1].close) <
-    //   Number(bollList[bollList.length - 1].MA);
+        Number(bollList[bollList.length - 1].DN) &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
 
     const CLOSE_MORE_HIGH_CONDITION =
       Number(macdList[macdList.length - 1].close) >
@@ -1358,7 +1356,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(
             maxOpenPosition,
-            openPositionAmt,
+            longHolding
+              ? Math.abs(longHolding.positionAmt + openPositionAmt)
+              : openPositionAmt,
             longPosition.positionAmt || 0,
             shortPosition.positionAmt || 0
           );
@@ -1445,7 +1445,9 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(
             maxOpenPosition,
-            openPositionAmt,
+            shortHolding
+              ? Math.abs(shortHolding.positionAmt) + openPositionAmt
+              : openPositionAmt,
             longPosition.positionAmt || 0,
             shortPosition.positionAmt || 0
           );
