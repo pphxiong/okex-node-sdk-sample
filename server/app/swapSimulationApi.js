@@ -836,16 +836,16 @@ const checkDeal = async (data, isAutoReset = true) => {
         Number(bollList[bollList.length - 1].MA);
 
     const OUT_HIGH_CONDITION =
-      Number(macdList[macdList.length - 2].close) <
-        Number(bollList[bollList.length - 2].UP) &&
+      // Number(macdList[macdList.length - 2].close) <
+      //   Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
-        Number(bollList[bollList.length - 1].UP);
+      Number(bollList[bollList.length - 1].UP);
 
     const OUT_LOW_CONDITION =
-      Number(macdList[macdList.length - 2].close) >
-        Number(bollList[bollList.length - 2].DN) &&
+      // Number(macdList[macdList.length - 2].close) >
+      //   Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) <
-        Number(bollList[bollList.length - 1].DN);
+      Number(bollList[bollList.length - 1].DN);
 
     const CONVERSE_UP_CONDITION =
       Number(macdList[macdList.length - 2].close) >
@@ -1314,7 +1314,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + longPosition.positionAmt;
           let openPositionAmt = longHolding
-            ? Math.abs(longHolding.positionAmt) * 2
+            ? Math.abs(longHolding.positionAmt) * 3
             : INIT_POSITION * 1;
           // if (shortHolding) {
           //   openPositionAmt = 2 * INIT_POSITION;
@@ -1401,7 +1401,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + shortPosition.positionAmt;
           let openPositionAmt = shortHolding
-            ? Math.abs(shortHolding.positionAmt) * 2
+            ? Math.abs(shortHolding.positionAmt) * 3
             : INIT_POSITION * 1;
           // if (longHolding) {
           //   openPositionAmt = 2 * INIT_POSITION;
