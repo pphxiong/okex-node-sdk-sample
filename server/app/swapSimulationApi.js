@@ -1339,6 +1339,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(
             maxOpenPosition,
+            openPositionAmt,
             longPosition.positionAmt || 0,
             shortPosition.positionAmt || 0
           );
@@ -1425,6 +1426,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(
             maxOpenPosition,
+            openPositionAmt,
             longPosition.positionAmt || 0,
             shortPosition.positionAmt || 0
           );
