@@ -6,7 +6,7 @@ const customAuthClientBN = require("./customAuthClientBN");
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "1h";
 const INIT_POSITION = 1;
-const MAX_OPEN_POSITION_RATIO = 3;
+const MAX_OPEN_POSITION_RATIO = 2;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -160,16 +160,16 @@ const checkDeal = async (data) => {
         Number(bollList[bollList.length - 1].MA);
 
     const OUT_HIGH_CONDITION =
-      // Number(macdList[macdList.length - 2].close) <
-      //   Number(bollList[bollList.length - 2].UP) &&
+      Number(macdList[macdList.length - 2].close) <
+        Number(bollList[bollList.length - 2].UP) &&
       Number(macdList[macdList.length - 1].close) >
-      Number(bollList[bollList.length - 1].UP);
+        Number(bollList[bollList.length - 1].UP);
 
     const OUT_LOW_CONDITION =
-      // Number(macdList[macdList.length - 2].close) >
-      //   Number(bollList[bollList.length - 2].DN) &&
+      Number(macdList[macdList.length - 2].close) >
+        Number(bollList[bollList.length - 2].DN) &&
       Number(macdList[macdList.length - 1].close) <
-      Number(bollList[bollList.length - 1].DN);
+        Number(bollList[bollList.length - 1].DN);
 
     const CONVERSE_UP_CONDITION =
       Number(macdList[macdList.length - 2].close) >
