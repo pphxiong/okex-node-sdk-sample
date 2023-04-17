@@ -6,7 +6,7 @@ const customAuthClientBN = require("./customAuthClientBN");
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "1h";
 const INIT_POSITION = 1;
-const MAX_OPEN_POSITION_RATIO = 1;
+const MAX_OPEN_POSITION_RATIO = 3;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
