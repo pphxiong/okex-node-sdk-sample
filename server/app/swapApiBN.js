@@ -770,8 +770,8 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 const closePosition = async (holding, isCloseAll = false, avail) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
-  position = Math.abs(Number(holding.positionAmt));
-  // position = INIT_POSITION;
+  // position = Math.abs(Number(holding.positionAmt));
+  position = INIT_POSITION;
   // if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
 
   // if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
