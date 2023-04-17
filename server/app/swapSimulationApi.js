@@ -1314,7 +1314,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + longPosition.positionAmt;
           let openPositionAmt = longHolding
-            ? Math.abs(longHolding.positionAmt) * 3
+            ? Math.abs(longHolding.positionAmt)
             : INIT_POSITION * 1;
           // if (shortHolding) {
           //   openPositionAmt = 2 * INIT_POSITION;
@@ -1401,7 +1401,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           // let openPositionAmt = INIT_POSITION + shortPosition.positionAmt;
           let openPositionAmt = shortHolding
-            ? Math.abs(shortHolding.positionAmt) * 3
+            ? Math.abs(shortHolding.positionAmt)
             : INIT_POSITION * 1;
           // if (longHolding) {
           //   openPositionAmt = 2 * INIT_POSITION;
