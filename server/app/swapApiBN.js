@@ -4,7 +4,7 @@ const fs = require("fs");
 const customAuthClientBN = require("./customAuthClientBN");
 
 const BN_SYMBOL = "ETHUSDT";
-const DEFAULT_INTERVAL = "1h";
+const DEFAULT_INTERVAL = "15m";
 const INIT_POSITION = 0.5;
 const MAX_OPEN_POSITION_RATIO = 2;
 let MODE = 1;
@@ -284,14 +284,14 @@ const checkDeal = async (data) => {
     const hmsArr = currentTime.split(" ")[1].split(":");
     const lastMinuteCharacter = hmsArr[1];
     const lastSecondCharacter = hmsArr[2];
-    const minuteList = ["0", "00"];
+    const minuteList = ["0", "00", "15", "30", "45"];
     const secondList = ["0", "00"];
     const minuteDiff = moment(currentTime).diff(
       moment(macdList[macdList.length - 1].time),
       "minute"
     );
     const isFiveM =
-      minuteDiff < 80 &&
+      minuteDiff < 20 &&
       minuteList.includes(lastMinuteCharacter) &&
       !secondList.includes(lastSecondCharacter);
 
