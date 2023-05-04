@@ -1193,10 +1193,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           longHolding.positionAmt = positionAmt;
           longPosition.entryPrice = entryPrice;
           longPosition.positionAmt = positionAmt;
-          if (!positionAmt) {
-            longHolding = null;
-            longPosition = null;
-          }
+
           maxWinRatio = 0;
           longPatchNum = 0;
         }
@@ -1283,10 +1280,6 @@ const checkDeal = async (data, isAutoReset = true) => {
           shortHolding.positionAmt = positionAmt;
           shortPosition.entryPrice = entryPrice;
           shortPosition.positionAmt = positionAmt;
-          if (!positionAmt) {
-            shortHolding = null;
-            shortPosition = null;
-          }
 
           maxWinRatio = 0;
           shortPatchNum = 0;
