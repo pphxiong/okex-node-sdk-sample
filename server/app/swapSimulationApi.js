@@ -1159,10 +1159,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           const positionAmt = longHolding.positionAmt - closePositionAmt;
           const entryPrice = positionAmt
-            ? (Math.abs(Number(longHolding.positionAmt)) *
-                longHolding.entryPrice +
-                longRatio * closePositionAmt * LEVERAGE -
-                closePositionAmt * Number(mark_price)) /
+            ? (Math.abs(
+                Number(longHolding.positionAmt) -
+                  closePositionAmt * (1 + longRatio)
+              ) *
+                Number(mark_price)) /
               positionAmt
             : 0;
 
@@ -1251,10 +1252,11 @@ const checkDeal = async (data, isAutoReset = true) => {
           const positionAmt =
             Math.abs(Number(shortHolding.positionAmt)) - closePositionAmt;
           const entryPrice = positionAmt
-            ? (Math.abs(Number(shortHolding.positionAmt)) *
-                shortHolding.entryPrice -
-                shortRatio * closePositionAmt * LEVERAGE -
-                closePositionAmt * Number(mark_price)) /
+            ? (Math.abs(
+                Number(shortHolding.positionAmt) -
+                  closePositionAmt * (1 + shortRatio)
+              ) *
+                Number(mark_price)) /
               positionAmt
             : 0;
 
