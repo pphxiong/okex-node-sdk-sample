@@ -1157,11 +1157,20 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           const closePrice = Number(mark_price);
 
+          const positionAmt = longHolding.positionAmt - closePositionAmt;
+          const entryPrice = positionAmt
+            ? (longHolding.positionAmt * longHolding.entryPrice -
+                closePositionAmt * Number(mark_price)) /
+              positionAmt
+            : 0;
+
           const dealDetail = {
             side: "CLOSE",
             positionSide: "LONG",
             closePrice,
-            positionAmt: closePositionAmt,
+            closePositionAmt,
+            entryPrice,
+            positionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
             totalProfit,
@@ -1181,13 +1190,6 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-
-          const positionAmt = longHolding.positionAmt - closePositionAmt;
-          const entryPrice = positionAmt
-            ? (longHolding.positionAmt * longHolding.entryPrice -
-                closePositionAmt * Number(mark_price)) /
-              positionAmt
-            : 0;
 
           longHolding.entryPrice = entryPrice;
           longHolding.positionAmt = positionAmt;
@@ -1244,11 +1246,22 @@ const checkDeal = async (data, isAutoReset = true) => {
 
           const closePrice = Number(mark_price);
 
+          const positionAmt =
+            Math.abs(Number(shortHolding.positionAmt)) - closePositionAmt;
+          const entryPrice = positionAmt
+            ? (Math.abs(Number(shortHolding.positionAmt)) *
+                shortHolding.entryPrice -
+                closePositionAmt * Number(mark_price)) /
+              positionAmt
+            : 0;
+
           const dealDetail = {
             side: "CLOSE",
             positionSide: "SHORT",
             closePrice,
-            positionAmt: closePositionAmt,
+            closePositionAmt,
+            entryPrice,
+            positionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
             totalProfit,
@@ -1268,15 +1281,6 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-
-          const positionAmt =
-            Math.abs(Number(shortHolding.positionAmt)) - closePositionAmt;
-          const entryPrice = positionAmt
-            ? (Math.abs(Number(shortHolding.positionAmt)) *
-                shortHolding.entryPrice -
-                closePositionAmt * Number(mark_price)) /
-              positionAmt
-            : 0;
 
           shortHolding.entryPrice = entryPrice;
           shortHolding.positionAmt = positionAmt;
