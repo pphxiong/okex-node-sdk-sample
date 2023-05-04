@@ -1483,11 +1483,13 @@ const checkDeal = async (data, isAutoReset = true) => {
             shortPosition.positionAmt || 0
           );
           const averagePrice =
-            (shortPosition.entryPrice * shortPosition.positionAmt +
+            (shortPosition.entryPrice *
+              Math.abs(Number(shortPosition.positionAmt)) +
               openPositionAmt * mark_price) /
-            (shortPosition.positionAmt + openPositionAmt);
+            (Math.abs(Number(shortPosition.positionAmt)) + openPositionAmt);
 
-          const totalPositionAmt = shortPosition.positionAmt + openPositionAmt;
+          const totalPositionAmt =
+            Math.abs(Number(shortPosition.positionAmt)) + openPositionAmt;
 
           shortPosition = {
             positionSide: "SHORT",
