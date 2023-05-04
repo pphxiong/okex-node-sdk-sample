@@ -1269,9 +1269,11 @@ const checkDeal = async (data, isAutoReset = true) => {
             };
           }
 
-          const positionAmt = shortHolding.positionAmt - closePositionAmt;
+          const positionAmt =
+            Math.abs(Number(shortHolding.positionAmt)) - closePositionAmt;
           const entryPrice = positionAmt
-            ? (shortHolding.positionAmt * shortHolding.entryPrice -
+            ? (Math.abs(Number(shortHolding.positionAmt)) *
+                shortHolding.entryPrice -
                 closePositionAmt * Number(mark_price)) /
               positionAmt
             : 0;
@@ -1489,7 +1491,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             side: "OPEN",
             positionSide: "SHORT",
             leverage: LEVERAGE,
-            entryPrice: averagePrice,
+            entryPrice: mark_price,
             positionAmt: openPositionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
