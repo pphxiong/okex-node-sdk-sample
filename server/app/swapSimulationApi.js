@@ -759,14 +759,14 @@ function fibonacci(n) {
 const checkDeal = async (data, isAutoReset = true) => {
   data.bollList = data.bollList || [];
 
-  for (let i = 0; i < data.bollList.length - 9; i++) {
+  for (let i = 0; i < data.bollList.length - 19; i++) {
     checkByStep(
       {
-        macdList: data.macdList.slice(i, i + 10),
-        rsiList: data.rsiList.slice(i, i + 10),
-        bollList: data.bollList.slice(i, i + 10),
+        macdList: data.macdList.slice(i, i + 20),
+        rsiList: data.rsiList.slice(i, i + 20),
+        bollList: data.bollList.slice(i, i + 20),
       },
-      isAutoReset && i == data.macdList.length - 10
+      isAutoReset && i == data.macdList.length - 20
     );
   }
 
@@ -774,7 +774,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     // isForceDeal = false;
     const { macdList, rsiList, bollList } = data;
 
-    macdList.slice(-3);
+    // macdList.slice(-3);
     const mark_price = macdList[macdList.length - 1].close;
     currentMarketPrice = mark_price;
 
@@ -939,29 +939,30 @@ const checkDeal = async (data, isAutoReset = true) => {
     //   ((!longHolding && CONVERSE_LOW_CONDITION) ||
     //     (longHolding && CENTER_CROSS_LONG_CONDITION));
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      CONVERSE_LOW_CONDITION &&
-      (!longHolding ||
-        Math.abs(longHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO);
-    // (shortHolding &&
-    //   OUT_HIGH_CONDITION &&
-    //   Math.abs(shortHolding.positionAmt) >
-    //     INIT_POSITION * MAX_OPEN_POSITION_RATIO);
+    const latestMACD = macdList[macdList.length - 1];
+    const HIGH_20_CONDITION = macdList.every(
+      (item) => latestMACD.close > item.close
+    );
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      CONVERSE_UP_CONDITION &&
-      (!shortHolding ||
-        Math.abs(shortHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO);
-    // (longHolding &&
-    //   OUT_LOW_CONDITION &&
-    //   Math.abs(longHolding.positionAmt) >
-    //     INIT_POSITION * MAX_OPEN_POSITION_RATIO);
+    const LOW_20_CONDITION = macdList.every(
+      (item) => latestMACD.close < item.close
+    );
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_UP_CONDITION;
+    const HIGH_10_CONDITION = macdList.every(
+      (item) => latestMACD.close > item.close
+    );
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_LOW_CONDITION;
+    const LOW_10_CONDITION = macdList.every(
+      (item) => latestMACD.close < item.close
+    );
+
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && HIGH_20_CONDITION;
+
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LOW_20_CONDITION;
+
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LOW_10_CONDITION;
+
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && HIGH_10_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
