@@ -950,13 +950,13 @@ const checkDeal = async (data, isAutoReset = true) => {
       (item) => latestMACD.close <= item.close
     );
 
-    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && LOW_20_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && LOW_10_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && HIGH_20_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && HIGH_10_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && HIGH_10_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && HIGH_20_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LOW_10_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LOW_20_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
