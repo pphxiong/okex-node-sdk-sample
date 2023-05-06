@@ -691,8 +691,8 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     const list = data;
     totalProfit = 0;
     // currentPosition = {};
-    // longPosition = { entryPrice: 0, positionAmt: 0 };
-    // shortPosition = { entryPrice: 0, positionAmt: 0 };
+    longPosition = { entryPrice: 0, positionAmt: 0 };
+    shortPosition = { entryPrice: 0, positionAmt: 0 };
     dealDetailList = [];
     // mostLoss = INIT_MOST_LOSS;
     maxWinRatio = 0;
@@ -1009,10 +1009,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     );
     console.log("************************************");
 
-    // if (isForceDeal) {
-    //   closeLongCondition = true;
-    //   closeShortCondition = true;
-    // }
+    if (isForceDeal) {
+      closeLongCondition = true;
+      closeShortCondition = true;
+    }
 
     // IS_CLOSE_ALL_POSITION = false;
     // if (isForceDeal) {
