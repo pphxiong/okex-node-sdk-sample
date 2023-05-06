@@ -941,19 +941,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const latestMACD = macdList[macdList.length - 1];
     const HIGH_20_CONDITION = macdList.every(
-      (item) => latestMACD.close > item.close
+      (item) => latestMACD.close >= item.close
     );
 
     const LOW_20_CONDITION = macdList.every(
-      (item) => latestMACD.close < item.close
+      (item) => latestMACD.close <= item.close
     );
 
     const HIGH_10_CONDITION = macdList.every(
-      (item) => latestMACD.close > item.close
+      (item) => latestMACD.close >= item.close
     );
 
     const LOW_10_CONDITION = macdList.every(
-      (item) => latestMACD.close < item.close
+      (item) => latestMACD.close <= item.close
     );
 
     const MAIN_OPEN_LONG_CONDITION1 = !longHolding && HIGH_20_CONDITION;
