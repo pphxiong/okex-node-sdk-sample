@@ -958,21 +958,41 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     // const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && HIGH_10_CONDITION;
 
+    // const MAIN_OPEN_LONG_CONDITION1 =
+    //   CONVERSE_LOW_CONDITION &&
+    //   (!longHolding ||
+    //     Math.abs(longHolding.positionAmt) <=
+    //       INIT_POSITION * MAX_OPEN_POSITION_RATIO);
+
+    // const MAIN_OPEN_SHORT_CONDITION1 =
+    //   CONVERSE_UP_CONDITION &&
+    //   (!shortHolding ||
+    //     Math.abs(shortHolding.positionAmt) <=
+    //       INIT_POSITION * MAX_OPEN_POSITION_RATIO);
+
+    // const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_UP_CONDITION;
+
+    // const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_LOW_CONDITION;
+
     const MAIN_OPEN_LONG_CONDITION1 =
-      CONVERSE_LOW_CONDITION &&
-      (!longHolding ||
-        Math.abs(longHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO);
+      !longHolding &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CONVERSE_UP_CONDITION &&
-      (!shortHolding ||
-        Math.abs(shortHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO);
+      !shortHolding &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].DN);
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_UP_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      longHolding &&
+      Number(macdList[macdList.length - 1].close) <
+        Number(bollList[bollList.length - 1].MA);
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_LOW_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      shortHolding &&
+      Number(macdList[macdList.length - 1].close) >
+        Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
