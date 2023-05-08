@@ -759,14 +759,14 @@ function fibonacci(n) {
 const checkDeal = async (data, isAutoReset = true) => {
   data.bollList = data.bollList || [];
 
-  for (let i = 0; i < data.bollList.length - 19; i++) {
+  for (let i = 0; i < data.bollList.length - 9; i++) {
     checkByStep(
       {
-        macdList: data.macdList.slice(i, i + 20),
-        rsiList: data.rsiList.slice(i, i + 20),
-        bollList: data.bollList.slice(i, i + 20),
+        macdList: data.macdList.slice(i, i + 10),
+        rsiList: data.rsiList.slice(i, i + 10),
+        bollList: data.bollList.slice(i, i + 10),
       },
-      isAutoReset && i == data.macdList.length - 20
+      isAutoReset && i == data.macdList.length - 10
     );
   }
 
@@ -976,22 +976,22 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       !longHolding &&
-      Number(macdList[macdList.length - 1].close) >
+      Number(macdList[macdList.length - 1].high) >
         Number(bollList[bollList.length - 1].UP);
 
     const MAIN_OPEN_SHORT_CONDITION1 =
       !shortHolding &&
-      Number(macdList[macdList.length - 1].close) <
+      Number(macdList[macdList.length - 1].low) <
         Number(bollList[bollList.length - 1].DN);
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
-      Number(macdList[macdList.length - 1].close) <
+      Number(macdList[macdList.length - 1].low) <
         Number(bollList[bollList.length - 1].MA);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
-      Number(macdList[macdList.length - 1].close) >
+      Number(macdList[macdList.length - 1].high) >
         Number(bollList[bollList.length - 1].MA);
 
     const MAIN_OPEN_LONG_CONDITION2 =
