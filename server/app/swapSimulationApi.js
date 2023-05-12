@@ -921,17 +921,20 @@ const checkDeal = async (data, isAutoReset = true) => {
       Number(bollList[bollList.length - 5].MA) <
         Number(bollList[bollList.length - 4].MA);
 
-    // const MAIN_OPEN_LONG_CONDITION1 =
-    //   !longHolding && CENTER_CROSS_LONG_CONDITION;
+    const RSI_UP = rsiList[rsiList.length - 1].RSI3 >= 50;
+    const RSI_DOWN = rsiList[rsiList.length - 1].RSI3 < 50;
 
-    // const MAIN_OPEN_SHORT_CONDITION1 =
-    //   !shortHolding && CENTER_CROSS_SHORT_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      !longHolding && CENTER_CROSS_LONG_CONDITION && RSI_UP;
 
-    // const MAIN_CLOSE_LONG_CONDITION1 =
-    //   longHolding && CENTER_CROSS_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      !shortHolding && CENTER_CROSS_SHORT_CONDITION && RSI_DOWN;
 
-    // const MAIN_CLOSE_SHORT_CONDITION1 =
-    //   shortHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      longHolding && CENTER_CROSS_SHORT_CONDITION && RSI_DOWN;
+
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      shortHolding && CENTER_CROSS_LONG_CONDITION && RSI_UP;
 
     // const latestMACD = macdList[macdList.length - 1];
     // const HIGH_20_CONDITION = macdList.every(
@@ -958,25 +961,21 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     // const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && HIGH_10_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      CONVERSE_LOW_CONDITION &&
-      (!longHolding ||
-        (Math.abs(longHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-          longRatio < -0.618));
+    // const MAIN_OPEN_LONG_CONDITION1 =
+    //   CONVERSE_LOW_CONDITION &&
+    //   (!longHolding ||
+    //     Math.abs(longHolding.positionAmt) <=
+    //       INIT_POSITION * MAX_OPEN_POSITION_RATIO);
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      CONVERSE_UP_CONDITION &&
-      (!shortHolding ||
-        (Math.abs(shortHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-          shortRatio < -0.618));
+    // const MAIN_OPEN_SHORT_CONDITION1 =
+    //   CONVERSE_UP_CONDITION &&
+    //   (!shortHolding ||
+    //     Math.abs(shortHolding.positionAmt) <=
+    //       INIT_POSITION * MAX_OPEN_POSITION_RATIO);
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CONVERSE_UP_CONDITION && longRatio > 0;
+    // const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_UP_CONDITION;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CONVERSE_LOW_CONDITION && shortRatio > 0;
+    // const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_LOW_CONDITION;
 
     // const MAIN_OPEN_LONG_CONDITION1 =
     //   CENTER_CROSS_LONG_CONDITION &&
