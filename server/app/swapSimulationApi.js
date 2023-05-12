@@ -925,16 +925,14 @@ const checkDeal = async (data, isAutoReset = true) => {
     const RSI_DOWN = rsiList[rsiList.length - 1].RSI3 < 50;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding && CENTER_CROSS_LONG_CONDITION && RSI_UP;
+      !longHolding && CENTER_CROSS_SHORT_CONDITION && RSI_UP;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding && CENTER_CROSS_SHORT_CONDITION && RSI_DOWN;
+      !shortHolding && CENTER_CROSS_LONG_CONDITION && RSI_DOWN;
 
-    const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION && RSI_DOWN;
+    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && RSI_DOWN;
 
-    const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION && RSI_UP;
+    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && RSI_UP;
 
     // const latestMACD = macdList[macdList.length - 1];
     // const HIGH_20_CONDITION = macdList.every(
