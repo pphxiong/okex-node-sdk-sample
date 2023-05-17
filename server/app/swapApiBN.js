@@ -6,7 +6,7 @@ const customAuthClientBN = require("./customAuthClientBN");
 const BN_SYMBOL = "ETHUSDT";
 const DEFAULT_INTERVAL = "15m";
 const INIT_POSITION = 0.5;
-const MAX_OPEN_POSITION_RATIO = 2;
+const MAX_OPEN_POSITION_RATIO = 3;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -209,29 +209,57 @@ const checkDeal = async (data) => {
       Number(macdList[macdList.length - 2].open) <
         Number(bollList[bollList.length - 2].MA);
 
+    const BATCH_LONG_OPEN_CONDITION =
+      !longHolding &&
+      shortHolding &&
+      Math.abs(shortHolding.positionAmt) >
+        INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+      OUT_HIGH_CONDITION;
+
+    const BATCH_SHORT_OPEN_CONDITION =
+      !shortHolding &&
+      longHolding &&
+      Math.abs(longHolding.positionAmt) >
+        INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+      OUT_LOW_CONDITION;
+
+    const BATCH_LONG_CLOSE_CONDITION =
+      longHolding &&
+      shortHolding &&
+      Math.abs(longHolding.positionAmt) >
+        INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+      Math.abs(shortHolding.positionAmt) >
+        INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+      CONVERSE_LOW_CONDITION;
+
+    const BATCH_SHORT_CLOSE_CONDITION =
+      longHolding &&
+      shortHolding &&
+      Math.abs(longHolding.positionAmt) >
+        INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+      Math.abs(shortHolding.positionAmt) >
+        INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+      CONVERSE_UP_CONDITION;
+
     const MAIN_OPEN_LONG_CONDITION1 =
-      CONVERSE_LOW_CONDITION &&
-      (!longHolding ||
-        Math.abs(longHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO ||
-        (shortHolding &&
-          OUT_HIGH_CONDITION &&
-          Math.abs(shortHolding.positionAmt) >
-            INIT_POSITION * MAX_OPEN_POSITION_RATIO));
+      (CONVERSE_LOW_CONDITION &&
+        (!longHolding ||
+          Math.abs(longHolding.positionAmt) <=
+            INIT_POSITION * MAX_OPEN_POSITION_RATIO)) ||
+      BATCH_LONG_OPEN_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      CONVERSE_UP_CONDITION &&
-      (!shortHolding ||
-        Math.abs(shortHolding.positionAmt) <=
-          INIT_POSITION * MAX_OPEN_POSITION_RATIO ||
-        (longHolding &&
-          OUT_LOW_CONDITION &&
-          Math.abs(longHolding.positionAmt) >
-            INIT_POSITION * MAX_OPEN_POSITION_RATIO));
+      (CONVERSE_UP_CONDITION &&
+        (!shortHolding ||
+          Math.abs(shortHolding.positionAmt) <=
+            INIT_POSITION * MAX_OPEN_POSITION_RATIO)) ||
+      BATCH_SHORT_OPEN_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_UP_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      longHolding && (CONVERSE_UP_CONDITION || BATCH_LONG_CLOSE_CONDITION);
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_LOW_CONDITION;
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      shortHolding && (CONVERSE_LOW_CONDITION || BATCH_SHORT_CLOSE_CONDITION);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -346,6 +374,8 @@ const checkDeal = async (data) => {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
           let closePositionAmt = Math.abs(Number(longHolding.positionAmt));
+          if (BATCH_LONG_CLOSE_CONDITION)
+            closePositionAmt = Math.abs(Number(longHolding.positionAmt));
           // const curIndex = fiList.findIndex(
           //   (positionAmt) =>
           //     positionAmt == Math.abs(Number(longHolding.positionAmt))
@@ -377,6 +407,8 @@ const checkDeal = async (data) => {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
           let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+          if (BATCH_SHORT_CLOSE_CONDITION)
+            closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           // const curIndex = fiList.findIndex(
           //   (positionAmt) =>
           //     positionAmt == Math.abs(Number(shortHolding.positionAmt))
@@ -427,6 +459,8 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
+        if (BATCH_LONG_OPEN_CONDITION)
+          openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
         // if (shortHolding && !closeShortCondition) {
         //   openPositionAmt = 2 * INIT_POSITION;
         // }
@@ -469,6 +503,8 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
+        if (BATCH_SHORT_OPEN_CONDITION)
+          openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
         // if (longHolding && !closeLongCondition) {
         //   openPositionAmt = 2 * INIT_POSITION;
         // }
@@ -768,7 +804,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
   let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
   // position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
   // position = Math.abs(Number(holding.positionAmt));
-  position = INIT_POSITION;
+  // position = INIT_POSITION;
   // if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
 
   // if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
