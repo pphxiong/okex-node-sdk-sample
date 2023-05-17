@@ -1200,7 +1200,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           let closePositionAmt = INIT_POSITION;
           // let closePositionAmt = longHolding.positionAmt;
           if (BATCH_LONG_CLOSE_CONDITION)
-            closePositionAmt = INIT_POSITION * MAX_OPEN_POSITION_RATIO;
+            closePositionAmt = longHolding.positionAmt;
           if (isForceDeal)
             // if (
             //   longHolding &&
@@ -1292,7 +1292,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           // let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           let closePositionAmt = INIT_POSITION;
           if (BATCH_SHORT_CLOSE_CONDITION)
-            closePositionAmt = INIT_POSITION * MAX_OPEN_POSITION_RATIO;
+            closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           // if (
           //   shortHolding &&
           //   Math.abs(shortHolding.positionAmt) >
@@ -1427,7 +1427,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           let openPositionAmt = INIT_POSITION;
           if (BATCH_LONG_OPEN_CONDITION)
-            openPositionAmt = INIT_POSITION * MAX_OPEN_POSITION_RATIO;
+            openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
           // let openPositionAmt = longHolding
           //   ? Math.abs(longHolding.positionAmt)
           //   : INIT_POSITION * 1;
@@ -1521,7 +1521,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           //   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
           let openPositionAmt = INIT_POSITION;
           if (BATCH_SHORT_OPEN_CONDITION)
-            openPositionAmt = INIT_POSITION * MAX_OPEN_POSITION_RATIO;
+            openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
           // let openPositionAmt = shortHolding
           //   ? Math.abs(shortHolding.positionAmt)
           //   : INIT_POSITION * 1;
