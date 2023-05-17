@@ -373,7 +373,7 @@ const checkDeal = async (data) => {
         if (longRatio < LOSS_MAX && false) {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
-          let closePositionAmt = Math.abs(Number(longHolding.positionAmt));
+          let closePositionAmt = INIT_POSITION;
           if (BATCH_LONG_CLOSE_CONDITION)
             closePositionAmt = Math.abs(Number(longHolding.positionAmt));
           // const curIndex = fiList.findIndex(
@@ -406,7 +406,7 @@ const checkDeal = async (data) => {
         if (shortRatio < LOSS_MAX && false) {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
-          let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+          let closePositionAmt = INIT_POSITION;
           if (BATCH_SHORT_CLOSE_CONDITION)
             closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           // const curIndex = fiList.findIndex(
