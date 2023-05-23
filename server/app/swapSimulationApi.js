@@ -1231,6 +1231,11 @@ const checkDeal = async (data, isAutoReset = true) => {
               positionAmt
             : 0;
 
+          longHolding.entryPrice = entryPrice;
+          longHolding.positionAmt = positionAmt;
+          longPosition.entryPrice = entryPrice;
+          longPosition.positionAmt = positionAmt;
+
           const dealDetail = {
             side: "CLOSE",
             positionSide: "LONG",
@@ -1249,6 +1254,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             bollList: bollList[bollList.length - 1],
             MODE,
             longRatio,
+            longPosition,
+            shortPosition,
           };
           dealDetailList.push(dealDetail);
           if (longRatio < mostLoss.profit) {
@@ -1257,11 +1264,6 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-
-          longHolding.entryPrice = entryPrice;
-          longHolding.positionAmt = positionAmt;
-          longPosition.entryPrice = entryPrice;
-          longPosition.positionAmt = positionAmt;
 
           maxWinRatio = 0;
           longPatchNum = 0;
@@ -1324,6 +1326,11 @@ const checkDeal = async (data, isAutoReset = true) => {
               positionAmt
             : 0;
 
+          shortHolding.entryPrice = entryPrice;
+          shortHolding.positionAmt = positionAmt;
+          shortPosition.entryPrice = entryPrice;
+          shortPosition.positionAmt = positionAmt;
+
           const dealDetail = {
             side: "CLOSE",
             positionSide: "SHORT",
@@ -1342,6 +1349,8 @@ const checkDeal = async (data, isAutoReset = true) => {
             bollList: bollList[bollList.length - 1],
             MODE,
             shortRatio,
+            longPosition,
+            shortPosition,
           };
           dealDetailList.push(dealDetail);
           if (shortRatio < mostLoss.profit) {
@@ -1350,11 +1359,6 @@ const checkDeal = async (data, isAutoReset = true) => {
               time: macdList[macdList.length - 1].time,
             };
           }
-
-          shortHolding.entryPrice = entryPrice;
-          shortHolding.positionAmt = positionAmt;
-          shortPosition.entryPrice = entryPrice;
-          shortPosition.positionAmt = positionAmt;
 
           maxWinRatio = 0;
           shortPatchNum = 0;
