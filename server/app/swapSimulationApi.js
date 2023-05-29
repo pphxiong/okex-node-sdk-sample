@@ -979,7 +979,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
       Math.abs(shortHolding.positionAmt) >
         INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-      CONVERSE_LOW_CONDITION;
+      CONVERSE_UP_CONDITION;
 
     const BATCH_SHORT_CLOSE_CONDITION =
       longHolding &&
@@ -988,7 +988,7 @@ const checkDeal = async (data, isAutoReset = true) => {
         INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
       Math.abs(shortHolding.positionAmt) >
         INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-      CONVERSE_UP_CONDITION;
+      CONVERSE_LOW_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION1 =
       (CONVERSE_LOW_CONDITION &&
