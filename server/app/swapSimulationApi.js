@@ -770,7 +770,7 @@ const checkDeal = async (data, isAutoReset = true) => {
   }
 
   function checkByStep(data, isForceDeal) {
-    isForceDeal = false;
+    // isForceDeal = false;
     const { macdList, rsiList, bollList } = data;
 
     // macdList.slice(-3);
