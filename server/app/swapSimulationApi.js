@@ -1231,6 +1231,8 @@ const checkDeal = async (data, isAutoReset = true) => {
               positionAmt
             : 0;
 
+          const priceBeforeDeal = longPosition.entryPrice;
+
           longHolding.entryPrice = entryPrice;
           longHolding.positionAmt = positionAmt;
           longPosition.entryPrice = entryPrice;
@@ -1242,6 +1244,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             closePrice,
             closePositionAmt,
             entryPrice,
+            priceBeforeDeal,
             positionAmt,
             time: macdList[macdList.length - 1].time,
             week: macdList[macdList.length - 1].week,
@@ -1255,7 +1258,10 @@ const checkDeal = async (data, isAutoReset = true) => {
             MODE,
             longRatio,
             longPosition,
+            longPositionAmt: longPosition.positionAmt,
             shortPosition,
+            shortPositionAmt: shortPosition.positionAmt,
+            shortRatio,
           };
           dealDetailList.push(dealDetail);
           if (longRatio < mostLoss.profit) {
@@ -1326,6 +1332,8 @@ const checkDeal = async (data, isAutoReset = true) => {
               positionAmt
             : 0;
 
+          const priceBeforeDeal = shortPosition.entryPrice;
+
           shortHolding.entryPrice = entryPrice;
           shortHolding.positionAmt = positionAmt;
           shortPosition.entryPrice = entryPrice;
@@ -1336,6 +1344,7 @@ const checkDeal = async (data, isAutoReset = true) => {
             positionSide: "SHORT",
             closePrice,
             closePositionAmt,
+            priceBeforeDeal,
             entryPrice,
             positionAmt,
             time: macdList[macdList.length - 1].time,
@@ -1348,9 +1357,12 @@ const checkDeal = async (data, isAutoReset = true) => {
             rsi: rsiList[rsiList.length - 1],
             bollList: bollList[bollList.length - 1],
             MODE,
-            shortRatio,
+            longRatio,
             longPosition,
+            longPositionAmt: longPosition.positionAmt,
             shortPosition,
+            shortPositionAmt: shortPosition.positionAmt,
+            shortRatio,
           };
           dealDetailList.push(dealDetail);
           if (shortRatio < mostLoss.profit) {
@@ -1494,6 +1506,12 @@ const checkDeal = async (data, isAutoReset = true) => {
             MODE,
             totalProfit,
             totalCapital,
+            longRatio,
+            longPosition,
+            longPositionAmt: longPosition.positionAmt,
+            shortPosition,
+            shortPositionAmt: shortPosition.positionAmt,
+            shortRatio,
           };
           dealDetailList.push(dealDetail);
           // shortHolding = {};
@@ -1590,6 +1608,12 @@ const checkDeal = async (data, isAutoReset = true) => {
             MODE,
             totalProfit,
             totalCapital,
+            longRatio,
+            longPosition,
+            longPositionAmt: longPosition.positionAmt,
+            shortPosition,
+            shortPositionAmt: shortPosition.positionAmt,
+            shortRatio,
           };
           dealDetailList.push(dealDetail);
           // longHolding = {};
