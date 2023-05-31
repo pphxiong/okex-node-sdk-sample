@@ -922,6 +922,12 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const RSI_UP = rsiList[rsiList.length - 1].RSI3 >= 50;
     const RSI_DOWN = rsiList[rsiList.length - 1].RSI3 < 50;
+    const MACD_UP =
+      macdList[macdList.length - 1].column >
+      macdList[macdList.length - 2].column;
+    const MACD_DOWN =
+      macdList[macdList.length - 1].column <
+      macdList[macdList.length - 2].column;
 
     // const MAIN_OPEN_LONG_CONDITION1 =
     //   !longHolding && CENTER_CROSS_SHORT_CONDITION && RSI_UP;
@@ -990,11 +996,9 @@ const checkDeal = async (data, isAutoReset = true) => {
         INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
       CONVERSE_UP_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding && CENTER_CROSS_LONG_CONDITION;
+    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && RSI_UP && MACD_UP;
 
-    const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding && CENTER_CROSS_SHORT_CONDITION;
+    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && RSI_DOWN && MACD_DOWN;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding && CENTER_CROSS_SHORT_CONDITION;
