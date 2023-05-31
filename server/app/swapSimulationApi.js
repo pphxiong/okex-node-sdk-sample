@@ -996,15 +996,17 @@ const checkDeal = async (data, isAutoReset = true) => {
         INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
       CONVERSE_UP_CONDITION;
 
-    const MAIN_OPEN_LONG_CONDITION1 = !longHolding && RSI_UP && MACD_UP;
+    const MAIN_OPEN_LONG_CONDITION1 =
+      !longHolding && RSI_UP && CONVERSE_UP_CONDITION;
 
-    const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && RSI_DOWN && MACD_DOWN;
+    const MAIN_OPEN_SHORT_CONDITION1 =
+      !shortHolding && RSI_DOWN && CONVERSE_LOW_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && CENTER_CROSS_SHORT_CONDITION;
+      longHolding && RSI_DOWN && CONVERSE_LOW_CONDITION;
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && CENTER_CROSS_LONG_CONDITION;
+      shortHolding && RSI_UP && CONVERSE_UP_CONDITION;
 
     // const MAIN_OPEN_LONG_CONDITION1 =
     //   CENTER_CROSS_LONG_CONDITION &&
