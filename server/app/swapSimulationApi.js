@@ -1001,8 +1001,7 @@ const checkDeal = async (data, isAutoReset = true) => {
       CENTER_CROSS_LONG_CONDITION;
 
     const MAIN_OPEN_LONG_CONDITION1 =
-      !longHolding &&
-      (CONVERSE_LOW_CONDITION || (shortHolding && OUT_HIGH_CONDITION));
+      CONVERSE_LOW_CONDITION || (shortHolding && OUT_HIGH_CONDITION);
     // (CONVERSE_LOW_CONDITION &&
     //   (!longHolding ||
     //     Math.abs(longHolding.positionAmt) <=
@@ -1010,8 +1009,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     // BATCH_LONG_OPEN_CONDITION;
 
     const MAIN_OPEN_SHORT_CONDITION1 =
-      !shortHolding &&
-      (CONVERSE_UP_CONDITION || (longHolding && OUT_LOW_CONDITION));
+      CONVERSE_UP_CONDITION || (longHolding && OUT_LOW_CONDITION);
     // (CONVERSE_UP_CONDITION &&
     //   (!shortHolding ||
     //     Math.abs(shortHolding.positionAmt) <=
