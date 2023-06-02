@@ -1019,10 +1019,10 @@ const checkDeal = async (data, isAutoReset = true) => {
     // BATCH_SHORT_OPEN_CONDITION;
 
     const MAIN_CLOSE_LONG_CONDITION1 =
-      longHolding && (CONVERSE_LOW_CONDITION || totalRatio > 0.1);
+      longHolding && (CONVERSE_LOW_CONDITION || totalRatio > 0.03);
 
     const MAIN_CLOSE_SHORT_CONDITION1 =
-      shortHolding && (CONVERSE_UP_CONDITION || totalRatio > 0.1);
+      shortHolding && (CONVERSE_UP_CONDITION || totalRatio > 0.03);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
