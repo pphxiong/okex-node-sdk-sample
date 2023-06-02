@@ -53,7 +53,7 @@ const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
   Number((item * CAPITAL_RATIO).toFixed(2))
 );
 let INIT_POSITION = 1;
-const MAX_OPEN_POSITION_RATIO = 3;
+const MAX_OPEN_POSITION_RATIO = 10;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -1018,9 +1018,20 @@ const checkDeal = async (data, isAutoReset = true) => {
     //       INIT_POSITION * MAX_OPEN_POSITION_RATIO)) ||
     // BATCH_SHORT_OPEN_CONDITION;
 
-    const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_LOW_CONDITION;
+    let totalPosition = 0;
+    if (longHolding && shortHolding) {
+      totalPosition =
+        Math.abs(Number(longHolding.positionAmt)) +
+        Math.abs(Number(shortHolding.positionAmt));
+    }
 
-    const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CONVERSE_UP_CONDITION;
+    const MAIN_CLOSE_LONG_CONDITION1 =
+      longHolding &&
+      (CONVERSE_LOW_CONDITION || totalPosition > MAX_OPEN_POSITION_RATIO);
+
+    const MAIN_CLOSE_SHORT_CONDITION1 =
+      shortHolding &&
+      (CONVERSE_UP_CONDITION || totalCapital > MAX_OPEN_POSITION_RATIO);
 
     const MAIN_OPEN_LONG_CONDITION2 =
       !longHolding && CENTER_CROSS_SHORT_CONDITION;
