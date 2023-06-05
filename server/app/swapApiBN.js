@@ -365,8 +365,8 @@ const checkDeal = async (data) => {
           await patchPosition(longHolding, "long");
         } else if (longRatio > WIN_MAX || longRatio < LOSS_MAX || true) {
           let closePositionAmt = INIT_POSITION;
-          if (BATCH_LONG_CLOSE_CONDITION)
-            closePositionAmt = Math.abs(Number(longHolding.positionAmt));
+          // if (BATCH_LONG_CLOSE_CONDITION)
+          //   closePositionAmt = Math.abs(Number(longHolding.positionAmt));
           // const curIndex = fiList.findIndex(
           //   (positionAmt) =>
           //     positionAmt == Math.abs(Number(longHolding.positionAmt))
@@ -398,8 +398,8 @@ const checkDeal = async (data) => {
           await patchPosition(shortHolding, "long");
         } else if (shortRatio > WIN_MAX || shortRatio < LOSS_MAX || true) {
           let closePositionAmt = INIT_POSITION;
-          if (BATCH_SHORT_CLOSE_CONDITION)
-            closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+          // if (BATCH_SHORT_CLOSE_CONDITION)
+          //   closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
           // const curIndex = fiList.findIndex(
           //   (positionAmt) =>
           //     positionAmt == Math.abs(Number(shortHolding.positionAmt))
@@ -450,8 +450,8 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
-        if (BATCH_LONG_OPEN_CONDITION)
-          openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
+        // if (BATCH_LONG_OPEN_CONDITION)
+        //   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
         // if (shortHolding && !closeShortCondition) {
         //   openPositionAmt = 2 * INIT_POSITION;
         // }
@@ -494,8 +494,8 @@ const checkDeal = async (data) => {
         //     INIT_POSITION * NEW_POSITION_RATIO
         //   : INIT_POSITION;
         let openPositionAmt = INIT_POSITION;
-        if (BATCH_SHORT_OPEN_CONDITION)
-          openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
+        // if (BATCH_SHORT_OPEN_CONDITION)
+        //   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
         // if (longHolding && !closeLongCondition) {
         //   openPositionAmt = 2 * INIT_POSITION;
         // }
