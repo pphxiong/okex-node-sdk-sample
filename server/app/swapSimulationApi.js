@@ -1465,11 +1465,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(
             maxOpenPosition,
-            longHolding
-              ? Math.abs(longHolding.positionAmt + openPositionAmt)
-              : openPositionAmt,
-            longPosition.positionAmt || 0,
-            shortPosition.positionAmt || 0
+            longPosition.positionAmt + shortPosition.positionAmt
           );
           const averagePrice =
             (longPosition.entryPrice * longPosition.positionAmt +
@@ -1565,11 +1561,7 @@ const checkDeal = async (data, isAutoReset = true) => {
           minTotalCapital = Math.min(minTotalCapital, totalCapital);
           maxOpenPosition = Math.max(
             maxOpenPosition,
-            shortHolding
-              ? Math.abs(shortHolding.positionAmt) + openPositionAmt
-              : openPositionAmt,
-            longPosition.positionAmt || 0,
-            shortPosition.positionAmt || 0
+            longPosition.positionAmt + shortPosition.positionAmt
           );
           const averagePrice =
             (shortPosition.entryPrice *
