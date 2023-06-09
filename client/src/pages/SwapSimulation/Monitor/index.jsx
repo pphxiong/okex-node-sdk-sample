@@ -944,7 +944,6 @@ export default (props) => {
               CONDITION设置
             </Button>
           </Col> */}
-
         </Row>
 
         {/* <Row style={{ marginTop: 10 }} gutter={12}>
@@ -966,7 +965,7 @@ export default (props) => {
             年数:{' '}
             <InputNumber step={1} value={yearPeriodStep} onChange={(v) => setYearPeriodStep(v)} />
           </Col>
-            <Col>
+          <Col>
             <Select
               value={latestInterval}
               onChange={(v) => {
@@ -1018,18 +1017,18 @@ export default (props) => {
         {/*<Divider />*/}
 
         {/*<p>总盈亏：{tPnl} </p>*/}
-        <p>总盈亏比：{tPnlRatio}</p>
+        <p>总YQ：{tPnlRatio}</p>
 
         {tPnlList.length &&
           tPnlList.map((item, index) => {
             return (
               <div key={`${item.date}-${index}`}>
                 <p>日期：{item.date}</p>
-                <p>盈亏比：{item.profit}</p>
-                <p>
+                <p>YQ：{item.profit}</p>
+                {/* <p>
                   最大亏损：{item.mostLoss && item.mostLoss.profit}{' '}
                   {item.mostLoss && item.mostLoss.time}
-                </p>
+                </p> */}
               </div>
             );
           })}
