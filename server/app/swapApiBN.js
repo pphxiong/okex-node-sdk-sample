@@ -254,6 +254,7 @@ const checkDeal = async (data) => {
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding &&
 			shortHolding &&
+			CONVERSE_UP_CONDITION &&
 			Math.abs(Number(longHolding.positionAmt)) -
 				Math.abs(Number(shortHolding.positionAmt)) >
 				MAX_OPEN_POSITION_RATIO;
@@ -261,6 +262,7 @@ const checkDeal = async (data) => {
 		const CLOSE_ALL_SHORT_CONDITION =
 			shortHolding &&
 			longHolding &&
+			CONVERSE_LOW_CONDITION &&
 			Math.abs(Number(shortHolding.positionAmt)) -
 				Math.abs(Number(longHolding.positionAmt)) >
 				MAX_OPEN_POSITION_RATIO;
