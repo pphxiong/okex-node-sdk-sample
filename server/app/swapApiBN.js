@@ -6,7 +6,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BN_SYMBOL = 'ETHUSDT';
 const DEFAULT_INTERVAL = '15m';
 const INIT_POSITION = 0.2;
-const MAX_OPEN_POSITION_RATIO = 3;
+const MAX_OPEN_POSITION_RATIO = 5;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -245,24 +245,26 @@ const checkDeal = async (data) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			// !longHolding &&
-			CONVERSE_UP_CONDITION;
+			CONVERSE_UP_CONDITION || (shortHolding && OUT_LOW_CONDITION);
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			// !shortHolding &&
-			CONVERSE_LOW_CONDITION;
+			CONVERSE_LOW_CONDITION || (longHolding && OUT_HIGH_CONDITION);
 
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding &&
 			shortHolding &&
+			OUT_HIGH_CONDITION &&
 			Math.abs(Number(longHolding.positionAmt)) -
-				Math.abs(Number(shortHolding.positionAmt)) >
+				Math.abs(Number(shortHolding.positionAmt)) >=
 				MAX_OPEN_POSITION_RATIO;
 
 		const CLOSE_ALL_SHORT_CONDITION =
 			shortHolding &&
 			longHolding &&
+			OUT_LOW_CONDITION &&
 			Math.abs(Number(shortHolding.positionAmt)) -
-				Math.abs(Number(longHolding.positionAmt)) >
+				Math.abs(Number(longHolding.positionAmt)) >=
 				MAX_OPEN_POSITION_RATIO;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =

@@ -53,7 +53,7 @@ const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
 	Number((item * CAPITAL_RATIO).toFixed(2))
 );
 let INIT_POSITION = 0.2;
-const MAX_OPEN_POSITION_RATIO = 4;
+const MAX_OPEN_POSITION_RATIO = 5;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
 const CLOSE_SAME_POSITION_RATIO = 6;
@@ -1011,18 +1011,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			// !longHolding &&
-			CONVERSE_UP_CONDITION || (shortHolding && OUT_LOW_CONDITION);
+			CONVERSE_UP_CONDITION;
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			// !shortHolding &&
-			CONVERSE_LOW_CONDITION || (longHolding && OUT_HIGH_CONDITION);
+			CONVERSE_LOW_CONDITION;
 
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding &&
 			shortHolding &&
 			OUT_HIGH_CONDITION &&
 			Math.abs(Number(longHolding.positionAmt)) -
-				Math.abs(Number(shortHolding.positionAmt)) >
+				Math.abs(Number(shortHolding.positionAmt)) >=
 				MAX_OPEN_POSITION_RATIO;
 
 		const CLOSE_ALL_SHORT_CONDITION =
@@ -1030,7 +1030,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 			longHolding &&
 			OUT_LOW_CONDITION &&
 			Math.abs(Number(shortHolding.positionAmt)) -
-				Math.abs(Number(longHolding.positionAmt)) >
+				Math.abs(Number(longHolding.positionAmt)) >=
 				MAX_OPEN_POSITION_RATIO;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
