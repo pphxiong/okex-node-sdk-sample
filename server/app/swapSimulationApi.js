@@ -1020,15 +1020,15 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding &&
 			shortHolding &&
-			Math.abs(Number(longHolding.positionAmt)) -
-				Math.abs(Number(shortHolding.positionAmt)) >
+			Math.abs(Number(shortHolding.positionAmt)) -
+				Math.abs(Number(longHolding.positionAmt)) >
 				MAX_OPEN_POSITION_RATIO;
 
 		const CLOSE_ALL_SHORT_CONDITION =
 			shortHolding &&
 			longHolding &&
-			Math.abs(Number(shortHolding.positionAmt)) -
-				Math.abs(Number(longHolding.positionAmt)) >
+			Math.abs(Number(longHolding.positionAmt)) -
+				Math.abs(Number(shortHolding.positionAmt)) >
 				MAX_OPEN_POSITION_RATIO;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
