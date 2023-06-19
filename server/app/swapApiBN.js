@@ -6,7 +6,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BN_SYMBOL = 'ETHUSDT';
 const DEFAULT_INTERVAL = '15m';
 const INIT_POSITION = 0.2;
-const MAX_OPEN_POSITION_RATIO = 5;
+const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
 
 const generatePositionList = (init, num) => {
@@ -393,7 +393,9 @@ const checkDeal = async (data) => {
 				) {
 					let closePositionAmt = INIT_POSITION;
 					if (CLOSE_ALL_LONG_CONDITION)
-						closePositionAmt = longHolding.positionAmt;
+						closePositionAmt = Math.abs(
+							Number(longHolding.positionAmt)
+						);
 					// if (BATCH_LONG_CLOSE_CONDITION)
 					//   closePositionAmt = Math.abs(Number(longHolding.positionAmt));
 					// const curIndex = fiList.findIndex(
