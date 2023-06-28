@@ -1011,11 +1011,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			// !longHolding &&
-			OUT_HIGH_CONDITION || (shortHolding && OUT_LOW_CONDITION);
+			CONVERSE_UP_CONDITION || (shortHolding && OUT_LOW_CONDITION);
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			// !shortHolding &&
-			OUT_LOW_CONDITION || (longHolding && OUT_HIGH_CONDITION);
+			CONVERSE_LOW_CONDITION || (longHolding && OUT_HIGH_CONDITION);
 
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding &&
@@ -1034,9 +1034,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 				MAX_OPEN_POSITION_RATIO;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (OUT_LOW_CONDITION || CLOSE_ALL_LONG_CONDITION);
+			longHolding && (CONVERSE_LOW_CONDITION || CLOSE_ALL_LONG_CONDITION);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (OUT_HIGH_CONDITION || CLOSE_ALL_SHORT_CONDITION);
+			shortHolding &&
+			(CONVERSE_UP_CONDITION || CLOSE_ALL_SHORT_CONDITION);
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -1140,8 +1141,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					Number(holding.entryPrice) * Number(holding.positionAmt)) /
 				positionAmt;
 
-			// totalProfit += (-0.01 * 0.036 * positionAmt) / 2;
-			// totalCapital += (-0.01 * 0.036 * positionAmt) / 2;
+			// totalProfit += (-0.01 * 0.04 * positionAmt) / 2;
+			// totalCapital += (-0.01 * 0.04 * positionAmt) / 2;
 			// if (totalCapital < positionAmt / 2) positionAmt = 0;
 			maxOpenPosition = Math.max(
 				maxOpenPosition,
@@ -1232,7 +1233,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(longRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.036 * closePositionAmt;
+						0.01 * 0.04 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1343,7 +1344,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(shortRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.036 * closePositionAmt;
+						0.01 * 0.04 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1495,8 +1496,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.036 * openPositionAmt;
-					totalProfit += -0.01 * 0.036 * openPositionAmt;
+					totalCapital += -0.01 * 0.04 * openPositionAmt;
+					totalProfit += -0.01 * 0.04 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1507,7 +1508,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					const averagePrice =
 						(longPosition.entryPrice * longPosition.positionAmt +
 							openPositionAmt * mark_price +
-							0.01 * 0.036 * openPositionAmt * mark_price) /
+							0.01 * 0.04 * openPositionAmt * mark_price) /
 						(longPosition.positionAmt + openPositionAmt);
 
 					const totalPositionAmt =
@@ -1592,8 +1593,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.036 * openPositionAmt;
-					totalProfit += -0.01 * 0.036 * openPositionAmt;
+					totalCapital += -0.01 * 0.04 * openPositionAmt;
+					totalProfit += -0.01 * 0.04 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1605,7 +1606,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 						(shortPosition.entryPrice *
 							Math.abs(Number(shortPosition.positionAmt)) +
 							openPositionAmt * mark_price -
-							0.01 * 0.036 * openPositionAmt * mark_price) /
+							0.01 * 0.04 * openPositionAmt * mark_price) /
 						(Math.abs(Number(shortPosition.positionAmt)) +
 							openPositionAmt);
 
