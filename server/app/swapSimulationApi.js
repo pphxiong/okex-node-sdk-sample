@@ -1242,14 +1242,15 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 					const positionAmt =
 						longHolding.positionAmt - closePositionAmt;
-					const entryPrice = positionAmt
-						? Math.abs(
-								(Math.abs(Number(longHolding.positionAmt)) *
-									Number(mark_price) -
-									closePositionAmt * longHolding.entryPrice) /
-									positionAmt
-						  )
-						: 0;
+					// const entryPrice = positionAmt
+					// 	? Math.abs(
+					// 			(Math.abs(Number(longHolding.positionAmt)) *
+					// 				Number(mark_price) -
+					// 				closePositionAmt * longHolding.entryPrice) /
+					// 				positionAmt
+					// 	  )
+					// 	: 0;
+					const entryPrice = positionAmt ? longHolding.entryPrice : 0;
 
 					const priceBeforeDeal = longPosition.entryPrice;
 
@@ -1354,14 +1355,17 @@ const checkDeal = async (data, isAutoReset = true) => {
 					const positionAmt =
 						Math.abs(Number(shortHolding.positionAmt)) -
 						closePositionAmt;
+					// const entryPrice = positionAmt
+					// 	? Math.abs(
+					// 			(Math.abs(Number(shortHolding.positionAmt)) *
+					// 				Number(mark_price) -
+					// 				closePositionAmt *
+					// 					shortHolding.entryPrice) /
+					// 				positionAmt
+					// 	  )
+					// 	: 0;
 					const entryPrice = positionAmt
-						? Math.abs(
-								(Math.abs(Number(shortHolding.positionAmt)) *
-									Number(mark_price) -
-									closePositionAmt *
-										shortHolding.entryPrice) /
-									positionAmt
-						  )
+						? shortHolding.entryPrice
 						: 0;
 
 					const priceBeforeDeal = shortPosition.entryPrice;
