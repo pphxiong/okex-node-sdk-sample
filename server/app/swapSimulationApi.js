@@ -1009,20 +1009,17 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Math.abs(Number(shortHolding.positionAmt));
 		}
 
-		const MAIN_OPEN_LONG_CONDITION1 =
-			// !longHolding &&
-			CONVERSE_UP_CONDITION;
-
+		const MAIN_OPEN_LONG_CONDITION1 = CONVERSE_LOW_CONDITION;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			// !shortHolding &&
-			CONVERSE_LOW_CONDITION;
+			CONVERSE_UP_CONDITION;
 
 		const CLOSE_ALL_LONG_CONDITION =
-			(longHolding && CONVERSE_LOW_CONDITION && longRatio > 0) ||
+			(longHolding && CONVERSE_UP_CONDITION && longRatio > 0) ||
 			isForceDeal;
 
 		const CLOSE_ALL_SHORT_CONDITION =
-			(shortHolding && CONVERSE_UP_CONDITION && shortRatio > 0) ||
+			(shortHolding && CONVERSE_LOW_CONDITION && shortRatio > 0) ||
 			isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 = CLOSE_ALL_LONG_CONDITION;
