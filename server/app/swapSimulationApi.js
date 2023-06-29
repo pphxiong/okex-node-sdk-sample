@@ -1507,8 +1507,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					);
 					const averagePrice =
 						(longPosition.entryPrice * longPosition.positionAmt +
-							openPositionAmt * mark_price +
-							0.01 * 0.04 * openPositionAmt * mark_price) /
+							openPositionAmt * mark_price) /
 						(longPosition.positionAmt + openPositionAmt);
 
 					const totalPositionAmt =
@@ -1605,8 +1604,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					const averagePrice =
 						(shortPosition.entryPrice *
 							Math.abs(Number(shortPosition.positionAmt)) +
-							openPositionAmt * mark_price -
-							0.01 * 0.04 * openPositionAmt * mark_price) /
+							openPositionAmt * mark_price) /
 						(Math.abs(Number(shortPosition.positionAmt)) +
 							openPositionAmt);
 
