@@ -1017,18 +1017,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 			// !shortHolding &&
 			CONVERSE_LOW_CONDITION;
 
-		const CLOSE_ALL_LONG_CONDITION = false;
+		const CLOSE_ALL_LONG_CONDITION =
+			longHolding && CONVERSE_LOW_CONDITION && longRatio > 0;
 
-		const CLOSE_ALL_SHORT_CONDITION = false;
+		const CLOSE_ALL_SHORT_CONDITION =
+			shortHolding && CONVERSE_UP_CONDITION && shortRatio > 0;
 
-		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding &&
-			(CONVERSE_LOW_CONDITION || CLOSE_ALL_LONG_CONDITION) &&
-			longRatio > 0;
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			(CONVERSE_UP_CONDITION || CLOSE_ALL_SHORT_CONDITION) &&
-			shortRatio > 0;
+		const MAIN_CLOSE_LONG_CONDITION1 = CLOSE_ALL_LONG_CONDITION;
+		const MAIN_CLOSE_SHORT_CONDITION1 = CLOSE_ALL_SHORT_CONDITION;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
