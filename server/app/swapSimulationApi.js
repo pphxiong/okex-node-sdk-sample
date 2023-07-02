@@ -1074,6 +1074,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 		if (isForceDeal) {
 			closeLongCondition = true;
 			closeShortCondition = true;
+			openLongCondition = false;
+			openShortCondition = false;
 		}
 
 		// IS_CLOSE_ALL_POSITION = false;
