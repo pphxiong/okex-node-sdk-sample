@@ -5,7 +5,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = 'ETHUSDT';
 const DEFAULT_INTERVAL = '15m';
-const INIT_POSITION = 0.2;
+const INIT_POSITION = 1;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
 
@@ -243,35 +243,20 @@ const checkDeal = async (data) => {
 				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
 			CONVERSE_UP_CONDITION;
 
-		const MAIN_OPEN_LONG_CONDITION1 =
-			// !longHolding &&
-			CONVERSE_UP_CONDITION || (shortHolding && OUT_LOW_CONDITION);
-
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			// !shortHolding &&
-			CONVERSE_LOW_CONDITION || (longHolding && OUT_HIGH_CONDITION);
-
-		const CLOSE_ALL_LONG_CONDITION =
-			longHolding &&
-			shortHolding &&
-			OUT_HIGH_CONDITION &&
-			Math.abs(Number(longHolding.positionAmt)) -
-				Math.abs(Number(shortHolding.positionAmt)) >=
-				MAX_OPEN_POSITION_RATIO;
-
-		const CLOSE_ALL_SHORT_CONDITION =
-			shortHolding &&
-			longHolding &&
-			OUT_LOW_CONDITION &&
-			Math.abs(Number(shortHolding.positionAmt)) -
-				Math.abs(Number(longHolding.positionAmt)) >=
-				MAX_OPEN_POSITION_RATIO;
-
-		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (CONVERSE_LOW_CONDITION || CLOSE_ALL_LONG_CONDITION);
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			(CONVERSE_UP_CONDITION || CLOSE_ALL_SHORT_CONDITION);
+			const MAIN_OPEN_LONG_CONDITION1 = CONVERSE_LOW_CONDITION;
+			const MAIN_OPEN_SHORT_CONDITION1 =
+				// !shortHolding &&
+				CONVERSE_UP_CONDITION;
+	
+			const CLOSE_ALL_LONG_CONDITION =
+				false;
+	
+			const CLOSE_ALL_SHORT_CONDITION =
+				false;
+	
+				const MAIN_CLOSE_LONG_CONDITION1 = longHolding && (CONVERSE_UP_CONDITION ||OUT_LOW_CONDITION);
+		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && (CONVERSE_LOW_CONDITION || OUT_HIGH_CONDITION);
+	
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -690,7 +675,7 @@ function getCurrentRSI(list) {
 
 function getBOLL(list) {
 	const N = 20;
-	const k = 2;
+	const k = 3;
 
 	const newList = list.slice(-N);
 
