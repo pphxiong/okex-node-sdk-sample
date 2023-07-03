@@ -230,7 +230,7 @@ DN=MB－k×MD
  */
 function getBOLL(list) {
 	const N = 20;
-	const k = 3;
+	const k = 2;
 
 	const newList = list.slice(-N);
 
@@ -1031,13 +1031,16 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && RSI_UP;
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && CONVERSE_UP_CONDITION;
 
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && RSI_DOWN;
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding && CONVERSE_LOW_CONDITION;
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && RSI_DOWN;
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && CENTER_CROSS_SHORT_CONDITION;
 
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && RSI_UP;
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && CENTER_CROSS_LONG_CONDITION;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
