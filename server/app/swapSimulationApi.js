@@ -230,7 +230,7 @@ DN=MB－k×MD
  */
 function getBOLL(list) {
 	const N = 20;
-	const k = 2;
+	const k = 3;
 
 	const newList = list.slice(-N);
 
