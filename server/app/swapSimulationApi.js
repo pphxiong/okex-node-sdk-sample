@@ -939,11 +939,15 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const RSI_UP =
 			rsiList[rsiList.length - 1].RSI1 >
 				rsiList[rsiList.length - 1].RSI2 &&
-			rsiList[rsiList.length - 1].RSI2 > rsiList[rsiList.length - 1].RSI3;
+			rsiList[rsiList.length - 1].RSI2 >
+				rsiList[rsiList.length - 1].RSI3 &&
+			rsiList[rsiList.length - 1].RSI3 >= 50;
 		const RSI_DOWN =
 			rsiList[rsiList.length - 1].RSI1 <
 				rsiList[rsiList.length - 1].RSI2 &&
-			rsiList[rsiList.length - 1].RSI2 < rsiList[rsiList.length - 1].RSI3;
+			rsiList[rsiList.length - 1].RSI2 <
+				rsiList[rsiList.length - 1].RSI3 &&
+			rsiList[rsiList.length - 1].RSI3 < 50;
 		const MACD_UP =
 			macdList[macdList.length - 1].column >
 			macdList[macdList.length - 2].column;
