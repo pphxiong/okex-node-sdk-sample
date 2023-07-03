@@ -836,12 +836,16 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Number(bollList[bollList.length - 1].MA);
 
 		const CONTINUOUS_LONG_CONDITION =
+			Number(macdList[macdList.length - 3].close) <
+				Number(bollList[bollList.length - 3].MA) &&
 			Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].MA) &&
 			Number(macdList[macdList.length - 1].close) >
 				Number(bollList[bollList.length - 1].MA);
 
 		const CONTINUOUS_SHORT_CONDITION =
+			Number(macdList[macdList.length - 3].close) >
+				Number(bollList[bollList.length - 3].MA) &&
 			Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].MA) &&
 			Number(macdList[macdList.length - 1].close) <
