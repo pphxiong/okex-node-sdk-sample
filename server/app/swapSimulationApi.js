@@ -230,7 +230,7 @@ DN=MB－k×MD
  */
 function getBOLL(list) {
 	const N = 20;
-	const k = 2;
+	const k = 3;
 
 	const newList = list.slice(-N);
 
@@ -835,6 +835,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].close) <
 				Number(bollList[bollList.length - 1].MA);
 
+		const CONTINUOUS_LONG_CONDITION =
+			Number(macdList[macdList.length - 2].close) >
+				Number(bollList[bollList.length - 2].MA) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].MA);
+
+		const CONTINUOUS_SHORT_CONDITION =
+			Number(macdList[macdList.length - 2].close) <
+				Number(bollList[bollList.length - 2].MA) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].MA);
+
 		const OUT_HIGH_CONDITION =
 			Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].UP) &&
@@ -1009,18 +1021,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Math.abs(Number(shortHolding.positionAmt));
 		}
 
-		const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
-		const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
+		const MAIN_OPEN_LONG_CONDITION1 = CENTER_CROSS_SHORT_CONDITION;
+		const MAIN_OPEN_SHORT_CONDITION1 = CENTER_CROSS_LONG_CONDITION;
 
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(CONVERSE_UP_CONDITION || CENTER_CROSS_SHORT_CONDITION);
+			(CONVERSE_UP_CONDITION || CONTINUOUS_SHORT_CONDITION);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(CONVERSE_LOW_CONDITION || CENTER_CROSS_LONG_CONDITION);
+			(CONVERSE_LOW_CONDITION || CONTINUOUS_LONG_CONDITION);
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
