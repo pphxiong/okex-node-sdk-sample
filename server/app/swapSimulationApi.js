@@ -1145,8 +1145,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					Number(holding.entryPrice) * Number(holding.positionAmt)) /
 				positionAmt;
 
-			// totalProfit += (-0.01 * 0.036 * positionAmt) / 2;
-			// totalCapital += (-0.01 * 0.036 * positionAmt) / 2;
+			// totalProfit += (-0.01 * 0 * positionAmt) / 2;
+			// totalCapital += (-0.01 * 0 * positionAmt) / 2;
 			// if (totalCapital < positionAmt / 2) positionAmt = 0;
 			maxOpenPosition = Math.max(
 				maxOpenPosition,
@@ -1237,7 +1237,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(longRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.036 * closePositionAmt;
+						0.01 * 0 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1349,7 +1349,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(shortRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.036 * closePositionAmt;
+						0.01 * 0 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1504,8 +1504,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.036 * openPositionAmt;
-					totalProfit += -0.01 * 0.036 * openPositionAmt;
+					totalCapital += -0.01 * 0 * openPositionAmt;
+					totalProfit += -0.01 * 0 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1600,8 +1600,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.036 * openPositionAmt;
-					totalProfit += -0.01 * 0.036 * openPositionAmt;
+					totalCapital += -0.01 * 0 * openPositionAmt;
+					totalProfit += -0.01 * 0 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
