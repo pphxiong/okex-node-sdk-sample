@@ -1032,9 +1032,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const RSI_LONG = rsiList[rsiList.length - 1].RSI3 >= 50;
 		const RSI_SHORT = rsiList[rsiList.length - 1].RSI3 < 50;
 
-		const MAIN_OPEN_LONG_CONDITION1 = CONVERSE_UP_CONDITION && RSI_LONG;
+		const MAIN_OPEN_LONG_CONDITION1 =
+			longHolding && CONVERSE_UP_CONDITION && RSI_LONG;
 
-		const MAIN_OPEN_SHORT_CONDITION1 = CONVERSE_LOW_CONDITION && RSI_SHORT;
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			shortHolding && CONVERSE_LOW_CONDITION && RSI_SHORT;
 
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding && MAIN_OPEN_SHORT_CONDITION1;
