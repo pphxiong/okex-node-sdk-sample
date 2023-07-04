@@ -4,7 +4,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = 'ETHUSDT';
-const DEFAULT_INTERVAL = '15m';
+const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 1;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
@@ -243,20 +243,20 @@ const checkDeal = async (data) => {
 				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
 			CONVERSE_UP_CONDITION;
 
-			const MAIN_OPEN_LONG_CONDITION1 = CONVERSE_LOW_CONDITION;
-			const MAIN_OPEN_SHORT_CONDITION1 =
-				// !shortHolding &&
-				CONVERSE_UP_CONDITION;
-	
-			const CLOSE_ALL_LONG_CONDITION =
-				false;
-	
-			const CLOSE_ALL_SHORT_CONDITION =
-				false;
-	
-				const MAIN_CLOSE_LONG_CONDITION1 = longHolding && (CONVERSE_UP_CONDITION ||OUT_LOW_CONDITION);
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && (CONVERSE_LOW_CONDITION || OUT_HIGH_CONDITION);
-	
+		const CLOSE_ALL_LONG_CONDITION =
+			longHolding && CONVERSE_UP_CONDITION && longRatio > 0;
+		const CLOSE_ALL_SHORT_CONDITION =
+			shortHolding && CONVERSE_LOW_CONDITION && shortRatio > 0;
+
+		const MAIN_OPEN_LONG_CONDITION1 = CONVERSE_LOW_CONDITION;
+
+		const MAIN_OPEN_SHORT_CONDITION1 = CONVERSE_UP_CONDITION;
+
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && CENTER_CROSS_LONG_CONDITION;
+
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -309,14 +309,14 @@ const checkDeal = async (data) => {
 		const hmsArr = currentTime.split(' ')[1].split(':');
 		const lastMinuteCharacter = hmsArr[1];
 		const lastSecondCharacter = hmsArr[2];
-		const minuteList = ['0', '00', '15', '30', '45'];
+		const minuteList = ['0', '00'];
 		const secondList = ['0', '00'];
 		const minuteDiff = moment(currentTime).diff(
 			moment(macdList[macdList.length - 1].time),
 			'minute'
 		);
 		const isFiveM =
-			minuteDiff < 20 &&
+			minuteDiff < 90 &&
 			minuteList.includes(lastMinuteCharacter) &&
 			!secondList.includes(lastSecondCharacter);
 
@@ -675,7 +675,7 @@ function getCurrentRSI(list) {
 
 function getBOLL(list) {
 	const N = 20;
-	const k = 3;
+	const k = 2;
 
 	const newList = list.slice(-N);
 
