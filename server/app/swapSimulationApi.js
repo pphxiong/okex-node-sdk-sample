@@ -1033,12 +1033,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const RSI_SHORT = rsiList[rsiList.length - 1].RSI3 < 50;
 
 		const MACD_LONG_REVERSE =
+			Number(macdList[macdList.length - 2].column) >= 0 &&
 			Number(macdList[macdList.length - 2].column) <
 				Number(macdList[macdList.length - 1].column) &&
 			Number(macdList[macdList.length - 1].close) <
 				Number(macdList[macdList.length - 1].open);
 
 		const MACD_SHORT_REVERSE =
+			Number(macdList[macdList.length - 2].column) < 0 &&
 			Number(macdList[macdList.length - 2].column) >
 				Number(macdList[macdList.length - 1].column) &&
 			Number(macdList[macdList.length - 1].close) >
