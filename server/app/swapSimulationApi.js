@@ -1050,16 +1050,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MACD_SHORT = Number(macdList[macdList.length - 1].column) < 0;
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding &&
-			MACD_LONG_REVERSE &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP);
+			!longHolding && MACD_LONG_REVERSE && RSI_LONG;
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
-			MACD_SHORT_REVERSE &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN);
+			!shortHolding && MACD_SHORT_REVERSE && RSI_SHORT;
 
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
