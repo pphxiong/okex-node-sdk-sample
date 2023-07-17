@@ -1057,10 +1057,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(bollList[bollList.length - 1].MA);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && MACD_LONG_REVERSE && PRICE_LOW_MA;
+			!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && MACD_SHORT_REVERSE && PRICE_UP_MA;
+			!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
 
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
