@@ -1037,18 +1037,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 2].column) <
 				Number(macdList[macdList.length - 1].column) &&
 			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP);
+				Number(macdList[macdList.length - 1].open);
 
 		const MACD_SHORT_REVERSE =
 			Number(macdList[macdList.length - 2].column) < 0 &&
 			Number(macdList[macdList.length - 2].column) >
 				Number(macdList[macdList.length - 1].column) &&
 			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN);
+				Number(macdList[macdList.length - 1].open);
 
 		const MACD_LONG = Number(macdList[macdList.length - 1].column) >= 0;
 
