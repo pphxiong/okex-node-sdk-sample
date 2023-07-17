@@ -260,9 +260,18 @@ const checkDeal = async (data) => {
 			Number(macdList[macdList.length - 1].close) >
 				Number(macdList[macdList.length - 1].open);
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && MACD_LONG_REVERSE;
+		const PRICE_LOW_MA =
+			Number(macdList[macdList.length - 1].close) <
+			Number(bollList[bollList.length - 1].MA);
+		const PRICE_UP_MA =
+			Number(macdList[macdList.length - 1].close) >
+			Number(bollList[bollList.length - 1].MA);
 
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && MACD_SHORT_REVERSE;
+		const MAIN_OPEN_LONG_CONDITION1 =
+			!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
+
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
 
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
