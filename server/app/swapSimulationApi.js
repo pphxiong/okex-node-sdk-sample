@@ -1059,10 +1059,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (MACD_SHORT_REVERSE || OUT_LOW_CONDITION);
+			longHolding &&
+			(MACD_SHORT_REVERSE || OUT_LOW_CONDITION) &&
+			RSI_SHORT;
 
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (MACD_LONG_REVERSE || OUT_HIGH_CONDITION);
+			shortHolding &&
+			(MACD_LONG_REVERSE || OUT_HIGH_CONDITION) &&
+			RSI_LONG;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
