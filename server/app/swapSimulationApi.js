@@ -1057,19 +1057,34 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(bollList[bollList.length - 1].MA);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && CENTER_CROSS_LONG_CONDITION;
+			!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && CENTER_CROSS_SHORT_CONDITION;
+			!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
 
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && CENTER_CROSS_SHORT_CONDITION;
+			longHolding && (MACD_SHORT_REVERSE || OUT_LOW_CONDITION);
 
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && CENTER_CROSS_LONG_CONDITION;
+			shortHolding && (MACD_LONG_REVERSE || OUT_HIGH_CONDITION);
+
+		//   const MAIN_OPEN_LONG_CONDITION1 =
+		// 	!longHolding && CENTER_CROSS_LONG_CONDITION;
+
+		// const MAIN_OPEN_SHORT_CONDITION1 =
+		// 	!shortHolding && CENTER_CROSS_SHORT_CONDITION;
+
+		// const CLOSE_ALL_LONG_CONDITION = false;
+		// const CLOSE_ALL_SHORT_CONDITION = false;
+
+		// const MAIN_CLOSE_LONG_CONDITION1 =
+		// 	longHolding && CENTER_CROSS_SHORT_CONDITION;
+
+		// const MAIN_CLOSE_SHORT_CONDITION1 =
+		// 	shortHolding && CENTER_CROSS_LONG_CONDITION;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
