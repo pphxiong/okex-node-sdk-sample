@@ -27,7 +27,7 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = 'ETHUSDT';
+const BN_SYMBOL = 'EOSUSDT';
 const LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
@@ -1056,35 +1056,35 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].close) >
 			Number(bollList[bollList.length - 1].MA);
 
+		// const MAIN_OPEN_LONG_CONDITION1 =
+		// 	!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
+
+		// const MAIN_OPEN_SHORT_CONDITION1 =
+		// 	!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
+
+		// const MAIN_CLOSE_LONG_CONDITION1 =
+		// 	longHolding && (MACD_SHORT_REVERSE || OUT_LOW_CONDITION);
+
+		// const MAIN_CLOSE_SHORT_CONDITION1 =
+		// 	shortHolding && (MACD_LONG_REVERSE || OUT_HIGH_CONDITION);
+
+		// const CLOSE_ALL_LONG_CONDITION = false;
+		// const CLOSE_ALL_SHORT_CONDITION = false;
+
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
+			!longHolding && CENTER_CROSS_LONG_CONDITION;
 
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
+			!shortHolding && CENTER_CROSS_SHORT_CONDITION;
 
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (MACD_SHORT_REVERSE || OUT_LOW_CONDITION);
+			longHolding && CENTER_CROSS_SHORT_CONDITION;
 
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (MACD_LONG_REVERSE || OUT_HIGH_CONDITION);
-
-		//   const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding && CENTER_CROSS_LONG_CONDITION;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding && CENTER_CROSS_SHORT_CONDITION;
-
-		// const CLOSE_ALL_LONG_CONDITION = false;
-		// const CLOSE_ALL_SHORT_CONDITION = false;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding && CENTER_CROSS_SHORT_CONDITION;
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding && CENTER_CROSS_LONG_CONDITION;
+			shortHolding && CENTER_CROSS_LONG_CONDITION;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
