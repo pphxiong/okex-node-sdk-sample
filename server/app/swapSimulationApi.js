@@ -52,7 +52,7 @@ let MODE2_NUM = 0;
 const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
 	Number((item * CAPITAL_RATIO).toFixed(2))
 );
-let INIT_POSITION = 3;
+let INIT_POSITION = 1;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 3;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
@@ -1080,9 +1080,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].open);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			(!longHolding || longRatio < 0) && PRICE_LONG;
+			(!longHolding || longRatio > 0) && PRICE_LONG;
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			(!shortHolding || shortRatio < 0) && PRICE_SHORT;
+			(!shortHolding || shortRatio > 0) && PRICE_SHORT;
 
 		const CLOSE_ALL_LONG_CONDITION =
 			longHolding && PRICE_SHORT && totalRatio > 0;
