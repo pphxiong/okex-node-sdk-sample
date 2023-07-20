@@ -1080,15 +1080,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].open);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			(!longHolding || longRatio > 0) && PRICE_LONG;
+			(!longHolding || longRatio > 0) && PRICE_SHORT;
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			(!shortHolding || shortRatio > 0) && PRICE_SHORT;
+			(!shortHolding || shortRatio > 0) && PRICE_LONG;
 
-		const CLOSE_ALL_LONG_CONDITION = longHolding && totalRatio > 0;
-		const CLOSE_ALL_SHORT_CONDITION = shortHolding && totalRatio > 0;
+		const CLOSE_ALL_LONG_CONDITION =
+			longHolding && PRICE_LONG && longRatio > 0;
+		const CLOSE_ALL_SHORT_CONDITION =
+			shortHolding && PRICE_SHORT && shortRatio > 0;
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && totalRatio > 0;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && totalRatio > 0;
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && PRICE_LONG && longRatio > 0;
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && PRICE_SHORT && shortRatio > 0;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
