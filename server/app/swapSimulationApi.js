@@ -1088,9 +1088,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && PRICE_LONG && longRatio > 0;
+			longHolding && PRICE_SHORT && longRatio > 0;
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && PRICE_SHORT && shortRatio > 0;
+			shortHolding && PRICE_LONG && shortRatio > 0;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
