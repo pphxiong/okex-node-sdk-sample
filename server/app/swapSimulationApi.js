@@ -27,7 +27,7 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = 'LTCUSDT';
+const BN_SYMBOL = 'DOGEUSDT';
 const LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
