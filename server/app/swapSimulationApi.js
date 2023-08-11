@@ -107,12 +107,14 @@ const checkDeal = async (data) => {
 		if (holding && holding.length) {
 			longHolding = holding.find(
 				(item) =>
+					item.symbol === BN_SYMBOL &&
 					item.positionSide &&
 					item.positionSide.toUpperCase() == 'LONG' &&
 					Math.abs(Number(item.positionAmt)) > 0
 			);
 			shortHolding = holding.find(
 				(item) =>
+					item.symbol === BN_SYMBOL &&
 					item.positionSide &&
 					item.positionSide.toUpperCase() == 'SHORT' &&
 					Math.abs(Number(item.positionAmt)) > 0
