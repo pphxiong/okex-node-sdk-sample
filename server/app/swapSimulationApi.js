@@ -52,8 +52,8 @@ let MODE2_NUM = 0;
 const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
 	Number((item * CAPITAL_RATIO).toFixed(2))
 );
-// let INIT_POSITION = 1;
-let INIT_POSITION = 9 / 15.88;
+let INIT_POSITION = 1;
+// let INIT_POSITION = 9 / 15.88;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 3;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
@@ -828,17 +828,17 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].MA) &&
 			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA) &&
+				Number(bollList[bollList.length - 1].MA); /* &&
 			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP);
+				Number(bollList[bollList.length - 1].UP);*/
 
 		const CENTER_CROSS_SHORT_CONDITION =
 			Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].MA) &&
 			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA) &&
+				Number(bollList[bollList.length - 1].MA); /* &&
 			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN);
+				Number(bollList[bollList.length - 1].DN); */
 
 		const CONTINUOUS_LONG_CONDITION =
 			Number(macdList[macdList.length - 3].close) <
