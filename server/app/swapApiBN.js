@@ -153,13 +153,17 @@ const checkDeal = async (data) => {
 			Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].MA) &&
 			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
+				Number(bollList[bollList.length - 1].MA) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].UP);
 
 		const CENTER_CROSS_SHORT_CONDITION =
 			Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].MA) &&
 			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
+				Number(bollList[bollList.length - 1].MA) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].DN);
 
 		const OUT_HIGH_CONDITION =
 			Number(macdList[macdList.length - 2].close) <
