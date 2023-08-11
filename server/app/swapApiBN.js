@@ -117,6 +117,7 @@ const checkDeal = async (data) => {
 					item.positionSide.toUpperCase() == 'SHORT' &&
 					Math.abs(Number(item.positionAmt)) > 0
 			);
+			console.log(11, longHolding);
 		}
 
 		if (longHolding) {
@@ -362,28 +363,28 @@ const checkDeal = async (data) => {
 		//   }
 		// }
 
-		console.log('************************************', currentTime);
-		console.log('isFiveM', isFiveM, lastMinuteCharacter);
-		console.log('macdList', macdList.slice(-2));
-		console.log('bollList', bollList.slice(-2));
-		console.log('longRatio', longRatio, 'shortRatio', shortRatio);
-		console.log(
-			'longPositionAmt',
-			longHolding ? longHolding.positionAmt : 0,
-			'shortPositionAmt',
-			shortHolding ? shortHolding.positionAmt : 0
-		);
-		console.log(
-			'closeLongCondition',
-			closeLongCondition,
-			'closeShortCondition',
-			closeShortCondition,
-			'openLongCondition',
-			openLongCondition,
-			'openShortCondition',
-			openShortCondition
-		);
-		console.log('************************************');
+		// console.log('************************************', currentTime);
+		// console.log('isFiveM', isFiveM, lastMinuteCharacter);
+		// console.log('macdList', macdList.slice(-2));
+		// console.log('bollList', bollList.slice(-2));
+		// console.log('longRatio', longRatio, 'shortRatio', shortRatio);
+		// console.log(
+		// 	'longPositionAmt',
+		// 	longHolding ? longHolding.positionAmt : 0,
+		// 	'shortPositionAmt',
+		// 	shortHolding ? shortHolding.positionAmt : 0
+		// );
+		// console.log(
+		// 	'closeLongCondition',
+		// 	closeLongCondition,
+		// 	'closeShortCondition',
+		// 	closeShortCondition,
+		// 	'openLongCondition',
+		// 	openLongCondition,
+		// 	'openShortCondition',
+		// 	openShortCondition
+		// );
+		// console.log('************************************');
 
 		const patchPosition = async (holding, direction) => {
 			let positionAmt = Number(holding.positionAmt) * 2;
