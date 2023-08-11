@@ -1,127 +1,616 @@
-import request from '../utils/request';
 import moment from 'moment';
-
-// const {PublicClient} = require('@okfe/okex-node');
-// const {AuthenticatedClient} = require('@okfe/okex-node');
-// const customAuthClient = require('./customAuthClientV5');
-const customAuthClientBN = require('./customAuthClientBN');
-const querystring = require('querystring');
 const fs = require('fs');
 
-//读取配置文件，变量config的类型是Object类型
-// let dataConfig = require('./configETH.json');
+const customAuthClientBN = require('./customAuthClientBN');
+
+const BN_SYMBOL = 'BTCUSDT';
+const DEFAULT_INTERVAL = '1h';
+const INIT_POSITION = 0.4;
+const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
+let MODE = 1;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
+	const holding = [init];
 	let i = 0;
 	while (i < num) {
-		init = Number((init + init * 0.15).toFixed(3));
+		init = Number((init + init * 0.15).toFixed(2));
 		arr.push(init);
+		holding.push(holding[i] + init);
 		i++;
 	}
-	return arr;
+	return [arr, holding];
 };
 
-function getRandomNumberByRange(start, end) {
-	return Math.floor(Math.random() * (end - start) + start);
-}
-
-// const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = 'BTCUSDT';
+const LONG_CONDITION = 50;
+const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
-const INTERVAL = '1h';
-const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-const LOSS_MAX = (-1 * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
-// const BAO_RATIO = LOSS_MAX * 2;
+const BAO_RATIO = -0.95;
+const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
+const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
 const CAPITAL_RATIO = 1;
-const ORIGIN_INIT_POSITION = 1;
-const DEFAULT_POSITION_RATIO_LIST = generatePositionList(
-	ORIGIN_INIT_POSITION,
-	0
-);
-// const DEFAULT_POSITION_RATIO_LIST = [2];
-const MODE_RATIO = {
-	1: DEFAULT_POSITION_RATIO_LIST,
-	2: DEFAULT_POSITION_RATIO_LIST,
-};
-const DEFAULT_MODE = 1;
-let MODE = DEFAULT_MODE;
-let MODE2_NUM = 0;
+const fiList = [1, 2, 4, 8, 16, 24];
 
-const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
-	Number((item * CAPITAL_RATIO).toFixed(2))
-);
-let INIT_POSITION = 1;
-// let INIT_POSITION = 9 / 15.88;
-const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 3;
-let NEW_POSITION_RATIO = 1;
-let IS_CLOSE_ALL_POSITION = false;
-const CLOSE_SAME_POSITION_RATIO = 6;
+const ORIGIN_INIT_POSITION = INIT_POSITION;
+const generate_position = generatePositionList(ORIGIN_INIT_POSITION, 20);
+const INCREASE_FI_LIST = generate_position[0];
+const INCREASE_FI_LIST_HOLDING = generate_position[1];
 
-let continuous_win = 0;
-let continuous_loss = 0;
-let lastWinOrLoss = 0; // 0: loss, 1: win
-let lastPosition = INIT_POSITION;
-let maxContinuousWin = 0;
-let maxContinuousLoss = 0;
-let baoNumTotal = 0;
+const POSITION_RATIO = 10;
+let RESTART_TIME = 0;
 
-let modeChange = false;
+let rsi1 = 8;
+let rsi2 = 12;
+let rsi3 = 24;
 
 const INIT_MOST_LOSS = {
 	profit: 0,
 	time: null,
 };
-const POSITION_RATIO_DEFAULT = 100;
-let POSITION_RATIO = POSITION_RATIO_DEFAULT;
-const ORIGIN_TOTAL_CAPITAL = (INIT_POSITION / LEVERAGE) * POSITION_RATIO;
-let totalCapital = ORIGIN_TOTAL_CAPITAL;
-let totalPosition = 0;
-let receiveCapital = 0;
-let minTotalCapital = totalCapital;
-let maxOpenPosition = 0;
-let ifIgnore = false;
-let ignoreNum = 0;
-
-let currentPosition = {};
-let longPosition = {
-	entryPrice: 0,
-	positionAmt: 0,
-};
-let shortPosition = {
-	entryPrice: 0,
-	positionAmt: 0,
-};
-let longPatchNum = 0;
-let shortPatchNum = 0;
-let totalProfit = 0;
-let currentMarketPrice = 0;
-let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
-let rsi1 = 5;
-let rsi2 = 14;
-let rsi3 = 24;
 
-const DEFAULT_CONDITION = 50;
-let LONG_CONDITION = DEFAULT_CONDITION;
-let SHORT_CONDITION = DEFAULT_CONDITION;
+const checkDeal = async (data) => {
+	await checkByStep({
+		macdList: data.macdList.slice(-80),
+		rsiList: data.rsiList.slice(-80),
+		bollList: data.bollList.slice(-80),
+	});
 
-let lastMode = 0;
+	async function checkByStep(data, isForceDeal) {
+		const { macdList, rsiList, bollList } = data;
+		let mark_price;
+		try {
+			const data = await cAuthClientBN.common.getMarkPrice(BN_SYMBOL);
+			mark_price = Number(data.markPrice);
+		} catch (e) {
+			restart('getMarkPrice');
+		}
 
-// const REVERSE_RATIO = - 0.15 * LEVERAGE / 10;
+		let longHolding;
+		let shortHolding;
+		let longRatio = 0;
+		let shortRatio = 0;
+		let avail = 0;
 
-let myInterval;
+		if (positionChange || !globalHolding || !globalHolding.length || true) {
+			try {
+				const { positions: holding, availableBalance } =
+					await cAuthClientBN.swap.getPosition();
+				globalHolding =
+					holding.filter(
+						(item) =>
+							item.positionAmt &&
+							Math.abs(Number(item.positionAmt)) > 0
+					) || [];
+				positionChange = false;
+				// MODE = 1;
+				avail = (availableBalance * LEVERAGE) / mark_price;
 
-// var config = require('./configV5');
-var configBN = require('./configBN');
-// const cAuthClient = new customAuthClient(
-//     config.httpkey,
-//     config.httpsecret,
-//     config.passphrase,
-//     config.urlHost
-// )
+				console.log('------------------');
+				console.log(
+					`availableBalance`,
+					availableBalance,
+					'avail',
+					avail,
+					'INIT_POSITION',
+					INIT_POSITION
+				);
+				console.log('------------------');
+			} catch (e) {
+				// if(result.error_message) throw new Error('Cannot get position!');
+				restart('getPosition');
+			}
+		}
+
+		let holding = globalHolding;
+		if (holding && holding.length) {
+			longHolding = holding.find(
+				(item) =>
+					item.positionSide &&
+					item.positionSide.toUpperCase() == 'LONG' &&
+					Math.abs(Number(item.positionAmt)) > 0
+			);
+			shortHolding = holding.find(
+				(item) =>
+					item.positionSide &&
+					item.positionSide.toUpperCase() == 'SHORT' &&
+					Math.abs(Number(item.positionAmt)) > 0
+			);
+		}
+
+		if (longHolding) {
+			const { leverage, entryPrice: avg_cost } = longHolding;
+			longRatio =
+				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
+				Number(mark_price);
+			maxWinRatio = Math.max(maxWinRatio, longRatio);
+		}
+
+		if (shortHolding) {
+			const { leverage, entryPrice: avg_cost } = shortHolding;
+			shortRatio =
+				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
+				Number(mark_price);
+			shortRatio = -shortRatio;
+			maxWinRatio = Math.max(maxWinRatio, shortRatio);
+		}
+
+		let totalRatio = 0;
+		if (longHolding && !shortHolding) {
+			totalRatio = longRatio;
+		} else if (!longHolding && shortHolding) {
+			totalRatio = shortRatio;
+		} else if (longHolding && shortHolding) {
+			totalRatio =
+				(longRatio * Math.abs(longHolding.positionAmt) +
+					shortRatio * Math.abs(shortHolding.positionAmt)) /
+				(Math.abs(longHolding.positionAmt) +
+					Math.abs(shortHolding.positionAmt));
+		}
+
+		const CENTER_CROSS_LONG_CONDITION =
+			Number(macdList[macdList.length - 2].close) <
+				Number(bollList[bollList.length - 2].MA) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].MA) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].UP);
+
+		const CENTER_CROSS_SHORT_CONDITION =
+			Number(macdList[macdList.length - 2].close) >
+				Number(bollList[bollList.length - 2].MA) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].MA) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].DN);
+
+		const OUT_HIGH_CONDITION =
+			Number(macdList[macdList.length - 2].close) <
+				Number(bollList[bollList.length - 2].UP) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].UP);
+
+		const OUT_LOW_CONDITION =
+			Number(macdList[macdList.length - 2].close) >
+				Number(bollList[bollList.length - 2].DN) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].DN);
+
+		const CONVERSE_UP_CONDITION =
+			Number(macdList[macdList.length - 2].close) >
+				Number(bollList[bollList.length - 2].UP) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].UP) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].MA);
+
+		const CONVERSE_LOW_CONDITION =
+			Number(macdList[macdList.length - 2].close) <
+				Number(bollList[bollList.length - 2].DN) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].DN) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].MA);
+
+		// const result = await queryLatestOpenOrders();
+		// const [latestLongOrder, latestShortOrder] = result;
+
+		// const isLatestLongWin = latestLongOrder
+		//   ? Number(mark_price) > Math.abs(Number(latestLongOrder.avgPrice))
+		//   : true;
+		// const isLatestShortWin = latestShortOrder
+		//   ? Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice))
+		//   : true;
+
+		const LAST_SECOND_LONG_CONDITION =
+			Number(macdList[macdList.length - 2].close) >
+				Number(bollList[bollList.length - 2].MA) &&
+			Number(macdList[macdList.length - 2].open) >
+				Number(bollList[bollList.length - 2].MA);
+
+		const LAST_SECOND_SHORT_CONDITION =
+			Number(macdList[macdList.length - 2].close) <
+				Number(bollList[bollList.length - 2].MA) &&
+			Number(macdList[macdList.length - 2].open) <
+				Number(bollList[bollList.length - 2].MA);
+
+		const BATCH_LONG_OPEN_CONDITION =
+			!longHolding &&
+			shortHolding &&
+			Math.abs(shortHolding.positionAmt) >
+				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+			OUT_HIGH_CONDITION;
+
+		const BATCH_SHORT_OPEN_CONDITION =
+			!shortHolding &&
+			longHolding &&
+			Math.abs(longHolding.positionAmt) >
+				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+			OUT_LOW_CONDITION;
+
+		const BATCH_LONG_CLOSE_CONDITION =
+			longHolding &&
+			shortHolding &&
+			Math.abs(longHolding.positionAmt) >
+				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+			Math.abs(shortHolding.positionAmt) >
+				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+			CONVERSE_LOW_CONDITION;
+
+		const BATCH_SHORT_CLOSE_CONDITION =
+			longHolding &&
+			shortHolding &&
+			Math.abs(longHolding.positionAmt) >
+				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+			Math.abs(shortHolding.positionAmt) >
+				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
+			CONVERSE_UP_CONDITION;
+
+		const RSI_LONG = rsiList[rsiList.length - 1].RSI3 >= 50;
+		const RSI_SHORT = rsiList[rsiList.length - 1].RSI3 < 50;
+
+		const MACD_LONG_REVERSE =
+			Number(macdList[macdList.length - 2].column) >= 0 &&
+			Number(macdList[macdList.length - 2].column) <
+				Number(macdList[macdList.length - 1].column) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(macdList[macdList.length - 1].open);
+
+		const MACD_SHORT_REVERSE =
+			Number(macdList[macdList.length - 2].column) < 0 &&
+			Number(macdList[macdList.length - 2].column) >
+				Number(macdList[macdList.length - 1].column) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(macdList[macdList.length - 1].open);
+
+		const PRICE_LOW_MA =
+			Number(macdList[macdList.length - 1].close) <
+			Number(bollList[bollList.length - 1].MA);
+		const PRICE_UP_MA =
+			Number(macdList[macdList.length - 1].close) >
+			Number(bollList[bollList.length - 1].MA);
+
+		const CLOSE_ALL_LONG_CONDITION = false;
+		const CLOSE_ALL_SHORT_CONDITION = false;
+
+		const MAIN_OPEN_LONG_CONDITION1 =
+			!longHolding &&
+			(CONVERSE_LOW_CONDITION || (shortHolding && OUT_HIGH_CONDITION));
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding &&
+			(CONVERSE_UP_CONDITION || (longHolding && OUT_LOW_CONDITION));
+
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding &&
+			((!shortHolding && CONVERSE_UP_CONDITION) ||
+				(shortHolding && CENTER_CROSS_SHORT_CONDITION));
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding &&
+			((!longHolding && CONVERSE_LOW_CONDITION) ||
+				(longHolding && CENTER_CROSS_LONG_CONDITION));
+
+		const MAIN_OPEN_LONG_CONDITION2 =
+			!longHolding && CENTER_CROSS_SHORT_CONDITION;
+		const MAIN_OPEN_SHORT_CONDITION2 =
+			!shortHolding && CENTER_CROSS_LONG_CONDITION;
+		const MAIN_CLOSE_LONG_CONDITION2 =
+			longHolding && CENTER_CROSS_LONG_CONDITION;
+		const MAIN_CLOSE_SHORT_CONDITION2 =
+			shortHolding && CENTER_CROSS_SHORT_CONDITION;
+
+		let openLongCondition =
+			MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
+		let openShortCondition =
+			MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
+		let closeLongCondition =
+			MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
+		let closeShortCondition =
+			MODE == 1
+				? MAIN_CLOSE_SHORT_CONDITION1
+				: MAIN_CLOSE_SHORT_CONDITION2;
+
+		// if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
+		// if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
+
+		// NEW_POSITION_RATIO =
+		//   35 /
+		//   (Number(bollList[bollList.length - 1].UP) -
+		//     Number(bollList[bollList.length - 1].DN));
+
+		// IS_CLOSE_ALL_POSITION = false;
+		// if (openLongCondition || openShortCondition) {
+		//   if (
+		//     (longHolding &&
+		//       Math.abs(Number(longHolding.positionAmt)) >=
+		//         CLOSE_SAME_POSITION_RATIO) ||
+		//     (shortHolding &&
+		//       Math.abs(Number(shortHolding.positionAmt)) >=
+		//         CLOSE_SAME_POSITION_RATIO)
+		//   ) {
+		//     IS_CLOSE_ALL_POSITION = true;
+		//     closeLongCondition = true;
+		//     closeShortCondition = true;
+		//   }
+		// }
+
+		let isMarketDeal = true;
+		let dealRatio = 0.01;
+
+		const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+		const hmsArr = currentTime.split(' ')[1].split(':');
+		const lastMinuteCharacter = hmsArr[1];
+		const lastSecondCharacter = hmsArr[2];
+		const minuteList = ['0', '00'];
+		const secondList = ['0', '00'];
+		const minuteDiff = moment(currentTime).diff(
+			moment(macdList[macdList.length - 1].time),
+			'minute'
+		);
+		const isFiveM =
+			minuteDiff < 90 &&
+			minuteList.includes(lastMinuteCharacter) &&
+			!secondList.includes(lastSecondCharacter);
+
+		// if (isFiveM && avail < INIT_POSITION * NEW_POSITION_RATIO) {
+		//   if (openLongCondition) {
+		//     openLongCondition = false;
+		//     closeShortCondition = true;
+		//   } else if (openShortCondition) {
+		//     openShortCondition = false;
+		//     closeLongCondition = true;
+		//   }
+		// }
+
+		console.log('************************************', currentTime);
+		console.log('isFiveM', isFiveM, lastMinuteCharacter);
+		console.log('macdList', macdList.slice(-2));
+		console.log('bollList', bollList.slice(-2));
+		console.log('longRatio', longRatio, 'shortRatio', shortRatio);
+		console.log(
+			'longPositionAmt',
+			longHolding ? longHolding.positionAmt : 0,
+			'shortPositionAmt',
+			shortHolding ? shortHolding.positionAmt : 0
+		);
+		console.log(
+			'closeLongCondition',
+			closeLongCondition,
+			'closeShortCondition',
+			closeShortCondition,
+			'openLongCondition',
+			openLongCondition,
+			'openShortCondition',
+			openShortCondition
+		);
+		console.log('************************************');
+
+		const patchPosition = async (holding, direction) => {
+			let positionAmt = Number(holding.positionAmt) * 2;
+			await openPosition({
+				position: positionAmt,
+				openSide: direction,
+				mark_price,
+				time: macdList[macdList.length - 1].time,
+			});
+		};
+
+		const closeLongPosition = async () => {
+			if (longHolding && Math.abs(Number(longHolding.positionAmt))) {
+				// const patchNum = getPowByNum(
+				//   Math.abs(Number(longHolding.positionAmt)),
+				//   INIT_POSITION
+				// );
+				if (longRatio < LOSS_MAX && false) {
+					await patchPosition(longHolding, 'long');
+				} else if (
+					longRatio > WIN_MAX ||
+					longRatio < LOSS_MAX ||
+					true
+				) {
+					let closePositionAmt = INIT_POSITION;
+					if (CLOSE_ALL_LONG_CONDITION)
+						closePositionAmt = Math.abs(
+							Number(longHolding.positionAmt)
+						);
+					// if (BATCH_LONG_CLOSE_CONDITION)
+					//   closePositionAmt = Math.abs(Number(longHolding.positionAmt));
+					// const curIndex = fiList.findIndex(
+					//   (positionAmt) =>
+					//     positionAmt == Math.abs(Number(longHolding.positionAmt))
+					// );
+					// if (curIndex) {
+					//   closePositionAmt = fiList[curIndex - 1];
+					// }
+					// if (closePositionAmt > INIT_POSITION)
+					//   closePositionAmt = Number(
+					//     ((closePositionAmt / 2.15) * 1.15).toFixed(2)
+					//   );
+
+					const payload = {
+						positionAmt: longHolding.positionAmt,
+						position: closePositionAmt,
+						side: 'long',
+						mark_price,
+						time: macdList[macdList.length - 1].time,
+						ratio: longRatio,
+					};
+					await closePosition(payload, false, avail);
+				}
+			}
+		};
+
+		const closeShortPosition = async () => {
+			if (shortHolding && Math.abs(Number(shortHolding.positionAmt))) {
+				if (shortRatio < LOSS_MAX && false) {
+					await patchPosition(shortHolding, 'long');
+				} else if (
+					shortRatio > WIN_MAX ||
+					shortRatio < LOSS_MAX ||
+					true
+				) {
+					let closePositionAmt = INIT_POSITION;
+					if (CLOSE_ALL_SHORT_CONDITION)
+						closePositionAmt = Math.abs(
+							Number(shortHolding.positionAmt)
+						);
+					// if (BATCH_SHORT_CLOSE_CONDITION)
+					//   closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+					// const curIndex = fiList.findIndex(
+					//   (positionAmt) =>
+					//     positionAmt == Math.abs(Number(shortHolding.positionAmt))
+					// );
+					// if (curIndex) {
+					//   closePositionAmt = fiList[curIndex - 1];
+					// }
+					// if (closePositionAmt > INIT_POSITION)
+					//   closePositionAmt = Number(
+					//     ((closePositionAmt / 2.15) * 1.15).toFixed(2)
+					//   );
+					const payload = {
+						positionAmt: shortHolding.positionAmt,
+						position: closePositionAmt,
+						side: 'short',
+						mark_price,
+						time: macdList[macdList.length - 1].time,
+						ratio: shortRatio,
+					};
+					await closePosition(payload, false, avail);
+				}
+			}
+		};
+
+		//平多仓条件
+		if (closeLongCondition && isFiveM) {
+			try {
+				await closeLongPosition();
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		//平空仓条件
+		if (closeShortCondition && isFiveM) {
+			try {
+				await closeShortPosition();
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		//开多仓条件
+		if (openLongCondition) {
+			try {
+				// let openPositionAmt = shortHolding
+				//   ? Math.abs(shortHolding.positionAmt) +
+				//     INIT_POSITION * NEW_POSITION_RATIO
+				//   : INIT_POSITION;
+				let openPositionAmt = INIT_POSITION;
+				// if (BATCH_LONG_OPEN_CONDITION)
+				//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
+				// if (shortHolding && !closeShortCondition) {
+				//   openPositionAmt = 2 * INIT_POSITION;
+				// }
+				// if (longHolding) {
+				//   const curIndex = fiList.findIndex(
+				//     (positionAmt) => positionAmt == Math.abs(longHolding.positionAmt)
+				//   );
+				//   openPositionAmt = fiList[curIndex];
+				// }
+				// openPositionAmt = Number(openPositionAmt.toFixed(2));
+				// if (!longHolding) {
+				//   if (shortHolding) {
+				//     openPositionAmt = Math.abs(shortHolding.positionAmt);
+				//   } else {
+				//     openPositionAmt = INIT_POSITION * 4;
+				//   }
+				// }
+				if (isFiveM /* && avail >= openPositionAmt */) {
+					await openPosition(
+						{
+							position: openPositionAmt,
+							openSide: 'long',
+							mark_price,
+							time: macdList[macdList.length - 1].time,
+						},
+						isMarketDeal,
+						dealRatio
+					);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		//开空仓条件
+		if (openShortCondition) {
+			try {
+				// let openPositionAmt = shortHolding
+				//   ? Math.abs(shortHolding.positionAmt) +
+				//     INIT_POSITION * NEW_POSITION_RATIO
+				//   : INIT_POSITION;
+				let openPositionAmt = INIT_POSITION;
+				// if (BATCH_SHORT_OPEN_CONDITION)
+				//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
+				// if (longHolding && !closeLongCondition) {
+				//   openPositionAmt = 2 * INIT_POSITION;
+				// }
+				// if (shortHolding) {
+				//   const curIndex = fiList.findIndex(
+				//     (positionAmt) => positionAmt == Math.abs(shortHolding.positionAmt)
+				//   );
+				//   openPositionAmt = fiList[curIndex];
+				// }
+				// openPositionAmt = Number(openPositionAmt.toFixed(2));
+				// if (!shortHolding) {
+				//   if (longHolding) {
+				//     openPositionAmt = Math.abs(longHolding.positionAmt);
+				//   } else {
+				//     openPositionAmt = INIT_POSITION * 4;
+				//   }
+				// }
+				if (isFiveM /* && avail >= openPositionAmt */) {
+					await openPosition(
+						{
+							position: openPositionAmt,
+							openSide: 'short',
+							mark_price,
+							time: macdList[macdList.length - 1].time,
+						},
+						isMarketDeal,
+						dealRatio
+					);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		// if (
+		//   (closeLongCondition && longRatio > WIN_MAX * 4) ||
+		//   (closeShortCondition && shortRatio > WIN_MAX * 4)
+		// ) {
+		//   stop();
+		// }
+	}
+};
+
+const cancelReduceOnly = async (direction) => {
+	let isHasReduceOnly = false;
+	const result = await cAuthClientBN.swap.openOrders();
+	if (result && result.length) {
+		const index = result.findIndex(
+			(item) => item.positionSide == direction && item.reduceOnly
+		);
+		if (index != -1) isHasReduceOnly = true;
+	}
+	if (isHasReduceOnly) {
+		const time = 1000 * 2;
+		await countdownCancelAll(time);
+	}
+};
+
+var configBN = require('./configBN2');
 const cAuthClientBN = new customAuthClientBN(
 	configBN.httpkey,
 	configBN.httpsecret,
@@ -148,38 +637,38 @@ function send(res, ret) {
 	res.send(str);
 }
 
-function getCurrentMacd(list, last) {
+function getCurrentMacd(list) {
 	let macdList = [];
 	list.map((item, index) => {
 		let result = {};
 		if (index == 0) {
-			result = last || {
+			result = {
+				open: Number(item[1]),
+				price: Number(item[4]),
+				close: Number(item[4]),
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
+				ema60: Number(item[4]),
 				diff: 0,
 				dea: 0,
 				column: 0,
-				open: Number(item[1]),
 				high: Number(item[2]),
 				low: Number(item[3]),
-				close: Number(item[4]),
-				quantity: Number(item[5]),
 				time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
-				week: moment(parseInt(item[0])).day(),
 			};
 		} else {
 			const lastResult = macdList[macdList.length - 1];
 			const payload = {
+				open: Number(item[1]),
+				price: Number(item[4]),
+				close: Number(item[4]),
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
+				lastEma60: lastResult.ema60,
 				lastDea: lastResult.dea,
-				open: Number(item[1]),
 				high: Number(item[2]),
 				low: Number(item[3]),
-				close: Number(item[4]),
-				quantity: Number(item[5]),
 				time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
-				week: moment(parseInt(item[0])).day(),
 			};
 			result = getMacd(payload);
 		}
@@ -191,17 +680,16 @@ function getCurrentMacd(list, last) {
 	return macdList;
 }
 
-function getCurrentRSI(list, last) {
+function getCurrentRSI(list) {
 	const newList = JSON.parse(JSON.stringify(list));
 	let rsiList = [];
 	function* gen() {
-		for (let i = 0; i < Math.min(newList.length, 1400); i++) {
+		for (let i = 0; i < Math.min(newList.length, 400); i++) {
 			if (i > 0) list.pop();
 			const result = getRSI(
 				Number(list[list.length - 1][0]),
 				Number(list[list.length - 1][4]),
-				list.map((item) => Number(item[4])),
-				last
+				list.map((item) => Number(item[4]))
 			);
 			rsiList.push(result);
 			yield i;
@@ -209,26 +697,14 @@ function getCurrentRSI(list, last) {
 	}
 
 	for (let k of gen()) {
-		if (k >= Math.min(newList.length, 1400)) break;
+		if (k >= Math.min(newList.length, 400)) break;
 	}
 
 	rsiList = rsiList.reverse();
+	// rsiList = rsiList.slice(-2)
 	return rsiList;
 }
 
-/**
- * 
- * （1）计算MA
-MA=N日内的收盘价之和÷N
-（2）计算标准差MD
-MD=平方根（N-1）日的（C－MA）的两次方之和除以N
-（C指收盘价）
-（3）计算MB、UP、DN线
-MB=（N－1）日的MA
-UP=MB+k×MD
-DN=MB－k×MD
-（K为参数，可根据股票的特性来做相应的调整，一般默认为2）
- */
 function getBOLL(list) {
 	const N = 20;
 	const k = 2;
@@ -279,18 +755,157 @@ app.get('/test', function (req, res) {
 	send(res, { errcode: 0, errmsg: 'ok' });
 });
 
+function getUUID() {
+	function S4() {
+		// eslint-disable-next-line no-bitwise
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	}
+	return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
+}
+
+const queryLatestOpenOrders = async () => {
+	const params = { symbol: BN_SYMBOL, limit: 30 };
+	const orders = await cAuthClientBN.swap.allOrders(params);
+	orders.reverse();
+	console.log(orders, orders.length);
+	const latestLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			!item.reduceOnly &&
+			Number(item.executedQty)
+	);
+	const latestShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			!item.reduceOnly &&
+			Number(item.executedQty)
+	);
+
+	return [latestLongOrder, latestShortOrder];
+
+	// const latestOpenOrder = orders.find(
+	//   (item) => !item.reduceOnly && Number(item.executedQty)
+	// );
+};
+
+let openOrigClientOrderId = '';
+let closeOrigClientOrderId = '';
+const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
+	isMarketDeal = true;
+	const {
+		openSide = 'long',
+		position = Number(INIT_POSITION),
+		mark_price,
+	} = params;
+
+	async function postOrder(size) {
+		const type = openSide == 'long' ? 'BUY' : 'SELL';
+		console.log(
+			'openOtherOrderMoment',
+			openSide,
+			moment().format('YYYY-MM-DD HH:mm:ss')
+		);
+		console.log('position', position, 'type', type, 'side', openSide);
+
+		let price = mark_price;
+		if (openSide == 'long') {
+			price = mark_price * (1 - dealRatio / LEVERAGE);
+		} else {
+			price = mark_price * (1 + dealRatio / LEVERAGE);
+		}
+		let payload = {
+			symbol: BN_SYMBOL,
+			side: type,
+			positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
+			quantity: Math.abs(size),
+			recvWindow: 5000,
+			// type: "MARKET",
+			type: 'LIMIT',
+			timeInForce: 'GTC',
+			price: price.toFixed(2),
+		};
+		if (MODE == 2 || isMarketDeal) {
+			payload = {
+				symbol: BN_SYMBOL,
+				side: type,
+				positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
+				quantity: Math.abs(size),
+				recvWindow: 5000,
+				type: 'MARKET',
+			};
+		}
+		try {
+			const result = await cAuthClientBN.swap.postOrder(payload);
+			positionChange = true;
+
+			openOrigClientOrderId = result.clientOrderId;
+		} catch (e) {
+			// throw new Error('Error');
+			restart('open');
+		}
+	}
+	await postOrder(position, mark_price);
+};
+
+const closePosition = async (holding, isCloseAll = false, avail) => {
+	let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
+	// position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
+	// position = Math.abs(Number(holding.positionAmt));
+	// position = INIT_POSITION;
+	// if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
+
+	// if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
+	// if (avail < INIT_POSITION * NEW_POSITION_RATIO)
+	//   position = INIT_POSITION * NEW_POSITION_RATIO;
+
+	async function postOrder(size) {
+		const newClientOrderId = getUUID();
+		closeOrigClientOrderId = newClientOrderId;
+
+		const type = side == 'long' ? 'SELL' : 'BUY';
+
+		const payload = {
+			symbol: BN_SYMBOL,
+			side: type,
+			positionSide: side == 'long' ? 'LONG' : 'SHORT',
+			quantity: Math.abs(size),
+			recvWindow: 5000,
+			type: 'MARKET',
+		};
+		try {
+			const result = await cAuthClientBN.swap.postOrder(payload);
+			positionChange = true;
+
+			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+			closeOrigClientOrderId = result.clientOrderId;
+			console.log('closeOrigClientOrderId', closeOrigClientOrderId);
+			console.log('price', mark_price);
+			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		} catch (e) {
+			// throw new Error('Error');
+			restart('close');
+		}
+	}
+	console.log('###################################');
+	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
+	console.log('###################################');
+	await postOrder(position, mark_price);
+};
+
+let positionChange = true;
+let globalHolding = null;
 function getMacd(params) {
 	const {
-		close: price,
+		open,
+		close,
+		price,
 		lastEma12,
 		lastEma26,
+		lastEma60,
 		lastDea,
 		high,
 		low,
 		time,
-		week,
-		quantity,
-		open,
 	} = params;
 
 	const ema12 = toFixedAndToNumber(
@@ -299,6 +914,10 @@ function getMacd(params) {
 	);
 	const ema26 = toFixedAndToNumber(
 		(2 / (26 + 1)) * price + (25 / (26 + 1)) * lastEma26,
+		4
+	);
+	const ema60 = toFixedAndToNumber(
+		(2 / (60 + 1)) * price + (59 / (60 + 1)) * lastEma26,
 		4
 	);
 
@@ -312,40 +931,30 @@ function getMacd(params) {
 
 	const result = {
 		open,
-		close: price,
+		close,
+		price,
 		ema12,
 		ema26,
+		ema60,
 		diff,
 		dea,
 		column,
 		high,
 		low,
-		quantity,
 		time,
-		week,
 	};
 
 	return result;
 }
 function toFixedAndToNumber(n, num = 1) {
-	// return Number(n.toFixed(num))
 	return Math.round(n * Math.pow(10, num)) / Math.pow(10, num);
 }
-function getRSIAverage(list, i, n, last) {
+function getRSIAverage(list, i, n) {
 	let diff;
 	let gainI = 0;
 	let lossI = 0;
 	if (i == 0) {
-		if (last) {
-			diff = Number(list[i]) - last.price;
-			if (diff > 0) {
-				gainI = Math.max(0, diff);
-			} else {
-				lossI = Math.max(0, -diff);
-			}
-		} else {
-			diff = 0;
-		}
+		diff = 0;
 	} else {
 		diff = Number(list[i]) - Number(list[i - 1]);
 		if (diff > 0) {
@@ -361,7 +970,7 @@ function getRSIAverage(list, i, n, last) {
 	if (i == 0) {
 		gainAverageI = gainI;
 		lossAverageI = lossI;
-	} else if ((i == 1 || i == 2) && !last) {
+	} else if (i == 1 || i == 2) {
 		gainAverageI = 100;
 		lossAverageI = 100;
 	} else {
@@ -369,15 +978,13 @@ function getRSIAverage(list, i, n, last) {
 		gainAverageI = (gainI + (n - 1) * lastRSIAverage.gainAverageI) / n;
 		lossAverageI = (lossI + (n - 1) * lastRSIAverage.lossAverageI) / n;
 	}
-
-	// console.log('gain','loss',gainAverageI,lossAverageI)
 	return {
 		gainAverageI,
 		lossAverageI,
 	};
 }
-function getRSIByPeriod(newList, period, last) {
-	const result = getRSIAverage(newList, newList.length - 1, period, last);
+function getRSIByPeriod(newList, period) {
+	const result = getRSIAverage(newList, newList.length - 1, period);
 	const { gainAverageI, lossAverageI } = result;
 	// const RSI = gainAverageI / (gainAverageI + lossAverageI) * 100
 	const RS = gainAverageI / (lossAverageI || 1);
@@ -389,14 +996,13 @@ function getRSIByPeriod(newList, period, last) {
 	};
 	return newResult;
 }
-function getRSI(time, price, list, last) {
-	const { RSI: RSI1 } = getRSIByPeriod(list, rsi1, last);
-	const { RSI: RSI2 } = getRSIByPeriod(list, rsi2, last);
-	const { RSI: RSI3 } = getRSIByPeriod(list, rsi3, last);
+function getRSI(time, price, list) {
+	const { RSI: RSI1 } = getRSIByPeriod(list, rsi1);
+	const { RSI: RSI2 } = getRSIByPeriod(list, rsi2);
+	const { RSI: RSI3 } = getRSIByPeriod(list, rsi3);
 
 	const result = {
 		time: moment(parseInt(time)).format('YYYY-MM-DD HH:mm:ss'),
-		week: moment(parseInt(time)).day(),
 		price,
 		RSI1,
 		RSI2,
@@ -404,107 +1010,7 @@ function getRSI(time, price, list, last) {
 	};
 	return result;
 }
-//计算向量叉乘
-function crossMul(v1, v2) {
-	return v1.x * v2.y - v1.y * v2.x;
-}
-//判断两条线段是否相交
-function checkCross(p1, p2, p3, p4) {
-	let v1 = { x: p1.x - p3.x, y: p1.y - p3.y },
-		v2 = { x: p2.x - p3.x, y: p2.y - p3.y },
-		v3 = { x: p4.x - p3.x, y: p4.y - p3.y },
-		v = crossMul(v1, v3) * crossMul(v2, v3);
-	v1 = { x: p3.x - p1.x, y: p3.y - p1.y };
-	v2 = { x: p4.x - p1.x, y: p4.y - p1.y };
-	v3 = { x: p2.x - p1.x, y: p2.y - p1.y };
-	return v <= 0 && crossMul(v1, v3) * crossMul(v2, v3) <= 0 ? true : false;
-}
-function isTripleDown(list) {
-	return list.every((item) => item.RSI1 < item.RSI2);
-}
-function isTripleUp(list) {
-	return list.every((item) => item.RSI1 > item.RSI2);
-}
-function isGoldOverLapping(list, index) {
-	// let isOverLapping = false
-	const isOverLapping = list.every(
-		(item) => /* item.RSI1 >= item.RSI2 && */ item.RSI2 >= item.RSI3
-	);
-	// if(
-	//     // ((list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3)
-	//     // ||
-	//     list[1].RSI1 >= list[1].RSI2 && list[1].RSI2 >= list[1].RSI3
-	//     &&
-	//     list[2].RSI1 >= list[2].RSI2 && list[2].RSI2 >= list[2].RSI3
-	// ){
-	//     const point1 = {
-	//         x: index,
-	//         y: list[0].RSI1
-	//     }
-	//     const point2 = {
-	//         x: index + 2,
-	//         y: list[2].RSI1
-	//     }
-	//     const point3 = {
-	//         x: index,
-	//         y: list[0].RSI2,
-	//     }
-	//     const point4 = {
-	//         x: index + 2,
-	//         y: list[2].RSI2
-	//     }
-	// if(checkCross(point1,point2,point3,point4)){
-	//     isOverLapping = true
-	// }
-	// }
-	const overlappingObj = {
-		isOverLapping,
-		overlappingIndex: index,
-		overlappingObj: list[0],
-	};
-	return overlappingObj;
-}
-function isDeadOverLapping(list, index) {
-	// let isOverLapping = false
-	const isOverLapping = list.every(
-		(item) => /* item.RSI1 <= item.RSI2 && */ item.RSI2 <= item.RSI3
-	);
-	// if(
-	//     // ((list[0].RSI1 >= list[0].RSI2 && list[0].RSI2 >= list[0].RSI3)
-	//     // ||
-	//     list[0].RSI1 <= list[0].RSI2 && list[0].RSI2 <= list[0].RSI3
-	//     &&
-	//     list[1].RSI1 <= list[1].RSI2 && list[1].RSI2 <= list[1].RSI3
-	//     &&
-	//     list[2].RSI1 <= list[2].RSI2 && list[2].RSI2 <= list[2].RSI3
-	// ){
-	//     const point1 = {
-	//         x: index,
-	//         y: list[0].RSI1
-	//     }
-	//     const point2 = {
-	//         x: index + 2,
-	//         y: list[2].RSI1
-	//     }
-	//     const point3 = {
-	//         x: index,
-	//         y: list[0].RSI2,
-	//     }
-	//     const point4 = {
-	//         x: index + 2,
-	//         y: list[2].RSI2
-	//     }
-	//     // if(checkCross(point1,point2,point3,point4)){
-	//         isOverLapping = true
-	//     // }
-	// }
-	const overlappingObj = {
-		isOverLapping,
-		overlappingIndex: index,
-		overlappingObj: list[0],
-	};
-	return overlappingObj;
-}
+
 function getAverage(list) {
 	let sum = 0;
 	for (let i = 0; i < list.length; i++) {
@@ -512,13 +1018,6 @@ function getAverage(list) {
 	}
 	let mean = sum / list.length;
 	return mean;
-}
-
-function stopInterval() {
-	if (myInterval) {
-		clearInterval(myInterval);
-		myInterval = null;
-	}
 }
 
 const waitTime = (time = 1000 * 4) => {
@@ -529,183 +1028,36 @@ const waitTime = (time = 1000 * 4) => {
 	});
 };
 
-app.get('/swap/reset', async (req, response) => {
-	totalProfit = 0;
-	currentPosition = {};
-	longPosition = { entryPrice: 0, positionAmt: 0 };
-	shortPosition = { entryPrice: 0, positionAmt: 0 };
-	dealDetailList = [];
-	mostLoss = {};
-	send(response, {
-		errcode: 0,
-		errmsg: 'ok',
-		data: { totalProfit, currentPosition, dealDetailList },
-	});
-});
-
-app.get('/swap/setRSIParams', async (req, response) => {
-	const { query = {} } = req;
-	const { rsi1: rsiP1, rsi2: rsiP2, rsi3: rsiP3 } = query;
-	rsi1 = rsiP1;
-	rsi2 = rsiP2;
-	rsi3 = rsiP3;
-	send(response, { errcode: 0, errmsg: 'ok', data: { rsi1, rsi2, rsi3 } });
-});
-
-app.get('/swap/setConditionParams', async (req, response) => {
-	const { query = {} } = req;
-	const { longCondition: longConditionP, shortCondition: shortConditionP } =
-		query;
-	LONG_CONDITION = longConditionP;
-	SHORT_CONDITION = shortConditionP;
-	send(response, {
-		errcode: 0,
-		errmsg: 'ok',
-		data: { LONG_CONDITION, SHORT_CONDITION },
-	});
-});
-
-app.get('/swap/getHistory', async (req, response) => {
-	const { query = {} } = req;
-	const { time } = query;
+const countdownCancelAll = async (time) => {
 	const payload = {
-		interval: INTERVAL,
-		limit: 480,
-		startTime: time,
+		symbol: BN_SYMBOL,
+		countdownTime: time,
 	};
-	const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
-	// const list = data.reverse();
-	const list = data;
-	send(response, { errcode: 0, errmsg: 'ok', data: list });
-});
+	await cAuthClientBN.swap.countdownCancelAll(payload);
+};
 
-let lastMacd;
-let lastRSI;
-let lastHistoryList = [];
-app.get('/swap/startHearBeat', async (req, response) => {
-	const { query = {}, body } = req;
-	const {
-		time,
-		date,
-		interval = INTERVAL,
-		limit = 1500,
-		isAutoReset = false,
-		isInit = false,
-	} = query;
-	try {
-		dealDetailList = [];
-		mostLoss = INIT_MOST_LOSS;
-
-		if (isAutoReset) {
-			totalProfit = 0;
-			currentPosition = {};
-			longPosition = { entryPrice: 0, positionAmt: 0 };
-			shortPosition = { entryPrice: 0, positionAmt: 0 };
-			dealDetailList = [];
-			mostLoss = INIT_MOST_LOSS;
-			maxWinRatio = 0;
-			dealDetailList = [];
-			maxOpenPosition = 0;
-		}
-
-		// const mock = require(`./mock/${date}.js`);
-		// const list = mock.mockData
-
-		const payload = {
-			interval,
-			// endTime: moment(Number(time)).add(1, "days").valueOf(),
-			limit,
-			startTime: time,
-		};
-		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
-		const list = data;
-
-		if (isInit) {
-			lastHistoryList = [];
-		}
-
-		const newList = JSON.parse(JSON.stringify(list));
-		newList.pop();
-		const macdList = getCurrentMacd(newList, lastMacd).slice(-limit);
-		const rsiList = [];
-		const bollList = getCurrentBOLL(newList).slice(-limit);
-
-		lastMacd = macdList[macdList.length - 1];
-		lastRSI = {};
-
-		const result = {
-			macdList,
-			rsiList,
-			bollList,
-		};
-
-		await checkDeal(result, isAutoReset);
-		// const longActualProfit =
-		//   ((currentMarketPrice - longPosition.entryPrice) *
-		//     longPosition.positionAmt) /
-		//   currentMarketPrice;
-		// const shortActualProfit =
-		//   (-(currentMarketPrice - shortPosition.entryPrice) *
-		//     shortPosition.positionAmt) /
-		//   currentMarketPrice;
-		// const actualProfit = totalProfit + longActualProfit + shortActualProfit;
-		send(response, {
-			errcode: 0,
-			errmsg: 'ok',
-			data: {
-				// history: list,
-				// index: result,
-				totalProfit: totalProfit || -0.0000001,
-				totalPosition,
-				totalCapital,
-				minTotalCapital,
-				maxOpenPosition,
-				currentPosition,
-				dealDetailList,
-				mostLoss,
-				maxContinuousWin,
-				maxContinuousLoss,
-				longPosition,
-				shortPosition,
-				baoNumTotal,
-				lastWinOrLoss,
-				lastPosition,
-				// actualProfit,
-			},
-		});
-	} catch (e) {
-		console.log(e);
-		restart('startHearBeat');
+const startInterval = async () => {
+	RESTART_TIME += 1;
+	if (RESTART_TIME >= 1 * 14) {
+		RESTART_TIME = 0;
+		restart();
+		return;
 	}
-});
-
-app.get('/swap/getLatestProfit', async (req, response) => {
-	const { query = {} } = req;
-	const { time, interval = INTERVAL, limit = 500 } = query;
 	try {
+		const time = moment().valueOf();
 		const payload = {
-			interval,
-			limit,
+			interval: DEFAULT_INTERVAL,
+			limit: 100,
 			endTime: time,
 		};
 		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
 		const list = data;
-		totalProfit = 0;
-		// currentPosition = {};
-		// longPosition = { entryPrice: 0, positionAmt: 0 };
-		// shortPosition = { entryPrice: 0, positionAmt: 0 };
-		dealDetailList = [];
-		// mostLoss = INIT_MOST_LOSS;
-		maxWinRatio = 0;
-		maxOpenPosition = 0;
-		totalCapital = ORIGIN_TOTAL_CAPITAL;
 
 		const newList = JSON.parse(JSON.stringify(list));
 		newList.pop();
-
-		const bollList = getCurrentBOLL(newList).slice(-1400);
-		const macdList = getCurrentMacd(newList).slice(-1400);
-		const rsiList = getCurrentRSI(newList).slice(-1400);
+		const bollList = getCurrentBOLL(newList);
+		const macdList = getCurrentMacd(newList);
+		const rsiList = getCurrentRSI(newList);
 
 		const result = {
 			macdList,
@@ -713,1056 +1065,46 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			bollList,
 		};
 		await checkDeal(result);
-		const longActualProfit =
-			((currentMarketPrice - longPosition.entryPrice) *
-				longPosition.positionAmt) /
-			currentMarketPrice;
-		const shortActualProfit =
-			(-(currentMarketPrice - shortPosition.entryPrice) *
-				shortPosition.positionAmt) /
-			currentMarketPrice;
-		const actualProfit = totalProfit + longActualProfit + shortActualProfit;
-		console.log('currentMarketPrice', currentMarketPrice);
-		send(response, {
-			errcode: 0,
-			errmsg: 'ok',
-			data: {
-				// index: result,
-				totalProfit,
-				dealDetailList,
-				mostLoss,
-				maxContinuousWin,
-				maxContinuousLoss,
-				longPosition,
-				shortPosition,
-				baoNumTotal,
-				lastWinOrLoss,
-				lastPosition,
-				maxOpenPosition,
-				actualProfit,
-				minTotalCapital,
-			},
-		});
+
+		await waitTime(1000 * 56);
+		await startInterval();
 	} catch (e) {
-		console.log(e);
 		restart();
 	}
-});
-
-function fibonacci(n) {
-	if (n == 1 || n == 2) {
-		return 1;
-	}
-	return fibonacci(n - 2) + fibonacci(n - 1);
-}
-
-const checkDeal = async (data, isAutoReset = true) => {
-	data.bollList = data.bollList || [];
-
-	for (let i = 0; i < data.bollList.length - 9; i++) {
-		checkByStep(
-			{
-				macdList: data.macdList.slice(i, i + 10),
-				rsiList: data.rsiList.slice(i, i + 10),
-				bollList: data.bollList.slice(i, i + 10),
-			},
-			isAutoReset && i == data.macdList.length - 10
-		);
-	}
-
-	function checkByStep(data, isForceDeal) {
-		// isForceDeal = false;
-		const { macdList, rsiList, bollList } = data;
-
-		// macdList.slice(-3);
-		const mark_price = macdList[macdList.length - 1].close;
-		currentMarketPrice = mark_price;
-
-		let longHolding;
-		let shortHolding;
-		let longRatio = 0;
-		let shortRatio = 0;
-		let holding;
-
-		if (longPosition && longPosition.positionAmt) {
-			longHolding = JSON.parse(JSON.stringify(longPosition));
-			holding = longHolding;
-		}
-		if (shortPosition && shortPosition.positionAmt) {
-			shortHolding = JSON.parse(JSON.stringify(shortPosition));
-			holding = shortHolding;
-		}
-
-		if (longHolding) {
-			const { leverage, entryPrice: avg_cost } = longHolding;
-			longRatio =
-				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
-				Number(mark_price);
-			maxWinRatio = Math.max(maxWinRatio, longRatio);
-		}
-
-		if (shortHolding) {
-			const { leverage, entryPrice: avg_cost } = shortHolding;
-			shortRatio =
-				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
-				Number(mark_price);
-			shortRatio = -shortRatio;
-			maxWinRatio = Math.max(maxWinRatio, shortRatio);
-		}
-
-		const DOWN_BOLL_CONDITION =
-			Number(bollList[bollList.length - 2].MA) >
-			Number(bollList[bollList.length - 1].MA);
-
-		const longWinRatio = longHolding
-			? longRatio * Math.abs(Number(longHolding.positionAmt))
-			: 0;
-
-		const shortWinRatio = shortHolding
-			? shortRatio * Math.abs(Number(shortHolding.positionAmt))
-			: 0;
-
-		const totalWin = longWinRatio + shortWinRatio;
-
-		const CENTER_CROSS_LONG_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP);
-
-		const CENTER_CROSS_SHORT_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN);
-
-		const CONTINUOUS_LONG_CONDITION =
-			Number(macdList[macdList.length - 3].close) <
-				Number(bollList[bollList.length - 3].MA) &&
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
-
-		const CONTINUOUS_SHORT_CONDITION =
-			Number(macdList[macdList.length - 3].close) >
-				Number(bollList[bollList.length - 3].MA) &&
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
-
-		const OUT_HIGH_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].UP);
-
-		const OUT_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].DN);
-
-		const CONVERSE_UP_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
-
-		const CONVERSE_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
-
-		const CLOSE_MORE_HIGH_CONDITION =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].UP);
-
-		const CLOSE_LESS_HIGH_CONDITION =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].UP);
-
-		const CLOSE_MORE_LOW_CONDITION =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].DN);
-
-		const CLOSE_LESS_LOW_CONDITION =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].DN);
-
-		let totalRatio = 0;
-		if (longHolding && !shortHolding) {
-			totalRatio = longRatio;
-		} else if (!longHolding && shortHolding) {
-			totalRatio = shortRatio;
-		} else if (longHolding && shortHolding) {
-			totalRatio =
-				(longRatio * Math.abs(longHolding.positionAmt) +
-					shortRatio * Math.abs(shortHolding.positionAmt)) /
-				(Math.abs(longHolding.positionAmt) +
-					Math.abs(shortHolding.positionAmt));
-		}
-
-		const LAST_SECOND_LONG_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 2].open) >
-				Number(bollList[bollList.length - 2].MA);
-
-		const LAST_SECOND_SHORT_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 2].open) <
-				Number(bollList[bollList.length - 2].MA);
-
-		const BOLL_CONTINOUS_LONG =
-			Number(bollList[bollList.length - 3].MA) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(bollList[bollList.length - 4].MA) >
-				Number(bollList[bollList.length - 3].MA) &&
-			Number(bollList[bollList.length - 5].MA) >
-				Number(bollList[bollList.length - 4].MA);
-
-		const BOLL_CONTINOUS_SHORT =
-			Number(bollList[bollList.length - 3].MA) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(bollList[bollList.length - 4].MA) <
-				Number(bollList[bollList.length - 3].MA) &&
-			Number(bollList[bollList.length - 5].MA) <
-				Number(bollList[bollList.length - 4].MA);
-
-		const RSI_UP =
-			rsiList[rsiList.length - 1].RSI1 >
-				rsiList[rsiList.length - 1].RSI2 &&
-			rsiList[rsiList.length - 1].RSI2 >
-				rsiList[rsiList.length - 1].RSI3 &&
-			rsiList[rsiList.length - 1].RSI3 >= 50;
-		const RSI_DOWN =
-			rsiList[rsiList.length - 1].RSI1 <
-				rsiList[rsiList.length - 1].RSI2 &&
-			rsiList[rsiList.length - 1].RSI2 <
-				rsiList[rsiList.length - 1].RSI3 &&
-			rsiList[rsiList.length - 1].RSI3 < 50;
-		const MACD_UP =
-			macdList[macdList.length - 1].column >
-			macdList[macdList.length - 2].column;
-		const MACD_DOWN =
-			macdList[macdList.length - 1].column <
-			macdList[macdList.length - 2].column;
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		//   !longHolding && CENTER_CROSS_SHORT_CONDITION && RSI_UP;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		//   !shortHolding && CENTER_CROSS_LONG_CONDITION && RSI_DOWN;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 = longHolding && RSI_DOWN;
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && RSI_UP;
-
-		// const latestMACD = macdList[macdList.length - 1];
-		// const HIGH_20_CONDITION = macdList.every(
-		//   (item) => latestMACD.close >= item.close
-		// );
-
-		// const LOW_20_CONDITION = macdList.every(
-		//   (item) => latestMACD.close <= item.close
-		// );
-
-		// const HIGH_10_CONDITION = macdList.every(
-		//   (item) => latestMACD.close >= item.close
-		// );
-
-		// const LOW_10_CONDITION = macdList.every(
-		//   (item) => latestMACD.close <= item.close
-		// );
-
-		// const MAIN_OPEN_LONG_CONDITION1 = !longHolding && HIGH_20_CONDITION;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LOW_20_CONDITION;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LOW_10_CONDITION;
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && HIGH_10_CONDITION;
-
-		const BATCH_LONG_OPEN_CONDITION =
-			!longHolding &&
-			shortHolding &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			OUT_HIGH_CONDITION;
-
-		const BATCH_SHORT_OPEN_CONDITION =
-			!shortHolding &&
-			longHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			OUT_LOW_CONDITION;
-
-		const BATCH_LONG_CLOSE_CONDITION =
-			longHolding &&
-			shortHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			CENTER_CROSS_SHORT_CONDITION;
-
-		const BATCH_SHORT_CLOSE_CONDITION =
-			longHolding &&
-			shortHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			CENTER_CROSS_LONG_CONDITION;
-
-		let totalPosition = 0;
-		if (longHolding && shortHolding) {
-			totalPosition =
-				Math.abs(Number(longHolding.positionAmt)) +
-				Math.abs(Number(shortHolding.positionAmt));
-		}
-
-		const RSI_LONG = rsiList[rsiList.length - 1].RSI3 >= 50;
-		const RSI_SHORT = rsiList[rsiList.length - 1].RSI3 < 50;
-
-		const MACD_LONG_REVERSE =
-			Number(macdList[macdList.length - 2].column) >= 0 &&
-			Number(macdList[macdList.length - 2].column) <
-				Number(macdList[macdList.length - 1].column) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open);
-
-		const MACD_SHORT_REVERSE =
-			Number(macdList[macdList.length - 2].column) < 0 &&
-			Number(macdList[macdList.length - 2].column) >
-				Number(macdList[macdList.length - 1].column) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open);
-
-		const MACD_LONG = Number(macdList[macdList.length - 1].column) >= 0;
-		const MACD_SHORT = Number(macdList[macdList.length - 1].column) < 0;
-
-		const PRICE_LOW_MA =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].MA);
-		const PRICE_UP_MA =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].MA);
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding && (MACD_SHORT_REVERSE || OUT_LOW_CONDITION);
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding && (MACD_LONG_REVERSE || OUT_HIGH_CONDITION);
-
-		// const CLOSE_ALL_LONG_CONDITION = false;
-		// const CLOSE_ALL_SHORT_CONDITION = false;
-
-		const PRICE_LONG =
-			Number(macdList[macdList.length - 1].close) >
-			Number(macdList[macdList.length - 1].open);
-
-		const PRICE_SHORT =
-			Number(macdList[macdList.length - 1].close) <
-			Number(macdList[macdList.length - 1].open);
-
-		const CLOSE_ALL_LONG_CONDITION = false;
-		const CLOSE_ALL_SHORT_CONDITION = false;
-
-		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding &&
-			(CONVERSE_LOW_CONDITION || (shortHolding && OUT_HIGH_CONDITION));
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
-			(CONVERSE_UP_CONDITION || (longHolding && OUT_LOW_CONDITION));
-
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CONVERSE_UP_CONDITION;
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && CONVERSE_LOW_CONDITION;
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding && CENTER_CROSS_LONG_CONDITION;
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding && CENTER_CROSS_SHORT_CONDITION;
-
-		// const CLOSE_ALL_LONG_CONDITION = false;
-		// const CLOSE_ALL_SHORT_CONDITION = false;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 = longHolding && OUT_LOW_CONDITION;
-		// const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && OUT_HIGH_CONDITION;
-
-		const MAIN_OPEN_LONG_CONDITION2 =
-			!longHolding && CENTER_CROSS_SHORT_CONDITION;
-		const MAIN_OPEN_SHORT_CONDITION2 =
-			!shortHolding && CENTER_CROSS_LONG_CONDITION;
-		const MAIN_CLOSE_LONG_CONDITION2 =
-			longHolding && CENTER_CROSS_LONG_CONDITION;
-		const MAIN_CLOSE_SHORT_CONDITION2 =
-			shortHolding && CENTER_CROSS_SHORT_CONDITION;
-
-		modeChange = false;
-		let openLongCondition =
-			MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
-		let openShortCondition =
-			MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
-		let closeLongCondition =
-			MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
-		let closeShortCondition =
-			MODE == 1
-				? MAIN_CLOSE_SHORT_CONDITION1
-				: MAIN_CLOSE_SHORT_CONDITION2;
-
-		NEW_POSITION_RATIO = 1;
-		// if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
-		// if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
-
-		console.log('************************************');
-
-		console.log('longRatio', longRatio, 'shortRatio', shortRatio);
-		console.log(
-			'longPositionAmt',
-			longHolding ? longHolding.positionAmt : 0,
-			'shortPositionAmt',
-			shortHolding ? shortHolding.positionAmt : 0
-		);
-		console.log(
-			'closeLongCondition',
-			closeLongCondition,
-			'closeShortCondition',
-			closeShortCondition,
-			'openLongCondition',
-			openLongCondition,
-			'openShortCondition',
-			openShortCondition,
-			'NEW_POSITION_RATIO',
-			NEW_POSITION_RATIO
-		);
-		console.log('************************************');
-
-		if (isForceDeal) {
-			closeLongCondition = true;
-			closeShortCondition = true;
-			openLongCondition = false;
-			openShortCondition = false;
-		}
-
-		// IS_CLOSE_ALL_POSITION = false;
-		// if (isForceDeal) {
-		//   closeLongCondition = true;
-		//   closeShortCondition = true;
-		// } else if (openLongCondition || openShortCondition) {
-		//   if (
-		//     (longHolding &&
-		//       Math.abs(Number(longHolding.positionAmt)) >=
-		//         CLOSE_SAME_POSITION_RATIO) ||
-		//     (shortHolding &&
-		//       Math.abs(Number(shortHolding.positionAmt)) >=
-		//         CLOSE_SAME_POSITION_RATIO)
-		//   ) {
-		//     isForceDeal = true;
-		//     closeLongCondition = true;
-		//     closeShortCondition = true;
-		//   }
-		// }
-
-		// NEW_POSITION_RATIO =
-		//   60 /
-		//   (Number(bollList[bollList.length - 1].UP) -
-		//     Number(bollList[bollList.length - 1].DN));
-
-		let fiIndex = INCREASE_FI_LIST.findIndex(
-			(item) => holding && item == Number(holding.positionAmt)
-		);
-
-		fiIndex =
-			fiIndex == INCREASE_FI_LIST.length - 1
-				? INCREASE_FI_LIST.length - 2
-				: fiIndex;
-
-		// console.log(
-		//   "************************************",
-		//   moment().format("YYYY-MM-DD HH:mm:ss")
-		// );
-		// console.log("------------------");
-		// console.log("mark_price", mark_price);
-		// console.log("bollList", bollList.slice(-1));
-		// console.log("------------------");
-
-		const patchPosition = async (holding, direction) => {
-			let positionAmt = Number(holding.positionAmt) + INIT_POSITION;
-			const price =
-				(Number(mark_price) * Number(holding.positionAmt) +
-					Number(holding.entryPrice) * Number(holding.positionAmt)) /
-				positionAmt;
-
-			// totalProfit += (-0.01 * 0 * positionAmt) / 2;
-			// totalCapital += (-0.01 * 0 * positionAmt) / 2;
-			// if (totalCapital < positionAmt / 2) positionAmt = 0;
-			maxOpenPosition = Math.max(
-				maxOpenPosition,
-				longPosition.positionAmt || 0,
-				shortPosition.positionAmt || 0
-			);
-
-			if (direction == 'LONG') {
-				longPosition = {
-					positionSide: direction,
-					leverage: LEVERAGE,
-					entryPrice: price,
-					positionAmt,
-					time: macdList[macdList.length - 1].time,
-					week: macdList[macdList.length - 1].week,
-				};
-			} else {
-				shortPosition = {
-					positionSide: direction,
-					leverage: LEVERAGE,
-					entryPrice: price,
-					positionAmt,
-					time: macdList[macdList.length - 1].time,
-					week: macdList[macdList.length - 1].week,
-				};
-			}
-			const dealDetail = {
-				side: 'OPEN',
-				positionSide: direction,
-				leverage: LEVERAGE,
-				entryPrice: price,
-				positionAmt,
-				time: macdList[macdList.length - 1].time,
-				macdList,
-				rsiList,
-				bollList,
-			};
-
-			dealDetailList.push(dealDetail);
-			if (direction == 'LONG') {
-				longPatchNum += 1;
-			} else {
-				shortPatchNum += 1;
-			}
-		};
-
-		const closeLong = async () => {
-			if (
-				shortHolding &&
-				Number(shortHolding.positionAmt) &&
-				// shortPatchNum <= 1 &&
-				shortRatio < 0 &&
-				false
-			) {
-				await patchPosition(shortHolding, 'SHORT');
-			} else if (longHolding && Number(longHolding.positionAmt)) {
-				if (longRatio < LOSS_MAX && longPatchNum < 3 && false) {
-					await patchPosition(longHolding, 'LONG');
-				} else if (
-					longRatio < LOSS_MAX ||
-					longRatio > WIN_MAX ||
-					true
-				) {
-					if (longRatio < 0) modeChange = true;
-					if (longRatio < LOSS_MAX) {
-						baoNumTotal++;
-						// openLongCondition = false;
-						// openShortCondition = true;
-					}
-
-					let closePositionAmt = INIT_POSITION;
-					// let closePositionAmt = longHolding.positionAmt;
-					if (CLOSE_ALL_LONG_CONDITION)
-						closePositionAmt = longHolding.positionAmt;
-					if (isForceDeal)
-						// if (
-						//   longHolding &&
-						//   Math.abs(longHolding.positionAmt) >
-						//     INIT_POSITION * MAX_OPEN_POSITION_RATIO
-						// )
-						//   closePositionAmt = longHolding.positionAmt;
-						closePositionAmt = longHolding.positionAmt;
-					// let closePositionAmt =
-					//   longHolding.positionAmt == INIT_POSITION
-					//     ? INIT_POSITION
-					//     : longHolding.positionAmt;
-					// if (longRatio < 0)
-					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
-					const currentProfit =
-						(longRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0 * closePositionAmt;
-					totalProfit += currentProfit;
-					totalCapital += currentProfit;
-					minTotalCapital = Math.min(minTotalCapital, totalCapital);
-
-					const closePrice = Number(mark_price);
-
-					const positionAmt =
-						longHolding.positionAmt - closePositionAmt;
-					// const entryPrice = positionAmt
-					// 	? Math.abs(
-					// 			(Math.abs(Number(longHolding.positionAmt)) *
-					// 				Number(mark_price) -
-					// 				closePositionAmt * longHolding.entryPrice) /
-					// 				positionAmt
-					// 	  )
-					// 	: 0;
-					const entryPrice = positionAmt ? longHolding.entryPrice : 0;
-
-					const priceBeforeDeal = longPosition.entryPrice;
-
-					longHolding.entryPrice = entryPrice;
-					longHolding.positionAmt = positionAmt;
-					longPosition.entryPrice = entryPrice;
-					longPosition.positionAmt = positionAmt;
-
-					const dealDetail = {
-						side: 'CLOSE',
-						positionSide: 'LONG',
-						closePrice,
-						closePositionAmt,
-						entryPrice,
-						priceBeforeDeal,
-						positionAmt,
-						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
-						totalProfit,
-						totalCapital,
-						currentProfit,
-						currentRMB: currentProfit * closePrice,
-						macd: macdList[macdList.length - 1],
-						rsi: rsiList[rsiList.length - 1],
-						bollList: bollList[bollList.length - 1],
-						MODE,
-						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
-						shortRatio,
-					};
-					dealDetailList.push(dealDetail);
-					if (longRatio < mostLoss.profit) {
-						mostLoss = {
-							profit: (longRatio * closePositionAmt) / LEVERAGE,
-							time: macdList[macdList.length - 1].time,
-						};
-					}
-
-					maxWinRatio = 0;
-					longPatchNum = 0;
-				}
-			}
-		};
-
-		const closeShort = async () => {
-			if (
-				longHolding &&
-				Number(longHolding.positionAmt) &&
-				// longPatchNum <= 1 &&
-				longRatio < 0 &&
-				false
-			) {
-				await patchPosition(longHolding, 'LONG');
-			} else if (shortHolding && Number(shortHolding.positionAmt)) {
-				if (shortRatio < LOSS_MAX && shortPatchNum < 3 && false) {
-					await patchPosition(shortHolding, 'SHORT');
-				} else if (
-					shortRatio < LOSS_MAX ||
-					shortRatio > WIN_MAX ||
-					true
-				) {
-					if (shortRatio < LOSS_MAX) {
-						baoNumTotal++;
-						// openLongCondition = true;
-						// openShortCondition = false;
-					}
-					if (shortRatio < 0) modeChange = true;
-					// let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
-					let closePositionAmt = INIT_POSITION;
-					if (CLOSE_ALL_SHORT_CONDITION)
-						closePositionAmt = Math.abs(
-							Number(shortHolding.positionAmt)
-						);
-					// if (
-					//   shortHolding &&
-					//   Math.abs(shortHolding.positionAmt) >
-					//     INIT_POSITION * MAX_OPEN_POSITION_RATIO
-					// )
-					//   closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
-					if (isForceDeal)
-						closePositionAmt = Math.abs(
-							Number(shortHolding.positionAmt)
-						);
-					// let closePositionAmt =
-					//   shortHolding.positionAmt == INIT_POSITION
-					//     ? INIT_POSITION
-					//     : shortHolding.positionAmt;
-					// if (shortRatio < 0)
-					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
-					const currentProfit =
-						(shortRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0 * closePositionAmt;
-					totalProfit += currentProfit;
-					totalCapital += currentProfit;
-					minTotalCapital = Math.min(minTotalCapital, totalCapital);
-
-					const closePrice = Number(mark_price);
-
-					const positionAmt =
-						Math.abs(Number(shortHolding.positionAmt)) -
-						closePositionAmt;
-					// const entryPrice = positionAmt
-					// 	? Math.abs(
-					// 			(Math.abs(Number(shortHolding.positionAmt)) *
-					// 				Number(mark_price) -
-					// 				closePositionAmt *
-					// 					shortHolding.entryPrice) /
-					// 				positionAmt
-					// 	  )
-					// 	: 0;
-					const entryPrice = positionAmt
-						? shortHolding.entryPrice
-						: 0;
-
-					const priceBeforeDeal = shortPosition.entryPrice;
-
-					shortHolding.entryPrice = entryPrice;
-					shortHolding.positionAmt = positionAmt;
-					shortPosition.entryPrice = entryPrice;
-					shortPosition.positionAmt = positionAmt;
-
-					const dealDetail = {
-						side: 'CLOSE',
-						positionSide: 'SHORT',
-						closePrice,
-						closePositionAmt,
-						priceBeforeDeal,
-						entryPrice,
-						positionAmt,
-						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
-						totalProfit,
-						totalCapital,
-						currentProfit,
-						currentRMB: currentProfit * closePrice,
-						macd: macdList[macdList.length - 1],
-						rsi: rsiList[rsiList.length - 1],
-						bollList: bollList[bollList.length - 1],
-						MODE,
-						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
-						shortRatio,
-					};
-					dealDetailList.push(dealDetail);
-					if (shortRatio < mostLoss.profit) {
-						mostLoss = {
-							profit:
-								(shortRatio * shortHolding.positionAmt) /
-								LEVERAGE,
-							time: macdList[macdList.length - 1].time,
-						};
-					}
-
-					maxWinRatio = 0;
-					shortPatchNum = 0;
-				}
-			}
-		};
-
-		//平多仓条件
-		if (closeLongCondition) {
-			try {
-				closeLong();
-				// if(longRatio > WIN_MAX * 2) MODE = DEFAULT_MODE
-			} catch (e) {
-				console.log(e);
-			}
-		}
-
-		//平空仓条件
-		if (closeShortCondition) {
-			try {
-				closeShort();
-				const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-				// if(shortRatio > WIN_MAX * 2) MODE = DEFAULT_MODE
-			} catch (e) {
-				console.log(e);
-			}
-		}
-
-		// if ((totalCapital * LEVERAGE) / 10 > ORIGIN_INIT_POSITION * 4) {
-		//   receiveCapital += totalCapital - (ORIGIN_INIT_POSITION * 4) / LEVERAGE;
-		//   totalCapital = totalCapital - receiveCapital;
-		// }
-
-		// if (closeLongCondition || closeShortCondition) {
-		//   if (longRatio > WIN_MAX || shortRatio > WIN_MAX) {
-		//     POSITION_RATIO = POSITION_RATIO_DEFAULT * 10;
-		//   } else {
-		//     POSITION_RATIO = POSITION_RATIO_DEFAULT;
-		//   }
-		// }
-
-		// INIT_POSITION =
-		//   longRatio > WIN_MAX || shortRatio > WIN_MAX
-		//     ? Math.min(
-		//         (totalCapital * LEVERAGE) / POSITION_RATIO,
-		//         ORIGIN_INIT_POSITION * 2
-		//       )
-		//     : Math.min(
-		//         (totalCapital * LEVERAGE) / POSITION_RATIO,
-		//         ORIGIN_INIT_POSITION * 2
-		//       );
-
-		// INIT_POSITION = (totalCapital * LEVERAGE) / POSITION_RATIO;
-
-		//开多仓条件
-		if (openLongCondition) {
-			try {
-				if (
-					true ||
-					!longHolding ||
-					!Number(longHolding.positionAmt)
-					// &&
-					// &&
-					// !shortPatchNum
-					// (!shortHolding || !Number(shortHolding.positionAmt))
-				) {
-					// closeShort()
-					// const openPositionAmt =
-					//   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
-					let openPositionAmt = INIT_POSITION;
-					// if (BATCH_LONG_OPEN_CONDITION)
-					//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
-					// let openPositionAmt = longHolding
-					//   ? Math.abs(longHolding.positionAmt)
-					//   : INIT_POSITION * 1;
-					// if (shortHolding) {
-					//   openPositionAmt = 2 * INIT_POSITION;
-					// }
-					// openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
-					// const ratio = shortRatio;
-					// const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-					// const decreasePosition = INCREASE_FI_LIST[0];
-					// if (ratio < WIN_MAX) {
-					//   openPositionAmt = increasePosition;
-					// }
-					// else if (ratio < LOSS_MAX) {
-					//   openPositionAmt = decreasePosition;
-					// }
-					// if(modeChange) openPositionAmt = INIT_POSITION;
-
-					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0 * openPositionAmt;
-					totalProfit += -0.01 * 0 * openPositionAmt;
-					totalPosition += openPositionAmt;
-
-					minTotalCapital = Math.min(minTotalCapital, totalCapital);
-					maxOpenPosition = Math.max(
-						maxOpenPosition,
-						longPosition.positionAmt
-					);
-					const averagePrice =
-						(longPosition.entryPrice * longPosition.positionAmt +
-							openPositionAmt * mark_price) /
-						(longPosition.positionAmt + openPositionAmt);
-
-					const totalPositionAmt =
-						longPosition.positionAmt + openPositionAmt;
-
-					longPosition = {
-						positionSide: 'LONG',
-						leverage: LEVERAGE,
-						entryPrice: averagePrice,
-						positionAmt: totalPositionAmt,
-						time: macdList[macdList.length - 1].time,
-					};
-					const dealDetail = {
-						side: 'OPEN',
-						positionSide: 'LONG',
-						leverage: LEVERAGE,
-						entryPrice: mark_price,
-						openPositionAmt,
-						positionAmt: totalPositionAmt,
-						averagePrice,
-						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
-						macdList,
-						rsiList,
-						bollList,
-						MODE,
-						totalProfit,
-						totalCapital,
-						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
-						shortRatio,
-					};
-					dealDetailList.push(dealDetail);
-					// shortHolding = {};
-					// shortPosition = {};
-
-					// if(ratio < LOSS_MAX * 1) MODE = MODE == 1 ? 2 : 1
-				}
-			} catch (e) {
-				console.log(e);
-			}
-		}
-
-		//开空仓条件
-		if (openShortCondition) {
-			try {
-				if (
-					// !longHolding ||
-					// !Number(longHolding.positionAmt)
-					// &&
-					true ||
-					!shortHolding ||
-					!Number(shortHolding.positionAmt)
-					// &&
-					// !longPatchNum
-				) {
-					// closeLong()
-					// const openPositionAmt =
-					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
-					let openPositionAmt = INIT_POSITION;
-					// if (BATCH_SHORT_OPEN_CONDITION)
-					//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
-					// let openPositionAmt = shortHolding
-					//   ? Math.abs(shortHolding.positionAmt)
-					//   : INIT_POSITION * 1;
-					// if (longHolding) {
-					//   openPositionAmt = 2 * INIT_POSITION;
-					// }
-					// openPositionAmt = Math.min(openPositionAmt, INIT_POSITION * 16);
-					// const ratio = longRatio;
-					// const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
-					// const decreasePosition = INCREASE_FI_LIST[0];
-					// if (ratio < WIN_MAX) {
-					//   openPositionAmt = increasePosition;
-					// }
-					// else if (ratio < LOSS_MAX) {
-					//   openPositionAmt = decreasePosition;
-					// }
-					// if(modeChange) openPositionAmt = INIT_POSITION;
-
-					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0 * openPositionAmt;
-					totalProfit += -0.01 * 0 * openPositionAmt;
-					totalPosition += openPositionAmt;
-
-					minTotalCapital = Math.min(minTotalCapital, totalCapital);
-					maxOpenPosition = Math.max(
-						maxOpenPosition,
-						shortPosition.positionAmt
-					);
-					const averagePrice =
-						(shortPosition.entryPrice *
-							Math.abs(Number(shortPosition.positionAmt)) +
-							openPositionAmt * mark_price) /
-						(Math.abs(Number(shortPosition.positionAmt)) +
-							openPositionAmt);
-
-					const totalPositionAmt =
-						Math.abs(Number(shortPosition.positionAmt)) +
-						openPositionAmt;
-
-					shortPosition = {
-						positionSide: 'SHORT',
-						leverage: LEVERAGE,
-						entryPrice: averagePrice,
-						positionAmt: totalPositionAmt,
-						time: macdList[macdList.length - 1].time,
-					};
-					const dealDetail = {
-						side: 'OPEN',
-						positionSide: 'SHORT',
-						leverage: LEVERAGE,
-						entryPrice: mark_price,
-						openPositionAmt,
-						positionAmt: totalPositionAmt,
-						averagePrice,
-						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
-						macdList,
-						rsiList,
-						bollList,
-						MODE,
-						totalProfit,
-						totalCapital,
-						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
-						shortRatio,
-					};
-					dealDetailList.push(dealDetail);
-					// longHolding = {};
-					// longPosition = {};
-
-					// if(ratio < LOSS_MAX * 1) MODE = MODE == 1 ? 2 : 1
-				}
-			} catch (e) {
-				console.log(e);
-			}
-		}
-	}
 };
 
-const readData = async () => {
-	let dataConfig = JSON.parse(
-		fs.readFileSync('./app/lastHistoryList.json', 'utf-8')
-	);
-	return dataConfig.lastHistoryList;
-};
+// const readData = async () => {
+//   let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
+//   MODE = dataConfig.MODE;
 
-const writeData = async (data) => {
-	//将修改后的配置写入文件前需要先转成json字符串格式
-	let dataConfig = {
-		lastHistoryList: JSON.stringify(data).toString(),
-	};
-	let jsonStr = JSON.stringify(dataConfig);
+//   console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
+// };
 
-	const result = await new Promise((resolve) => {
-		//将修改后的内容写入文件
-		fs.writeFile('./app/lastHistoryList.json', jsonStr, function (err) {
-			if (err) {
-				// console.error(err);
-			} else {
-				// console.log('----------修改成功-------------');
-				resolve(true);
-			}
-		});
-	});
+// const writeData = async () => {
+//   //将修改后的配置写入文件前需要先转成json字符串格式
+//   let dataConfig = {
+//     MODE: String(MODE),
+//   };
+//   let jsonStr = JSON.stringify(dataConfig);
 
-	return result;
-};
+//   const result = await new Promise((resolve) => {
+//     //将修改后的内容写入文件
+//     fs.writeFile("./app/config.json", jsonStr, function (err) {
+//       if (err) {
+//         console.error(err);
+//       } else {
+//         console.log("----------修改成功-------------");
+//         resolve(true);
+//       }
+//     });
+//   });
+
+//   return result;
+// };
 
 // 定时获取交割合约账户信息
 (async () => {
-	// await startInterval();
+	await startInterval();
 })();
 app.listen(8092);
 
@@ -1775,15 +1117,42 @@ process.on('uncaughtException', function (err) {
 });
 
 let exec = require('child_process').exec;
-function restart(resource) {
-	console.log('restarting......', resource);
+function restart() {
+	console.log('restarting......');
 	setTimeout(() => {
-		exec('npm run restart:product', function (err, stdout, stderr) {
+		exec('npm run restart', function (err, stdout, stderr) {
 			if (err) {
 				console.log('restarting failed');
 			} else {
 				console.log('restarting success');
 			}
 		});
-	}, 1000 * 10);
+	}, 1000 * 2);
+}
+function start() {
+	console.log('starting......');
+	setTimeout(() => {
+		exec('npm run start', function (err, stdout, stderr) {
+			if (err) {
+				console.log('starting failed');
+			} else {
+				console.log('starting success');
+			}
+		});
+	}, 1000 * 2);
+}
+function stop() {
+	console.log('stopping......');
+	setTimeout(() => {
+		exec('npm run stop', function (err, stdout, stderr) {
+			if (err) {
+				console.log('stopping failed');
+			} else {
+				console.log('stopping success');
+			}
+			setTimeout(() => {
+				start();
+			}, 1000 * 60 * 60 * 24 * 1);
+		});
+	}, 1000 * 2);
 }
