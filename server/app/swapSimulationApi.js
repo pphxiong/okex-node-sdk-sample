@@ -350,10 +350,9 @@ const checkDeal = async (data) => {
 			'minute'
 		);
 		const isFiveM =
-			true ||
-			(minuteDiff < 90 &&
-				minuteList.includes(lastMinuteCharacter) &&
-				!secondList.includes(lastSecondCharacter));
+			minuteDiff < 90 &&
+			minuteList.includes(lastMinuteCharacter) &&
+			!secondList.includes(lastSecondCharacter);
 
 		// if (isFiveM && avail < INIT_POSITION * NEW_POSITION_RATIO) {
 		//   if (openLongCondition) {
