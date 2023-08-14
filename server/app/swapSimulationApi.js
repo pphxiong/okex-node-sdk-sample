@@ -1122,7 +1122,7 @@ let exec = require('child_process').exec;
 function restart() {
 	console.log('restarting......');
 	setTimeout(() => {
-		exec('npm run restart', function (err, stdout, stderr) {
+		exec('npm run restart:product', function (err, stdout, stderr) {
 			if (err) {
 				console.log('restarting failed');
 			} else {
@@ -1134,7 +1134,7 @@ function restart() {
 function start() {
 	console.log('starting......');
 	setTimeout(() => {
-		exec('npm run start', function (err, stdout, stderr) {
+		exec('npm run start:product', function (err, stdout, stderr) {
 			if (err) {
 				console.log('starting failed');
 			} else {
@@ -1146,7 +1146,7 @@ function start() {
 function stop() {
 	console.log('stopping......');
 	setTimeout(() => {
-		exec('npm run stop', function (err, stdout, stderr) {
+		exec('npm run stop:product', function (err, stdout, stderr) {
 			if (err) {
 				console.log('stopping failed');
 			} else {
