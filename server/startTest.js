@@ -3,7 +3,7 @@ require('babel-register') ({
 })
 require('babel-polyfill');
 
-module.exports = require('./app/swapApi.js')
+module.exports = require('./app/swapSimulationTest.js')
 // module.exports = require('./app/customAuthClientV5.js')
 // module.exports = require('./check.js')
 
