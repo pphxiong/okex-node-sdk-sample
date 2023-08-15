@@ -31,7 +31,7 @@ export default {
       },
     },
     '/bn/': {
-      target: 'http://8.218.11.23:8092',
+      target: 'http://8.218.11.23:8091',
       // target: 'http://localhost:8092',
       changeOrigin: true,
       pathRewrite: {
