@@ -869,12 +869,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Number(bollList[bollList.length - 1].DN);
 
 		const CONVERSE_UP_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
+			(Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
+				Number(macdList[macdList.length - 1].close) <
+					Number(bollList[bollList.length - 1].UP) &&
+				Number(macdList[macdList.length - 1].close) >
+					Number(bollList[bollList.length - 1].MA)) ||
+			CONVERSE_UP_ONLY_CONDITION;
 
 		const CONVERSE_UP_ONLY_CONDITION =
 			Number(macdList[macdList.length - 2].close) <
@@ -889,12 +890,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Number(bollList[bollList.length - 1].MA);
 
 		const CONVERSE_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
+			(Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
+				Number(macdList[macdList.length - 1].close) >
+					Number(bollList[bollList.length - 1].DN) &&
+				Number(macdList[macdList.length - 1].close) <
+					Number(bollList[bollList.length - 1].MA)) ||
+			CONTINUOUS_LOW_ONLY_CONDITION;
 
 		const CONTINUOUS_LOW_ONLY_CONDITION =
 			Number(macdList[macdList.length - 2].close) >
@@ -1113,25 +1115,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			(CONVERSE_LOW_CONDITION ||
-				(CONTINUOUS_LOW_ONLY_CONDITION &&
-					shortHolding &&
-					OUT_HIGH_CONDITION));
+			(CONVERSE_LOW_CONDITION || (shortHolding && OUT_HIGH_CONDITION));
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			(CONVERSE_UP_CONDITION ||
-				CONVERSE_UP_ONLY_CONDITION ||
-				(longHolding && OUT_LOW_CONDITION));
+			(CONVERSE_UP_CONDITION || (longHolding && OUT_LOW_CONDITION));
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((!shortHolding &&
-				(CONVERSE_UP_ONLY_CONDITION || CONVERSE_UP_CONDITION)) ||
+			((!shortHolding && CONVERSE_UP_CONDITION) ||
 				(shortHolding && CENTER_CROSS_SHORT_CONDITION));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((!longHolding &&
-				(CONTINUOUS_LOW_ONLY_CONDITION || CONVERSE_LOW_CONDITION)) ||
+			((!longHolding && CONVERSE_LOW_CONDITION) ||
 				(longHolding && CENTER_CROSS_LONG_CONDITION));
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
