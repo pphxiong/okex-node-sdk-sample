@@ -5,7 +5,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = 'BTCUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 0.6;
+const INIT_POSITION = 0.8;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
 
@@ -180,20 +180,40 @@ const checkDeal = async (data) => {
 				Number(bollList[bollList.length - 1].DN);
 
 		const CONVERSE_UP_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
+			(Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
+				Number(macdList[macdList.length - 1].close) <
+					Number(bollList[bollList.length - 1].UP) &&
+				Number(macdList[macdList.length - 1].close) >
+					Number(bollList[bollList.length - 1].MA)) ||
+			(Number(macdList[macdList.length - 2].close) <
+				Number(bollList[bollList.length - 2].UP) &&
+				Number(macdList[macdList.length - 1].high) >
+					Number(bollList[bollList.length - 1].UP) &&
+				Number(macdList[macdList.length - 1].open) <
+					Number(bollList[bollList.length - 1].UP) &&
+				Number(macdList[macdList.length - 1].close) <
+					Number(bollList[bollList.length - 1].open) &&
+				Number(macdList[macdList.length - 1].close) >
+					Number(bollList[bollList.length - 1].MA));
 
 		const CONVERSE_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
+			(Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
+				Number(macdList[macdList.length - 1].close) >
+					Number(bollList[bollList.length - 1].DN) &&
+				Number(macdList[macdList.length - 1].close) <
+					Number(bollList[bollList.length - 1].MA)) ||
+			(Number(macdList[macdList.length - 2].close) >
+				Number(bollList[bollList.length - 2].DN) &&
+				Number(macdList[macdList.length - 1].low) <
+					Number(bollList[bollList.length - 1].DN) &&
+				Number(macdList[macdList.length - 1].open) >
+					Number(bollList[bollList.length - 1].DN) &&
+				Number(macdList[macdList.length - 1].close) >
+					Number(bollList[bollList.length - 1].open) &&
+				Number(macdList[macdList.length - 1].close) <
+					Number(bollList[bollList.length - 1].MA));
 
 		// const result = await queryLatestOpenOrders();
 		// const [latestLongOrder, latestShortOrder] = result;
