@@ -876,9 +876,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].open) <
 				Number(bollList[bollList.length - 1].UP) &&
 			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
+				Number(macdList[macdList.length - 1].open);
+		//    &&
+		// Number(macdList[macdList.length - 1].close) >
+		// 	Number(bollList[bollList.length - 1].MA);
 
 		const CONVERSE_UP_CONDITION =
 			(Number(macdList[macdList.length - 2].close) >
@@ -897,9 +898,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].open) >
 				Number(bollList[bollList.length - 1].DN) &&
 			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
+				Number(macdList[macdList.length - 1].open);
+		//    &&
+		// Number(macdList[macdList.length - 1].close) <
+		// 	Number(bollList[bollList.length - 1].MA);
 
 		const CONVERSE_LOW_CONDITION =
 			(Number(macdList[macdList.length - 2].close) <
