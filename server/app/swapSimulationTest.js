@@ -1120,12 +1120,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((!shortHolding && CENTER_CROSS_LONG_CONDITION) ||
-				(shortHolding && CONVERSE_LOW_CONDITION));
+			CONVERSE_LOW_CONDITION;
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((!longHolding && CENTER_CROSS_SHORT_CONDITION) ||
-				(longHolding && CONVERSE_UP_CONDITION));
+			CONVERSE_UP_CONDITION;
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
