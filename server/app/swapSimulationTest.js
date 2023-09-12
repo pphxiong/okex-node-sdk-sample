@@ -884,10 +884,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].UP) &&
 			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP);
-		//    &&
-		// Number(macdList[macdList.length - 1].close) >
-		// 	Number(bollList[bollList.length - 1].MA);
+				Number(bollList[bollList.length - 1].UP) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(bollList[bollList.length - 1].MA);
 
 		const CONVERSE_LOW_ONLY_CONDITION =
 			Number(macdList[macdList.length - 2].close) >
@@ -905,10 +904,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].DN) &&
 			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN);
-		//   &&
-		// Number(macdList[macdList.length - 1].close) <
-		// 	Number(bollList[bollList.length - 1].MA);
+				Number(bollList[bollList.length - 1].DN) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(bollList[bollList.length - 1].MA);
 
 		const CLOSE_MORE_HIGH_CONDITION =
 			Number(macdList[macdList.length - 1].close) >
