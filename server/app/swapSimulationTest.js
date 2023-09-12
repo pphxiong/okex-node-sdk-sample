@@ -841,16 +841,16 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Number(bollList[bollList.length - 1].DN);
 
 		const CONTINUOUS_HIGH_CONDITION =
-			Number(macdList[macdList.length - 3].close) >
-				Number(bollList[bollList.length - 3].UP) &&
+			// Number(macdList[macdList.length - 3].close) >
+			// 	Number(bollList[bollList.length - 3].UP) &&
 			Number(macdList[macdList.length - 2].close) >
 				Number(bollList[bollList.length - 2].UP) &&
 			Number(macdList[macdList.length - 1].close) >
 				Number(bollList[bollList.length - 1].UP);
 
 		const CONTINUOUS_LOW_CONDITION =
-			Number(macdList[macdList.length - 3].close) <
-				Number(bollList[bollList.length - 3].DN) &&
+			// Number(macdList[macdList.length - 3].close) <
+			// 	Number(bollList[bollList.length - 3].DN) &&
 			Number(macdList[macdList.length - 2].close) <
 				Number(bollList[bollList.length - 2].DN) &&
 			Number(macdList[macdList.length - 1].close) <
@@ -1114,19 +1114,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
 			((!shortHolding && OUT_LOW_CONDITION) ||
-				(shortHolding && OUT_HIGH_CONDITION));
+				(shortHolding && CONTINUOUS_HIGH_CONDITION));
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
 			((!longHolding && OUT_HIGH_CONDITION) ||
-				(longHolding && OUT_LOW_CONDITION));
+				(longHolding && CONTINUOUS_LOW_CONDITION));
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((!shortHolding && CONVERSE_LOW_CONDITION) ||
+			((!shortHolding && OUT_HIGH_CONDITION) ||
 				(shortHolding && CONVERSE_UP_CONDITION));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((!longHolding && CONVERSE_UP_CONDITION) ||
+			((!longHolding && OUT_LOW_CONDITION) ||
 				(longHolding && CONVERSE_LOW_CONDITION));
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
