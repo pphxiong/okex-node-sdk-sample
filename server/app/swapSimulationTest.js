@@ -778,17 +778,17 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const mark_price = macdList[macdList.length - 1].close;
 		currentMarketPrice = mark_price;
 
-		let longHolding;
-		let shortHolding;
+		let longHolding = null;
+		let shortHolding = null;
 		let longRatio = 0;
 		let shortRatio = 0;
 		let holding;
 
-		if (longPosition && longPosition.positionAmt) {
+		if (longPosition && longPosition.positionAmt > 0) {
 			longHolding = JSON.parse(JSON.stringify(longPosition));
 			holding = longHolding;
 		}
-		if (shortPosition && shortPosition.positionAmt) {
+		if (shortPosition && shortPosition.positionAmt > 0) {
 			shortHolding = JSON.parse(JSON.stringify(shortPosition));
 			holding = shortHolding;
 		}
