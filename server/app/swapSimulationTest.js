@@ -722,7 +722,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 				shortPosition.positionAmt) /
 			currentMarketPrice;
 		const actualProfit = totalProfit + longActualProfit + shortActualProfit;
-		console.log('currentMarketPrice', currentMarketPrice);
+		// console.log('currentMarketPrice', currentMarketPrice);
 		send(response, {
 			errcode: 0,
 			errmsg: 'ok',
@@ -1125,7 +1125,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 			((!shortHolding && CONVERSE_LOW_CONDITION) ||
 				(shortHolding && CONVERSE_UP_CONDITION));
 		if (MAIN_CLOSE_LONG_CONDITION1) {
-			console.log(22, shortHolding, CONVERSE_UP_CONDITION);
+			console.log(
+				22,
+				shortHolding,
+				CONVERSE_UP_CONDITION,
+				macdList,
+				bollList
+			);
 		}
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
@@ -1206,24 +1212,24 @@ const checkDeal = async (data, isAutoReset = true) => {
 		console.log('************************************');
 
 		console.log('longRatio', longRatio, 'shortRatio', shortRatio);
-		console.log(
-			'longPositionAmt',
-			longHolding ? longHolding.positionAmt : 0,
-			'shortPositionAmt',
-			shortHolding ? shortHolding.positionAmt : 0
-		);
-		console.log(
-			'closeLongCondition',
-			closeLongCondition,
-			'closeShortCondition',
-			closeShortCondition,
-			'openLongCondition',
-			openLongCondition,
-			'openShortCondition',
-			openShortCondition,
-			'NEW_POSITION_RATIO',
-			NEW_POSITION_RATIO
-		);
+		// console.log(
+		// 	'longPositionAmt',
+		// 	longHolding ? longHolding.positionAmt : 0,
+		// 	'shortPositionAmt',
+		// 	shortHolding ? shortHolding.positionAmt : 0
+		// );
+		// console.log(
+		// 	'closeLongCondition',
+		// 	closeLongCondition,
+		// 	'closeShortCondition',
+		// 	closeShortCondition,
+		// 	'openLongCondition',
+		// 	openLongCondition,
+		// 	'openShortCondition',
+		// 	openShortCondition,
+		// 	'NEW_POSITION_RATIO',
+		// 	NEW_POSITION_RATIO
+		// );
 		console.log('************************************');
 
 		if (isForceDeal) {
