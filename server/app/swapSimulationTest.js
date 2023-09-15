@@ -756,7 +756,7 @@ function fibonacci(n) {
 	return fibonacci(n - 2) + fibonacci(n - 1);
 }
 
-function getConverseHighIndexList(macd, bollList) {
+function getConverseHighIndexList(macdList, bollList) {
 	const indexList = [];
 	for (let i = 1; i < macd.length; i += 1) {
 		const is =
@@ -768,7 +768,7 @@ function getConverseHighIndexList(macd, bollList) {
 	return indexList;
 }
 
-function getConverseLowIndexList(macd, bollList) {
+function getConverseLowIndexList(macdList, bollList) {
 	const indexList = [];
 	for (let i = 1; i < macd.length; i += 1) {
 		const is =
@@ -780,7 +780,7 @@ function getConverseLowIndexList(macd, bollList) {
 	return indexList;
 }
 
-function getCenterCrossLongIndexList(macd, bollList) {
+function getCenterCrossLongIndexList(macdList, bollList) {
 	const indexList = [];
 	for (let i = 1; i < macd.length; i += 1) {
 		const is =
@@ -792,7 +792,7 @@ function getCenterCrossLongIndexList(macd, bollList) {
 	return indexList;
 }
 
-function getCenterCrossShortIndexList(macd, bollList) {
+function getCenterCrossShortIndexList(macdList, bollList) {
 	const indexList = [];
 	for (let i = 1; i < macd.length; i += 1) {
 		const is =
