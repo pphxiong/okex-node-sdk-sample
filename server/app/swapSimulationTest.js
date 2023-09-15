@@ -756,17 +756,65 @@ function fibonacci(n) {
 	return fibonacci(n - 2) + fibonacci(n - 1);
 }
 
+function getConverseHighIndexList(macd, bollList) {
+	const indexList = [];
+	for (let i = 1; i < macd.length; i += 1) {
+		const is =
+			Number(macdList[i - 1].close) > Number(bollList[i - 1].UP) &&
+			Number(macdList[i].close) < Number(bollList[i].UP) &&
+			Number(macdList[i].close) < Number(bollList[i].MA);
+		if (is) indexList.push(i);
+	}
+	return indexList;
+}
+
+function getConverseLowIndexList(macd, bollList) {
+	const indexList = [];
+	for (let i = 1; i < macd.length; i += 1) {
+		const is =
+			Number(macdList[i - 1].close) < Number(bollList[i - 1].DN) &&
+			Number(macdList[i].close) > Number(bollList[i].DN) &&
+			Number(macdList[i].close) < Number(bollList[i].MA);
+		if (is) indexList.push(i);
+	}
+	return indexList;
+}
+
+function getCenterCrossLongIndexList(macd, bollList) {
+	const indexList = [];
+	for (let i = 1; i < macd.length; i += 1) {
+		const is =
+			Number(macdList[i - 1].close) < Number(bollList[i - 1].MA) &&
+			Number(macdList[i].close) > Number(bollList[i].MA) &&
+			Number(macdList[i].close) < Number(bollList[i].UP);
+		if (is) indexList.push(i);
+	}
+	return indexList;
+}
+
+function getCenterCrossShortIndexList(macd, bollList) {
+	const indexList = [];
+	for (let i = 1; i < macd.length; i += 1) {
+		const is =
+			Number(macdList[i - 1].close) > Number(bollList[i - 1].MA) &&
+			Number(macdList[i].close) < Number(bollList[i].MA) &&
+			Number(macdList[i].close) > Number(bollList[i].DN);
+		if (is) indexList.push(i);
+	}
+	return indexList;
+}
+
 const checkDeal = async (data, isAutoReset = true) => {
 	data.bollList = data.bollList || [];
 
-	for (let i = 0; i < data.bollList.length - 9; i++) {
+	for (let i = 0; i < data.bollList.length - 49; i++) {
 		checkByStep(
 			{
-				macdList: data.macdList.slice(i, i + 10),
-				rsiList: data.rsiList.slice(i, i + 10),
-				bollList: data.bollList.slice(i, i + 10),
+				macdList: data.macdList.slice(i, i + 50),
+				rsiList: data.rsiList.slice(i, i + 50),
+				bollList: data.bollList.slice(i, i + 50),
 			},
-			isAutoReset && i == data.macdList.length - 10
+			isAutoReset && i == data.macdList.length - 50
 		);
 	}
 
@@ -823,6 +871,45 @@ const checkDeal = async (data, isAutoReset = true) => {
 			: 0;
 
 		const totalWin = longWinRatio + shortWinRatio;
+
+		const converseHighIndexList = getConverseHighIndexList(
+			macdList,
+			bollList
+		);
+		const converseLowIndexList = getConverseLowIndexList(
+			macdList,
+			bollList
+		);
+		const centerCrossLongIndexList = getCenterCrossLongIndexList(
+			macdList,
+			bollList
+		);
+		const centerCrossShortIndexList = getCenterCrossShortIndexList(
+			macdList,
+			bollList
+		);
+		const IS_CONTINOUSE_LONG =
+			!centerCrossShortIndexList.length ||
+			converseHighIndexList
+				.slice(-2)
+				.every(
+					(index) =>
+						index >
+						centerCrossShortIndexList[
+							centerCrossShortIndexList.length - 1
+						]
+				);
+		const IS_CONTINOUSE_SHORT =
+			!centerCrossLongIndexList.length ||
+			converseLowIndexList
+				.slice(-2)
+				.every(
+					(index) =>
+						index >
+						centerCrossLongIndexList[
+							centerCrossLongIndexList.length - 1
+						]
+				);
 
 		const CENTER_CROSS_LONG_CONDITION =
 			Number(macdList[macdList.length - 2].close) <
@@ -1113,21 +1200,21 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			(CONVERSE_LOW_CONDITION || (shortHolding && CONVERSE_UP_CONDITION));
+			(CONVERSE_LOW_CONDITION || (shortHolding && IS_CONTINOUSE_LONG));
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			(CONVERSE_UP_CONDITION || (longHolding && CONVERSE_LOW_CONDITION));
+			(CONVERSE_UP_CONDITION || (longHolding && IS_CONTINOUSE_SHORT));
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((!shortHolding && CONVERSE_UP_CONDITION) ||
 				(shortHolding &&
-					(CENTER_CROSS_LONG_CONDITION || OUT_LOW_CONDITION)));
+					(CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION)));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((!longHolding && CONVERSE_LOW_CONDITION) ||
 				(longHolding &&
-					(CENTER_CROSS_SHORT_CONDITION || OUT_HIGH_CONDITION)));
+					(CENTER_CROSS_LONG_CONDITION || OUT_HIGH_CONDITION)));
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
