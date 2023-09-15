@@ -872,44 +872,44 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const totalWin = longWinRatio + shortWinRatio;
 
-		const converseHighIndexList = getConverseHighIndexList(
-			macdList,
-			bollList
-		);
-		const converseLowIndexList = getConverseLowIndexList(
-			macdList,
-			bollList
-		);
-		const centerCrossLongIndexList = getCenterCrossLongIndexList(
-			macdList,
-			bollList
-		);
-		const centerCrossShortIndexList = getCenterCrossShortIndexList(
-			macdList,
-			bollList
-		);
-		const IS_CONTINOUSE_LONG =
-			!centerCrossShortIndexList.length ||
-			converseHighIndexList
-				.slice(-2)
-				.every(
-					(index) =>
-						index >
-						centerCrossShortIndexList[
-							centerCrossShortIndexList.length - 1
-						]
-				);
-		const IS_CONTINOUSE_SHORT =
-			!centerCrossLongIndexList.length ||
-			converseLowIndexList
-				.slice(-2)
-				.every(
-					(index) =>
-						index >
-						centerCrossLongIndexList[
-							centerCrossLongIndexList.length - 1
-						]
-				);
+		// const converseHighIndexList = getConverseHighIndexList(
+		// 	macdList,
+		// 	bollList
+		// );
+		// const converseLowIndexList = getConverseLowIndexList(
+		// 	macdList,
+		// 	bollList
+		// );
+		// const centerCrossLongIndexList = getCenterCrossLongIndexList(
+		// 	macdList,
+		// 	bollList
+		// );
+		// const centerCrossShortIndexList = getCenterCrossShortIndexList(
+		// 	macdList,
+		// 	bollList
+		// );
+		// const IS_CONTINOUSE_LONG =
+		// 	!centerCrossShortIndexList.length ||
+		// 	converseHighIndexList
+		// 		.slice(-2)
+		// 		.every(
+		// 			(index) =>
+		// 				index >
+		// 				centerCrossShortIndexList[
+		// 					centerCrossShortIndexList.length - 1
+		// 				]
+		// 		);
+		// const IS_CONTINOUSE_SHORT =
+		// 	!centerCrossLongIndexList.length ||
+		// 	converseLowIndexList
+		// 		.slice(-2)
+		// 		.every(
+		// 			(index) =>
+		// 				index >
+		// 				centerCrossLongIndexList[
+		// 					centerCrossLongIndexList.length - 1
+		// 				]
+		// 		);
 
 		const CENTER_CROSS_LONG_CONDITION =
 			Number(macdList[macdList.length - 2].close) <
@@ -1200,10 +1200,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			(CONVERSE_LOW_CONDITION || (shortHolding && IS_CONTINOUSE_LONG));
+			(CONVERSE_LOW_CONDITION ||
+				(shortHolding && CONVERSE_LOW_CONDITION));
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			(CONVERSE_UP_CONDITION || (longHolding && IS_CONTINOUSE_SHORT));
+			(CONVERSE_UP_CONDITION || (longHolding && CONVERSE_UP_CONDITION));
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
