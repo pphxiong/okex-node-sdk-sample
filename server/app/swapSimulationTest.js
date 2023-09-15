@@ -758,7 +758,7 @@ function fibonacci(n) {
 
 function getConverseHighIndexList(macdList, bollList) {
 	const indexList = [];
-	for (let i = 1; i < macd.length; i += 1) {
+	for (let i = 1; i < macdList.length; i += 1) {
 		const is =
 			Number(macdList[i - 1].close) > Number(bollList[i - 1].UP) &&
 			Number(macdList[i].close) < Number(bollList[i].UP) &&
@@ -770,7 +770,7 @@ function getConverseHighIndexList(macdList, bollList) {
 
 function getConverseLowIndexList(macdList, bollList) {
 	const indexList = [];
-	for (let i = 1; i < macd.length; i += 1) {
+	for (let i = 1; i < macdList.length; i += 1) {
 		const is =
 			Number(macdList[i - 1].close) < Number(bollList[i - 1].DN) &&
 			Number(macdList[i].close) > Number(bollList[i].DN) &&
@@ -782,7 +782,7 @@ function getConverseLowIndexList(macdList, bollList) {
 
 function getCenterCrossLongIndexList(macdList, bollList) {
 	const indexList = [];
-	for (let i = 1; i < macd.length; i += 1) {
+	for (let i = 1; i < macdList.length; i += 1) {
 		const is =
 			Number(macdList[i - 1].close) < Number(bollList[i - 1].MA) &&
 			Number(macdList[i].close) > Number(bollList[i].MA) &&
@@ -794,7 +794,7 @@ function getCenterCrossLongIndexList(macdList, bollList) {
 
 function getCenterCrossShortIndexList(macdList, bollList) {
 	const indexList = [];
-	for (let i = 1; i < macd.length; i += 1) {
+	for (let i = 1; i < macdList.length; i += 1) {
 		const is =
 			Number(macdList[i - 1].close) > Number(bollList[i - 1].MA) &&
 			Number(macdList[i].close) < Number(bollList[i].MA) &&
