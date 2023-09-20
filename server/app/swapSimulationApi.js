@@ -5,7 +5,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = 'BTCUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 0.66;
+const INIT_POSITION = 0.6;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
 
