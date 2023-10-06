@@ -1206,21 +1206,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_OPEN_LONG_CONDITION1 =
       !longHolding &&
-      (OUT_LOW_CONDITION || (shortHolding && (LAST_HIGH_CONDITION || CENTER_CROSS_LONG_CONDITION)));
+      (OUT_LOW_CONDITION || (shortHolding && LAST_HIGH_CONDITION));
     const MAIN_OPEN_SHORT_CONDITION1 =
       !shortHolding &&
-      (OUT_HIGH_CONDITION || (longHolding && (LAST_LOW_CONDITION || CENTER_CROSS_SHORT_CONDITION)));
+      (OUT_HIGH_CONDITION || (longHolding && LAST_LOW_CONDITION));
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
       ((!shortHolding && OUT_HIGH_CONDITION) ||
-        (shortHolding &&
-          (CONVERSE_UP_CONDITION)));
+        (shortHolding && CONVERSE_UP_CONDITION));
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
       ((!longHolding && OUT_LOW_CONDITION) ||
-        (longHolding &&
-          (CONVERSE_LOW_CONDITION)));
+        (longHolding && CONVERSE_LOW_CONDITION));
 
     // const MAIN_OPEN_LONG_CONDITION1 =
     // 	!longHolding &&
