@@ -1058,7 +1058,7 @@ const startInterval = async () => {
 		const list = data;
 
 		const newList = JSON.parse(JSON.stringify(list));
-		newList.pop();
+		// newList.pop();
 		const bollList = getCurrentBOLL(newList);
 		const macdList = getCurrentMacd(newList);
 		const rsiList = getCurrentRSI(newList);

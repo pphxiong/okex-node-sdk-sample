@@ -701,7 +701,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		totalCapital = ORIGIN_TOTAL_CAPITAL;
 
 		const newList = JSON.parse(JSON.stringify(list));
-		// newList.pop();
+		newList.pop();
 
 		const bollList = getCurrentBOLL(newList).slice(-1400);
 		const macdList = getCurrentMacd(newList).slice(-1400);
