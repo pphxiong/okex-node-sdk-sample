@@ -1244,11 +1244,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((!shortHolding && CONVERSE_UP_CONDITION) ||
-				(shortHolding && OUT_LOW_CONDITION));
+				(shortHolding && CONVERSE_UP_CONDITION));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((!longHolding && CONVERSE_LOW_CONDITION) ||
-				(longHolding && OUT_HIGH_CONDITION));
+				(longHolding && CONVERSE_LOW_CONDITION));
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
