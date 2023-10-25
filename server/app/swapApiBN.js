@@ -5,7 +5,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = 'BTCUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 0.5;
+const INIT_POSITION = 0.015;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
 
@@ -278,21 +278,21 @@ const checkDeal = async (data) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			(CONVERSE_LOW_CONDITION || (shortHolding && CONVERSE_UP_CONDITION));
+			((!shortHolding && CENTER_CROSS_SHORT_CONDITION) ||
+				(shortHolding && OUT_HIGH_CONDITION));
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			(CONVERSE_UP_CONDITION || (longHolding && CONVERSE_LOW_CONDITION));
+			((!longHolding && CENTER_CROSS_LONG_CONDITION) ||
+				(longHolding && OUT_LOW_CONDITION));
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((!shortHolding && CONVERSE_UP_CONDITION) ||
-				(shortHolding &&
-					(CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION)));
+				(shortHolding && CENTER_CROSS_LONG_CONDITION));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((!longHolding && CONVERSE_LOW_CONDITION) ||
-				(longHolding &&
-					(CENTER_CROSS_LONG_CONDITION || OUT_HIGH_CONDITION)));
+				(longHolding && CENTER_CROSS_SHORT_CONDITION));
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -1058,7 +1058,7 @@ const startInterval = async () => {
 		const list = data;
 
 		const newList = JSON.parse(JSON.stringify(list));
-		// newList.pop();
+		newList.pop();
 		const bollList = getCurrentBOLL(newList);
 		const macdList = getCurrentMacd(newList);
 		const rsiList = getCurrentRSI(newList);
