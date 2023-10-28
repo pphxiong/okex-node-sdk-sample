@@ -1251,11 +1251,27 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// 	((!longHolding && CENTER_CROSS_SHORT_CONDITION) ||
 		// 		(longHolding && CONVERSE_LOW_CONDITION));
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && PRICE_LONG;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && PRICE_SHORT;
+		const PRICE_LONG_CONVERSE = Number(macdList[macdList.length - 2].close) <
+		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) >
+		Number(macdList[macdList.length - 1].open);
+		
+		const PRICE_SHORT_CONVERSE = Number(macdList[macdList.length - 2].close) >
+		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) <
+		Number(macdList[macdList.length - 1].open);
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && PRICE_SHORT;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && PRICE_LONG;
+		const PRICE_LONG_CONTINUOUS = Number(macdList[macdList.length - 2].close) >
+		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) >
+		Number(macdList[macdList.length - 1].open);
+
+		const PRICE_SHORT_CONTINOUS = Number(macdList[macdList.length - 2].close) <
+		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) <
+		Number(macdList[macdList.length - 1].open);
+
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && PRICE_LONG_CONVERSE;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && PRICE_SHORT_CONVERSE;
+
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && (PRICE_LONG_CONTINUOUS || PRICE_SHORT_CONVERSE);
+		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && (PRICE_SHORT_CONTINOUS || PRICE_LONG_CONVERSE);
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
