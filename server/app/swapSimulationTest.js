@@ -32,7 +32,7 @@ const LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 const LOSS_MAX = (-1 * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
+const WIN_MAX = (1 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -1251,11 +1251,15 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// 	((!longHolding && CENTER_CROSS_SHORT_CONDITION) ||
 		// 		(longHolding && CONVERSE_LOW_CONDITION));
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && PRICE_LONG;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && PRICE_SHORT;
+		const RANDOM = Math.random();
+		const LONG_WIN_OR_LOSE = longRatio > WIN_MAX || longRatio < LOSS_MAX;
+		const SHORT_WIN_OR_LOSE = shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && PRICE_SHORT;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && PRICE_LONG;
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && RANDOM > 0.5;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && RANDOM < 0.5;
+
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LONG_WIN_OR_LOSE;
+		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && SHORT_WIN_OR_LOSE;
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
