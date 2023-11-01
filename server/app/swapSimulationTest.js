@@ -31,7 +31,7 @@ const BN_SYMBOL = 'BTCUSDT';
 const LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-const LOSS_MAX = (-1 * LEVERAGE) / LEVERAGE;
+const LOSS_MAX = (-1 * LEVERAGE) / LEVERAGE / 2;
 const WIN_MAX = (1 * LEVERAGE) / LEVERAGE;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -154,6 +154,10 @@ function getCurrentMacd(list, last) {
 		let result = {};
 		if (index == 0) {
 			result = last || {
+				ema5: Number(item[4]),
+				ema10: Number(item[4]),
+				ema20: Number(item[4]),
+				ema60: Number(item[4]),
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
 				diff: 0,
@@ -170,6 +174,10 @@ function getCurrentMacd(list, last) {
 		} else {
 			const lastResult = macdList[macdList.length - 1];
 			const payload = {
+				lastEma5: lastResult.ema5,
+				lastEma10: lastResult.ema10,
+				lastEma20: lastResult.ema20,
+				lastEma60: lastResult.ema60,
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
 				lastDea: lastResult.dea,
@@ -282,6 +290,10 @@ app.get('/test', function (req, res) {
 function getMacd(params) {
 	const {
 		close: price,
+		lastEma5,
+		lastEma10,
+		lastEma20,
+		lastEma60,
 		lastEma12,
 		lastEma26,
 		lastDea,
@@ -292,6 +304,23 @@ function getMacd(params) {
 		quantity,
 		open,
 	} = params;
+
+	const ema5 = toFixedAndToNumber(
+		(2 / (5 + 1)) * price + (4 / (5 + 1)) * lastEma5,
+		4
+	);
+	const ema10 = toFixedAndToNumber(
+		(2 / (10 + 1)) * price + (9 / (10 + 1)) * lastEma10,
+		4
+	);
+	const ema20 = toFixedAndToNumber(
+		(2 / (20 + 1)) * price + (19 / (20 + 1)) * lastEma20,
+		4
+	);
+	const ema60 = toFixedAndToNumber(
+		(2 / (59 + 1)) * price + (59 / (60 + 1)) * lastEma60,
+		4
+	);
 
 	const ema12 = toFixedAndToNumber(
 		(2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
@@ -313,6 +342,10 @@ function getMacd(params) {
 	const result = {
 		open,
 		close: price,
+		ema5,
+		ema10,
+		ema20,
+		ema60,
 		ema12,
 		ema26,
 		diff,
@@ -1251,17 +1284,34 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// 	((!longHolding && CENTER_CROSS_SHORT_CONDITION) ||
 		// 		(longHolding && CONVERSE_LOW_CONDITION));
 
-		const RANDOM = Math.random();
+		// const RANDOM = Math.random();
+
+		const EMA_CONTINUOUS_LONG =
+			Number(macdList[macdList.length - 1].ema5) >
+				Number(macdList[macdList.length - 1].ema10) &&
+			Number(macdList[macdList.length - 1].ema10) >
+				Number(macdList[macdList.length - 1].ema20) &&
+			Number(macdList[macdList.length - 1].ema20) >
+				Number(macdList[macdList.length - 1].ema60);
+
+		const EMA_CONTINUOUS_SHORT =
+			Number(macdList[macdList.length - 1].ema5) <
+				Number(macdList[macdList.length - 1].ema10) &&
+			Number(macdList[macdList.length - 1].ema10) <
+				Number(macdList[macdList.length - 1].ema20) &&
+			Number(macdList[macdList.length - 1].ema20) <
+				Number(macdList[macdList.length - 1].ema60);
+
 		const LONG_WIN_OR_LOSE = longRatio > WIN_MAX || longRatio < LOSS_MAX;
 		const SHORT_WIN_OR_LOSE = shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
-		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && !shortHolding && MACD_LONG;
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && EMA_CONTINUOUS_LONG;
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && !longHolding && MACD_SHORT;
+			!shortHolding && EMA_CONTINUOUS_SHORT;
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LONG_WIN_OR_LOSE;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && SHORT_WIN_OR_LOSE;
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && !EMA_CONTINUOUS_LONG;
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && !EMA_CONTINUOUS_SHORT;
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
