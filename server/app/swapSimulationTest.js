@@ -1292,17 +1292,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 			Number(macdList[macdList.length - 1].ema5) >
 				Number(macdList[macdList.length - 1].ema10) &&
 			Number(macdList[macdList.length - 1].ema10) >
-				Number(macdList[macdList.length - 1].ema20) &&
-			Number(macdList[macdList.length - 1].ema20) >
-				Number(macdList[macdList.length - 1].ema60);
+				Number(macdList[macdList.length - 1].ema20);
 
 		const EMA_CONTINUOUS_SHORT =
 			Number(macdList[macdList.length - 1].ema5) <
 				Number(macdList[macdList.length - 1].ema10) &&
 			Number(macdList[macdList.length - 1].ema10) <
-				Number(macdList[macdList.length - 1].ema20) &&
-			Number(macdList[macdList.length - 1].ema20) <
-				Number(macdList[macdList.length - 1].ema60);
+				Number(macdList[macdList.length - 1].ema20);
 
 		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && EMA_CONTINUOUS_LONG;
 		const MAIN_OPEN_SHORT_CONDITION1 =
