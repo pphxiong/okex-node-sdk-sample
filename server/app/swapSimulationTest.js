@@ -1285,6 +1285,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// 		(longHolding && CONVERSE_LOW_CONDITION));
 
 		// const RANDOM = Math.random();
+		const LONG_WIN_OR_LOSE = longRatio > WIN_MAX || longRatio < LOSS_MAX;
+		const SHORT_WIN_OR_LOSE = shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
 		const EMA_CONTINUOUS_LONG =
 			Number(macdList[macdList.length - 1].ema5) >
@@ -1301,9 +1303,6 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Number(macdList[macdList.length - 1].ema20) &&
 			Number(macdList[macdList.length - 1].ema20) <
 				Number(macdList[macdList.length - 1].ema60);
-
-		const LONG_WIN_OR_LOSE = longRatio > WIN_MAX || longRatio < LOSS_MAX;
-		const SHORT_WIN_OR_LOSE = shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
 		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && EMA_CONTINUOUS_LONG;
 		const MAIN_OPEN_SHORT_CONDITION1 =

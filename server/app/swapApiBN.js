@@ -5,7 +5,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BN_SYMBOL = 'BTCUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 0.01;
+const INIT_POSITION = 0.001;
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 5;
 let MODE = 1;
 
@@ -283,27 +283,49 @@ const checkDeal = async (data) => {
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
-		const PRICE_LONG_CONVERSE = Number(macdList[macdList.length - 2].close) <
-		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) >
-		Number(macdList[macdList.length - 1].open);
-		
-		const PRICE_SHORT_CONVERSE = Number(macdList[macdList.length - 2].close) >
-		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) <
-		Number(macdList[macdList.length - 1].open);
+		const PRICE_LONG_CONVERSE =
+			Number(macdList[macdList.length - 2].close) <
+				Number(macdList[macdList.length - 2].open) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(macdList[macdList.length - 1].open);
 
-		const PRICE_LONG_CONTINUOUS = Number(macdList[macdList.length - 2].close) >
-		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) >
-		Number(macdList[macdList.length - 1].open);
+		const PRICE_SHORT_CONVERSE =
+			Number(macdList[macdList.length - 2].close) >
+				Number(macdList[macdList.length - 2].open) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(macdList[macdList.length - 1].open);
 
-		const PRICE_SHORT_CONTINOUS = Number(macdList[macdList.length - 2].close) <
-		Number(macdList[macdList.length - 2].open) && Number(macdList[macdList.length - 1].close) <
-		Number(macdList[macdList.length - 1].open);
+		const PRICE_LONG_CONTINUOUS =
+			Number(macdList[macdList.length - 2].close) >
+				Number(macdList[macdList.length - 2].open) &&
+			Number(macdList[macdList.length - 1].close) >
+				Number(macdList[macdList.length - 1].open);
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && PRICE_LONG_CONVERSE;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && PRICE_SHORT_CONVERSE;
+		const PRICE_SHORT_CONTINOUS =
+			Number(macdList[macdList.length - 2].close) <
+				Number(macdList[macdList.length - 2].open) &&
+			Number(macdList[macdList.length - 1].close) <
+				Number(macdList[macdList.length - 1].open);
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && (PRICE_LONG_CONTINUOUS || PRICE_SHORT_CONVERSE);
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && (PRICE_SHORT_CONTINOUS || PRICE_LONG_CONVERSE);
+		const EMA_CONTINUOUS_LONG =
+			Number(macdList[macdList.length - 1].ema5) >
+				Number(macdList[macdList.length - 1].ema10) &&
+			Number(macdList[macdList.length - 1].ema10) >
+				Number(macdList[macdList.length - 1].ema20);
+
+		const EMA_CONTINUOUS_SHORT =
+			Number(macdList[macdList.length - 1].ema5) <
+				Number(macdList[macdList.length - 1].ema10) &&
+			Number(macdList[macdList.length - 1].ema10) <
+				Number(macdList[macdList.length - 1].ema20);
+
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && EMA_CONTINUOUS_LONG;
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding && EMA_CONTINUOUS_SHORT;
+
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && !EMA_CONTINUOUS_LONG;
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && !EMA_CONTINUOUS_SHORT;
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
@@ -652,38 +674,46 @@ function send(res, ret) {
 	res.send(str);
 }
 
-function getCurrentMacd(list) {
+function getCurrentMacd(list, last) {
 	let macdList = [];
 	list.map((item, index) => {
 		let result = {};
 		if (index == 0) {
-			result = {
-				open: Number(item[1]),
-				price: Number(item[4]),
-				close: Number(item[4]),
+			result = last || {
+				ema5: Number(item[4]),
+				ema10: Number(item[4]),
+				ema20: Number(item[4]),
+				ema60: Number(item[4]),
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
-				ema60: Number(item[4]),
 				diff: 0,
 				dea: 0,
 				column: 0,
+				open: Number(item[1]),
 				high: Number(item[2]),
 				low: Number(item[3]),
+				close: Number(item[4]),
+				quantity: Number(item[5]),
 				time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
+				week: moment(parseInt(item[0])).day(),
 			};
 		} else {
 			const lastResult = macdList[macdList.length - 1];
 			const payload = {
-				open: Number(item[1]),
-				price: Number(item[4]),
-				close: Number(item[4]),
+				lastEma5: lastResult.ema5,
+				lastEma10: lastResult.ema10,
+				lastEma20: lastResult.ema20,
+				lastEma60: lastResult.ema60,
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
-				lastEma60: lastResult.ema60,
 				lastDea: lastResult.dea,
+				open: Number(item[1]),
 				high: Number(item[2]),
 				low: Number(item[3]),
+				close: Number(item[4]),
+				quantity: Number(item[5]),
 				time: moment(parseInt(item[0])).format('YYYY-MM-DD HH:mm:ss'),
+				week: moment(parseInt(item[0])).day(),
 			};
 			result = getMacd(payload);
 		}
@@ -911,17 +941,38 @@ let positionChange = true;
 let globalHolding = null;
 function getMacd(params) {
 	const {
-		open,
-		close,
-		price,
+		close: price,
+		lastEma5,
+		lastEma10,
+		lastEma20,
+		lastEma60,
 		lastEma12,
 		lastEma26,
-		lastEma60,
 		lastDea,
 		high,
 		low,
 		time,
+		week,
+		quantity,
+		open,
 	} = params;
+
+	const ema5 = toFixedAndToNumber(
+		(2 / (5 + 1)) * price + (4 / (5 + 1)) * lastEma5,
+		4
+	);
+	const ema10 = toFixedAndToNumber(
+		(2 / (10 + 1)) * price + (9 / (10 + 1)) * lastEma10,
+		4
+	);
+	const ema20 = toFixedAndToNumber(
+		(2 / (20 + 1)) * price + (19 / (20 + 1)) * lastEma20,
+		4
+	);
+	const ema60 = toFixedAndToNumber(
+		(2 / (59 + 1)) * price + (59 / (60 + 1)) * lastEma60,
+		4
+	);
 
 	const ema12 = toFixedAndToNumber(
 		(2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
@@ -929,10 +980,6 @@ function getMacd(params) {
 	);
 	const ema26 = toFixedAndToNumber(
 		(2 / (26 + 1)) * price + (25 / (26 + 1)) * lastEma26,
-		4
-	);
-	const ema60 = toFixedAndToNumber(
-		(2 / (60 + 1)) * price + (59 / (60 + 1)) * lastEma26,
 		4
 	);
 
@@ -946,17 +993,21 @@ function getMacd(params) {
 
 	const result = {
 		open,
-		close,
-		price,
+		close: price,
+		ema5,
+		ema10,
+		ema20,
+		ema60,
 		ema12,
 		ema26,
-		ema60,
 		diff,
 		dea,
 		column,
 		high,
 		low,
+		quantity,
 		time,
+		week,
 	};
 
 	return result;
