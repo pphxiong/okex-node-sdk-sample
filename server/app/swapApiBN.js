@@ -385,9 +385,10 @@ const checkDeal = async (data) => {
 			'minute'
 		);
 		const isFiveM =
-			minuteDiff < 90 &&
-			minuteList.includes(lastMinuteCharacter) &&
-			!secondList.includes(lastSecondCharacter);
+			true ||
+			(minuteDiff < 90 &&
+				minuteList.includes(lastMinuteCharacter) &&
+				!secondList.includes(lastSecondCharacter));
 
 		// if (isFiveM && avail < INIT_POSITION * NEW_POSITION_RATIO) {
 		//   if (openLongCondition) {
@@ -1120,7 +1121,7 @@ const startInterval = async () => {
 		const list = data;
 
 		const newList = JSON.parse(JSON.stringify(list));
-		newList.pop();
+		// newList.pop();
 		const bollList = getCurrentBOLL(newList);
 		const macdList = getCurrentMacd(newList);
 		const rsiList = getCurrentRSI(newList);
