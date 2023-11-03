@@ -26,8 +26,8 @@ const LONG_CONDITION = 50;
 const SHORT_CONDITION = 50;
 const LEVERAGE = 10;
 const BAO_RATIO = -0.95;
-const LOSS_MAX = ((-0.1 / 1.9) * LEVERAGE) / 10;
-const WIN_MAX = (0.1 * 3 * LEVERAGE) / 10;
+const LOSS_MAX = 0.618;
+const WIN_MAX = 2.472;
 const CAPITAL_RATIO = 1;
 const fiList = [1, 2, 4, 8, 16, 24];
 
@@ -167,34 +167,6 @@ const checkDeal = async (data) => {
 			Number(macdList[macdList.length - 1].close) >
 				Number(bollList[bollList.length - 1].DN);
 
-		const OUT_HIGH_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].UP);
-
-		const OUT_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].DN);
-
-		const CONVERSE_UP_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
-
-		const CONVERSE_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
-
 		// const result = await queryLatestOpenOrders();
 		// const [latestLongOrder, latestShortOrder] = result;
 
@@ -205,127 +177,21 @@ const checkDeal = async (data) => {
 		//   ? Number(mark_price) < Math.abs(Number(latestShortOrder.avgPrice))
 		//   : true;
 
-		const LAST_SECOND_LONG_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 2].open) >
-				Number(bollList[bollList.length - 2].MA);
+		const RANDOM = Math.random();
+		const LONG_WIN = longRatio > WIN_MAX;
+		const LONG_LOSE = longRatio < LOSS_MAX;
+		const SHORT_WIN = shortRatio > WIN_MAX;
+		const SHORT_LOSE = shortRatio < LOSS_MAX;
 
-		const LAST_SECOND_SHORT_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 2].open) <
-				Number(bollList[bollList.length - 2].MA);
-
-		const BATCH_LONG_OPEN_CONDITION =
-			!longHolding &&
-			shortHolding &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			OUT_HIGH_CONDITION;
-
-		const BATCH_SHORT_OPEN_CONDITION =
-			!shortHolding &&
-			longHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			OUT_LOW_CONDITION;
-
-		const BATCH_LONG_CLOSE_CONDITION =
-			longHolding &&
-			shortHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			CONVERSE_LOW_CONDITION;
-
-		const BATCH_SHORT_CLOSE_CONDITION =
-			longHolding &&
-			shortHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			CONVERSE_UP_CONDITION;
-
-		const RSI_LONG = rsiList[rsiList.length - 1].RSI3 >= 50;
-		const RSI_SHORT = rsiList[rsiList.length - 1].RSI3 < 50;
-
-		const MACD_LONG_REVERSE =
-			Number(macdList[macdList.length - 2].column) >= 0 &&
-			Number(macdList[macdList.length - 2].column) <
-				Number(macdList[macdList.length - 1].column) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open);
-
-		const MACD_SHORT_REVERSE =
-			Number(macdList[macdList.length - 2].column) < 0 &&
-			Number(macdList[macdList.length - 2].column) >
-				Number(macdList[macdList.length - 1].column) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open);
-
-		const PRICE_LOW_MA =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].MA);
-		const PRICE_UP_MA =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].MA);
-
-		const PRICE_LONG =
-			Number(macdList[macdList.length - 1].close) >
-			Number(macdList[macdList.length - 1].open);
-		const PRICE_SHORT =
-			Number(macdList[macdList.length - 1].close) <
-			Number(macdList[macdList.length - 1].open);
-
-		const CLOSE_ALL_LONG_CONDITION = false;
-		const CLOSE_ALL_SHORT_CONDITION = false;
-
-		const PRICE_LONG_CONVERSE =
-			Number(macdList[macdList.length - 2].close) <
-				Number(macdList[macdList.length - 2].open) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open);
-
-		const PRICE_SHORT_CONVERSE =
-			Number(macdList[macdList.length - 2].close) >
-				Number(macdList[macdList.length - 2].open) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open);
-
-		const PRICE_LONG_CONTINUOUS =
-			Number(macdList[macdList.length - 2].close) >
-				Number(macdList[macdList.length - 2].open) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open);
-
-		const PRICE_SHORT_CONTINOUS =
-			Number(macdList[macdList.length - 2].close) <
-				Number(macdList[macdList.length - 2].open) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open);
-
-		const EMA_CONTINUOUS_LONG =
-			Number(macdList[macdList.length - 1].ema5) >
-				Number(macdList[macdList.length - 1].ema10) &&
-			Number(macdList[macdList.length - 1].ema10) >
-				Number(macdList[macdList.length - 1].ema20);
-
-		const EMA_CONTINUOUS_SHORT =
-			Number(macdList[macdList.length - 1].ema5) <
-				Number(macdList[macdList.length - 1].ema10) &&
-			Number(macdList[macdList.length - 1].ema10) <
-				Number(macdList[macdList.length - 1].ema20);
-
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && EMA_CONTINUOUS_LONG;
+		const MAIN_OPEN_LONG_CONDITION1 =
+			!longHolding && ((!shortHolding && RANDOM > 0.5) || SHORT_WIN);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && EMA_CONTINUOUS_SHORT;
+			!shortHolding && ((!longHolding && RANDOM < 0.5) || LONG_WIN);
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && !EMA_CONTINUOUS_LONG;
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && (LONG_WIN || LONG_LOSE);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && !EMA_CONTINUOUS_SHORT;
+			shortHolding && (SHORT_WIN || SHORT_LOSE);
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
