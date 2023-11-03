@@ -31,8 +31,8 @@ const BN_SYMBOL = 'BTCUSDT';
 const LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-const LOSS_MAX = (-1 * LEVERAGE) / LEVERAGE / 2;
-const WIN_MAX = (1 * LEVERAGE) / LEVERAGE;
+const LOSS_MAX = (-1 * 0.618 * LEVERAGE * 2) / LEVERAGE;
+const WIN_MAX = (1 * 0.618 * LEVERAGE) / LEVERAGE;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -1284,29 +1284,27 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// 	((!longHolding && CENTER_CROSS_SHORT_CONDITION) ||
 		// 		(longHolding && CONVERSE_LOW_CONDITION));
 
-		// const RANDOM = Math.random();
+		// 	const EMA_CONTINUOUS_LONG =
+		//   Number(macdList[macdList.length - 1].ema5) >
+		//     Number(macdList[macdList.length - 1].ema10) &&
+		//   Number(macdList[macdList.length - 1].ema10) >
+		//     Number(macdList[macdList.length - 1].ema20);
+
+		// const EMA_CONTINUOUS_SHORT =
+		//   Number(macdList[macdList.length - 1].ema5) <
+		//     Number(macdList[macdList.length - 1].ema10) &&
+		//   Number(macdList[macdList.length - 1].ema10) <
+		//     Number(macdList[macdList.length - 1].ema20);
+
+		const RANDOM = Math.random();
 		const LONG_WIN_OR_LOSE = longRatio > WIN_MAX || longRatio < LOSS_MAX;
 		const SHORT_WIN_OR_LOSE = shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
 
-		const EMA_CONTINUOUS_LONG =
-			Number(macdList[macdList.length - 1].ema5) >
-				Number(macdList[macdList.length - 1].ema10) &&
-			Number(macdList[macdList.length - 1].ema10) >
-				Number(macdList[macdList.length - 1].ema20);
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && RANDOM > 0.5;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && RANDOM < 0.5;
 
-		const EMA_CONTINUOUS_SHORT =
-			Number(macdList[macdList.length - 1].ema5) <
-				Number(macdList[macdList.length - 1].ema10) &&
-			Number(macdList[macdList.length - 1].ema10) <
-				Number(macdList[macdList.length - 1].ema20);
-
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && EMA_CONTINUOUS_LONG;
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && EMA_CONTINUOUS_SHORT;
-
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && !EMA_CONTINUOUS_LONG;
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && !EMA_CONTINUOUS_SHORT;
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LONG_WIN_OR_LOSE;
+		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && SHORT_WIN_OR_LOSE;
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
