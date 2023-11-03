@@ -1297,14 +1297,20 @@ const checkDeal = async (data, isAutoReset = true) => {
 		//     Number(macdList[macdList.length - 1].ema20);
 
 		const RANDOM = Math.random();
-		const LONG_WIN_OR_LOSE = longRatio > WIN_MAX || longRatio < LOSS_MAX;
-		const SHORT_WIN_OR_LOSE = shortRatio > WIN_MAX || shortRatio < LOSS_MAX;
+		const LONG_WIN = longRatio > WIN_MAX;
+		const LONG_LOSE = longRatio < LOSS_MAX;
+		const SHORT_WIN = shortRatio > WIN_MAX;
+		const SHORT_LOSE = shortRatio < LOSS_MAX;
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && RANDOM > 0.5;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && RANDOM < 0.5;
+		const MAIN_OPEN_LONG_CONDITION1 =
+			!longHolding && (RANDOM > 0.5 || SHORT_LOSE);
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding && (RANDOM < 0.5 || LONG_LOSE);
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LONG_WIN_OR_LOSE;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && SHORT_WIN_OR_LOSE;
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && (LONG_WIN || LONG_LOSE);
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && (SHORT_WIN || SHORT_LOSE);
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
