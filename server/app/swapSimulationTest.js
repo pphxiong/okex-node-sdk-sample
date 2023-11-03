@@ -31,8 +31,8 @@ const BN_SYMBOL = 'BTCUSDT';
 const LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-const LOSS_MAX = (-1 * 0.618 * LEVERAGE) / LEVERAGE;
-const WIN_MAX = (1 * 0.618 * LEVERAGE * 2) / LEVERAGE;
+let LOSS_MAX = -1 * 0.618;
+let WIN_MAX = 1 * 0.618 * 2;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -710,6 +710,22 @@ app.get('/swap/startHearBeat', async (req, response) => {
 		console.log(e);
 		restart('startHearBeat');
 	}
+});
+
+app.get('/swap/setWinAndLossMax', async (req, response) => {
+	const { query = {} } = req;
+	const { winMax, lossMax } = query;
+	WIN_MAX = winMax;
+	LOSS_MAX = -lossMax;
+
+	send(response, {
+		errcode: 0,
+		errmsg: 'ok',
+		data: {
+			WIN_MAX,
+			LOSS_MAX,
+		},
+	});
 });
 
 app.get('/swap/getLatestProfit', async (req, response) => {

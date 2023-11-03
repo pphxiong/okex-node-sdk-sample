@@ -21,6 +21,7 @@ import {
   setConditionParams,
   getHistory,
   getLatestProfit,
+  setWinAndLossMax,
 } from './api';
 import { tradeTypeEnum } from '../../config';
 // import { getRSI, getMacd } from '@/utils/utils'
@@ -60,6 +61,9 @@ export default (props) => {
   const [dayStep, setDayStep] = useState(0);
   const [date, setDate] = useState('');
   const [yearPeriodStep, setYearPeriodStep] = useState(3);
+
+  const [winMax, setWinMax] = useState(0.618);
+  const [lossMax, setLossMax] = useState(0.618);
 
   const intervalDaysMap = {
     '15m': 15,
@@ -559,6 +563,12 @@ export default (props) => {
     }
   };
 
+  const fnSetWinAndLossMax = async () => {
+    const payload = { winMax, lossMax };
+    const { errmsg } = await setWinAndLossMax(payload);
+    message.info(errmsg);
+  };
+
   const fnGetLatestProfit = async () => {
     try {
       setPageLoading(true);
@@ -661,7 +671,7 @@ export default (props) => {
     reader.onload = function (e) {
       // 转换完成，创建一个a标签用于下载
       const a = document.createElement('a');
-      a.download = fileName + '.js';
+      a.download = `${fileName}.js`;
       a.href = e.target.result;
       a.click();
     };
@@ -926,12 +936,21 @@ export default (props) => {
               );
             })}
           </Select>
-          <Button onClick={() => fnGetHistoryByDay()} style={{ marginLeft: 10 }}>
+          <Col>
+            WINMAX: <InputNumber step={0.1} value={winMax} onChange={(v) => setWinMax(v)} />
+          </Col>
+          <Col>
+            LOSSMAX: <InputNumber step={0.1} value={lossMax} onChange={(v) => setLossMax(v)} />
+          </Col>
+          <Button onClick={() => fnSetWinAndLossMax()} style={{ marginLeft: 10 }}>
+            设置WINLOSS
+          </Button>
+          {/* <Button onClick={() => fnGetHistoryByDay()} style={{ marginLeft: 10 }}>
             下载天历史数据
           </Button>
           <Button onClick={() => fnGetHistoryByMonth()} style={{ marginLeft: 10 }}>
             下载月历史数据
-          </Button>
+          </Button> */}
         </Row>
 
         <Row style={{ marginTop: 10 }} gutter={12}>
@@ -994,29 +1013,29 @@ export default (props) => {
 
         <Divider />
 
-        {/*查询时长:*/}
-        {/*<InputNumber*/}
-        {/*  value={ duration }*/}
-        {/*  step={1}*/}
-        {/*  min={1}*/}
-        {/*  max={12}*/}
-        {/*  onChange={v=>setDuration(Number(v))}*/}
-        {/*/>*/}
-        {/*个月*/}
-        {/*<Button onClick={()=>fnGetHistory()} type="primary" style={{ marginLeft: 10 }}>测算</Button>*/}
-        {/*<Divider />*/}
-        {/*历史数据范围：*/}
-        {/*<RangePicker*/}
-        {/*  showTime*/}
-        {/*  showNow*/}
-        {/*  onChange={fnGetHistory}*/}
-        {/*  disabledDate={disabledDate}*/}
-        {/*  defaultValue={[moment('2020-10-01 00:00:00','YYYY-MM-DD HH:mm:ss'),moment('2020-09-03 00:00:00','YYYY-MM-DD HH:mm:ss')]}*/}
-        {/*/>*/}
+        {/* 查询时长: */}
+        {/* <InputNumber */}
+        {/*  value={ duration } */}
+        {/*  step={1} */}
+        {/*  min={1} */}
+        {/*  max={12} */}
+        {/*  onChange={v=>setDuration(Number(v))} */}
+        {/* /> */}
+        {/* 个月 */}
+        {/* <Button onClick={()=>fnGetHistory()} type="primary" style={{ marginLeft: 10 }}>测算</Button> */}
+        {/* <Divider /> */}
+        {/* 历史数据范围： */}
+        {/* <RangePicker */}
+        {/*  showTime */}
+        {/*  showNow */}
+        {/*  onChange={fnGetHistory} */}
+        {/*  disabledDate={disabledDate} */}
+        {/*  defaultValue={[moment('2020-10-01 00:00:00','YYYY-MM-DD HH:mm:ss'),moment('2020-09-03 00:00:00','YYYY-MM-DD HH:mm:ss')]} */}
+        {/* /> */}
 
-        {/*<Divider />*/}
+        {/* <Divider /> */}
 
-        {/*<p>总盈亏：{tPnl} </p>*/}
+        {/* <p>总盈亏：{tPnl} </p> */}
         <p>总YQ：{tPnlRatio}</p>
 
         {tPnlList.length &&
@@ -1033,79 +1052,79 @@ export default (props) => {
             );
           })}
       </Card>
-      {/*<Card title={'BTC交易记录'} >*/}
-      {/*  <SearchTable*/}
-      {/*    columns={getColumns(pageSize)}*/}
-      {/*    getList={initBTCData}*/}
-      {/*    responseHandler={data=>responseHandler(data,current,pageSize)}*/}
-      {/*    rowKey={"order_id"}*/}
-      {/*    tableId={"btc"}*/}
-      {/*    key={'btc'}*/}
-      {/*    callbackPageSize={(cr,ps)=> {*/}
-      {/*      setCurrent(cr)*/}
-      {/*      setPageSize(ps)*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*</Card>*/}
-      {/*<Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}>*/}
-      {/*  <SearchTable*/}
-      {/*    columns={getColumns(eosPageSize)}*/}
-      {/*    getList={initEOSData}*/}
-      {/*    responseHandler={data=>responseHandler(data,eosCurrent,eosPageSize)}*/}
-      {/*    rowKey={"order_id"}*/}
-      {/*    tableId={"eos"}*/}
-      {/*    key={'eos'}*/}
-      {/*    callbackPageSize={(cr,ps)=> {*/}
-      {/*      setEosCurrent(cr)*/}
-      {/*      setEosPageSize(ps)*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*</Card>*/}
-      {/*<Card title={'多空人数比'} style={{ marginTop: 10 }}>*/}
-      {/*  {*/}
-      {/*    longShortRatioData.length ? (*/}
-      {/*      <Line*/}
-      {/*        {...lineConfig}*/}
-      {/*        height={300}*/}
-      {/*        data={longShortRatioData}*/}
-      {/*        xField = 'time'*/}
-      {/*        yField = 'ratio'*/}
-      {/*        meta = {{*/}
-      {/*          time: { alias: '时间' },*/}
-      {/*          ratio: { alias: '多空人数比' },*/}
-      {/*        }}*/}
-      {/*        point = {{*/}
-      {/*          visible: true,*/}
-      {/*          size: 5,*/}
-      {/*          shape: 'diamond',*/}
-      {/*          style: {*/}
-      {/*            fill: 'white',*/}
-      {/*            stroke: '#2593fc',*/}
-      {/*            lineWidth: 2,*/}
-      {/*          },*/}
-      {/*        }}*/}
-      {/*      />*/}
-      {/*    ) : ''*/}
-      {/*  }*/}
-      {/*</Card>*/}
-      {/*<Card title={'多空精英趋向指标'} style={{ marginTop: 10 }}>*/}
-      {/*  {*/}
-      {/*    longShortRatioData.length ? (*/}
-      {/*      <Line*/}
-      {/*        {...lineConfig}*/}
-      {/*        height={300}*/}
-      {/*        data={sentimentData}*/}
-      {/*        xField = 'time'*/}
-      {/*        yField = 'ratio'*/}
-      {/*        seriesField = 'type'*/}
-      {/*        meta = {{*/}
-      {/*          time: { alias: '时间' },*/}
-      {/*          ratio: { alias: '多空人数比' },*/}
-      {/*        }}*/}
-      {/*      />*/}
-      {/*    ) : ''*/}
-      {/*  }*/}
-      {/*</Card>*/}
+      {/* <Card title={'BTC交易记录'} > */}
+      {/*  <SearchTable */}
+      {/*    columns={getColumns(pageSize)} */}
+      {/*    getList={initBTCData} */}
+      {/*    responseHandler={data=>responseHandler(data,current,pageSize)} */}
+      {/*    rowKey={"order_id"} */}
+      {/*    tableId={"btc"} */}
+      {/*    key={'btc'} */}
+      {/*    callbackPageSize={(cr,ps)=> { */}
+      {/*      setCurrent(cr) */}
+      {/*      setPageSize(ps) */}
+      {/*    }} */}
+      {/*  /> */}
+      {/* </Card> */}
+      {/* <Card title={'EOS交易记录'} style={{ marginTop: 10 }} extra={<Button onClick={()=>{refreshTable('eos')}}>刷新</Button>}> */}
+      {/*  <SearchTable */}
+      {/*    columns={getColumns(eosPageSize)} */}
+      {/*    getList={initEOSData} */}
+      {/*    responseHandler={data=>responseHandler(data,eosCurrent,eosPageSize)} */}
+      {/*    rowKey={"order_id"} */}
+      {/*    tableId={"eos"} */}
+      {/*    key={'eos'} */}
+      {/*    callbackPageSize={(cr,ps)=> { */}
+      {/*      setEosCurrent(cr) */}
+      {/*      setEosPageSize(ps) */}
+      {/*    }} */}
+      {/*  /> */}
+      {/* </Card> */}
+      {/* <Card title={'多空人数比'} style={{ marginTop: 10 }}> */}
+      {/*  { */}
+      {/*    longShortRatioData.length ? ( */}
+      {/*      <Line */}
+      {/*        {...lineConfig} */}
+      {/*        height={300} */}
+      {/*        data={longShortRatioData} */}
+      {/*        xField = 'time' */}
+      {/*        yField = 'ratio' */}
+      {/*        meta = {{ */}
+      {/*          time: { alias: '时间' }, */}
+      {/*          ratio: { alias: '多空人数比' }, */}
+      {/*        }} */}
+      {/*        point = {{ */}
+      {/*          visible: true, */}
+      {/*          size: 5, */}
+      {/*          shape: 'diamond', */}
+      {/*          style: { */}
+      {/*            fill: 'white', */}
+      {/*            stroke: '#2593fc', */}
+      {/*            lineWidth: 2, */}
+      {/*          }, */}
+      {/*        }} */}
+      {/*      /> */}
+      {/*    ) : '' */}
+      {/*  } */}
+      {/* </Card> */}
+      {/* <Card title={'多空精英趋向指标'} style={{ marginTop: 10 }}> */}
+      {/*  { */}
+      {/*    longShortRatioData.length ? ( */}
+      {/*      <Line */}
+      {/*        {...lineConfig} */}
+      {/*        height={300} */}
+      {/*        data={sentimentData} */}
+      {/*        xField = 'time' */}
+      {/*        yField = 'ratio' */}
+      {/*        seriesField = 'type' */}
+      {/*        meta = {{ */}
+      {/*          time: { alias: '时间' }, */}
+      {/*          ratio: { alias: '多空人数比' }, */}
+      {/*        }} */}
+      {/*      /> */}
+      {/*    ) : '' */}
+      {/*  } */}
+      {/* </Card> */}
     </Spin>
   );
 };

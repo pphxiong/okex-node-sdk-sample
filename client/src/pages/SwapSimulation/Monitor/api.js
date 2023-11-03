@@ -16,6 +16,12 @@ export async function getLatestProfit(params) {
   });
 }
 
+export async function setWinAndLossMax(params) {
+  return request(`${commonUrl}/swap/setWinAndLossMax`, {
+    params,
+  });
+}
+
 export async function startHearBeat(params) {
   return request(`${commonUrl}/swap/startHearBeat`, {
     params,
