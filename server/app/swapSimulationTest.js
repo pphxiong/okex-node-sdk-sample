@@ -28,7 +28,7 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = 'BTCUSDT';
-const LEVERAGE = 60;
+let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let LOSS_MAX = -1 * 0.618;
@@ -714,9 +714,10 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/setWinAndLossMax', async (req, response) => {
 	const { query = {} } = req;
-	const { winMax, lossMax } = query;
+	const { winMax, lossMax, leverage } = query;
 	WIN_MAX = winMax;
 	LOSS_MAX = -lossMax;
+	LEVERAGE = leverage;
 
 	send(response, {
 		errcode: 0,

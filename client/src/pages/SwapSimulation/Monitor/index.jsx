@@ -564,7 +564,7 @@ export default (props) => {
   };
 
   const fnSetWinAndLossMax = async () => {
-    const payload = { winMax, lossMax };
+    const payload = { winMax, lossMax, leverage };
     const { errmsg } = await setWinAndLossMax(payload);
     message.info(errmsg);
   };
@@ -881,7 +881,7 @@ export default (props) => {
       {/* <iframe src="https://api.binance.com" width="1000" height="800" /> */}
       <Card title="概况">
         <Row>
-          年份：
+          {/* 年份：
           <Select
             value={year}
             onChange={(v) => {
@@ -917,7 +917,7 @@ export default (props) => {
           <DatePicker
             onChange={(v, dateString) => setDate(dateString)}
             style={{ marginLeft: 10 }}
-          />
+          /> */}
           间隔：
           <Select
             value={interval}
@@ -941,6 +941,9 @@ export default (props) => {
           </Col>
           <Col>
             LOSSMAX: <InputNumber step={0.1} value={lossMax} onChange={(v) => setLossMax(v)} />
+          </Col>
+          <Col>
+            LEVERAGE: <InputNumber step={10} value={leverage} onChange={(v) => setLeverage(v)} />
           </Col>
           <Button onClick={() => fnSetWinAndLossMax()} style={{ marginLeft: 10 }}>
             设置WINLOSS
