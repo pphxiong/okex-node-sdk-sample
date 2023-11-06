@@ -32,7 +32,7 @@ let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let LOSS_MAX = -1 * 0.618;
-let WIN_MAX = 1 * 0.618 * 2;
+let WIN_MAX = 1 * 0.618 * 3;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -715,9 +715,9 @@ app.get('/swap/startHearBeat', async (req, response) => {
 app.get('/swap/setWinAndLossMax', async (req, response) => {
 	const { query = {} } = req;
 	const { winMax, lossMax, leverage } = query;
-	WIN_MAX = winMax;
-	LOSS_MAX = -lossMax;
-	LEVERAGE = leverage;
+	WIN_MAX = Number(winMax);
+	LOSS_MAX = Number(-lossMax);
+	LEVERAGE = Number(leverage);
 
 	send(response, {
 		errcode: 0,
@@ -1320,9 +1320,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const SHORT_LOSE = shortRatio < LOSS_MAX;
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && ((!shortHolding && RANDOM > 0.5) || SHORT_LOSE);
+			!longHolding &&
+			((!shortHolding && RANDOM > 0.5) || SHORT_LOSE || LONG_WIN);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && ((!longHolding && RANDOM < 0.5) || LONG_LOSE);
+			!shortHolding &&
+			((!longHolding && RANDOM < 0.5) || LONG_LOSE || SHORT_LOSE);
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding && (LONG_WIN || LONG_LOSE);
@@ -1515,8 +1517,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					Number(holding.entryPrice) * Number(holding.positionAmt)) /
 				positionAmt;
 
-			// totalProfit += (-0.01 * 0.039 * positionAmt) / 2;
-			// totalCapital += (-0.01 * 0.039 * positionAmt) / 2;
+			// totalProfit += (-0.01 * 0.039 * 0 * positionAmt) / 2;
+			// totalCapital += (-0.01 * 0.039 * 0 * positionAmt) / 2;
 			// if (totalCapital < positionAmt / 2) positionAmt = 0;
 			maxOpenPosition = Math.max(
 				maxOpenPosition,
@@ -1607,7 +1609,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(longRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.039 * closePositionAmt;
+						0.01 * 0.039 * 0 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1719,7 +1721,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(shortRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.039 * closePositionAmt;
+						0.01 * 0.039 * 0 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1874,8 +1876,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.039 * openPositionAmt;
-					totalProfit += -0.01 * 0.039 * openPositionAmt;
+					totalCapital += -0.01 * 0.039 * 0 * openPositionAmt;
+					totalProfit += -0.01 * 0.039 * 0 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1970,8 +1972,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.039 * openPositionAmt;
-					totalProfit += -0.01 * 0.039 * openPositionAmt;
+					totalCapital += -0.01 * 0.039 * 0 * openPositionAmt;
+					totalProfit += -0.01 * 0.039 * 0 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
