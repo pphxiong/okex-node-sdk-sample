@@ -1320,16 +1320,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const SHORT_LOSE = shortRatio < LOSS_MAX;
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding &&
-			((!shortHolding && RANDOM > 0.5) ||
-				(shortHolding && shortRatio < -WIN_MAX));
+			!longHolding && ((!shortHolding && RANDOM > 0.5) || SHORT_LOSE);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
-			((!longHolding && RANDOM < 0.5) ||
-				(longHolding && longRatio < -WIN_MAX));
+			!shortHolding && ((!longHolding && RANDOM < 0.5) || LONG_LOSE);
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LONG_WIN;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && SHORT_WIN;
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && (LONG_WIN || LONG_LOSE);
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && (SHORT_WIN || SHORT_LOSE);
 
 		// const MAIN_OPEN_LONG_CONDITION1 =
 		// 	!longHolding &&
