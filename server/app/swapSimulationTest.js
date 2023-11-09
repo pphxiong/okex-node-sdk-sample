@@ -27,8 +27,8 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BTC_SYMBOL = 'EOSUSDT';
-const ETH_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'BTCUSDT';
+const ETH_SYMBOL = 'EOSUSDT';
 let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
