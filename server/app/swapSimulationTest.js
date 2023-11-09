@@ -27,12 +27,13 @@ function getRandomNumberByRange(start, end) {
 }
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
-const BN_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'BTCUSDT';
+const ETH_SYMBOL = 'ETHUSDT';
 let LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-let LOSS_MAX = -1 * 0.618;
-let WIN_MAX = 1 * 0.618 * 3;
+let LOSS_MAX = (-1 * 0.382 * LEVERAGE) / 10;
+let WIN_MAX = (1 * 0.618 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -85,11 +86,11 @@ let ifIgnore = false;
 let ignoreNum = 0;
 
 let currentPosition = {};
-let longPosition = {
+let btcLongPosition = {
 	entryPrice: 0,
 	positionAmt: 0,
 };
-let shortPosition = {
+let ethShortPosition = {
 	entryPrice: 0,
 	positionAmt: 0,
 };
@@ -565,8 +566,8 @@ const waitTime = (time = 1000 * 4) => {
 app.get('/swap/reset', async (req, response) => {
 	totalProfit = 0;
 	currentPosition = {};
-	longPosition = { entryPrice: 0, positionAmt: 0 };
-	shortPosition = { entryPrice: 0, positionAmt: 0 };
+	// longPosition = { entryPrice: 0, positionAmt: 0 };
+	// shortPosition = { entryPrice: 0, positionAmt: 0 };
 	dealDetailList = [];
 	mostLoss = {};
 	send(response, {
@@ -606,7 +607,7 @@ app.get('/swap/getHistory', async (req, response) => {
 		limit: 480,
 		startTime: time,
 	};
-	const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
+	const data = await cAuthClientBN.common.getHistory(BTC_SYMBOL, payload);
 	// const list = data.reverse();
 	const list = data;
 	send(response, { errcode: 0, errmsg: 'ok', data: list });
@@ -632,8 +633,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
 		if (isAutoReset) {
 			totalProfit = 0;
 			currentPosition = {};
-			longPosition = { entryPrice: 0, positionAmt: 0 };
-			shortPosition = { entryPrice: 0, positionAmt: 0 };
+			// longPosition = { entryPrice: 0, positionAmt: 0 };
+			// shortPosition = { entryPrice: 0, positionAmt: 0 };
 			dealDetailList = [];
 			mostLoss = INIT_MOST_LOSS;
 			maxWinRatio = 0;
@@ -650,7 +651,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 			limit,
 			startTime: time,
 		};
-		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
+		const data = await cAuthClientBN.common.getHistory(BTC_SYMBOL, payload);
 		const list = data;
 
 		if (isInit) {
@@ -698,8 +699,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
 				mostLoss,
 				maxContinuousWin,
 				maxContinuousLoss,
-				longPosition,
-				shortPosition,
+				// longPosition,
+				// shortPosition,
 				baoNumTotal,
 				lastWinOrLoss,
 				lastPosition,
@@ -729,17 +730,27 @@ app.get('/swap/setWinAndLossMax', async (req, response) => {
 	});
 });
 
+const fnGetSymbolResult = async (symbol, payload) => {
+	const list = await cAuthClientBN.common.getHistory(symbol, payload);
+	const newList = JSON.parse(JSON.stringify(list));
+	newList.pop();
+
+	const bollList = getCurrentBOLL(newList).slice(-1400);
+	const macdList = getCurrentMacd(newList).slice(-1400);
+	const rsiList = getCurrentRSI(newList).slice(-1400);
+
+	const result = {
+		macdList,
+		rsiList,
+		bollList,
+	};
+	return result;
+};
+
 app.get('/swap/getLatestProfit', async (req, response) => {
 	const { query = {} } = req;
 	const { time, interval = INTERVAL, limit = 500 } = query;
 	try {
-		const payload = {
-			interval,
-			limit,
-			endTime: time,
-		};
-		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
-		const list = data;
 		totalProfit = 0;
 		// currentPosition = {};
 		// longPosition = { entryPrice: 0, positionAmt: 0 };
@@ -750,26 +761,22 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		maxOpenPosition = 0;
 		totalCapital = ORIGIN_TOTAL_CAPITAL;
 
-		const newList = JSON.parse(JSON.stringify(list));
-		newList.pop();
-
-		const bollList = getCurrentBOLL(newList).slice(-1400);
-		const macdList = getCurrentMacd(newList).slice(-1400);
-		const rsiList = getCurrentRSI(newList).slice(-1400);
-
-		const result = {
-			macdList,
-			rsiList,
-			bollList,
+		const payload = {
+			interval,
+			limit,
+			endTime: time,
 		};
-		await checkDeal(result);
+
+		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
+		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		await checkDeal(btc_result, eth_result);
 		const longActualProfit =
-			((currentMarketPrice - longPosition.entryPrice) *
-				longPosition.positionAmt) /
+			((currentMarketPrice - btcLongPosition.entryPrice) *
+				btcLongPosition.positionAmt) /
 			currentMarketPrice;
 		const shortActualProfit =
-			(-(currentMarketPrice - shortPosition.entryPrice) *
-				shortPosition.positionAmt) /
+			(-(currentMarketPrice - ethShortPosition.entryPrice) *
+				ethShortPosition.positionAmt) /
 			currentMarketPrice;
 		const actualProfit = totalProfit + longActualProfit + shortActualProfit;
 		// console.log('currentMarketPrice', currentMarketPrice);
@@ -783,8 +790,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 				mostLoss,
 				maxContinuousWin,
 				maxContinuousLoss,
-				longPosition,
-				shortPosition,
+				// longPosition,
+				// shortPosition,
 				baoNumTotal,
 				lastWinOrLoss,
 				lastPosition,
@@ -854,8 +861,11 @@ function getCenterCrossShortIndexList(macdList, bollList) {
 	return indexList;
 }
 
-const checkDeal = async (data, isAutoReset = true) => {
+const fnGetHolding = () => {};
+
+const checkDeal = async (data, ethData, isAutoReset = true) => {
 	data.bollList = data.bollList || [];
+	ethData.bollList = ethData.bollList || [];
 
 	for (let i = 0; i < data.bollList.length - 49; i++) {
 		checkByStep(
@@ -864,13 +874,23 @@ const checkDeal = async (data, isAutoReset = true) => {
 				rsiList: data.rsiList.slice(i, i + 50),
 				bollList: data.bollList.slice(i, i + 50),
 			},
+			{
+				macdList: ethData.macdList.slice(i, i + 50),
+				rsiList: ethData.rsiList.slice(i, i + 50),
+				bollList: ethData.bollList.slice(i, i + 50),
+			},
 			isAutoReset && i == data.macdList.length - 50
 		);
 	}
 
-	function checkByStep(data, isForceDeal) {
+	function checkByStep(data, ethData, isForceDeal) {
 		// isForceDeal = false;
 		const { macdList, rsiList, bollList } = data;
+		const {
+			macdList: ethMacdList,
+			rsiList: ethRsiList,
+			bollList: ethBollList,
+		} = ethData;
 
 		// macdList.slice(-3);
 		const mark_price = macdList[macdList.length - 1].close;
@@ -882,12 +902,12 @@ const checkDeal = async (data, isAutoReset = true) => {
 		let shortRatio = 0;
 		let holding;
 
-		if (longPosition && longPosition.positionAmt > 0) {
-			longHolding = JSON.parse(JSON.stringify(longPosition));
+		if (btcLongPosition && btcLongPosition.positionAmt > 0) {
+			longHolding = JSON.parse(JSON.stringify(btcLongPosition));
 			holding = longHolding;
 		}
-		if (shortPosition && shortPosition.positionAmt > 0) {
-			shortHolding = JSON.parse(JSON.stringify(shortPosition));
+		if (ethShortPosition && ethShortPosition.positionAmt > 0) {
+			shortHolding = JSON.parse(JSON.stringify(ethShortPosition));
 			holding = shortHolding;
 		}
 
@@ -908,286 +928,6 @@ const checkDeal = async (data, isAutoReset = true) => {
 			maxWinRatio = Math.max(maxWinRatio, shortRatio);
 		}
 
-		const DOWN_BOLL_CONDITION =
-			Number(bollList[bollList.length - 2].MA) >
-			Number(bollList[bollList.length - 1].MA);
-
-		const longWinRatio = longHolding
-			? longRatio * Math.abs(Number(longHolding.positionAmt))
-			: 0;
-
-		const shortWinRatio = shortHolding
-			? shortRatio * Math.abs(Number(shortHolding.positionAmt))
-			: 0;
-
-		const totalWin = longWinRatio + shortWinRatio;
-
-		// const converseHighIndexList = getConverseHighIndexList(
-		// 	macdList,
-		// 	bollList
-		// );
-		// const converseLowIndexList = getConverseLowIndexList(
-		// 	macdList,
-		// 	bollList
-		// );
-		// const centerCrossLongIndexList = getCenterCrossLongIndexList(
-		// 	macdList,
-		// 	bollList
-		// );
-		// const centerCrossShortIndexList = getCenterCrossShortIndexList(
-		// 	macdList,
-		// 	bollList
-		// );
-		// const IS_CONTINOUSE_LONG =
-		// 	!centerCrossShortIndexList.length ||
-		// 	converseHighIndexList
-		// 		.slice(-2)
-		// 		.every(
-		// 			(index) =>
-		// 				index >
-		// 				centerCrossShortIndexList[
-		// 					centerCrossShortIndexList.length - 1
-		// 				]
-		// 		);
-		// const IS_CONTINOUSE_SHORT =
-		// 	!centerCrossLongIndexList.length ||
-		// 	converseLowIndexList
-		// 		.slice(-2)
-		// 		.every(
-		// 			(index) =>
-		// 				index >
-		// 				centerCrossLongIndexList[
-		// 					centerCrossLongIndexList.length - 1
-		// 				]
-		// 		);
-
-		const CENTER_CROSS_LONG_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP);
-
-		const CENTER_CROSS_SHORT_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN);
-
-		const CONTINUOUS_HIGH_CONDITION =
-			// Number(macdList[macdList.length - 3].close) >
-			// 	Number(bollList[bollList.length - 3].UP) &&
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].UP);
-
-		const CONTINUOUS_LOW_CONDITION =
-			// Number(macdList[macdList.length - 3].close) <
-			// 	Number(bollList[bollList.length - 3].DN) &&
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].DN);
-
-		const OUT_HIGH_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].UP);
-
-		const OUT_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].DN);
-
-		const CONVERSE_UP_ONLY_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].high) >
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].open) <
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
-
-		const CONVERSE_UP_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].UP) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].UP) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].MA);
-
-		const CONVERSE_LOW_ONLY_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].low) <
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].open) >
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
-
-		const CONVERSE_LOW_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].DN) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].DN) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].MA);
-
-		const CLOSE_MORE_HIGH_CONDITION =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].UP);
-
-		const CLOSE_LESS_HIGH_CONDITION =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].UP);
-
-		const CLOSE_MORE_LOW_CONDITION =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].DN);
-
-		const CLOSE_LESS_LOW_CONDITION =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].DN);
-
-		let totalRatio = 0;
-		if (longHolding && !shortHolding) {
-			totalRatio = longRatio;
-		} else if (!longHolding && shortHolding) {
-			totalRatio = shortRatio;
-		} else if (longHolding && shortHolding) {
-			totalRatio =
-				(longRatio * Math.abs(longHolding.positionAmt) +
-					shortRatio * Math.abs(shortHolding.positionAmt)) /
-				(Math.abs(longHolding.positionAmt) +
-					Math.abs(shortHolding.positionAmt));
-		}
-
-		const LAST_SECOND_LONG_CONDITION =
-			Number(macdList[macdList.length - 2].close) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 2].open) >
-				Number(bollList[bollList.length - 2].MA);
-
-		const LAST_SECOND_SHORT_CONDITION =
-			Number(macdList[macdList.length - 2].close) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(macdList[macdList.length - 2].open) <
-				Number(bollList[bollList.length - 2].MA);
-
-		const BOLL_CONTINOUS_LONG =
-			Number(bollList[bollList.length - 3].MA) >
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(bollList[bollList.length - 4].MA) >
-				Number(bollList[bollList.length - 3].MA) &&
-			Number(bollList[bollList.length - 5].MA) >
-				Number(bollList[bollList.length - 4].MA);
-
-		const BOLL_CONTINOUS_SHORT =
-			Number(bollList[bollList.length - 3].MA) <
-				Number(bollList[bollList.length - 2].MA) &&
-			Number(bollList[bollList.length - 4].MA) <
-				Number(bollList[bollList.length - 3].MA) &&
-			Number(bollList[bollList.length - 5].MA) <
-				Number(bollList[bollList.length - 4].MA);
-
-		const RSI_UP =
-			rsiList[rsiList.length - 1].RSI1 >
-				rsiList[rsiList.length - 1].RSI2 &&
-			rsiList[rsiList.length - 1].RSI2 >
-				rsiList[rsiList.length - 1].RSI3 &&
-			rsiList[rsiList.length - 1].RSI3 >= 50;
-		const RSI_DOWN =
-			rsiList[rsiList.length - 1].RSI1 <
-				rsiList[rsiList.length - 1].RSI2 &&
-			rsiList[rsiList.length - 1].RSI2 <
-				rsiList[rsiList.length - 1].RSI3 &&
-			rsiList[rsiList.length - 1].RSI3 < 50;
-		const MACD_UP =
-			macdList[macdList.length - 1].column >
-			macdList[macdList.length - 2].column;
-		const MACD_DOWN =
-			macdList[macdList.length - 1].column <
-			macdList[macdList.length - 2].column;
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		//   !longHolding && CENTER_CROSS_SHORT_CONDITION && RSI_UP;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		//   !shortHolding && CENTER_CROSS_LONG_CONDITION && RSI_DOWN;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 = longHolding && RSI_DOWN;
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && RSI_UP;
-
-		// const latestMACD = macdList[macdList.length - 1];
-		// const HIGH_20_CONDITION = macdList.every(
-		//   (item) => latestMACD.close >= item.close
-		// );
-
-		// const LOW_20_CONDITION = macdList.every(
-		//   (item) => latestMACD.close <= item.close
-		// );
-
-		// const HIGH_10_CONDITION = macdList.every(
-		//   (item) => latestMACD.close >= item.close
-		// );
-
-		// const LOW_10_CONDITION = macdList.every(
-		//   (item) => latestMACD.close <= item.close
-		// );
-
-		// const MAIN_OPEN_LONG_CONDITION1 = !longHolding && HIGH_20_CONDITION;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LOW_20_CONDITION;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LOW_10_CONDITION;
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && HIGH_10_CONDITION;
-
-		const BATCH_LONG_OPEN_CONDITION =
-			!longHolding &&
-			shortHolding &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			OUT_HIGH_CONDITION;
-
-		const BATCH_SHORT_OPEN_CONDITION =
-			!shortHolding &&
-			longHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			OUT_LOW_CONDITION;
-
-		const BATCH_LONG_CLOSE_CONDITION =
-			longHolding &&
-			shortHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			CENTER_CROSS_SHORT_CONDITION;
-
-		const BATCH_SHORT_CLOSE_CONDITION =
-			longHolding &&
-			shortHolding &&
-			Math.abs(longHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			Math.abs(shortHolding.positionAmt) >
-				INIT_POSITION * MAX_OPEN_POSITION_RATIO &&
-			CENTER_CROSS_LONG_CONDITION;
-
 		let totalPosition = 0;
 		if (longHolding && shortHolding) {
 			totalPosition =
@@ -1195,268 +935,30 @@ const checkDeal = async (data, isAutoReset = true) => {
 				Math.abs(Number(shortHolding.positionAmt));
 		}
 
-		const RSI_LONG = rsiList[rsiList.length - 1].RSI3 >= 50;
-		const RSI_SHORT = rsiList[rsiList.length - 1].RSI3 < 50;
-
-		const MACD_LONG_REVERSE =
-			Number(macdList[macdList.length - 2].column) >= 0 &&
-			Number(macdList[macdList.length - 2].column) <
-				Number(macdList[macdList.length - 1].column) &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(macdList[macdList.length - 1].open);
-
-		const MACD_SHORT_REVERSE =
-			Number(macdList[macdList.length - 2].column) < 0 &&
-			Number(macdList[macdList.length - 2].column) >
-				Number(macdList[macdList.length - 1].column) &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(macdList[macdList.length - 1].open);
-
-		const MACD_LONG = Number(macdList[macdList.length - 1].column) >= 0;
-		const MACD_SHORT = Number(macdList[macdList.length - 1].column) < 0;
-
-		const PRICE_LOW_MA =
-			Number(macdList[macdList.length - 1].close) <
-			Number(bollList[bollList.length - 1].MA);
-		const PRICE_UP_MA =
-			Number(macdList[macdList.length - 1].close) >
-			Number(bollList[bollList.length - 1].MA);
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding && MACD_LONG_REVERSE && PRICE_UP_MA;
-
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding && MACD_SHORT_REVERSE && PRICE_LOW_MA;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding && (MACD_SHORT_REVERSE || OUT_LOW_CONDITION);
-
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding && (MACD_LONG_REVERSE || OUT_HIGH_CONDITION);
-
-		// const CLOSE_ALL_LONG_CONDITION = false;
-		// const CLOSE_ALL_SHORT_CONDITION = false;
-
-		const PRICE_LONG =
-			Number(macdList[macdList.length - 1].close) >
-			Number(macdList[macdList.length - 1].open);
-
-		const PRICE_SHORT =
-			Number(macdList[macdList.length - 1].close) <
-			Number(macdList[macdList.length - 1].open);
-
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
-		const LAST_HIGH_CONDITION =
-			PRICE_LONG &&
-			Number(macdList[macdList.length - 1].close) >
-				Number(bollList[bollList.length - 1].UP);
+		const TOTALRATIO = longRatio + shortRatio;
 
-		const LAST_LOW_CONDITION =
-			PRICE_SHORT &&
-			Number(macdList[macdList.length - 1].close) <
-				Number(bollList[bollList.length - 1].DN);
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	(OUT_LOW_CONDITION ||
-		// 		(shortHolding && CONVERSE_UP_CONDITION) ||
-		// 		(!shortHolding && CENTER_CROSS_LONG_CONDITION));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	(OUT_HIGH_CONDITION ||
-		// 		(longHolding && CONVERSE_LOW_CONDITION) ||
-		// 		(!longHolding && CENTER_CROSS_SHORT_CONDITION));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((!shortHolding && OUT_HIGH_CONDITION) ||
-		// 		(shortHolding &&
-		// 			(CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION)));
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((!longHolding && OUT_LOW_CONDITION) ||
-		// 		(longHolding &&
-		// 			(CENTER_CROSS_LONG_CONDITION || OUT_HIGH_CONDITION)));
-
-		// -1.72
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	(CONVERSE_LOW_CONDITION ||
-		// 		(shortHolding &&
-		// 			(OUT_HIGH_CONDITION || CENTER_CROSS_LONG_CONDITION)));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	(CONVERSE_UP_CONDITION ||
-		// 		(longHolding &&
-		// 			(OUT_LOW_CONDITION || CENTER_CROSS_SHORT_CONDITION)));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((!shortHolding && CENTER_CROSS_LONG_CONDITION) ||
-		// 		(shortHolding && CONVERSE_UP_CONDITION));
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((!longHolding && CENTER_CROSS_SHORT_CONDITION) ||
-		// 		(longHolding && CONVERSE_LOW_CONDITION));
-
-		// 	const EMA_CONTINUOUS_LONG =
-		//   Number(macdList[macdList.length - 1].ema5) >
-		//     Number(macdList[macdList.length - 1].ema10) &&
-		//   Number(macdList[macdList.length - 1].ema10) >
-		//     Number(macdList[macdList.length - 1].ema20);
-
-		// const EMA_CONTINUOUS_SHORT =
-		//   Number(macdList[macdList.length - 1].ema5) <
-		//     Number(macdList[macdList.length - 1].ema10) &&
-		//   Number(macdList[macdList.length - 1].ema10) <
-		//     Number(macdList[macdList.length - 1].ema20);
-
-		const RANDOM = Math.random();
-		const LONG_WIN = longRatio > WIN_MAX;
-		const LONG_LOSE = longRatio < LOSS_MAX;
-		const SHORT_WIN = shortRatio > WIN_MAX;
-		const SHORT_LOSE = shortRatio < LOSS_MAX;
-
-		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && ((!shortHolding && RANDOM > 0.5) || SHORT_LOSE);
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && ((!longHolding && RANDOM < 0.5) || LONG_LOSE);
-
-		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (LONG_WIN || LONG_LOSE);
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && TOTALRATIO > WIN_MAX;
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (SHORT_WIN || SHORT_LOSE);
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	(CONVERSE_LOW_CONDITION || (shortHolding && CONVERSE_UP_CONDITION));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	(CONVERSE_UP_CONDITION || (longHolding && CONVERSE_LOW_CONDITION));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((!shortHolding && CONVERSE_UP_CONDITION) ||
-		// 		(shortHolding &&
-		// 			(CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION)));
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((!longHolding && CONVERSE_LOW_CONDITION) ||
-		// 		(longHolding &&
-		// 			(CENTER_CROSS_LONG_CONDITION || OUT_HIGH_CONDITION)));
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	((!shortHolding && OUT_LOW_CONDITION) ||
-		// 		(shortHolding && OUT_HIGH_CONDITION));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	((!longHolding && OUT_HIGH_CONDITION) ||
-		// 		(longHolding && OUT_LOW_CONDITION));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((!shortHolding && CONVERSE_LOW_CONDITION) ||
-		// 		(shortHolding && CONVERSE_UP_CONDITION));
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((!longHolding && CONVERSE_UP_CONDITION) ||
-		// 		(longHolding && CONVERSE_LOW_CONDITION));
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	((!shortHolding && CONVERSE_UP_CONDITION) ||
-		// 		(shortHolding && CENTER_CROSS_LONG_CONDITION));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	((!longHolding && CONVERSE_LOW_CONDITION) ||
-		// 		(longHolding && CENTER_CROSS_SHORT_CONDITION));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((!shortHolding && CENTER_CROSS_SHORT_CONDITION) ||
-		// 		(shortHolding && CONVERSE_LOW_CONDITION));
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((!longHolding && CENTER_CROSS_LONG_CONDITION) ||
-		// 		(longHolding && CONVERSE_UP_CONDITION));
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	(CONVERSE_UP_CONDITION || (shortHolding && CENTER_CROSS_LONG_CONDITION));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	(CONVERSE_LOW_CONDITION || (longHolding && CENTER_CROSS_SHORT_CONDITION));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((!shortHolding && OUT_HIGH_CONDITION) ||
-		// 		(shortHolding && CONVERSE_LOW_CONDITION) ||
-		// 		OUT_LOW_CONDITION);
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((!longHolding && OUT_LOW_CONDITION) ||
-		// 		(longHolding &&
-		// 			CONVERSE_UP_CONDITION));
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding && CENTER_CROSS_LONG_CONDITION;
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding && CENTER_CROSS_SHORT_CONDITION;
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding && CENTER_CROSS_SHORT_CONDITION;
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding && CENTER_CROSS_LONG_CONDITION;
-
-		const MAIN_OPEN_LONG_CONDITION2 =
-			!longHolding && CENTER_CROSS_SHORT_CONDITION;
-		const MAIN_OPEN_SHORT_CONDITION2 =
-			!shortHolding && CENTER_CROSS_LONG_CONDITION;
-		const MAIN_CLOSE_LONG_CONDITION2 =
-			longHolding && CENTER_CROSS_LONG_CONDITION;
-		const MAIN_CLOSE_SHORT_CONDITION2 =
-			shortHolding && CENTER_CROSS_SHORT_CONDITION;
+			shortHolding && TOTALRATIO > WIN_MAX;
 
 		modeChange = false;
-		let openLongCondition =
-			MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
-		let openShortCondition =
-			MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
-		let closeLongCondition =
-			MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
-		let closeShortCondition =
-			MODE == 1
-				? MAIN_CLOSE_SHORT_CONDITION1
-				: MAIN_CLOSE_SHORT_CONDITION2;
+		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
+		let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
+		let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
+		let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
 		NEW_POSITION_RATIO = 1;
 		// if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
 		// if (CLOSE_CONDITION) NEW_POSITION_RATIO = 1;
 
 		console.log('************************************');
-
 		console.log('longRatio', longRatio, 'shortRatio', shortRatio);
-		// console.log(
-		// 	'longPositionAmt',
-		// 	longHolding ? longHolding.positionAmt : 0,
-		// 	'shortPositionAmt',
-		// 	shortHolding ? shortHolding.positionAmt : 0
-		// );
-		// console.log(
-		// 	'closeLongCondition',
-		// 	closeLongCondition,
-		// 	'closeShortCondition',
-		// 	closeShortCondition,
-		// 	'openLongCondition',
-		// 	openLongCondition,
-		// 	'openShortCondition',
-		// 	openShortCondition,
-		// 	'NEW_POSITION_RATIO',
-		// 	NEW_POSITION_RATIO
-		// );
 		console.log('************************************');
 
 		if (isForceDeal) {
@@ -1465,30 +967,6 @@ const checkDeal = async (data, isAutoReset = true) => {
 			openLongCondition = false;
 			openShortCondition = false;
 		}
-
-		// IS_CLOSE_ALL_POSITION = false;
-		// if (isForceDeal) {
-		//   closeLongCondition = true;
-		//   closeShortCondition = true;
-		// } else if (openLongCondition || openShortCondition) {
-		//   if (
-		//     (longHolding &&
-		//       Math.abs(Number(longHolding.positionAmt)) >=
-		//         CLOSE_SAME_POSITION_RATIO) ||
-		//     (shortHolding &&
-		//       Math.abs(Number(shortHolding.positionAmt)) >=
-		//         CLOSE_SAME_POSITION_RATIO)
-		//   ) {
-		//     isForceDeal = true;
-		//     closeLongCondition = true;
-		//     closeShortCondition = true;
-		//   }
-		// }
-
-		// NEW_POSITION_RATIO =
-		//   60 /
-		//   (Number(bollList[bollList.length - 1].UP) -
-		//     Number(bollList[bollList.length - 1].DN));
 
 		let fiIndex = INCREASE_FI_LIST.findIndex(
 			(item) => holding && item == Number(holding.positionAmt)
@@ -1499,177 +977,67 @@ const checkDeal = async (data, isAutoReset = true) => {
 				? INCREASE_FI_LIST.length - 2
 				: fiIndex;
 
-		// console.log(
-		//   "************************************",
-		//   moment().format("YYYY-MM-DD HH:mm:ss")
-		// );
-		// console.log("------------------");
-		// console.log("mark_price", mark_price);
-		// console.log("bollList", bollList.slice(-1));
-		// console.log("------------------");
+		const closeLong = async () => {
+			let closePositionAmt = INIT_POSITION;
+			// let closePositionAmt = longHolding.positionAmt;
+			if (CLOSE_ALL_LONG_CONDITION)
+				closePositionAmt = longHolding.positionAmt;
+			if (isForceDeal) closePositionAmt = longHolding.positionAmt;
+			const currentProfit =
+				(longRatio * closePositionAmt) / LEVERAGE -
+				0.01 * 0.039 * 0 * closePositionAmt;
+			totalProfit += currentProfit;
+			totalCapital += currentProfit;
+			minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
-		const patchPosition = async (holding, direction) => {
-			let positionAmt = Number(holding.positionAmt) + INIT_POSITION;
-			const price =
-				(Number(mark_price) * Number(holding.positionAmt) +
-					Number(holding.entryPrice) * Number(holding.positionAmt)) /
-				positionAmt;
+			const closePrice = Number(mark_price);
 
-			// totalProfit += (-0.01 * 0.039 * 0 * positionAmt) / 2;
-			// totalCapital += (-0.01 * 0.039 * 0 * positionAmt) / 2;
-			// if (totalCapital < positionAmt / 2) positionAmt = 0;
-			maxOpenPosition = Math.max(
-				maxOpenPosition,
-				longPosition.positionAmt || 0,
-				shortPosition.positionAmt || 0
-			);
+			const positionAmt = longHolding.positionAmt - closePositionAmt;
 
-			if (direction == 'LONG') {
-				longPosition = {
-					positionSide: direction,
-					leverage: LEVERAGE,
-					entryPrice: price,
-					positionAmt,
-					time: macdList[macdList.length - 1].time,
-					week: macdList[macdList.length - 1].week,
-				};
-			} else {
-				shortPosition = {
-					positionSide: direction,
-					leverage: LEVERAGE,
-					entryPrice: price,
-					positionAmt,
-					time: macdList[macdList.length - 1].time,
-					week: macdList[macdList.length - 1].week,
-				};
-			}
+			const entryPrice = positionAmt ? longHolding.entryPrice : 0;
+
+			const priceBeforeDeal = btcLongPosition.entryPrice;
+
+			longHolding.entryPrice = entryPrice;
+			longHolding.positionAmt = positionAmt;
+			btcLongPosition.entryPrice = entryPrice;
+			btcLongPosition.positionAmt = positionAmt;
+
 			const dealDetail = {
-				side: 'OPEN',
-				positionSide: direction,
-				leverage: LEVERAGE,
-				entryPrice: price,
+				side: 'CLOSE',
+				positionSide: 'LONG',
+				closePrice,
+				closePositionAmt,
+				entryPrice,
+				priceBeforeDeal,
 				positionAmt,
 				time: macdList[macdList.length - 1].time,
-				macdList,
-				rsiList,
-				bollList,
+				week: macdList[macdList.length - 1].week,
+				totalProfit,
+				totalCapital,
+				currentProfit,
+				currentRMB: currentProfit * closePrice,
+				macd: macdList[macdList.length - 1],
+				rsi: rsiList[rsiList.length - 1],
+				bollList: bollList[bollList.length - 1],
+				MODE,
+				longRatio,
+				btcLongPosition,
+				longPositionAmt: btcLongPosition.positionAmt,
+				ethShortPosition,
+				shortPositionAmt: ethShortPosition.positionAmt,
+				shortRatio,
 			};
-
 			dealDetailList.push(dealDetail);
-			if (direction == 'LONG') {
-				longPatchNum += 1;
-			} else {
-				shortPatchNum += 1;
+			if (longRatio < mostLoss.profit) {
+				mostLoss = {
+					profit: (longRatio * closePositionAmt) / LEVERAGE,
+					time: macdList[macdList.length - 1].time,
+				};
 			}
-		};
 
-		const closeLong = async () => {
-			if (
-				shortHolding &&
-				Number(shortHolding.positionAmt) &&
-				// shortPatchNum <= 1 &&
-				shortRatio < 0 &&
-				false
-			) {
-				await patchPosition(shortHolding, 'SHORT');
-			} else if (longHolding && Number(longHolding.positionAmt)) {
-				if (longRatio < LOSS_MAX && longPatchNum < 3 && false) {
-					await patchPosition(longHolding, 'LONG');
-				} else if (
-					longRatio < LOSS_MAX ||
-					longRatio > WIN_MAX ||
-					true
-				) {
-					if (longRatio < 0) modeChange = true;
-					if (longRatio < LOSS_MAX) {
-						baoNumTotal++;
-						// openLongCondition = false;
-						// openShortCondition = true;
-					}
-
-					let closePositionAmt = INIT_POSITION;
-					// let closePositionAmt = longHolding.positionAmt;
-					if (CLOSE_ALL_LONG_CONDITION)
-						closePositionAmt = longHolding.positionAmt;
-					if (isForceDeal)
-						// if (
-						//   longHolding &&
-						//   Math.abs(longHolding.positionAmt) >
-						//     INIT_POSITION * MAX_OPEN_POSITION_RATIO
-						// )
-						//   closePositionAmt = longHolding.positionAmt;
-						closePositionAmt = longHolding.positionAmt;
-					// let closePositionAmt =
-					//   longHolding.positionAmt == INIT_POSITION
-					//     ? INIT_POSITION
-					//     : longHolding.positionAmt;
-					// if (longRatio < 0)
-					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
-					const currentProfit =
-						(longRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.039 * 0 * closePositionAmt;
-					totalProfit += currentProfit;
-					totalCapital += currentProfit;
-					minTotalCapital = Math.min(minTotalCapital, totalCapital);
-
-					const closePrice = Number(mark_price);
-
-					const positionAmt =
-						longHolding.positionAmt - closePositionAmt;
-					// const entryPrice = positionAmt
-					// 	? Math.abs(
-					// 			(Math.abs(Number(longHolding.positionAmt)) *
-					// 				Number(mark_price) -
-					// 				closePositionAmt * longHolding.entryPrice) /
-					// 				positionAmt
-					// 	  )
-					// 	: 0;
-					const entryPrice = positionAmt ? longHolding.entryPrice : 0;
-
-					const priceBeforeDeal = longPosition.entryPrice;
-
-					longHolding.entryPrice = entryPrice;
-					longHolding.positionAmt = positionAmt;
-					longPosition.entryPrice = entryPrice;
-					longPosition.positionAmt = positionAmt;
-
-					const dealDetail = {
-						side: 'CLOSE',
-						positionSide: 'LONG',
-						closePrice,
-						closePositionAmt,
-						entryPrice,
-						priceBeforeDeal,
-						positionAmt,
-						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
-						totalProfit,
-						totalCapital,
-						currentProfit,
-						currentRMB: currentProfit * closePrice,
-						macd: macdList[macdList.length - 1],
-						rsi: rsiList[rsiList.length - 1],
-						bollList: bollList[bollList.length - 1],
-						MODE,
-						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
-						shortRatio,
-					};
-					dealDetailList.push(dealDetail);
-					if (longRatio < mostLoss.profit) {
-						mostLoss = {
-							profit: (longRatio * closePositionAmt) / LEVERAGE,
-							time: macdList[macdList.length - 1].time,
-						};
-					}
-
-					maxWinRatio = 0;
-					longPatchNum = 0;
-				}
-			}
+			maxWinRatio = 0;
+			longPatchNum = 0;
 		};
 
 		const closeShort = async () => {
@@ -1680,10 +1048,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 				longRatio < 0 &&
 				false
 			) {
-				await patchPosition(longHolding, 'LONG');
 			} else if (shortHolding && Number(shortHolding.positionAmt)) {
 				if (shortRatio < LOSS_MAX && shortPatchNum < 3 && false) {
-					await patchPosition(shortHolding, 'SHORT');
 				} else if (
 					shortRatio < LOSS_MAX ||
 					shortRatio > WIN_MAX ||
@@ -1701,22 +1067,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 						closePositionAmt = Math.abs(
 							Number(shortHolding.positionAmt)
 						);
-					// if (
-					//   shortHolding &&
-					//   Math.abs(shortHolding.positionAmt) >
-					//     INIT_POSITION * MAX_OPEN_POSITION_RATIO
-					// )
-					//   closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
 					if (isForceDeal)
 						closePositionAmt = Math.abs(
 							Number(shortHolding.positionAmt)
 						);
-					// let closePositionAmt =
-					//   shortHolding.positionAmt == INIT_POSITION
-					//     ? INIT_POSITION
-					//     : shortHolding.positionAmt;
-					// if (shortRatio < 0)
-					//   closePositionAmt = Math.min(INIT_POSITION * 3, closePositionAmt);
 					const currentProfit =
 						(shortRatio * closePositionAmt) / LEVERAGE -
 						0.01 * 0.039 * 0 * closePositionAmt;
@@ -1729,25 +1083,16 @@ const checkDeal = async (data, isAutoReset = true) => {
 					const positionAmt =
 						Math.abs(Number(shortHolding.positionAmt)) -
 						closePositionAmt;
-					// const entryPrice = positionAmt
-					// 	? Math.abs(
-					// 			(Math.abs(Number(shortHolding.positionAmt)) *
-					// 				Number(mark_price) -
-					// 				closePositionAmt *
-					// 					shortHolding.entryPrice) /
-					// 				positionAmt
-					// 	  )
-					// 	: 0;
 					const entryPrice = positionAmt
 						? shortHolding.entryPrice
 						: 0;
 
-					const priceBeforeDeal = shortPosition.entryPrice;
+					const priceBeforeDeal = ethShortPosition.entryPrice;
 
 					shortHolding.entryPrice = entryPrice;
 					shortHolding.positionAmt = positionAmt;
-					shortPosition.entryPrice = entryPrice;
-					shortPosition.positionAmt = positionAmt;
+					ethShortPosition.entryPrice = entryPrice;
+					ethShortPosition.positionAmt = positionAmt;
 
 					const dealDetail = {
 						side: 'CLOSE',
@@ -1768,10 +1113,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 						bollList: bollList[bollList.length - 1],
 						MODE,
 						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
+						btcLongPosition,
+						longPositionAmt: btcLongPosition.positionAmt,
+						ethShortPosition,
+						shortPositionAmt: ethShortPosition.positionAmt,
 						shortRatio,
 					};
 					dealDetailList.push(dealDetail);
@@ -1881,17 +1226,18 @@ const checkDeal = async (data, isAutoReset = true) => {
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
 					maxOpenPosition = Math.max(
 						maxOpenPosition,
-						longPosition.positionAmt
+						btcLongPosition.positionAmt
 					);
 					const averagePrice =
-						(longPosition.entryPrice * longPosition.positionAmt +
+						(btcLongPosition.entryPrice *
+							btcLongPosition.positionAmt +
 							openPositionAmt * mark_price) /
-						(longPosition.positionAmt + openPositionAmt);
+						(btcLongPosition.positionAmt + openPositionAmt);
 
 					const totalPositionAmt =
-						longPosition.positionAmt + openPositionAmt;
+						btcLongPosition.positionAmt + openPositionAmt;
 
-					longPosition = {
+					btcLongPosition = {
 						positionSide: 'LONG',
 						leverage: LEVERAGE,
 						entryPrice: averagePrice,
@@ -1915,10 +1261,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 						totalProfit,
 						totalCapital,
 						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
+						btcLongPosition,
+						longPositionAmt: btcLongPosition.positionAmt,
+						ethShortPosition,
+						shortPositionAmt: ethShortPosition.positionAmt,
 						shortRatio,
 					};
 					dealDetailList.push(dealDetail);
@@ -1977,20 +1323,20 @@ const checkDeal = async (data, isAutoReset = true) => {
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
 					maxOpenPosition = Math.max(
 						maxOpenPosition,
-						shortPosition.positionAmt
+						ethShortPosition.positionAmt
 					);
 					const averagePrice =
-						(shortPosition.entryPrice *
-							Math.abs(Number(shortPosition.positionAmt)) +
+						(ethShortPosition.entryPrice *
+							Math.abs(Number(ethShortPosition.positionAmt)) +
 							openPositionAmt * mark_price) /
-						(Math.abs(Number(shortPosition.positionAmt)) +
+						(Math.abs(Number(ethShortPosition.positionAmt)) +
 							openPositionAmt);
 
 					const totalPositionAmt =
-						Math.abs(Number(shortPosition.positionAmt)) +
+						Math.abs(Number(ethShortPosition.positionAmt)) +
 						openPositionAmt;
 
-					shortPosition = {
+					ethShortPosition = {
 						positionSide: 'SHORT',
 						leverage: LEVERAGE,
 						entryPrice: averagePrice,
@@ -2014,10 +1360,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 						totalProfit,
 						totalCapital,
 						longRatio,
-						longPosition,
-						longPositionAmt: longPosition.positionAmt,
-						shortPosition,
-						shortPositionAmt: shortPosition.positionAmt,
+						btcLongPosition,
+						longPositionAmt: btcLongPosition.positionAmt,
+						ethShortPosition,
+						shortPositionAmt: ethShortPosition.positionAmt,
 						shortRatio,
 					};
 					dealDetailList.push(dealDetail);
