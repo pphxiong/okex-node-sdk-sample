@@ -983,66 +983,68 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 				: fiIndex;
 
 		const closeLong = async () => {
-			let closePositionAmt = INIT_POSITION;
-			// let closePositionAmt = longHolding.positionAmt;
-			if (CLOSE_ALL_LONG_CONDITION)
-				closePositionAmt = longHolding.positionAmt;
-			if (isForceDeal) closePositionAmt = longHolding.positionAmt;
-			const currentProfit =
-				(longRatio * closePositionAmt) / LEVERAGE -
-				0.01 * 0.039 * 0 * closePositionAmt;
-			totalProfit += currentProfit;
-			totalCapital += currentProfit;
-			minTotalCapital = Math.min(minTotalCapital, totalCapital);
+			if (longHolding && longHolding.positionAmt) {
+				let closePositionAmt = INIT_POSITION;
+				// let closePositionAmt = longHolding.positionAmt;
+				if (CLOSE_ALL_LONG_CONDITION)
+					closePositionAmt = longHolding.positionAmt;
+				if (isForceDeal) closePositionAmt = longHolding.positionAmt;
+				const currentProfit =
+					(longRatio * closePositionAmt) / LEVERAGE -
+					0.01 * 0.039 * 0 * closePositionAmt;
+				totalProfit += currentProfit;
+				totalCapital += currentProfit;
+				minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
-			const closePrice = Number(mark_price);
+				const closePrice = Number(mark_price);
 
-			const positionAmt = longHolding.positionAmt - closePositionAmt;
+				const positionAmt = longHolding.positionAmt - closePositionAmt;
 
-			const entryPrice = positionAmt ? longHolding.entryPrice : 0;
+				const entryPrice = positionAmt ? longHolding.entryPrice : 0;
 
-			const priceBeforeDeal = btcLongPosition.entryPrice;
+				const priceBeforeDeal = btcLongPosition.entryPrice;
 
-			longHolding.entryPrice = entryPrice;
-			longHolding.positionAmt = positionAmt;
-			btcLongPosition.entryPrice = entryPrice;
-			btcLongPosition.positionAmt = positionAmt;
+				longHolding.entryPrice = entryPrice;
+				longHolding.positionAmt = positionAmt;
+				btcLongPosition.entryPrice = entryPrice;
+				btcLongPosition.positionAmt = positionAmt;
 
-			const dealDetail = {
-				side: 'CLOSE',
-				positionSide: 'LONG',
-				closePrice,
-				closePositionAmt,
-				entryPrice,
-				priceBeforeDeal,
-				positionAmt,
-				time: macdList[macdList.length - 1].time,
-				week: macdList[macdList.length - 1].week,
-				totalProfit,
-				totalCapital,
-				currentProfit,
-				currentRMB: currentProfit * closePrice,
-				macd: macdList[macdList.length - 1],
-				rsi: rsiList[rsiList.length - 1],
-				bollList: bollList[bollList.length - 1],
-				MODE,
-				longRatio,
-				btcLongPosition,
-				longPositionAmt: btcLongPosition.positionAmt,
-				ethShortPosition,
-				shortPositionAmt: ethShortPosition.positionAmt,
-				shortRatio,
-			};
-			dealDetailList.push(dealDetail);
-			if (longRatio < mostLoss.profit) {
-				mostLoss = {
-					profit: (longRatio * closePositionAmt) / LEVERAGE,
+				const dealDetail = {
+					side: 'CLOSE',
+					positionSide: 'LONG',
+					closePrice,
+					closePositionAmt,
+					entryPrice,
+					priceBeforeDeal,
+					positionAmt,
 					time: macdList[macdList.length - 1].time,
+					week: macdList[macdList.length - 1].week,
+					totalProfit,
+					totalCapital,
+					currentProfit,
+					currentRMB: currentProfit * closePrice,
+					macd: macdList[macdList.length - 1],
+					rsi: rsiList[rsiList.length - 1],
+					bollList: bollList[bollList.length - 1],
+					MODE,
+					longRatio,
+					btcLongPosition,
+					longPositionAmt: btcLongPosition.positionAmt,
+					ethShortPosition,
+					shortPositionAmt: ethShortPosition.positionAmt,
+					shortRatio,
 				};
-			}
+				dealDetailList.push(dealDetail);
+				if (longRatio < mostLoss.profit) {
+					mostLoss = {
+						profit: (longRatio * closePositionAmt) / LEVERAGE,
+						time: macdList[macdList.length - 1].time,
+					};
+				}
 
-			maxWinRatio = 0;
-			longPatchNum = 0;
+				maxWinRatio = 0;
+				longPatchNum = 0;
+			}
 		};
 
 		const closeShort = async () => {
