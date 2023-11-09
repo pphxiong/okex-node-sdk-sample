@@ -997,7 +997,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 				if (isForceDeal) closePositionAmt = longHolding.positionAmt;
 				const currentProfit =
 					(longRatio * closePositionAmt) / LEVERAGE -
-					0.01 * 0.039 * 0 * closePositionAmt;
+					0.01 * 0.039 * closePositionAmt;
 				totalProfit += currentProfit;
 				totalCapital += currentProfit;
 				minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1068,7 +1068,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					shortRatio > WIN_MAX ||
 					true
 				) {
-					if (shortRatio < LOSS_MAX) {
+					if (TOTALRATIO < LOSS_MAX) {
 						baoNumTotal++;
 						// openLongCondition = true;
 						// openShortCondition = false;
@@ -1086,7 +1086,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						);
 					const currentProfit =
 						(shortRatio * closePositionAmt) / LEVERAGE -
-						0.01 * 0.039 * 0 * closePositionAmt;
+						0.01 * 0.039 * closePositionAmt;
 					totalProfit += currentProfit;
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1232,8 +1232,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.039 * 0 * openPositionAmt;
-					totalProfit += -0.01 * 0.039 * 0 * openPositionAmt;
+					totalCapital += -0.01 * 0.039 * openPositionAmt;
+					totalProfit += -0.01 * 0.039 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1329,8 +1329,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
-					totalCapital += -0.01 * 0.039 * 0 * openPositionAmt;
-					totalProfit += -0.01 * 0.039 * 0 * openPositionAmt;
+					totalCapital += -0.01 * 0.039 * openPositionAmt;
+					totalProfit += -0.01 * 0.039 * openPositionAmt;
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
