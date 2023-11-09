@@ -28,8 +28,8 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BTC_SYMBOL = 'BTCUSDT';
-const ETH_SYMBOL = 'ETHUSDT';
-let LEVERAGE = 10;
+const ETH_SYMBOL = 'LTCUSDT';
+let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let LOSS_MAX = (-1 * 0.382 * LEVERAGE) / 10;
