@@ -34,6 +34,9 @@ const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let LOSS_MAX = (-1 * 0.382) / 10;
 let WIN_MAX = (1 * 0.382) / 10;
+let INIT_POSITION = 1;
+const INIT_ASSETS = 100;
+
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -54,7 +57,7 @@ const INCREASE_FI_LIST = generatePositionList(INIT_POSITION, 20).map((item) =>
 	Number((item * CAPITAL_RATIO).toFixed(2))
 );
 // let INIT_POSITION = 9;
-let INIT_POSITION = 1;
+
 const MAX_OPEN_POSITION_RATIO = INIT_POSITION * 3;
 let NEW_POSITION_RATIO = 1;
 let IS_CLOSE_ALL_POSITION = false;
@@ -990,8 +993,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 		const closeLong = async () => {
 			if (longHolding && longHolding.positionAmt) {
-				let closePositionAmt = INIT_POSITION;
-				// let closePositionAmt = longHolding.positionAmt;
+				// let closePositionAmt = INIT_POSITION;
+				let closePositionAmt = longHolding.positionAmt;
 				if (CLOSE_ALL_LONG_CONDITION)
 					closePositionAmt = longHolding.positionAmt;
 				if (isForceDeal) closePositionAmt = longHolding.positionAmt;
@@ -1074,8 +1077,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						// openShortCondition = false;
 					}
 					if (shortRatio < 0) modeChange = true;
-					// let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
-					let closePositionAmt = INIT_POSITION;
+					let closePositionAmt = Math.abs(
+						Number(shortHolding.positionAmt)
+					);
+					// let closePositionAmt = INIT_POSITION;
 					if (CLOSE_ALL_SHORT_CONDITION)
 						closePositionAmt = Math.abs(
 							Number(shortHolding.positionAmt)
@@ -1210,7 +1215,9 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					// closeShort()
 					// const openPositionAmt =
 					//   shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
-					let openPositionAmt = INIT_POSITION;
+					let openPositionAmt = Number(
+						((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+					);
 					// if (BATCH_LONG_OPEN_CONDITION)
 					//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 					// let openPositionAmt = longHolding
@@ -1307,7 +1314,9 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					// closeLong()
 					// const openPositionAmt =
 					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
-					let openPositionAmt = INIT_POSITION;
+					let openPositionAmt = Number(
+						((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+					);
 					// if (BATCH_SHORT_OPEN_CONDITION)
 					//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 					// let openPositionAmt = shortHolding
