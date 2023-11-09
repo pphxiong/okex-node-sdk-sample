@@ -950,14 +950,13 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const TOTALRATIO = longRatio + shortRatio;
+		const CLOSE_CONDITION = TOTALRATIO > WIN_MAX;
 
 		const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (TOTALRATIO > WIN_MAX || TOTALRATIO < LOSS_MAX);
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (TOTALRATIO > WIN_MAX || TOTALRATIO < LOSS_MAX);
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_CONDITION;
+		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_CONDITION;
 
 		modeChange = false;
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
