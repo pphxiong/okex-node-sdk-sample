@@ -98,6 +98,7 @@ let longPatchNum = 0;
 let shortPatchNum = 0;
 let totalProfit = 0;
 let currentMarketPrice = 0;
+let ethCurrentMarketPrice = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
@@ -775,9 +776,9 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 				btcLongPosition.positionAmt) /
 			currentMarketPrice;
 		const shortActualProfit =
-			(-(currentMarketPrice - ethShortPosition.entryPrice) *
+			(-(ethCurrentMarketPrice - ethShortPosition.entryPrice) *
 				ethShortPosition.positionAmt) /
-			currentMarketPrice;
+			ethCurrentMarketPrice;
 		const actualProfit = totalProfit + longActualProfit + shortActualProfit;
 		// console.log('currentMarketPrice', currentMarketPrice);
 		send(response, {
@@ -896,6 +897,9 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const mark_price = macdList[macdList.length - 1].close;
 		currentMarketPrice = mark_price;
 
+		const eth_mark_price = ethMacdList[ethMacdList.length - 1].close;
+		ethCurrentMarketPrice = eth_mark_price;
+
 		let longHolding = null;
 		let shortHolding = null;
 		let longRatio = 0;
@@ -922,8 +926,9 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		if (shortHolding) {
 			const { leverage, entryPrice: avg_cost } = shortHolding;
 			shortRatio =
-				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
-				Number(mark_price);
+				((Number(eth_mark_price) - Number(avg_cost)) *
+					Number(leverage)) /
+				Number(eth_mark_price);
 			shortRatio = -shortRatio;
 			maxWinRatio = Math.max(maxWinRatio, shortRatio);
 		}
