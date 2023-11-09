@@ -787,7 +787,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			data: {
 				// index: result,
 				totalProfit,
-				// dealDetailList,
+				dealDetailList,
 				mostLoss,
 				maxContinuousWin,
 				maxContinuousLoss,
@@ -1091,7 +1091,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
-					const closePrice = Number(mark_price);
+					const closePrice = Number(eth_mark_price);
 
 					const positionAmt =
 						Math.abs(Number(shortHolding.positionAmt)) -
@@ -1267,18 +1267,18 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						averagePrice,
 						time: macdList[macdList.length - 1].time,
 						week: macdList[macdList.length - 1].week,
-						macdList,
-						rsiList,
-						bollList,
-						MODE,
-						totalProfit,
-						totalCapital,
-						longRatio,
-						btcLongPosition,
-						longPositionAmt: btcLongPosition.positionAmt,
-						ethShortPosition,
-						shortPositionAmt: ethShortPosition.positionAmt,
-						shortRatio,
+						// macdList,
+						// rsiList,
+						// bollList,
+						// MODE,
+						// totalProfit,
+						// totalCapital,
+						// longRatio,
+						// btcLongPosition,
+						// longPositionAmt: btcLongPosition.positionAmt,
+						// ethShortPosition,
+						// shortPositionAmt: ethShortPosition.positionAmt,
+						// shortRatio,
 					};
 					dealDetailList.push(dealDetail);
 					// shortHolding = {};
@@ -1341,7 +1341,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					const averagePrice =
 						(ethShortPosition.entryPrice *
 							Math.abs(Number(ethShortPosition.positionAmt)) +
-							openPositionAmt * mark_price) /
+							openPositionAmt * eth_mark_price) /
 						(Math.abs(Number(ethShortPosition.positionAmt)) +
 							openPositionAmt);
 
@@ -1360,24 +1360,24 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						side: 'OPEN',
 						positionSide: 'SHORT',
 						leverage: LEVERAGE,
-						entryPrice: mark_price,
+						entryPrice: eth_mark_price,
 						openPositionAmt,
 						positionAmt: totalPositionAmt,
 						averagePrice,
 						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
-						macdList,
-						rsiList,
-						bollList,
-						MODE,
-						totalProfit,
-						totalCapital,
-						longRatio,
-						btcLongPosition,
-						longPositionAmt: btcLongPosition.positionAmt,
-						ethShortPosition,
-						shortPositionAmt: ethShortPosition.positionAmt,
-						shortRatio,
+						// week: macdList[macdList.length - 1].week,
+						// macdList,
+						// rsiList,
+						// bollList,
+						// MODE,
+						// totalProfit,
+						// totalCapital,
+						// longRatio,
+						// btcLongPosition,
+						// longPositionAmt: btcLongPosition.positionAmt,
+						// ethShortPosition,
+						// shortPositionAmt: ethShortPosition.positionAmt,
+						// shortRatio,
 					};
 					dealDetailList.push(dealDetail);
 					// longHolding = {};
