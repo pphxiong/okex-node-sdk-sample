@@ -32,8 +32,8 @@ const ETH_SYMBOL = 'EOSUSDT';
 let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-let LOSS_MAX = -1 * 0.382 * 10;
-let WIN_MAX = 1 * 0.382;
+let LOSS_MAX = (-1 * 0.382 * LEVERAGE) / 10;
+let WIN_MAX = (1 * 0.382 * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 1;
@@ -950,7 +950,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const TOTALRATIO = longRatio + shortRatio;
-		const CLOSE_CONDITION = TOTALRATIO > WIN_MAX || TOTALRATIO < LOSS_MAX;
+		const CLOSE_CONDITION = TOTALRATIO > WIN_MAX;
 
 		const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
