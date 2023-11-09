@@ -787,7 +787,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			data: {
 				// index: result,
 				totalProfit,
-				dealDetailList,
+				// dealDetailList,
 				mostLoss,
 				maxContinuousWin,
 				maxContinuousLoss,
@@ -906,11 +906,17 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		let shortRatio = 0;
 		let holding;
 
-		if (btcLongPosition && btcLongPosition.positionAmt > 0) {
+		if (
+			btcLongPosition &&
+			Math.abs(Number(btcLongPosition.positionAmt)) > 0
+		) {
 			longHolding = JSON.parse(JSON.stringify(btcLongPosition));
 			holding = longHolding;
 		}
-		if (ethShortPosition && ethShortPosition.positionAmt > 0) {
+		if (
+			ethShortPosition &&
+			Math.abs(Number(ethShortPosition.positionAmt)) > 0
+		) {
 			shortHolding = JSON.parse(JSON.stringify(ethShortPosition));
 			holding = shortHolding;
 		}
