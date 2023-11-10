@@ -12,7 +12,7 @@ const INIT_POSITION = 100;
 let MODE = 1;
 const LOSS_MAX = -1 * 0.382;
 const WIN_MAX = 1 * 0.382;
-const LEVERAGE = 60;
+const LEVERAGE = 50;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
