@@ -4,7 +4,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const BTC_SYMBOL = 'BTCUSDT';
-const ETH_SYMBOL = 'EOSUSDT';
+const ETH_SYMBOL = 'ETHUSDT';
 const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
