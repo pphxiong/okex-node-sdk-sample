@@ -32,8 +32,8 @@ const ETH_SYMBOL = 'EOSUSDT';
 let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-let LOSS_MAX = (-1 * 0.382) / 10;
-let WIN_MAX = (1 * 0.382) / 10;
+let LOSS_MAX = -1 * 0.382;
+let WIN_MAX = 1 * 0.382;
 let INIT_POSITION = 1;
 const INIT_ASSETS = 100;
 

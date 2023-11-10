@@ -10,8 +10,8 @@ const INIT_ASSETS = 100;
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const LOSS_MAX = (-1 * 0.382) / 10;
-const WIN_MAX = (1 * 0.382) / 10;
+const LOSS_MAX = -1 * 0.382;
+const WIN_MAX = 1 * 0.382;
 const LEVERAGE = 60;
 
 const generatePositionList = (init, num) => {
