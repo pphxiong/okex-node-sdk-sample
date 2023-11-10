@@ -301,9 +301,10 @@ async function checkByStep(data, ethData) {
 			//   ? Math.abs(shortHolding.positionAmt) +
 			//     INIT_POSITION * NEW_POSITION_RATIO
 			//   : INIT_POSITION;
-			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
-			);
+			let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+			// );
 			// if (BATCH_LONG_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 			// if (shortHolding && !closeShortCondition) {
@@ -347,9 +348,10 @@ async function checkByStep(data, ethData) {
 			//   ? Math.abs(shortHolding.positionAmt) +
 			//     INIT_POSITION * NEW_POSITION_RATIO
 			//   : INIT_POSITION;
-			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
-			);
+			let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+			// );
 			// if (BATCH_SHORT_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 			// if (longHolding && !closeLongCondition) {
@@ -910,9 +912,9 @@ const startInterval = async () => {
 		};
 
 		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
-		await checkDeal(btc_result, eth_result);
+		// await checkDeal(btc_result, eth_result);
 
 		await waitTime(1000 * 56 * 2);
 		await startInterval();
