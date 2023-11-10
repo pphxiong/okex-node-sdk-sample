@@ -7,7 +7,7 @@ const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
 const INIT_ASSETS = 100;
-const INIT_POSITION = 1;
+const INIT_POSITION = 100;
 
 let MODE = 1;
 const LOSS_MAX = (-1 * 0.382) / 10;
