@@ -894,6 +894,8 @@ const fnGetSymbolResult = async (symbol, payload) => {
 		rsiList,
 		bollList,
 	};
+
+	return result;
 };
 
 const startInterval = async () => {
@@ -914,9 +916,7 @@ const startInterval = async () => {
 		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
 		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
-		// await checkDeal(btc_result, eth_result);
-
-		console.log(111);
+		await checkDeal(btc_result, eth_result);
 
 		await waitTime(1000 * 56 * 2);
 		await startInterval();
