@@ -350,7 +350,7 @@ async function checkByStep(data, ethData) {
 			//   : INIT_POSITION;
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 			);
 			// if (BATCH_SHORT_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
