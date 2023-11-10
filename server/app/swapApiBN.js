@@ -60,34 +60,34 @@ async function checkByStep(data, ethData) {
 	let shortRatio = 0;
 	let avail = 0;
 
-	// if (positionChange || !globalHolding || !globalHolding.length || true) {
-	// 	try {
-	// 		const { positions: holding, availableBalance } =
-	// 			await cAuthClientBN.swap.getPosition();
-	// 		globalHolding =
-	// 			holding.filter(
-	// 				(item) =>
-	// 					item.positionAmt &&
-	// 					Math.abs(Number(item.positionAmt)) > 0
-	// 			) || [];
-	// 		positionChange = false;
-	// 		avail = (availableBalance * LEVERAGE) / mark_price;
+	if (positionChange || !globalHolding || !globalHolding.length || true) {
+		try {
+			const { positions: holding, availableBalance } =
+				await cAuthClientBN.swap.getPosition();
+			globalHolding =
+				holding.filter(
+					(item) =>
+						item.positionAmt &&
+						Math.abs(Number(item.positionAmt)) > 0
+				) || [];
+			positionChange = false;
+			// avail = (availableBalance * LEVERAGE) / mark_price;
 
-	// 		console.log('------------------');
-	// 		console.log(
-	// 			`availableBalance`,
-	// 			availableBalance,
-	// 			'avail',
-	// 			avail,
-	// 			'INIT_POSITION',
-	// 			INIT_POSITION
-	// 		);
-	// 		console.log('------------------');
-	// 	} catch (e) {
-	// 		// if(result.error_message) throw new Error('Cannot get position!');
-	// 		restart('getPosition');
-	// 	}
-	// }
+			console.log('------------------');
+			console.log(
+				`availableBalance`,
+				availableBalance,
+				// 'avail',
+				// avail,
+				'INIT_POSITION',
+				INIT_POSITION
+			);
+			console.log('------------------');
+		} catch (e) {
+			// if(result.error_message) throw new Error('Cannot get position!');
+			restart('getPosition');
+		}
+	}
 
 	let holding = globalHolding;
 	if (holding && holding.length) {
@@ -616,11 +616,7 @@ let openOrigClientOrderId = '';
 let closeOrigClientOrderId = '';
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 	isMarketDeal = true;
-	const {
-		openSide = 'long',
-		position = Number(INIT_POSITION),
-		mark_price,
-	} = params;
+	const { openSide = 'long', position, mark_price } = params;
 
 	async function postOrder(size) {
 		const type = openSide == 'long' ? 'BUY' : 'SELL';
@@ -674,7 +670,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 const closePosition = async (holding, isCloseAll = false, avail) => {
 	let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
 	// position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
-	// position = Math.abs(Number(holding.positionAmt));
+	position = Math.abs(Number(holding.positionAmt));
 	// position = INIT_POSITION;
 	// if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
 
