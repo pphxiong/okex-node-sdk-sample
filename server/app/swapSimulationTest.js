@@ -891,7 +891,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 	}
 
 	function checkByStep(data, ethData, isForceDeal) {
-		// isForceDeal = false;
+		isForceDeal = false;
 		const { macdList, rsiList, bollList } = data;
 		const {
 			macdList: ethMacdList,
