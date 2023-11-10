@@ -782,7 +782,10 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			(-(ethCurrentMarketPrice - ethShortPosition.entryPrice) *
 				ethShortPosition.positionAmt) /
 			ethCurrentMarketPrice;
-		const actualProfit = totalProfit + longActualProfit + shortActualProfit;
+		const actualProfit =
+			totalProfit +
+			longActualProfit * currentMarketPrice +
+			shortActualProfit * ethCurrentMarketPrice;
 		// console.log('currentMarketPrice', currentMarketPrice);
 		send(response, {
 			errcode: 0,
@@ -1001,7 +1004,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 				const currentProfit =
 					(longRatio * closePositionAmt) / LEVERAGE -
 					0.01 * 0.039 * closePositionAmt;
-				totalProfit += currentProfit;
+				totalProfit += currentProfit * Number(mark_price);
 				totalCapital += currentProfit;
 				minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
@@ -1092,7 +1095,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					const currentProfit =
 						(shortRatio * closePositionAmt) / LEVERAGE -
 						0.01 * 0.039 * closePositionAmt;
-					totalProfit += currentProfit;
+					totalProfit += currentProfit * Number(eth_mark_price);
 					totalCapital += currentProfit;
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
 
@@ -1240,7 +1243,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
 					totalCapital += -0.01 * 0.039 * openPositionAmt;
-					totalProfit += -0.01 * 0.039 * openPositionAmt;
+					totalProfit +=
+						-0.01 * 0.039 * openPositionAmt * Number(mark_price);
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
@@ -1339,7 +1343,11 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 					// if (totalCapital * LEVERAGE < openPositionAmt) openPositionAmt = 0;
 					totalCapital += -0.01 * 0.039 * openPositionAmt;
-					totalProfit += -0.01 * 0.039 * openPositionAmt;
+					totalProfit +=
+						-0.01 *
+						0.039 *
+						openPositionAmt *
+						Number(eth_mark_price);
 					totalPosition += openPositionAmt;
 
 					minTotalCapital = Math.min(minTotalCapital, totalCapital);
