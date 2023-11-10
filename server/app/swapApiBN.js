@@ -911,10 +911,12 @@ const startInterval = async () => {
 			endTime: time,
 		};
 
-		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		// const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
+		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
 		// await checkDeal(btc_result, eth_result);
+
+		console.log(111);
 
 		await waitTime(1000 * 56 * 2);
 		await startInterval();
