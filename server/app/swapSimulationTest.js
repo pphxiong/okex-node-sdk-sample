@@ -969,7 +969,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding && (CLOSE_CONDITION || REVERSE_MODE_CONDITION);
 
-		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
+		if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 
 		modeChange = false;
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
