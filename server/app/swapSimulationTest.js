@@ -894,12 +894,12 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 	function checkByStep(data, ethData, isForceDeal) {
 		// isForceDeal = false;
-		const { macdList, rsiList, bollList } = data;
+		const { macdList, rsiList, bollList } = MODE == 1 ? data : ethData;
 		const {
 			macdList: ethMacdList,
 			rsiList: ethRsiList,
 			bollList: ethBollList,
-		} = ethData;
+		} = MODE == 1 ? ethData : data;
 
 		// macdList.slice(-3);
 		const mark_price = macdList[macdList.length - 1].close;
