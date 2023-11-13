@@ -32,7 +32,7 @@ const ETH_SYMBOL = 'EOSUSDT';
 let LEVERAGE = 60;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-let LOSS_MAX = -1 * 0.382;
+let LOSS_MAX = -1 * 0.618;
 let WIN_MAX = 1 * 0.382;
 let INIT_POSITION = 1;
 const INIT_ASSETS = 100;
@@ -771,8 +771,10 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			endTime: time,
 		};
 
-		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		const LONG_SYMBOL = MODE == 1 ? BTC_SYMBOL : ETH_SYMBOL;
+		const SHORT_SYMBOL = MODE == 1 ? ETH_SYMBOL : BTC_SYMBOL;
+		const btc_result = await fnGetSymbolResult(LONG_SYMBOL, payload);
+		const eth_result = await fnGetSymbolResult(SHORT_SYMBOL, payload);
 		await checkDeal(btc_result, eth_result);
 		const longActualProfit =
 			((currentMarketPrice - btcLongPosition.entryPrice) *
@@ -957,12 +959,17 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 		const TOTALRATIO = longRatio + shortRatio;
 		const CLOSE_CONDITION = TOTALRATIO > WIN_MAX;
+		const REVERSE_MODE_CONDITION = TOTALRATIO < LOSS_MAX;
 
 		const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_CONDITION;
-		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_CONDITION;
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && (CLOSE_CONDITION || REVERSE_MODE_CONDITION);
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && (CLOSE_CONDITION || REVERSE_MODE_CONDITION);
+
+		if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 
 		modeChange = false;
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
