@@ -36,6 +36,8 @@ let LOSS_MAX = -1 * 0.618;
 let WIN_MAX = 1 * 0.382;
 let INIT_POSITION = 1;
 const INIT_ASSETS = 100;
+let NO_WIN = 0;
+let NO_LOSS = 0;
 
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -970,6 +972,13 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 			shortHolding && (CLOSE_CONDITION || REVERSE_MODE_CONDITION);
 
 		if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
+		if (MAIN_CLOSE_LONG_CONDITION1 || MAIN_CLOSE_SHORT_CONDITION1) {
+			if (TOTALRATIO > 0) {
+				NO_WIN += 1;
+			} else {
+				NO_WIN -= 1;
+			}
+		}
 
 		modeChange = false;
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
@@ -1033,25 +1042,27 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					positionSide: 'LONG',
 					closePrice,
 					closePositionAmt,
-					entryPrice,
-					priceBeforeDeal,
+					// entryPrice,
+					// priceBeforeDeal,
 					positionAmt,
 					time: macdList[macdList.length - 1].time,
-					week: macdList[macdList.length - 1].week,
+					// week: macdList[macdList.length - 1].week,
 					totalProfit,
-					totalCapital,
+					// totalCapital,
 					currentProfit,
 					currentRMB: currentProfit * closePrice,
-					macd: macdList[macdList.length - 1],
-					rsi: rsiList[rsiList.length - 1],
-					bollList: bollList[bollList.length - 1],
+					// macd: macdList[macdList.length - 1],
+					// rsi: rsiList[rsiList.length - 1],
+					// bollList: bollList[bollList.length - 1],
 					MODE,
 					longRatio,
-					btcLongPosition,
-					longPositionAmt: btcLongPosition.positionAmt,
-					ethShortPosition,
-					shortPositionAmt: ethShortPosition.positionAmt,
+					// btcLongPosition,
+					// longPositionAmt: btcLongPosition.positionAmt,
+					// ethShortPosition,
+					// shortPositionAmt: ethShortPosition.positionAmt,
 					shortRatio,
+					NO_WIN,
+					NO_LOSS,
 				};
 				dealDetailList.push(dealDetail);
 				if (longRatio < mostLoss.profit) {
@@ -1127,25 +1138,27 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						positionSide: 'SHORT',
 						closePrice,
 						closePositionAmt,
-						priceBeforeDeal,
-						entryPrice,
+						// entryPrice,
+						// priceBeforeDeal,
 						positionAmt,
 						time: macdList[macdList.length - 1].time,
-						week: macdList[macdList.length - 1].week,
+						// week: macdList[macdList.length - 1].week,
 						totalProfit,
-						totalCapital,
+						// totalCapital,
 						currentProfit,
 						currentRMB: currentProfit * closePrice,
-						macd: macdList[macdList.length - 1],
-						rsi: rsiList[rsiList.length - 1],
-						bollList: bollList[bollList.length - 1],
+						// macd: macdList[macdList.length - 1],
+						// rsi: rsiList[rsiList.length - 1],
+						// bollList: bollList[bollList.length - 1],
 						MODE,
 						longRatio,
-						btcLongPosition,
-						longPositionAmt: btcLongPosition.positionAmt,
-						ethShortPosition,
-						shortPositionAmt: ethShortPosition.positionAmt,
+						// btcLongPosition,
+						// longPositionAmt: btcLongPosition.positionAmt,
+						// ethShortPosition,
+						// shortPositionAmt: ethShortPosition.positionAmt,
 						shortRatio,
+						NO_WIN,
+						NO_LOSS,
 					};
 					dealDetailList.push(dealDetail);
 					if (shortRatio < mostLoss.profit) {
