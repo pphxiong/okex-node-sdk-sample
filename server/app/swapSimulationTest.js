@@ -901,12 +901,12 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 	function checkByStep(data, ethData, isForceDeal) {
 		// isForceDeal = false;
-		const { macdList, rsiList, bollList } = MODE == 1 ? data : ethData;
+		const { macdList, rsiList, bollList } = data;
 		const {
 			macdList: ethMacdList,
 			rsiList: ethRsiList,
 			bollList: ethBollList,
-		} = MODE == 1 ? ethData : data;
+		} = ethData;
 
 		// macdList.slice(-3);
 		const mark_price = macdList[macdList.length - 1].close;
