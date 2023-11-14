@@ -976,7 +976,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 			if (TOTALRATIO > 0) {
 				NO_WIN += 1;
 			} else {
-				NO_WIN -= 1;
+				NO_LOSS += 1;
 			}
 		}
 
