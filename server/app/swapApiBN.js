@@ -138,13 +138,16 @@ async function checkByStep(data, ethData) {
 	}
 
 	const TOTALRATIO = totalRatio;
-	const CLOSE_CONDITION = TOTALRATIO > WIN_MAX;
+	const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
+	const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_CONDITION;
-	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_CONDITION;
+	const MAIN_CLOSE_LONG_CONDITION1 =
+		longHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
+	const MAIN_CLOSE_SHORT_CONDITION1 =
+		shortHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
 	let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
 	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
@@ -165,10 +168,9 @@ async function checkByStep(data, ethData) {
 		'minute'
 	);
 	const isFiveM =
-		true ||
-		(minuteDiff < 90 &&
-			minuteList.includes(lastMinuteCharacter) &&
-			!secondList.includes(lastSecondCharacter));
+		minuteDiff < 90 &&
+		minuteList.includes(lastMinuteCharacter) &&
+		!secondList.includes(lastSecondCharacter);
 
 	console.log('************************************', currentTime);
 	console.log('isFiveM', isFiveM, lastMinuteCharacter);
