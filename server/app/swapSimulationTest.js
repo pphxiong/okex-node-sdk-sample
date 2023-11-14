@@ -975,12 +975,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
-		if (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION) {
-			if (TOTALRATIO > 0) {
-				NO_WIN += 1;
-			} else {
-				NO_LOSS += 1;
-			}
+		if (CLOSE_WIN_CONDITION) {
+			NO_WIN += 1;
+		} else if (CLOSE_LOSS_CONDITION) {
+			NO_LOSS += 1;
 		}
 
 		modeChange = false;
