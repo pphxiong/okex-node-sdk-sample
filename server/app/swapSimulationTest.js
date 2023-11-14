@@ -973,9 +973,15 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (longRatio > WIN_MAX || longRatio < LOSS_MAX);
+			longHolding &&
+			((shortHolding && CLOSE_WIN_CONDITION) ||
+				longRatio < LOSS_MAX ||
+				longRatio > WIN_MAX * 2);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (shortRatio > WIN_MAX || shortRatio < LOSS_MAX);
+			shortHolding &&
+			((longHolding && CLOSE_WIN_CONDITION) ||
+				shortRatio < LOSS_MAX ||
+				shortRatio > WIN_MAX * 2);
 
 		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 		if (CLOSE_WIN_CONDITION) {
