@@ -727,6 +727,7 @@ app.get('/swap/setWinAndLossMax', async (req, response) => {
 	LEVERAGE = Number(leverage);
 	NO_WIN = 0;
 	NO_LOSS = 0;
+	MODE = DEFAULT_MODE;
 
 	send(response, {
 		errcode: 0,
