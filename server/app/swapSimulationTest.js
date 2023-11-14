@@ -809,6 +809,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 				maxOpenPosition,
 				actualProfit,
 				minTotalCapital,
+				NO_WIN,
+				NO_LOSS,
 			},
 		});
 	} catch (e) {
@@ -1061,8 +1063,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					// ethShortPosition,
 					// shortPositionAmt: ethShortPosition.positionAmt,
 					shortRatio,
-					NO_WIN,
-					NO_LOSS,
+					// NO_WIN,
+					// NO_LOSS,
 				};
 				dealDetailList.push(dealDetail);
 				if (longRatio < mostLoss.profit) {
@@ -1157,8 +1159,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						// ethShortPosition,
 						// shortPositionAmt: ethShortPosition.positionAmt,
 						shortRatio,
-						NO_WIN,
-						NO_LOSS,
+						// NO_WIN,
+						// NO_LOSS,
 					};
 					dealDetailList.push(dealDetail);
 					if (shortRatio < mostLoss.profit) {
