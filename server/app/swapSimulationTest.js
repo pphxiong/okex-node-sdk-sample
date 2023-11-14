@@ -33,7 +33,7 @@ let LEVERAGE = 50;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let LOSS_MAX = -1 * 0.618;
-let WIN_MAX = 1 * 0.382;
+let WIN_MAX = 1 * 0.618;
 let INIT_POSITION = 1;
 const INIT_ASSETS = 100;
 let NO_WIN = 0;
@@ -969,17 +969,11 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 		const REVERSE_MODE_CONDITION = CLOSE_LOSS_CONDITION;
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding &&
-			((shortHolding && (CLOSE_WIN_CONDITION || longRatio < LOSS_MAX)) ||
-				(!shortHolding && (longRatio > WIN_MAX || longRatio < 0)));
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			((longHolding && (CLOSE_WIN_CONDITION || shortRatio < LOSS_MAX)) ||
-				(!longHolding && (shortRatio > WIN_MAX || shortRatio < 0)));
+		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_WIN_CONDITION;
+		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 		if (CLOSE_WIN_CONDITION) {
