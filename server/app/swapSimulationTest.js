@@ -776,10 +776,10 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			endTime: time,
 		};
 
-		const LONG_SYMBOL = MODE == 1 ? BTC_SYMBOL : ETH_SYMBOL;
-		const SHORT_SYMBOL = MODE == 1 ? ETH_SYMBOL : BTC_SYMBOL;
-		const btc_result = await fnGetSymbolResult(LONG_SYMBOL, payload);
-		const eth_result = await fnGetSymbolResult(SHORT_SYMBOL, payload);
+		// const LONG_SYMBOL = MODE == 1 ? BTC_SYMBOL : ETH_SYMBOL;
+		// const SHORT_SYMBOL = MODE == 1 ? ETH_SYMBOL : BTC_SYMBOL;
+		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
+		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 		await checkDeal(btc_result, eth_result);
 		const longActualProfit =
 			((currentMarketPrice - btcLongPosition.entryPrice) *
@@ -901,12 +901,12 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 	function checkByStep(data, ethData, isForceDeal) {
 		// isForceDeal = false;
-		const { macdList, rsiList, bollList } = data;
+		const { macdList, rsiList, bollList } = MODE == 1 ? data : ethData;
 		const {
 			macdList: ethMacdList,
 			rsiList: ethRsiList,
 			bollList: ethBollList,
-		} = ethData;
+		} = MODE == 1 ? ethData : data;
 
 		// macdList.slice(-3);
 		const mark_price = macdList[macdList.length - 1].close;
@@ -977,7 +977,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
-		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
+		if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 		if (CLOSE_WIN_CONDITION) {
 			NO_WIN += 1;
 		} else if (CLOSE_LOSS_CONDITION) {
