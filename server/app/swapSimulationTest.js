@@ -29,7 +29,7 @@ function getRandomNumberByRange(start, end) {
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'LTCUSDT';
-let LEVERAGE = 60;
+let LEVERAGE = 50;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let LOSS_MAX = -1 * 0.618;
@@ -969,15 +969,15 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 		const REVERSE_MODE_CONDITION = CLOSE_LOSS_CONDITION;
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
+			longHolding && (longRatio > WIN_MAX || longRatio < LOSS_MAX);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
+			shortHolding && (shortRatio > WIN_MAX || shortRatio < LOSS_MAX);
 
-		if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
+		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 		if (CLOSE_WIN_CONDITION) {
 			NO_WIN += 1;
 		} else if (CLOSE_LOSS_CONDITION) {
