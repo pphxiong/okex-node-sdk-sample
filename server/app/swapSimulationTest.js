@@ -742,7 +742,7 @@ app.get('/swap/setWinAndLossMax', async (req, response) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	newList.pop();
+	// newList.pop();
 
 	const bollList = getCurrentBOLL(newList).slice(-1400);
 	const macdList = getCurrentMacd(newList).slice(-1400);
