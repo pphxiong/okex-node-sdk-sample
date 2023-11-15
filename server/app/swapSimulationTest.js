@@ -1342,7 +1342,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
 					let openPositionAmt = Number(
 						(
-							((INIT_ASSETS / 2) * LEVERAGE) /
+							(((INIT_ASSETS * 2) / 3) * LEVERAGE) /
 							eth_mark_price
 						).toFixed(3)
 					);
