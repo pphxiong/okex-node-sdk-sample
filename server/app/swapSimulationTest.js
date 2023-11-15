@@ -29,11 +29,11 @@ function getRandomNumberByRange(start, end) {
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'LTCUSDT';
-let LEVERAGE = 50;
+let LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-let LOSS_MAX = -1 * 0.618;
-let WIN_MAX = 1 * 0.618;
+let LOSS_MAX = -1 * 0.682;
+let WIN_MAX = 1 * 0.682;
 let INIT_POSITION = 1;
 const INIT_ASSETS = 100;
 let NO_WIN = 0;
@@ -1341,7 +1341,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					// const openPositionAmt =
 					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
 					let openPositionAmt = Number(
-						((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+						(
+							((INIT_ASSETS / 2) * LEVERAGE) /
+							eth_mark_price
+						).toFixed(3)
 					);
 					// if (BATCH_SHORT_OPEN_CONDITION)
 					//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
