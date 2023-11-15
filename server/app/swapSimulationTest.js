@@ -967,10 +967,14 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const IS_HAS_POSITION = longHolding && shortHolding;
 
 		const TOTALRATIO = IS_HAS_POSITION
-			? (longRatio * Math.abs(Number(longHolding.positionAmt)) +
-					shortRatio * Math.abs(Number(shortHolding.positionAmt))) /
-			  (Math.abs(Number(longHolding.positionAmt)) +
-					Math.abs(Number(shortHolding.positionAmt)))
+			? (longRatio *
+					Math.abs(Number(longHolding.positionAmt) * mark_price) +
+					shortRatio *
+						Math.abs(
+							Number(shortHolding.positionAmt) * eth_mark_price
+						)) /
+			  (Math.abs(Number(longHolding.positionAmt)) * mark_price +
+					Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price)
 			: 0;
 		const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
 		const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
