@@ -964,7 +964,11 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const CLOSE_ALL_LONG_CONDITION = false;
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
-		const TOTALRATIO = longRatio + shortRatio;
+		const TOTALRATIO =
+			longRatio * Math.abs(Number(longHolding.positionAmt)) +
+			(shortRatio * Math.abs(Number(shortHolding.positionAmt))) /
+				(Math.abs(Number(longHolding.positionAmt)) +
+					Math.abs(Number(shortHolding.positionAmt)));
 		const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
 		const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 		const REVERSE_MODE_CONDITION = CLOSE_LOSS_CONDITION;
@@ -1342,7 +1346,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
 					let openPositionAmt = Number(
 						(
-							(((INIT_ASSETS * 2) / 10) * LEVERAGE) /
+							(((INIT_ASSETS * 3) / 5) * LEVERAGE) /
 							eth_mark_price
 						).toFixed(3)
 					);
