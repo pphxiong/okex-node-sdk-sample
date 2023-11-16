@@ -6,13 +6,13 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_ASSETS = 100;
 const INIT_POSITION = 100;
 
 let MODE = 1;
 const LOSS_MAX = -1 * 0.382;
 const WIN_MAX = 1 * 0.382;
-const LEVERAGE = 50;
+const LEVERAGE = 20;
+const INIT_ASSETS = 100;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
@@ -131,10 +131,14 @@ async function checkByStep(data, ethData) {
 		totalRatio = shortRatio;
 	} else if (longHolding && shortHolding) {
 		totalRatio =
-			(longRatio * Math.abs(longHolding.positionAmt) +
-				shortRatio * Math.abs(shortHolding.positionAmt)) /
-			(Math.abs(longHolding.positionAmt) +
-				Math.abs(shortHolding.positionAmt));
+			(longRatio *
+				Math.abs(Number(longHolding.positionAmt) * mark_price) +
+				shortRatio *
+					Math.abs(
+						Number(shortHolding.positionAmt) * eth_mark_price
+					)) /
+			(Math.abs(Number(longHolding.positionAmt)) * mark_price +
+				Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price);
 	}
 
 	const TOTALRATIO = totalRatio;
@@ -144,13 +148,18 @@ async function checkByStep(data, ethData) {
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
-	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
+	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_WIN_CONDITION;
+	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
+
+	const PATCH_CONDITION =
+		CLOSE_LOSS_CONDITION &&
+		longRatio < 0 &&
+		(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
+			LEVERAGE <
+			INIT_ASSETS;
 
 	let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
-	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
+	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 || PATCH_CONDITION;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
@@ -353,8 +362,23 @@ async function checkByStep(data, ethData) {
 			//   : INIT_POSITION;
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
+				((((INIT_ASSETS * 3) / 5) * LEVERAGE) / eth_mark_price).toFixed(
+					1
+				)
 			);
+			if (PATCH_CONDITION) {
+				const currentAssets =
+					(Math.abs(Number(shortHolding.positionAmt)) *
+						eth_mark_price) /
+					LEVERAGE;
+				openPositionAmt = Number(
+					(
+						((INIT_ASSETS - currentAssets) * LEVERAGE) /
+						eth_mark_price
+					).toFixed(1)
+				);
+			}
+
 			// if (BATCH_SHORT_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 			// if (longHolding && !closeLongCondition) {
