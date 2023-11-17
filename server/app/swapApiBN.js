@@ -76,11 +76,11 @@ async function checkByStep(data, ethData) {
 			console.log('------------------');
 			console.log(
 				`availableBalance`,
-				availableBalance,
+				availableBalance
 				// 'avail',
 				// avail,
-				'INIT_POSITION',
-				INIT_POSITION
+				// 'INIT_POSITION',
+				// INIT_POSITION
 			);
 			console.log('------------------');
 		} catch (e) {

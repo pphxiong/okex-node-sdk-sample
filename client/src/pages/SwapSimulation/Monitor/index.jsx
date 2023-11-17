@@ -62,8 +62,8 @@ export default (props) => {
   const [date, setDate] = useState('');
   const [yearPeriodStep, setYearPeriodStep] = useState(3);
 
-  const [winMax, setWinMax] = useState(0.618);
-  const [lossMax, setLossMax] = useState(0.618);
+  const [winMax, setWinMax] = useState(0.682);
+  const [lossMax, setLossMax] = useState(0.682);
 
   const intervalDaysMap = {
     '15m': 15,
