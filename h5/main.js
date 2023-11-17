@@ -9,7 +9,7 @@ const app = express();
 const port = 80;
 
 app.use(express.json());
-app.use(express.static('static'));
+app.use(express.static('www'));
 // 开启所有请求都支持跨域
 app.use(cors());
 
@@ -18,11 +18,11 @@ app.use(cors());
 // app.use('/admin', adminRouter)
 
 // 处理 / 根请求
-app.get('/', (req, res) => {
-	const filePath = __dirname + '/index.html';
+// app.get('/', (req, res) => {
+// 	const filePath = __dirname + '/index.html';
 
-	res.sendFile(filePath);
-});
+// 	res.sendFile(filePath);
+// });
 
 app.listen(port, () => {
 	console.log(`node服务已启动 端口号为： ${port}`);
