@@ -9,6 +9,7 @@ const app = express();
 const port = 80;
 
 app.use(express.json());
+app.use(express.static('static'));
 // 开启所有请求都支持跨域
 app.use(cors());
 
