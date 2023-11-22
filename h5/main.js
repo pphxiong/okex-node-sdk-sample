@@ -10,6 +10,7 @@ const port = 80;
 
 app.use(express.json());
 app.use(express.static('www'));
+app.use(express.static('www/static'));
 // 开启所有请求都支持跨域
 app.use(cors());
 
