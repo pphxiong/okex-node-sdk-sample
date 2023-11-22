@@ -6,7 +6,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "pm2 start main.js --env=manul",
-		"stop": "pm2 stop 2"
+		"stop": "pm2 stop 2",
+		"stop:all": "pm2 delete all"
 	},
 	"keywords": [],
 	"author": "",
