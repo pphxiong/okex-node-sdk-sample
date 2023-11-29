@@ -9,8 +9,8 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const LOSS_MAX = -1 * 0.282;
-const WIN_MAX = 1 * 0.282;
+const LOSS_MAX = -1 * 0.182;
+const WIN_MAX = 1 * 0.182;
 const LEVERAGE = 20;
 const INIT_ASSETS = 200;
 
