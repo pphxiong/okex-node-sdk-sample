@@ -12,7 +12,7 @@ let MODE = 1;
 const LOSS_MAX = -1 * 0.382;
 const WIN_MAX = 1 * 0.382;
 const LEVERAGE = 20;
-const INIT_ASSETS = 100;
+const INIT_ASSETS = 200;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
@@ -177,16 +177,23 @@ async function checkByStep(data, ethData) {
 		'minute'
 	);
 	const isFiveM =
-		// true ||
-		minuteDiff < 90 &&
-		minuteList.includes(lastMinuteCharacter) &&
-		!secondList.includes(lastSecondCharacter);
+		true ||
+		(minuteDiff < 90 &&
+			minuteList.includes(lastMinuteCharacter) &&
+			!secondList.includes(lastSecondCharacter));
 
 	console.log('************************************', currentTime);
 	console.log('isFiveM', isFiveM, lastMinuteCharacter);
 	// console.log('macdList', macdList.slice(-2));
 	// console.log('bollList', bollList.slice(-2));
-	console.log('longRatio', longRatio, 'shortRatio', shortRatio);
+	console.log(
+		'longRatio',
+		longRatio,
+		'shortRatio',
+		shortRatio,
+		'totalRatio',
+		totalRatio
+	);
 	console.log(
 		'longPositionAmt',
 		longHolding ? longHolding.positionAmt : 0,
