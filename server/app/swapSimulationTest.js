@@ -987,12 +987,11 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 		const PATCH_CONDITION =
-			false &&
-			CLOSE_LOSS_CONDITION &&
-			longRatio < 0 &&
-			(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
-				LEVERAGE <
-				INIT_ASSETS;
+			// false &&
+			CLOSE_LOSS_CONDITION && longRatio > 0;
+		// (Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
+		// 	LEVERAGE <
+		// 	INIT_ASSETS;
 
 		// if (REVERSE_MODE_CONDITION) MODE = MODE == 1 ? 2 : 1;
 		if (CLOSE_WIN_CONDITION) {
@@ -1003,9 +1002,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 		modeChange = false;
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
-		let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 || PATCH_CONDITION;
+		let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 		let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
-		let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
+		let closeShortCondition =
+			MAIN_CLOSE_SHORT_CONDITION1 || PATCH_CONDITION;
 
 		NEW_POSITION_RATIO = 1;
 		// if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
@@ -1365,18 +1365,18 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 							eth_mark_price
 						).toFixed(3)
 					);
-					if (PATCH_CONDITION) {
-						const currentAssets =
-							(Math.abs(Number(shortHolding.positionAmt)) *
-								eth_mark_price) /
-							LEVERAGE;
-						openPositionAmt = Number(
-							(
-								((INIT_ASSETS - currentAssets) * LEVERAGE) /
-								eth_mark_price
-							).toFixed(3)
-						);
-					}
+					// if (PATCH_CONDITION) {
+					// 	const currentAssets =
+					// 		(Math.abs(Number(shortHolding.positionAmt)) *
+					// 			eth_mark_price) /
+					// 		LEVERAGE;
+					// 	openPositionAmt = Number(
+					// 		(
+					// 			((INIT_ASSETS - currentAssets) * LEVERAGE) /
+					// 			eth_mark_price
+					// 		).toFixed(3)
+					// 	);
+					// }
 					// if (BATCH_SHORT_OPEN_CONDITION)
 					//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 					// let openPositionAmt = shortHolding
