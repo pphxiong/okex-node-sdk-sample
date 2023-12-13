@@ -987,7 +987,9 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_WIN_CONDITION;
 		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
-		const PATCH_CONDITION = false && CLOSE_LOSS_CONDITION && longRatio > 0;
+		const PATCH_CONDITION =
+			// false &&
+			CLOSE_LOSS_CONDITION && longRatio > 0;
 		// (Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
 		// 	LEVERAGE <
 		// 	INIT_ASSETS;
@@ -1003,8 +1005,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
 		let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 		let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
-		let closeShortCondition =
-			MAIN_CLOSE_SHORT_CONDITION1 || PATCH_CONDITION;
+		let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
 		NEW_POSITION_RATIO = 1;
 		// if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
@@ -1360,7 +1361,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
 					let openPositionAmt = Number(
 						(
-							(((INIT_ASSETS * 3) / 5) * LEVERAGE) /
+							(((INIT_ASSETS * 1) / 2) * LEVERAGE) /
 							eth_mark_price
 						).toFixed(3)
 					);
