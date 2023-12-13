@@ -989,7 +989,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const PATCH_CONDITION =
 			// false &&
 			CLOSE_LOSS_CONDITION &&
-			longRatio > 0 &&
+			// longRatio > 0 &&
 			(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
 				LEVERAGE <
 				INIT_ASSETS;
