@@ -1002,7 +1002,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 		modeChange = false;
 		let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
-		let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 && PATCH_CONDITION;
+		let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 || PATCH_CONDITION;
 		let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 		let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
