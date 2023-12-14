@@ -32,8 +32,8 @@ const ETH_SYMBOL = 'EOSUSDT';
 let LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
-let LOSS_MAX = -1 * 0.182;
 let WIN_MAX = 1 * 0.182;
+let LOSS_MAX = -1 * 0.482;
 let INIT_POSITION = 20;
 const INIT_ASSETS = 100;
 let NO_WIN = 0;
@@ -1372,7 +1372,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 							LEVERAGE;
 						openPositionAmt = Number(
 							(
-								((INIT_ASSETS - currentAssets) * LEVERAGE) /
+								(((INIT_ASSETS - currentAssets) / 2) *
+									LEVERAGE) /
 								eth_mark_price
 							).toFixed(3)
 						);

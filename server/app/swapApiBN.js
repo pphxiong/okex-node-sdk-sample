@@ -9,8 +9,8 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const LOSS_MAX = -1 * 0.182;
 const WIN_MAX = 1 * 0.182;
+const LOSS_MAX = -1 * 0.818;
 const LEVERAGE = 20;
 const INIT_ASSETS = 265;
 
@@ -154,7 +154,7 @@ async function checkByStep(data, ethData) {
 	const PATCH_CONDITION =
 		false &&
 		CLOSE_LOSS_CONDITION &&
-		longRatio < 0 &&
+		// longRatio < 0 &&
 		(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
 			LEVERAGE <
 			INIT_ASSETS;
