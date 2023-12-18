@@ -36,6 +36,7 @@ let WIN_MAX = 1 * 0.182;
 let LOSS_MAX = -1 * 0.482;
 let INIT_POSITION = 20;
 const INIT_ASSETS = 100;
+const INIT_ASSETS_RATIO = 3 / 5;
 let NO_WIN = 0;
 let NO_LOSS = 0;
 
@@ -1361,7 +1362,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					//   longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION;
 					let openPositionAmt = Number(
 						(
-							(((INIT_ASSETS * 3) / 5) * LEVERAGE) /
+							(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
 							eth_mark_price
 						).toFixed(3)
 					);
