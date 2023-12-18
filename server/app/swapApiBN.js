@@ -13,6 +13,7 @@ const WIN_MAX = 1 * 0.182;
 const LOSS_MAX = -1 * 0.482;
 const LEVERAGE = 20;
 const INIT_ASSETS = 265;
+const INIT_ASSETS_RATIO = 3 / 6;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
@@ -370,9 +371,10 @@ async function checkByStep(data, ethData) {
 			//   : INIT_POSITION;
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
-				((((INIT_ASSETS * 3) / 5) * LEVERAGE) / eth_mark_price).toFixed(
-					1
-				)
+				(
+					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
+					eth_mark_price
+				).toFixed(1)
 			);
 			if (PATCH_CONDITION) {
 				const currentAssets =
