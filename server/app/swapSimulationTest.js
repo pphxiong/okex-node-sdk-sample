@@ -36,7 +36,7 @@ let WIN_MAX = 1 * 0.82;
 let LOSS_MAX = -1 * 0.482;
 let INIT_POSITION = 20;
 const INIT_ASSETS = 100;
-const INIT_ASSETS_RATIO = 3 / 7;
+let INIT_ASSETS_RATIO = 3 / 6;
 let NO_WIN = 0;
 let NO_LOSS = 0;
 
@@ -722,10 +722,11 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/setWinAndLossMax', async (req, response) => {
 	const { query = {} } = req;
-	const { winMax, lossMax, leverage } = query;
+	const { winMax, lossMax, leverage, assetsRatio } = query;
 	WIN_MAX = Number(winMax);
 	LOSS_MAX = Number(-lossMax);
 	LEVERAGE = Number(leverage);
+	INIT_ASSETS_RATIO = Number(assetsRatio);
 	NO_WIN = 0;
 	NO_LOSS = 0;
 	MODE = DEFAULT_MODE;

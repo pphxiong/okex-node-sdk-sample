@@ -62,8 +62,9 @@ export default (props) => {
   const [date, setDate] = useState('');
   const [yearPeriodStep, setYearPeriodStep] = useState(3);
 
-  const [winMax, setWinMax] = useState(0.682);
-  const [lossMax, setLossMax] = useState(0.682);
+  const [winMax, setWinMax] = useState(0.82);
+  const [lossMax, setLossMax] = useState(0.482);
+  const [assetsRatio, setAssetsRatio] = useState(0.5);
 
   const intervalDaysMap = {
     '15m': 15,
@@ -564,7 +565,7 @@ export default (props) => {
   };
 
   const fnSetWinAndLossMax = async () => {
-    const payload = { winMax, lossMax, leverage };
+    const payload = { winMax, lossMax, leverage, assetsRatio };
     const { errmsg } = await setWinAndLossMax(payload);
     message.info(errmsg);
   };
@@ -944,6 +945,10 @@ export default (props) => {
           </Col>
           <Col>
             LEVERAGE: <InputNumber step={10} value={leverage} onChange={(v) => setLeverage(v)} />
+          </Col>
+          <Col>
+            ASSETSRATIO:
+            <InputNumber step={0.1} value={assetsRatio} onChange={(v) => setAssetsRatio(v)} />
           </Col>
           <Button onClick={() => fnSetWinAndLossMax()} style={{ marginLeft: 10 }}>
             设置WINLOSS
