@@ -33,7 +33,7 @@ let LEVERAGE = 10;
 const INTERVAL = '1h';
 const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let WIN_MAX = 1 * 0.82;
-let LOSS_MAX = -1 * 0.482;
+let LOSS_MAX = -1 * 0.382;
 let INIT_POSITION = 20;
 const INIT_ASSETS = 100;
 let INIT_ASSETS_RATIO = 3 / 6;
@@ -989,7 +989,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 		const PATCH_CONDITION =
-			// false &&
+			false &&
 			CLOSE_LOSS_CONDITION &&
 			// longRatio > 0 &&
 			(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
