@@ -13,7 +13,7 @@ const WIN_MAX = 1 * 0.82;
 const LOSS_MAX = -1 * 0.382;
 const LEVERAGE = 20;
 const INIT_ASSETS = 265;
-const INIT_ASSETS_RATIO = 3 / 6;
+const INIT_ASSETS_RATIO = 3 / 5;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
@@ -153,7 +153,7 @@ async function checkByStep(data, ethData) {
 	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 	const PATCH_CONDITION =
-		false &&
+		// false &&
 		CLOSE_LOSS_CONDITION &&
 		// longRatio < 0 &&
 		(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
