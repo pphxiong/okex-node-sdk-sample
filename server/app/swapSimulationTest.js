@@ -990,7 +990,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 		const PATCH_CONDITION =
-			// false &&
+			false &&
 			CLOSE_LOSS_CONDITION &&
 			// longRatio > 0 &&
 			(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
