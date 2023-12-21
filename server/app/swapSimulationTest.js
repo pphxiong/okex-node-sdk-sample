@@ -1375,7 +1375,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 							LEVERAGE;
 						openPositionAmt = Number(
 							(
-								(((INIT_ASSETS - currentAssets) / 4) *
+								((INIT_ASSETS - currentAssets) *
+									MAX_SHORT_ASSETS_RATIO *
 									LEVERAGE) /
 								eth_mark_price
 							).toFixed(3)
