@@ -9,11 +9,11 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.82;
-const LOSS_MAX = -1 * 0.382;
+const WIN_MAX = 1 * 0.382;
+const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
 const INIT_ASSETS = 265;
-const INIT_ASSETS_RATIO = 3 / 5;
+const INIT_ASSETS_RATIO = 2 / 5;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
