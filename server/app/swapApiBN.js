@@ -384,7 +384,9 @@ async function checkByStep(data, ethData) {
 					LEVERAGE;
 				openPositionAmt = Number(
 					(
-						(((INIT_ASSETS - currentAssets) / 4) * LEVERAGE) /
+						((INIT_ASSETS - currentAssets) *
+							INIT_ASSETS_RATIO *
+							LEVERAGE) /
 						eth_mark_price
 					).toFixed(1)
 				);
