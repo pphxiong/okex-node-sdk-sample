@@ -1374,11 +1374,9 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 								eth_mark_price) /
 							LEVERAGE;
 						openPositionAmt = Number(
-							(
-								(((INIT_ASSETS - currentAssets) / 4) *
-									LEVERAGE) /
-								eth_mark_price
-							).toFixed(3)
+							Math.abs(Number(shortHolding.positionAmt)).toFixed(
+								3
+							)
 						);
 					}
 					// if (BATCH_SHORT_OPEN_CONDITION)
