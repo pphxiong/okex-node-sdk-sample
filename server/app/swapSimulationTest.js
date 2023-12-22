@@ -37,7 +37,7 @@ let LOSS_MAX = -1 * 0.182;
 let INIT_POSITION = 20;
 const INIT_ASSETS = 100;
 let INIT_ASSETS_RATIO = 1 / 5;
-const MAX_SHORT_ASSETS_RATIO = 4 / 5;
+const MAX_SHORT_ASSETS_RATIO = 2 / 5;
 let NO_WIN = 0;
 let NO_LOSS = 0;
 
