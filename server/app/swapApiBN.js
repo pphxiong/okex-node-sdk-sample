@@ -9,12 +9,12 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.382;
+const WIN_MAX = 1 * 0.282;
 const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
 const INIT_ASSETS = 265;
 const INIT_ASSETS_RATIO = 1 / 5;
-const MAX_SHORT_ASSETS_RATIO = 4 / 5;
+const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
@@ -383,10 +383,7 @@ async function checkByStep(data, ethData) {
 						eth_mark_price) /
 					LEVERAGE;
 				openPositionAmt = Number(
-					(
-						(((INIT_ASSETS - currentAssets) / 4) * LEVERAGE) /
-						eth_mark_price
-					).toFixed(1)
+					(Math.abs(Number(shortHolding.positionAmt)) / 2).toFixed(3)
 				);
 			}
 
