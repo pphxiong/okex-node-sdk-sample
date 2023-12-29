@@ -1006,14 +1006,14 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const MAIN_OPEN_SHORT_ETH_CONDITION =
 			!shortHolding && longHolding && longRatio < 0;
 
-		const MAIN_CLOSE_LONG_BTC_CONDITION =
+		let MAIN_CLOSE_LONG_BTC_CONDITION =
 			longHolding &&
 			shortHolding &&
 			(longRatio < LOSS_MAX || shortRatio > WIN_MAX);
-		const MAIN_CLOSE_SHORT_BTC_CONDITION = false;
-		const MAIN_CLOSE_LONG_ETH_CONDITION =
+		let MAIN_CLOSE_SHORT_BTC_CONDITION = false;
+		let MAIN_CLOSE_LONG_ETH_CONDITION =
 			shortHolding && (longRatio < LOSS_MAX || shortRatio > WIN_MAX);
-		const MAIN_CLOSE_SHORT_ETH_CONDITION =
+		let MAIN_CLOSE_SHORT_ETH_CONDITION =
 			shortHolding && (longRatio < LOSS_MAX || shortRatio > WIN_MAX);
 
 		const PATCH_CONDITION =
