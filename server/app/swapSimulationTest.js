@@ -882,6 +882,14 @@ function getCenterCrossShortIndexList(macdList, bollList) {
 
 const fnGetHolding = () => {};
 
+const fnGetIsShort = (holding) => {
+	return (
+		(holding.positionSide &&
+			holding.positionSide.toUpperCase() === 'SHORT') ||
+		(holding.side && holding.side.toUpperCase() === 'SHORT')
+	);
+};
+
 const checkDeal = async (data, ethData, isAutoReset = true) => {
 	data.bollList = data.bollList || [];
 	ethData.bollList = ethData.bollList || [];
@@ -991,10 +999,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const RATIO_MAX_DISTANCE =
 			TOTALRATIO && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
-		let MAIN_OPEN_LONG_BTC_CONDITION = !longHolding;
-		let MAIN_OPEN_SHORT_BTC_CONDITION = false;
-		let MAIN_OPEN_LONG_ETH_CONDITION = false;
-		let MAIN_OPEN_SHORT_ETH_CONDITION = !shortHolding;
+		const MAIN_OPEN_LONG_BTC_CONDITION = !longHolding;
+		const MAIN_OPEN_SHORT_BTC_CONDITION = false;
+		const MAIN_OPEN_LONG_ETH_CONDITION = false;
+		const MAIN_OPEN_SHORT_ETH_CONDITION = !shortHolding;
 
 		let MAIN_CLOSE_LONG_BTC_CONDITION = longHolding && CLOSE_WIN_CONDITION;
 		let MAIN_CLOSE_SHORT_BTC_CONDITION = false;
