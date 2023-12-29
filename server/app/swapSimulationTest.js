@@ -992,11 +992,12 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 			: shortHolding
 			? shortRatio
 			: 0;
-		const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
+		const CLOSE_WIN_CONDITION = longRatio + shortRatio > WIN_MAX;
 		const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 		const REVERSE_MODE_CONDITION = CLOSE_LOSS_CONDITION;
 
-		const RATIO_MAX_DISTANCE = TOTALRATIO && TOTALRATIO > WIN_MAX;
+		const RATIO_MAX_DISTANCE =
+			TOTALRATIO && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
 		const MAIN_OPEN_LONG_BTC_CONDITION =
 			!longHolding ||
