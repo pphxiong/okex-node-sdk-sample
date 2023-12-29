@@ -1136,7 +1136,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					maxWinRatio = 0;
 					longPatchNum = 0;
 				}
-			} else if (MAIN_CLOSE_LONG_ETH_CONDITION) {
+			}
+			if (MAIN_CLOSE_LONG_ETH_CONDITION) {
 				if (shortHolding && shortHolding.positionAmt) {
 					let closePositionAmt = shortHolding.positionAmt;
 					if (CLOSE_ALL_LONG_CONDITION)
@@ -1267,7 +1268,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					maxWinRatio = 0;
 					shortPatchNum = 0;
 				}
-			} else if (MAIN_CLOSE_SHORT_ETH_CONDITION) {
+			}
+			if (MAIN_CLOSE_SHORT_ETH_CONDITION) {
 				if (shortHolding && shortHolding.positionAmt) {
 					if (TOTALRATIO < LOSS_MAX) {
 						baoNumTotal++;
@@ -1445,7 +1447,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						time: macdList[macdList.length - 1].time,
 					};
 					dealDetailList.push(dealDetail);
-				} else if (MAIN_OPEN_LONG_ETH_CONDITION) {
+				}
+				if (MAIN_OPEN_LONG_ETH_CONDITION) {
 					let openPositionAmt = Number(
 						(
 							(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
@@ -1557,7 +1560,8 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						time: macdList[macdList.length - 1].time,
 					};
 					dealDetailList.push(dealDetail);
-				} else if (MAIN_OPEN_SHORT_ETH_CONDITION) {
+				}
+				if (MAIN_OPEN_SHORT_ETH_CONDITION) {
 					let openPositionAmt = Number(
 						(
 							(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
