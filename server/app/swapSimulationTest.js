@@ -1033,7 +1033,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 		modeChange = false;
 		let openLongCondition =
-			MAIN_OPEN_LONG_BTC_CONDITION || MAIN_CLOSE_LONG_ETH_CONDITION;
+			MAIN_OPEN_LONG_BTC_CONDITION || MAIN_OPEN_LONG_ETH_CONDITION;
 		let openShortCondition =
 			MAIN_OPEN_SHORT_BTC_CONDITION || MAIN_OPEN_SHORT_ETH_CONDITION;
 		let closeLongCondition =
