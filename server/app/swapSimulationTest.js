@@ -35,8 +35,8 @@ const BAO_RATIO = (-0.8 * LEVERAGE) / 10;
 let WIN_MAX = 1 * 0.282;
 let LOSS_MAX = -1 * 0.182;
 let INIT_POSITION = 20;
-const INIT_ASSETS = 100;
-let INIT_ASSETS_RATIO = 1;
+const INIT_ASSETS = 1;
+let INIT_ASSETS_RATIO = 100;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 let NO_WIN = 0;
 let NO_LOSS = 0;
@@ -999,38 +999,22 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const RATIO_MAX_DISTANCE =
 			TOTALRATIO && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
-		const MAIN_OPEN_LONG_BTC_CONDITION =
-			!longHolding ||
-			(longHolding && fnGetIsShort(longHolding) && longRatio < 0);
-		const MAIN_OPEN_SHORT_BTC_CONDITION =
-			longHolding && !fnGetIsShort(longHolding) && longRatio < 0;
+		const MAIN_OPEN_LONG_BTC_CONDITION = !longHolding;
+		const MAIN_OPEN_SHORT_BTC_CONDITION = false;
 		const MAIN_OPEN_LONG_ETH_CONDITION =
-			!shortHolding &&
-			longHolding &&
-			!fnGetIsShort(longHolding) &&
-			longRatio > 0;
+			!shortHolding && longHolding && longRatio > 0;
 		const MAIN_OPEN_SHORT_ETH_CONDITION =
-			!shortHolding &&
-			longHolding &&
-			fnGetIsShort(longHolding) &&
-			longRatio > 0;
+			!shortHolding && longHolding && longRatio < 0;
 
 		const MAIN_CLOSE_LONG_BTC_CONDITION =
 			longHolding &&
-			!fnGetIsShort(longHolding) &&
-			(longRatio < 0 || RATIO_MAX_DISTANCE);
-		const MAIN_CLOSE_SHORT_BTC_CONDITION =
-			longHolding &&
-			fnGetIsShort(longHolding) &&
-			(longRatio < 0 || RATIO_MAX_DISTANCE);
+			shortHolding &&
+			(longRatio < LOSS_MAX || shortRatio > WIN_MAX);
+		const MAIN_CLOSE_SHORT_BTC_CONDITION = false;
 		const MAIN_CLOSE_LONG_ETH_CONDITION =
-			shortHolding &&
-			!fnGetIsShort(shortHolding) &&
-			(shortRatio < 0 || RATIO_MAX_DISTANCE);
+			shortHolding && (longRatio < LOSS_MAX || shortRatio > WIN_MAX);
 		const MAIN_CLOSE_SHORT_ETH_CONDITION =
-			shortHolding &&
-			fnGetIsShort(shortHolding) &&
-			(shortRatio < 0 || RATIO_MAX_DISTANCE);
+			shortHolding && (longRatio < LOSS_MAX || shortRatio > WIN_MAX);
 
 		const PATCH_CONDITION =
 			false &&
@@ -1442,7 +1426,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 					dealDetailList.push(dealDetail);
 				} else if (MAIN_OPEN_LONG_ETH_CONDITION) {
 					let openPositionAmt = Number(
-						((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+						(
+							(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
+							eth_mark_price
+						).toFixed(3)
 					);
 
 					totalCapital += -0.01 * 0.039 * openPositionAmt;
