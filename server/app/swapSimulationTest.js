@@ -1001,7 +1001,7 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_BTC_CONDITION = !longHolding;
 		const MAIN_OPEN_SHORT_BTC_CONDITION = false;
-		const MAIN_OPEN_LONG_ETH_CONDITION = shortRatio < LOSS_MAX;
+		const MAIN_OPEN_LONG_ETH_CONDITION = !shortHolding;
 		const MAIN_OPEN_SHORT_ETH_CONDITION = !shortHolding;
 
 		let MAIN_CLOSE_LONG_BTC_CONDITION = longHolding && CLOSE_WIN_CONDITION;
@@ -1009,11 +1009,11 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		let MAIN_CLOSE_LONG_ETH_CONDITION =
 			shortHolding &&
 			!fnGetIsShort(shortHolding) &&
-			(CLOSE_WIN_CONDITION || shortRatio < LOSS_MAX);
+			(CLOSE_WIN_CONDITION || shortRatio > WIN_MAX);
 		let MAIN_CLOSE_SHORT_ETH_CONDITION =
 			shortHolding &&
 			fnGetIsShort(shortHolding) &&
-			(CLOSE_WIN_CONDITION || shortRatio < LOSS_MAX);
+			(CLOSE_WIN_CONDITION || shortRatio > WIN_MAX);
 
 		const PATCH_CONDITION =
 			// false &&
