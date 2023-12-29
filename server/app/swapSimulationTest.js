@@ -987,6 +987,10 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 						)) /
 			  (Math.abs(Number(longHolding.positionAmt)) * mark_price +
 					Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price)
+			: longHolding
+			? longRatio
+			: shortHolding
+			? shortRatio
 			: 0;
 		const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
 		const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
