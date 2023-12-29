@@ -998,12 +998,12 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 			!longHolding ||
 			(longHolding && fnGetIsShort(longHolding) && longRatio < 0);
 		const MAIN_OPEN_SHORT_BTC_CONDITION =
-			longHolding && !fnGetIsShort(longHolding) && longRatio < 0;
+			longHolding && !fnGetIsShort(longHolding) && longRatio > 0;
 		const MAIN_OPEN_LONG_ETH_CONDITION =
 			!shortHolding ||
 			(shortHolding && fnGetIsShort(shortHolding) && shortRatio < 0);
 		const MAIN_OPEN_SHORT_ETH_CONDITION =
-			shortHolding && !fnGetIsShort(shortHolding) && shortRatio < 0;
+			shortHolding && !fnGetIsShort(shortHolding) && shortRatio > 0;
 
 		const MAIN_CLOSE_LONG_BTC_CONDITION =
 			longHolding &&
