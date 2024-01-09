@@ -152,8 +152,13 @@ async function checkByStep(data, ethData) {
 				entryPrice: avg_cost,
 				symbol,
 				positionAmt,
+				positionSide,
 			} = item;
-			if (Math.abs(Number(positionAmt)) > 0 && item.positionSide) {
+			if (
+				Math.abs(Number(positionAmt)) > 0 &&
+				positionAmt &&
+				positionSide
+			) {
 				let current_mark_price =
 					symbol === BTC_SYMBOL
 						? Number(mark_price)
