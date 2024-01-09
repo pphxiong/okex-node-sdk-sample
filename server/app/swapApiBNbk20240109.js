@@ -127,50 +127,20 @@ async function checkByStep(data, ethData) {
 	}
 
 	let totalRatio = 0;
-	// if (longHolding && !shortHolding) {
-	// 	totalRatio = longRatio;
-	// } else if (!longHolding && shortHolding) {
-	// 	totalRatio = shortRatio;
-	// } else if (longHolding && shortHolding) {
-	// 	totalRatio =
-	// 		(longRatio *
-	// 			Math.abs(Number(longHolding.positionAmt) * mark_price) +
-	// 			shortRatio *
-	// 				Math.abs(
-	// 					Number(shortHolding.positionAmt) * eth_mark_price
-	// 				)) /
-	// 		(Math.abs(Number(longHolding.positionAmt)) * mark_price +
-	// 			Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price);
-	// }
-
-	if (holding && holding.length) {
-		let w_Position = 0;
-		let t_position = 0;
-		holding.forEach((item) => {
-			const {
-				leverage,
-				entryPrice: avg_cost,
-				symbol,
-				positionAmt,
-			} = item;
-			if (Math.abs(Number(positionAmt)) > 0 && item.positionSide) {
-				let current_mark_price =
-					symbol === BTC_SYMBOL
-						? Number(mark_price)
-						: Number(eth_mark_price);
-				let ratio =
-					((Number(current_mark_price) - Number(avg_cost)) *
-						Number(leverage)) /
-					Number(current_mark_price);
-				if (positionSide.toUpperCase() == 'SHORT') ratio = -ratio;
-				w_Position +=
-					ratio * Math.abs(Number(positionAmt) * current_mark_price);
-				t_position += Math.abs(
-					Number(positionAmt) * current_mark_price
-				);
-			}
-		});
-		if (w_Position && t_position) totalRatio = w_Position / t_position;
+	if (longHolding && !shortHolding) {
+		totalRatio = longRatio;
+	} else if (!longHolding && shortHolding) {
+		totalRatio = shortRatio;
+	} else if (longHolding && shortHolding) {
+		totalRatio =
+			(longRatio *
+				Math.abs(Number(longHolding.positionAmt) * mark_price) +
+				shortRatio *
+					Math.abs(
+						Number(shortHolding.positionAmt) * eth_mark_price
+					)) /
+			(Math.abs(Number(longHolding.positionAmt)) * mark_price +
+				Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price);
 	}
 
 	const TOTALRATIO = totalRatio;
@@ -180,12 +150,8 @@ async function checkByStep(data, ethData) {
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
 
-	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && CLOSE_WIN_CONDITION && false;
-	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && CLOSE_WIN_CONDITION && false;
-
-	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION;
+	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && CLOSE_WIN_CONDITION;
+	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && CLOSE_WIN_CONDITION;
 
 	const PATCH_CONDITION =
 		false &&
@@ -258,16 +224,6 @@ async function checkByStep(data, ethData) {
 			time: macdList[macdList.length - 1].time,
 		});
 	};
-
-	const closeAllPosition = async () => {
-		const pList = [];
-		holding.forEach((item) => {
-			pList.push(closePosition(item));
-		});
-		await Promise.all(pList);
-	};
-
-	if (MAIN_CLOSE_ALL_CONDITION) closeAllPosition();
 
 	const closeLongPosition = async () => {
 		if (longHolding && Math.abs(Number(longHolding.positionAmt))) {
@@ -747,7 +703,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
-	let { position = INIT_POSITION, positionSide, symbol } = holding;
+	let { position = INIT_POSITION, side, mark_price, time, ratio } = holding;
 	// position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
 	position = Math.abs(Number(holding.positionAmt));
 	// position = INIT_POSITION;
@@ -761,13 +717,12 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 		const newClientOrderId = getUUID();
 		closeOrigClientOrderId = newClientOrderId;
 
-		const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
+		const type = side == 'long' ? 'SELL' : 'BUY';
 
 		const payload = {
-			symbol,
+			symbol: side == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
 			side: type,
-			positionSide:
-				positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
+			positionSide: side == 'long' ? 'LONG' : 'SHORT',
 			quantity: Math.abs(size),
 			recvWindow: 5000,
 			type: 'MARKET',
@@ -779,6 +734,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 			closeOrigClientOrderId = result.clientOrderId;
 			console.log('closeOrigClientOrderId', closeOrigClientOrderId);
+			console.log('price', mark_price);
 			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 		} catch (e) {
 			// throw new Error('Error');
@@ -788,7 +744,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 	console.log('###################################');
 	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
 	console.log('###################################');
-	return await postOrder(position);
+	await postOrder(position, mark_price);
 };
 
 let positionChange = true;
