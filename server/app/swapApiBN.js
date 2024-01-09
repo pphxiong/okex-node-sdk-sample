@@ -169,10 +169,9 @@ async function checkByStep(data, ethData) {
 					Number(current_mark_price);
 				if (positionSide.toUpperCase() == 'SHORT') ratio = -ratio;
 				w_Position +=
-					ratio * Math.abs(Number(positionAmt) * current_mark_price);
-				t_Position += Math.abs(
-					Number(positionAmt) * current_mark_price
-				);
+					ratio * Math.abs(Number(positionAmt)) * current_mark_price;
+				t_Position +=
+					Math.abs(Number(positionAmt)) * current_mark_price;
 			}
 		});
 		if (w_Position && t_Position) totalRatio = w_Position / t_Position;
