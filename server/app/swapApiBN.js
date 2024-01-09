@@ -143,9 +143,9 @@ async function checkByStep(data, ethData) {
 	// 			Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price);
 	// }
 
+	let w_Position = 0;
+	let t_Position = 0;
 	if (holding && holding.length) {
-		let w_Position = 0;
-		let t_position = 0;
 		holding.forEach((item) => {
 			const {
 				leverage,
@@ -170,12 +170,12 @@ async function checkByStep(data, ethData) {
 				if (positionSide.toUpperCase() == 'SHORT') ratio = -ratio;
 				w_Position +=
 					ratio * Math.abs(Number(positionAmt) * current_mark_price);
-				t_position += Math.abs(
+				t_Position += Math.abs(
 					Number(positionAmt) * current_mark_price
 				);
 			}
 		});
-		if (w_Position && t_position) totalRatio = w_Position / t_position;
+		if (w_Position && t_Position) totalRatio = w_Position / t_Position;
 	}
 
 	const TOTALRATIO = totalRatio;
@@ -251,6 +251,14 @@ async function checkByStep(data, ethData) {
 		openLongCondition,
 		'openShortCondition',
 		openShortCondition
+	);
+	console.log(
+		'w_Position',
+		w_Position,
+		't_Position',
+		t_Position,
+		'TOTALRATIO',
+		TOTALRATIO
 	);
 	console.log('************************************');
 
