@@ -9,7 +9,7 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.282;
+const WIN_MAX = 1 * 0.0618;
 const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
 const INIT_ASSETS = 265;
@@ -159,11 +159,11 @@ async function checkByStep(data, ethData) {
 				positionAmt &&
 				positionSide
 			) {
-				let current_mark_price =
+				const current_mark_price =
 					symbol === BTC_SYMBOL
 						? Number(mark_price)
 						: Number(eth_mark_price);
-				let ratio =
+				const ratio =
 					((Number(current_mark_price) - Number(avg_cost)) *
 						Number(leverage)) /
 					Number(current_mark_price);
