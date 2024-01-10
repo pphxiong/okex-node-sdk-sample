@@ -163,7 +163,7 @@ async function checkByStep(data, ethData) {
 					symbol === BTC_SYMBOL
 						? Number(mark_price)
 						: Number(eth_mark_price);
-				const ratio =
+				let ratio =
 					((Number(current_mark_price) - Number(avg_cost)) *
 						Number(leverage)) /
 					Number(current_mark_price);
