@@ -3,7 +3,8 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const BTC_SYMBOL = 'BTCUSDT';
+// const BTC_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
@@ -686,6 +687,7 @@ const queryLatestOpenOrders = async () => {
 	const orders = await cAuthClientBN.swap.allOrders(params);
 	// orders.reverse();
 	orders.forEach((item) => {
+		item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss');
 		item.updateTime = moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss');
 	});
 	console.log(orders, orders.length);
