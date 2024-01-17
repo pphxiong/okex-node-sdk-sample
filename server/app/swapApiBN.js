@@ -797,7 +797,7 @@ const openLimitPosition = async (params = {}) => {
 };
 
 const closeLimitPosition = async (params) => {
-	let { position = INIT_POSITION, positionSide, symbol } = params;
+	let { position = INIT_POSITION, positionSide, symbol, price } = params;
 	const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
 	console.log(
 		'closeLimitOrderMoment',
