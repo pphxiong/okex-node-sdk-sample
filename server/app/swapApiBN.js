@@ -850,7 +850,7 @@ const genRelationPosition = async (params) => {
 	const pList = [];
 	const { openSide = 'long', position, mark_price } = params;
 	const everyNum = 3;
-	const everyPosition = Number((position / everyNum).toFixed(2));
+	const everyPosition = Number(position / everyNum);
 	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
 	for (let i = 0; i < everyNum; i += 1) {
 		const price = mark_price + (mark_price * direction * 0.01) / 2;
