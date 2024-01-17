@@ -801,12 +801,18 @@ const closeLimitPosition = async (params) => {
 	const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
 	console.log(
 		'closeLimitOrderMoment',
-		openSide,
+		positionSide,
 		moment().format('YYYY-MM-DD HH:mm:ss')
 	);
-	console.log('position', position, 'type', type, 'side', openSide);
+	console.log('position', position, 'type', type, 'side', positionSide);
 
 	async function postOrder(size) {
+		const newSize =
+			symbol === 'BTCUSDT'
+				? Math.abs(Number(size.toFixed(1)))
+				: Math.abs(Number(size.toFixed(3)));
+		const newPrice =
+			symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(3);
 		const newClientOrderId = getUUID();
 		closeOrigClientOrderId = newClientOrderId;
 
@@ -815,9 +821,11 @@ const closeLimitPosition = async (params) => {
 			side: type,
 			positionSide:
 				positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
-			quantity: Math.abs(size),
+			quantity: newSize,
 			recvWindow: 5000,
-			type: 'MARKET',
+			type: 'LIMIT',
+			timeInForce: 'GTC',
+			price: newPrice,
 		};
 		try {
 			const result = await cAuthClientBN.swap.postOrder(payload);
@@ -850,6 +858,7 @@ const genRelationPosition = async (params) => {
 			price,
 			position: everyPosition,
 			positionAmt: everyPosition,
+			positionSide: openSide.toUpperCase(),
 		});
 		// pList.push(openLimitPosition(payload));
 		pList.push(closeLimitPosition(payload));
