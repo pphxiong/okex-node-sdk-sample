@@ -697,8 +697,26 @@ const latestOrderhandler = async () => {
 			latesCLoseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		console.log('diffSeconds', diffSeconds);
-		if (diffSeconds < 30) {
+		if (diffSeconds < 120) {
 			const newPrice = Number(price) - 0.01;
+			const payload = {
+				price: newPrice,
+				symbol,
+				side,
+				positionSide: 'SHORT',
+				position: Number(cumQuote),
+				positionAmt: Number(cumQuote),
+			};
+			await openLimitPosition(payload);
+		}
+	}
+	if (latesCLoseShortOrder) {
+		const { updateTime, price, symbol, side, positionSide, cumQuote } =
+			latesCLoseLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		console.log('diffSeconds', diffSeconds);
+		if (diffSeconds < 120) {
+			const newPrice = Number(price) + 0.01;
 			const payload = {
 				price: newPrice,
 				symbol,
