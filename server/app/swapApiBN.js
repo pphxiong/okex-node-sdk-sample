@@ -693,11 +693,21 @@ const latestOrderhandler = async () => {
 		latesCLoseShortOrder
 	);
 	if (latesCLoseLongOrder) {
-		const { updateTime } = latesCLoseLongOrder;
+		const { updateTime, price, symbol, side, positionSide, cumQuote } =
+			latesCLoseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		console.log('diffSeconds', diffSeconds);
 		if (diffSeconds < 30) {
-			const payload = {};
+			const newPrice = Number(price) - 0.01;
+			const payload = {
+				price: newPrice,
+				symbol,
+				side,
+				positionSide: 'SHORT',
+				position: Number(cumQuote),
+				positionAmt: Number(cumQuote),
+			};
+			await openLimitPosition(payload);
 		}
 	}
 };
@@ -786,6 +796,48 @@ const openLimitPosition = async (params = {}) => {
 	return result;
 };
 
+const closeLimitPosition = async (params) => {
+	let { position = INIT_POSITION, positionSide, symbol } = params;
+	const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
+	console.log(
+		'closeLimitOrderMoment',
+		openSide,
+		moment().format('YYYY-MM-DD HH:mm:ss')
+	);
+	console.log('position', position, 'type', type, 'side', openSide);
+
+	async function postOrder(size) {
+		const newClientOrderId = getUUID();
+		closeOrigClientOrderId = newClientOrderId;
+
+		const payload = {
+			symbol,
+			side: type,
+			positionSide:
+				positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
+			quantity: Math.abs(size),
+			recvWindow: 5000,
+			type: 'MARKET',
+		};
+		try {
+			const result = await cAuthClientBN.swap.postOrder(payload);
+			positionChange = true;
+
+			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+			closeOrigClientOrderId = result.clientOrderId;
+			console.log('closeOrigClientOrderId', closeOrigClientOrderId);
+			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		} catch (e) {
+			// throw new Error('Error');
+			restart('close');
+		}
+	}
+	console.log('###################################');
+	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
+	console.log('###################################');
+	return await postOrder(position);
+};
+
 const genRelationPosition = async (params) => {
 	const pList = [];
 	const { openSide = 'long', position, mark_price } = params;
@@ -797,8 +849,10 @@ const genRelationPosition = async (params) => {
 		const payload = Object.assign(params, {
 			price,
 			position: everyPosition,
+			positionAmt: everyPosition,
 		});
-		pList.push(openLimitPosition(payload));
+		// pList.push(openLimitPosition(payload));
+		pList.push(closeLimitPosition(payload));
 	}
 	await Promise.all(pList);
 };
