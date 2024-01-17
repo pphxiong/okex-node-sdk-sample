@@ -13,7 +13,7 @@ let MODE = 1;
 const WIN_MAX = 1 * 0.0618;
 const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
-const INIT_ASSETS = 100;
+const INIT_ASSETS = 10;
 const INIT_ASSETS_RATIO = 3 / 5;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
