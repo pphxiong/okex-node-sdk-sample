@@ -766,7 +766,10 @@ const genRelationPosition = async (params) => {
 	const everyPosition = Number((position / everyNum).toFixed(2));
 	for (let i = 0; i < everyNum; i += 1) {
 		const price = mark_price + (mark_price * 0.01) / 2;
-		const payload = { ...params, price, position: everyPosition };
+		const payload = Object.assign(params, {
+			price,
+			position: everyPosition,
+		});
 		pList.push(openLimitPosition(payload));
 	}
 	await Promise.all(pList);
