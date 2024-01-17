@@ -721,7 +721,7 @@ const latestOrderhandler = async () => {
 				price: newPrice,
 				symbol,
 				side,
-				positionSide: 'SHORT',
+				positionSide: 'LONG',
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
