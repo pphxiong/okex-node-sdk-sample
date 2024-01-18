@@ -708,8 +708,7 @@ const latestOrderhandler = async () => {
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
-			// await closeLimitPosition(payload);
-			await openLimitPosition(payload);
+			await closeLimitPosition(payload);
 		}
 	}
 	if (latestCloseShortOrder) {
@@ -829,29 +828,19 @@ const closeLimitPosition = async (params) => {
 		symbol === 'BTCUSDT'
 			? Math.abs(Number(position.toFixed(1)))
 			: Math.abs(Number(position.toFixed(3)));
-	const newPrice = symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(3);
+	const newPrice = symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(2);
 	const newClientOrderId = getUUID();
 	closeOrigClientOrderId = newClientOrderId;
 
-	// const payload = {
-	// 	symbol,
-	// 	side: type,
-	// 	positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
-	// 	quantity: newSize,
-	// 	recvWindow: 5000,
-	// 	type: 'LIMIT',
-	// 	timeInForce: 'GTC',
-	// 	price: newPrice,
-	// };
 	const payload = {
-		symbol: 'EOSUSDT',
-		side: 'SELL',
-		positionSide: 'LONG',
-		quantity: 399.969,
+		symbol,
+		side: type,
+		positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
+		quantity: newSize,
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
-		price: 0.791,
+		price: newPrice,
 	};
 	let result;
 	try {
