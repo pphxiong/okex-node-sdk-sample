@@ -707,8 +707,7 @@ const latestOrderhandler = async () => {
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
-			console.log(888, 'payload', payload);
-			// await closeLimitPosition(payload);
+			await closeLimitPosition(payload);
 		}
 	}
 	if (latesCLoseShortOrder || true) {
@@ -725,8 +724,7 @@ const latestOrderhandler = async () => {
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
-			console.log(888, 'payload', payload);
-			// await closeLimitPosition(payload);
+			await closeLimitPosition(payload);
 		}
 	}
 };
@@ -825,44 +823,42 @@ const closeLimitPosition = async (params) => {
 	);
 	console.log('position', position, 'type', type, 'side', positionSide);
 
-	async function postOrder(size) {
-		const newSize =
-			symbol === 'BTCUSDT'
-				? Math.abs(Number(size.toFixed(1)))
-				: Math.abs(Number(size.toFixed(3)));
-		const newPrice =
-			symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(3);
-		const newClientOrderId = getUUID();
-		closeOrigClientOrderId = newClientOrderId;
+	const newSize =
+		symbol === 'BTCUSDT'
+			? Math.abs(Number(position.toFixed(1)))
+			: Math.abs(Number(position.toFixed(3)));
+	const newPrice = symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(3);
+	const newClientOrderId = getUUID();
+	closeOrigClientOrderId = newClientOrderId;
 
-		const payload = {
-			symbol,
-			side: type,
-			positionSide:
-				positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
-			quantity: newSize,
-			recvWindow: 5000,
-			type: 'LIMIT',
-			timeInForce: 'GTC',
-			price: newPrice,
-		};
-		try {
-			const result = await cAuthClientBN.swap.postOrder(payload);
-			positionChange = true;
+	const payload = {
+		symbol,
+		side: type,
+		positionSide: positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
+		quantity: newSize,
+		recvWindow: 5000,
+		type: 'LIMIT',
+		timeInForce: 'GTC',
+		price: newPrice,
+	};
+	let result;
+	try {
+		// result = await cAuthClientBN.swap.postOrder(payload);
+		positionChange = true;
 
-			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-			closeOrigClientOrderId = result.clientOrderId;
-			console.log('closeOrigClientOrderId', closeOrigClientOrderId);
-			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-		} catch (e) {
-			// throw new Error('Error');
-			restart('close');
-		}
+		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		console.log(payload);
+		closeOrigClientOrderId = result.clientOrderId;
+		console.log('closeOrigClientOrderId', closeOrigClientOrderId);
+		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+	} catch (e) {
+		// throw new Error('Error');
+		restart('close');
 	}
 	console.log('###################################');
 	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
 	console.log('###################################');
-	return await postOrder(position);
+	return result;
 };
 
 const genRelationPosition = async (params) => {
@@ -881,10 +877,9 @@ const genRelationPosition = async (params) => {
 		});
 		// pList.push(openLimitPosition(payload));
 		pList.push(closeLimitPosition(payload));
-		console.log(999, payload);
 	}
 
-	// await Promise.all(pList);
+	await Promise.all(pList);
 };
 
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
