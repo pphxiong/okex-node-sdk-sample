@@ -692,6 +692,7 @@ const latestOrderhandler = async () => {
 		'latestCloseShortOrder',
 		latestCloseShortOrder
 	);
+	await waitTime(1500);
 	if (latestCloseLongOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
@@ -831,25 +832,15 @@ const closeLimitPosition = async (params) => {
 	const newClientOrderId = getUUID();
 	closeOrigClientOrderId = newClientOrderId;
 
-	// const payload = {
-	// 	symbol,
-	// 	side: type,
-	// 	positionSide: positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
-	// 	quantity: newSize,
-	// 	recvWindow: 5000,
-	// 	type: 'LIMIT',
-	// 	timeInForce: 'GTC',
-	// 	price: newPrice,
-	// };
 	const payload = {
-		symbol: 'EOSUSDT',
-		side: 'BUY',
-		positionSide: 'SHORT',
-		quantity: 52.833,
+		symbol,
+		side: type,
+		positionSide: positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
+		quantity: newSize,
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
-		price: '0.753',
+		price: newPrice,
 	};
 	let result;
 	try {
