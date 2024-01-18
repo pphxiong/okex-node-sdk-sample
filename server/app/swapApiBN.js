@@ -758,12 +758,14 @@ const queryLatestOpenOrders = async () => {
 		(item) =>
 			item.positionSide == 'LONG' &&
 			item.reduceOnly &&
+			item.origType !== 'MARKET' &&
 			Number(item.executedQty)
 	);
 	const latestCloseShortOrder = orders.find(
 		(item) =>
 			item.positionSide == 'SHORT' &&
 			item.reduceOnly &&
+			item.origType !== 'MARKET' &&
 			Number(item.executedQty)
 	);
 
