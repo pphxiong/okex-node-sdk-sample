@@ -816,7 +816,7 @@ const openLimitPosition = async (params = {}) => {
 
 const closeLimitPosition = async (params) => {
 	let { position = INIT_POSITION, positionSide, symbol, price } = params;
-	const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
+	const type = positionSide.toUpperCase() === 'LONG' ? 'SELL' : 'SELL';
 	console.log(
 		'closeLimitOrderMoment',
 		positionSide,
@@ -835,7 +835,7 @@ const closeLimitPosition = async (params) => {
 	const payload = {
 		symbol,
 		side: type,
-		positionSide: positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
+		positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
 		quantity: newSize,
 		recvWindow: 5000,
 		type: 'LIMIT',
@@ -949,7 +949,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 		const newClientOrderId = getUUID();
 		closeOrigClientOrderId = newClientOrderId;
 
-		const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'SELL';
+		const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
 
 		const payload = {
 			symbol,
