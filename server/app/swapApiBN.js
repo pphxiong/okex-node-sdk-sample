@@ -684,17 +684,17 @@ function getUUID() {
 }
 
 const latestOrderhandler = async () => {
-	const { latesCLoseLongOrder, latesCLoseShortOrder } =
+	const { latestCloseLongOrder, latestCloseShortOrder } =
 		await queryLatestOpenOrders();
 	console.log(
-		'latesCLoseLongOrder',
-		latesCLoseLongOrder,
-		'latesCLoseShortOrder',
-		latesCLoseShortOrder
+		'latestCloseLongOrder',
+		latestCloseLongOrder,
+		'latestCloseShortOrder',
+		latestCloseShortOrder
 	);
-	if (latesCLoseLongOrder) {
+	if (latestCloseLongOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
-			latesCLoseLongOrder;
+			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 
 		if (diffSeconds < 120 || true) {
@@ -710,11 +710,11 @@ const latestOrderhandler = async () => {
 			await closeLimitPosition(payload);
 		}
 	}
-	if (latesCLoseShortOrder || true) {
+	if (latestCloseShortOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
-			latesCLoseLongOrder;
+			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		if (diffSeconds < 120) {
+		if (diffSeconds < 120 || true) {
 			const newPrice = Number(price) + 0.01;
 			const payload = {
 				price: newPrice,
@@ -751,13 +751,13 @@ const queryLatestOpenOrders = async () => {
 			!item.reduceOnly &&
 			Number(item.executedQty)
 	);
-	const latesCLoseLongOrder = orders.find(
+	const latestCloseLongOrder = orders.find(
 		(item) =>
 			item.positionSide == 'LONG' &&
 			item.reduceOnly &&
 			Number(item.executedQty)
 	);
-	const latesCLoseShortOrder = orders.find(
+	const latestCloseShortOrder = orders.find(
 		(item) =>
 			item.positionSide == 'SHORT' &&
 			item.reduceOnly &&
@@ -767,8 +767,8 @@ const queryLatestOpenOrders = async () => {
 	return {
 		latestLongOrder,
 		latestShortOrder,
-		latesCLoseLongOrder,
-		latesCLoseShortOrder,
+		latestCloseLongOrder,
+		latestCloseShortOrder,
 	};
 
 	// const latestOpenOrder = orders.find(
