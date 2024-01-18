@@ -700,8 +700,8 @@ const latestOrderhandler = async () => {
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 
-		if (diffSeconds < 120 || true) {
-			const newPrice = price - 0.01;
+		if (diffSeconds < 120) {
+			const newPrice = price - 0.01 / 2;
 			const payload = {
 				price: newPrice,
 				symbol,
@@ -880,7 +880,6 @@ const genRelationPosition = async (params) => {
 			positionAmt: everyPosition,
 			positionSide: openSide.toUpperCase(),
 		});
-		// pList.push(openLimitPosition(payload));
 		pList.push(closeLimitPosition(payload));
 	}
 
