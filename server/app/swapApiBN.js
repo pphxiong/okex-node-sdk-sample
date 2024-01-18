@@ -696,7 +696,7 @@ const latestOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latesCLoseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		console.log('diffSeconds', diffSeconds);
+
 		if (diffSeconds < 120 || true) {
 			const newPrice = Number(price) - 0.01;
 			const payload = {
@@ -707,6 +707,7 @@ const latestOrderhandler = async () => {
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
+			console.log(888, 'payload', payload);
 			await closeLimitPosition(payload);
 		}
 	}
@@ -714,7 +715,6 @@ const latestOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latesCLoseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		console.log('diffSeconds', diffSeconds);
 		if (diffSeconds < 120) {
 			const newPrice = Number(price) + 0.01;
 			const payload = {
@@ -725,6 +725,7 @@ const latestOrderhandler = async () => {
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
+			console.log(888, 'payload', payload);
 			await closeLimitPosition(payload);
 		}
 	}
@@ -881,7 +882,8 @@ const genRelationPosition = async (params) => {
 		// pList.push(openLimitPosition(payload));
 		pList.push(closeLimitPosition(payload));
 	}
-	await Promise.all(pList);
+	console.log(999, payload);
+	// await Promise.all(pList);
 };
 
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
