@@ -846,7 +846,7 @@ const closeLimitPosition = async (params) => {
 		symbol: 'EOSUSDT',
 		side: 'BUY',
 		positionSide: 'SHORT',
-		quantity: 100.969,
+		quantity: 399.969,
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
