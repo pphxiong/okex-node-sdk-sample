@@ -848,7 +848,7 @@ const closeLimitPosition = async (params) => {
 
 		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 		console.log(payload);
-		closeOrigClientOrderId = result.clientOrderId;
+		// closeOrigClientOrderId = result.clientOrderId;
 		console.log('closeOrigClientOrderId', closeOrigClientOrderId);
 		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 	} catch (e) {
