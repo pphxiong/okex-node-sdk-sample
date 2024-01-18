@@ -844,13 +844,13 @@ const closeLimitPosition = async (params) => {
 	// };
 	const payload = {
 		symbol: 'EOSUSDT',
-		side: 'BUY',
-		positionSide: 'SHORT',
+		side: 'SELL',
+		positionSide: 'LONG',
 		quantity: 399.969,
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
-		price: '0.751',
+		price: '0.791',
 	};
 	let result;
 	try {
