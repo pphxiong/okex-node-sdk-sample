@@ -849,7 +849,7 @@ const closeLimitPosition = async (params) => {
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
-		price: '0.751',
+		price: '0.753',
 	};
 	let result;
 	try {
