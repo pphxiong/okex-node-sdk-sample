@@ -435,7 +435,7 @@ async function checkByStep(data, ethData) {
 				(
 					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
-				).toFixed(1)
+				).toFixed(3)
 			);
 			if (PATCH_CONDITION) {
 				const currentAssets =
@@ -699,7 +699,7 @@ const latestOrderhandler = async () => {
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 
 		if (diffSeconds < 120 || true) {
-			const newPrice = Number(price) - 0.01;
+			const newPrice = price - 0.01;
 			const payload = {
 				price: newPrice,
 				symbol,
@@ -716,7 +716,7 @@ const latestOrderhandler = async () => {
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		if (diffSeconds < 120) {
-			const newPrice = Number(price) + 0.01;
+			const newPrice = price + 0.01;
 			const payload = {
 				price: newPrice,
 				symbol,
@@ -949,7 +949,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 		const newClientOrderId = getUUID();
 		closeOrigClientOrderId = newClientOrderId;
 
-		const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'BUY';
+		const type = positionSide.toUpperCase() == 'LONG' ? 'SELL' : 'SELL';
 
 		const payload = {
 			symbol,
