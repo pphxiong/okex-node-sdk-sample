@@ -708,7 +708,7 @@ const latestOrderhandler = async () => {
 				positionAmt: Number(cumQuote),
 			};
 			console.log(888, 'payload', payload);
-			await closeLimitPosition(payload);
+			// await closeLimitPosition(payload);
 		}
 	}
 	if (latesCLoseShortOrder || true) {
@@ -726,7 +726,7 @@ const latestOrderhandler = async () => {
 				positionAmt: Number(cumQuote),
 			};
 			console.log(888, 'payload', payload);
-			await closeLimitPosition(payload);
+			// await closeLimitPosition(payload);
 		}
 	}
 };
@@ -881,8 +881,9 @@ const genRelationPosition = async (params) => {
 		});
 		// pList.push(openLimitPosition(payload));
 		pList.push(closeLimitPosition(payload));
+		console.log(999, payload);
 	}
-	console.log(999, pList);
+
 	// await Promise.all(pList);
 };
 
