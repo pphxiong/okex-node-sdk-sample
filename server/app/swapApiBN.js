@@ -13,8 +13,8 @@ let MODE = 1;
 const WIN_MAX = 1 * 0.0618;
 const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
-const INIT_ASSETS = 10;
-const INIT_ASSETS_RATIO = 3 / 5;
+const INIT_ASSETS = 100;
+const INIT_ASSETS_RATIO = 5 / 5;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
 const generatePositionList = (init, num) => {
@@ -873,7 +873,8 @@ const genRelationPosition = async (params) => {
 	const everyPosition = Number(position / everyNum);
 	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
 	for (let i = 0; i < everyNum; i += 1) {
-		const price = mark_price + (mark_price * direction * 0.01) / 2;
+		const price =
+			mark_price + (mark_price * direction * (i + 1) * 0.01) / 2;
 		const payload = Object.assign(params, {
 			price,
 			position: everyPosition,
