@@ -816,7 +816,7 @@ const openLimitPosition = async (params = {}) => {
 
 const closeLimitPosition = async (params) => {
 	let { position = INIT_POSITION, positionSide, symbol, price } = params;
-	const type = positionSide.toUpperCase() === 'LONG' ? 'SELL' : 'SELL';
+	const type = positionSide.toUpperCase() === 'LONG' ? 'SELL' : 'BUY';
 	console.log(
 		'closeLimitOrderMoment',
 		positionSide,
@@ -832,15 +832,25 @@ const closeLimitPosition = async (params) => {
 	const newClientOrderId = getUUID();
 	closeOrigClientOrderId = newClientOrderId;
 
+	// const payload = {
+	// 	symbol,
+	// 	side: type,
+	// 	positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
+	// 	quantity: newSize,
+	// 	recvWindow: 5000,
+	// 	type: 'LIMIT',
+	// 	timeInForce: 'GTC',
+	// 	price: newPrice,
+	// };
 	const payload = {
-		symbol,
-		side: type,
-		positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
-		quantity: newSize,
+		symbol: 'EOSUSDT',
+		side: 'BUY',
+		positionSide: 'SHORT',
+		quantity: 100.969,
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
-		price: newPrice,
+		price: '0.751',
 	};
 	let result;
 	try {
