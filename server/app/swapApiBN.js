@@ -835,7 +835,7 @@ const closeLimitPosition = async (params) => {
 		symbol,
 		side: type,
 		positionSide: positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
-		quantity: '20.969',
+		quantity: 20.833,
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
