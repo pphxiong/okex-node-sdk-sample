@@ -891,7 +891,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 	const { openSide = 'long', position, mark_price } = params;
 
 	async function postOrder(size) {
-		const type = openSide.toUpperCase() === 'LONG' ? 'BUY' : 'SELL';
+		const type = openSide == 'long' ? 'BUY' : 'SELL';
 		console.log(
 			'openOtherOrderMoment',
 			openSide,
@@ -900,15 +900,15 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		console.log('position', position, 'type', type, 'side', openSide);
 
 		let price = mark_price;
-		if (openSide.toUpperCase() === 'LONG') {
+		if (openSide == 'long') {
 			price = mark_price * (1 - dealRatio / LEVERAGE);
 		} else {
 			price = mark_price * (1 + dealRatio / LEVERAGE);
 		}
 		let payload = {
-			symbol: openSide.toUpperCase() === 'LONG' ? BTC_SYMBOL : ETH_SYMBOL,
+			symbol: openSide == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
 			side: type,
-			positionSide: openSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
+			positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
 			quantity: Math.abs(size),
 			recvWindow: 5000,
 			// type: "MARKET",
@@ -918,11 +918,9 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		};
 		if (MODE == 2 || isMarketDeal) {
 			payload = {
-				symbol:
-					openSide.toUpperCase() === 'LONG' ? BTC_SYMBOL : ETH_SYMBOL,
+				symbol: openSide == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
 				side: type,
-				positionSide:
-					openSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
+				positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
 				quantity: Math.abs(size),
 				recvWindow: 5000,
 				type: 'MARKET',
