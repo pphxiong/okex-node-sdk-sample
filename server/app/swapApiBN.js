@@ -714,7 +714,7 @@ const latestOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		if (diffSeconds < 120 || true) {
+		if (diffSeconds < 120) {
 			const newPrice = Number(price) + 0.01;
 			const payload = {
 				price: newPrice,
@@ -835,7 +835,7 @@ const closeLimitPosition = async (params) => {
 		symbol,
 		side: type,
 		positionSide: positionSide.toUpperCase() == 'LONG' ? 'LONG' : 'SHORT',
-		quantity: newSize,
+		quantity: '20.969',
 		recvWindow: 5000,
 		type: 'LIMIT',
 		timeInForce: 'GTC',
@@ -843,7 +843,7 @@ const closeLimitPosition = async (params) => {
 	};
 	let result;
 	try {
-		// result = await cAuthClientBN.swap.postOrder(payload);
+		result = await cAuthClientBN.swap.postOrder(payload);
 		positionChange = true;
 
 		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
