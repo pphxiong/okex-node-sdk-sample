@@ -882,7 +882,7 @@ const genRelationPosition = async (params) => {
 		// pList.push(openLimitPosition(payload));
 		pList.push(closeLimitPosition(payload));
 	}
-	console.log(999, payload);
+	console.log(999, pList);
 	// await Promise.all(pList);
 };
 
