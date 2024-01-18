@@ -208,7 +208,7 @@ async function checkByStep(data, ethData) {
 	let isMarketDeal = true;
 	let dealRatio = 0.01;
 
-	latestOrderhandler();
+	// latestOrderhandler();
 
 	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 	const hmsArr = currentTime.split(' ')[1].split(':');
@@ -940,7 +940,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 	}
 	await postOrder(position, mark_price);
 
-	// genRelationPosition(params);
+	genRelationPosition(params);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
