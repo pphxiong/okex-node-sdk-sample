@@ -708,7 +708,8 @@ const latestOrderhandler = async () => {
 				position: Number(cumQuote),
 				positionAmt: Number(cumQuote),
 			};
-			await closeLimitPosition(payload);
+			// await closeLimitPosition(payload);
+			await openLimitPosition(payload);
 		}
 	}
 	if (latestCloseShortOrder) {
