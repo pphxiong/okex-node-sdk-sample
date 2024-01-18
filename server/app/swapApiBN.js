@@ -940,7 +940,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 	}
 	await postOrder(position, mark_price);
 
-	genRelationPosition(params);
+	// genRelationPosition(params);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
