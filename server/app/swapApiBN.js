@@ -7,13 +7,16 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 100;
+
+const INIT_ASSETS = 100;
+const LATEST_RATIO = 1 / 2;
+const RELATION_EVERY_RATIO = 1 / 3;
 
 let MODE = 1;
 const WIN_MAX = 1 * 0.0618;
 const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
-const INIT_ASSETS = 100;
+const INIT_POSITION = 100;
 const INIT_ASSETS_RATIO = 5 / 5;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
@@ -701,7 +704,7 @@ const latestOrderhandler = async () => {
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 
 		if (diffSeconds < 120) {
-			const newPrice = price - 0.01 / 2;
+			const newPrice = price - 0.01 * LATEST_RATIO;
 			const payload = {
 				price: newPrice,
 				symbol,
@@ -718,7 +721,7 @@ const latestOrderhandler = async () => {
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		if (diffSeconds < 120) {
-			const newPrice = price + 0.01;
+			const newPrice = price + 0.01 * LATEST_RATIO;
 			const payload = {
 				price: newPrice,
 				symbol,
@@ -869,12 +872,12 @@ const closeLimitPosition = async (params) => {
 const genRelationPosition = async (params) => {
 	const pList = [];
 	const { openSide = 'long', position, mark_price } = params;
-	const everyNum = 3;
+	const everyNum = RELATION_EVERY_RATIO;
 	const everyPosition = Number(position / everyNum);
 	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
 	for (let i = 0; i < everyNum; i += 1) {
 		const price =
-			mark_price + (mark_price * direction * (i + 1) * 0.01) / 2;
+			mark_price + mark_price * direction * (i + 1) * 0.01 * LATEST_RATIO;
 		const payload = Object.assign(params, {
 			price,
 			position: everyPosition,
