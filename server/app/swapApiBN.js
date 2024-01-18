@@ -730,7 +730,7 @@ const latestOrderhandler = async () => {
 };
 
 const queryLatestOpenOrders = async () => {
-	const params = { symbol: BTC_SYMBOL, limit: 10 };
+	const params = { symbol: BTC_SYMBOL, limit: 30 };
 	const orders = await cAuthClientBN.swap.allOrders(params);
 	orders.reverse();
 	orders.forEach((item) => {
