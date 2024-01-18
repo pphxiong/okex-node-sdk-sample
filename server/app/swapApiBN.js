@@ -270,6 +270,7 @@ async function checkByStep(data, ethData) {
 			position: positionAmt,
 			openSide: direction,
 			mark_price,
+			price: mark_price,
 			time: macdList[macdList.length - 1].time,
 		});
 	};
@@ -411,6 +412,7 @@ async function checkByStep(data, ethData) {
 						position: openPositionAmt,
 						openSide: 'long',
 						mark_price,
+						price: mark_price,
 						time: macdList[macdList.length - 1].time,
 						symbol: BTC_SYMBOL,
 					},
