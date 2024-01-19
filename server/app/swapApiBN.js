@@ -20,6 +20,124 @@ const INIT_POSITION = 100;
 const INIT_ASSETS_RATIO = 5 / 5;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
+const genRelationPosition = async (params) => {
+	const pList = [];
+	const { openSide = 'long', position, mark_price } = params;
+	const everyNum = RELATION_EVERY_RATIO;
+	const everyPosition = Number(position / everyNum);
+	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
+	for (let i = 0; i < everyNum; i += 1) {
+		const price =
+			mark_price + mark_price * direction * (i + 1) * 0.01 * LATEST_RATIO;
+		const payload = Object.assign(params, {
+			price,
+			position: everyPosition,
+			positionAmt: everyPosition,
+			positionSide: openSide.toUpperCase(),
+		});
+		pList.push(closeLimitPosition(payload));
+	}
+
+	await Promise.all(pList);
+};
+
+const latestOrderhandler = async () => {
+	const { latestCloseLongOrder, latestCloseShortOrder } =
+		await queryLatestOpenOrders();
+	// console.log(
+	// 	'latestCloseLongOrder',
+	// 	latestCloseLongOrder,
+	// 	'latestCloseShortOrder',
+	// 	latestCloseShortOrder
+	// );
+	// await waitTime(1500);
+	if (latestCloseLongOrder) {
+		const { updateTime, price, symbol, side, positionSide, cumQuote } =
+			latestCloseLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = Number(price) - 0.01 * LATEST_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(cumQuote),
+			positionAmt: Number(cumQuote),
+		};
+		console.log('latestCloseLongOrderDIffSeconds', diffSeconds, payload);
+		if (diffSeconds < 120) {
+			await closeLimitPosition(payload);
+		}
+	}
+	if (latestCloseShortOrder) {
+		const { updateTime, price, symbol, side, positionSide, cumQuote } =
+			latestCloseLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = Number(price) + 0.01 * LATEST_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(cumQuote),
+			positionAmt: Number(cumQuote),
+		};
+		console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
+		if (diffSeconds < 120) {
+			await closeLimitPosition(payload);
+		}
+	}
+};
+
+const queryLatestOpenOrders = async () => {
+	const params = { symbol: BTC_SYMBOL, limit: 30 };
+	const orders = await cAuthClientBN.swap.allOrders(params);
+	orders.reverse();
+	orders.forEach((item) => {
+		item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss');
+		item.updateTime = moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss');
+	});
+	// console.log(orders, orders.length);
+
+	const latestLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			!item.reduceOnly &&
+			Number(item.executedQty)
+	);
+	const latestShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			!item.reduceOnly &&
+			Number(item.executedQty)
+	);
+	const latestCloseLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			item.reduceOnly &&
+			item.origType !== 'MARKET' &&
+			Number(item.executedQty)
+	);
+	const latestCloseShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			item.reduceOnly &&
+			item.origType !== 'MARKET' &&
+			Number(item.executedQty)
+	);
+
+	return {
+		latestLongOrder,
+		latestShortOrder,
+		latestCloseLongOrder,
+		latestCloseShortOrder,
+	};
+
+	// const latestOpenOrder = orders.find(
+	//   (item) => !item.reduceOnly && Number(item.executedQty)
+	// );
+};
+
 const generatePositionList = (init, num) => {
 	const arr = [init];
 	const holding = [init];
@@ -688,103 +806,6 @@ function getUUID() {
 	return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
 }
 
-const latestOrderhandler = async () => {
-	const { latestCloseLongOrder, latestCloseShortOrder } =
-		await queryLatestOpenOrders();
-	// console.log(
-	// 	'latestCloseLongOrder',
-	// 	latestCloseLongOrder,
-	// 	'latestCloseShortOrder',
-	// 	latestCloseShortOrder
-	// );
-	// await waitTime(1500);
-	if (latestCloseLongOrder) {
-		const { updateTime, price, symbol, side, positionSide, cumQuote } =
-			latestCloseLongOrder;
-		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) - 0.01 * LATEST_RATIO;
-		const payload = {
-			price: newPrice,
-			symbol,
-			side,
-			positionSide: 'SHORT',
-			position: Number(cumQuote),
-			positionAmt: Number(cumQuote),
-		};
-		console.log('latestCloseLongOrderDIffSeconds', diffSeconds, payload);
-		if (diffSeconds < 120) {
-			await closeLimitPosition(payload);
-		}
-	}
-	if (latestCloseShortOrder) {
-		const { updateTime, price, symbol, side, positionSide, cumQuote } =
-			latestCloseLongOrder;
-		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) + 0.01 * LATEST_RATIO;
-		const payload = {
-			price: newPrice,
-			symbol,
-			side,
-			positionSide: 'LONG',
-			position: Number(cumQuote),
-			positionAmt: Number(cumQuote),
-		};
-		console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
-		if (diffSeconds < 120) {
-			await closeLimitPosition(payload);
-		}
-	}
-};
-
-const queryLatestOpenOrders = async () => {
-	const params = { symbol: BTC_SYMBOL, limit: 30 };
-	const orders = await cAuthClientBN.swap.allOrders(params);
-	orders.reverse();
-	orders.forEach((item) => {
-		item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss');
-		item.updateTime = moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss');
-	});
-	// console.log(orders, orders.length);
-
-	const latestLongOrder = orders.find(
-		(item) =>
-			item.positionSide == 'LONG' &&
-			!item.reduceOnly &&
-			Number(item.executedQty)
-	);
-	const latestShortOrder = orders.find(
-		(item) =>
-			item.positionSide == 'SHORT' &&
-			!item.reduceOnly &&
-			Number(item.executedQty)
-	);
-	const latestCloseLongOrder = orders.find(
-		(item) =>
-			item.positionSide == 'LONG' &&
-			item.reduceOnly &&
-			item.origType !== 'MARKET' &&
-			Number(item.executedQty)
-	);
-	const latestCloseShortOrder = orders.find(
-		(item) =>
-			item.positionSide == 'SHORT' &&
-			item.reduceOnly &&
-			item.origType !== 'MARKET' &&
-			Number(item.executedQty)
-	);
-
-	return {
-		latestLongOrder,
-		latestShortOrder,
-		latestCloseLongOrder,
-		latestCloseShortOrder,
-	};
-
-	// const latestOpenOrder = orders.find(
-	//   (item) => !item.reduceOnly && Number(item.executedQty)
-	// );
-};
-
 let openOrigClientOrderId = '';
 let closeOrigClientOrderId = '';
 const openLimitPosition = async (params = {}) => {
@@ -868,27 +889,6 @@ const closeLimitPosition = async (params) => {
 	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
 	console.log('###################################');
 	return result;
-};
-
-const genRelationPosition = async (params) => {
-	const pList = [];
-	const { openSide = 'long', position, mark_price } = params;
-	const everyNum = RELATION_EVERY_RATIO;
-	const everyPosition = Number(position / everyNum);
-	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
-	for (let i = 0; i < everyNum; i += 1) {
-		const price =
-			mark_price + mark_price * direction * (i + 1) * 0.01 * LATEST_RATIO;
-		const payload = Object.assign(params, {
-			price,
-			position: everyPosition,
-			positionAmt: everyPosition,
-			positionSide: openSide.toUpperCase(),
-		});
-		pList.push(closeLimitPosition(payload));
-	}
-
-	await Promise.all(pList);
 };
 
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
