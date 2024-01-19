@@ -12,13 +12,13 @@ const LEVERAGE = 20;
 const INIT_POSITION = 100;
 const INIT_ASSETS = 100;
 const LATEST_EVERY_PRICE_RATIO = 1 / 2;
-const RELATION_EVERY_POSITION_RATIO = 1 / 4;
+const RELATION_EVERY_POSITION_RATIO = 4;
 
 const genRelationPosition = async (params) => {
 	const pList = [];
 	const { openSide = 'long', position, mark_price } = params;
 	const everyNum = RELATION_EVERY_POSITION_RATIO;
-	const everyPosition = Number(position * everyNum);
+	const everyPosition = Number(position / everyNum);
 	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
 	for (let i = 0; i < everyNum; i += 1) {
 		const price =
