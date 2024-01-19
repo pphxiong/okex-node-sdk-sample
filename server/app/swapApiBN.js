@@ -691,46 +691,47 @@ function getUUID() {
 const latestOrderhandler = async () => {
 	const { latestCloseLongOrder, latestCloseShortOrder } =
 		await queryLatestOpenOrders();
-	console.log(
-		'latestCloseLongOrder',
-		latestCloseLongOrder,
-		'latestCloseShortOrder',
-		latestCloseShortOrder
-	);
-	await waitTime(1500);
+	// console.log(
+	// 	'latestCloseLongOrder',
+	// 	latestCloseLongOrder,
+	// 	'latestCloseShortOrder',
+	// 	latestCloseShortOrder
+	// );
+	// await waitTime(1500);
 	if (latestCloseLongOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-
+		const newPrice = price - 0.01 * LATEST_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(cumQuote),
+			positionAmt: Number(cumQuote),
+		};
+		console.log('latestCloseLongOrderDIffSeconds', diffSeconds, payload);
 		if (diffSeconds < 120) {
-			const newPrice = price - 0.01 * LATEST_RATIO;
-			const payload = {
-				price: newPrice,
-				symbol,
-				side,
-				positionSide: 'SHORT',
-				position: Number(cumQuote),
-				positionAmt: Number(cumQuote),
-			};
-			await closeLimitPosition(payload);
+			// await closeLimitPosition(payload);
 		}
 	}
 	if (latestCloseShortOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = price + 0.01 * LATEST_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(cumQuote),
+			positionAmt: Number(cumQuote),
+		};
+		console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
 		if (diffSeconds < 120) {
-			const newPrice = price + 0.01 * LATEST_RATIO;
-			const payload = {
-				price: newPrice,
-				symbol,
-				side,
-				positionSide: 'LONG',
-				position: Number(cumQuote),
-				positionAmt: Number(cumQuote),
-			};
-			await closeLimitPosition(payload);
+			// await closeLimitPosition(payload);
 		}
 	}
 };
