@@ -38,15 +38,15 @@ const genRelationPosition = async (params) => {
 const latestOrderhandler = async () => {
 	const { latestCloseLongOrder, latestCloseShortOrder } =
 		await queryLatestOpenOrders();
-	console.log(
-		'latestCloseLongOrder',
-		latestCloseLongOrder,
-		'latestCloseShortOrder',
-		latestCloseShortOrder
-	);
+	// console.log(
+	// 	'latestCloseLongOrder',
+	// 	latestCloseLongOrder,
+	// 	'latestCloseShortOrder',
+	// 	latestCloseShortOrder
+	// );
 	// await waitTime(1500);
 	if (latestCloseLongOrder) {
-		const { updateTime, price, symbol, side, positionSide, cumQuote } =
+		const { updateTime, price, symbol, side, positionSide, origQty } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		const newPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
@@ -55,8 +55,8 @@ const latestOrderhandler = async () => {
 			symbol,
 			side,
 			positionSide: 'SHORT',
-			position: Number(cumQuote),
-			positionAmt: Number(cumQuote),
+			position: Number(origQty),
+			positionAmt: Number(origQty),
 		};
 		console.log(
 			'latestCloseLongOrderDIffSeconds',
@@ -64,12 +64,12 @@ const latestOrderhandler = async () => {
 			payload,
 			latestCloseLongOrder
 		);
-		if (diffSeconds < 120) {
+		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
 		}
 	}
 	if (latestCloseShortOrder) {
-		const { updateTime, price, symbol, side, positionSide, cumQuote } =
+		const { updateTime, price, symbol, side, positionSide, origQty } =
 			latestCloseShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
@@ -78,8 +78,8 @@ const latestOrderhandler = async () => {
 			symbol,
 			side,
 			positionSide: 'LONG',
-			position: Number(cumQuote),
-			positionAmt: Number(cumQuote),
+			position: Number(origQty),
+			positionAmt: Number(origQty),
 		};
 		console.log(
 			'latestCloseShortOrderDIffSeconds',
@@ -87,7 +87,7 @@ const latestOrderhandler = async () => {
 			payload,
 			latestCloseShortOrder
 		);
-		if (diffSeconds < 120) {
+		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
 		}
 	}
