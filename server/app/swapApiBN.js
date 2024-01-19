@@ -65,7 +65,7 @@ const latestOrderhandler = async () => {
 	}
 	if (latestCloseShortOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
-			latestCloseLongOrder;
+			latestCloseShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
