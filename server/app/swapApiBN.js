@@ -8,27 +8,22 @@ const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
 
-const INIT_ASSETS = 100;
-const LATEST_RATIO = 1 / 2;
-const RELATION_EVERY_RATIO = 1 / 3;
-
-let MODE = 1;
-const WIN_MAX = 1 * 0.0618;
-const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
 const INIT_POSITION = 100;
-const INIT_ASSETS_RATIO = 5 / 5;
-const MAX_SHORT_ASSETS_RATIO = 1 / 2;
+const INIT_ASSETS = 100;
+const LATEST_EVERY_PRICE_RATIO = 1 / 2;
+const RELATION_EVERY_POSITION_RATIO = 1 / 4;
 
 const genRelationPosition = async (params) => {
 	const pList = [];
 	const { openSide = 'long', position, mark_price } = params;
-	const everyNum = RELATION_EVERY_RATIO;
+	const everyNum = RELATION_EVERY_POSITION_RATIO;
 	const everyPosition = Number(position / everyNum);
 	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
 	for (let i = 0; i < everyNum; i += 1) {
 		const price =
-			mark_price + mark_price * direction * (i + 1) * 0.01 * LATEST_RATIO;
+			mark_price +
+			mark_price * direction * (i + 1) * 0.01 * LATEST_EVERY_PRICE_RATIO;
 		const payload = Object.assign(params, {
 			price,
 			position: everyPosition,
@@ -37,7 +32,6 @@ const genRelationPosition = async (params) => {
 		});
 		pList.push(closeLimitPosition(payload));
 	}
-
 	await Promise.all(pList);
 };
 
@@ -55,7 +49,7 @@ const latestOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) - 0.01 * LATEST_RATIO;
+		const newPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -73,7 +67,7 @@ const latestOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) + 0.01 * LATEST_RATIO;
+		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -137,6 +131,12 @@ const queryLatestOpenOrders = async () => {
 	//   (item) => !item.reduceOnly && Number(item.executedQty)
 	// );
 };
+
+let MODE = 1;
+const WIN_MAX = 1 * 0.0618;
+const LOSS_MAX = -1 * 0.182;
+const INIT_ASSETS_RATIO = 5 / 5;
+const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
 const generatePositionList = (init, num) => {
 	const arr = [init];
@@ -504,10 +504,10 @@ async function checkByStep(data, ethData) {
 			//   ? Math.abs(shortHolding.positionAmt) +
 			//     INIT_POSITION * NEW_POSITION_RATIO
 			//   : INIT_POSITION;
-			// let openPositionAmt = INIT_POSITION;
-			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
-			);
+			let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
+			// );
 			// if (BATCH_LONG_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 			// if (shortHolding && !closeShortCondition) {
@@ -553,13 +553,13 @@ async function checkByStep(data, ethData) {
 			//   ? Math.abs(shortHolding.positionAmt) +
 			//     INIT_POSITION * NEW_POSITION_RATIO
 			//   : INIT_POSITION;
-			// let openPositionAmt = INIT_POSITION;
-			let openPositionAmt = Number(
-				(
-					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
-					eth_mark_price
-				).toFixed(1)
-			);
+			let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	(
+			// 		(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
+			// 		eth_mark_price
+			// 	).toFixed(1)
+			// );
 			if (PATCH_CONDITION) {
 				const currentAssets =
 					(Math.abs(Number(shortHolding.positionAmt)) *
