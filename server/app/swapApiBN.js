@@ -18,7 +18,7 @@ const genRelationPosition = async (params) => {
 	const pList = [];
 	const { openSide = 'long', position, mark_price } = params;
 	const everyNum = RELATION_EVERY_POSITION_RATIO;
-	const everyPosition = Number(position / everyNum);
+	const everyPosition = Number(position * everyNum);
 	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
 	for (let i = 0; i < everyNum; i += 1) {
 		const price =
@@ -1189,7 +1189,7 @@ const startInterval = async () => {
 
 		await checkDeal(btc_result, eth_result);
 
-		await waitTime(1000 * 56);
+		await waitTime(1000 * 45);
 		await startInterval();
 	} catch (e) {
 		restart();
