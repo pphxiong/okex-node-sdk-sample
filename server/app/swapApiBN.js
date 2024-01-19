@@ -38,12 +38,12 @@ const genRelationPosition = async (params) => {
 const latestOrderhandler = async () => {
 	const { latestCloseLongOrder, latestCloseShortOrder } =
 		await queryLatestOpenOrders();
-	// console.log(
-	// 	'latestCloseLongOrder',
-	// 	latestCloseLongOrder,
-	// 	'latestCloseShortOrder',
-	// 	latestCloseShortOrder
-	// );
+	console.log(
+		'latestCloseLongOrder',
+		latestCloseLongOrder,
+		'latestCloseShortOrder',
+		latestCloseShortOrder
+	);
 	// await waitTime(1500);
 	if (latestCloseLongOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
@@ -58,7 +58,12 @@ const latestOrderhandler = async () => {
 			position: Number(cumQuote),
 			positionAmt: Number(cumQuote),
 		};
-		console.log('latestCloseLongOrderDIffSeconds', diffSeconds, payload);
+		console.log(
+			'latestCloseLongOrderDIffSeconds',
+			diffSeconds,
+			payload,
+			latestCloseLongOrder
+		);
 		if (diffSeconds < 120) {
 			await closeLimitPosition(payload);
 		}
@@ -76,7 +81,12 @@ const latestOrderhandler = async () => {
 			position: Number(cumQuote),
 			positionAmt: Number(cumQuote),
 		};
-		console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
+		console.log(
+			'latestCloseShortOrderDIffSeconds',
+			diffSeconds,
+			payload,
+			latestCloseShortOrder
+		);
 		if (diffSeconds < 120) {
 			await closeLimitPosition(payload);
 		}
@@ -328,8 +338,6 @@ async function checkByStep(data, ethData) {
 
 	let isMarketDeal = true;
 	let dealRatio = 0.01;
-
-	latestOrderhandler();
 
 	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 	const hmsArr = currentTime.split(' ')[1].split(':');
@@ -613,6 +621,7 @@ async function checkByStep(data, ethData) {
 	// ) {
 	//   stop();
 	// }
+	return;
 }
 
 const checkDeal = async (data, ethData) => {
@@ -628,6 +637,7 @@ const checkDeal = async (data, ethData) => {
 			bollList: ethData.bollList.slice(-80),
 		}
 	);
+	latestOrderhandler();
 };
 
 const cancelReduceOnly = async (direction) => {
