@@ -105,7 +105,7 @@ const queryLatestOpenOrders = async () => {
 	});
 	orders.sort(
 		(a, b) =>
-			moment(a.updateTime).diff(moment(b.updateTime), 'secondes') >= 0
+			moment(a.updateTime).diff(moment(b.updateTime), 'seconds') >= 0
 	);
 	console.log(11, orders, orders.length);
 
