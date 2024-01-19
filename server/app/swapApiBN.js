@@ -99,14 +99,14 @@ const queryLatestOpenOrders = async () => {
 	const params = { symbol: BTC_SYMBOL, limit: 30 };
 	const orders = await cAuthClientBN.swap.allOrders(params);
 	// orders.reverse();
-	orders.sort(
-		(a, b) =>
-			moment(a.updateTime).diff(moment(b.updateTime), 'secondes') >= 0
-	);
 	orders.forEach((item) => {
 		item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss');
 		item.updateTime = moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss');
 	});
+	orders.sort(
+		(a, b) =>
+			moment(a.updateTime).diff(moment(b.updateTime), 'secondes') >= 0
+	);
 	console.log(11, orders, orders.length);
 
 	const latestLongOrder = orders.find(
