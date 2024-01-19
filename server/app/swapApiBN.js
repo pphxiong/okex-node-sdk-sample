@@ -702,9 +702,9 @@ const latestOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = price - 0.01 * LATEST_RATIO;
+		const newPrice = Number(price) - 0.01 * LATEST_RATIO;
 		const payload = {
-			price: newPrice,
+			price: 0.6,
 			symbol,
 			side,
 			positionSide: 'SHORT',
@@ -712,17 +712,17 @@ const latestOrderhandler = async () => {
 			positionAmt: Number(cumQuote),
 		};
 		console.log('latestCloseLongOrderDIffSeconds', diffSeconds, payload);
-		if (diffSeconds < 120) {
-			// await closeLimitPosition(payload);
+		if (diffSeconds < 120 || true) {
+			await closeLimitPosition(payload);
 		}
 	}
 	if (latestCloseShortOrder) {
 		const { updateTime, price, symbol, side, positionSide, cumQuote } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = price + 0.01 * LATEST_RATIO;
+		const newPrice = Number(price) + 0.01 * LATEST_RATIO;
 		const payload = {
-			price: newPrice,
+			price: 0.8,
 			symbol,
 			side,
 			positionSide: 'LONG',
@@ -730,8 +730,8 @@ const latestOrderhandler = async () => {
 			positionAmt: Number(cumQuote),
 		};
 		console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
-		if (diffSeconds < 120) {
-			// await closeLimitPosition(payload);
+		if (diffSeconds < 120 || true) {
+			await closeLimitPosition(payload);
 		}
 	}
 };
