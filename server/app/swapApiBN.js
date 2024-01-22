@@ -62,6 +62,7 @@ const fnDealLossHolding = async (longHolding, shortHolding, mark_price) => {
 		shortHolding,
 		mark_price
 	);
+	console.log(33, isLongLoss, isShortLoss);
 	if (isLongLoss) {
 		const payload = {
 			position: longHolding.positionAmt,
