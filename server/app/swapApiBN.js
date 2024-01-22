@@ -123,12 +123,7 @@ const latestOrderhandler = async () => {
 			openSide: 'SHORT',
 			mark_price: Number(price),
 		};
-		console.log(
-			'latestCloseLongOrderDIffSeconds',
-			diffSeconds,
-			payload,
-			latestCloseLongMarketOrder
-		);
+		// console.log('latestCloseLongOrderDIffSeconds', diffSeconds, payload);
 		if (diffSeconds <= 48) {
 			genRelationPosition(payload);
 		}
@@ -148,12 +143,7 @@ const latestOrderhandler = async () => {
 			openSide: 'LONG',
 			mark_price: Number(price),
 		};
-		console.log(
-			'latestCloseShortOrderDIffSeconds',
-			diffSeconds,
-			payload,
-			latestCloseShortMarketOrder
-		);
+		// console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
 		if (diffSeconds <= 48) {
 			genRelationPosition(payload);
 		}
