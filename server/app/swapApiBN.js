@@ -44,21 +44,15 @@ const fnIsLoss = (longHolding, shortHolding, mark_price) => {
 	let isLongLoss = false;
 	let isShortLoss = false;
 	if (longHolding) {
-		const { price } = longHolding;
-		const lowPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const { avg_cost: price } = longHolding;
+		const lowPrice =
+			Math.abs(Number(price)) - 0.01 * LATEST_EVERY_PRICE_RATIO;
 		isLongLoss = Number(mark_price) <= lowPrice;
-		console.log(
-			33,
-			lowPrice,
-			price,
-			LATEST_EVERY_PRICE_RATIO,
-			mark_price,
-			isLongLoss
-		);
 	}
 	if (shortHolding) {
-		const { price } = shortHolding;
-		const highPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const { avg_cost: price } = shortHolding;
+		const highPrice =
+			Math.abs(Number(price)) + 0.01 * LATEST_EVERY_PRICE_RATIO;
 		isShortLoss = Number(mark_price) >= highPrice;
 	}
 	return { isLongLoss, isShortLoss };
