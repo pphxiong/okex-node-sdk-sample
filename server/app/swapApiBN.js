@@ -47,7 +47,14 @@ const fnIsLoss = (longHolding, shortHolding, mark_price) => {
 		const { price } = longHolding;
 		const lowPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
 		isLongLoss = Number(mark_price) <= lowPrice;
-		console.log(33, lowPrice, mark_price, isLongLoss);
+		console.log(
+			33,
+			lowPrice,
+			price,
+			LATEST_EVERY_PRICE_RATIO,
+			mark_price,
+			isLongLoss
+		);
 	}
 	if (shortHolding) {
 		const { price } = shortHolding;
