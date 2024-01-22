@@ -43,7 +43,6 @@ const genRelationPosition = async (params) => {
 const fnIsLoss = (longHolding, shortHolding, mark_price) => {
 	let isLongLoss = false;
 	let isShortLoss = false;
-	console.log(66, longHolding, shortHolding, mark_price);
 	if (longHolding) {
 		const { price } = longHolding;
 		const lowPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
@@ -66,14 +65,18 @@ const fnDealLossHolding = async (longHolding, shortHolding, mark_price) => {
 	if (isLongLoss) {
 		const payload = {
 			position: longHolding.positionAmt,
+			positionAmt: longHolding.positionAmt,
 			positionSide: 'LONG',
+			symbol: BTC_SYMBOL,
 		};
 		await closePosition(payload);
 	}
 	if (isShortLoss) {
 		const payload = {
 			position: shortHolding.positionAmt,
+			positionAmt: shortHolding.positionAmt,
 			positionSide: 'SHORT',
+			symbol: ETH_SYMBOL,
 		};
 		await closePosition(payload);
 	}
