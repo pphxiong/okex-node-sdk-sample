@@ -111,8 +111,14 @@ const latestOrderhandler = async () => {
 	} = await queryLatestOpenOrders();
 
 	if (latestCloseLongMarketOrder) {
-		const { updateTime, price, symbol, side, positionSide, origQty } =
-			latestCloseLongMarketOrder;
+		const {
+			updateTime,
+			avgPrice: price,
+			symbol,
+			side,
+			positionSide,
+			origQty,
+		} = latestCloseLongMarketOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		// const newPrice = Number(price) + 0.01 * 4 * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
@@ -125,18 +131,24 @@ const latestOrderhandler = async () => {
 			openSide: 'SHORT',
 			mark_price: Number(price),
 		};
-		console.log(
-			'latestCloseLongOrderDIffSeconds',
-			diffSeconds,
-			latestCloseLongMarketOrder
-		);
+		// console.log(
+		// 	'latestCloseLongOrderDIffSeconds',
+		// 	diffSeconds,
+		// 	latestCloseLongMarketOrder
+		// );
 		if (diffSeconds <= 48) {
 			genRelationPosition(payload);
 		}
 	}
 	if (latestCloseShortMarketOrder) {
-		const { updateTime, price, symbol, side, positionSide, origQty } =
-			latestCloseShortMarketOrder;
+		const {
+			updateTime,
+			avgPrice: price,
+			symbol,
+			side,
+			positionSide,
+			origQty,
+		} = latestCloseShortMarketOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		// const newPrice = Number(price) + 0.01 * 4 * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
