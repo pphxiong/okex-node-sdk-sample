@@ -9,10 +9,10 @@ const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
 
 const LEVERAGE = 20;
-const INIT_POSITION = 8000;
+const INIT_POSITION = 4000;
 const INIT_ASSETS = INIT_POSITION;
 const LATEST_EVERY_PRICE_RATIO = 1 / 4;
-const EVERY_WIN_RATIO = 5;
+const EVERY_WIN_RATIO = 10;
 const RELATION_EVERY_POSITION_RATIO = 1;
 
 const genRelationPosition = async (params) => {
@@ -103,7 +103,7 @@ const fnOpenWhenLoss = async (holding, mark_price) => {
 	}
 };
 
-const latestOrderhandler = async () => {
+const latestOrderhandler = async (longHolding && shortHolding) => {
 	const {
 		latestCloseLongOrder,
 		latestCloseShortOrder,
@@ -138,7 +138,7 @@ const latestOrderhandler = async () => {
 		// 	latestCloseLongMarketOrder
 		// );
 		if (diffSeconds <= 48) {
-			genRelationPosition(payload);
+			if(shortHolding) genRelationPosition(payload);
 		}
 	}
 	if (latestCloseShortMarketOrder) {
@@ -164,7 +164,7 @@ const latestOrderhandler = async () => {
 		};
 		// console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
 		if (diffSeconds <= 48) {
-			genRelationPosition(payload);
+			if(longHolding) genRelationPosition(payload);
 		}
 	}
 	// if (latestCloseLongOrder) {
@@ -401,6 +401,7 @@ async function checkByStep(data, ethData) {
 		maxWinRatio = Math.max(maxWinRatio, shortRatio);
 	}
 
+	latestOrderhandler(longHolding && shortHolding);
 	if (longHolding && shortHolding) {
 		fnDealLossHolding(longHolding, shortHolding, mark_price);
 	} else {
@@ -463,8 +464,10 @@ async function checkByStep(data, ethData) {
 	const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
 	const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
+  const randomNum = Math.random()
+
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding && randomNum >= 0.5;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding && randomNum >= 0.5;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding && CLOSE_WIN_CONDITION && false;
@@ -787,7 +790,6 @@ const checkDeal = async (data, ethData) => {
 			bollList: ethData.bollList.slice(-80),
 		}
 	);
-	latestOrderhandler();
 };
 
 const cancelReduceOnly = async (direction) => {
