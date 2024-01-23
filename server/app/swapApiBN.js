@@ -11,7 +11,8 @@ const DEFAULT_INTERVAL = '1h';
 const LEVERAGE = 20;
 const INIT_POSITION = 8000;
 const INIT_ASSETS = INIT_POSITION;
-const LATEST_EVERY_PRICE_RATIO = 1 / 3;
+const LATEST_EVERY_PRICE_RATIO = 1 / 4;
+const EVERY_WIN_RATIO = 5;
 const RELATION_EVERY_POSITION_RATIO = 1;
 
 const genRelationPosition = async (params) => {
@@ -27,7 +28,7 @@ const genRelationPosition = async (params) => {
 				direction *
 				(i + 1) *
 				0.01 *
-				4 *
+				EVERY_WIN_RATIO *
 				LATEST_EVERY_PRICE_RATIO;
 		const payload = Object.assign(params, {
 			price,
