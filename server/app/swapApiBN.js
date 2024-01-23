@@ -48,7 +48,6 @@ const fnIsLoss = (longHolding, shortHolding, mark_price) => {
 		const lowPrice =
 			Math.abs(Number(price)) - 0.01 * LATEST_EVERY_PRICE_RATIO;
 		isLongLoss = Number(mark_price) <= lowPrice;
-console.log(price,11)
 	}
 	if (shortHolding) {
 		const { entryPrice: price } = shortHolding;
@@ -86,10 +85,10 @@ const fnDealLossHolding = async (longHolding, shortHolding, mark_price) => {
 };
 
 const fnOpenWhenLoss = async (holding, mark_price) => {
-	const { price, positionSide, positionAmt } = holding;
+	const { entryPrice: price, positionSide, positionAmt } = holding;
 	const direction = positionSide.toUpperCase() === 'LONG' ? -1 : 1;
 	const lossPrice =
-		Number(price) + 0.01 * direction * LATEST_EVERY_PRICE_RATIO;
+		Number(price) + (0.01 - 0.01) * direction * LATEST_EVERY_PRICE_RATIO;
 	const isLoss =
 		direction === -1
 			? Number(mark_price) <= lossPrice
