@@ -103,7 +103,7 @@ const fnOpenWhenLoss = async (holding, mark_price) => {
 	}
 };
 
-const latestOrderhandler = async (longHolding && shortHolding) => {
+const latestOrderhandler = async (longHolding, shortHolding) => {
 	const {
 		latestCloseLongOrder,
 		latestCloseShortOrder,
@@ -138,7 +138,7 @@ const latestOrderhandler = async (longHolding && shortHolding) => {
 		// 	latestCloseLongMarketOrder
 		// );
 		if (diffSeconds <= 48) {
-			if(shortHolding) genRelationPosition(payload);
+			if (shortHolding) genRelationPosition(payload);
 		}
 	}
 	if (latestCloseShortMarketOrder) {
@@ -164,7 +164,7 @@ const latestOrderhandler = async (longHolding && shortHolding) => {
 		};
 		// console.log('latestCloseShortOrderDIffSeconds', diffSeconds, payload);
 		if (diffSeconds <= 48) {
-			if(longHolding) genRelationPosition(payload);
+			if (longHolding) genRelationPosition(payload);
 		}
 	}
 	// if (latestCloseLongOrder) {
@@ -464,10 +464,12 @@ async function checkByStep(data, ethData) {
 	const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
 	const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 
-  const randomNum = Math.random()
+	const randomNum = Math.random();
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding && randomNum >= 0.5;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding && randomNum >= 0.5;
+	const MAIN_OPEN_LONG_CONDITION1 =
+		!longHolding && !shortHolding && randomNum >= 0.5;
+	const MAIN_OPEN_SHORT_CONDITION1 =
+		!shortHolding && !longHolding && randomNum >= 0.5;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding && CLOSE_WIN_CONDITION && false;
