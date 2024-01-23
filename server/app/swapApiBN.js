@@ -469,7 +469,7 @@ async function checkByStep(data, ethData) {
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding && !shortHolding && randomNum >= 0.5;
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && !longHolding && randomNum >= 0.5;
+		!shortHolding && !longHolding && randomNum < 0.5;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding && CLOSE_WIN_CONDITION && false;
