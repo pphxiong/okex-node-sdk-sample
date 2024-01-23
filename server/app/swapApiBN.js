@@ -44,13 +44,14 @@ const fnIsLoss = (longHolding, shortHolding, mark_price) => {
 	let isLongLoss = false;
 	let isShortLoss = false;
 	if (longHolding) {
-		const { avg_cost: price } = longHolding;
+		const { entryPrice: price } = longHolding;
 		const lowPrice =
 			Math.abs(Number(price)) - 0.01 * LATEST_EVERY_PRICE_RATIO;
 		isLongLoss = Number(mark_price) <= lowPrice;
+console.log(price,11)
 	}
 	if (shortHolding) {
-		const { avg_cost: price } = shortHolding;
+		const { entryPrice: price } = shortHolding;
 		const highPrice =
 			Math.abs(Number(price)) + 0.01 * LATEST_EVERY_PRICE_RATIO;
 		isShortLoss = Number(mark_price) >= highPrice;
@@ -470,7 +471,7 @@ async function checkByStep(data, ethData) {
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding && CLOSE_WIN_CONDITION && false;
 
-	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION;
+	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION && false;
 
 	const PATCH_CONDITION =
 		false &&
