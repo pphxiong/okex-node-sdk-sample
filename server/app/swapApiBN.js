@@ -12,7 +12,7 @@ let MODE = 1;
 const WIN_MAX = 1 * 0.0618;
 const LOSS_MAX = -1 * 0.182;
 const LEVERAGE = 20;
-const INIT_ASSETS = 300;
+const INIT_ASSETS = 300 * 1.2;
 const INIT_ASSETS_RATIO = 1 / 2;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
@@ -181,8 +181,8 @@ async function checkByStep(data, ethData) {
 	const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
 	const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding;
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding && CLOSE_WIN_CONDITION && false;
