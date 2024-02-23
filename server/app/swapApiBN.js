@@ -3,17 +3,236 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const BTC_SYMBOL = 'BTCUSDT';
+// const BTC_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 100;
+
+const LEVERAGE = 20;
+const INIT_POSITION = 2000;
+const INIT_ASSETS = INIT_POSITION;
+const LATEST_EVERY_PRICE_RATIO = 1;
+const RELATION_EVERY_POSITION_RATIO = 1;
+
+const genRelationPosition = async (params) => {
+	const pList = [];
+	const { openSide = 'long', position, mark_price } = params;
+	const everyNum = RELATION_EVERY_POSITION_RATIO;
+	const everyPosition = Number(position / everyNum);
+	const direction = openSide.toUpperCase() === 'LONG' ? 1 : -1;
+	for (let i = 0; i < everyNum; i += 1) {
+		const price =
+			mark_price +
+			mark_price * direction * (i + 1) * 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const payload = Object.assign(params, {
+			price,
+			position: everyPosition,
+			positionAmt: everyPosition,
+			positionSide: openSide.toUpperCase(),
+		});
+		pList.push(closeLimitPosition(payload));
+		const price1 =
+			mark_price +
+			-1 *
+				mark_price *
+				direction *
+				(i + 1) *
+				0.01 *
+				2 *
+				LATEST_EVERY_PRICE_RATIO;
+		const payload1 = Object.assign(params, {
+			price: price1,
+			position: everyPosition,
+			positionAmt: everyPosition,
+			positionSide: openSide.toUpperCase(),
+		});
+		pList.push(openLimitPosition(payload1));
+	}
+	await Promise.all(pList);
+};
+
+const latestOpenOrderhandler = async () => {
+	const { latestOpenLongOrder, latestOpenShortOrder } =
+		await queryLatestOpenOrders();
+	if (latestOpenLongOrder) {
+		const { updateTime, price, symbol, side, positionSide, origQty } =
+			latestOpenLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		const newPrice1 = Number(price) - 0.01 * 2 * LATEST_EVERY_PRICE_RATIO;
+		const payload1 = {
+			price: newPrice1,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		console.log(
+			'latestOpenLongOrderDiffSeconds',
+			diffSeconds,
+			payload,
+			latestOpenLongOrder
+		);
+		if (diffSeconds <= 48) {
+			await closeLimitPosition(payload);
+			await openLimitPosition(payload1);
+		}
+	}
+	if (latestOpenShortOrder) {
+		const { updateTime, price, symbol, side, positionSide, origQty } =
+			latestOpenShortOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		const newPrice1 = Number(price) + 0.01 * 2 * LATEST_EVERY_PRICE_RATIO;
+		const payload1 = {
+			price: newPrice1,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		console.log(
+			'latestOpenShortOrderDiffSeconds',
+			diffSeconds,
+			payload,
+			latestOpenShortOrder
+		);
+		if (diffSeconds <= 48) {
+			await closeLimitPosition(payload);
+			await openLimitPosition(payload1);
+		}
+	}
+};
+
+const latestCloseOrderhandler = async () => {
+	const {
+		latestOpenLongOrder,
+		latestOpenShortOrder,
+		latestCloseLongOrder,
+		latestCloseShortOrder,
+	} = await queryLatestOpenOrders();
+	if (latestCloseLongOrder) {
+		const { updateTime, price, symbol, side, positionSide, origQty } =
+			latestCloseLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		console.log(
+			'latestCloseLongOrderDIffSeconds',
+			diffSeconds,
+			payload,
+			latestCloseLongOrder
+		);
+		if (diffSeconds <= 48) {
+			await closeLimitPosition(payload);
+		}
+	}
+	if (latestCloseShortOrder) {
+		const { updateTime, price, symbol, side, positionSide, origQty } =
+			latestCloseShortOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		console.log(
+			'latestCloseShortOrderDIffSeconds',
+			diffSeconds,
+			payload,
+			latestCloseShortOrder
+		);
+		if (diffSeconds <= 48) {
+			await closeLimitPosition(payload);
+		}
+	}
+};
+
+const queryLatestOpenOrders = async () => {
+	const params = { symbol: BTC_SYMBOL, limit: 30 };
+	const orders = await cAuthClientBN.swap.allOrders(params);
+	// orders.reverse();
+	orders.forEach((item) => {
+		item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss');
+		item.updateTime = moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss');
+	});
+	orders.sort((a, b) =>
+		moment(b.updateTime).diff(moment(a.updateTime), 'seconds')
+	);
+	// console.log(11, orders, orders.length);
+
+	const latestOpenLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			!item.reduceOnly &&
+			Number(item.executedQty)
+	);
+	const latestOpenShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			!item.reduceOnly &&
+			Number(item.executedQty)
+	);
+	const latestCloseLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			item.reduceOnly &&
+			item.origType !== 'MARKET' &&
+			Number(item.executedQty)
+	);
+	const latestCloseShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			item.reduceOnly &&
+			item.origType !== 'MARKET' &&
+			Number(item.executedQty)
+	);
+
+	return {
+		latestOpenLongOrder,
+		latestOpenShortOrder,
+		latestCloseLongOrder,
+		latestCloseShortOrder,
+	};
+
+	// const latestOpenOrder = orders.find(
+	//   (item) => !item.reduceOnly && Number(item.executedQty)
+	// );
+};
 
 let MODE = 1;
 const WIN_MAX = 1 * 0.0618;
 const LOSS_MAX = -1 * 0.182;
-const LEVERAGE = 20;
-const INIT_ASSETS = 300 * 1.2;
-const INIT_ASSETS_RATIO = 1 / 2;
+const INIT_ASSETS_RATIO = 5 / 5;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
 const generatePositionList = (init, num) => {
@@ -200,7 +419,7 @@ async function checkByStep(data, ethData) {
 			INIT_ASSETS * MAX_SHORT_ASSETS_RATIO;
 
 	let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
-	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 || PATCH_CONDITION;
+	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
@@ -267,6 +486,7 @@ async function checkByStep(data, ethData) {
 			position: positionAmt,
 			openSide: direction,
 			mark_price,
+			price: mark_price,
 			time: macdList[macdList.length - 1].time,
 		});
 	};
@@ -379,10 +599,10 @@ async function checkByStep(data, ethData) {
 			//   ? Math.abs(shortHolding.positionAmt) +
 			//     INIT_POSITION * NEW_POSITION_RATIO
 			//   : INIT_POSITION;
-			// let openPositionAmt = INIT_POSITION;
-			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
-			);
+			let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
+			// );
 			// if (BATCH_LONG_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
 			// if (shortHolding && !closeShortCondition) {
@@ -408,7 +628,9 @@ async function checkByStep(data, ethData) {
 						position: openPositionAmt,
 						openSide: 'long',
 						mark_price,
+						price: mark_price,
 						time: macdList[macdList.length - 1].time,
+						symbol: BTC_SYMBOL,
 					},
 					isMarketDeal,
 					dealRatio
@@ -426,13 +648,13 @@ async function checkByStep(data, ethData) {
 			//   ? Math.abs(shortHolding.positionAmt) +
 			//     INIT_POSITION * NEW_POSITION_RATIO
 			//   : INIT_POSITION;
-			// let openPositionAmt = INIT_POSITION;
-			let openPositionAmt = Number(
-				(
-					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
-					eth_mark_price
-				).toFixed(1)
-			);
+			let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	(
+			// 		(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
+			// 		eth_mark_price
+			// 	).toFixed(1)
+			// );
 			if (PATCH_CONDITION) {
 				const currentAssets =
 					(Math.abs(Number(shortHolding.positionAmt)) *
@@ -469,6 +691,7 @@ async function checkByStep(data, ethData) {
 						openSide: 'short',
 						mark_price,
 						time: macdList[macdList.length - 1].time,
+						symbol: BTC_SYMBOL,
 					},
 					isMarketDeal,
 					dealRatio
@@ -485,6 +708,7 @@ async function checkByStep(data, ethData) {
 	// ) {
 	//   stop();
 	// }
+	return;
 }
 
 const checkDeal = async (data, ethData) => {
@@ -500,6 +724,8 @@ const checkDeal = async (data, ethData) => {
 			bollList: ethData.bollList.slice(-80),
 		}
 	);
+	latestOpenOrderhandler();
+	// latestCloseOrderhandler();
 };
 
 const cancelReduceOnly = async (direction) => {
@@ -678,39 +904,109 @@ function getUUID() {
 	return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
 }
 
-const queryLatestOpenOrders = async () => {
-	const params = { symbol: BTC_SYMBOL, limit: 30 };
-	const orders = await cAuthClientBN.swap.allOrders(params);
-	orders.reverse();
-	console.log(orders, orders.length);
-	const latestLongOrder = orders.find(
-		(item) =>
-			item.positionSide == 'LONG' &&
-			!item.reduceOnly &&
-			Number(item.executedQty)
-	);
-	const latestShortOrder = orders.find(
-		(item) =>
-			item.positionSide == 'SHORT' &&
-			!item.reduceOnly &&
-			Number(item.executedQty)
-	);
-
-	return [latestLongOrder, latestShortOrder];
-
-	// const latestOpenOrder = orders.find(
-	//   (item) => !item.reduceOnly && Number(item.executedQty)
-	// );
-};
-
 let openOrigClientOrderId = '';
 let closeOrigClientOrderId = '';
+const openLimitPosition = async (params = {}) => {
+	let { position = INIT_POSITION, positionSide, symbol, price } = params;
+	const type = positionSide.toUpperCase() === 'LONG' ? 'BUY' : 'SELL';
+	console.log(
+		'openLimitOrderMoment',
+		positionSide,
+		moment().format('YYYY-MM-DD HH:mm:ss')
+	);
+	console.log('position', position, 'type', type, 'side', positionSide);
+
+	const newSize =
+		symbol === 'BTCUSDT'
+			? Math.abs(Number(position.toFixed(3)))
+			: Math.abs(Number(position.toFixed(1)));
+	const newPrice = symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(3);
+	const newClientOrderId = getUUID();
+	closeOrigClientOrderId = newClientOrderId;
+
+	const payload = {
+		symbol,
+		side: type,
+		positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
+		quantity: newSize,
+		recvWindow: 5000,
+		type: 'LIMIT',
+		timeInForce: 'GTC',
+		price: newPrice,
+	};
+	let result;
+	try {
+		result = await cAuthClientBN.swap.postOrder(payload);
+		positionChange = true;
+
+		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		console.log(payload);
+		console.log('openOrigClientOrderId', openOrigClientOrderId);
+		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+	} catch (e) {
+		// throw new Error('Error');
+		restart('close');
+	}
+	console.log('###################################');
+	console.log('openPositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
+	console.log('###################################');
+	return result;
+};
+
+const closeLimitPosition = async (params) => {
+	let { position = INIT_POSITION, positionSide, symbol, price } = params;
+	const type = positionSide.toUpperCase() === 'LONG' ? 'SELL' : 'BUY';
+	console.log(
+		'closeLimitOrderMoment',
+		positionSide,
+		moment().format('YYYY-MM-DD HH:mm:ss')
+	);
+	console.log('position', position, 'type', type, 'side', positionSide);
+
+	const newSize =
+		symbol === 'BTCUSDT'
+			? Math.abs(Number(position.toFixed(3)))
+			: Math.abs(Number(position.toFixed(1)));
+	const newPrice = symbol === 'BTCUSDT' ? price.toFixed(1) : price.toFixed(3);
+	const newClientOrderId = getUUID();
+	closeOrigClientOrderId = newClientOrderId;
+
+	const payload = {
+		symbol,
+		side: type,
+		positionSide: positionSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
+		quantity: newSize,
+		recvWindow: 5000,
+		type: 'LIMIT',
+		timeInForce: 'GTC',
+		price: newPrice,
+	};
+	let result;
+	try {
+		result = await cAuthClientBN.swap.postOrder(payload);
+		positionChange = true;
+
+		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+		console.log(payload);
+		// closeOrigClientOrderId = result.clientOrderId;
+		console.log('closeOrigClientOrderId', closeOrigClientOrderId);
+		console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+	} catch (e) {
+		// throw new Error('Error');
+		restart('close');
+	}
+	console.log('###################################');
+	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
+	console.log('###################################');
+	return result;
+};
+
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 	isMarketDeal = true;
 	const { openSide = 'long', position, mark_price } = params;
 
 	async function postOrder(size) {
-		const type = openSide == 'long' ? 'BUY' : 'SELL';
+		const type = openSide.toUpperCase() === 'LONG' ? 'BUY' : 'SELL';
 		console.log(
 			'openOtherOrderMoment',
 			openSide,
@@ -719,15 +1015,15 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		console.log('position', position, 'type', type, 'side', openSide);
 
 		let price = mark_price;
-		if (openSide == 'long') {
+		if (openSide.toUpperCase() === 'LONG') {
 			price = mark_price * (1 - dealRatio / LEVERAGE);
 		} else {
 			price = mark_price * (1 + dealRatio / LEVERAGE);
 		}
 		let payload = {
-			symbol: openSide == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
+			symbol: openSide.toUpperCase() === 'LONG' ? BTC_SYMBOL : ETH_SYMBOL,
 			side: type,
-			positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
+			positionSide: openSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
 			quantity: Math.abs(size),
 			recvWindow: 5000,
 			// type: "MARKET",
@@ -737,9 +1033,11 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		};
 		if (MODE == 2 || isMarketDeal) {
 			payload = {
-				symbol: openSide == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
+				symbol:
+					openSide.toUpperCase() === 'LONG' ? BTC_SYMBOL : ETH_SYMBOL,
 				side: type,
-				positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
+				positionSide:
+					openSide.toUpperCase() === 'LONG' ? 'LONG' : 'SHORT',
 				quantity: Math.abs(size),
 				recvWindow: 5000,
 				type: 'MARKET',
@@ -756,18 +1054,14 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		}
 	}
 	await postOrder(position, mark_price);
+
+	genRelationPosition(params);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
 	let { position = INIT_POSITION, positionSide, symbol } = holding;
 	// position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
 	position = Math.abs(Number(holding.positionAmt));
-	// position = INIT_POSITION;
-	// if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
-
-	// if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
-	// if (avail < INIT_POSITION * NEW_POSITION_RATIO)
-	//   position = INIT_POSITION * NEW_POSITION_RATIO;
 
 	async function postOrder(size) {
 		const newClientOrderId = getUUID();
@@ -1005,7 +1299,7 @@ const startInterval = async () => {
 
 		await checkDeal(btc_result, eth_result);
 
-		await waitTime(1000 * 56);
+		await waitTime(1000 * 45);
 		await startInterval();
 	} catch (e) {
 		restart();
