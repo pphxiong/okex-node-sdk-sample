@@ -13,6 +13,8 @@ const INIT_POSITION = 2000;
 const INIT_ASSETS = INIT_POSITION;
 const LATEST_EVERY_PRICE_RATIO = 1;
 const RELATION_EVERY_POSITION_RATIO = 1;
+const DEFAULT_PRICE_INTERVAL = 0.01 * 1;
+const DEFAULT_DEAL_RATIO = 2;
 
 const genRelationPosition = async (params) => {
 	const pList = [];
@@ -23,7 +25,11 @@ const genRelationPosition = async (params) => {
 	for (let i = 0; i < everyNum; i += 1) {
 		const price =
 			mark_price +
-			mark_price * direction * (i + 1) * 0.01 * LATEST_EVERY_PRICE_RATIO;
+			mark_price *
+				direction *
+				(i + 1) *
+				DEFAULT_PRICE_INTERVAL *
+				LATEST_EVERY_PRICE_RATIO;
 		const payload = Object.assign(params, {
 			price,
 			position: everyPosition,
@@ -37,8 +43,8 @@ const genRelationPosition = async (params) => {
 				mark_price *
 				direction *
 				(i + 1) *
-				0.01 *
-				2 *
+				DEFAULT_PRICE_INTERVAL *
+				DEFAULT_DEAL_RATIO *
 				LATEST_EVERY_PRICE_RATIO;
 		const payload1 = Object.assign(params, {
 			price: price1,
@@ -51,14 +57,25 @@ const genRelationPosition = async (params) => {
 	await Promise.all(pList);
 };
 
-const latestOpenOrderhandler = async () => {
-	const { latestOpenLongOrder, latestOpenShortOrder } =
-		await queryLatestOpenOrders();
+const latestOpenOrderhandler = async (longHolding, shortHolding) => {
+	let longPostionAmt;
+	let shortPositionAmt;
+	if (longHolding && longHolding.positionAmt)
+		longPostionAmt = Math.abs(Number(longHolding.positionAmt));
+	if (shortHolding && shortHolding.positionAmt)
+		shortPositionAmt = Math.abs(Number(shortHolding.positionAmt));
+	const {
+		latestOpenLongOrder,
+		latestOpenShortOrder,
+		latestOpenMarketLongOrder,
+		latestOpenMarketShortOrder,
+	} = await queryLatestOpenOrders();
 	if (latestOpenLongOrder) {
-		const { updateTime, price, symbol, side, positionSide, origQty } =
+		const { updateTime, price, symbol, side, origQty } =
 			latestOpenLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const newPrice =
+			Number(price) + DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -67,12 +84,24 @@ const latestOpenOrderhandler = async () => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		const newPrice1 = Number(price) - 0.01 * 2 * LATEST_EVERY_PRICE_RATIO;
+		const newPrice1 =
+			Number(price) -
+			DEFAULT_PRICE_INTERVAL *
+				DEFAULT_DEAL_RATIO *
+				LATEST_EVERY_PRICE_RATIO;
 		const payload1 = {
 			price: newPrice1,
 			symbol,
 			side,
 			positionSide: 'LONG',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		const payload2 = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
@@ -84,14 +113,24 @@ const latestOpenOrderhandler = async () => {
 		);
 		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
-			await openLimitPosition(payload1);
+			await openLimitPosition(payload2);
+			if (longPostionAmt <= INIT_POSITION * 2) {
+				await openLimitPosition(payload1);
+			} else {
+				const marketPayload = {
+					openSide: 'SHORT',
+					position: longPostionAmt,
+				};
+				await openPosition(marketPayload);
+			}
 		}
 	}
 	if (latestOpenShortOrder) {
-		const { updateTime, price, symbol, side, positionSide, origQty } =
+		const { updateTime, price, symbol, side, origQty } =
 			latestOpenShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const newPrice =
+			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -100,7 +139,104 @@ const latestOpenOrderhandler = async () => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		const newPrice1 = Number(price) + 0.01 * 2 * LATEST_EVERY_PRICE_RATIO;
+		const newPrice1 =
+			Number(price) +
+			DEFAULT_PRICE_INTERVAL *
+				DEFAULT_DEAL_RATIO *
+				LATEST_EVERY_PRICE_RATIO;
+		const payload1 = {
+			price: newPrice1,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		const payload2 = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		console.log(
+			'latestOpenShortOrderDiffSeconds',
+			diffSeconds,
+			payload,
+			latestOpenShortOrder
+		);
+		if (diffSeconds <= 48) {
+			await closeLimitPosition(payload);
+			await openLimitPosition(payload2);
+			if (shortPositionAmt <= INIT_POSITION * 2) {
+				await openLimitPosition(payload1);
+			} else {
+				const marketPayload = {
+					openSide: 'LONG',
+					position: shortPositionAmt,
+				};
+				await openPosition(marketPayload);
+			}
+		}
+	}
+	if (latestOpenMarketLongOrder) {
+		const { updateTime, price, symbol, side, origQty } =
+			latestOpenMarketLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice =
+			Number(price) + DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'LONG',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		const newPrice1 =
+			Number(price) +
+			DEFAULT_PRICE_INTERVAL *
+				DEFAULT_DEAL_RATIO *
+				LATEST_EVERY_PRICE_RATIO;
+		const payload1 = {
+			price: newPrice1,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		console.log(
+			'latestOpenLongOrderDiffSeconds',
+			diffSeconds,
+			payload,
+			latestOpenLongOrder
+		);
+		if (diffSeconds <= 48) {
+			await closeLimitPosition(payload);
+			// await openLimitPosition(payload1);
+		}
+	}
+	if (latestOpenMarketShortOrder) {
+		const { updateTime, price, symbol, side, origQty } =
+			latestOpenMarketShortOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice =
+			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty),
+			positionAmt: Number(origQty),
+		};
+		const newPrice1 =
+			Number(price) +
+			DEFAULT_PRICE_INTERVAL *
+				DEFAULT_DEAL_RATIO *
+				LATEST_EVERY_PRICE_RATIO;
 		const payload1 = {
 			price: newPrice1,
 			symbol,
@@ -117,7 +253,7 @@ const latestOpenOrderhandler = async () => {
 		);
 		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
-			await openLimitPosition(payload1);
+			// await openLimitPosition(payload1);
 		}
 	}
 };
@@ -133,7 +269,8 @@ const latestCloseOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, origQty } =
 			latestCloseLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) - 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const newPrice =
+			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -156,7 +293,8 @@ const latestCloseOrderhandler = async () => {
 		const { updateTime, price, symbol, side, positionSide, origQty } =
 			latestCloseShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const newPrice = Number(price) + 0.01 * LATEST_EVERY_PRICE_RATIO;
+		const newPrice =
+			Number(price) + DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -194,12 +332,14 @@ const queryLatestOpenOrders = async () => {
 		(item) =>
 			item.positionSide == 'LONG' &&
 			!item.reduceOnly &&
+			item.origType !== 'MARKET' &&
 			Number(item.executedQty)
 	);
 	const latestOpenShortOrder = orders.find(
 		(item) =>
 			item.positionSide == 'SHORT' &&
 			!item.reduceOnly &&
+			item.origType !== 'MARKET' &&
 			Number(item.executedQty)
 	);
 	const latestCloseLongOrder = orders.find(
@@ -217,11 +357,28 @@ const queryLatestOpenOrders = async () => {
 			Number(item.executedQty)
 	);
 
+	const latestOpenMarketLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			!item.reduceOnly &&
+			item.origType == 'MARKET' &&
+			Number(item.executedQty)
+	);
+	const latestOpenMarketShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			!item.reduceOnly &&
+			item.origType == 'MARKET' &&
+			Number(item.executedQty)
+	);
+
 	return {
 		latestOpenLongOrder,
 		latestOpenShortOrder,
 		latestCloseLongOrder,
 		latestCloseShortOrder,
+		latestOpenMarketLongOrder,
+		latestOpenMarketShortOrder,
 	};
 
 	// const latestOpenOrder = orders.find(
@@ -422,6 +579,9 @@ async function checkByStep(data, ethData) {
 	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
+
+	await latestOpenOrderhandler(longHolding, shortHolding);
+	// latestCloseOrderhandler(longHolding,shortHolding);
 
 	let isMarketDeal = true;
 	let dealRatio = 0.01;
@@ -724,8 +884,6 @@ const checkDeal = async (data, ethData) => {
 			bollList: ethData.bollList.slice(-80),
 		}
 	);
-	latestOpenOrderhandler();
-	// latestCloseOrderhandler();
 };
 
 const cancelReduceOnly = async (direction) => {
@@ -1054,8 +1212,9 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		}
 	}
 	await postOrder(position, mark_price);
-
-	genRelationPosition(params);
+	await countdownCancelAll(500);
+	await waitTime(1000 * 2);
+	await genRelationPosition(params);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
