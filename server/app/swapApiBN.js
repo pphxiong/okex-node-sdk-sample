@@ -110,13 +110,13 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		console.log(
-			'latestOpenLongOrderDiffSeconds',
-			diffSeconds,
-			payload,
-			latestOpenLongOrder
-		);
 		if (diffSeconds <= 48) {
+			// console.log(
+			// 	'latestOpenLongOrderDiffSeconds',
+			// 	diffSeconds,
+			// 	payload,
+			// 	latestOpenLongOrder
+			// );
 			await closeLimitPosition(payload);
 			await openLimitPosition(payload2);
 			await openLimitPosition(payload1);
@@ -169,12 +169,6 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		console.log(
-			'latestOpenShortOrderDiffSeconds',
-			diffSeconds,
-			payload,
-			latestOpenShortOrder
-		);
 		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
 			await openLimitPosition(payload2);
@@ -254,13 +248,6 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty) / 10,
 			positionAmt: Number(origQty) / 10,
 		};
-
-		console.log(
-			'latestOpenLongOrderDiffSeconds',
-			diffSeconds,
-			payload,
-			latestOpenLongOrder
-		);
 		if (diffSeconds <= 48 && Number(origQty) > INIT_POSITION) {
 			// await openLimitPosition(payload);
 		}
