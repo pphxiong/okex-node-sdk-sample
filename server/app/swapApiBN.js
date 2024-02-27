@@ -69,13 +69,17 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 		latestOpenShortOrder,
 		latestOpenMarketLongOrder,
 		latestOpenMarketShortOrder,
+		latestCloseLongOrder,
+		latestCloseShortOrder,
 	} = await queryLatestOpenOrders();
 	if (latestOpenLongOrder) {
 		const { updateTime, price, symbol, side, origQty } =
 			latestOpenLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const ratio = Math.ceil(longPostionAmt / INIT_POSITION) + 1;
 		const newPrice =
-			Number(price) + DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+			Number(price) +
+			DEFAULT_PRICE_INTERVAL * (ratio - 1) * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -88,6 +92,7 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			Number(price) -
 			DEFAULT_PRICE_INTERVAL *
 				DEFAULT_DEAL_RATIO *
+				ratio *
 				LATEST_EVERY_PRICE_RATIO;
 		const payload1 = {
 			price: newPrice1,
@@ -114,15 +119,16 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
 			await openLimitPosition(payload2);
-			if (longPostionAmt <= INIT_POSITION * 2) {
-				await openLimitPosition(payload1);
-			} else {
-				const marketPayload = {
-					openSide: 'SHORT',
-					position: longPostionAmt,
-				};
-				await openPosition(marketPayload);
-			}
+			await openLimitPosition(payload1);
+			// if (longPostionAmt <= INIT_POSITION * 2) {
+			// 	await openLimitPosition(payload1);
+			// } else {
+			// 	const marketPayload = {
+			// 		openSide: 'SHORT',
+			// 		position: longPostionAmt,
+			// 	};
+			// 	await openPosition(marketPayload);
+			// }
 		}
 	}
 	if (latestOpenShortOrder) {
@@ -130,7 +136,8 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			latestOpenShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		const newPrice =
-			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+			Number(price) -
+			DEFAULT_PRICE_INTERVAL * (ratio - 1) * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -139,10 +146,12 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
+		const ratio = Math.ceil(shortPositionAmt / INIT_POSITION) + 1;
 		const newPrice1 =
 			Number(price) +
 			DEFAULT_PRICE_INTERVAL *
 				DEFAULT_DEAL_RATIO *
+				ratio *
 				LATEST_EVERY_PRICE_RATIO;
 		const payload1 = {
 			price: newPrice1,
@@ -169,15 +178,16 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
 			await openLimitPosition(payload2);
-			if (shortPositionAmt <= INIT_POSITION * 2) {
-				await openLimitPosition(payload1);
-			} else {
-				const marketPayload = {
-					openSide: 'LONG',
-					position: shortPositionAmt,
-				};
-				await openPosition(marketPayload);
-			}
+			await openLimitPosition(payload1);
+			// if (shortPositionAmt <= INIT_POSITION * 2) {
+			// 	await openLimitPosition(payload1);
+			// } else {
+			// 	const marketPayload = {
+			// 		openSide: 'LONG',
+			// 		position: shortPositionAmt,
+			// 	};
+			// 	await openPosition(marketPayload);
+			// }
 		}
 	}
 	if (latestOpenMarketLongOrder) {
@@ -185,25 +195,13 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			latestOpenMarketLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		const newPrice =
-			Number(price) + DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+			Number(price) +
+			(DEFAULT_PRICE_INTERVAL / 2) * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
 			side,
 			positionSide: 'LONG',
-			position: Number(origQty),
-			positionAmt: Number(origQty),
-		};
-		const newPrice1 =
-			Number(price) +
-			DEFAULT_PRICE_INTERVAL *
-				DEFAULT_DEAL_RATIO *
-				LATEST_EVERY_PRICE_RATIO;
-		const payload1 = {
-			price: newPrice1,
-			symbol,
-			side,
-			positionSide: 'SHORT',
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
@@ -214,8 +212,7 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			latestOpenLongOrder
 		);
 		if (diffSeconds <= 48) {
-			await closeLimitPosition(payload);
-			// await openLimitPosition(payload1);
+			// await closeLimitPosition(payload);
 		}
 	}
 	if (latestOpenMarketShortOrder) {
@@ -223,22 +220,10 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			latestOpenMarketShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
 		const newPrice =
-			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+			Number(price) -
+			(DEFAULT_PRICE_INTERVAL / 2) * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
-			symbol,
-			side,
-			positionSide: 'SHORT',
-			position: Number(origQty),
-			positionAmt: Number(origQty),
-		};
-		const newPrice1 =
-			Number(price) +
-			DEFAULT_PRICE_INTERVAL *
-				DEFAULT_DEAL_RATIO *
-				LATEST_EVERY_PRICE_RATIO;
-		const payload1 = {
-			price: newPrice1,
 			symbol,
 			side,
 			positionSide: 'SHORT',
@@ -252,8 +237,32 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			latestOpenShortOrder
 		);
 		if (diffSeconds <= 48) {
-			await closeLimitPosition(payload);
-			// await openLimitPosition(payload1);
+			// await closeLimitPosition(payload);
+		}
+	}
+	if (latestCloseLongOrder) {
+		const { updateTime, price, symbol, side, origQty } =
+			latestCloseLongOrder;
+		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const newPrice =
+			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
+		const payload = {
+			price: newPrice,
+			symbol,
+			side,
+			positionSide: 'SHORT',
+			position: Number(origQty) / 10,
+			positionAmt: Number(origQty) / 10,
+		};
+
+		console.log(
+			'latestOpenLongOrderDiffSeconds',
+			diffSeconds,
+			payload,
+			latestOpenLongOrder
+		);
+		if (diffSeconds <= 48 && Number(origQty) > INIT_POSITION) {
+			// await openLimitPosition(payload);
 		}
 	}
 };
@@ -372,6 +381,21 @@ const queryLatestOpenOrders = async () => {
 			Number(item.executedQty)
 	);
 
+	const latestCloseMarketLongOrder = orders.find(
+		(item) =>
+			item.positionSide == 'LONG' &&
+			item.reduceOnly &&
+			item.origType == 'MARKET' &&
+			Number(item.executedQty)
+	);
+	const latestCloseMarketShortOrder = orders.find(
+		(item) =>
+			item.positionSide == 'SHORT' &&
+			item.reduceOnly &&
+			item.origType == 'MARKET' &&
+			Number(item.executedQty)
+	);
+
 	return {
 		latestOpenLongOrder,
 		latestOpenShortOrder,
@@ -379,6 +403,8 @@ const queryLatestOpenOrders = async () => {
 		latestCloseShortOrder,
 		latestOpenMarketLongOrder,
 		latestOpenMarketShortOrder,
+		latestCloseMarketLongOrder,
+		latestCloseMarketShortOrder,
 	};
 
 	// const latestOpenOrder = orders.find(
@@ -579,9 +605,6 @@ async function checkByStep(data, ethData) {
 	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
-
-	await latestOpenOrderhandler(longHolding, shortHolding);
-	// latestCloseOrderhandler(longHolding,shortHolding);
 
 	let isMarketDeal = true;
 	let dealRatio = 0.01;
@@ -862,12 +885,15 @@ async function checkByStep(data, ethData) {
 		}
 	}
 
-	// if (
-	//   (closeLongCondition && longRatio > WIN_MAX * 4) ||
-	//   (closeShortCondition && shortRatio > WIN_MAX * 4)
-	// ) {
-	//   stop();
-	// }
+	if (openLongCondition && openShortCondition) {
+		await countdownCancelAll(500);
+		await waitTime(1000 * 2);
+		await genRelationPosition(params);
+	}
+
+	await latestOpenOrderhandler(longHolding, shortHolding);
+	// latestCloseOrderhandler(longHolding,shortHolding);
+
 	return;
 }
 
@@ -1212,9 +1238,6 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		}
 	}
 	await postOrder(position, mark_price);
-	await countdownCancelAll(500);
-	await waitTime(1000 * 2);
-	await genRelationPosition(params);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
