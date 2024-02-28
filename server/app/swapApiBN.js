@@ -76,10 +76,10 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 		const { updateTime, price, symbol, side, origQty } =
 			latestOpenLongOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
-		const ratio = Math.ceil(longPostionAmt / INIT_POSITION) + 1;
+		const ratio = Math.ceil(longPostionAmt / INIT_POSITION);
+		const ratioPosition = Number((Number(origQty) / ratio).toFixed(3));
 		const newPrice =
-			Number(price) +
-			DEFAULT_PRICE_INTERVAL * (ratio - 1) * LATEST_EVERY_PRICE_RATIO;
+			Number(price) + DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -99,8 +99,8 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			symbol,
 			side,
 			positionSide: 'LONG',
-			position: Number(origQty),
-			positionAmt: Number(origQty),
+			position: ratioPosition,
+			positionAmt: ratioPosition,
 		};
 		const payload2 = {
 			price: newPrice,
@@ -136,9 +136,10 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 		const { updateTime, price, symbol, side, origQty } =
 			latestOpenShortOrder;
 		const diffSeconds = moment().diff(moment(updateTime), 'seconds');
+		const ratio = Math.ceil(shortPositionAmt / INIT_POSITION);
+		const ratioPosition = Number((Number(origQty) / ratio).toFixed(3));
 		const newPrice =
-			Number(price) -
-			DEFAULT_PRICE_INTERVAL * (ratio - 1) * LATEST_EVERY_PRICE_RATIO;
+			Number(price) - DEFAULT_PRICE_INTERVAL * LATEST_EVERY_PRICE_RATIO;
 		const payload = {
 			price: newPrice,
 			symbol,
@@ -147,20 +148,20 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		const ratio = Math.ceil(shortPositionAmt / INIT_POSITION) + 1;
 		const newPrice1 =
 			Number(price) +
 			DEFAULT_PRICE_INTERVAL *
 				DEFAULT_DEAL_RATIO *
 				ratio *
 				LATEST_EVERY_PRICE_RATIO;
+
 		const payload1 = {
 			price: newPrice1,
 			symbol,
 			side,
 			positionSide: 'SHORT',
-			position: Number(origQty),
-			positionAmt: Number(origQty),
+			position: ratioPosition,
+			positionAmt: ratioPosition,
 		};
 		const payload2 = {
 			price: newPrice,
