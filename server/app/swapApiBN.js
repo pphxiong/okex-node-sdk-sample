@@ -118,8 +118,9 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			// 	latestOpenLongOrder
 			// );
 			await closeLimitPosition(payload);
-			await openLimitPosition(payload2);
 			await openLimitPosition(payload1);
+			if (!(longHolding && shortHolding))
+				await openLimitPosition(payload2);
 			// if (longPostionAmt <= INIT_POSITION * 2) {
 			// 	await openLimitPosition(payload1);
 			// } else {
@@ -171,8 +172,9 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 		};
 		if (diffSeconds <= 48) {
 			await closeLimitPosition(payload);
-			await openLimitPosition(payload2);
 			await openLimitPosition(payload1);
+			if (!(longHolding && shortHolding))
+				await openLimitPosition(payload2);
 			// if (shortPositionAmt <= INIT_POSITION * 2) {
 			// 	await openLimitPosition(payload1);
 			// } else {
@@ -199,13 +201,13 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		console.log(
-			'latestOpenLongOrderDiffSeconds',
-			diffSeconds,
-			payload,
-			latestOpenLongOrder
-		);
 		if (diffSeconds <= 48) {
+			console.log(
+				'latestOpenLongOrderDiffSeconds',
+				diffSeconds,
+				payload,
+				latestOpenLongOrder
+			);
 			// await closeLimitPosition(payload);
 		}
 	}
@@ -224,13 +226,13 @@ const latestOpenOrderhandler = async (longHolding, shortHolding) => {
 			position: Number(origQty),
 			positionAmt: Number(origQty),
 		};
-		console.log(
-			'latestOpenShortOrderDiffSeconds',
-			diffSeconds,
-			payload,
-			latestOpenShortOrder
-		);
 		if (diffSeconds <= 48) {
+			console.log(
+				'latestOpenShortOrderDiffSeconds',
+				diffSeconds,
+				payload,
+				latestOpenShortOrder
+			);
 			// await closeLimitPosition(payload);
 		}
 	}
