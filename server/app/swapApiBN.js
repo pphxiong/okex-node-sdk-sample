@@ -9,10 +9,11 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.0618;
+const WIN_MAX = 1 * 0.0618 * 2;
 const LOSS_MAX = -1 * 0.182;
+const MAX_OFFSET_RATIO = 0.0618;
 const LEVERAGE = 20;
-const INIT_ASSETS = 300 * 1.2;
+const INIT_ASSETS = (300 * 1.2) / 2;
 const INIT_ASSETS_RATIO = 1 / 2;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
@@ -24,13 +25,7 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
-async function checkByStep(data, ethData) {
-	const { macdList, bollList } = data;
-	const {
-		macdList: ethMacdList,
-		rsiList: ethRsiList,
-		bollList: ethBollList,
-	} = ethData;
+async function checkByStep() {
 	let mark_price;
 	let eth_mark_price;
 	try {
@@ -114,22 +109,6 @@ async function checkByStep(data, ethData) {
 	}
 
 	let totalRatio = 0;
-	// if (longHolding && !shortHolding) {
-	// 	totalRatio = longRatio;
-	// } else if (!longHolding && shortHolding) {
-	// 	totalRatio = shortRatio;
-	// } else if (longHolding && shortHolding) {
-	// 	totalRatio =
-	// 		(longRatio *
-	// 			Math.abs(Number(longHolding.positionAmt) * mark_price) +
-	// 			shortRatio *
-	// 				Math.abs(
-	// 					Number(shortHolding.positionAmt) * eth_mark_price
-	// 				)) /
-	// 		(Math.abs(Number(longHolding.positionAmt)) * mark_price +
-	// 			Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price);
-	// }
-
 	let w_Position = 0;
 	let t_Position = 0;
 	if (holding && holding.length) {
@@ -176,7 +155,8 @@ async function checkByStep(data, ethData) {
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding && CLOSE_WIN_CONDITION && false;
 
-	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION;
+	const MAIN_CLOSE_ALL_CONDITION =
+		CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION;
 
 	const PATCH_CONDITION =
 		false &&
@@ -198,17 +178,8 @@ async function checkByStep(data, ethData) {
 	const hmsArr = currentTime.split(' ')[1].split(':');
 	const lastMinuteCharacter = hmsArr[1];
 	const lastSecondCharacter = hmsArr[2];
-	const minuteList = ['0', '00'];
-	const secondList = ['0', '00'];
-	const minuteDiff = moment(currentTime).diff(
-		moment(macdList[macdList.length - 1].time),
-		'minute'
-	);
-	const isFiveM =
-		true ||
-		(minuteDiff < 90 &&
-			minuteList.includes(lastMinuteCharacter) &&
-			!secondList.includes(lastSecondCharacter));
+
+	const isFiveM = true;
 
 	console.log('************************************', currentTime);
 	console.log('isFiveM', isFiveM, lastMinuteCharacter);
@@ -254,7 +225,6 @@ async function checkByStep(data, ethData) {
 			position: positionAmt,
 			openSide: direction,
 			mark_price,
-			time: macdList[macdList.length - 1].time,
 		});
 	};
 
@@ -299,7 +269,6 @@ async function checkByStep(data, ethData) {
 					position: closePositionAmt,
 					side: 'long',
 					mark_price,
-					time: macdList[macdList.length - 1].time,
 					ratio: longRatio,
 				};
 				await closePosition(payload, false, avail);
@@ -333,7 +302,6 @@ async function checkByStep(data, ethData) {
 					position: closePositionAmt,
 					side: 'short',
 					mark_price,
-					time: macdList[macdList.length - 1].time,
 					ratio: shortRatio,
 				};
 				await closePosition(payload, false, avail);
@@ -395,7 +363,7 @@ async function checkByStep(data, ethData) {
 						position: openPositionAmt,
 						openSide: 'long',
 						mark_price,
-						time: macdList[macdList.length - 1].time,
+						symbol: BTC_SYMBOL,
 					},
 					isMarketDeal,
 					dealRatio
@@ -455,7 +423,7 @@ async function checkByStep(data, ethData) {
 						position: openPositionAmt,
 						openSide: 'short',
 						mark_price,
-						time: macdList[macdList.length - 1].time,
+						symbol: ETH_SYMBOL,
 					},
 					isMarketDeal,
 					dealRatio
@@ -466,13 +434,67 @@ async function checkByStep(data, ethData) {
 		}
 	}
 
-	// if (
-	//   (closeLongCondition && longRatio > WIN_MAX * 4) ||
-	//   (closeShortCondition && shortRatio > WIN_MAX * 4)
-	// ) {
-	//   stop();
-	// }
+	if (longHolding && shortHolding) {
+		await waitTime(1000 * 2);
+		await extraDealHandler(
+			holding,
+			longHolding,
+			shortHolding,
+			longRatio,
+			shortRatio
+		);
+	}
 }
+
+const extraDealHandler = async (
+	holding,
+	longHolding,
+	shortHolding,
+	longRatio,
+	shortRatio
+) => {
+	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
+	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
+		if (longRatio < 0) {
+			const { positionAmt } = longHolding;
+			const openPositionAmt = Number(positionAmt.toFixed(3));
+			const payload = {
+				positionAmt: Number(openPositionAmt),
+				position: Number(openPositionAmt),
+				side: 'short',
+				openSide: 'short',
+				symbol: BTC_SYMBOL,
+			};
+			const btcShortHolding = holding.find(
+				(item) =>
+					item.symbol === BTC_SYMBOL &&
+					item.positionSide &&
+					item.positionSide.toUpperCase() == 'SHORT' &&
+					Math.abs(Number(item.positionAmt)) > 0
+			);
+			if (!btcShortHolding) await openPosition(payload);
+		}
+		if (shortRatio < 0) {
+			const { positionAmt } = shortHolding;
+			const openPositionAmt = Number(positionAmt.toFixed(1));
+			const payload = {
+				positionAmt: Number(openPositionAmt),
+				position: Number(openPositionAmt),
+				side: 'long',
+				openSide: 'long',
+				symbol: ETH_SYMBOL,
+			};
+			const ethLongHolding = holding.find(
+				(item) =>
+					item.symbol === ETH_SYMBOL &&
+					item.positionSide &&
+					item.positionSide.toUpperCase() == 'LONG' &&
+					Math.abs(Number(item.positionAmt)) > 0
+			);
+			if (!ethLongHolding) await openPosition(payload);
+		}
+	}
+};
 
 const checkDeal = async (data, ethData) => {
 	await checkByStep(
@@ -694,7 +716,7 @@ let openOrigClientOrderId = '';
 let closeOrigClientOrderId = '';
 const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 	isMarketDeal = true;
-	const { openSide = 'long', position, mark_price } = params;
+	const { openSide = 'long', position, mark_price, symbol } = params;
 
 	async function postOrder(size) {
 		const type = openSide == 'long' ? 'BUY' : 'SELL';
@@ -712,7 +734,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 			price = mark_price * (1 + dealRatio / LEVERAGE);
 		}
 		let payload = {
-			symbol: openSide == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
+			symbol,
 			side: type,
 			positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
 			quantity: Math.abs(size),
@@ -724,7 +746,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		};
 		if (MODE == 2 || isMarketDeal) {
 			payload = {
-				symbol: openSide == 'long' ? BTC_SYMBOL : ETH_SYMBOL,
+				symbol,
 				side: type,
 				positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
 				quantity: Math.abs(size),
@@ -747,14 +769,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
 	let { position = INIT_POSITION, positionSide, symbol } = holding;
-	// position = isCloseAll ? Math.abs(Number(holding.positionAmt)) : INIT_POSITION;
 	position = Math.abs(Number(holding.positionAmt));
-	// position = INIT_POSITION;
-	// if (ratio > 0) position = Math.abs(Number(holding.positionAmt));
-
-	// if (IS_CLOSE_ALL_POSITION) position = Math.abs(Number(holding.positionAmt));
-	// if (avail < INIT_POSITION * NEW_POSITION_RATIO)
-	//   position = INIT_POSITION * NEW_POSITION_RATIO;
 
 	async function postOrder(size) {
 		const newClientOrderId = getUUID();
@@ -980,17 +995,18 @@ const startInterval = async () => {
 		return;
 	}
 	try {
-		const time = moment().valueOf();
-		const payload = {
-			interval: DEFAULT_INTERVAL,
-			limit: 100,
-			endTime: time,
-		};
+		// const time = moment().valueOf();
+		// const payload = {
+		// 	interval: DEFAULT_INTERVAL,
+		// 	limit: 100,
+		// 	endTime: time,
+		// };
 
-		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		// const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
+		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
-		await checkDeal(btc_result, eth_result);
+		// await checkDeal(btc_result, eth_result);
+		await checkByStep();
 
 		await waitTime(1000 * 56);
 		await startInterval();
