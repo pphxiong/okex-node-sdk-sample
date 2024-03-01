@@ -449,7 +449,10 @@ async function checkByStep() {
 		}
 		console.log('*********************');
 		console.log('MAX_OFFSET_RATIO', MAX_OFFSET_RATIO);
-		console.log('offsetRatio', Math.abs(shortRatio - longRatio));
+		console.log(
+			'offsetRatio',
+			Math.abs(Math.abs(shortRatio) - Math.abs(longRatio))
+		);
 		console.log('*********************');
 	}
 }
