@@ -466,7 +466,7 @@ const extraDealHandler = async (
 ) => {
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
-		if (longRatio < 0 && Math.abs(longRatio) < Math.abs(shortRatio)) {
+		if (longRatio < 0 && Math.abs(longRatio) > Math.abs(shortRatio)) {
 			const { positionAmt } = longHolding;
 			const openPositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(3)
@@ -487,7 +487,7 @@ const extraDealHandler = async (
 			);
 			if (!btcShortHolding) await openPosition(payload);
 		}
-		if (shortRatio < 0 && Math.abs(shortRatio) < Math.abs(longRatio)) {
+		if (shortRatio < 0 && Math.abs(shortRatio) > Math.abs(longRatio)) {
 			const { positionAmt } = shortHolding;
 			const openPositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(1)
