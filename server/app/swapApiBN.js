@@ -10,8 +10,8 @@ const INIT_POSITION = 100;
 
 let MODE = 1;
 const WIN_MAX = 1 * 0.0618 * 2;
-const LOSS_MAX = -1 * 0.0618 * 2 * 100;
-const MAX_OFFSET_RATIO = 0.0618;
+const LOSS_MAX = -1 * 0.0618;
+const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
 const INIT_ASSETS = (300 * 1.2) / 2;
 const INIT_ASSETS_RATIO = 1 / 2;
@@ -145,7 +145,8 @@ async function checkByStep() {
 
 	const TOTALRATIO = totalRatio;
 	const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
-	const CLOSE_LOSS_CONDITION = TOTALRATIO < LOSS_MAX;
+	const CLOSE_LOSS_CONDITION =
+		TOTALRATIO < LOSS_MAX && holding && holding.length >= 3;
 
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
@@ -436,13 +437,15 @@ async function checkByStep() {
 
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 2);
-		await extraDealHandler(
-			holding,
-			longHolding,
-			shortHolding,
-			longRatio,
-			shortRatio
-		);
+		if (holding.length < 3) {
+			await extraDealHandler(
+				holding,
+				longHolding,
+				shortHolding,
+				longRatio,
+				shortRatio
+			);
+		}
 	}
 }
 
@@ -453,11 +456,13 @@ const extraDealHandler = async (
 	longRatio,
 	shortRatio
 ) => {
-	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
+	const offsetRatio = Math.abs(shortRatio - longRatio);
 	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
-		if (longRatio < 0) {
+		if (longRatio < 0 && longRatio < shortRatio) {
 			const { positionAmt } = longHolding;
-			const openPositionAmt = Number(positionAmt.toFixed(3));
+			const openPositionAmt = Number(
+				Math.abs(Number(positionAmt)).toFixed(3)
+			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
 				position: Number(openPositionAmt),
@@ -474,9 +479,11 @@ const extraDealHandler = async (
 			);
 			if (!btcShortHolding) await openPosition(payload);
 		}
-		if (shortRatio < 0) {
+		if (shortRatio < 0 && shortRatio < longRatio) {
 			const { positionAmt } = shortHolding;
-			const openPositionAmt = Number(positionAmt.toFixed(1));
+			const openPositionAmt = Number(
+				Math.abs(Number(positionAmt)).toFixed(1)
+			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
 				position: Number(openPositionAmt),
