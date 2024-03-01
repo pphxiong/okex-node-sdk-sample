@@ -437,6 +437,11 @@ async function checkByStep() {
 
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 2);
+		const { positionAmt } = longHolding;
+		const openPositionAmt = Number(
+			Math.abs(Number(positionAmt)).toFixed(3)
+		);
+		console.log(33, openPositionAmt);
 		if (holding.length < 3) {
 			await extraDealHandler(
 				holding,
