@@ -9,7 +9,7 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.0618 * 2;
+const WIN_MAX = 1 * 0.0818;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
@@ -144,9 +144,10 @@ async function checkByStep() {
 	}
 
 	const TOTALRATIO = totalRatio;
-	const CLOSE_WIN_CONDITION = TOTALRATIO > WIN_MAX;
+	const CLOSE_WIN_CONDITION =
+		holding && TOTALRATIO > (WIN_MAX * 2) / holding.length;
 	const CLOSE_LOSS_CONDITION =
-		TOTALRATIO < LOSS_MAX && holding && holding.length >= 3;
+		TOTALRATIO < holding && holding.length >= 3 && LOSS_MAX;
 
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
@@ -1002,7 +1003,7 @@ const startInterval = async () => {
 	RESTART_TIME += 1;
 	if (RESTART_TIME >= 1 * 14) {
 		RESTART_TIME = 0;
-		restart();
+		restart('normal');
 		return;
 	}
 	try {
@@ -1063,10 +1064,9 @@ app.listen(8093);
 
 console.log('8093 server start');
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function (e) {
 	//打印出错误
-	// console.log('uncaughtException',err);
-	restart();
+	restart(e);
 });
 
 let exec = require('child_process').exec;
