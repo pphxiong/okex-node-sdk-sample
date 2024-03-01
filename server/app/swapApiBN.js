@@ -183,7 +183,7 @@ async function checkByStep() {
 	const isFiveM = true;
 
 	console.log('************************************', currentTime);
-	console.log('isFiveM', isFiveM, lastMinuteCharacter);
+	// console.log('isFiveM', isFiveM, lastMinuteCharacter);
 	// console.log('macdList', macdList.slice(-2));
 	// console.log('bollList', bollList.slice(-2));
 	console.log(
@@ -200,16 +200,16 @@ async function checkByStep() {
 		'shortPositionAmt',
 		shortHolding ? shortHolding.positionAmt : 0
 	);
-	console.log(
-		'closeLongCondition',
-		closeLongCondition,
-		'closeShortCondition',
-		closeShortCondition,
-		'openLongCondition',
-		openLongCondition,
-		'openShortCondition',
-		openShortCondition
-	);
+	// console.log(
+	// 	'closeLongCondition',
+	// 	closeLongCondition,
+	// 	'closeShortCondition',
+	// 	closeShortCondition,
+	// 	'openLongCondition',
+	// 	openLongCondition,
+	// 	'openShortCondition',
+	// 	openShortCondition
+	// );
 	console.log(
 		'w_Position',
 		w_Position,
@@ -446,6 +446,10 @@ async function checkByStep() {
 				shortRatio
 			);
 		}
+		console.log('*********************');
+		console.log('MAX_OFFSET_RATIO', MAX_OFFSET_RATIO);
+		console.log('offsetRatio', Math.abs(shortRatio - longRatio));
+		console.log('*********************');
 	}
 }
 
