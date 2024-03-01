@@ -11,7 +11,7 @@ const INIT_POSITION = 100;
 let MODE = 1;
 const WIN_MAX = 1 * 0.0818;
 const LOSS_MAX = -1 * 0.0618;
-const MAX_OFFSET_RATIO = 0.0618 * 3;
+const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
 const INIT_ASSETS = (300 * 1.2) / 2;
 const INIT_ASSETS_RATIO = 1 / 2;
@@ -461,9 +461,9 @@ const extraDealHandler = async (
 	longRatio,
 	shortRatio
 ) => {
-	const offsetRatio = Math.abs(shortRatio - longRatio);
+	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
-		if (longRatio < 0 && longRatio < shortRatio) {
+		if (longRatio < 0 && Math.abs(longRatio) < Math.abs(shortRatio)) {
 			const { positionAmt } = longHolding;
 			const openPositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(3)
@@ -484,7 +484,7 @@ const extraDealHandler = async (
 			);
 			if (!btcShortHolding) await openPosition(payload);
 		}
-		if (shortRatio < 0 && shortRatio < longRatio) {
+		if (shortRatio < 0 && Math.abs(shortRatio) < Math.abs(longRatio)) {
 			const { positionAmt } = shortHolding;
 			const openPositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(1)
