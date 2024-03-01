@@ -436,13 +436,13 @@ async function checkByStep() {
 
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 2);
-		// await extraDealHandler(
-		// 	holding,
-		// 	longHolding,
-		// 	shortHolding,
-		// 	longRatio,
-		// 	shortRatio
-		// );
+		await extraDealHandler(
+			holding,
+			longHolding,
+			shortHolding,
+			longRatio,
+			shortRatio
+		);
 	}
 }
 
@@ -1011,7 +1011,7 @@ const startInterval = async () => {
 		await waitTime(1000 * 56);
 		await startInterval();
 	} catch (e) {
-		restart();
+		restart(e);
 	}
 };
 
@@ -1059,8 +1059,8 @@ process.on('uncaughtException', function (err) {
 });
 
 let exec = require('child_process').exec;
-function restart() {
-	console.log('restarting......');
+function restart(e) {
+	console.log('restarting......', e);
 	setTimeout(() => {
 		exec('npm run restart', function (err, stdout, stderr) {
 			if (err) {
