@@ -556,6 +556,8 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				positionAmt: closePositionAmt,
 				position: closePositionAmt,
 				side: 'short',
+				positionSide: 'short',
+				symbol: BTC_SYMBOL,
 			};
 			await closePosition(payload);
 		}
@@ -591,6 +593,8 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				positionAmt: closePositionAmt,
 				position: closePositionAmt,
 				side: 'long',
+				positionSide: 'long',
+				symbol: ETH_SYMBOL,
 			};
 			await closePosition(payload);
 		}
