@@ -439,7 +439,7 @@ async function checkByStep() {
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 1);
 		if (holding.length < 3) {
-			await extraDealHandler(
+			await extraPatchDealHandler(
 				holding,
 				longHolding,
 				shortHolding,
@@ -447,6 +447,8 @@ async function checkByStep() {
 				shortRatio,
 				totalRatio
 			);
+		} else {
+			await extraLossDealHandler(holding, mark_price, eth_mark_price);
 		}
 		console.log('*********************');
 		console.log('MAX_OFFSET_RATIO', MAX_OFFSET_RATIO);
@@ -458,13 +460,12 @@ async function checkByStep() {
 	}
 }
 
-const extraDealHandler = async (
+const extraPatchDealHandler = async (
 	holding,
 	longHolding,
 	shortHolding,
 	longRatio,
-	shortRatio,
-	totalRatio
+	shortRatio
 ) => {
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
@@ -511,24 +512,42 @@ const extraDealHandler = async (
 			if (!ethLongHolding) await openPosition(payload);
 		}
 	}
-	const CLOSE_LOSS_CONDITION =
-		holding && holding.length >= 3 && totalRatio < LOSS_MAX;
-	if (CLOSE_LOSS_CONDITION) {
-		const btcHoldingList = holding.filter(
-			(item) =>
-				item.symbol === BTC_SYMBOL &&
-				item.positionSide &&
-				Math.abs(Number(item.positionAmt)) > 0
+};
+
+const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
+	const btcHoldingList = holding.filter(
+		(item) =>
+			item.symbol === BTC_SYMBOL &&
+			item.positionSide &&
+			Math.abs(Number(item.positionAmt)) > 0
+	);
+	const ethHoldingList = holding.filter(
+		(item) =>
+			item.symbol === ETH_SYMBOL && Math.abs(Number(item.positionAmt)) > 0
+	);
+	let longRatio = 0;
+	let shortRatio = 0;
+	if (btcHoldingList.length === 2) {
+		const btcLongHolding = btcHoldingList.find(
+			(item) => item.positionSide.toUpperCase() == 'LONG'
 		);
-		const ethHoldingList = holding.filter(
-			(item) =>
-				item.symbol === ETH_SYMBOL &&
-				Math.abs(Number(item.positionAmt)) > 0
+		const btcShortHolding = btcHoldingList.find(
+			(item) => item.positionSide.toUpperCase() == 'SHORT'
 		);
-		if (btcHoldingList.length === 2) {
-			const btcShortHolding = btcHoldingList.find(
-				(item) => item.positionSide.toUpperCase() == 'SHORT'
-			);
+		if (btcLongHolding) {
+			const { leverage, entryPrice: avg_cost } = btcLongHolding;
+			longRatio =
+				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
+				Number(mark_price);
+		}
+		if (btcShortHolding) {
+			const { leverage, entryPrice: avg_cost } = btcShortHolding;
+			shortRatio =
+				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
+				Number(mark_price);
+			shortRatio = -shortRatio;
+		}
+		if (longRatio > shortRatio) {
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(3)
@@ -540,11 +559,31 @@ const extraDealHandler = async (
 			};
 			await closePosition(payload);
 		}
-		if (ethHoldingList.length === 2) {
-			const etcLongHolding = ethHoldingList.find(
-				(item) => item.positionSide.toUpperCase() == 'LONG'
-			);
-			const { positionAmt } = etcLongHolding;
+	}
+	if (ethHoldingList.length === 2) {
+		const ethLongHolding = ethHoldingList.find(
+			(item) => item.positionSide.toUpperCase() == 'LONG'
+		);
+		const ethShortHolding = ethHoldingList.find(
+			(item) => item.positionSide.toUpperCase() == 'SHORT'
+		);
+		if (ethLongHolding) {
+			const { leverage, entryPrice: avg_cost } = ethLongHolding;
+			longRatio =
+				((Number(eth_mark_price) - Number(avg_cost)) *
+					Number(leverage)) /
+				Number(eth_mark_price);
+		}
+		if (ethShortHolding) {
+			const { leverage, entryPrice: avg_cost } = ethShortHolding;
+			shortRatio =
+				((Number(eth_mark_price) - Number(avg_cost)) *
+					Number(leverage)) /
+				Number(eth_mark_price);
+			shortRatio = -shortRatio;
+		}
+		if (longRatio < shortRatio) {
+			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(1)
 			);
