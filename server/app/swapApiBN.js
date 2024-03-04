@@ -13,7 +13,7 @@ const WIN_MAX = 1 * 0.0818;
 const LOSS_MAX = (-1 * 0.0818) / 2;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
-const INIT_ASSETS = (300 * 1.2) / 2 / 4;
+const INIT_ASSETS = (((300 * 1.2) / 2 / 4) * 3) / 2;
 const INIT_ASSETS_RATIO = 1 / 2;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
