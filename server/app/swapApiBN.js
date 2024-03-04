@@ -584,6 +584,9 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(eth_mark_price);
 			shortRatio = -shortRatio;
 		}
+		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+		console.log('longRatio', longRatio, 'shortRatio', shortRatio);
+		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		if (longRatio < shortRatio) {
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
