@@ -527,6 +527,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 	);
 	let longRatio = 0;
 	let shortRatio = 0;
+	console.log(holding);
 	if (btcHoldingList.length === 2) {
 		const btcLongHolding = btcHoldingList.find(
 			(item) => item.positionSide.toUpperCase() == 'LONG'
