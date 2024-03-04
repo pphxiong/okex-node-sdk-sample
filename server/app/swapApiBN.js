@@ -10,10 +10,10 @@ const INIT_POSITION = 100;
 
 let MODE = 1;
 const WIN_MAX = 1 * 0.0818;
-const LOSS_MAX = -1 * 0.0618;
+const LOSS_MAX = (-1 * 0.0818) / 2;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
-const INIT_ASSETS = (300 * 1.2) / 2;
+const INIT_ASSETS = (300 * 1.2) / 2 / 4;
 const INIT_ASSETS_RATIO = 1 / 2;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
@@ -147,7 +147,7 @@ async function checkByStep() {
 	const CLOSE_WIN_CONDITION =
 		holding && TOTALRATIO > (WIN_MAX * 2) / holding.length;
 	const CLOSE_LOSS_CONDITION =
-		TOTALRATIO < holding && holding.length >= 3 && LOSS_MAX;
+		holding && holding.length >= 3 && TOTALRATIO < LOSS_MAX;
 
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
@@ -157,8 +157,8 @@ async function checkByStep() {
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding && CLOSE_WIN_CONDITION && false;
 
-	const MAIN_CLOSE_ALL_CONDITION =
-		CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION;
+	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION;
+	// const MAIN_CLOSE_EXTRA_CONDITION = CLOSE_LOSS_CONDITION;
 
 	const PATCH_CONDITION =
 		false &&
@@ -444,7 +444,8 @@ async function checkByStep() {
 				longHolding,
 				shortHolding,
 				longRatio,
-				shortRatio
+				shortRatio,
+				totalRatio
 			);
 		}
 		console.log('*********************');
@@ -462,7 +463,8 @@ const extraDealHandler = async (
 	longHolding,
 	shortHolding,
 	longRatio,
-	shortRatio
+	shortRatio,
+	totalRatio
 ) => {
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
@@ -490,7 +492,7 @@ const extraDealHandler = async (
 		if (shortRatio < 0 && Math.abs(shortRatio) > Math.abs(longRatio)) {
 			const { positionAmt } = shortHolding;
 			const openPositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(1)
+				Math.abs(Number(positionAmt) * 2).toFixed(1)
 			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
@@ -507,6 +509,51 @@ const extraDealHandler = async (
 					Math.abs(Number(item.positionAmt)) > 0
 			);
 			if (!ethLongHolding) await openPosition(payload);
+		}
+	}
+	const CLOSE_LOSS_CONDITION =
+		holding && holding.length >= 3 && totalRatio < LOSS_MAX;
+	if (CLOSE_LOSS_CONDITION) {
+		const btcHoldingList = holding.filter(
+			(item) =>
+				item.symbol === BTC_SYMBOL &&
+				item.positionSide &&
+				Math.abs(Number(item.positionAmt)) > 0
+		);
+		const ethHoldingList = holding.filter(
+			(item) =>
+				item.symbol === ETH_SYMBOL &&
+				Math.abs(Number(item.positionAmt)) > 0
+		);
+		if (btcHoldingList.length === 2) {
+			const btcShortHolding = btcHoldingList.find(
+				(item) => item.positionSide.toUpperCase() == 'SHORT'
+			);
+			const { positionAmt } = btcShortHolding;
+			const closePositionAmt = Number(
+				Math.abs(Number(positionAmt)).toFixed(3)
+			);
+			const payload = {
+				positionAmt: closePositionAmt,
+				position: closePositionAmt,
+				side: 'short',
+			};
+			await closePosition(payload);
+		}
+		if (ethHoldingList.length === 2) {
+			const etcLongHolding = ethHoldingList.find(
+				(item) => item.positionSide.toUpperCase() == 'LONG'
+			);
+			const { positionAmt } = etcLongHolding;
+			const closePositionAmt = Number(
+				Math.abs(Number(positionAmt)).toFixed(1)
+			);
+			const payload = {
+				positionAmt: closePositionAmt,
+				position: closePositionAmt,
+				side: 'long',
+			};
+			await closePosition(payload);
 		}
 	}
 };
