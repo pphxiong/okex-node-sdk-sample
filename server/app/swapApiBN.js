@@ -13,8 +13,8 @@ const WIN_MAX = 1 * 0.0618 * 2;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618;
 const LEVERAGE = 20;
-const INIT_ASSETS = 300 / 4;
-const INIT_ASSETS_RATIO = 1 / 2;
+const INIT_ASSETS = 300 / 4 / 2;
+const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
 let RESTART_TIME = 0;
@@ -144,8 +144,7 @@ async function checkByStep() {
 	}
 
 	const TOTALRATIO = totalRatio;
-	const CLOSE_WIN_CONDITION =
-		holding && TOTALRATIO > (WIN_MAX * 2) / holding.length;
+	const CLOSE_WIN_CONDITION = holding && TOTALRATIO > WIN_MAX;
 	const CLOSE_LOSS_CONDITION =
 		holding && holding.length >= 3 && TOTALRATIO < LOSS_MAX;
 
@@ -473,7 +472,7 @@ const extraPatchDealHandler = async (
 		if (longRatio < 0 && Math.abs(longRatio) > Math.abs(shortRatio)) {
 			const { positionAmt } = longHolding;
 			const openPositionAmt = Number(
-				Math.abs(Number(positionAmt) / 2).toFixed(3)
+				Math.abs(Number(positionAmt) * 2).toFixed(3)
 			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
