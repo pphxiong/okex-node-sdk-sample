@@ -11,7 +11,7 @@ const INIT_POSITION = 100;
 let MODE = 1;
 const WIN_MAX = 1 * 0.0618 * 2;
 const LOSS_MAX = -1 * 0.0618;
-const MAX_OFFSET_RATIO = 0.0618 * 2;
+const MAX_OFFSET_RATIO = 0.0618;
 const LEVERAGE = 20;
 const INIT_ASSETS = 300 / 4;
 const INIT_ASSETS_RATIO = 1 / 2;
@@ -473,7 +473,7 @@ const extraPatchDealHandler = async (
 		if (longRatio < 0 && Math.abs(longRatio) > Math.abs(shortRatio)) {
 			const { positionAmt } = longHolding;
 			const openPositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
+				Math.abs(Number(positionAmt) / 2).toFixed(3)
 			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
@@ -548,16 +548,16 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(mark_price);
 			shortRatio = -shortRatio;
 		}
-		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
-		console.log(
-			'btcShortClosing',
-			'longRatio',
-			longRatio,
-			'shortRatio',
-			shortRatio
-		);
-		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		if (longRatio > shortRatio) {
+			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+			console.log(
+				'btcShortClosing',
+				'longRatio',
+				longRatio,
+				'shortRatio',
+				shortRatio
+			);
+			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(3)
@@ -594,16 +594,16 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(eth_mark_price);
 			shortRatio = -shortRatio;
 		}
-		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
-		console.log(
-			'ethLongClosing',
-			'longRatio',
-			longRatio,
-			'shortRatio',
-			shortRatio
-		);
-		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		if (longRatio < shortRatio) {
+			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+			console.log(
+				'ethLongClosing',
+				'longRatio',
+				longRatio,
+				'shortRatio',
+				shortRatio
+			);
+			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(1)
@@ -847,6 +847,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 		console.log(
 			'openOtherOrderMoment',
 			openSide,
+			symbol,
 			moment().format('YYYY-MM-DD HH:mm:ss')
 		);
 		console.log('position', position, 'type', type, 'side', openSide);
@@ -917,7 +918,8 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 			closeOrigClientOrderId = result.clientOrderId;
 			console.log('closeOrigClientOrderId', closeOrigClientOrderId);
-			console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+			console.log(symbol),
+				console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 		} catch (e) {
 			// throw new Error('Error');
 			restart('close');
