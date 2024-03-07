@@ -9,7 +9,7 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.0618 * 3;
+const WIN_MAX = 1 * 0.0618 * 4;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
@@ -444,7 +444,9 @@ async function checkByStep() {
 				shortHolding,
 				longRatio,
 				shortRatio,
-				totalRatio
+				totalRatio,
+				mark_price,
+				eth_mark_price
 			);
 		} else {
 			await extraLossDealHandler(holding, mark_price, eth_mark_price);
@@ -465,7 +467,9 @@ const extraPatchDealHandler = async (
 	longHolding,
 	shortHolding,
 	longRatio,
-	shortRatio
+	shortRatio,
+	mark_price,
+	eth_mark_price
 ) => {
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	if (Math.abs(offsetRatio) > MAX_OFFSET_RATIO) {
@@ -523,8 +527,17 @@ const extraPatchDealHandler = async (
 				openSide: 'long',
 				symbol: BTC_SYMBOL,
 			};
-			// Math.abs(Number(longHolding.positionAmt))
-			await openPosition(payload);
+			const isHasPatch =
+				Math.round(
+					Math.abs(
+						Number(longHolding.positionAmt) * Number(mark_price)
+					) /
+						Math.abs(
+							Number(shortHolding.positionAmt) *
+								Number(eth_mark_price)
+						)
+				) >= 2;
+			if (!isHasPatch) await openPosition(payload);
 		}
 		if (shortRatio > 0 && Math.abs(shortRatio) > Math.abs(longRatio)) {
 			const { positionAmt } = shortHolding;
@@ -538,7 +551,17 @@ const extraPatchDealHandler = async (
 				openSide: 'short',
 				symbol: ETH_SYMBOL,
 			};
-			await openPosition(payload);
+			const isHasPatch =
+				Math.round(
+					Math.abs(
+						Number(shortHolding.positionAmt) *
+							Number(eth_mark_price)
+					) /
+						Math.abs(
+							Number(longHolding.positionAmt) * Number(mark_price)
+						)
+				) >= 2;
+			if (!isHasPatch) await openPosition(payload);
 		}
 	}
 };
