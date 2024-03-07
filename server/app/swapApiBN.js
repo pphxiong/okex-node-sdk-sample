@@ -438,7 +438,17 @@ async function checkByStep() {
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 1);
 		if (holding.length < 3) {
-			await extraPatchDealHandler(
+			await extraPatchCloseHandler(
+				holding,
+				longHolding,
+				shortHolding,
+				longRatio,
+				shortRatio,
+				totalRatio,
+				mark_price,
+				eth_mark_price
+			);
+			await extraPatchOpenHandler(
 				holding,
 				longHolding,
 				shortHolding,
@@ -462,7 +472,59 @@ async function checkByStep() {
 	}
 }
 
-const extraPatchDealHandler = async (
+const extraPatchCloseHandler = async (
+	longHolding,
+	shortHolding,
+	longRatio,
+	shortRatio,
+	mark_price,
+	eth_mark_price
+) => {
+	const isHasPatch1 =
+		Math.round(
+			Math.abs(Number(longHolding.positionAmt) * Number(mark_price)) /
+				Math.abs(
+					Number(shortHolding.positionAmt) * Number(eth_mark_price)
+				)
+		) >= 2;
+	const isHasPatch2 =
+		Math.round(
+			Math.abs(
+				Number(shortHolding.positionAmt) * Number(eth_mark_price)
+			) / Math.abs(Number(longHolding.positionAmt) * Number(mark_price))
+		) >= 2;
+	if (isHasPatch1 || isHasPatch2) {
+		if (isHasPatch1 && longRatio < 0) {
+			const { positionAmt } = longHolding;
+			const closePositionAmt = Number(
+				Math.abs((Number(positionAmt) * 2) / 3).toFixed(3)
+			);
+			const payload = {
+				positionAmt: closePositionAmt,
+				position: closePositionAmt,
+				side: 'long',
+				positionSide: 'long',
+				symbol: BTC_SYMBOL,
+			};
+			await closePosition(payload);
+		} else if (isHasPatch1 && shortRatio < 0) {
+			const { positionAmt } = shortHolding;
+			const closePositionAmt = Number(
+				Math.abs((Number(positionAmt) * 2) / 3).toFixed(1)
+			);
+			const payload = {
+				positionAmt: closePositionAmt,
+				position: closePositionAmt,
+				side: 'short',
+				positionSide: 'short',
+				symbol: ETH_SYMBOL,
+			};
+			await closePosition(payload);
+		}
+	}
+};
+
+const extraPatchOpenHandler = async (
 	holding,
 	longHolding,
 	shortHolding,
@@ -518,7 +580,7 @@ const extraPatchDealHandler = async (
 		if (longRatio > 0 && Math.abs(longRatio) > Math.abs(shortRatio)) {
 			const { positionAmt } = longHolding;
 			const openPositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
+				Math.abs(Number(positionAmt) * 2).toFixed(3)
 			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
@@ -542,7 +604,7 @@ const extraPatchDealHandler = async (
 		if (shortRatio > 0 && Math.abs(shortRatio) > Math.abs(longRatio)) {
 			const { positionAmt } = shortHolding;
 			const openPositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(1)
+				Math.abs(Number(positionAmt) * 2).toFixed(1)
 			);
 			const payload = {
 				positionAmt: Number(openPositionAmt),
