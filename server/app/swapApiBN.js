@@ -9,11 +9,11 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.0618 * 2;
+const WIN_MAX = 1 * 0.0618 * 3;
 const LOSS_MAX = -1 * 0.0618;
-const MAX_OFFSET_RATIO = 0.0618;
+const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
-const INIT_ASSETS = 40;
+const INIT_ASSETS = 40 / 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
@@ -511,6 +511,35 @@ const extraPatchDealHandler = async (
 			);
 			if (!ethLongHolding) await openPosition(payload);
 		}
+		if (longRatio > 0 && Math.abs(longRatio) > Math.abs(shortRatio)) {
+			const { positionAmt } = longHolding;
+			const openPositionAmt = Number(
+				Math.abs(Number(positionAmt)).toFixed(3)
+			);
+			const payload = {
+				positionAmt: Number(openPositionAmt),
+				position: Number(openPositionAmt),
+				side: 'long',
+				openSide: 'long',
+				symbol: BTC_SYMBOL,
+			};
+			// Math.abs(Number(longHolding.positionAmt))
+			await openPosition(payload);
+		}
+		if (shortRatio > 0 && Math.abs(shortRatio) > Math.abs(longRatio)) {
+			const { positionAmt } = shortHolding;
+			const openPositionAmt = Number(
+				Math.abs(Number(positionAmt)).toFixed(1)
+			);
+			const payload = {
+				positionAmt: Number(openPositionAmt),
+				position: Number(openPositionAmt),
+				side: 'short',
+				openSide: 'short',
+				symbol: ETH_SYMBOL,
+			};
+			await openPosition(payload);
+		}
 	}
 };
 
@@ -547,7 +576,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(mark_price);
 			shortRatio = -shortRatio;
 		}
-		if (longRatio > shortRatio) {
+		if (longRatio > shortRatio && longRatio > 0) {
 			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 			console.log(
 				'btcShortClosing',
@@ -593,7 +622,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(eth_mark_price);
 			shortRatio = -shortRatio;
 		}
-		if (longRatio < shortRatio) {
+		if (shortRatio > longRatio && shortRatio > 0) {
 			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 			console.log(
 				'ethLongClosing',
