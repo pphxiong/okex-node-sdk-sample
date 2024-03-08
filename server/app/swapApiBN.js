@@ -9,11 +9,11 @@ const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 
 let MODE = 1;
-const WIN_MAX = 1 * 0.01 * 6.18 * 6.18;
-const LOSS_MAX = -1 * 0.0618;
-const MAX_OFFSET_RATIO = 0.0618 * 2;
 const LEVERAGE = 20;
 const INIT_ASSETS = 40 * 2;
+const WIN_MAX = 1 * 0.0618 * 10;
+const LOSS_MAX = -1 * 0.0618;
+const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 
@@ -1213,7 +1213,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= 1 * 14 * 4) {
+	if (RESTART_TIME >= 1 * 14 * 4 * 2) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -1232,7 +1232,7 @@ const startInterval = async () => {
 		// await checkDeal(btc_result, eth_result);
 		await checkByStep();
 
-		await waitTime((1000 * 56) / 4);
+		await waitTime((1000 * 56) / 4 / 2);
 		await startInterval();
 	} catch (e) {
 		restart(e);
