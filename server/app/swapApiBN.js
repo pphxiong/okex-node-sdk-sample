@@ -661,16 +661,10 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(mark_price);
 			shortRatio = -shortRatio;
 		}
+		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+		console.log('btcLongRatio', longRatio, 'btcShortRatio', shortRatio);
+		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		if (longRatio > shortRatio && longRatio > 0) {
-			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
-			console.log(
-				'btcShortClosing',
-				'longRatio',
-				longRatio,
-				'shortRatio',
-				shortRatio
-			);
-			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(3)
@@ -707,16 +701,10 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 				Number(eth_mark_price);
 			shortRatio = -shortRatio;
 		}
+		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+		console.log('ethLongRatio', longRatio, 'ethShortRatio', shortRatio);
+		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		if (shortRatio > longRatio && shortRatio > 0) {
-			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
-			console.log(
-				'ethLongClosing',
-				'longRatio',
-				longRatio,
-				'shortRatio',
-				shortRatio
-			);
-			console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
 				Math.abs(Number(positionAmt)).toFixed(1)
