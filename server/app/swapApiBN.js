@@ -507,7 +507,7 @@ const extraPatchCloseHandler = async (
 				symbol: BTC_SYMBOL,
 			};
 			await closePosition(payload);
-		} else if (isHasPatch1 && shortRatio < 0) {
+		} else if (isHasPatch2 && shortRatio < 0) {
 			const { positionAmt } = shortHolding;
 			const closePositionAmt = Number(
 				Math.abs((Number(positionAmt) * 2) / 3).toFixed(1)
