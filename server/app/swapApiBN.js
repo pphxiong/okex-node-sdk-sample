@@ -439,12 +439,10 @@ async function checkByStep() {
 		await waitTime(1000 * 1);
 		if (holding.length < 3) {
 			await extraPatchCloseHandler(
-				holding,
 				longHolding,
 				shortHolding,
 				longRatio,
 				shortRatio,
-				totalRatio,
 				mark_price,
 				eth_mark_price
 			);
@@ -454,7 +452,6 @@ async function checkByStep() {
 				shortHolding,
 				longRatio,
 				shortRatio,
-				totalRatio,
 				mark_price,
 				eth_mark_price
 			);
