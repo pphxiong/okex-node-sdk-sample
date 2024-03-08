@@ -625,15 +625,10 @@ const extraPatchOpenHandler = async (
 				) >= 2;
 			console.log(
 				11,
-				Math.round(
-					Math.abs(
-						Number(shortHolding.positionAmt) *
-							Number(eth_mark_price)
-					) /
-						Math.abs(
-							Number(longHolding.positionAmt) * Number(mark_price)
-						)
-				)
+				Math.abs(
+					Number(shortHolding.positionAmt) * Number(eth_mark_price)
+				),
+				Math.abs(Number(longHolding.positionAmt) * Number(mark_price))
 			);
 			if (!isHasPatch) await openPosition(payload);
 		}
