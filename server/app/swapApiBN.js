@@ -195,10 +195,10 @@ async function checkByStep() {
 		totalRatio
 	);
 	console.log(
-		'longPositionAmt',
-		longHolding ? longHolding.positionAmt : 0,
-		'shortPositionAmt',
-		shortHolding ? shortHolding.positionAmt : 0
+		'longPositionAmt*mark_parice',
+		longHolding ? longHolding.positionAmt * mark_price : 0,
+		'shortPositionAmt*eth_mark_price',
+		shortHolding ? shortHolding.positionAmt * eth_mark_price : 0
 	);
 	// console.log(
 	// 	'closeLongCondition',
@@ -462,7 +462,7 @@ async function checkByStep() {
 			await extraLossDealHandler(holding, mark_price, eth_mark_price);
 		}
 		console.log('*********************');
-		console.log('MAX_OFFSET_RATIO', MAX_OFFSET_RATIO);
+		// console.log('MAX_OFFSET_RATIO', MAX_OFFSET_RATIO);
 		console.log(
 			'offsetRatio',
 			Math.abs(Math.abs(shortRatio) - Math.abs(longRatio))
@@ -623,6 +623,18 @@ const extraPatchOpenHandler = async (
 							Number(longHolding.positionAmt) * Number(mark_price)
 						)
 				) >= 2;
+			console.log(
+				11,
+				Math.round(
+					Math.abs(
+						Number(shortHolding.positionAmt) *
+							Number(eth_mark_price)
+					) /
+						Math.abs(
+							Number(longHolding.positionAmt) * Number(mark_price)
+						)
+				)
+			);
 			if (!isHasPatch) await openPosition(payload);
 		}
 	}
