@@ -10,7 +10,7 @@ const INIT_POSITION = 100;
 
 let MODE = 1;
 const LEVERAGE = 20;
-const INIT_ASSETS = 40 * 2;
+const INIT_ASSETS = 40 * 1.5;
 const WIN_MAX = 1 * 0.0618 * 10;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
