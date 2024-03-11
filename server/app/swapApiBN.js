@@ -61,8 +61,8 @@ async function checkByStep() {
 			console.log(
 				`availableBalance`,
 				availableBalance,
-				'holding',
-				holding
+				'globalHolding',
+				globalHolding
 			);
 			console.log('------------------');
 		} catch (e) {
