@@ -193,7 +193,9 @@ async function checkByStep() {
 		'shortRatio',
 		shortRatio,
 		'totalRatio',
-		totalRatio
+		totalRatio,
+		'winMax',
+		holding ? WIN_MAX / holding.length : 0
 	);
 	console.log(
 		'longPositionAmt*mark_parice',
@@ -607,7 +609,12 @@ const extraPatchCloseHandler = async (
 		) >= 2;
 	if (isHasPatch1 || isHasPatch2) {
 		if (isHasPatch1 && longRatio < 0) {
-			const closePositionAmt = btcBasicPositionAmt;
+			const { positionAmt } = longHolding;
+			const CURRENT_ASSETS =
+				(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
+			const closePositionAmt = Number(
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
+			);
 			const payload = {
 				positionAmt: closePositionAmt,
 				position: closePositionAmt,
@@ -617,7 +624,12 @@ const extraPatchCloseHandler = async (
 			};
 			await closePosition(payload);
 		} else if (isHasPatch2 && shortRatio < 0) {
-			const closePositionAmt = ethBasicPositionAmt;
+			const { positionAmt } = shortHolding;
+			const CURRENT_ASSETS =
+				(Math.abs(Number(positionAmt)) * eth_mark_price) / LEVERAGE;
+			const closePositionAmt = Number(
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / eth_mark_price).toFixed(1)
+			);
 			const payload = {
 				positionAmt: closePositionAmt,
 				position: closePositionAmt,
