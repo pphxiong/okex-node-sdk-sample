@@ -10,13 +10,12 @@ const INIT_POSITION = 100;
 
 let MODE = 1;
 const LEVERAGE = 20;
-const INIT_ASSETS = 40 * 1.2;
 const WIN_MAX = 1 * 0.0618 * 3.82 * 4;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
-
+let INIT_ASSETS = 40 * 1.2;
 let RESTART_TIME = 0;
 
 let rsi1 = 8;
@@ -55,14 +54,21 @@ async function checkByStep() {
 						Math.abs(Number(item.positionAmt)) > 0
 				) || [];
 			positionChange = false;
-			// avail = (availableBalance * LEVERAGE) / mark_price;
+			const currentTotalAsset = globalHolding
+				.map((item) => Number(item.initialMargin))
+				.reduce((pre, cur) => {
+					pre + cur;
+				}, 0);
+			INIT_ASSETS =
+				(Number(availableBalance) + Number(currentTotalAsset)) / 6.18;
 
 			console.log('------------------');
 			console.log(
 				`availableBalance`,
 				availableBalance,
-				'globalHolding',
-				globalHolding
+				'currentTotalAsset',
+				currentTotalAsset,
+				INIT_ASSETS
 			);
 			console.log('------------------');
 		} catch (e) {
