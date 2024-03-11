@@ -465,12 +465,14 @@ async function checkByStep() {
 			await extraLossDealHandler(holding, mark_price, eth_mark_price);
 		}
 		console.log('*********************');
-		// console.log('MAX_OFFSET_RATIO', MAX_OFFSET_RATIO);
 		console.log(
 			'offsetRatio',
-			Math.abs(Math.abs(shortRatio) - Math.abs(longRatio))
+			Math.abs(Math.abs(shortRatio) - Math.abs(longRatio)),
+			'MAX_OFFSET_RATIO',
+			MAX_OFFSET_RATIO,
+			'holdingLength',
+			holding.length
 		);
-		console.log('holdingLength', holding.length);
 		console.log('*********************');
 	}
 }
