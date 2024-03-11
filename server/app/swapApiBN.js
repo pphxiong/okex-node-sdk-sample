@@ -56,9 +56,7 @@ async function checkByStep() {
 			positionChange = false;
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
-				.reduce((pre, cur) => {
-					pre + cur;
-				}, 0);
+				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) / 6.18;
 
