@@ -60,11 +60,9 @@ async function checkByStep() {
 			console.log('------------------');
 			console.log(
 				`availableBalance`,
-				availableBalance
-				// 'avail',
-				// avail,
-				// 'INIT_POSITION',
-				// INIT_POSITION
+				availableBalance,
+				'holding',
+				holding
 			);
 			console.log('------------------');
 		} catch (e) {
