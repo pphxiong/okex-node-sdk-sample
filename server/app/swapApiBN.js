@@ -11,7 +11,7 @@ const INIT_POSITION = 100;
 let MODE = 1;
 const LEVERAGE = 20;
 const INIT_ASSETS = 40 * 1.2;
-const WIN_MAX = 1 * 0.0618 * 3.82;
+const WIN_MAX = 1 * 0.0618 * 3.82 * 4;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
@@ -144,7 +144,8 @@ async function checkByStep() {
 	}
 
 	const TOTALRATIO = totalRatio;
-	const CLOSE_WIN_CONDITION = holding && TOTALRATIO > WIN_MAX;
+	const CLOSE_WIN_CONDITION =
+		holding && TOTALRATIO > WIN_MAX / holding.length;
 	const CLOSE_LOSS_CONDITION =
 		holding && holding.length >= 3 && TOTALRATIO < LOSS_MAX;
 
