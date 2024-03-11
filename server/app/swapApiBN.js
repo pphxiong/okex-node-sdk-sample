@@ -68,6 +68,7 @@ async function checkByStep() {
 				availableBalance,
 				'currentTotalAsset',
 				currentTotalAsset,
+				'INIT_ASSETS',
 				INIT_ASSETS
 			);
 			console.log('------------------');
