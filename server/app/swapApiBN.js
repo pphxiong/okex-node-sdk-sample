@@ -510,13 +510,15 @@ const extraPatchOpenHandler = async (
 					Math.abs(Number(item.positionAmt)) > 0
 			);
 			if (!btcShortHolding) await openPosition(payload);
+			const { positionAmt } = longHolding;
+			const CURRENT_ASSETS =
+				(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
+			const closePositionAmt = Number(
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
+			);
 			const closePayload = {
-				positionAmt: Number(
-					(((INIT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
-				),
-				position: Number(
-					(((INIT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
-				),
+				positionAmt: closePositionAmt,
+				position: closePositionAmt,
 				side: 'long',
 				positionSide: 'long',
 				symbol: BTC_SYMBOL,
@@ -540,15 +542,15 @@ const extraPatchOpenHandler = async (
 					Math.abs(Number(item.positionAmt)) > 0
 			);
 			if (!ethLongHolding) await openPosition(payload);
+			const { positionAmt } = shortHolding;
+			const CURRENT_ASSETS =
+				(Math.abs(Number(positionAmt)) * eth_mark_price) / LEVERAGE;
+			const closePositionAmt = Number(
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / eth_mark_price).toFixed(1)
+			);
 			const closePayload = {
-				positionAmt: (
-					((INIT_ASSETS - 5) * LEVERAGE) /
-					eth_mark_price
-				).toFixed(1),
-				position: (
-					((INIT_ASSETS - 5) * LEVERAGE) /
-					eth_mark_price
-				).toFixed(1),
+				positionAmt: closePositionAmt,
+				position: closePositionAmt,
 				side: 'short',
 				positionSide: 'short',
 				symbol: ETH_SYMBOL,
