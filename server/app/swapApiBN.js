@@ -210,23 +210,13 @@ async function checkByStep() {
 		'shortPositionAmt*eth_mark_price',
 		shortHolding ? shortHolding.positionAmt * eth_mark_price : 0
 	);
-	// console.log(
-	// 	'closeLongCondition',
-	// 	closeLongCondition,
-	// 	'closeShortCondition',
-	// 	closeShortCondition,
-	// 	'openLongCondition',
-	// 	openLongCondition,
-	// 	'openShortCondition',
-	// 	openShortCondition
-	// );
 	console.log(
 		'w_Position',
 		w_Position,
 		't_Position',
-		t_Position,
-		'TOTALRATIO',
-		TOTALRATIO
+		t_Position
+		// 'TOTALRATIO',
+		// TOTALRATIO
 	);
 	console.log('************************************');
 
