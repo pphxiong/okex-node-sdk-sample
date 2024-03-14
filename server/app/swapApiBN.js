@@ -159,8 +159,12 @@ async function checkByStep() {
 		longHolding && CLOSE_WIN_CONDITION && false;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding && CLOSE_WIN_CONDITION && false;
+	const MAIN_SAME_HOLDING =
+		holding &&
+		holding.length === 2 &&
+		((longHolding && !shortHolding) || (!longHolding && shortHolding));
 
-	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION;
+	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION || MAIN_SAME_HOLDING;
 	// const MAIN_CLOSE_EXTRA_CONDITION = CLOSE_LOSS_CONDITION;
 
 	const PATCH_CONDITION =
