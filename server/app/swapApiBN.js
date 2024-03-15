@@ -814,6 +814,24 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		console.log('btcLongRatio', longRatio, 'btcShortRatio', shortRatio);
 		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+		// const isHasBtcShortPatch =
+		// 	Math.round(
+		// 		Math.abs(Number(btcShortHolding.positionAmt)) /
+		// 			btcBasicPositionAmt
+		// 	) >= 2;
+		// if (!isHasBtcShortPatch) {
+		// 	if (shortRatio > MAX_OFFSET_RATIO) {
+		// 		const openPositionAmt = btcBasicPositionAmt;
+		// 		const payload = {
+		// 			positionAmt: Number(openPositionAmt),
+		// 			position: Number(openPositionAmt),
+		// 			side: 'short',
+		// 			openSide: 'short',
+		// 			symbol: BTC_SYMBOL,
+		// 		};
+		// 		await openPosition(payload);
+		// 	}
+		// }
 		if (longRatio > shortRatio && longRatio > 0) {
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
@@ -875,6 +893,24 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
 		console.log('ethLongRatio', longRatio, 'ethShortRatio', shortRatio);
 		console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+		// const isHasEthLongPatch =
+		// 	Math.round(
+		// 		Math.abs(Number(ethLongHolding.positionAmt)) /
+		// 			ethBasicPositionAmt
+		// 	) >= 2;
+		// if (!isHasEthLongPatch) {
+		// 	if (longRatio > MAX_OFFSET_RATIO) {
+		// 		const openPositionAmt = ethBasicPositionAmt;
+		// 		const payload = {
+		// 			positionAmt: Number(openPositionAmt),
+		// 			position: Number(openPositionAmt),
+		// 			side: 'long',
+		// 			openSide: 'long',
+		// 			symbol: ETH_SYMBOL,
+		// 		};
+		// 		await openPosition(payload);
+		// 	}
+		// }
 		if (shortRatio > longRatio && shortRatio > 0) {
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
@@ -912,99 +948,99 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			}
 		}
 	}
-	// if (btcHoldingList.length === 1) {
-	// 	const btcLongHolding = btcHoldingList.find(
-	// 		(item) => item.positionSide.toUpperCase() == 'LONG'
-	// 	);
-	// 	if (btcLongHolding) {
-	// 		const { leverage, entryPrice: avg_cost } = btcLongHolding;
-	// 		longRatio =
-	// 			((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
-	// 			Number(mark_price);
-	// 		if (longRatio < 0) {
-	// 			const { positionAmt } = btcLongHolding;
-	// 			const ratio = Math.round(
-	// 				Math.abs(Number(positionAmt)) / btcBasicPositionAmt
-	// 			);
-	// 			if (ratio >= 1) {
-	// 				const CURRENT_ASSETS =
-	// 					(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
-	// 				if (CURRENT_ASSETS > 10) {
-	// 					const closePostion = (
-	// 						((CURRENT_ASSETS - 5) * LEVERAGE) /
-	// 						mark_price
-	// 					).toFixed(3);
-	// 					const closePayload = {
-	// 						positionAmt: closePostion,
-	// 						position: closePostion,
-	// 						side: 'long',
-	// 						positionSide: 'long',
-	// 						symbol: BTC_SYMBOL,
-	// 					};
-	// 					await closePosition(closePayload);
-	// 				}
-	// 			}
-	// 			// const openPositionAmt = Number(
-	// 			// 	(ethBasicPositionAmt * 2).toFixed(1)
-	// 			// );
-	// 			// const payload = {
-	// 			// 	positionAmt: openPositionAmt,
-	// 			// 	position: openPositionAmt,
-	// 			// 	side: 'short',
-	// 			// 	openSide: 'short',
-	// 			// 	symbol: ETH_SYMBOL,
-	// 			// };
-	// 			// await openPosition(payload);
-	// 		}
-	// 	}
-	// }
-	// if (ethHoldingList.length === 1) {
-	// 	const ethShortHolding = ethHoldingList.find(
-	// 		(item) => item.positionSide.toUpperCase() == 'SHORT'
-	// 	);
-	// 	if (ethShortHolding) {
-	// 		const { leverage, entryPrice: avg_cost } = ethShortHolding;
-	// 		shortRatio =
-	// 			((Number(eth_mark_price) - Number(avg_cost)) *
-	// 				Number(leverage)) /
-	// 			Number(eth_mark_price);
-	// 		shortRatio = -shortRatio;
-	// 		if (shortRatio < 0) {
-	// 			const { positionAmt } = ethShortHolding;
-	// 			const ratio = Math.round(
-	// 				Math.abs(Number(positionAmt)) / ethBasicPositionAmt
-	// 			);
-	// 			if (ratio >= 1) {
-	// 				const CURRENT_ASSETS =
-	// 					(Math.abs(Number(positionAmt)) * eth_mark_price) /
-	// 					LEVERAGE;
-	// 				if (CURRENT_ASSETS > 10) {
-	// 					const closePostion = (
-	// 						((CURRENT_ASSETS - 5) * LEVERAGE) /
-	// 						eth_mark_price
-	// 					).toFixed(1);
-	// 					const closePayload = {
-	// 						positionAmt: closePostion,
-	// 						position: closePostion,
-	// 						side: 'short',
-	// 						positionSide: 'short',
-	// 						symbol: ETH_SYMBOL,
-	// 					};
-	// 					await closePosition(closePayload);
-	// 				}
-	// 			}
-	// 			// const openPositionAmt = btcBasicPositionAmt;
-	// 			// const payload = {
-	// 			// 	positionAmt: Number(openPositionAmt),
-	// 			// 	position: Number(openPositionAmt),
-	// 			// 	side: 'long',
-	// 			// 	openSide: 'long',
-	// 			// 	symbol: BTC_SYMBOL,
-	// 			// };
-	// 			// await openPosition(payload);
-	// 		}
-	// 	}
-	// }
+	if (btcHoldingList.length === 1) {
+		const btcLongHolding = btcHoldingList.find(
+			(item) => item.positionSide.toUpperCase() == 'LONG'
+		);
+		if (btcLongHolding) {
+			const { leverage, entryPrice: avg_cost } = btcLongHolding;
+			longRatio =
+				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
+				Number(mark_price);
+			if (longRatio < -MAX_OFFSET_RATIO) {
+				const { positionAmt } = btcLongHolding;
+				const ratio = Math.round(
+					Math.abs(Number(positionAmt)) / btcBasicPositionAmt
+				);
+				if (ratio >= 1) {
+					const CURRENT_ASSETS =
+						(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
+					if (CURRENT_ASSETS > 10) {
+						const closePostion = (
+							((CURRENT_ASSETS - 5) * LEVERAGE) /
+							mark_price
+						).toFixed(3);
+						const closePayload = {
+							positionAmt: closePostion,
+							position: closePostion,
+							side: 'long',
+							positionSide: 'long',
+							symbol: BTC_SYMBOL,
+						};
+						await closePosition(closePayload);
+					}
+				}
+				// const openPositionAmt = Number(
+				// 	(ethBasicPositionAmt * 2).toFixed(1)
+				// );
+				// const payload = {
+				// 	positionAmt: openPositionAmt,
+				// 	position: openPositionAmt,
+				// 	side: 'short',
+				// 	openSide: 'short',
+				// 	symbol: ETH_SYMBOL,
+				// };
+				// await openPosition(payload);
+			}
+		}
+	}
+	if (ethHoldingList.length === 1) {
+		const ethShortHolding = ethHoldingList.find(
+			(item) => item.positionSide.toUpperCase() == 'SHORT'
+		);
+		if (ethShortHolding) {
+			const { leverage, entryPrice: avg_cost } = ethShortHolding;
+			shortRatio =
+				((Number(eth_mark_price) - Number(avg_cost)) *
+					Number(leverage)) /
+				Number(eth_mark_price);
+			shortRatio = -shortRatio;
+			if (shortRatio < -MAX_OFFSET_RATIO) {
+				const { positionAmt } = ethShortHolding;
+				const ratio = Math.round(
+					Math.abs(Number(positionAmt)) / ethBasicPositionAmt
+				);
+				if (ratio >= 1) {
+					const CURRENT_ASSETS =
+						(Math.abs(Number(positionAmt)) * eth_mark_price) /
+						LEVERAGE;
+					if (CURRENT_ASSETS > 10) {
+						const closePostion = (
+							((CURRENT_ASSETS - 5) * LEVERAGE) /
+							eth_mark_price
+						).toFixed(1);
+						const closePayload = {
+							positionAmt: closePostion,
+							position: closePostion,
+							side: 'short',
+							positionSide: 'short',
+							symbol: ETH_SYMBOL,
+						};
+						await closePosition(closePayload);
+					}
+				}
+				// const openPositionAmt = btcBasicPositionAmt;
+				// const payload = {
+				// 	positionAmt: Number(openPositionAmt),
+				// 	position: Number(openPositionAmt),
+				// 	side: 'long',
+				// 	openSide: 'long',
+				// 	symbol: BTC_SYMBOL,
+				// };
+				// await openPosition(payload);
+			}
+		}
+	}
 };
 
 const checkDeal = async (data, ethData) => {
