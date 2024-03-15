@@ -489,11 +489,11 @@ const extraPatchCloseHandler = async (
 	const isHasPatch1 =
 		Math.round(
 			Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-		) >= 2;
+		) >= 1;
 	const isHasPatch2 =
 		Math.round(
 			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-		) >= 2;
+		) >= 1;
 	if (isHasPatch1 || isHasPatch2) {
 		if (isHasPatch1 && longRatio < 0) {
 			const { positionAmt } = longHolding;
@@ -556,16 +556,21 @@ const extraPatchOpenHandler = async (
 	const isBoth =
 		Math.abs(longRatio) > MAX_OFFSET_RATIO &&
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
+	const isHasBtcPatch =
+		Math.round(
+			Math.abs(Number(longHoldingHolding.positionAmt)) /
+				btcBasicPositionAmt
+		) >= 1;
+	const isHasEthPatch =
+		Math.round(
+			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
+		) >= 1;
 	if (
 		isOffsetBehind &&
 		longRatio > 0 &&
 		Math.abs(longRatio) > Math.abs(shortRatio)
 	) {
-		const isHasPatch =
-			Math.round(
-				Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-			) >= 2;
-		if (!isHasPatch) {
+		if (!isHasBtcPatch) {
 			const openPositionAmt = btcBasicPositionAmt;
 			const payload = {
 				positionAmt: Number(openPositionAmt),
@@ -604,11 +609,7 @@ const extraPatchOpenHandler = async (
 		shortRatio > 0 &&
 		Math.abs(shortRatio) > Math.abs(longRatio)
 	) {
-		const isHasPatch =
-			Math.round(
-				Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-			) >= 2;
-		if (!isHasPatch) {
+		if (!isHasEthPatch) {
 			const openPositionAmt = ethBasicPositionAmt;
 			const payload = {
 				positionAmt: Number(openPositionAmt),
@@ -640,6 +641,20 @@ const extraPatchOpenHandler = async (
 					await closePosition(closePayload);
 				}
 			}
+
+			// if (!isHasBtcPatch) {
+			// 	const openPositionAmt = Number(
+			// 		(btcBasicPositionAmt * 1).toFixed(3)
+			// 	);
+			// 	const payload = {
+			// 		positionAmt: openPositionAmt,
+			// 		position: openPositionAmt,
+			// 		side: 'short',
+			// 		openSide: 'short',
+			// 		symbol: BTC_SYMBOL,
+			// 	};
+			// 	await openPosition(payload);
+			// }
 		}
 	}
 	if (
