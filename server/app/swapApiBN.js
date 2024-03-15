@@ -15,9 +15,10 @@ const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
+const DEFAULT_INIT_ASSET = 7;
 let INIT_ASSETS = 40 * 1.2;
-let RESTART_TIME = 0;
 
+let RESTART_TIME = 0;
 let rsi1 = 8;
 let rsi2 = 12;
 let rsi3 = 24;
@@ -337,7 +338,7 @@ async function checkByStep() {
 			//   : INIT_POSITION;
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+				((DEFAULT_INIT_ASSET * LEVERAGE) / mark_price).toFixed(3)
 			);
 			// if (BATCH_LONG_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
@@ -385,7 +386,7 @@ async function checkByStep() {
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
 				(
-					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
+					(DEFAULT_INIT_ASSET * INIT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
 				).toFixed(1)
 			);
