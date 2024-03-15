@@ -495,7 +495,7 @@ const extraPatchCloseHandler = async (
 			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
 		) >= 1;
 	if (isHasPatch1 || isHasPatch2) {
-		if (isHasPatch1 && longRatio < 0) {
+		if (isHasPatch1 && longRatio < -MAX_OFFSET_RATIO) {
 			const { positionAmt } = longHolding;
 			const CURRENT_ASSETS =
 				(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
@@ -512,7 +512,7 @@ const extraPatchCloseHandler = async (
 				};
 				await closePosition(payload);
 			}
-		} else if (isHasPatch2 && shortRatio < 0) {
+		} else if (isHasPatch2 && shortRatio < -MAX_OFFSET_RATIO) {
 			const { positionAmt } = shortHolding;
 			const CURRENT_ASSETS =
 				(Math.abs(Number(positionAmt)) * eth_mark_price) / LEVERAGE;
