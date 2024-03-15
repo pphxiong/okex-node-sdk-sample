@@ -601,6 +601,19 @@ const extraPatchOpenHandler = async (
 					await closePosition(closePayload);
 				}
 			}
+			if (!isHasEthPatch) {
+				const openPositionAmt = Number(
+					(ethBasicPositionAmt * 1).toFixed(1)
+				);
+				const payload = {
+					positionAmt: openPositionAmt,
+					position: openPositionAmt,
+					side: 'long',
+					openSide: 'long',
+					symbol: ETH_SYMBOL,
+				};
+				await openPosition(payload);
+			}
 		}
 	}
 	if (
@@ -640,20 +653,19 @@ const extraPatchOpenHandler = async (
 					await closePosition(closePayload);
 				}
 			}
-
-			// if (!isHasBtcPatch) {
-			// 	const openPositionAmt = Number(
-			// 		(btcBasicPositionAmt * 1).toFixed(3)
-			// 	);
-			// 	const payload = {
-			// 		positionAmt: openPositionAmt,
-			// 		position: openPositionAmt,
-			// 		side: 'short',
-			// 		openSide: 'short',
-			// 		symbol: BTC_SYMBOL,
-			// 	};
-			// 	await openPosition(payload);
-			// }
+			if (!isHasBtcPatch) {
+				const openPositionAmt = Number(
+					(btcBasicPositionAmt * 1).toFixed(3)
+				);
+				const payload = {
+					positionAmt: openPositionAmt,
+					position: openPositionAmt,
+					side: 'short',
+					openSide: 'short',
+					symbol: BTC_SYMBOL,
+				};
+				await openPosition(payload);
+			}
 		}
 	}
 	if (
@@ -694,21 +706,19 @@ const extraPatchOpenHandler = async (
 			};
 			await closePosition(closePayload);
 		}
-		// const isHasPatch =
-		// 	Math.round(
-		// 		Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-		// 	) >= 2;
-		// if (!isHasPatch) {
-		// 	const openPositionAmt = btcBasicPositionAmt;
-		// 	const payload = {
-		// 		positionAmt: Number(openPositionAmt),
-		// 		position: Number(openPositionAmt),
-		// 		side: 'long',
-		// 		openSide: 'long',
-		// 		symbol: BTC_SYMBOL,
-		// 	};
-		// 	await openPosition(payload);
-		// }
+		if (!isHasBtcPatch) {
+			const openPositionAmt = Number(
+				(btcBasicPositionAmt * 1).toFixed(3)
+			);
+			const payload = {
+				positionAmt: openPositionAmt,
+				position: openPositionAmt,
+				side: 'long',
+				openSide: 'long',
+				symbol: BTC_SYMBOL,
+			};
+			await openPosition(payload);
+		}
 	}
 	if (
 		(isBoth && shortRatio > 0 && longRatio < 0) ||
@@ -748,21 +758,19 @@ const extraPatchOpenHandler = async (
 			};
 			await closePosition(closePayload);
 		}
-		// const isHasPatch =
-		// 	Math.round(
-		// 		Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-		// 	) >= 2;
-		// if (!isHasPatch) {
-		// 	const openPositionAmt = ethBasicPositionAmt;
-		// 	const payload = {
-		// 		positionAmt: Number(openPositionAmt),
-		// 		position: Number(openPositionAmt),
-		// 		side: 'short',
-		// 		openSide: 'short',
-		// 		symbol: ETH_SYMBOL,
-		// 	};
-		// 	await openPosition(payload);
-		// }
+		if (!isHasEthPatch) {
+			const openPositionAmt = Number(
+				(ethBasicPositionAmt * 1).toFixed(1)
+			);
+			const payload = {
+				positionAmt: openPositionAmt,
+				position: openPositionAmt,
+				side: 'short',
+				openSide: 'short',
+				symbol: ETH_SYMBOL,
+			};
+			await openPosition(payload);
+		}
 	}
 };
 
