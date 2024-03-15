@@ -558,8 +558,7 @@ const extraPatchOpenHandler = async (
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
 	const isHasBtcPatch =
 		Math.round(
-			Math.abs(Number(longHoldingHolding.positionAmt)) /
-				btcBasicPositionAmt
+			Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
 		) >= 1;
 	const isHasEthPatch =
 		Math.round(
