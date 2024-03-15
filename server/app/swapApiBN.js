@@ -10,7 +10,7 @@ const INIT_POSITION = 100;
 
 let MODE = 1;
 const LEVERAGE = 20;
-const WIN_MAX = 1 * 0.0618 * 6.18;
+const WIN_MAX = 1 * 0.0618 * 3.82 * 4;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
@@ -59,7 +59,7 @@ async function checkByStep() {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) / 3.82;
+				(Number(availableBalance) + Number(currentTotalAsset)) / 6.18;
 
 			console.log('------------------');
 			console.log(
@@ -148,7 +148,7 @@ async function checkByStep() {
 	}
 
 	const TOTALRATIO = totalRatio;
-	const CLOSE_WIN_CONDITION = holding && TOTALRATIO > WIN_MAX;
+	const CLOSE_WIN_CONDITION = holding && TOTALRATIO > WIN_MAX / holding.length;
 	const CLOSE_LOSS_CONDITION =
 		holding && holding.length >= 3 && TOTALRATIO < LOSS_MAX;
 
@@ -337,7 +337,7 @@ async function checkByStep() {
 			//   : INIT_POSITION;
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
-				((DEFAULT_INIT_ASSET * LEVERAGE) / mark_price).toFixed(3)
+				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
 			);
 			// if (BATCH_LONG_OPEN_CONDITION)
 			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
@@ -385,7 +385,7 @@ async function checkByStep() {
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
 				(
-					(DEFAULT_INIT_ASSET * INIT_ASSETS_RATIO * LEVERAGE) /
+					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
 				).toFixed(1)
 			);
@@ -553,16 +553,17 @@ const extraPatchOpenHandler = async (
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
 	const isBoth =
+		false && 
 		Math.abs(longRatio) > MAX_OFFSET_RATIO &&
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
 	const isHasBtcPatch =
 		Math.round(
 			Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-		) >= 1;
+		) >= 2;
 	const isHasEthPatch =
 		Math.round(
 			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-		) >= 1;
+		) >= 2;
 	if (
 		((isBoth && longRatio > 0 && shortRatio < 0) ||
 			(isOffsetBehind && longRatio > 0)) &&
@@ -956,7 +957,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			longRatio =
 				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
 				Number(mark_price);
-			if (longRatio < -MAX_OFFSET_RATIO) {
+			if (longRatio < -MAX_OFFSET_RATIO/2) {
 				const { positionAmt } = btcLongHolding;
 				const ratio = Math.round(
 					Math.abs(Number(positionAmt)) / btcBasicPositionAmt
@@ -1004,7 +1005,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 					Number(leverage)) /
 				Number(eth_mark_price);
 			shortRatio = -shortRatio;
-			if (shortRatio < -MAX_OFFSET_RATIO) {
+			if (shortRatio < -MAX_OFFSET_RATIO/2) {
 				const { positionAmt } = ethShortHolding;
 				const ratio = Math.round(
 					Math.abs(Number(positionAmt)) / ethBasicPositionAmt
