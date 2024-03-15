@@ -647,7 +647,7 @@ const extraPatchOpenHandler = async (
 			shortRatio < 0 &&
 			Math.abs(shortRatio) > Math.abs(longRatio))
 	) {
-		const openPositionAmt = Number((ethBasicPositionAmt * 2).toFixed(1));
+		const openPositionAmt = Number((ethBasicPositionAmt * 1).toFixed(1));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
@@ -701,7 +701,7 @@ const extraPatchOpenHandler = async (
 			longRatio < 0 &&
 			Math.abs(longRatio) > Math.abs(shortRatio))
 	) {
-		const openPositionAmt = Number((btcBasicPositionAmt * 2).toFixed(3));
+		const openPositionAmt = Number((btcBasicPositionAmt * 1).toFixed(3));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
