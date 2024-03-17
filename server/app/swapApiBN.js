@@ -16,7 +16,7 @@ const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 const DEFAULT_INIT_ASSET = 7;
-let INIT_ASSETS = 80;
+let INIT_ASSETS = 60;
 
 let RESTART_TIME = 0;
 let rsi1 = 8;
