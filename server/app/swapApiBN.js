@@ -16,7 +16,7 @@ const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 const DEFAULT_INIT_ASSET = 7;
-let INIT_ASSETS = 40 * 1.2;
+let INIT_ASSETS = 100;
 
 let RESTART_TIME = 0;
 let rsi1 = 8;
@@ -58,8 +58,8 @@ async function checkByStep() {
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
-			INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) / 6.18;
+		//	INIT_ASSETS =
+				(Number(availableBalance) + Number(currentTotalAsset)) / 6.18/4;
 
 			console.log('------------------');
 			console.log(
