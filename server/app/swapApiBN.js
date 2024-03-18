@@ -9,7 +9,7 @@ const ETH_SYMBOL = 'EOSUSDT';
 const LEVERAGE = 20;
 const WIN_MAX = 1 * 0.0618 * 3.82;
 const LOSS_MAX = -1 * 0.0618;
-const MAX_OFFSET_RATIO = 0.0618 * 2;
+const MAX_OFFSET_RATIO = WIN_MAX / 2;
 const INIT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 60;
 
@@ -552,6 +552,7 @@ const extraPatchOpenHandler = async (
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
 	const isBoth =
+		false &&
 		Math.abs(longRatio) > MAX_OFFSET_RATIO &&
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
 	const isHasBtcPatch =
