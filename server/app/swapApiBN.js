@@ -10,7 +10,7 @@ const INIT_POSITION = 100;
 
 let MODE = 1;
 const LEVERAGE = 20;
-const WIN_MAX = 1 * 0.0618 * 3.82 * 2;
+const WIN_MAX = 1 * 0.0618 * 3.82;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
@@ -552,7 +552,6 @@ const extraPatchOpenHandler = async (
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
 	const isBoth =
-		false && 
 		Math.abs(longRatio) > MAX_OFFSET_RATIO &&
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
 	const isHasBtcPatch =
@@ -956,7 +955,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			longRatio =
 				((Number(mark_price) - Number(avg_cost)) * Number(leverage)) /
 				Number(mark_price);
-			if (longRatio < -MAX_OFFSET_RATIO/2) {
+			if (longRatio < -MAX_OFFSET_RATIO / 2) {
 				const { positionAmt } = btcLongHolding;
 				const ratio = Math.round(
 					Math.abs(Number(positionAmt)) / btcBasicPositionAmt
@@ -1004,7 +1003,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 					Number(leverage)) /
 				Number(eth_mark_price);
 			shortRatio = -shortRatio;
-			if (shortRatio < -MAX_OFFSET_RATIO/2) {
+			if (shortRatio < -MAX_OFFSET_RATIO / 2) {
 				const { positionAmt } = ethShortHolding;
 				const ratio = Math.round(
 					Math.abs(Number(positionAmt)) / ethBasicPositionAmt
