@@ -5,19 +5,19 @@ const customAuthClientBN = require('./customAuthClientBN');
 
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
-const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 60;
 
-let MODE = 1;
 const LEVERAGE = 20;
 const WIN_MAX = 1 * 0.0618 * 3.82;
 const LOSS_MAX = -1 * 0.0618;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
-const MAX_SHORT_ASSETS_RATIO = 1 / 2;
-const DEFAULT_INIT_ASSET = 7;
-let INIT_ASSETS = 80;
+let INIT_ASSETS = 60;
 
+const DEFAULT_INTERVAL = '1h';
+const DEFAULT_INIT_ASSET = 7;
+const MAX_SHORT_ASSETS_RATIO = 1 / 2;
+const INIT_POSITION = INIT_ASSETS;
+let MODE = 1;
 let RESTART_TIME = 0;
 let rsi1 = 8;
 let rsi2 = 12;
