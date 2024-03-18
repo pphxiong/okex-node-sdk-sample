@@ -16,7 +16,7 @@ const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_ASSETS_RATIO = 1;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
 const DEFAULT_INIT_ASSET = 7;
-let INIT_ASSETS = 60;
+let INIT_ASSETS = 80;
 
 let RESTART_TIME = 0;
 let rsi1 = 8;
@@ -201,7 +201,7 @@ async function checkByStep() {
 		'totalRatio',
 		totalRatio,
 		'winMax',
-		holding ? WIN_MAX / holding.length : 0
+		holding ? WIN_MAX : 0
 	);
 	console.log(
 		'longPositionAmt*mark_parice',
