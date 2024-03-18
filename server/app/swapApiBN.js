@@ -6,7 +6,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 const DEFAULT_INTERVAL = '1h';
-const INIT_POSITION = 100;
+const INIT_POSITION = 60;
 
 let MODE = 1;
 const LEVERAGE = 20;
