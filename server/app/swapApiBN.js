@@ -7,12 +7,13 @@ const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
-const WIN_MAX = 1 * 0.0618 * 3.82;
-const LOSS_MAX = -1 * 0.0618;
+// const WIN_MAX = 1 * 0.0618 * 3.82;
+const WIN_MAX = 1 * 0.02;
 const MAX_OFFSET_RATIO = WIN_MAX / 2;
 const INIT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 60;
 
+const LOSS_MAX = -WIN_MAX / 2;
 const DEFAULT_INTERVAL = '1h';
 const DEFAULT_INIT_ASSET = 7;
 const MAX_SHORT_ASSETS_RATIO = 1 / 2;
