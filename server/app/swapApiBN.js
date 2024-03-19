@@ -8,7 +8,7 @@ const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
 // const WIN_MAX = 1 * 0.0618 * 3.82;
-const WIN_MAX = 1 * 0.2;
+const WIN_MAX = 1 * 0.3;
 const MAX_OFFSET_RATIO = WIN_MAX / 2;
 const INIT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 60;
@@ -229,15 +229,7 @@ async function checkByStep() {
 		});
 	};
 
-	const closeAllPosition = async () => {
-		const pList = [];
-		holding.forEach((item) => {
-			pList.push(closePosition(item));
-		});
-		await Promise.all(pList);
-	};
-
-	if (MAIN_CLOSE_ALL_CONDITION) closeAllPosition();
+	if (MAIN_CLOSE_ALL_CONDITION) closeAllPosition(holding);
 
 	const closeLongPosition = async () => {
 		if (longHolding && Math.abs(Number(longHolding.positionAmt))) {
@@ -439,6 +431,7 @@ async function checkByStep() {
 		await waitTime(1000 * 1);
 		if (holding.length <= 2) {
 			await extraPatchCloseHandler(
+				holding,
 				longHolding,
 				shortHolding,
 				longRatio,
@@ -472,6 +465,7 @@ async function checkByStep() {
 }
 
 const extraPatchCloseHandler = async (
+	holding,
 	longHolding,
 	shortHolding,
 	longRatio,
@@ -509,7 +503,8 @@ const extraPatchCloseHandler = async (
 					positionSide: 'long',
 					symbol: BTC_SYMBOL,
 				};
-				await closePosition(payload);
+				// await closePosition(payload);
+				await closeAllPosition(holding);
 			}
 		} else if (isHasPatch2 && shortRatio < 0) {
 			const { positionAmt } = shortHolding;
@@ -529,7 +524,8 @@ const extraPatchCloseHandler = async (
 					positionSide: 'short',
 					symbol: ETH_SYMBOL,
 				};
-				await closePosition(payload);
+				// await closePosition(payload);
+				await closeAllPosition(holding);
 			}
 		}
 	}
@@ -551,18 +547,18 @@ const extraPatchOpenHandler = async (
 		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
-	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
+	const isOffsetBehind = false && Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
 	const isBoth =
-		Math.abs(longRatio) > MAX_OFFSET_RATIO &&
+		Math.abs(longRatio) > MAX_OFFSET_RATIO ||
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
 	const isHasBtcPatch =
 		Math.round(
 			Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-		) >= 1;
+		) >= 2;
 	const isHasEthPatch =
 		Math.round(
 			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-		) >= 1;
+		) >= 2;
 	if (
 		((isBoth && longRatio > 0 && shortRatio < 0) ||
 			(isOffsetBehind && longRatio > 0)) &&
@@ -831,40 +827,41 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		// 		await openPosition(payload);
 		// 	}
 		// }
-		if (longRatio > shortRatio && longRatio > 0) {
-			const { positionAmt } = btcShortHolding;
-			const closePositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
-			);
-			const payload = {
-				positionAmt: closePositionAmt,
-				position: closePositionAmt,
-				side: 'short',
-				positionSide: 'short',
-				symbol: BTC_SYMBOL,
-			};
-			await closePosition(payload);
-			const openPositionAmt = Number(
-				(
-					((INIT_ASSETS -
-						Math.abs(
-							(Number(btcLongHolding.positionAmt) * mark_price) /
-								LEVERAGE
-						)) *
-						LEVERAGE) /
-					mark_price
-				).toFixed(3)
-			);
-			if (openPositionAmt > 10) {
-				const openPayload = {
-					positionAmt: Number(openPositionAmt),
-					position: Number(openPositionAmt),
-					side: 'long',
-					openSide: 'long',
-					symbol: BTC_SYMBOL,
-				};
-				await openPosition(openPayload);
-			}
+		if (shortRatio < -MAX_OFFSET_RATIO) {
+			await closeAllPosition(holding);
+			// const { positionAmt } = btcShortHolding;
+			// const closePositionAmt = Number(
+			// 	Math.abs(Number(positionAmt)).toFixed(3)
+			// );
+			// const payload = {
+			// 	positionAmt: closePositionAmt,
+			// 	position: closePositionAmt,
+			// 	side: 'short',
+			// 	positionSide: 'short',
+			// 	symbol: BTC_SYMBOL,
+			// };
+			// await closePosition(payload);
+			// const openPositionAmt = Number(
+			// 	(
+			// 		((INIT_ASSETS -
+			// 			Math.abs(
+			// 				(Number(btcLongHolding.positionAmt) * mark_price) /
+			// 					LEVERAGE
+			// 			)) *
+			// 			LEVERAGE) /
+			// 		mark_price
+			// 	).toFixed(3)
+			// );
+			// if (openPositionAmt > 10) {
+			// 	const openPayload = {
+			// 		positionAmt: Number(openPositionAmt),
+			// 		position: Number(openPositionAmt),
+			// 		side: 'long',
+			// 		openSide: 'long',
+			// 		symbol: BTC_SYMBOL,
+			// 	};
+			// 	await openPosition(openPayload);
+			// }
 		}
 	}
 	if (ethHoldingList.length === 2) {
@@ -910,41 +907,42 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		// 		await openPosition(payload);
 		// 	}
 		// }
-		if (shortRatio > longRatio && shortRatio > 0) {
-			const { positionAmt } = ethLongHolding;
-			const closePositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(1)
-			);
-			const payload = {
-				positionAmt: closePositionAmt,
-				position: closePositionAmt,
-				side: 'long',
-				positionSide: 'long',
-				symbol: ETH_SYMBOL,
-			};
-			await closePosition(payload);
-			const openPositionAmt = Number(
-				(
-					((INIT_ASSETS -
-						Math.abs(
-							(Number(ethShortHolding.positionAmt) *
-								eth_mark_price) /
-								LEVERAGE
-						)) *
-						LEVERAGE) /
-					eth_mark_price
-				).toFixed(1)
-			);
-			if (openPositionAmt > 10) {
-				const openPayload = {
-					positionAmt: Number(openPositionAmt),
-					position: Number(openPositionAmt),
-					side: 'short',
-					openSide: 'short',
-					symbol: ETH_SYMBOL,
-				};
-				await openPosition(openPayload);
-			}
+		if (longRatio < -MAX_OFFSET_RATIO / 2) {
+			await closeAllPosition(holding);
+			// const { positionAmt } = ethLongHolding;
+			// const closePositionAmt = Number(
+			// 	Math.abs(Number(positionAmt)).toFixed(1)
+			// );
+			// const payload = {
+			// 	positionAmt: closePositionAmt,
+			// 	position: closePositionAmt,
+			// 	side: 'long',
+			// 	positionSide: 'long',
+			// 	symbol: ETH_SYMBOL,
+			// };
+			// await closePosition(payload);
+			// const openPositionAmt = Number(
+			// 	(
+			// 		((INIT_ASSETS -
+			// 			Math.abs(
+			// 				(Number(ethShortHolding.positionAmt) *
+			// 					eth_mark_price) /
+			// 					LEVERAGE
+			// 			)) *
+			// 			LEVERAGE) /
+			// 		eth_mark_price
+			// 	).toFixed(1)
+			// );
+			// if (openPositionAmt > 10) {
+			// 	const openPayload = {
+			// 		positionAmt: Number(openPositionAmt),
+			// 		position: Number(openPositionAmt),
+			// 		side: 'short',
+			// 		openSide: 'short',
+			// 		symbol: ETH_SYMBOL,
+			// 	};
+			// 	await openPosition(openPayload);
+			// }
 		}
 	}
 	if (false && btcHoldingList.length === 1) {
@@ -1356,6 +1354,14 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 	}
 
 	return await postOrder(position);
+};
+
+const closeAllPosition = async (holding) => {
+	const pList = [];
+	holding.forEach((item) => {
+		pList.push(closePosition(item));
+	});
+	await Promise.all(pList);
 };
 
 let positionChange = true;
