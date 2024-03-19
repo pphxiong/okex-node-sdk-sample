@@ -11,7 +11,7 @@ const LEVERAGE = 20;
 const WIN_MAX = 1 * 0.2;
 const MAX_OFFSET_RATIO = WIN_MAX / 2;
 const INIT_ASSETS_RATIO = 1;
-let INIT_ASSETS = 40;
+let INIT_ASSETS = 60;
 
 const LOSS_MAX = -WIN_MAX / 2;
 const DEFAULT_INTERVAL = '1h';
@@ -553,17 +553,16 @@ const extraPatchOpenHandler = async (
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
 	const isBoth =
-		false &&
 		Math.abs(longRatio) > MAX_OFFSET_RATIO &&
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
 	const isHasBtcPatch =
 		Math.round(
 			Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-		) >= 2;
+		) >= 1;
 	const isHasEthPatch =
 		Math.round(
 			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-		) >= 2;
+		) >= 1;
 	if (
 		((isBoth && longRatio > 0 && shortRatio < 0) ||
 			(isOffsetBehind && longRatio > 0)) &&
@@ -673,7 +672,7 @@ const extraPatchOpenHandler = async (
 			(isOffsetBehind && shortRatio < 0)) &&
 		Math.abs(shortRatio) > Math.abs(longRatio)
 	) {
-		const openPositionAmt = Number((ethBasicPositionAmt * 2).toFixed(1));
+		const openPositionAmt = Number((ethBasicPositionAmt * 1).toFixed(1));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
@@ -724,7 +723,7 @@ const extraPatchOpenHandler = async (
 			(isOffsetBehind && longRatio < 0)) &&
 		Math.abs(longRatio) > Math.abs(shortRatio)
 	) {
-		const openPositionAmt = Number((btcBasicPositionAmt * 2).toFixed(3));
+		const openPositionAmt = Number((btcBasicPositionAmt * 1).toFixed(3));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
