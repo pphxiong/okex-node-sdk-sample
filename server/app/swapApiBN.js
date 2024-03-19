@@ -551,14 +551,15 @@ const extraPatchOpenHandler = async (
 	const isBoth =
 		Math.abs(longRatio) > MAX_OFFSET_RATIO ||
 		Math.abs(shortRatio) > MAX_OFFSET_RATIO;
+	const patchNum = holding.length === 2 ? 2 : 1;
 	const isHasBtcPatch =
 		Math.round(
 			Math.abs(Number(longHolding.positionAmt)) / btcBasicPositionAmt
-		) >= 2;
+		) >= patchNum;
 	const isHasEthPatch =
 		Math.round(
 			Math.abs(Number(shortHolding.positionAmt)) / ethBasicPositionAmt
-		) >= 2;
+		) >= patchNum;
 	if (
 		((isBoth && longRatio > 0 && shortRatio < 0) ||
 			(isOffsetBehind && longRatio > 0)) &&
