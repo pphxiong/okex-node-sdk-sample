@@ -9,7 +9,7 @@ const ETH_SYMBOL = 'EOSUSDT';
 const LEVERAGE = 20;
 // const WIN_MAX = 1 * 0.0618 * 3.82;
 const WIN_MAX = 1 * 0.3;
-const MAX_OFFSET_RATIO = WIN_MAX / 2;
+const MAX_OFFSET_RATIO = WIN_MAX / 3;
 const INIT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 60;
 
