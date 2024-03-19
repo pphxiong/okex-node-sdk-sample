@@ -11,7 +11,7 @@ const LEVERAGE = 20;
 const MAX_OFFSET_RATIO = 0.1;
 const WIN_RATIO = 3;
 const WIN_MAX = MAX_OFFSET_RATIO * WIN_RATIO;
-let INIT_ASSETS = 40;
+let INIT_ASSETS = 60;
 
 const INIT_ASSETS_RATIO = 1;
 const LOSS_MAX = -WIN_MAX / 2;
