@@ -830,7 +830,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		// 		await openPosition(payload);
 		// 	}
 		// }
-		if (longRatio > shortRatio && longRatio > 0) {
+		if (shortRatio < -MAX_OFFSET_RATIO) {
 			// await closeAllPosition(holding);
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
@@ -910,7 +910,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		// 		await openPosition(payload);
 		// 	}
 		// }
-		if (shortRatio > longRatio && shortRatio > 0) {
+		if (longRatio < -MAX_OFFSET_RATIO) {
 			// await closeAllPosition(holding);
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
