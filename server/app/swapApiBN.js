@@ -60,7 +60,7 @@ async function checkByStep() {
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
-			// INIT_ASSETS = (Number(availableBalance) + Number(currentTotalAsset)) / 6.18/4;
+			// INIT_ASSETS = (Number(availableBalance) + Number(currentTotalAsset)) / 6.18;
 
 			console.log('------------------');
 			console.log(
@@ -830,7 +830,10 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		// 		await openPosition(payload);
 		// 	}
 		// }
-		if (shortRatio < -MAX_OFFSET_RATIO) {
+		if (
+			shortRatio < -MAX_OFFSET_RATIO ||
+			(longRatio > shortRatio && longRatio > 0)
+		) {
 			// await closeAllPosition(holding);
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
@@ -910,7 +913,10 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 		// 		await openPosition(payload);
 		// 	}
 		// }
-		if (longRatio < -MAX_OFFSET_RATIO) {
+		if (
+			longRatio < -MAX_OFFSET_RATIO ||
+			(shortRatio > longRatio && shortRatio > 0)
+		) {
 			// await closeAllPosition(holding);
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
