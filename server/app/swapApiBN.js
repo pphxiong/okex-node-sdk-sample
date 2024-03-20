@@ -13,12 +13,12 @@ const WIN_RATIO = 6.18;
 const WIN_MAX = MAX_OFFSET_RATIO * WIN_RATIO;
 let INIT_ASSETS = 20;
 
-const INIT_ASSETS_RATIO = 1;
+const INIT_SHORT_ASSETS_RATIO = 1 / 2;
+const PATCH_SHORT_ASSETS_RATIO = 1 / 2;
 const LOSS_MAX = -WIN_MAX / 2;
+const INIT_POSITION = INIT_ASSETS;
 const DEFAULT_INTERVAL = '1h';
 const DEFAULT_INIT_ASSET = 7;
-const MAX_SHORT_ASSETS_RATIO = 1 / 2;
-const INIT_POSITION = INIT_ASSETS;
 let MODE = 1;
 let RESTART_TIME = 0;
 let rsi1 = 8;
@@ -174,7 +174,7 @@ async function checkByStep() {
 		// longRatio < 0 &&
 		(Math.abs(Number(shortHolding.positionAmt)) * eth_mark_price) /
 			LEVERAGE <
-			INIT_ASSETS * MAX_SHORT_ASSETS_RATIO;
+			INIT_ASSETS * PATCH_SHORT_ASSETS_RATIO;
 
 	let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
 	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 || PATCH_CONDITION;
@@ -378,7 +378,7 @@ async function checkByStep() {
 			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
 				(
-					(INIT_ASSETS * INIT_ASSETS_RATIO * LEVERAGE) /
+					(INIT_ASSETS * INIT_SHORT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
 				).toFixed(1)
 			);
