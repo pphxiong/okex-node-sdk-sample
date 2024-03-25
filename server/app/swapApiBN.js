@@ -214,7 +214,7 @@ async function checkByStep(data, ethData) {
 			!secondList.includes(lastSecondCharacter));
 
 	console.log('************************************', currentTime);
-	// console.log('isFiveM', isFiveM, lastMinuteCharacter);
+	console.log('isFiveM', isFiveM, lastMinuteCharacter);
 	// console.log('macdList', macdList.slice(-2));
 	// console.log('bollList', bollList.slice(-2));
 	console.log(
