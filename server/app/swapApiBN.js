@@ -3,19 +3,20 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const BTC_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
+let INIT_ASSETS = 10;
+const LOSS_MAX = -0.0382;
+
 // const WIN_MAX = 1 * 0.0618 * 3.82;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
-const WIN_RATIO = 6.18;
+const WIN_RATIO = 5;
 const WIN_MAX = MAX_OFFSET_RATIO * WIN_RATIO;
-let INIT_ASSETS = 20;
-
-const INIT_SHORT_ASSETS_RATIO = 1 / 2;
+const INIT_SHORT_ASSETS_RATIO = 1;
 const PATCH_SHORT_ASSETS_RATIO = 1 / 2;
-const LOSS_MAX = -WIN_MAX / 2;
+
 const INIT_POSITION = INIT_ASSETS;
 const DEFAULT_INTERVAL = '1h';
 const DEFAULT_INIT_ASSET = 7;
@@ -27,7 +28,9 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
-async function checkByStep() {
+async function checkByStep(data, ethData) {
+	const { macdList } = data;
+	const { macdList: ethMacdList } = ethData;
 	let mark_price;
 	let eth_mark_price;
 	try {
@@ -60,7 +63,8 @@ async function checkByStep() {
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
-			// INIT_ASSETS = (Number(availableBalance) + Number(currentTotalAsset)) / 6.18;
+			INIT_ASSETS =
+				(Number(availableBalance) + Number(currentTotalAsset)) / 3;
 
 			console.log('------------------');
 			console.log(
@@ -82,7 +86,7 @@ async function checkByStep() {
 	if (holding && holding.length) {
 		longHolding = holding.find(
 			(item) =>
-				item.symbol === BTC_SYMBOL &&
+				item.symbol === ETH_SYMBOL &&
 				item.positionSide &&
 				item.positionSide.toUpperCase() == 'LONG' &&
 				Math.abs(Number(item.positionAmt)) > 0
@@ -153,19 +157,28 @@ async function checkByStep() {
 	const CLOSE_LOSS_CONDITION =
 		holding && holding.length >= 3 && TOTALRATIO < LOSS_MAX;
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && !shortHolding;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && !longHolding;
+	const LAST_LONG =
+		macdList[macdList.length - 1].close >
+		macdList[macdList.length - 1].open;
 
-	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && CLOSE_WIN_CONDITION && false;
-	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && CLOSE_WIN_CONDITION && false;
+	const LAST_SHORT =
+		macdList[macdList.length - 1].close <
+		macdList[macdList.length - 1].open;
+
+	const MAIN_OPEN_LONG_CONDITION1 =
+		!longHolding && (LAST_LONG || shortRatio < LOSS_MAX);
+	const MAIN_OPEN_SHORT_CONDITION1 =
+		!shortHolding && (LAST_SHORT || longRatio < LOSS_MAX);
+
+	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LAST_SHORT;
+	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LAST_LONG;
 	const MAIN_SAME_HOLDING =
 		holding &&
 		holding.length === 2 &&
 		((longHolding && !shortHolding) || (!longHolding && shortHolding));
 
-	const MAIN_CLOSE_ALL_CONDITION = CLOSE_WIN_CONDITION || MAIN_SAME_HOLDING;
+	const MAIN_CLOSE_ALL_CONDITION =
+		false && (CLOSE_WIN_CONDITION || MAIN_SAME_HOLDING);
 	// const MAIN_CLOSE_EXTRA_CONDITION = CLOSE_LOSS_CONDITION;
 
 	const PATCH_CONDITION =
@@ -177,7 +190,7 @@ async function checkByStep() {
 			INIT_ASSETS * PATCH_SHORT_ASSETS_RATIO;
 
 	let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
-	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 || PATCH_CONDITION;
+	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
@@ -188,8 +201,16 @@ async function checkByStep() {
 	const hmsArr = currentTime.split(' ')[1].split(':');
 	const lastMinuteCharacter = hmsArr[1];
 	const lastSecondCharacter = hmsArr[2];
-
-	const isFiveM = true;
+	const minuteList = ['0', '00'];
+	const secondList = ['0', '00'];
+	const minuteDiff = moment(currentTime).diff(
+		moment(macdList[macdList.length - 1].time),
+		'minute'
+	);
+	const isFiveM =
+		minuteDiff < 90 &&
+		minuteList.includes(lastMinuteCharacter) &&
+		!secondList.includes(lastSecondCharacter);
 
 	console.log('************************************', currentTime);
 	// console.log('isFiveM', isFiveM, lastMinuteCharacter);
@@ -259,11 +280,11 @@ async function checkByStep() {
 				//   );
 
 				const payload = {
-					positionAmt: longHolding.positionAmt,
+					positionAmt: closePositionAmt,
 					position: closePositionAmt,
 					side: 'long',
-					mark_price,
-					ratio: longRatio,
+					positionSide: 'long',
+					symbol: ETH_SYMBOL,
 				};
 				await closePosition(payload, false, avail);
 			}
@@ -292,11 +313,11 @@ async function checkByStep() {
 				//     ((closePositionAmt / 2.15) * 1.15).toFixed(2)
 				//   );
 				const payload = {
-					positionAmt: shortHolding.positionAmt,
+					positionAmt: closePositionAmt,
 					position: closePositionAmt,
 					side: 'short',
-					mark_price,
-					ratio: shortRatio,
+					positionSide: 'short',
+					symbol: ETH_SYMBOL,
 				};
 				await closePosition(payload, false, avail);
 			}
@@ -324,44 +345,19 @@ async function checkByStep() {
 	//开多仓条件
 	if (openLongCondition) {
 		try {
-			// let openPositionAmt = shortHolding
-			//   ? Math.abs(shortHolding.positionAmt) +
-			//     INIT_POSITION * NEW_POSITION_RATIO
-			//   : INIT_POSITION;
-			// let openPositionAmt = INIT_POSITION;
+			// let openPositionAmt = Number(
+			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+			// );
 			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 			);
-			// if (BATCH_LONG_OPEN_CONDITION)
-			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
-			// if (shortHolding && !closeShortCondition) {
-			//   openPositionAmt = 2 * INIT_POSITION;
-			// }
-			// if (longHolding) {
-			//   const curIndex = fiList.findIndex(
-			//     (positionAmt) => positionAmt == Math.abs(longHolding.positionAmt)
-			//   );
-			//   openPositionAmt = fiList[curIndex];
-			// }
-			// openPositionAmt = Number(openPositionAmt.toFixed(2));
-			// if (!longHolding) {
-			//   if (shortHolding) {
-			//     openPositionAmt = Math.abs(shortHolding.positionAmt);
-			//   } else {
-			//     openPositionAmt = INIT_POSITION * 4;
-			//   }
-			// }
-			if (isFiveM /* && avail >= openPositionAmt */) {
-				await openPosition(
-					{
-						position: openPositionAmt,
-						openSide: 'long',
-						mark_price,
-						symbol: BTC_SYMBOL,
-					},
-					isMarketDeal,
-					dealRatio
-				);
+			if (isFiveM) {
+				await openPosition({
+					position: openPositionAmt,
+					openSide: 'long',
+					mark_price,
+					symbol: ETH_SYMBOL,
+				});
 			}
 		} catch (e) {
 			console.log(e);
@@ -371,46 +367,12 @@ async function checkByStep() {
 	//开空仓条件
 	if (openShortCondition) {
 		try {
-			// let openPositionAmt = shortHolding
-			//   ? Math.abs(shortHolding.positionAmt) +
-			//     INIT_POSITION * NEW_POSITION_RATIO
-			//   : INIT_POSITION;
-			// let openPositionAmt = INIT_POSITION;
 			let openPositionAmt = Number(
 				(
 					(INIT_ASSETS * INIT_SHORT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
 				).toFixed(1)
 			);
-			if (PATCH_CONDITION) {
-				const currentAssets =
-					(Math.abs(Number(shortHolding.positionAmt)) *
-						eth_mark_price) /
-					LEVERAGE;
-				openPositionAmt = Number(
-					(Math.abs(Number(shortHolding.positionAmt)) / 2).toFixed(3)
-				);
-			}
-
-			// if (BATCH_SHORT_OPEN_CONDITION)
-			//   openPositionAmt = INIT_POSITION * (MAX_OPEN_POSITION_RATIO + 1);
-			// if (longHolding && !closeLongCondition) {
-			//   openPositionAmt = 2 * INIT_POSITION;
-			// }
-			// if (shortHolding) {
-			//   const curIndex = fiList.findIndex(
-			//     (positionAmt) => positionAmt == Math.abs(shortHolding.positionAmt)
-			//   );
-			//   openPositionAmt = fiList[curIndex];
-			// }
-			// openPositionAmt = Number(openPositionAmt.toFixed(2));
-			// if (!shortHolding) {
-			//   if (longHolding) {
-			//     openPositionAmt = Math.abs(longHolding.positionAmt);
-			//   } else {
-			//     openPositionAmt = INIT_POSITION * 4;
-			//   }
-			// }
 			if (isFiveM /* && avail >= openPositionAmt */) {
 				await openPosition(
 					{
@@ -428,41 +390,41 @@ async function checkByStep() {
 		}
 	}
 
-	if (longHolding && shortHolding) {
-		await waitTime(1000 * 1);
-		if (holding.length <= 2) {
-			await extraPatchCloseHandler(
-				holding,
-				longHolding,
-				shortHolding,
-				longRatio,
-				shortRatio,
-				mark_price,
-				eth_mark_price
-			);
-			await extraPatchOpenHandler(
-				holding,
-				longHolding,
-				shortHolding,
-				longRatio,
-				shortRatio,
-				mark_price,
-				eth_mark_price
-			);
-		} else {
-			await extraLossDealHandler(holding, mark_price, eth_mark_price);
-		}
-		console.log('*********************');
-		console.log(
-			'offsetRatio',
-			Math.abs(Math.abs(shortRatio) - Math.abs(longRatio)),
-			'MAX_OFFSET_RATIO',
-			MAX_OFFSET_RATIO,
-			'holdingLength',
-			holding.length
-		);
-		console.log('*********************');
-	}
+	// if (longHolding && shortHolding) {
+	// 	await waitTime(1000 * 1);
+	// 	if (holding.length <= 2) {
+	// 		await extraPatchCloseHandler(
+	// 			holding,
+	// 			longHolding,
+	// 			shortHolding,
+	// 			longRatio,
+	// 			shortRatio,
+	// 			mark_price,
+	// 			eth_mark_price
+	// 		);
+	// 		await extraPatchOpenHandler(
+	// 			holding,
+	// 			longHolding,
+	// 			shortHolding,
+	// 			longRatio,
+	// 			shortRatio,
+	// 			mark_price,
+	// 			eth_mark_price
+	// 		);
+	// 	} else {
+	// 		await extraLossDealHandler(holding, mark_price, eth_mark_price);
+	// 	}
+	// 	console.log('*********************');
+	// 	console.log(
+	// 		'offsetRatio',
+	// 		Math.abs(Math.abs(shortRatio) - Math.abs(longRatio)),
+	// 		'MAX_OFFSET_RATIO',
+	// 		MAX_OFFSET_RATIO,
+	// 		'holdingLength',
+	// 		holding.length
+	// 	);
+	// 	console.log('*********************');
+	// }
 }
 
 const extraPatchCloseHandler = async (
@@ -1557,26 +1519,25 @@ const fnGetSymbolResult = async (symbol, payload) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= 1 * 14 * 4 * 2) {
+	if (RESTART_TIME >= 1 * 14) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
 	}
 	try {
-		// const time = moment().valueOf();
-		// const payload = {
-		// 	interval: DEFAULT_INTERVAL,
-		// 	limit: 100,
-		// 	endTime: time,
-		// };
+		const time = moment().valueOf();
+		const payload = {
+			interval: DEFAULT_INTERVAL,
+			limit: 100,
+			endTime: time,
+		};
 
-		// const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
+		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
-		// await checkDeal(btc_result, eth_result);
-		await checkByStep();
+		await checkDeal(btc_result, eth_result);
 
-		await waitTime((1000 * 56) / 4 / 2);
+		await waitTime(1000 * 45);
 		await startInterval();
 	} catch (e) {
 		restart(e);
