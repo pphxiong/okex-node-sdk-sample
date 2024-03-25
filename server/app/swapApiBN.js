@@ -8,7 +8,7 @@ const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
 let INIT_ASSETS = 10;
-const LOSS_MAX = -0.0382;
+const LOSS_MAX = -0.382;
 
 // const WIN_MAX = 1 * 0.0618 * 3.82;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
@@ -214,7 +214,7 @@ async function checkByStep(data, ethData) {
 
 	console.log('************************************', currentTime);
 	console.log('isFiveM', isFiveM, lastMinuteCharacter, lastSecondCharacter);
-	console.log('macdList', macdList.slice(-1));
+	// console.log('macdList', macdList.slice(-1));
 	// console.log('bollList', bollList.slice(-2));
 	console.log(
 		'longRatio',
