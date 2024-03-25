@@ -208,10 +208,9 @@ async function checkByStep(data, ethData) {
 		'minute'
 	);
 	const isFiveM =
-		true ||
-		(minuteDiff < 90 &&
-			minuteList.includes(lastMinuteCharacter) &&
-			!secondList.includes(lastSecondCharacter));
+		minuteDiff < 90 &&
+		minuteList.includes(lastMinuteCharacter) &&
+		!secondList.includes(lastSecondCharacter);
 
 	console.log('************************************', currentTime);
 	console.log('isFiveM', isFiveM, lastMinuteCharacter);
