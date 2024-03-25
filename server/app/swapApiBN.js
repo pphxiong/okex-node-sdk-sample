@@ -214,7 +214,7 @@ async function checkByStep(data, ethData) {
 
 	console.log('************************************', currentTime);
 	console.log('isFiveM', isFiveM, lastMinuteCharacter, lastSecondCharacter);
-	console.log('macdList', macdList.slice(-2));
+	console.log('macdList', macdList.slice(-1));
 	// console.log('bollList', bollList.slice(-2));
 	console.log(
 		'longRatio',
@@ -1503,7 +1503,7 @@ const countdownCancelAll = async (time) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	// newList.pop();
+	newList.pop();
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
