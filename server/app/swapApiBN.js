@@ -213,7 +213,7 @@ async function checkByStep(data, ethData) {
 		!secondList.includes(lastSecondCharacter);
 
 	console.log('************************************', currentTime);
-	console.log('isFiveM', isFiveM, lastMinuteCharacter);
+	console.log('isFiveM', isFiveM, lastMinuteCharacter, lastSecondCharacter);
 	// console.log('macdList', macdList.slice(-2));
 	// console.log('bollList', bollList.slice(-2));
 	console.log(
@@ -222,9 +222,9 @@ async function checkByStep(data, ethData) {
 		'shortRatio',
 		shortRatio,
 		'totalRatio',
-		totalRatio,
-		'winMax',
-		holding ? WIN_MAX : 0
+		totalRatio
+		// 'winMax',
+		// holding ? WIN_MAX : 0
 	);
 	console.log(
 		'longPositionAmt*mark_parice',
