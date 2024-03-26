@@ -9,6 +9,7 @@ const ETH_SYMBOL = 'BTCUSDT';
 const LEVERAGE = 20;
 let INIT_ASSETS = 10;
 const LOSS_MAX = -0.382 / 2;
+const IS_AUTO_OPEN = false;
 
 // const WIN_MAX = 1 * 0.0618 * 3.82;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
@@ -208,7 +209,7 @@ async function checkByStep(data, ethData) {
 		'minute'
 	);
 	const isFiveM =
-		true ||
+		IS_AUTO_OPEN ||
 		(minuteDiff < 90 &&
 			minuteList.includes(lastMinuteCharacter) &&
 			!secondList.includes(lastSecondCharacter));
