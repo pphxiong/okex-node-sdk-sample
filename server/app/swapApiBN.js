@@ -3,13 +3,13 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const BTC_SYMBOL = 'BTCUSDT';
-const ETH_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'EOSUSDT';
+const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
 let INIT_ASSETS = 10;
 const LOSS_MAX = -0.382 / 2;
-const IS_AUTO_OPEN = false;
+const IS_AUTO_OPEN = true;
 
 // const WIN_MAX = 1 * 0.0618 * 3.82;
 const MAX_OFFSET_RATIO = 0.0618 * 2;
@@ -19,7 +19,7 @@ const INIT_SHORT_ASSETS_RATIO = 1;
 const PATCH_SHORT_ASSETS_RATIO = 1 / 2;
 
 const INIT_POSITION = INIT_ASSETS;
-const DEFAULT_INTERVAL = '1h';
+const DEFAULT_INTERVAL = '15m';
 const DEFAULT_INIT_ASSET = 7;
 let MODE = 1;
 let RESTART_TIME = 0;
@@ -166,13 +166,13 @@ async function checkByStep(data, ethData) {
 		macdList[macdList.length - 1].close <
 		macdList[macdList.length - 1].open;
 
-	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && (LAST_LONG || shortRatio < LOSS_MAX);
-	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && (LAST_SHORT || longRatio < LOSS_MAX);
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && LAST_LONG;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LAST_SHORT;
 
-	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && LAST_SHORT;
-	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && LAST_LONG;
+	const MAIN_CLOSE_LONG_CONDITION1 =
+		longHolding && (LAST_SHORT || longRatio < LOSS_MAX);
+	const MAIN_CLOSE_SHORT_CONDITION1 =
+		shortHolding && (LAST_LONG || shortRatio < LOSS_MAX);
 	const MAIN_SAME_HOLDING =
 		holding &&
 		holding.length === 2 &&
@@ -202,7 +202,7 @@ async function checkByStep(data, ethData) {
 	const hmsArr = currentTime.split(' ')[1].split(':');
 	const lastMinuteCharacter = hmsArr[1];
 	const lastSecondCharacter = hmsArr[2];
-	const minuteList = ['0', '00'];
+	const minuteList = ['0', '15', '30', '45', '00'];
 	const secondList = ['0', '00'];
 	const minuteDiff = moment(currentTime).diff(
 		moment(macdList[macdList.length - 1].time),
@@ -210,7 +210,7 @@ async function checkByStep(data, ethData) {
 	);
 	const isFiveM =
 		IS_AUTO_OPEN ||
-		(minuteDiff < 90 &&
+		(minuteDiff < 20 &&
 			minuteList.includes(lastMinuteCharacter) &&
 			!secondList.includes(lastSecondCharacter));
 
