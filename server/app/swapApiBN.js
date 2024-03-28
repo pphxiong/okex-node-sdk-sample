@@ -348,10 +348,10 @@ async function checkByStep(data, ethData) {
 	if (openLongCondition) {
 		try {
 			// let openPositionAmt = Number(
-			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 			// );
 			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 			);
 			if (isFiveM) {
 				await openPosition({
@@ -373,7 +373,7 @@ async function checkByStep(data, ethData) {
 				(
 					(INIT_ASSETS * INIT_SHORT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
-				).toFixed(3)
+				).toFixed(1)
 			);
 			if (isFiveM /* && avail >= openPositionAmt */) {
 				await openPosition(
@@ -439,10 +439,10 @@ const extraPatchCloseHandler = async (
 	eth_mark_price
 ) => {
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	const isHasPatch1 =
 		Math.round(
@@ -459,7 +459,7 @@ const extraPatchCloseHandler = async (
 				(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
 			if (CURRENT_ASSETS > 10) {
 				const closePositionAmt = Number(
-					(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
+					(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(1)
 				);
 				const payload = {
 					positionAmt: closePositionAmt,
@@ -480,7 +480,7 @@ const extraPatchCloseHandler = async (
 					(
 						((CURRENT_ASSETS - 5) * LEVERAGE) /
 						eth_mark_price
-					).toFixed(3)
+					).toFixed(1)
 				);
 				const payload = {
 					positionAmt: closePositionAmt,
@@ -506,10 +506,10 @@ const extraPatchOpenHandler = async (
 	eth_mark_price
 ) => {
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
@@ -552,7 +552,7 @@ const extraPatchOpenHandler = async (
 					const closePostion = (
 						((CURRENT_ASSETS - 5) * LEVERAGE) /
 						eth_mark_price
-					).toFixed(3);
+					).toFixed(1);
 					const closePayload = {
 						positionAmt: closePostion,
 						position: closePostion,
@@ -565,7 +565,7 @@ const extraPatchOpenHandler = async (
 			}
 			// if (!isHasEthPatch) {
 			// 	const openPositionAmt = Number(
-			// 		(ethBasicPositionAmt * 1).toFixed(3)
+			// 		(ethBasicPositionAmt * 1).toFixed(1)
 			// 	);
 			// 	const payload = {
 			// 		positionAmt: openPositionAmt,
@@ -604,7 +604,7 @@ const extraPatchOpenHandler = async (
 					const closePostion = (
 						((CURRENT_ASSETS - 5) * LEVERAGE) /
 						mark_price
-					).toFixed(3);
+					).toFixed(1);
 					const closePayload = {
 						positionAmt: closePostion,
 						position: closePostion,
@@ -617,7 +617,7 @@ const extraPatchOpenHandler = async (
 			}
 			// if (!isHasBtcPatch) {
 			// 	const openPositionAmt = Number(
-			// 		(btcBasicPositionAmt * 1).toFixed(3)
+			// 		(btcBasicPositionAmt * 1).toFixed(1)
 			// 	);
 			// 	const payload = {
 			// 		positionAmt: openPositionAmt,
@@ -635,7 +635,7 @@ const extraPatchOpenHandler = async (
 			(isOffsetBehind && shortRatio < 0)) &&
 		Math.abs(shortRatio) > Math.abs(longRatio)
 	) {
-		const openPositionAmt = Number((ethBasicPositionAmt * 1).toFixed(3));
+		const openPositionAmt = Number((ethBasicPositionAmt * 1).toFixed(1));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
@@ -656,7 +656,7 @@ const extraPatchOpenHandler = async (
 			(Math.abs(Number(positionAmt)) * eth_mark_price) / LEVERAGE;
 		if (CURRENT_ASSETS > 10) {
 			const closePositionAmt = Number(
-				(((CURRENT_ASSETS - 5) * LEVERAGE) / eth_mark_price).toFixed(3)
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / eth_mark_price).toFixed(1)
 			);
 			const closePayload = {
 				positionAmt: closePositionAmt,
@@ -669,7 +669,7 @@ const extraPatchOpenHandler = async (
 		}
 		// if (!isHasBtcPatch) {
 		// 	const openPositionAmt = Number(
-		// 		(btcBasicPositionAmt * 1).toFixed(3)
+		// 		(btcBasicPositionAmt * 1).toFixed(1)
 		// 	);
 		// 	const payload = {
 		// 		positionAmt: openPositionAmt,
@@ -686,7 +686,7 @@ const extraPatchOpenHandler = async (
 			(isOffsetBehind && longRatio < 0)) &&
 		Math.abs(longRatio) > Math.abs(shortRatio)
 	) {
-		const openPositionAmt = Number((btcBasicPositionAmt * 1).toFixed(3));
+		const openPositionAmt = Number((btcBasicPositionAmt * 1).toFixed(1));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
@@ -707,7 +707,7 @@ const extraPatchOpenHandler = async (
 			(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
 		if (CURRENT_ASSETS > 10) {
 			const closePositionAmt = Number(
-				(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(1)
 			);
 			const closePayload = {
 				positionAmt: closePositionAmt,
@@ -720,7 +720,7 @@ const extraPatchOpenHandler = async (
 		}
 		// if (!isHasEthPatch) {
 		// 	const openPositionAmt = Number(
-		// 		(ethBasicPositionAmt * 1).toFixed(3)
+		// 		(ethBasicPositionAmt * 1).toFixed(1)
 		// 	);
 		// 	const payload = {
 		// 		positionAmt: openPositionAmt,
@@ -746,10 +746,10 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			item.symbol === ETH_SYMBOL && Math.abs(Number(item.positionAmt)) > 0
 	);
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	let longRatio = 0;
 	let shortRatio = 0;
@@ -801,7 +801,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			// await closeAllPosition(holding);
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
+				Math.abs(Number(positionAmt)).toFixed(1)
 			);
 			const payload = {
 				positionAmt: closePositionAmt,
@@ -820,7 +820,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						)) *
 						LEVERAGE) /
 					mark_price
-				).toFixed(3)
+				).toFixed(1)
 			);
 			if (openPositionAmt > 10) {
 				const openPayload = {
@@ -884,7 +884,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			// await closeAllPosition(holding);
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
+				Math.abs(Number(positionAmt)).toFixed(1)
 			);
 			const payload = {
 				positionAmt: closePositionAmt,
@@ -904,7 +904,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						)) *
 						LEVERAGE) /
 					eth_mark_price
-				).toFixed(3)
+				).toFixed(1)
 			);
 			if (openPositionAmt > 10) {
 				const openPayload = {
@@ -939,7 +939,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						const closePostion = (
 							((CURRENT_ASSETS - 5) * LEVERAGE) /
 							mark_price
-						).toFixed(3);
+						).toFixed(1);
 						const closePayload = {
 							positionAmt: closePostion,
 							position: closePostion,
@@ -951,7 +951,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 					}
 				}
 				// const openPositionAmt = Number(
-				// 	(ethBasicPositionAmt * 2).toFixed(3)
+				// 	(ethBasicPositionAmt * 2).toFixed(1)
 				// );
 				// const payload = {
 				// 	positionAmt: openPositionAmt,
@@ -988,7 +988,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						const closePostion = (
 							((CURRENT_ASSETS - 5) * LEVERAGE) /
 							eth_mark_price
-						).toFixed(3);
+						).toFixed(1);
 						const closePayload = {
 							positionAmt: closePostion,
 							position: closePostion,
