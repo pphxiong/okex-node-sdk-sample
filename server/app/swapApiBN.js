@@ -12,6 +12,7 @@ const LOSS_MAX = -0.382 / 2;
 const WIN_RATIO = 1.2;
 const WIN_MAX = -LOSS_MAX * WIN_RATIO;
 const UPPER_RATIO = 0.1;
+const INIT_ASSETS_RATIO = 1 / 10;
 let isLoss = false;
 let isWin = false;
 let lastPostionAsset = INIT_ASSETS;
@@ -68,7 +69,8 @@ async function checkByStep(data, ethData) {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) / 3;
+				(Number(availableBalance) + Number(currentTotalAsset)) *
+				INIT_ASSETS_RATIO;
 
 			if (isLoss) {
 				INIT_ASSETS = lastPostionAsset * (1 + UPPER_RATIO);
