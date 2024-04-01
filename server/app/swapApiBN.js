@@ -189,6 +189,7 @@ async function checkByStep(data, ethData) {
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding && (shortRatio >= WIN_MAX || shortRatio < LOSS_MAX);
 	isLoss = longRatio < LOSS_MAX || shortRatio < LOSS_MAX;
+	isWin = longRatio >= WIN_MAX || shortRatio >= WIN_MAX;
 
 	const MAIN_SAME_HOLDING =
 		holding &&
