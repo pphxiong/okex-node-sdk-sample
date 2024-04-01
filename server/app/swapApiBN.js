@@ -9,14 +9,17 @@ const ETH_SYMBOL = 'EOSUSDT';
 const LEVERAGE = 20;
 let INIT_ASSETS = 10;
 const LOSS_MAX = -0.382 / 2;
-const IS_AUTO_OPEN = true;
+const WIN_RATIO = 2;
+const WIN_MAX = -LOSS_MAX * WIN_RATIO;
+const UPPER_RATIO = 0.1 / 2;
+let isLoss = false;
+let isWin = false;
+let lastPostionAsset = INIT_ASSETS;
 
-// const WIN_MAX = 1 * 0.0618 * 3.82;
-const MAX_OFFSET_RATIO = 0.0618 * 2;
-const WIN_RATIO = 5;
-const WIN_MAX = MAX_OFFSET_RATIO * WIN_RATIO;
 const INIT_SHORT_ASSETS_RATIO = 1;
 const PATCH_SHORT_ASSETS_RATIO = 1 / 2;
+const MAX_OFFSET_RATIO = 0.0618 * 2;
+const IS_AUTO_OPEN = true;
 
 const INIT_POSITION = INIT_ASSETS;
 const DEFAULT_INTERVAL = '15m';
@@ -66,6 +69,12 @@ async function checkByStep(data, ethData) {
 				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) / 3;
+
+			if (isLoss) {
+				INIT_ASSETS = lastPostionAsset * (1 + UPPER_RATIO);
+			} else if (isWin) {
+				INIT_ASSETS = lastPostionAsset * (1 - UPPER_RATIO);
+			}
 
 			console.log('------------------');
 			console.log(
@@ -166,13 +175,21 @@ async function checkByStep(data, ethData) {
 		macdList[macdList.length - 1].close <
 		macdList[macdList.length - 1].open;
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && LAST_LONG;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && LAST_SHORT;
+	const random = Math.random();
+	const RANDOM_LONG = random >= 0.5;
+	const RANDOM_SHORT = random < 0.5;
+
+	const MAIN_OPEN_LONG_CONDITION1 =
+		!longHolding && !shortHolding && RANDOM_LONG;
+	const MAIN_OPEN_SHORT_CONDITION1 =
+		!longHolding && !shortHolding && RANDOM_SHORT;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && (LAST_SHORT || longRatio < LOSS_MAX);
+		longHolding && (longRatio >= WIN_MAX || longRatio < LOSS_MAX);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && (LAST_LONG || shortRatio < LOSS_MAX);
+		shortHolding && (shortRatio >= WIN_MAX || shortRatio < LOSS_MAX);
+	isLoss = longRatio < LOSS_MAX || shortRatio < LOSS_MAX;
+
 	const MAIN_SAME_HOLDING =
 		holding &&
 		holding.length === 2 &&
@@ -287,6 +304,7 @@ async function checkByStep(data, ethData) {
 					side: 'long',
 					positionSide: 'long',
 					symbol: ETH_SYMBOL,
+					mark_price,
 				};
 				await closePosition(payload, false, avail);
 			}
@@ -320,6 +338,7 @@ async function checkByStep(data, ethData) {
 					side: 'short',
 					positionSide: 'short',
 					symbol: ETH_SYMBOL,
+					mark_price,
 				};
 				await closePosition(payload, false, avail);
 			}
@@ -1286,9 +1305,14 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
-	let { position = INIT_POSITION, positionSide, symbol } = holding;
+	let {
+		position = INIT_POSITION,
+		positionSide,
+		symbol,
+		mark_price,
+	} = holding;
 	position = Math.abs(Number(holding.positionAmt));
-
+	lastPostionAsset = (position * mark_price) / LEVERAGE;
 	async function postOrder(size) {
 		const newClientOrderId = getUUID();
 		closeOrigClientOrderId = newClientOrderId;
