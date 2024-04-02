@@ -1353,6 +1353,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 		}
 	}
 
+	await writeData();
 	return await postOrder(position);
 };
 
@@ -1573,37 +1574,46 @@ const startInterval = async () => {
 	}
 };
 
-// const readData = async () => {
-//   let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
-//   MODE = dataConfig.MODE;
+const readData = async () => {
+	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
+	// MODE = dataConfig.MODE;
+	isLoss = dataConfig.isLoss === 'true';
+	isWin = dataConfig.isWin === 'true';
 
-//   console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
-// };
+	console.log(
+		'read::isLoss,isWin',
+		isLoss,
+		isWin,
+		moment().format('YYYY-MM-DD HH:mm:ss')
+	);
+};
 
-// const writeData = async () => {
-//   //将修改后的配置写入文件前需要先转成json字符串格式
-//   let dataConfig = {
-//     MODE: String(MODE),
-//   };
-//   let jsonStr = JSON.stringify(dataConfig);
+const writeData = async () => {
+	//将修改后的配置写入文件前需要先转成json字符串格式
+	let dataConfig = {
+		isLoss: String(isLoss),
+		isWin: String(isWin),
+	};
+	let jsonStr = JSON.stringify(dataConfig);
 
-//   const result = await new Promise((resolve) => {
-//     //将修改后的内容写入文件
-//     fs.writeFile("./app/config.json", jsonStr, function (err) {
-//       if (err) {
-//         console.error(err);
-//       } else {
-//         console.log("----------修改成功-------------");
-//         resolve(true);
-//       }
-//     });
-//   });
+	const result = await new Promise((resolve) => {
+		//将修改后的内容写入文件
+		fs.writeFile('./app/config.json', jsonStr, function (err) {
+			if (err) {
+				console.error(err);
+			} else {
+				console.log('----------修改成功-------------');
+				resolve(true);
+			}
+		});
+	});
 
-//   return result;
-// };
+	return result;
+};
 
 // 定时获取交割合约账户信息
 (async () => {
+	await readData();
 	await startInterval();
 })();
 app.listen(8093);
