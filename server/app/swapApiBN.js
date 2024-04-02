@@ -15,6 +15,8 @@ const UPPER_RATIO = 0.1 / 2;
 const INIT_ASSETS_RATIO = 1 / 10;
 let isLoss = false;
 let isWin = false;
+let longRatio = 0;
+let shortRatio = 0;
 let lastPostionAsset = INIT_ASSETS;
 
 const INIT_SHORT_ASSETS_RATIO = 1;
@@ -50,8 +52,6 @@ async function checkByStep(data, ethData) {
 
 	let longHolding;
 	let shortHolding;
-	let longRatio = 0;
-	let shortRatio = 0;
 	let avail = 0;
 
 	if (positionChange || !globalHolding || !globalHolding.length || true) {
@@ -190,8 +190,6 @@ async function checkByStep(data, ethData) {
 		longHolding && (longRatio >= WIN_MAX || longRatio < LOSS_MAX);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding && (shortRatio >= WIN_MAX || shortRatio < LOSS_MAX);
-	isLoss = longRatio < LOSS_MAX || shortRatio < LOSS_MAX;
-	isWin = longRatio >= WIN_MAX || shortRatio >= WIN_MAX;
 
 	const MAIN_SAME_HOLDING =
 		holding &&
@@ -1354,6 +1352,8 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 		}
 	}
 
+	isLoss = longRatio < LOSS_MAX || shortRatio < LOSS_MAX;
+	isWin = longRatio >= WIN_MAX || shortRatio >= WIN_MAX;
 	await writeData();
 	return await postOrder(position);
 };
