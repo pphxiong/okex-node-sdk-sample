@@ -1580,11 +1580,16 @@ const readData = async () => {
 	// MODE = dataConfig.MODE;
 	isLoss = dataConfig.isLoss === 'true';
 	isWin = dataConfig.isWin === 'true';
+	lastPostionAsset = Number(dataConfig.lastPostionAsset);
 
 	console.log(
-		'read::isLoss,isWin',
+		'read::',
+		'isLoss',
 		isLoss,
+		'isWin',
 		isWin,
+		'lastPostionAsset',
+		lastPostionAsset,
 		moment().format('YYYY-MM-DD HH:mm:ss')
 	);
 };
@@ -1594,6 +1599,7 @@ const writeData = async () => {
 	let dataConfig = {
 		isLoss: String(isLoss),
 		isWin: String(isWin),
+		lastPostionAsset: String(lastPostionAsset),
 	};
 	let jsonStr = JSON.stringify(dataConfig);
 
