@@ -7,12 +7,12 @@ const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 75;
-let INIT_ASSETS = 10;
+let INIT_ASSETS = 0.45;
 const LOSS_MAX = (-LEVERAGE * 1.382) / 100;
-const WIN_RATIO = 1.382;
+const WIN_RATIO = 1.2;
 const WIN_MAX = -LOSS_MAX * WIN_RATIO;
 const UPPER_RATIO = 1.382 / LEVERAGE;
-const INIT_ASSETS_RATIO = (1.382 * 2) / LEVERAGE;
+const INIT_ASSETS_RATIO = 0.051;;
 let isLoss = false;
 let isWin = false;
 let longRatio = 0;
@@ -68,7 +68,7 @@ async function checkByStep(data, ethData) {
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
-			INIT_ASSETS =
+	/*		INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
 
@@ -76,7 +76,7 @@ async function checkByStep(data, ethData) {
 				INIT_ASSETS = lastPostionAsset * (1 + UPPER_RATIO);
 			} else if (isWin) {
 				// INIT_ASSETS = lastPostionAsset * (1 - UPPER_RATIO);
-			}
+			}*/
 
 			console.log('------------------');
 			console.log(
