@@ -3,10 +3,10 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const BTC_SYMBOL = 'BTCUSDT';
-const ETH_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'EOSUSDT';
+const ETH_SYMBOL = 'EOSUSDT';
 
-const LEVERAGE = 125;
+const LEVERAGE = 75;
 let INIT_ASSETS = 1.3;
 const LOSS_MAX = -LEVERAGE / 100;
 const WIN_RATIO = 3;
