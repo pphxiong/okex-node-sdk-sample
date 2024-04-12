@@ -1298,7 +1298,7 @@ const openPosition = async (params = {}, isMarketDeal = false, dealRatio) => {
 			symbol,
 			side: type,
 			positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
-			quantity: Math.abs(size),
+			quantity: Math.abs(size).toFixed(1),
 			recvWindow: 5000,
 			// type: "MARKET",
 			type: 'LIMIT',
