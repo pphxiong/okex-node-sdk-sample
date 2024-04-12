@@ -8,8 +8,8 @@ const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 75;
 let INIT_ASSETS = 1.3;
-const LOSS_MAX = -LEVERAGE / 100;
-const WIN_RATIO = 3;
+const LOSS_MAX = -LEVERAGE / 5 / 100;
+const WIN_RATIO = 10;
 const WIN_MAX = -LOSS_MAX * WIN_RATIO;
 const UPPER_RATIO = 1.382 / LEVERAGE;
 const INIT_ASSETS_RATIO = 0.051;
@@ -1571,7 +1571,7 @@ const startInterval = async () => {
 
 		await checkDeal(btc_result, eth_result);
 
-		await waitTime(1000 * 45);
+		await waitTime(1000 * 30);
 		await startInterval();
 	} catch (e) {
 		restart(e);
