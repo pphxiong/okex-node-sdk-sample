@@ -7,7 +7,7 @@ const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 75;
-let INIT_ASSETS = 0.15;
+let INIT_ASSETS = 0.015;
 const LOSS_MAX = -LEVERAGE / 3 / 100;
 const WIN_RATIO = 1.5;
 const WIN_MAX = -LOSS_MAX * WIN_RATIO;
