@@ -7,14 +7,16 @@ const BTC_SYMBOL = 'EOSUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 75;
-let INIT_ASSETS = 1.3;
-const LOSS_MAX = -LEVERAGE / 5 / 100;
-const WIN_RATIO = 10;
+let INIT_ASSETS = 0.01;
+const LOSS_MAX = -LEVERAGE / 3 / 100;
+const WIN_RATIO = 1.5;
 const WIN_MAX = -LOSS_MAX * WIN_RATIO;
 const UPPER_RATIO = 1.382 / LEVERAGE;
 const INIT_ASSETS_RATIO = 0.051;
 let isLoss = false;
 let isWin = false;
+let lossNum = 1;
+let winNum = 1;
 let longRatio = 0;
 let shortRatio = 0;
 let lastPostionAsset = INIT_ASSETS;
@@ -68,6 +70,10 @@ async function checkByStep(data, ethData) {
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
+
+			INIT_ASSETS =
+				INIT_ASSETS * (1 + (LOSS_MAX - WIN_MAX) / (LOSS_MAX + WIN_MAX));
+
 			/*		INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
@@ -372,10 +378,10 @@ async function checkByStep(data, ethData) {
 	if (openLongCondition) {
 		try {
 			// let openPositionAmt = Number(
-			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+			// 	((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 			// );
 			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+				((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 			);
 			if (isFiveM) {
 				await openPosition({
@@ -397,7 +403,7 @@ async function checkByStep(data, ethData) {
 				(
 					(INIT_ASSETS * INIT_SHORT_ASSETS_RATIO * LEVERAGE) /
 					eth_mark_price
-				).toFixed(3)
+				).toFixed(1)
 			);
 			if (isFiveM /* && avail >= openPositionAmt */) {
 				await openPosition(
@@ -463,10 +469,10 @@ const extraPatchCloseHandler = async (
 	eth_mark_price
 ) => {
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	const isHasPatch1 =
 		Math.round(
@@ -483,7 +489,7 @@ const extraPatchCloseHandler = async (
 				(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
 			if (CURRENT_ASSETS > 10) {
 				const closePositionAmt = Number(
-					(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
+					(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(1)
 				);
 				const payload = {
 					positionAmt: closePositionAmt,
@@ -504,7 +510,7 @@ const extraPatchCloseHandler = async (
 					(
 						((CURRENT_ASSETS - 5) * LEVERAGE) /
 						eth_mark_price
-					).toFixed(3)
+					).toFixed(1)
 				);
 				const payload = {
 					positionAmt: closePositionAmt,
@@ -530,10 +536,10 @@ const extraPatchOpenHandler = async (
 	eth_mark_price
 ) => {
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
 	const isOffsetBehind = Math.abs(offsetRatio) > MAX_OFFSET_RATIO;
@@ -576,7 +582,7 @@ const extraPatchOpenHandler = async (
 					const closePostion = (
 						((CURRENT_ASSETS - 5) * LEVERAGE) /
 						eth_mark_price
-					).toFixed(3);
+					).toFixed(1);
 					const closePayload = {
 						positionAmt: closePostion,
 						position: closePostion,
@@ -589,7 +595,7 @@ const extraPatchOpenHandler = async (
 			}
 			// if (!isHasEthPatch) {
 			// 	const openPositionAmt = Number(
-			// 		(ethBasicPositionAmt * 1).toFixed(3)
+			// 		(ethBasicPositionAmt * 1).toFixed(1)
 			// 	);
 			// 	const payload = {
 			// 		positionAmt: openPositionAmt,
@@ -628,7 +634,7 @@ const extraPatchOpenHandler = async (
 					const closePostion = (
 						((CURRENT_ASSETS - 5) * LEVERAGE) /
 						mark_price
-					).toFixed(3);
+					).toFixed(1);
 					const closePayload = {
 						positionAmt: closePostion,
 						position: closePostion,
@@ -641,7 +647,7 @@ const extraPatchOpenHandler = async (
 			}
 			// if (!isHasBtcPatch) {
 			// 	const openPositionAmt = Number(
-			// 		(btcBasicPositionAmt * 1).toFixed(3)
+			// 		(btcBasicPositionAmt * 1).toFixed(1)
 			// 	);
 			// 	const payload = {
 			// 		positionAmt: openPositionAmt,
@@ -659,7 +665,7 @@ const extraPatchOpenHandler = async (
 			(isOffsetBehind && shortRatio < 0)) &&
 		Math.abs(shortRatio) > Math.abs(longRatio)
 	) {
-		const openPositionAmt = Number((ethBasicPositionAmt * 1).toFixed(3));
+		const openPositionAmt = Number((ethBasicPositionAmt * 1).toFixed(1));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
@@ -680,7 +686,7 @@ const extraPatchOpenHandler = async (
 			(Math.abs(Number(positionAmt)) * eth_mark_price) / LEVERAGE;
 		if (CURRENT_ASSETS > 10) {
 			const closePositionAmt = Number(
-				(((CURRENT_ASSETS - 5) * LEVERAGE) / eth_mark_price).toFixed(3)
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / eth_mark_price).toFixed(1)
 			);
 			const closePayload = {
 				positionAmt: closePositionAmt,
@@ -693,7 +699,7 @@ const extraPatchOpenHandler = async (
 		}
 		// if (!isHasBtcPatch) {
 		// 	const openPositionAmt = Number(
-		// 		(btcBasicPositionAmt * 1).toFixed(3)
+		// 		(btcBasicPositionAmt * 1).toFixed(1)
 		// 	);
 		// 	const payload = {
 		// 		positionAmt: openPositionAmt,
@@ -710,7 +716,7 @@ const extraPatchOpenHandler = async (
 			(isOffsetBehind && longRatio < 0)) &&
 		Math.abs(longRatio) > Math.abs(shortRatio)
 	) {
-		const openPositionAmt = Number((btcBasicPositionAmt * 1).toFixed(3));
+		const openPositionAmt = Number((btcBasicPositionAmt * 1).toFixed(1));
 		const payload = {
 			positionAmt: openPositionAmt,
 			position: openPositionAmt,
@@ -731,7 +737,7 @@ const extraPatchOpenHandler = async (
 			(Math.abs(Number(positionAmt)) * mark_price) / LEVERAGE;
 		if (CURRENT_ASSETS > 10) {
 			const closePositionAmt = Number(
-				(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(3)
+				(((CURRENT_ASSETS - 5) * LEVERAGE) / mark_price).toFixed(1)
 			);
 			const closePayload = {
 				positionAmt: closePositionAmt,
@@ -744,7 +750,7 @@ const extraPatchOpenHandler = async (
 		}
 		// if (!isHasEthPatch) {
 		// 	const openPositionAmt = Number(
-		// 		(ethBasicPositionAmt * 1).toFixed(3)
+		// 		(ethBasicPositionAmt * 1).toFixed(1)
 		// 	);
 		// 	const payload = {
 		// 		positionAmt: openPositionAmt,
@@ -770,10 +776,10 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			item.symbol === ETH_SYMBOL && Math.abs(Number(item.positionAmt)) > 0
 	);
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(1)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(3)
+		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
 	);
 	let longRatio = 0;
 	let shortRatio = 0;
@@ -825,7 +831,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			// await closeAllPosition(holding);
 			const { positionAmt } = btcShortHolding;
 			const closePositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
+				Math.abs(Number(positionAmt)).toFixed(1)
 			);
 			const payload = {
 				positionAmt: closePositionAmt,
@@ -844,7 +850,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						)) *
 						LEVERAGE) /
 					mark_price
-				).toFixed(3)
+				).toFixed(1)
 			);
 			if (openPositionAmt > 10) {
 				const openPayload = {
@@ -908,7 +914,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 			// await closeAllPosition(holding);
 			const { positionAmt } = ethLongHolding;
 			const closePositionAmt = Number(
-				Math.abs(Number(positionAmt)).toFixed(3)
+				Math.abs(Number(positionAmt)).toFixed(1)
 			);
 			const payload = {
 				positionAmt: closePositionAmt,
@@ -928,7 +934,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						)) *
 						LEVERAGE) /
 					eth_mark_price
-				).toFixed(3)
+				).toFixed(1)
 			);
 			if (openPositionAmt > 10) {
 				const openPayload = {
@@ -963,7 +969,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						const closePostion = (
 							((CURRENT_ASSETS - 5) * LEVERAGE) /
 							mark_price
-						).toFixed(3);
+						).toFixed(1);
 						const closePayload = {
 							positionAmt: closePostion,
 							position: closePostion,
@@ -975,7 +981,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 					}
 				}
 				// const openPositionAmt = Number(
-				// 	(ethBasicPositionAmt * 2).toFixed(3)
+				// 	(ethBasicPositionAmt * 2).toFixed(1)
 				// );
 				// const payload = {
 				// 	positionAmt: openPositionAmt,
@@ -1012,7 +1018,7 @@ const extraLossDealHandler = async (holding, mark_price, eth_mark_price) => {
 						const closePostion = (
 							((CURRENT_ASSETS - 5) * LEVERAGE) /
 							eth_mark_price
-						).toFixed(3);
+						).toFixed(1);
 						const closePayload = {
 							positionAmt: closePostion,
 							position: closePostion,
@@ -1553,7 +1559,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= 1 * 14) {
+	if (RESTART_TIME >= 1 * 12 * 5) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -1571,7 +1577,7 @@ const startInterval = async () => {
 
 		await checkDeal(btc_result, eth_result);
 
-		await waitTime(1000 * 30);
+		await waitTime(1000 * 5);
 		await startInterval();
 	} catch (e) {
 		restart(e);
@@ -1584,6 +1590,8 @@ const readData = async () => {
 	isLoss = dataConfig.isLoss === 'true';
 	isWin = dataConfig.isWin === 'true';
 	lastPostionAsset = Number(dataConfig.lastPostionAsset);
+	lossNum = Number(dataConfig.lossNum);
+	winNum = Number(dataConfig.winNum);
 
 	console.log(
 		'read::',
@@ -1593,6 +1601,10 @@ const readData = async () => {
 		isWin,
 		'lastPostionAsset',
 		lastPostionAsset,
+		'lossNum',
+		lossNum,
+		'winNum',
+		winNum,
 		moment().format('YYYY-MM-DD HH:mm:ss')
 	);
 };
@@ -1603,6 +1615,8 @@ const writeData = async () => {
 		isLoss: String(isLoss),
 		isWin: String(isWin),
 		lastPostionAsset: String(lastPostionAsset),
+		lossNum: isLoss ? String(lossNum + 1) : String(lossNum),
+		winNum: isWin ? String(winNum + 1) : String(winNum),
 	};
 	let jsonStr = JSON.stringify(dataConfig);
 
