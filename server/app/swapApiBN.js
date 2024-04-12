@@ -245,14 +245,27 @@ async function checkByStep(data, ethData) {
 	// console.log('isFiveM', isFiveM, lastMinuteCharacter, lastSecondCharacter);
 	// console.log('macdList', macdList.slice(-1));
 	// console.log('bollList', bollList.slice(-2));
-	console.log('isLoss', isLoss, 'isWin', isWin);
+	console.log(
+		'isLoss',
+		isLoss,
+		'isWin',
+		isWin,
+		'lossNum',
+		lossNum,
+		'winNum',
+		winNum
+	);
 	console.log(
 		'longRatio',
 		longRatio,
 		'shortRatio',
 		shortRatio,
 		'totalRatio',
-		totalRatio
+		totalRatio,
+		'lossMax',
+		LOSS_MAX,
+		'winMax',
+		WIN_MAX
 		// 'winMax',
 		// holding ? WIN_MAX : 0
 	);
