@@ -9,10 +9,10 @@ const ETH_SYMBOL = 'EOSUSDT';
 const LEVERAGE = 20;
 const WIN_MAX = LEVERAGE / 100;
 const LOSS_MAX = -WIN_MAX;
-const MAX_OFFSET_RATIO = 0.0618 * 2;
 const INIT_LONG_SHORT_ASSETS_RATIO = 2;
 let INIT_ASSETS = 52;
 
+// const MAX_OFFSET_RATIO = 0.0618 * 2;
 let RESTART_TIME = 0;
 let MODE = 1;
 const DEFAULT_INTERVAL = '1h';
@@ -185,7 +185,7 @@ async function checkByStep() {
 		'totalRatio',
 		totalRatio,
 		'winMax',
-		holding ? WIN_MAX / holding.length : 0
+		WIN_MAX
 	);
 	console.log(
 		'longPositionAmt*mark_parice',
@@ -344,14 +344,7 @@ async function checkByStep() {
 			);
 		}
 		console.log('*********************');
-		console.log(
-			'offsetRatio',
-			Math.abs(Math.abs(shortRatio) - Math.abs(longRatio)),
-			'MAX_OFFSET_RATIO',
-			MAX_OFFSET_RATIO,
-			'holdingLength',
-			holding.length
-		);
+		console.log('holdingLength', holding.length);
 		console.log('*********************');
 	}
 }
@@ -923,7 +916,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= 1 * 14 * 4 * 2) {
+	if (RESTART_TIME >= 1 * 14 * 4) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -942,7 +935,7 @@ const startInterval = async () => {
 		// await checkDeal(btc_result, eth_result);
 		await checkByStep();
 
-		await waitTime((1000 * 56) / 4 / 2);
+		await waitTime((1000 * 56) / 4);
 		await startInterval();
 	} catch (e) {
 		restart(e);
