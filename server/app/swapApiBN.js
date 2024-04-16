@@ -333,33 +333,28 @@ async function checkByStep() {
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 1);
 		if (holding.length === 2) {
-			await fnTwoHoldingHandler(shortRatio, mark_price, eth_mark_price);
+			await fnTwoHoldingHandler(longHolding, shortHolding, shortRatio);
 		} else if (holding.length === 3) {
-			await fnThirdHoldingHandler(
-				holding,
-				longRatio,
-				shortHolding,
-				mark_price,
-				eth_mark_price
-			);
+			await fnThirdHoldingHandler(holding, longHolding, longRatio);
 		}
-		console.log('*********************');
+		console.log;
 		console.log('holdingLength', holding.length);
 		console.log('*********************');
 	}
 }
-const fnTwoHoldingHandler = async (shortRatio, mark_price, eth_mark_price) => {
+const fnTwoHoldingHandler = async (longHolding, shortHolding, shortRatio) => {
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		Math.abs(Number(longHolding.positionAmt) / 2).toFixed(3)
 	);
 	const ethBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / eth_mark_price).toFixed(1)
+		Math.abs(Number(shortHolding.positionAmt)).toFixed(1)
 	);
+
 	if (shortRatio < LOSS_MAX) {
 		const openPositionAmt = ethBasicPositionAmt;
 		const payload = {
-			positionAmt: Number((openPositionAmt * 2).toFixed(1)),
-			position: Number((openPositionAmt * 2).toFixed(1)),
+			positionAmt: openPositionAmt,
+			position: openPositionAmt,
 			side: 'long',
 			openSide: 'long',
 			symbol: ETH_SYMBOL,
@@ -378,14 +373,9 @@ const fnTwoHoldingHandler = async (shortRatio, mark_price, eth_mark_price) => {
 	}
 };
 
-const fnThirdHoldingHandler = async (
-	holding,
-	longRatio,
-	mark_price,
-	eth_mark_price
-) => {
+const fnThirdHoldingHandler = async (holding, longHolding, longRatio) => {
 	const btcBasicPositionAmt = Number(
-		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
+		Math.abs(Number(longHolding.positionAmt)).toFixed(3)
 	);
 	if (longRatio < LOSS_MAX) {
 		const openPositionAmt = btcBasicPositionAmt;
