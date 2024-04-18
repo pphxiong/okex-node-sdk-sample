@@ -7,9 +7,9 @@ const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
-const WIN_MAX = LEVERAGE / 100;
+const WIN_MAX = LEVERAGE / 2 / 100;
 const LOSS_MAX = -WIN_MAX;
-const INIT_LONG_SHORT_ASSETS_RATIO = 2;
+const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 52;
 
 // const MAX_OFFSET_RATIO = 0.0618 * 2;
@@ -344,7 +344,9 @@ async function checkByStep() {
 }
 const fnTwoHoldingHandler = async (longHolding, shortHolding, shortRatio) => {
 	const btcBasicPositionAmt = Number(
-		Math.abs(Number(longHolding.positionAmt) / 2).toFixed(3)
+		Math.abs(
+			Number(longHolding.positionAmt) / INIT_LONG_SHORT_ASSETS_RATIO
+		).toFixed(3)
 	);
 	const ethBasicPositionAmt = Number(
 		Math.abs(Number(shortHolding.positionAmt)).toFixed(1)
@@ -361,15 +363,15 @@ const fnTwoHoldingHandler = async (longHolding, shortHolding, shortRatio) => {
 		};
 		await openPosition(payload);
 
-		const closePositionAmt = btcBasicPositionAmt;
-		const closePayload = {
-			positionAmt: closePositionAmt,
-			position: closePositionAmt,
-			side: 'long',
-			positionSide: 'long',
-			symbol: BTC_SYMBOL,
-		};
-		await closePosition(closePayload);
+		// const closePositionAmt = btcBasicPositionAmt;
+		// const closePayload = {
+		// 	positionAmt: closePositionAmt,
+		// 	position: closePositionAmt,
+		// 	side: 'long',
+		// 	positionSide: 'long',
+		// 	symbol: BTC_SYMBOL,
+		// };
+		// await closePosition(closePayload);
 	}
 };
 
@@ -378,15 +380,15 @@ const fnThirdHoldingHandler = async (holding, longHolding, longRatio) => {
 		Math.abs(Number(longHolding.positionAmt)).toFixed(3)
 	);
 	if (longRatio < LOSS_MAX) {
-		const openPositionAmt = btcBasicPositionAmt;
-		const openPayload = {
-			positionAmt: openPositionAmt,
-			position: openPositionAmt,
-			side: 'long',
-			openSide: 'long',
-			symbol: BTC_SYMBOL,
-		};
-		await openPosition(openPayload);
+		// const openPositionAmt = btcBasicPositionAmt;
+		// const openPayload = {
+		// 	positionAmt: openPositionAmt,
+		// 	position: openPositionAmt,
+		// 	side: 'long',
+		// 	openSide: 'long',
+		// 	symbol: BTC_SYMBOL,
+		// };
+		// await openPosition(openPayload);
 
 		const ethHoldingList = holding.filter(
 			(item) =>
