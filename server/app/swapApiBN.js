@@ -12,7 +12,7 @@ const WIN_MAX = -LOSS_MAX;
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 52;
 
-const MAX_OFFSET_RATIO = LOSS_MAX;
+const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
@@ -345,7 +345,8 @@ async function checkByStep() {
 				holding,
 				longHolding,
 				longRatio,
-				shortRatio
+				shortRatio,
+				eth_mark_price
 			);
 		}
 		console.log;
@@ -395,13 +396,26 @@ const fnThirdHoldingHandler = async (
 	holding,
 	longHolding,
 	longRatio,
-	shortRatio
+	shortRatio,
+	eth_mark_price
 ) => {
 	const btcBasicPositionAmt = Number(
 		Math.abs(Number(longHolding.positionAmt)).toFixed(3)
 	);
+	const ethHoldingList = holding.filter(
+		(item) =>
+			item.symbol === ETH_SYMBOL && Math.abs(Number(item.positionAmt)) > 0
+	);
+	const ethLongHolding = ethHoldingList.find(
+		(item) => item.positionSide.toUpperCase() == 'LONG'
+	);
+	const { leverage, entryPrice: avg_cost } = ethLongHolding;
+	const ethLongRatio =
+		((Number(eth_mark_price) - Number(avg_cost)) * Number(leverage)) /
+		Number(eth_mark_price);
+
 	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
-	if (offsetRatio < MAX_OFFSET_RATIO / 2) {
+	if (offsetRatio < 0 || ethLongRatio < -MAX_OFFSET_RATIO) {
 		// const openPositionAmt = btcBasicPositionAmt;
 		// const openPayload = {
 		// 	positionAmt: openPositionAmt,
@@ -412,14 +426,6 @@ const fnThirdHoldingHandler = async (
 		// };
 		// await openPosition(openPayload);
 
-		const ethHoldingList = holding.filter(
-			(item) =>
-				item.symbol === ETH_SYMBOL &&
-				Math.abs(Number(item.positionAmt)) > 0
-		);
-		const ethLongHolding = ethHoldingList.find(
-			(item) => item.positionSide.toUpperCase() == 'LONG'
-		);
 		const { positionAmt } = ethLongHolding;
 		const closePositionAmt = Number(
 			Math.abs(Number(positionAmt)).toFixed(1)
