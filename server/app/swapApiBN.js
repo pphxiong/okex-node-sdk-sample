@@ -7,12 +7,13 @@ const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
-const WIN_MAX = LEVERAGE / 2 / 100;
-const LOSS_MAX = -WIN_MAX;
+const LOSS_MAX = -LEVERAGE / 2 / 100;
+const WIN_MAX = -LOSS_MAX;
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 52;
 
-// const MAX_OFFSET_RATIO = 0.0618 * 2;
+const MAX_OFFSET_RATIO = LOSS_MAX;
+
 let RESTART_TIME = 0;
 let MODE = 1;
 const DEFAULT_INTERVAL = '1h';
@@ -333,16 +334,31 @@ async function checkByStep() {
 	if (longHolding && shortHolding) {
 		await waitTime(1000 * 1);
 		if (holding.length === 2) {
-			await fnTwoHoldingHandler(longHolding, shortHolding, shortRatio);
+			await fnTwoHoldingHandler(
+				longHolding,
+				shortHolding,
+				longRatio,
+				shortRatio
+			);
 		} else if (holding.length === 3) {
-			await fnThirdHoldingHandler(holding, longHolding, longRatio);
+			await fnThirdHoldingHandler(
+				holding,
+				longHolding,
+				longRatio,
+				shortRatio
+			);
 		}
 		console.log;
 		console.log('holdingLength', holding.length);
 		console.log('*********************');
 	}
 }
-const fnTwoHoldingHandler = async (longHolding, shortHolding, shortRatio) => {
+const fnTwoHoldingHandler = async (
+	longHolding,
+	shortHolding,
+	longRatio,
+	shortRatio
+) => {
 	const btcBasicPositionAmt = Number(
 		Math.abs(
 			Number(longHolding.positionAmt) / INIT_LONG_SHORT_ASSETS_RATIO
@@ -351,8 +367,8 @@ const fnTwoHoldingHandler = async (longHolding, shortHolding, shortRatio) => {
 	const ethBasicPositionAmt = Number(
 		Math.abs(Number(shortHolding.positionAmt)).toFixed(1)
 	);
-
-	if (shortRatio < LOSS_MAX) {
+	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
+	if (offsetRatio > MAX_OFFSET_RATIO && shortRatio < 0) {
 		const openPositionAmt = ethBasicPositionAmt;
 		const payload = {
 			positionAmt: openPositionAmt,
@@ -375,11 +391,17 @@ const fnTwoHoldingHandler = async (longHolding, shortHolding, shortRatio) => {
 	}
 };
 
-const fnThirdHoldingHandler = async (holding, longHolding, longRatio) => {
+const fnThirdHoldingHandler = async (
+	holding,
+	longHolding,
+	longRatio,
+	shortRatio
+) => {
 	const btcBasicPositionAmt = Number(
 		Math.abs(Number(longHolding.positionAmt)).toFixed(3)
 	);
-	if (longRatio < LOSS_MAX) {
+	const offsetRatio = Math.abs(shortRatio) - Math.abs(longRatio);
+	if (offsetRatio < MAX_OFFSET_RATIO / 2) {
 		// const openPositionAmt = btcBasicPositionAmt;
 		// const openPayload = {
 		// 	positionAmt: openPositionAmt,
