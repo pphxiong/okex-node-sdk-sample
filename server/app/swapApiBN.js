@@ -8,7 +8,7 @@ const ETH_SYMBOL = 'EOSUSDT';
 
 const LEVERAGE = 20;
 const LOSS_MAX = -LEVERAGE / 2 / 100;
-const WIN_MAX = -LOSS_MAX;
+const WIN_MAX = -LOSS_MAX * 1.5;
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 52;
 
