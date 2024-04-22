@@ -1015,7 +1015,7 @@ const startInterval = async () => {
 		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
 		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
-		await checkDeal(btc_result);
+		await checkDeal(btc_result, btc_result);
 		// await checkByStep();
 
 		await waitTime(1000 * 56);
