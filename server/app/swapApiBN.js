@@ -248,8 +248,20 @@ async function checkByStep(data) {
 		shortRatio,
 		'totalRatio',
 		totalRatio,
-		'winMax',
-		WIN_MAX
+		'isUp',
+		isUp,
+		'isLow',
+		isLow,
+		'CENTER_CROSS_LONG_CONDITION',
+		CENTER_CROSS_LONG_CONDITION,
+		'CENTER_CROSS_SHORT_CONDITION',
+		CENTER_CROSS_SHORT_CONDITION,
+		'OUT_HIGH_CONDITION',
+		OUT_HIGH_CONDITION,
+		'OUT_LOW_CONDITION',
+		OUT_LOW_CONDITION
+		// 'winMax',
+		// WIN_MAX
 	);
 	console.log(
 		'longPositionAmt*mark_parice',
