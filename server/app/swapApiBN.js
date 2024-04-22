@@ -1011,7 +1011,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= (1 * 14) / 2) {
+	if (RESTART_TIME >= 1 * 14) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -1030,7 +1030,7 @@ const startInterval = async () => {
 		await checkDeal(btc_result, btc_result);
 		// await checkByStep();
 
-		await waitTime(1000 * 56);
+		await waitTime((1000 * 56) / 2);
 		await startInterval();
 	} catch (e) {
 		restart(e);
