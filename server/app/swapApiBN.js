@@ -6,7 +6,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'BTCUSDT';
 
-const LEVERAGE = 20;
+const LEVERAGE = 10;
 const LOSS_MAX = -LEVERAGE / 2 / 100;
 const WIN_MAX = -LOSS_MAX * 1.5;
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
