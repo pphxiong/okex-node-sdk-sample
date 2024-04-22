@@ -83,7 +83,7 @@ async function checkByStep(data) {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
-				((Number(availableBalance) + Number(currentTotalAsset)) * 2) /
+				((Number(availableBalance) + Number(currentTotalAsset)) * 3) /
 				LEVERAGE;
 
 			console.log('------------------');
