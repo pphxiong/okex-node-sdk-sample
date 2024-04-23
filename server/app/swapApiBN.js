@@ -227,10 +227,12 @@ async function checkByStep(data) {
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		((isUp && CENTER_CROSS_LONG_CONDITION) || OUT_HIGH_CONDITION);
+		((isUp && CENTER_CROSS_LONG_CONDITION) ||
+			(OUT_HIGH_CONDITION && !shortHolding));
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		((isLow && CENTER_CROSS_SHORT_CONDITION) || OUT_LOW_CONDITION);
+		((isLow && CENTER_CROSS_SHORT_CONDITION) ||
+			(OUT_LOW_CONDITION && !longHolding));
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -345,7 +347,7 @@ async function checkByStep(data) {
 					positionSide: 'short',
 					mark_price,
 					ratio: shortRatio,
-					symbol: longHolding.symbol,
+					symbol: shortHolding.symbol,
 				};
 				await closePosition(payload, false, avail);
 			}
