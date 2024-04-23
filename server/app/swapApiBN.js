@@ -86,6 +86,16 @@ async function checkByStep(data) {
 				((Number(availableBalance) + Number(currentTotalAsset)) * 3) /
 				LEVERAGE;
 
+			if (longHolding) {
+				INIT_ASSETS =
+					(Math.abs(Number(longHolding.positionAmt)) * mark_price) /
+					LEVERAGE;
+			} else if (shortHolding) {
+				INIT_ASSETS =
+					(Math.abs(Number(shortHolding.positionAmt)) * mark_price) /
+					LEVERAGE;
+			}
+
 			console.log('------------------');
 			console.log(
 				`availableBalance`,
