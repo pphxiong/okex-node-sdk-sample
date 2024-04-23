@@ -323,6 +323,7 @@ async function checkByStep(data) {
 					positionSide: 'long',
 					mark_price,
 					ratio: longRatio,
+					symbol: longHolding.symbol,
 				};
 				await closePosition(payload, false, avail);
 			}
@@ -344,6 +345,7 @@ async function checkByStep(data) {
 					positionSide: 'short',
 					mark_price,
 					ratio: shortRatio,
+					symbol: longHolding.symbol,
 				};
 				await closePosition(payload, false, avail);
 			}
