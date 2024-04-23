@@ -310,6 +310,7 @@ async function checkByStep(data) {
 					positionAmt: longHolding.positionAmt,
 					position: closePositionAmt,
 					side: 'long',
+					positionSide: 'long',
 					mark_price,
 					ratio: longRatio,
 				};
@@ -330,6 +331,7 @@ async function checkByStep(data) {
 					positionAmt: shortHolding.positionAmt,
 					position: closePositionAmt,
 					side: 'short',
+					positionSide: 'short',
 					mark_price,
 					ratio: shortRatio,
 				};
