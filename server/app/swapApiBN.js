@@ -49,7 +49,8 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 };
 
 async function checkByStep(data) {
-	const { macdList, bollList } = data;
+	const { macdList, bollList, atrList } = data;
+	console.log(3, atrList);
 	let mark_price;
 	let eth_mark_price;
 	try {
@@ -538,11 +539,13 @@ const checkDeal = async (data, ethData) => {
 			macdList: data.macdList.slice(-80),
 			rsiList: data.rsiList.slice(-80),
 			bollList: data.bollList.slice(-80),
+			atrList: data.atrList.slice(-80),
 		},
 		{
 			macdList: ethData.macdList.slice(-80),
 			rsiList: ethData.rsiList.slice(-80),
 			bollList: ethData.bollList.slice(-80),
+			atrList: data.atrList.slice(-80),
 		}
 	);
 };
@@ -845,6 +848,42 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 
 let positionChange = true;
 let globalHolding = null;
+/*
+ATR = (n-1) * ATR’ + TR
+
+ATR’表示昨天的ATR，TR表示今天的真实波动幅度，n表示计算的时间周期，通常为14。
+
+真实波动幅度（TR）的计算公式如下：
+
+TR = max(max(H – L, abs(H – C’)), abs(L – C’))
+
+H表示今天的最高价，L表示今天的最低价，C’表示昨天的收盘价。
+*/
+function getATR(list, i, period) {
+	const item = list[i];
+	const open = Number(item[1]);
+	const high = Number(item[2]);
+	const low = Number(item[3]);
+	const TR = Math.max(
+		Math.max(high - low, Math.abs(high - open)),
+		Math.abs(low - open)
+	);
+	let ATR = TR;
+	if (i > 0) {
+		ATR = (period - 1) * getATR(list, i - 1, period) + TR;
+	}
+	return ATR;
+}
+
+function getATRByPeriod(list, period = 14) {
+	const atrList = [];
+	for (let i = 0; i < list.length; i += 1) {
+		const ATR = getATR(list, i, period);
+		atrList.push(ATR);
+	}
+	return atrList;
+}
+
 function getMacd(params) {
 	const {
 		close: price,
@@ -862,6 +901,10 @@ function getMacd(params) {
 		quantity,
 		open,
 	} = params;
+
+	const p1 = 13;
+	const p2 = 34;
+	const p3 = 9;
 
 	const ema5 = toFixedAndToNumber(
 		(2 / (5 + 1)) * price + (4 / (5 + 1)) * lastEma5,
@@ -881,17 +924,17 @@ function getMacd(params) {
 	);
 
 	const ema12 = toFixedAndToNumber(
-		(2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
+		(2 / p1) * price + ((p1 - 1) / p1) * lastEma12,
 		4
 	);
 	const ema26 = toFixedAndToNumber(
-		(2 / (26 + 1)) * price + (25 / (26 + 1)) * lastEma26,
+		(2 / p2) * price + ((p2 - 1) / p2) * lastEma26,
 		4
 	);
 
 	const diff = toFixedAndToNumber(ema12 - ema26, 2);
 	const dea = toFixedAndToNumber(
-		(2 / (9 + 1)) * diff + (8 / (9 + 1)) * lastDea,
+		(2 / p3) * diff + ((p3 - 1) / p3) * lastDea,
 		2
 	);
 
@@ -1015,11 +1058,13 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
+	const atrList = getATRByPeriod(newList);
 
 	const result = {
 		macdList,
 		rsiList,
 		bollList,
+		atrList,
 	};
 
 	return result;
