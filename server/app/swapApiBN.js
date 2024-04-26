@@ -48,6 +48,8 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 	return { isUp, isLow };
 };
 
+const fnIsMacdReverse = (macdList, bollList, atrList) => {};
+
 async function checkByStep(data) {
 	const { macdList, bollList, atrList } = data;
 	console.log(3, atrList);
@@ -217,14 +219,8 @@ async function checkByStep(data) {
 		Number(macdList[macdList.length - 1].close) <
 			Number(bollList[bollList.length - 1].DN);
 
-	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding &&
-		((!shortHolding && isLow && CENTER_CROSS_SHORT_CONDITION) ||
-			(shortHolding && OUT_HIGH_CONDITION));
-	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding &&
-		((!longHolding && isUp && CENTER_CROSS_LONG_CONDITION) ||
-			(longHolding && OUT_LOW_CONDITION));
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && false;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && false;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
