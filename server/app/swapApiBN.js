@@ -1055,7 +1055,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
-
+	console.log(2,atrList.length)
 	const result = {
 		macdList,
 		rsiList,
