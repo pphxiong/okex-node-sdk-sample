@@ -855,7 +855,7 @@ TR = max(max(H – L, abs(H – C’)), abs(L – C’))
 
 H表示今天的最高价，L表示今天的最低价，C’表示昨天的收盘价。
 */
-function getATR(list, i, period) {
+function getATR(list, i, lastATR, period) {
 	const item = list[i];
 	const open = Number(item[1]);
 	const high = Number(item[2]);
@@ -866,7 +866,8 @@ function getATR(list, i, period) {
 	);
 	let ATR = TR;
 	if (i > 0) {
-		ATR = (period - 1) * getATR(list, i - 1, period) + TR;
+		// ATR = (period - 1) * getATR(list, i - 1, period) + TR;
+		ATR = (period - 1) * lastATR + TR;
 	}
 	return ATR;
 }
@@ -879,7 +880,7 @@ function getATRIndex(list, i, period) {
 function getATRByPeriod(list, period = 14) {
 	const atrList = [];
 	for (let i = 0; i < list.length; i += 1) {
-		const ATR = getATRIndex(list, i, period);
+		const ATR = getATR(list, i, atrList[i-1],period);
 		atrList.push(ATR);
 	}
 	return atrList;
