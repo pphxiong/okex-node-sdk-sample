@@ -52,7 +52,7 @@ const fnIsMacdReverse = (macdList, bollList, atrList) => {};
 
 async function checkByStep(data) {
 	const { macdList, bollList, atrList } = data;
-	console.log(3, atrList);
+
 	let mark_price;
 	let eth_mark_price;
 	try {
@@ -872,15 +872,10 @@ function getATR(list, i, lastATR, period) {
 	return ATR;
 }
 
-function getATRIndex(list, i, period) {
-	const ATR = getATR(list, i, period);
-	return ATR
-}
-
 function getATRByPeriod(list, period = 14) {
 	const atrList = [];
 	for (let i = 0; i < list.length; i += 1) {
-		const ATR = getATR(list, i, atrList[i-1],period);
+		const ATR = getATR(list, i, atrList[i-1], period);
 		atrList.push(ATR);
 	}
 	return atrList;
@@ -1061,7 +1056,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
-
+	console.log(3,macdList.length,atrList.length)
 	const result = {
 		macdList,
 		rsiList,
