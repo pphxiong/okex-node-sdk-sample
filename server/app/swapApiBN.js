@@ -871,13 +871,18 @@ function getATR(list, i, period) {
 	return ATR;
 }
 
+function getATRIndex(list, i, period) {
+	const ATR = getATR(list, i, period);
+	return ATR
+}
+
 function getATRByPeriod(list, period = 14) {
 	const atrList = [];
-	for (let i = list.length - 1; i >= 0 ; i -= 1) {
-		const ATR = getATR(list, i, period);
+	for (let i = 0; i < list.length; i += 1) {
+		const ATR = getATRIndex(list, i, period);
 		atrList.push(ATR);
 	}
-	return atrList.reverse();
+	return atrList;
 }
 
 function getMacd(params) {
