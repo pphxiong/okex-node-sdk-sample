@@ -873,11 +873,11 @@ function getATR(list, i, period) {
 
 function getATRByPeriod(list, period = 14) {
 	const atrList = [];
-	for (let i = 0; i < list.length; i += 1) {
+	for (let i = list.length - 1; i >= 0 ; i -= 1) {
 		const ATR = getATR(list, i, period);
 		atrList.push(ATR);
 	}
-	return atrList;
+	return atrList.reverse();
 }
 
 function getMacd(params) {
@@ -1055,7 +1055,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
-	console.log(2,atrList.length)
+
 	const result = {
 		macdList,
 		rsiList,
