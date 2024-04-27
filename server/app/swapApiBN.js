@@ -858,6 +858,7 @@ H表示今天的最高价，L表示今天的最低价，C’表示昨天的收�
 */
 function getATR(list, i, lastATR, period) {
 	const item = list[i];
+	console.log(6,item)
 	const open = Number(item[1]);
 	const high = Number(item[2]);
 	const low = Number(item[3]);
