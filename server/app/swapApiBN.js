@@ -873,7 +873,6 @@ function getATR(item, i, lastATR, period) {
 }
 
 function getATRByPeriod(list, period = 13) {
-	console.log(9, list.length)
 	const newList = JSON.parse(JSON.stringify(list));
 	const atrList = [];
 	console.log(9, newList.length)
@@ -1057,15 +1056,15 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const newList = JSON.parse(JSON.stringify(list));
 	newList.pop();
 
-	const bollList = getCurrentBOLL(newList);
-	const macdList = getCurrentMacd(newList);
-	const rsiList = getCurrentRSI(newList);
+	// const bollList = getCurrentBOLL(newList);
+	// const macdList = getCurrentMacd(newList);
+	// const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
 
 	const result = {
-		macdList,
-		rsiList,
-		bollList,
+		// macdList,
+		// rsiList,
+		// bollList,
 		atrList,
 	};
 
@@ -1090,8 +1089,7 @@ const startInterval = async () => {
 		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
 		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 
-		await checkDeal(btc_result, btc_result);
-		// await checkByStep();
+		// await checkDeal(btc_result, btc_result);
 
 		await waitTime((1000 * 56) / 2);
 		await startInterval();
