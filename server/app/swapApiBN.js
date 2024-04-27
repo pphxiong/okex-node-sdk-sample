@@ -876,9 +876,10 @@ function getATR(list, i, lastATR, period) {
 function getATRByPeriod(list, period = 13) {
 	const newList = JSON.parse(JSON.stringify(list));
 	const atrList = [];
-	console.log(newList)
+
 	for (let i = 0; i < newList.length; i += 1) {
 		const ATR = getATR(newList, i, atrList[i-1], period);
+		console.log(4,i, ATR)
 		atrList.push(ATR);
 	}
 	console.log(3,atrList)
