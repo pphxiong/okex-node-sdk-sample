@@ -3,8 +3,8 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const BTC_SYMBOL = 'BTCUSDT';
-const ETH_SYMBOL = 'BTCUSDT';
+const BTC_SYMBOL = 'ETHUSDT';
+const ETH_SYMBOL = 'ETHUSDT';
 
 const LEVERAGE = 10;
 const LOSS_MAX = -LEVERAGE / 2 / 100;
@@ -1057,7 +1057,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
-
+	console.log(3,atrList.length)
 	const result = {
 		macdList,
 		rsiList,
