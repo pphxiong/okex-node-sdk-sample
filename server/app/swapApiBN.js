@@ -876,10 +876,12 @@ function getATR(list, i, lastATR, period) {
 function getATRByPeriod(list, period = 13) {
 	const newList = JSON.parse(JSON.stringify(list));
 	const atrList = [];
+	console.log(newList)
 	for (let i = 0; i < newList.length; i += 1) {
 		const ATR = getATR(newList, i, atrList[i-1], period);
 		atrList.push(ATR);
 	}
+	console.log(3,atrList)
 	return atrList;
 }
 
@@ -1059,7 +1061,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
-	console.log(3,atrList)
+
 	const result = {
 		macdList,
 		rsiList,
