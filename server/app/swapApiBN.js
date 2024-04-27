@@ -878,8 +878,19 @@ function getATRByPeriod(list, period = 13) {
 	const atrList = [];
 
 	for (let i = 0; i < newList.length; i += 1) {
-		const ATR = getATR(newList, i, atrList[i-1], period);
-		console.log(4,i, ATR)
+		const item = newList[i];
+		const open = Number(item[1]);
+		const high = Number(item[2]);
+		const low = Number(item[3]);
+		const TR = Math.max(
+			Math.max(high - low, Math.abs(high - open)),
+			Math.abs(low - open)
+		);
+		let ATR = TR;
+		if (i > 0) {
+			// ATR = (period - 1) * getATR(list, i - 1, period) + TR;
+			ATR = (period - 1) * atrList[i - 1] + TR;
+		}
 		atrList.push(ATR);
 	}
 	console.log(3,atrList)
@@ -1057,7 +1068,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
 	newList.pop();
-	console.log(newList)
+
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
