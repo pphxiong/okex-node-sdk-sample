@@ -875,6 +875,7 @@ function getATR(item, i, lastATR, period) {
 function getATRByPeriod(list, period = 13) {
 	const newList = JSON.parse(JSON.stringify(list));
 	const atrList = [];
+	console.log(9, newList.length)
 	newList.forEach((item,index)=>{
 		const ATR = getATR(item, index, atrList[index-1], period);
 		atrList.push(ATR);
@@ -1054,7 +1055,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
 	newList.pop();
-	console.log(9,newList.length)
+
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
