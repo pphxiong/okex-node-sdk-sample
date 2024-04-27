@@ -846,7 +846,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 let positionChange = true;
 let globalHolding = null;
 /*
-ATR = (n-1) * ATR’ + TR
+ATR = ((n-1) * ATR’ + TR) / n
 
 ATR’表示昨天的ATR，TR表示今天的真实波动幅度，n表示计算的时间周期，通常为14。
 
@@ -867,7 +867,7 @@ function getATR(item, i, lastATR, period) {
 	let ATR = TR;
 	if (i > 0) {
 		// ATR = (period - 1) * getATR(list, i - 1, period) + TR;
-		ATR = (period - 1) * lastATR + TR;
+		ATR = ((period - 1) * lastATR + TR) / period;
 	}
 	return ATR;
 }
@@ -1056,15 +1056,15 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const newList = JSON.parse(JSON.stringify(list));
 	newList.pop();
 
-	// const bollList = getCurrentBOLL(newList);
-	// const macdList = getCurrentMacd(newList);
+	const bollList = getCurrentBOLL(newList);
+	const macdList = getCurrentMacd(newList);
 	// const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
 
 	const result = {
-		// macdList,
+		macdList,
+		bollList,
 		// rsiList,
-		// bollList,
 		atrList,
 	};
 
