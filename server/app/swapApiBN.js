@@ -872,11 +872,12 @@ function getATR(list, i, lastATR, period) {
 	return ATR;
 }
 
-function getATRByPeriod(list, period = 14) {
+function getATRByPeriod(list, period = 13) {
 	const newList = JSON.parse(JSON.stringify(list));
 	const atrList = [];
 	for (let i = 0; i < newList.length; i += 1) {
 		const ATR = getATR(newList, i, atrList[i-1], period);
+		console.log(i,ATR)
 		atrList.push(ATR);
 	}
 	return atrList;
@@ -902,7 +903,7 @@ function getMacd(params) {
 
 	const p1 = 13;
 	const p2 = 34;
-	const p3 = 9;
+	const p3 = 5;
 
 	const ema5 = toFixedAndToNumber(
 		(2 / (5 + 1)) * price + (4 / (5 + 1)) * lastEma5,
@@ -1057,7 +1058,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const macdList = getCurrentMacd(newList);
 	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
-	console.log(3,atrList.length)
+	console.log(3,atrList)
 	const result = {
 		macdList,
 		rsiList,
