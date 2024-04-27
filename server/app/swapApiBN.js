@@ -589,8 +589,9 @@ function send(res, ret) {
 }
 
 function getCurrentMacd(list, last) {
+	const newList = JSON.parse(JSON.stringify(list));
 	let macdList = [];
-	list.map((item, index) => {
+	newList.map((item, index) => {
 		let result = {};
 		if (index == 0) {
 			result = last || {
