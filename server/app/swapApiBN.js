@@ -57,7 +57,7 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		// macdList[i].column >= 0 &&
+		macdList[i].column >= 0 &&
 		macdList[i].column >= macdList[i - 1].column &&
 		macdList[i - 1].column >= macdList[i - 2].column &&
 		macdList[i - 2].column >= macdList[i - 3].column
@@ -66,7 +66,7 @@ const fnIsCurrentContinousUpper = (macdList, i) => {
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		// macdList[i].column <= 0 &&
+		macdList[i].column <= 0 &&
 		macdList[i].column <= macdList[i - 1].column &&
 		macdList[i - 1].column <= macdList[i - 2].column &&
 		macdList[i - 2].column <= macdList[i - 3].column
@@ -1119,7 +1119,6 @@ const countdownCancelAll = async (time) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
