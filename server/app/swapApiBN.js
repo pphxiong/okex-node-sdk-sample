@@ -78,7 +78,6 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 };
 
 const fnIsMacdReverse = (macdList) => {
-	console.log(3, macdList.slice(-10));
 	const isUpper =
 		macdList[macdList.length - 1].column >
 		macdList[macdList.length - 2].column;
