@@ -177,16 +177,16 @@ async function checkByStep(data, symbol) {
 			// 		LEVERAGE;
 			// }
 
-			console.log('------------------');
-			console.log(
-				`availableBalance`,
-				availableBalance,
-				'currentTotalAsset',
-				currentTotalAsset,
-				'INIT_ASSETS',
-				INIT_ASSETS
-			);
-			console.log('------------------');
+			// console.log('------------------');
+			// console.log(
+			// 	`availableBalance`,
+			// 	availableBalance,
+			// 	'currentTotalAsset',
+			// 	currentTotalAsset,
+			// 	'INIT_ASSETS',
+			// 	INIT_ASSETS
+			// );
+			// console.log('------------------');
 		} catch (e) {
 			// if(result.error_message) throw new Error('Cannot get position!');
 			restart('getPosition');
