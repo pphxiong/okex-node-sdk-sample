@@ -309,7 +309,8 @@ async function checkByStep(data, symbol) {
 		// 'winMax',
 		// WIN_MAX
 	);
-	console.log('w_Position', w_Position, 't_Position', t_Position);
+	// console.log('macd', macdList[macdList.length - 1]);
+	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 
 	const patchPosition = async (holding, direction) => {
@@ -407,7 +408,7 @@ async function checkByStep(data, symbol) {
 						position: openPositionAmt,
 						openSide: 'long',
 						mark_price,
-						symbol: BTC_SYMBOL,
+						symbol,
 					},
 					atrList
 				);
