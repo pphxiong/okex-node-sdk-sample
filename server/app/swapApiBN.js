@@ -61,28 +61,28 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		macdList[i].column >= 0 &&
-		macdList[i].column >= macdList[i - 1].column &&
-		macdList[i - 1].column >= macdList[i - 2].column &&
-		macdList[i - 2].column >= macdList[i - 3].column
+		macdList[i].column > 0 &&
+		macdList[i].column > macdList[i - 1].column &&
+		macdList[i - 1].column > macdList[i - 2].column &&
+		macdList[i - 2].column > macdList[i - 3].column
 	);
 };
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		macdList[i].column <= 0 &&
-		macdList[i].column <= macdList[i - 1].column &&
-		macdList[i - 1].column <= macdList[i - 2].column &&
-		macdList[i - 2].column <= macdList[i - 3].column
+		macdList[i].column < 0 &&
+		macdList[i].column < macdList[i - 1].column &&
+		macdList[i - 1].column < macdList[i - 2].column &&
+		macdList[i - 2].column < macdList[i - 3].column
 	);
 };
 
 const fnIsMacdReverse = (macdList) => {
 	const isUpper =
-		macdList[macdList.length - 1].column >=
+		macdList[macdList.length - 1].column >
 		macdList[macdList.length - 2].column;
 	const isLower =
-		macdList[macdList.length - 1].column <=
+		macdList[macdList.length - 1].column <
 		macdList[macdList.length - 2].column;
 
 	const isLatestContinousUpper = fnIsCurrentContinousUpper(
@@ -106,7 +106,7 @@ const fnIsMacdReverse = (macdList) => {
 					isUpperReverse =
 						macdList[macdList.length - 2].close >
 							macdList[i].close &&
-						macdList[macdList.length - 2].column <=
+						macdList[macdList.length - 2].column <
 							macdList[i].column;
 					break;
 				}
@@ -123,7 +123,7 @@ const fnIsMacdReverse = (macdList) => {
 					isLowerReverse =
 						macdList[macdList.length - 2].close <
 							macdList[i].close &&
-						macdList[macdList.length - 2].column >=
+						macdList[macdList.length - 2].column >
 							macdList[i].column;
 					break;
 				}
@@ -994,20 +994,20 @@ function getMacd(params) {
 
 	const ema12 = toFixedAndToNumber(
 		(2 / p1) * price + ((p1 - 1) / p1) * lastEma12,
-		4
+		8
 	);
 	const ema26 = toFixedAndToNumber(
 		(2 / p2) * price + ((p2 - 1) / p2) * lastEma26,
-		4
+		8
 	);
 
-	const diff = toFixedAndToNumber(ema12 - ema26, 2);
+	const diff = toFixedAndToNumber(ema12 - ema26, 8);
 	const dea = toFixedAndToNumber(
 		(2 / p3) * diff + ((p3 - 1) / p3) * lastDea,
-		2
+		8
 	);
 
-	const column = toFixedAndToNumber(2 * (diff - dea), 2);
+	const column = toFixedAndToNumber(2 * (diff - dea), 8);
 
 	const result = {
 		open,
