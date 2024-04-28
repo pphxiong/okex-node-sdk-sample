@@ -994,17 +994,17 @@ function getMacd(params) {
 	);
 
 	const ema12 = toFixedAndToNumber(
-		(2 / p1) * price + ((p1 - 1) / p1) * lastEma12,
+		(2 / (p1 + 1)) * price + ((p1 - 1) / (p1 + 1)) * lastEma12,
 		8
 	);
 	const ema26 = toFixedAndToNumber(
-		(2 / p2) * price + ((p2 - 1) / p2) * lastEma26,
+		(2 / (p2 + 1)) * price + ((p2 - 1) / (p2 + 1)) * lastEma26,
 		8
 	);
 
 	const diff = toFixedAndToNumber(ema12 - ema26, 8);
 	const dea = toFixedAndToNumber(
-		(2 / p3) * diff + ((p3 - 1) / p3) * lastDea,
+		(2 / (p3 + 1)) * diff + ((p3 - 1) / (p3 + 1)) * lastDea,
 		8
 	);
 
