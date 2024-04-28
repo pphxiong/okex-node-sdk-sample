@@ -1,1 +1,10 @@
-{"isLoss":"true","isWin":"false","lastPostionAsset":"0.23987733333333328","lossNum":"7","winNum":"2"}
+{
+	"isLoss": "true",
+	"isWin": "false",
+	"lastPostionAsset": "0.23987733333333328",
+	"lossNum": "7",
+	"winNum": "2",
+	"ETHUSDT": "0",
+	"BTCUSDT": "0",
+	"EOSUSDT": "0"
+}
