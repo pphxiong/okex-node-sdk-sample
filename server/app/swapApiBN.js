@@ -229,36 +229,35 @@ async function checkByStep(data, symbol) {
 	}
 
 	let totalRatio = 0;
-	let w_Position = 0;
-	let t_Position = 0;
-	if (holding && holding.length) {
-		holding.forEach((item) => {
-			const {
-				leverage,
-				entryPrice: avg_cost,
-				symbol,
-				positionAmt,
-				positionSide,
-			} = item;
-			if (
-				Math.abs(Number(positionAmt)) > 0 &&
-				positionAmt &&
-				positionSide
-			) {
-				const current_mark_price = Number(mark_price);
-				let ratio =
-					((Number(current_mark_price) - Number(avg_cost)) *
-						Number(leverage)) /
-					Number(current_mark_price);
-				if (positionSide.toUpperCase() == 'SHORT') ratio = -ratio;
-				w_Position +=
-					ratio * Math.abs(Number(positionAmt)) * current_mark_price;
-				t_Position +=
-					Math.abs(Number(positionAmt)) * current_mark_price;
-			}
-		});
-		if (w_Position && t_Position) totalRatio = w_Position / t_Position;
-	}
+	// let w_Position = 0;
+	// let t_Position = 0;
+	// if (holding && holding.length) {
+	// 	holding.forEach((item) => {
+	// 		const {
+	// 			leverage,
+	// 			entryPrice: avg_cost,
+	// 			positionAmt,
+	// 			positionSide,
+	// 		} = item;
+	// 		if (
+	// 			Math.abs(Number(positionAmt)) > 0 &&
+	// 			positionAmt &&
+	// 			positionSide
+	// 		) {
+	// 			const current_mark_price = Number(mark_price);
+	// 			let ratio =
+	// 				((Number(current_mark_price) - Number(avg_cost)) *
+	// 					Number(leverage)) /
+	// 				Number(current_mark_price);
+	// 			if (positionSide.toUpperCase() == 'SHORT') ratio = -ratio;
+	// 			w_Position +=
+	// 				ratio * Math.abs(Number(positionAmt)) * current_mark_price;
+	// 			t_Position +=
+	// 				Math.abs(Number(positionAmt)) * current_mark_price;
+	// 		}
+	// 	});
+	// 	if (w_Position && t_Position) totalRatio = w_Position / t_Position;
+	// }
 
 	const TOTALRATIO = totalRatio;
 	const CLOSE_WIN_CONDITION = holding && TOTALRATIO > WIN_MAX;
