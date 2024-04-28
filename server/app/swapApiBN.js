@@ -165,7 +165,7 @@ async function checkByStep(data, symbol) {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) / 5;
+				(Number(availableBalance) + Number(currentTotalAsset)) / 3;
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
