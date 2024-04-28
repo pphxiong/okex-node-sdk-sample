@@ -1120,6 +1120,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
 	newList.pop();
+	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
