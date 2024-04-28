@@ -79,10 +79,10 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 
 const fnIsMacdReverse = (macdList) => {
 	const isUpper =
-		macdList[macdList.length - 1].column >
+		macdList[macdList.length - 1].column >=
 		macdList[macdList.length - 2].column;
 	const isLower =
-		macdList[macdList.length - 1].column <
+		macdList[macdList.length - 1].column <=
 		macdList[macdList.length - 2].column;
 
 	const isLatestContinousUpper = fnIsCurrentContinousUpper(
