@@ -6,11 +6,15 @@ const customAuthClientBN = require('./customAuthClientBN');
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'ETHUSDT';
 const EOS_SYMBOL = 'EOSUSDT';
+const XRP_SYMBOL = 'XRPUSDT';
+const DOGE_SYMBOL = 'DOGEUSDT';
 
 const fixedMap = {
 	[BTC_SYMBOL]: 1,
 	[ETH_SYMBOL]: 2,
 	[EOS_SYMBOL]: 3,
+	[XRP_SYMBOL]: 4,
+	[DOGE_SYMBOL]: 5,
 };
 
 const LEVERAGE = 20;
@@ -1154,10 +1158,14 @@ const startInterval = async () => {
 		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
 		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 		const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
+		const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
+		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
 
 		await checkDeal(btc_result, BTC_SYMBOL);
 		await checkDeal(eth_result, ETH_SYMBOL);
 		await checkDeal(eos_result, EOS_SYMBOL);
+		await checkDeal(xrp_result, XRP_SYMBOL);
+		await checkDeal(doge_result, DOGE_SYMBOL);
 
 		await waitTime((1000 * 56) / 2);
 		await startInterval();
