@@ -135,7 +135,18 @@ const fnIsMacdReverse = (macdList) => {
 
 async function checkByStep(data, symbol) {
 	const { macdList, bollList, atrList } = data;
-
+	if (symbol === EOS_SYMBOL) {
+		console.log(
+			macdList
+				.slice(-30)
+				.map(({ column, open, close, time }) => ({
+					column,
+					open,
+					close,
+					time,
+				}))
+		);
+	}
 	let mark_price;
 	try {
 		const data = await cAuthClientBN.common.getMarkPrice(symbol);
