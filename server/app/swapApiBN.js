@@ -408,7 +408,7 @@ async function checkByStep(data, symbol) {
 	if (openLongCondition) {
 		try {
 			let openPositionAmt = Number(
-				(INIT_ASSETS * LEVERAGE).toFixed(fixedMap[symbol])
+				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(3)
 			);
 			if (isFiveM /* && avail >= openPositionAmt */) {
 				await openPosition(
