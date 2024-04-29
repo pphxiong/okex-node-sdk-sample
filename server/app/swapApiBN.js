@@ -830,13 +830,6 @@ const openPosition = async (params = {}, atrList) => {
 
 	async function postOrder(size) {
 		const type = openSide == 'long' ? 'BUY' : 'SELL';
-		console.log(
-			'openOtherOrderMoment',
-			openSide,
-			symbol,
-			moment().format('YYYY-MM-DD HH:mm:ss')
-		);
-		console.log('position', position, 'type', type, 'side', openSide);
 
 		let price = mark_price;
 		if (openSide == 'long') {
@@ -844,7 +837,7 @@ const openPosition = async (params = {}, atrList) => {
 		} else {
 			price = mark_price * (1 + dealRatio / LEVERAGE);
 		}
-		let payload = {
+		const payload = {
 			symbol,
 			side: type,
 			positionSide: openSide == 'long' ? 'LONG' : 'SHORT',
@@ -852,6 +845,15 @@ const openPosition = async (params = {}, atrList) => {
 			recvWindow: 5000,
 			type: 'MARKET',
 		};
+		console.log(
+			'openOtherOrderMoment',
+			openSide,
+			symbol,
+				'INIT_ASSETS',
+				INIT_ASSETS
+			moment().format('YYYY-MM-DD HH:mm:ss')
+		);
+		console.log('payload', payload);
 		try {
 			const result = await cAuthClientBN.swap.postOrder(payload);
 			positionChange = true;
