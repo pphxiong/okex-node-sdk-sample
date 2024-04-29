@@ -849,8 +849,8 @@ const openPosition = async (params = {}, atrList) => {
 			'openOtherOrderMoment',
 			openSide,
 			symbol,
-				'INIT_ASSETS',
-				INIT_ASSETS
+			'INIT_ASSETS',
+			INIT_ASSETS,
 			moment().format('YYYY-MM-DD HH:mm:ss')
 		);
 		console.log('payload', payload);
