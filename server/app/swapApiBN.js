@@ -19,10 +19,10 @@ const priceFixedMap = {
 
 const quantityFixedMap = {
 	[BTC_SYMBOL]: 3,
-	[ETH_SYMBOL]: 2,
-	[EOS_SYMBOL]: 3,
-	[XRP_SYMBOL]: 4,
-	[DOGE_SYMBOL]: 5,
+	[ETH_SYMBOL]: 1,
+	[EOS_SYMBOL]: 1,
+	[XRP_SYMBOL]: 1,
+	[DOGE_SYMBOL]: 1,
 };
 
 const LEVERAGE = 20;
