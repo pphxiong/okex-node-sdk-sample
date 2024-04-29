@@ -787,7 +787,7 @@ const closeLimitPosition = async (params) => {
 	);
 	console.log('position', position, 'type', type, 'side', positionSide);
 
-	const newSize = Math.abs(Number(position.toFixed(fixedMap[symbol])));
+	const newSize = Math.abs(Number(position.toFixed(3)));
 	const newPrice = price.toFixed(fixedMap[symbol]);
 	const newClientOrderId = getUUID();
 	closeOrigClientOrderId = newClientOrderId;
