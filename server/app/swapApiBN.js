@@ -104,7 +104,7 @@ const fnIsMacdReverse = (macdList) => {
 				);
 				if (isCurrentContinousUpper) {
 					isUpperReverse =
-						macdList[macdList.length - 2].close >
+						macdList[macdList.length - 2].close >=
 							macdList[i].close &&
 						macdList[macdList.length - 2].column <
 							macdList[i].column;
@@ -121,7 +121,7 @@ const fnIsMacdReverse = (macdList) => {
 				);
 				if (isCurrentContinousLower) {
 					isLowerReverse =
-						macdList[macdList.length - 2].close <
+						macdList[macdList.length - 2].close <=
 							macdList[i].close &&
 						macdList[macdList.length - 2].column >
 							macdList[i].column;
@@ -136,15 +136,6 @@ const fnIsMacdReverse = (macdList) => {
 async function checkByStep(data, symbol) {
 	const { macdList, bollList, atrList } = data;
 	if (symbol === EOS_SYMBOL) {
-		console.log(
-			66,
-			macdList.slice(-30).map(({ column, open, close, time }) => ({
-				column,
-				open,
-				close,
-				time,
-			}))
-		);
 	}
 	let mark_price;
 	try {
@@ -318,7 +309,15 @@ async function checkByStep(data, symbol) {
 		// 'winMax',
 		// WIN_MAX
 	);
-	// console.log('macd', macdList[macdList.length - 1]);
+	// console.log(
+	// 	'macd',
+	// 	macdList.slice(-4).map(({ column, open, close, time }) => ({
+	// 		column,
+	// 		open,
+	// 		close,
+	// 		time,
+	// 	}))
+	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 
