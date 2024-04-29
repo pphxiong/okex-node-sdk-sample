@@ -28,7 +28,7 @@ const quantityFixedMap = {
 const LEVERAGE = 20;
 const ATR_WIN_RATIO = 2.5;
 
-const LOSS_MAX = -LEVERAGE / 2 / 100;
+const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
 const WIN_MAX = -LOSS_MAX * 1.5;
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 let INIT_ASSETS = 52;
@@ -279,8 +279,8 @@ async function checkByStep(data, symbol) {
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
-	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && false;
-	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && false;
+	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && longRatio < LOSS_MAX;
+	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && shortRatio < LOSS_MAX;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
