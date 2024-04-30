@@ -30,13 +30,14 @@ const quantityFixedMap = {
 };
 
 const LEVERAGE = 20;
-const ATR_WIN_RATIO = 2.5;
+const ATR_WIN_RATIO = 4;
+const INIT_ASSETS_RATIO = 4;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
-const WIN_MAX = -LOSS_MAX * 1.5;
-const INIT_LONG_SHORT_ASSETS_RATIO = 1;
+const WIN_MAX = -LOSS_MAX * 2;
 let INIT_ASSETS = 52;
 
+const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
@@ -180,7 +181,8 @@ async function checkByStep(data, symbol) {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) / 3;
+				(Number(availableBalance) + Number(currentTotalAsset)) /
+				INIT_ASSETS_RATIO;
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
@@ -283,8 +285,12 @@ async function checkByStep(data, symbol) {
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
 	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
-	const MAIN_CLOSE_LONG_CONDITION1 = longHolding && longRatio < LOSS_MAX;
-	const MAIN_CLOSE_SHORT_CONDITION1 = shortHolding && shortRatio < LOSS_MAX;
+	const MAIN_CLOSE_LONG_CONDITION1 =
+		longHolding &&
+		(longRatio < LOSS_MAX || longRatio > WIN_MAX || isUpperReverse);
+	const MAIN_CLOSE_SHORT_CONDITION1 =
+		shortHolding &&
+		(shortRatio < LOSS_MAX || shortRatio > WIN_MAX || isLowerReverse);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -939,6 +945,7 @@ const closePosition = async (holding, isCloseAll = false, avail) => {
 	console.log('###################################');
 	console.log('closePositionMoment', moment().format('YYYY-MM-DD HH:mm:ss'));
 	console.log('###################################');
+	countdownCancelAll(symbol);
 	return await postOrder(position);
 };
 
@@ -1140,9 +1147,9 @@ const waitTime = (time = 1000 * 4) => {
 	});
 };
 
-const countdownCancelAll = async (time) => {
+const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 	const payload = {
-		symbol: BTC_SYMBOL,
+		symbol,
 		countdownTime: time,
 	};
 	await cAuthClientBN.swap.countdownCancelAll(payload);
