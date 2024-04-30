@@ -1,4 +1,8 @@
 import moment from 'moment';
+import helper from '../utils/index';
+
+const { cloneDeep } = helper;
+
 const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
@@ -74,7 +78,8 @@ const fnIsCurrentContinousUpper = (macdList, i) => {
 		macdList[i].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
 		macdList[i - 1].column > macdList[i - 2].column &&
-		macdList[i - 2].column > macdList[i - 3].column
+		macdList[i - 2].column > macdList[i - 3].column &&
+		macdList[i].column > macdList[i + 1].column
 	);
 };
 
@@ -83,7 +88,8 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 		macdList[i].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
 		macdList[i - 1].column < macdList[i - 2].column &&
-		macdList[i - 2].column < macdList[i - 3].column
+		macdList[i - 2].column < macdList[i - 3].column &&
+		macdList[i].column < macdList[i + 1].column
 	);
 };
 
@@ -145,8 +151,6 @@ const fnIsMacdReverse = (macdList) => {
 
 async function checkByStep(data, symbol) {
 	const { macdList, bollList, atrList } = data;
-	if (symbol === EOS_SYMBOL) {
-	}
 	let mark_price;
 	try {
 		const data = await cAuthClientBN.common.getMarkPrice(symbol);
@@ -451,7 +455,7 @@ async function checkByStep(data, symbol) {
 						position: openPositionAmt,
 						openSide: 'short',
 						mark_price,
-						symbol: ETH_SYMBOL,
+						symbol,
 					},
 					atrList
 				);
@@ -571,8 +575,9 @@ const fnThirdHoldingHandler = async (
 	}
 };
 
-const checkDeal = async (data, symbol) => {
-	await checkByStep(
+const checkDeal = async (oldData, symbol) => {
+	const data = cloneDeep(oldData);
+	return await checkByStep(
 		{
 			macdList: data.macdList.slice(-80),
 			rsiList: data.rsiList.slice(-80),
