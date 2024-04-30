@@ -31,7 +31,7 @@ const quantityFixedMap = {
 
 const LEVERAGE = 20;
 const ATR_WIN_RATIO = 8;
-const INIT_ASSETS_RATIO = 5;
+const INIT_ASSETS_RATIO = 6;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 100;
 const WIN_MAX = -LOSS_MAX * 2;
