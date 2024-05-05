@@ -1,10 +1,7 @@
 {
-	"isLoss": "true",
-	"isWin": "false",
-	"lastPostionAsset": "0.23987733333333328",
-	"lossNum": "7",
-	"winNum": "2",
-	"ETHUSDT": "0",
-	"BTCUSDT": "0",
-	"EOSUSDT": "0"
+	"BTCUSDT_ATR": "0",
+	"ETHUSDT_ATR": "0",
+	"EOSUSDT_ATR": "0",
+	"XRPUSDT_ATR": "0",
+	"DOGEUSDT_ATR": "0"
 }
