@@ -328,7 +328,7 @@ async function checkByStep(data, symbol) {
     "ATR",
     atrList[atrList.length - 1],
 	'ATR_PRICE_OBJ',
-	ATR_PRICE_OBJ
+	ATR_PRICE_OBJ[symbol + '_ATR']
     // 'winMax',
     // WIN_MAX
   );
