@@ -113,7 +113,7 @@ const fnGetIsUpperest = (macdList, i, j) => {
 const fnGetIsLowerest = (macdList, i, j) => {
 	let lowerest = 0;
 	for (let k = i; k <= j; k += 1) {
-		lowerest = Math.min(upperest, macdList[k].close);
+		lowerest = Math.min(lowerest, macdList[k].close);
 	}
 	return lowerest === macdList[j].close;
 };
