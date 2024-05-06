@@ -163,9 +163,11 @@ const fnGetIsLoss = (holding, mark_price) => {
 	const key = symbol + '_ATR';
 	const isLong = positionSide.toUpperCase() === 'LONG';
 	const lossPrice = isLong
-		? entryPrice - Number(ATR_PRICE_OBJ[key])
-		: entryPrice + Number(ATR_PRICE_OBJ[key]);
-	const isLoss = isLong ? mark_price < lossPrice : mark_price > lossPrice;
+		? Number(entryPrice) - Number(ATR_PRICE_OBJ[key])
+		: Number(entryPrice) + Number(ATR_PRICE_OBJ[key]);
+	const isLoss = isLong
+		? Number(mark_price) < lossPrice
+		: Number(mark_price) > lossPrice;
 	return Number(ATR_PRICE_OBJ[key]) && isLoss;
 };
 
@@ -346,8 +348,7 @@ async function checkByStep(data, symbol) {
 		'ATR',
 		atrList[atrList.length - 1],
 		'ATR_PRICE_OBJ',
-		ATR_PRICE_OBJ[symbol + '_ATR'],
-		fnGetIsLoss(shortHolding, mark_price)
+		ATR_PRICE_OBJ[symbol + '_ATR']
 		// 'winMax',
 		// WIN_MAX
 	);
