@@ -37,9 +37,9 @@ let ATR_PRICE_OBJ = {
 	DOGEUSDT_ATR: 0,
 };
 
-const LEVERAGE = 20;
+const LEVERAGE = 10;
 const ATR_WIN_RATIO = 1;
-const INIT_ASSETS_RATIO = 5;
+const INIT_ASSETS_RATIO = 2;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
 const WIN_MAX = -LOSS_MAX;
