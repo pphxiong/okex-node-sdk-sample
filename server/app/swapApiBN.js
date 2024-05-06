@@ -168,14 +168,6 @@ const fnGetIsLoss = (holding, mark_price) => {
 	const isLoss = isLong
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
-	console.log(
-		11,
-		key,
-		lossPrice,
-		mark_price,
-		isLoss,
-		Number(ATR_PRICE_OBJ[key])
-	);
 	return Number(ATR_PRICE_OBJ[key]) && isLoss;
 };
 
