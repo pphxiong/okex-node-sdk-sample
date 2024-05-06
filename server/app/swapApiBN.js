@@ -102,6 +102,22 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 	);
 };
 
+const fnGetIsUpperest = (macdList, i, j) => {
+	let upperest = 0;
+	for (let k = i; k <= j; k += 1) {
+		upperest = Math.max(upperest, macdList[k].close);
+	}
+	return upperest === macdList[j].close;
+};
+
+const fnGetIsLowerest = (macdList, i, j) => {
+	let lowerest = 0;
+	for (let k = i; k <= j; k += 1) {
+		lowerest = Math.min(upperest, macdList[k].close);
+	}
+	return lowerest === macdList[j].close;
+};
+
 const fnIsMacdReverse = (macdList) => {
 	const isUpper =
 		macdList[macdList.length - 1].column >
@@ -128,11 +144,17 @@ const fnIsMacdReverse = (macdList) => {
 					i
 				);
 				if (isCurrentContinousUpper) {
+					const isUpperest = fnGetIsUpperest(
+						macdList,
+						i,
+						macdList.length - 2
+					);
 					isUpperReverse =
 						macdList[macdList.length - 2].close >=
 							macdList[i].close &&
 						macdList[macdList.length - 2].column <
-							macdList[i].column;
+							macdList[i].column &&
+						isUpperest;
 					break;
 				}
 			}
@@ -145,11 +167,17 @@ const fnIsMacdReverse = (macdList) => {
 					i
 				);
 				if (isCurrentContinousLower) {
+					const isLowerest = fnGetIsLowerest(
+						macdList,
+						i,
+						macdList.length - 2
+					);
 					isLowerReverse =
 						macdList[macdList.length - 2].close <=
 							macdList[i].close &&
 						macdList[macdList.length - 2].column >
-							macdList[i].column;
+							macdList[i].column &&
+						isLowerest;
 					break;
 				}
 			}
@@ -168,6 +196,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 	const isLoss = isLong
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
+	console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
 	return Number(ATR_PRICE_OBJ[key]) && isLoss;
 };
 
