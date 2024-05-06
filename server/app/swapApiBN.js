@@ -111,10 +111,9 @@ const fnGetIsUpperest = (macdList, i, j) => {
 };
 
 const fnGetIsLowerest = (macdList, i, j) => {
-	let lowerest = 0;
+	let lowerest = Infinity;
 	for (let k = i; k <= j; k += 1) {
 		lowerest = Math.min(lowerest, macdList[k].close);
-		console.log(i,j,lowerest,macdList[j].close)
 	}
 	return lowerest === macdList[j].close;
 };
@@ -1211,8 +1210,6 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	newList.pop();
-	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
