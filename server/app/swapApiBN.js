@@ -118,6 +118,32 @@ const fnGetIsLowerest = (macdList, i, j) => {
 	return lowerest === macdList[j].close;
 };
 
+const fnGetIsHasIntervalUpper = (macdList, i, j) => {
+	let is = false;
+	for (let k = i; k < j; k += 1) {
+		is =
+			macdList[k].column > 0 &&
+			macdList[k + 1].column > 0 &&
+			macdList[k - 1].column > 0 &&
+			macdList[k].column < macdList[k - 1].column &&
+			macdList[k].column < macdList[k + 1].column;
+	}
+	return is;
+};
+
+const fnGetIsHasIntervalLower = (macdList, i, j) => {
+	let is = false;
+	for (let k = i; k < j; k += 1) {
+		is =
+			macdList[k].column < 0 &&
+			macdList[k + 1].column < 0 &&
+			macdList[k - 1].column < 0 &&
+			macdList[k].column > macdList[k - 1].column &&
+			macdList[k].column > macdList[k + 1].column;
+	}
+	return is;
+};
+
 const fnIsMacdReverse = (macdList) => {
 	const isUpper =
 		macdList[macdList.length - 1].column >
@@ -149,6 +175,11 @@ const fnIsMacdReverse = (macdList) => {
 						i,
 						macdList.length - 2
 					);
+					// const isHasIntervalUpper = fnGetIsHasIntervalUpper(
+					// 	macdList,
+					// 	i,
+					// 	macdList.length - 2
+					// );
 					isUpperReverse =
 						macdList[macdList.length - 2].close >=
 							macdList[i].close &&
@@ -333,8 +364,8 @@ async function checkByStep(data, symbol) {
 
 	const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse && false;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse && false;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
@@ -382,15 +413,15 @@ async function checkByStep(data, symbol) {
 		// 'winMax',
 		// WIN_MAX
 	);
-	// console.log(
-	// 	'macd',
-	// 	macdList.slice(-4).map(({ column, open, close, time }) => ({
-	// 		column,
-	// 		open,
-	// 		close,
-	// 		time,
-	// 	}))
-	// );
+	console.log(
+		'macd',
+		macdList.slice(-3).map(({ column, open, close, time }) => ({
+			column,
+			open,
+			close,
+			time,
+		}))
+	);
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 
@@ -1211,6 +1242,13 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
+	newList.pop();
+	newList.pop();
+	newList.pop();
+	newList.pop();
+	newList.pop();
+	newList.pop();
+	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
