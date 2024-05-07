@@ -105,7 +105,7 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 const fnGetIsUpperest = (macdList, i, j) => {
 	let upperest = 0;
 	for (let k = i; k <= j; k += 1) {
-		upperest = Math.max(upperest, macdList[k].close);
+		upperest = Math.max(macdList[j].close, macdList[k].close);
 	}
 	return upperest === macdList[j].close;
 };
@@ -114,7 +114,7 @@ const fnGetIsLowerest = (macdList, i, j) => {
 	console.log(11, macdList[j].close);
 	let lowerest = Infinity;
 	for (let k = i; k <= j; k += 1) {
-		lowerest = Math.min(lowerest, macdList[k].close);
+		lowerest = Math.min(macdList[j].close, macdList[k].close);
 		console.log(22, lowerest, macdList[j].close);
 	}
 	return lowerest === macdList[j].close;
@@ -335,8 +335,8 @@ async function checkByStep(data, symbol) {
 
 	const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse && false;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse && false;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
