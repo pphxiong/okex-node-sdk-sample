@@ -114,7 +114,6 @@ const fnGetIsLowerest = (macdList, i, j) => {
 	let lowerest = macdList[j].close;
 	for (let k = i; k <= j; k += 1) {
 		lowerest = Math.min(lowerest, macdList[k].close);
-		console.log(2, macdList[j].close, macdList[k].close, lowerest);
 	}
 	return lowerest === macdList[j].close;
 };
@@ -365,8 +364,8 @@ async function checkByStep(data, symbol) {
 
 	const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse && false;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse && false;
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
@@ -1243,14 +1242,6 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	newList.pop();
-	newList.pop();
-	newList.pop();
-	newList.pop();
-	newList.pop();
-	newList.pop();
-	newList.pop();
-	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
