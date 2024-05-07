@@ -103,17 +103,17 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 };
 
 const fnGetIsUpperest = (macdList, i, j) => {
-	let upperest = 0;
+	let upperest = macdList[j].close;
 	for (let k = i; k <= j; k += 1) {
-		upperest = Math.max(macdList[j].close, macdList[k].close);
+		upperest = Math.max(upperest, macdList[k].close);
 	}
 	return upperest === macdList[j].close;
 };
 
 const fnGetIsLowerest = (macdList, i, j) => {
-	let lowerest = Infinity;
+	let lowerest = macdList[j].close;
 	for (let k = i; k <= j; k += 1) {
-		lowerest = Math.min(macdList[j].close, macdList[k].close);
+		lowerest = Math.min(lowerest, macdList[k].close);
 		console.log(2, macdList[j].close, macdList[k].close, lowerest);
 	}
 	return lowerest === macdList[j].close;
