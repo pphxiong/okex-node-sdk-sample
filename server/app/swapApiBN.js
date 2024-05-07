@@ -114,6 +114,7 @@ const fnGetIsLowerest = (macdList, i, j) => {
 	let lowerest = Infinity;
 	for (let k = i; k <= j; k += 1) {
 		lowerest = Math.min(macdList[j].close, macdList[k].close);
+		console.log(2, macdList[j].close, macdList[k].close);
 	}
 	return lowerest === macdList[j].close;
 };
