@@ -43,7 +43,7 @@ const INIT_ASSETS_RATIO = 1;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
 const WIN_MAX = -LOSS_MAX;
-let INIT_ASSETS = 52;
+let INIT_ASSETS = 120;
 
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
@@ -261,10 +261,14 @@ async function checkByStep(data, symbol) {
 			const currentTotalAsset = globalHolding
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
-			INIT_ASSETS =
+			const COMPUTED_INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) /
 				INIT_ASSETS_RATIO;
-			INIT_ASSETS = Math.min(INIT_ASSETS, Number(availableBalance));
+			INIT_ASSETS = Math.min(
+				COMPUTED_INIT_ASSETS,
+				INIT_ASSETS,
+				Number(availableBalance)
+			);
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
@@ -978,7 +982,7 @@ const openPosition = async (params = {}, atrList) => {
 
 const fnCloseLimitOrder = async (params, atrList) => {
 	const { openSide = 'long', position, mark_price, symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1.1;
 	const isLong = openSide.toUpperCase() == 'LONG';
 	const price = isLong ? mark_price + ATR : mark_price - ATR;
 	const side = isLong ? 'SELL' : 'BUY';
