@@ -39,7 +39,7 @@ let ATR_PRICE_OBJ = {
 
 const LEVERAGE = 10;
 const ATR_WIN_RATIO = 1;
-const INIT_ASSETS_RATIO = 2;
+const INIT_ASSETS_RATIO = 1;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
 const WIN_MAX = -LOSS_MAX;
@@ -413,15 +413,15 @@ async function checkByStep(data, symbol) {
 		// 'winMax',
 		// WIN_MAX
 	);
-	console.log(
-		'macd',
-		macdList.slice(-3).map(({ column, open, close, time }) => ({
-			column,
-			open,
-			close,
-			time,
-		}))
-	);
+	// console.log(
+	// 	'macd',
+	// 	macdList.slice(-3).map(({ column, open, close, time }) => ({
+	// 		column,
+	// 		open,
+	// 		close,
+	// 		time,
+	// 	}))
+	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 
