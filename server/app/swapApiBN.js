@@ -1216,6 +1216,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	newList.pop();
 	newList.pop();
 	newList.pop();
+	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
