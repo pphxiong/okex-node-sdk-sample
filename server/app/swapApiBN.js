@@ -414,8 +414,10 @@ async function checkByStep(data, symbol) {
 		atrList
 	);
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
+	const MAIN_OPEN_LONG_CONDITION1 =
+		!longHolding && !shortHolding && isLowerReverse;
+	const MAIN_OPEN_SHORT_CONDITION1 =
+		!shortHolding && !longHolding && isUpperReverse;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
