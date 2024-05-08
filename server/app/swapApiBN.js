@@ -213,7 +213,7 @@ const fnIsMacdReverse = (macdList, atrList) => {
 								macdList[i].high &&
 							macdList[macdList.length - 2].column <
 								macdList[i].column &&
-							differ > ATR / 20;
+							differ > ATR / 24;
 						if (isUpperReverse) break;
 					}
 				} else {
@@ -248,7 +248,7 @@ const fnIsMacdReverse = (macdList, atrList) => {
 								macdList[i].low &&
 							macdList[macdList.length - 2].column >
 								macdList[i].column &&
-							differ > ATR / 20;
+							differ > ATR / 24;
 						if (isLowerReverse) break;
 					}
 				} else {
