@@ -1038,9 +1038,18 @@ const fnCloseLimitOrder = async (params, atrList) => {
 		symbol,
 		side,
 		positionSide,
-		position,
+		position: Number(position) / 2,
 	};
 	await closeLimitPosition(payload);
+	const price2 = isLong ? mark_price + ATR * 2 : mark_price - ATR * 2;
+	const payload2 = {
+		price: price2,
+		symbol,
+		side,
+		positionSide,
+		position: Number(position) / 2,
+	};
+	await closeLimitPosition(payload2);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
