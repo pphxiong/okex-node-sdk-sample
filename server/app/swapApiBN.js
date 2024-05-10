@@ -168,6 +168,7 @@ const fnGetIsContinousLow = (macdList, i, j) => {
 
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	let is = false;
+	// is = fnIsUpperReverse(macdList, i, j);
 	for (let k = i + 1; k < j; k += 1) {
 		const isCurrentContinousUpper = fnIsCurrentContinousUpper(macdList, k);
 		if (isCurrentContinousUpper) {
@@ -182,6 +183,7 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 
 const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	let is = false;
+	// is = fnIsLowerReverse(macdList, i, j);
 	for (let k = i + 1; k < j; k += 1) {
 		const isCurrentContinousLower = fnIsCurrentContinousLower(macdList, k);
 		if (isCurrentContinousLower) {
@@ -1066,7 +1068,7 @@ const openPosition = async (params = {}, atrList) => {
 
 const fnCloseLimitOrder = async (params, atrList) => {
 	const { openSide = 'long', position, mark_price, symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1.5;
 	const isLong = openSide.toUpperCase() == 'LONG';
 	const price = isLong ? mark_price + ATR : mark_price - ATR;
 	const side = isLong ? 'SELL' : 'BUY';
@@ -1405,7 +1407,7 @@ const readData = async () => {
 
 const writeData = async (params, atrList) => {
 	const { symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 2;
 
 	let key = symbol + '_ATR';
 	//将修改后的配置写入文件前需要先转成json字符串格式
