@@ -189,22 +189,22 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 };
 
 const fnIsLowerReverse = (macdList, i, j) => {
-	const differ = Math.abs(macdList[i].column - macdList[j].column);
+	// const differ = Math.abs(macdList[i].column - macdList[j].column);
 	const isLowerReverse =
 		(macdList[j].low <= macdList[i].close ||
 			macdList[j].close <= macdList[i].close) &&
-		macdList[j].column > macdList[i].column &&
-		differ > ATR / 240;
+		macdList[j].column > macdList[i].column;
+	// && differ > ATR / 240;
 	return isLowerReverse;
 };
 
 const fnIsUpperReverse = (macdList, i, j) => {
-	const differ = Math.abs(macdList[i].column - macdList[j].column);
+	// const differ = Math.abs(macdList[i].column - macdList[j].column);
 	const isUpperReverse =
 		(macdList[j].high >= macdList[i].close ||
 			macdList[j].close >= macdList[i].close) &&
-		macdList[j].column < macdList[i].column &&
-		differ > ATR / 240;
+		macdList[j].column < macdList[i].column;
+	// && differ > ATR / 240;
 	return isUpperReverse;
 };
 
@@ -249,6 +249,12 @@ const fnIsMacdReverse = (macdList, atrList) => {
 						macdList,
 						i,
 						macdList.length - 2
+					);
+					console.log(
+						i,
+						macdList[i],
+						isCurrentContinousUpper,
+						isStartEndReverse
 					);
 					if (isCurrentContinousUpper && isStartEndReverse) {
 						isUpperReverse = fnGetIsHasIntervalUpperReverse(
@@ -1345,6 +1351,7 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
+	newList.pop();
 	newList.pop();
 	newList.pop();
 	newList.pop();
