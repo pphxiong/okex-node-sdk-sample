@@ -191,7 +191,7 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 const fnIsLowerReverse = (macdList, i, j) => {
 	// const differ = Math.abs(macdList[i].column - macdList[j].column);
 	const isLowerReverse =
-		(macdList[j].low <= macdList[i].close ||
+		(macdList[j].low <= macdList[i].low ||
 			macdList[j].close <= macdList[i].close) &&
 		macdList[j].column > macdList[i].column;
 	// && differ > ATR / 240;
@@ -201,7 +201,7 @@ const fnIsLowerReverse = (macdList, i, j) => {
 const fnIsUpperReverse = (macdList, i, j) => {
 	// const differ = Math.abs(macdList[i].column - macdList[j].column);
 	const isUpperReverse =
-		(macdList[j].high >= macdList[i].close ||
+		(macdList[j].high >= macdList[i].high ||
 			macdList[j].close >= macdList[i].close) &&
 		macdList[j].column < macdList[i].column;
 	// && differ > ATR / 240;
@@ -228,7 +228,6 @@ const fnIsMacdReverse = (macdList, atrList) => {
 	);
 	let isUpperReverse = false;
 	let isLowerReverse = false;
-	console.log(isLower, macdList.slice(-2));
 	if (isLower) {
 		if (isLatestContinousUpper) {
 			for (
@@ -250,12 +249,6 @@ const fnIsMacdReverse = (macdList, atrList) => {
 						macdList,
 						i,
 						macdList.length - 2
-					);
-					console.log(
-						i,
-						macdList[i],
-						isCurrentContinousUpper,
-						isStartEndReverse
 					);
 					if (isCurrentContinousUpper && isStartEndReverse) {
 						isUpperReverse = fnGetIsHasIntervalUpperReverse(
@@ -320,7 +313,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
 	console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
-	return Number(ATR_PRICE_OBJ[key]) && isLoss && false;
+	return Number(ATR_PRICE_OBJ[key]) && isLoss;
 };
 
 async function checkByStep(data, symbol) {
@@ -464,9 +457,9 @@ async function checkByStep(data, symbol) {
 	);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && !shortHolding && isLowerReverse && false;
+		!longHolding && !shortHolding && isLowerReverse;
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && !longHolding && isUpperReverse && false;
+		!shortHolding && !longHolding && isUpperReverse;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
@@ -1421,7 +1414,7 @@ const readData = async () => {
 
 const writeData = async (params, atrList) => {
 	const { symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 2;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 3.82;
 
 	let key = symbol + '_ATR';
 	//将修改后的配置写入文件前需要先转成json字符串格式
