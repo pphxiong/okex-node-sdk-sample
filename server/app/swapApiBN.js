@@ -313,7 +313,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
 	console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
-	return Number(ATR_PRICE_OBJ[key]) && isLoss;
+	return Number(ATR_PRICE_OBJ[key]) && isLoss && false;
 };
 
 async function checkByStep(data, symbol) {
