@@ -228,6 +228,7 @@ const fnIsMacdReverse = (macdList, atrList) => {
 	);
 	let isUpperReverse = false;
 	let isLowerReverse = false;
+	console.log(isLower, macdList.slice(-2));
 	if (isLower) {
 		if (isLatestContinousUpper) {
 			for (
