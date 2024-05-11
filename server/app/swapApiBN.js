@@ -515,15 +515,15 @@ async function checkByStep(data, symbol) {
 		// 'winMax',
 		// WIN_MAX
 	);
-	// console.log(
-	// 	'macd',
-	// 	macdList.slice(-3).map(({ column, open, close, time }) => ({
-	// 		column,
-	// 		open,
-	// 		close,
-	// 		time,
-	// 	}))
-	// );
+	console.log(
+		'macd',
+		macdList.slice(-1).map(({ column, open, close, time }) => ({
+			column,
+			open,
+			close,
+			time,
+		}))
+	);
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 
@@ -1353,6 +1353,7 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
+	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
