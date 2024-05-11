@@ -457,9 +457,9 @@ async function checkByStep(data, symbol) {
 	);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && !shortHolding && isLowerReverse;
+		!longHolding && !shortHolding && isLowerReverse && false;
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && !longHolding && isUpperReverse;
+		!shortHolding && !longHolding && isUpperReverse && false;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
@@ -1072,7 +1072,7 @@ const openPosition = async (params = {}, atrList) => {
 
 const fnCloseLimitOrder = async (params, atrList) => {
 	const { openSide = 'long', position, mark_price, symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1.5;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1;
 	const isLong = openSide.toUpperCase() == 'LONG';
 	const price = isLong ? mark_price + ATR : mark_price - ATR;
 	const side = isLong ? 'SELL' : 'BUY';
@@ -1345,6 +1345,8 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
+	newList.pop();
+	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
