@@ -39,7 +39,7 @@ let ATR_PRICE_OBJ = {
 
 const LEVERAGE = 10;
 const ATR_WIN_RATIO = 1;
-const INIT_ASSETS_RATIO = 2;
+const INIT_ASSETS_RATIO = 5;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
 const WIN_MAX = -LOSS_MAX;
@@ -84,7 +84,7 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		macdList[i].column > 0 &&
+		macdList[i - 2].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
 		macdList[i - 1].column > macdList[i - 2].column &&
 		macdList[i - 2].column > macdList[i - 3].column &&
@@ -94,7 +94,7 @@ const fnIsCurrentContinousUpper = (macdList, i) => {
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		macdList[i].column < 0 &&
+		macdList[i - 2].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
 		macdList[i - 1].column < macdList[i - 2].column &&
 		macdList[i - 2].column < macdList[i - 3].column &&
@@ -169,9 +169,10 @@ const fnGetIsContinousLow = (macdList, i, j) => {
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	let is = false;
 	for (let k = i + 1; k < j; k += 1) {
-		is =
-			fnIsUpperReverse(macdList, i, k) &&
-			fnIsUpperReverse(macdList, i, j);
+		// is =
+		// 	fnIsUpperReverse(macdList, i, k) &&
+		// 	fnIsUpperReverse(macdList, i, j);
+		is = macdList[k].column < 0;
 		if (is) break;
 	}
 	return is;
@@ -180,9 +181,10 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	let is = false;
 	for (let k = i + 1; k < j; k += 1) {
-		is =
-			fnIsLowerReverse(macdList, i, k) &&
-			fnIsLowerReverse(macdList, i, j);
+		// is =
+		// 	fnIsLowerReverse(macdList, i, k) &&
+		// 	fnIsLowerReverse(macdList, i, j);
+		is = macdList[k].column > 0;
 		if (is) break;
 	}
 	return is;
@@ -251,11 +253,12 @@ const fnIsMacdReverse = (macdList, atrList) => {
 						macdList.length - 2
 					);
 					if (isCurrentContinousUpper && isStartEndReverse) {
-						isUpperReverse = fnGetIsHasIntervalUpperReverse(
-							macdList,
-							i,
-							macdList.length - 2
-						);
+						isUpperReverse =
+							fnGetIsHasIntervalUpperReverse(
+								macdList,
+								i,
+								macdList.length - 2
+							) && i + 10 < macdList.length - 2;
 						if (isUpperReverse) break;
 					}
 				} else {
@@ -286,11 +289,12 @@ const fnIsMacdReverse = (macdList, atrList) => {
 						macdList.length - 2
 					);
 					if (isCurrentContinousLower && isStartEndReverse) {
-						isLowerReverse = fnGetIsHasIntervalLowerReverse(
-							macdList,
-							i,
-							macdList.length - 2
-						);
+						isLowerReverse =
+							fnGetIsHasIntervalLowerReverse(
+								macdList,
+								i,
+								macdList.length - 2
+							) && i + 10 < macdList.length - 2;
 						if (isLowerReverse) break;
 					}
 				} else {
@@ -313,7 +317,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
 	console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
-	return Number(ATR_PRICE_OBJ[key]) && isLoss && false;
+	return Number(ATR_PRICE_OBJ[key]) && isLoss;
 };
 
 async function checkByStep(data, symbol) {
@@ -463,10 +467,14 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		(fnGetIsLoss(longHolding, mark_price) || longRatio > WIN_MAX);
+		(fnGetIsLoss(longHolding, mark_price) ||
+			longRatio > WIN_MAX ||
+			isUpperReverse);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		(fnGetIsLoss(shortHolding, mark_price) || shortRatio > WIN_MAX);
+		(fnGetIsLoss(shortHolding, mark_price) ||
+			shortRatio > WIN_MAX ||
+			isLowerReverse);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
