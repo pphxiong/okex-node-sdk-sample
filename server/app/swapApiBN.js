@@ -87,7 +87,7 @@ const fnIsCurrentContinousUpper = (macdList, i) => {
 		macdList[i - 2].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
 		macdList[i - 1].column > macdList[i - 2].column &&
-		macdList[i - 2].column > macdList[i - 3].column &&
+		// macdList[i - 2].column > macdList[i - 3].column &&
 		macdList[i].column > macdList[i + 1].column
 	);
 };
@@ -97,7 +97,7 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 		macdList[i - 2].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
 		macdList[i - 1].column < macdList[i - 2].column &&
-		macdList[i - 2].column < macdList[i - 3].column &&
+		// macdList[i - 2].column < macdList[i - 3].column &&
 		macdList[i].column < macdList[i + 1].column
 	);
 };
@@ -1353,9 +1353,6 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	newList.pop();
-	newList.pop();
-	newList.pop();
 	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
