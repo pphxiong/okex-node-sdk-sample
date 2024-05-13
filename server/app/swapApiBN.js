@@ -38,8 +38,8 @@ let ATR_PRICE_OBJ = {
 };
 
 const LEVERAGE = 10;
-const ATR_WIN_RATIO = 1;
-const INIT_ASSETS_RATIO = 5;
+const ATR_WIN_RATIO = 2;
+const INIT_ASSETS_RATIO = 4;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
 const WIN_MAX = -LOSS_MAX;
@@ -1090,18 +1090,18 @@ const fnCloseLimitOrder = async (params, atrList) => {
 		symbol,
 		side,
 		positionSide,
-		position: Number(position) / 2,
+		position: Number(position) / 1,
 	};
 	await closeLimitPosition(payload);
-	const price2 = isLong ? mark_price + ATR * 2 : mark_price - ATR * 2;
-	const payload2 = {
-		price: price2,
-		symbol,
-		side,
-		positionSide,
-		position: Number(position) / 2,
-	};
-	await closeLimitPosition(payload2);
+	// const price2 = isLong ? mark_price + ATR * 2 : mark_price - ATR * 2;
+	// const payload2 = {
+	// 	price: price2,
+	// 	symbol,
+	// 	side,
+	// 	positionSide,
+	// 	position: Number(position) / 2,
+	// };
+	// await closeLimitPosition(payload2);
 };
 
 const closePosition = async (holding, isCloseAll = false, avail) => {
@@ -1419,7 +1419,7 @@ const readData = async () => {
 
 const writeData = async (params, atrList) => {
 	const { symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 2;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO;
 
 	let key = symbol + '_ATR';
 	//将修改后的配置写入文件前需要先转成json字符串格式
