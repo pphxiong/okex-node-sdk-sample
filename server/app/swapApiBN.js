@@ -1080,7 +1080,7 @@ const openPosition = async (params = {}, atrList) => {
 
 const fnCloseLimitOrder = async (params, atrList) => {
 	const { openSide = 'long', position, mark_price, symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1.2;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1;
 	const isLong = openSide.toUpperCase() == 'LONG';
 	const price = isLong ? mark_price + ATR : mark_price - ATR;
 	const side = isLong ? 'SELL' : 'BUY';
