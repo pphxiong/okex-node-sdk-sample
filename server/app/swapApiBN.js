@@ -197,7 +197,10 @@ const fnIsLowerReverse = (macdList, i, j) => {
 			macdList[j].close <= macdList[i].close) &&
 		macdList[j].column > macdList[i].column;
 	// && differ > ATR / 240;
-	return isLowerReverse;
+	const isExtraReverse =
+		macdList[j].close >= macdList[i].close &&
+		macdList[j].column < macdList[i].column;
+	return isLowerReverse || isExtraReverse;
 };
 
 const fnIsUpperReverse = (macdList, i, j) => {
@@ -207,7 +210,10 @@ const fnIsUpperReverse = (macdList, i, j) => {
 			macdList[j].close >= macdList[i].close) &&
 		macdList[j].column < macdList[i].column;
 	// && differ > ATR / 240;
-	return isUpperReverse;
+	const isExtraReverse =
+		macdList[j].close <= macdList[i].close &&
+		macdList[j].column > macdList[i].column;
+	return isUpperReverse || isExtraReverse;
 };
 
 const fnIsMacdReverse = (macdList, atrList) => {
