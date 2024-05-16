@@ -38,7 +38,7 @@ let ATR_PRICE_OBJ = {
 };
 
 const LEVERAGE = 10;
-const ATR_WIN_RATIO = 2;
+const ATR_WIN_RATIO = 1;
 const INIT_ASSETS_RATIO = 4;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
@@ -1425,7 +1425,7 @@ const readData = async () => {
 
 const writeData = async (params, atrList) => {
 	const { symbol } = params;
-	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO;
+	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 2;
 
 	let key = symbol + '_ATR';
 	//将修改后的配置写入文件前需要先转成json字符串格式
