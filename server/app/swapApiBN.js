@@ -168,7 +168,7 @@ const fnGetIsContinousLow = (macdList, i, j) => {
 
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	let is = false;
-	for (let k = i + 1; k < j; k += 1) {
+	for (let k = i + 1; k < j - 5; k += 1) {
 		is =
 			fnIsUpperReverse(macdList, i, k) &&
 			fnIsUpperReverse(macdList, i, j);
@@ -180,7 +180,7 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 
 const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	let is = false;
-	for (let k = i + 1; k < j; k += 1) {
+	for (let k = i + 1; k < j - 5; k += 1) {
 		is =
 			fnIsLowerReverse(macdList, i, k) &&
 			fnIsLowerReverse(macdList, i, j);
