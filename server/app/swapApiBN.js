@@ -344,8 +344,9 @@ async function checkByStep(data, symbol) {
 
 	if (positionChange || !globalHolding || !globalHolding.length || true) {
 		try {
-			const { positions: holding, availableBalance } =
-				await cAuthClientBN.swap.getPosition();
+			const positionResult = await cAuthClientBN.swap.getPosition();
+			const { positions: holding, availableBalance } = positionResult;
+
 			globalHolding =
 				holding.filter(
 					(item) =>
@@ -365,7 +366,7 @@ async function checkByStep(data, symbol) {
 				Number(availableBalance)
 			);
 			INIT_ASSETS = Math.floor(INIT_ASSETS);
-			console.log(11, availableBalance, currentTotalAsset, INIT_ASSETS);
+			console.log(1, positionResult);
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
