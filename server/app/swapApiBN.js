@@ -366,7 +366,7 @@ async function checkByStep(data, symbol) {
 				Number(availableBalance)
 			);
 			INIT_ASSETS = Math.floor(INIT_ASSETS);
-			console.log(1, positionResult);
+			console.log(1, globalHolding);
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
