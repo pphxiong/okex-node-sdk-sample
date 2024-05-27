@@ -355,7 +355,7 @@ async function checkByStep(data, symbol) {
 				) || [];
 			positionChange = false;
 			const currentTotalAsset = globalHolding
-				.map((item) => Number(item.initialMargin))
+				.map((item) => Number(item.isolatedWallet))
 				.reduce((pre, cur) => pre + cur, 0);
 			// const unrealizedProfitTotal = globalHolding
 			// 	.map((item) => Number(item.unrealizedProfit))
@@ -364,16 +364,15 @@ async function checkByStep(data, symbol) {
 				(Number(availableBalance) + Number(currentTotalAsset)) /
 				INIT_ASSETS_RATIO;
 			INIT_ASSETS = Math.min(
-				COMPUTED_INIT_ASSETS,
 				INIT_ASSETS,
+				COMPUTED_INIT_ASSETS,
 				Number(availableBalance)
 			);
-			INIT_ASSETS = Math.floor(INIT_ASSETS - 3);
+			// INIT_ASSETS = Math.floor(INIT_ASSETS - 3);
 			console.log(
-				22,
-				globalHolding,
+				'currentTotalAsset',
 				currentTotalAsset,
-				availableBalance,
+				'INIT_ASSETS',
 				INIT_ASSETS
 			);
 
