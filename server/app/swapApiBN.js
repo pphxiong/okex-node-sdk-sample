@@ -640,6 +640,7 @@ async function checkByStep(data, symbol) {
 						openSide: 'long',
 						mark_price,
 						symbol,
+						lastMacd: macdList.slice(-1)[0],
 					},
 					atrList
 				);
@@ -665,6 +666,7 @@ async function checkByStep(data, symbol) {
 						openSide: 'short',
 						mark_price,
 						symbol,
+						lastMacd: macdList.slice(-1)[0],
 					},
 					atrList
 				);
@@ -1096,10 +1098,17 @@ const openPosition = async (params = {}, atrList) => {
 };
 
 const fnCloseLimitOrder = async (params, atrList) => {
-	const { openSide = 'long', position, mark_price, symbol } = params;
+	const {
+		openSide = 'long',
+		position,
+		mark_price,
+		symbol,
+		lastMacd,
+	} = params;
+	const { high, low } = lastMacd;
 	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1;
 	const isLong = openSide.toUpperCase() == 'LONG';
-	const price = isLong ? mark_price + ATR : mark_price - ATR;
+	const price = isLong ? Number(high) + ATR : Number(low) - ATR;
 	const side = isLong ? 'SELL' : 'BUY';
 	const positionSide = isLong ? 'LONG' : 'SHORT';
 	const payload = {
