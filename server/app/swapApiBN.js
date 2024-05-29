@@ -278,11 +278,17 @@ const fnIsMacdReverse = (macdList, atrList) => {
 					);
 					if (isCurrentContinousUpper && isStartEndReverse) {
 						isUpperReverse =
+							fnGetIsHasIntervalUpperReverse(
+								macdList,
+								i,
+								macdList.length - 2
+							) &&
 							fnGetIsHasIntervalMacdLow(
 								macdList,
 								i,
 								macdList.length - 2
-							) && i + 10 < macdList.length - 2;
+							) &&
+							i + 10 < macdList.length - 2;
 						if (isUpperReverse) break;
 					}
 				} else {
@@ -314,11 +320,17 @@ const fnIsMacdReverse = (macdList, atrList) => {
 					);
 					if (isCurrentContinousLower && isStartEndReverse) {
 						isLowerReverse =
+							fnGetIsHasIntervalLowerReverse(
+								macdList,
+								i,
+								macdList.length - 2
+							) &&
 							fnGetIsHasIntervalMacdHigh(
 								macdList,
 								i,
 								macdList.length - 2
-							) && i + 10 < macdList.length - 2;
+							) &&
+							i + 10 < macdList.length - 2;
 						if (isLowerReverse) break;
 					}
 				} else {
