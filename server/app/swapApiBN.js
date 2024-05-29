@@ -38,7 +38,7 @@ let ATR_PRICE_OBJ = {
 };
 
 const LEVERAGE = 10;
-const ATR_WIN_RATIO = 2;
+const ATR_WIN_RATIO = 1;
 const INIT_ASSETS_RATIO = 5;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
