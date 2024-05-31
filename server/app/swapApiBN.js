@@ -38,7 +38,7 @@ let ATR_PRICE_OBJ = {
 };
 
 const LEVERAGE = 10;
-const ATR_WIN_RATIO = 1;
+const ATR_WIN_RATIO = 2;
 const INIT_ASSETS_RATIO = 5;
 
 const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
@@ -171,7 +171,8 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	for (let k = i + 1; k < j - 5; k += 1) {
 		is =
 			fnIsUpperReverse(macdList, i, k) &&
-			fnIsUpperReverse(macdList, i, j);
+			fnIsUpperReverse(macdList, i, j) &&
+			fnGetIsHasIntervalMacdLow(macdList, k, j);
 		// is = macdList[k].column < 0;
 		if (is) break;
 	}
@@ -183,7 +184,8 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	for (let k = i + 1; k < j - 5; k += 1) {
 		is =
 			fnIsLowerReverse(macdList, i, k) &&
-			fnIsLowerReverse(macdList, i, j);
+			fnIsLowerReverse(macdList, i, j) &&
+			fnGetIsHasIntervalMacdHigh(macdList, k, j);
 		// is = macdList[k].column > 0;
 		if (is) break;
 	}
@@ -282,13 +284,7 @@ const fnIsMacdReverse = (macdList, atrList) => {
 								macdList,
 								i,
 								macdList.length - 2
-							) &&
-							fnGetIsHasIntervalMacdLow(
-								macdList,
-								i,
-								macdList.length - 2
-							) &&
-							i + 10 < macdList.length - 2;
+							) && i + 10 < macdList.length - 2;
 						if (isUpperReverse) break;
 					}
 				} else {
