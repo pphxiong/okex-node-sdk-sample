@@ -26,7 +26,7 @@ const quantityFixedMap = {
 	[ETH_SYMBOL]: 1,
 	[EOS_SYMBOL]: 1,
 	[XRP_SYMBOL]: 1,
-	[DOGE_SYMBOL]: 1,
+	[DOGE_SYMBOL]: 0,
 };
 
 let ATR_PRICE_OBJ = {
