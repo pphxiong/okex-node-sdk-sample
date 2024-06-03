@@ -536,8 +536,18 @@ async function checkByStep(data, symbol) {
 	const hmsArr = currentTime.split(' ')[1].split(':');
 	const lastMinuteCharacter = hmsArr[1];
 	const lastSecondCharacter = hmsArr[2];
+	const minuteList = ['0', '00'];
+	const secondList = ['0', '00'];
+	const minuteDiff = moment(currentTime).diff(
+		moment(macdList[macdList.length - 1].time),
+		'minute'
+	);
 
-	const isFiveM = true;
+	const isFiveM =
+		true ||
+		(minuteDiff < 90 &&
+			minuteList.includes(lastMinuteCharacter) &&
+			!secondList.includes(lastSecondCharacter));
 
 	console.log('************************************', currentTime);
 	console.log(
@@ -1136,7 +1146,9 @@ const fnCloseLimitOrder = async (params, atrList) => {
 	const { high, low } = lastMacd;
 	const ATR = atrList[atrList.length - 1] * ATR_WIN_RATIO * 1;
 	const isLong = openSide.toUpperCase() == 'LONG';
-	const price = isLong ? Number(high) + ATR : Number(low) - ATR;
+	const price = isLong
+		? Math.max(Number(high), Number(mark_price)) + ATR
+		: Math.min(Number(low), Number(mark_price)) - ATR;
 	const side = isLong ? 'SELL' : 'BUY';
 	const positionSide = isLong ? 'LONG' : 'SHORT';
 	const payload = {
