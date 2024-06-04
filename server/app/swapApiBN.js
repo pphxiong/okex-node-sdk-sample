@@ -175,7 +175,23 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 			fnIsUpperReverse(macdList, i, j) &&
 			fnGetIsHasIntervalMacdLow(macdList, k, j);
 		// is = macdList[k].column < 0;
-		if (is) break;
+		if (is) {
+			console.log('########################');
+			console.log(
+				macdList
+					.slice(k, k + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					}))
+			);
+			console.log('########################');
+			break;
+		}
 	}
 	return is;
 };
@@ -350,7 +366,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 	const isLoss = isLong
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
-	console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
+	// console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
 	return Number(ATR_PRICE_OBJ[key]) && isLoss && false;
 };
 
@@ -570,15 +586,15 @@ async function checkByStep(data, symbol) {
 		// 'winMax',
 		// WIN_MAX
 	);
-	console.log(
-		'macd',
-		macdList.slice(-1).map(({ column, open, close, time }) => ({
-			column,
-			open,
-			close,
-			time,
-		}))
-	);
+	// console.log(
+	// 	'macd',
+	// 	macdList.slice(-1).map(({ column, open, close, time }) => ({
+	// 		column,
+	// 		open,
+	// 		close,
+	// 		time,
+	// 	}))
+	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 
