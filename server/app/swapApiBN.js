@@ -176,10 +176,38 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 			fnGetIsHasIntervalMacdLow(macdList, k, j);
 		// is = macdList[k].column < 0;
 		if (is) {
-			console.log('########################');
 			console.log(
+				'############fnGetIsHasIntervalUpperReverse############'
+			);
+			console.log(
+				'i',
+				i,
+				macdList
+					.slice(i, i + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'k',
+				k,
 				macdList
 					.slice(k, k + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'j',
+				j,
+				macdList
+					.slice(j, j + 1)
 					.map(({ column, open, close, high, low, time }) => ({
 						column,
 						open,
@@ -205,7 +233,51 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 			fnIsLowerReverse(macdList, i, j) &&
 			fnGetIsHasIntervalMacdHigh(macdList, k, j);
 		// is = macdList[k].column > 0;
-		if (is) break;
+		if (is) {
+			console.log(
+				'############fnGetIsHasIntervalLowerReverse############'
+			);
+			console.log(
+				'i',
+				i,
+				macdList
+					.slice(i, i + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'k',
+				k,
+				macdList
+					.slice(k, k + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'j',
+				j,
+				macdList
+					.slice(j, j + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					}))
+			);
+			console.log('########################');
+			break;
+		}
 	}
 	return is;
 };
