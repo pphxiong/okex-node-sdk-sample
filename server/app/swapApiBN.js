@@ -412,13 +412,12 @@ async function checkByStep(data, symbol) {
 				COMPUTED_INIT_ASSETS,
 				Number(availableBalance)
 			);
-			// INIT_ASSETS = Math.floor(INIT_ASSETS - 3);
-			console.log(
-				'currentTotalAsset',
-				currentTotalAsset,
-				'INIT_ASSETS',
-				INIT_ASSETS
-			);
+			// console.log(
+			// 	'currentTotalAsset',
+			// 	currentTotalAsset,
+			// 	'INIT_ASSETS',
+			// 	INIT_ASSETS
+			// );
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
