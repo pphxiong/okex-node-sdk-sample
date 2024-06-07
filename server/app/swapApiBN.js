@@ -144,25 +144,19 @@ const fnGetIsHasIntervalLower = (macdList, i, j) => {
 	return is;
 };
 
-const fnGetIsContinousHigh = (macdList, i, j) => {
-	let is = true;
-	for (let k = i; k <= j; k += 1) {
-		if (macdList[k].column > 0) {
-			is = false;
-			break;
-		}
-	}
+const fnGetIsContinousHigh = (macdList, i) => {
+	const is =
+		macdList[i].column > macdList[i - 1].column &&
+		macdList[i - 1].column > macdList[i - 2].column &&
+		macdList[i].column > macdList[i + 1].column;
 	return is;
 };
 
 const fnGetIsContinousLow = (macdList, i, j) => {
-	let is = true;
-	for (let k = i; k <= j; k += 1) {
-		if (macdList[k].column < 0) {
-			is = false;
-			break;
-		}
-	}
+	let is =
+		macdList[i].column < macdList[i - 1].column &&
+		macdList[i - 1].column < macdList[i - 2].column &&
+		macdList[i].column < macdList[i + 1].column;
 	return is;
 };
 
@@ -173,6 +167,7 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 			fnIsUpperReverse(macdList, i, k) &&
 			fnIsUpperReverse(macdList, k, j) &&
 			fnIsUpperReverse(macdList, i, j) &&
+			fnGetIsContinousHigh(macdList, k) &&
 			fnGetIsHasIntervalMacdLow(macdList, k, j);
 		// is = macdList[k].column < 0;
 		if (is) {
@@ -231,6 +226,7 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 			fnIsLowerReverse(macdList, i, k) &&
 			fnIsLowerReverse(macdList, k, j) &&
 			fnIsLowerReverse(macdList, i, j) &&
+			fnGetIsContinousLow(macdList, k) &&
 			fnGetIsHasIntervalMacdHigh(macdList, k, j);
 		// is = macdList[k].column > 0;
 		if (is) {
@@ -353,32 +349,23 @@ const fnIsMacdReverse = (macdList, atrList) => {
 				i > macdList.length - 48;
 				i -= 1
 			) {
-				const isContinousHigh = fnGetIsContinousHigh(
+				const isCurrentContinousUpper = fnIsCurrentContinousUpper(
+					macdList,
+					i
+				);
+				const isStartEndReverse = fnIsUpperReverse(
 					macdList,
 					i,
 					macdList.length - 2
 				);
-				if (isContinousHigh || true) {
-					const isCurrentContinousUpper = fnIsCurrentContinousUpper(
-						macdList,
-						i
-					);
-					const isStartEndReverse = fnIsUpperReverse(
-						macdList,
-						i,
-						macdList.length - 2
-					);
-					if (isCurrentContinousUpper && isStartEndReverse) {
-						isUpperReverse =
-							fnGetIsHasIntervalUpperReverse(
-								macdList,
-								i,
-								macdList.length - 2
-							) && i + 10 < macdList.length - 2;
-						if (isUpperReverse) break;
-					}
-				} else {
-					break;
+				if (isCurrentContinousUpper && isStartEndReverse) {
+					isUpperReverse =
+						fnGetIsHasIntervalUpperReverse(
+							macdList,
+							i,
+							macdList.length - 2
+						) && i + 10 < macdList.length - 2;
+					if (isUpperReverse) break;
 				}
 			}
 		}
@@ -389,38 +376,29 @@ const fnIsMacdReverse = (macdList, atrList) => {
 				i > macdList.length - 48;
 				i -= 1
 			) {
-				const isContinousLow = fnGetIsContinousLow(
+				const isCurrentContinousLower = fnIsCurrentContinousLower(
+					macdList,
+					i
+				);
+				const isStartEndReverse = fnIsLowerReverse(
 					macdList,
 					i,
 					macdList.length - 2
 				);
-				if (isContinousLow || true) {
-					const isCurrentContinousLower = fnIsCurrentContinousLower(
-						macdList,
-						i
-					);
-					const isStartEndReverse = fnIsLowerReverse(
-						macdList,
-						i,
-						macdList.length - 2
-					);
-					if (isCurrentContinousLower && isStartEndReverse) {
-						isLowerReverse =
-							fnGetIsHasIntervalLowerReverse(
-								macdList,
-								i,
-								macdList.length - 2
-							) &&
-							fnGetIsHasIntervalMacdHigh(
-								macdList,
-								i,
-								macdList.length - 2
-							) &&
-							i + 10 < macdList.length - 2;
-						if (isLowerReverse) break;
-					}
-				} else {
-					break;
+				if (isCurrentContinousLower && isStartEndReverse) {
+					isLowerReverse =
+						fnGetIsHasIntervalLowerReverse(
+							macdList,
+							i,
+							macdList.length - 2
+						) &&
+						fnGetIsHasIntervalMacdHigh(
+							macdList,
+							i,
+							macdList.length - 2
+						) &&
+						i + 10 < macdList.length - 2;
+					if (isLowerReverse) break;
 				}
 			}
 		}
