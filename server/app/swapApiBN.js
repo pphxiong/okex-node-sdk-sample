@@ -41,7 +41,7 @@ const LEVERAGE = 10;
 const ATR_WIN_RATIO = 3;
 const INIT_ASSETS_RATIO = 5;
 
-const LOSS_MAX = (-LEVERAGE * 3.82) / 2 / 100;
+const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
 const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 120;
 
@@ -578,12 +578,12 @@ async function checkByStep(data, symbol) {
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
 		(fnGetIsLoss(longHolding, mark_price) ||
-			longRatio > WIN_MAX ||
+			longRatio > WIN_MAX || longRatio < LOSS_MAX || 
 			isUpperReverse);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
 		(fnGetIsLoss(shortHolding, mark_price) ||
-			shortRatio > WIN_MAX ||
+			shortRatio > WIN_MAX || shortRatio < LOSS_MAX ||
 			isLowerReverse);
 
 	const MAIN_CLOSE_ALL_CONDITION =
