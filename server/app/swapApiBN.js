@@ -41,7 +41,7 @@ const LEVERAGE = 10;
 const ATR_WIN_RATIO = 4;
 const INIT_ASSETS_RATIO = 5;
 
-const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
+const LOSS_MAX = (-LEVERAGE * 3.82) / 100;
 const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 120;
 
