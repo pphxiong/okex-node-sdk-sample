@@ -162,7 +162,7 @@ const fnGetIsContinousLow = (macdList, i, j) => {
 
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	let is = false;
-	for (let k = i + 1; k < j - 5; k += 1) {
+	for (let k = i + 5; k < j - 5; k += 1) {
 		is =
 			fnIsUpperReverse(macdList, i, k) &&
 			fnIsUpperReverse(macdList, k, j) &&
@@ -221,7 +221,7 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 
 const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	let is = false;
-	for (let k = i + 1; k < j - 5; k += 1) {
+	for (let k = i + 5; k < j - 5; k += 1) {
 		is =
 			fnIsLowerReverse(macdList, i, k) &&
 			fnIsLowerReverse(macdList, k, j) &&
@@ -578,12 +578,14 @@ async function checkByStep(data, symbol) {
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
 		(fnGetIsLoss(longHolding, mark_price) ||
-			longRatio > WIN_MAX || longRatio < LOSS_MAX || 
+			longRatio > WIN_MAX ||
+			longRatio < LOSS_MAX ||
 			isUpperReverse);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
 		(fnGetIsLoss(shortHolding, mark_price) ||
-			shortRatio > WIN_MAX || shortRatio < LOSS_MAX ||
+			shortRatio > WIN_MAX ||
+			shortRatio < LOSS_MAX ||
 			isLowerReverse);
 
 	const MAIN_CLOSE_ALL_CONDITION =
