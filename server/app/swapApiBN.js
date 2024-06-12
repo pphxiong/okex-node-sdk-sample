@@ -571,22 +571,24 @@ async function checkByStep(data, symbol) {
 	);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && !shortHolding && isLowerReverse;
+		!longHolding && isLowerReverse;
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && !longHolding && isUpperReverse;
+		!shortHolding && isUpperReverse;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
 		(fnGetIsLoss(longHolding, mark_price) ||
 			longRatio > WIN_MAX ||
-			longRatio < LOSS_MAX ||
-			isUpperReverse);
+			longRatio < LOSS_MAX 
+			// || isUpperReverse
+		);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
 		(fnGetIsLoss(shortHolding, mark_price) ||
 			shortRatio > WIN_MAX ||
-			shortRatio < LOSS_MAX ||
-			isLowerReverse);
+			shortRatio < LOSS_MAX 
+			// || isLowerReverse
+		);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
