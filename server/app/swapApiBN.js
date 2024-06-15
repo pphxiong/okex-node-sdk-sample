@@ -38,7 +38,7 @@ let ATR_PRICE_OBJ = {
 };
 
 const LEVERAGE = 10;
-const ATR_WIN_RATIO = 4;
+const ATR_WIN_RATIO = 2;
 const INIT_ASSETS_RATIO = 5;
 
 const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
@@ -84,18 +84,20 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		macdList[i - 2].column > 0 &&
+		// macdList[i - 2].column > 0 &&
+		macdList[i].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
-		macdList[i - 1].column > macdList[i - 2].column &&
+		// macdList[i - 1].column > macdList[i - 2].column &&
 		macdList[i].column > macdList[i + 1].column
 	);
 };
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		macdList[i - 2].column < 0 &&
+		// macdList[i - 2].column < 0 &&
+		macdList[i].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
-		macdList[i - 1].column < macdList[i - 2].column &&
+		// macdList[i - 1].column < macdList[i - 2].column &&
 		macdList[i].column < macdList[i + 1].column
 	);
 };
@@ -160,12 +162,12 @@ const fnGetIsContinousLow = (macdList, i, j) => {
 
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	let is = false;
-	for (let k = i + 5; k < j - 5; k += 1) {
+	for (let k = i + 1; k < j - 5; k += 1) {
 		is =
 			fnIsUpperReverse(macdList, i, k) &&
 			fnIsUpperReverse(macdList, k, j) &&
 			fnIsUpperReverse(macdList, i, j) &&
-			fnGetIsContinousHigh(macdList, k) &&
+			// fnGetIsContinousHigh(macdList, k) &&
 			fnGetIsHasIntervalMacdLow(macdList, k, j);
 		if (is) {
 			console.log(
@@ -218,12 +220,12 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 
 const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	let is = false;
-	for (let k = i + 5; k < j - 5; k += 1) {
+	for (let k = i + 1; k < j - 5; k += 1) {
 		is =
 			fnIsLowerReverse(macdList, i, k) &&
 			fnIsLowerReverse(macdList, k, j) &&
 			fnIsLowerReverse(macdList, i, j) &&
-			fnGetIsContinousLow(macdList, k) &&
+			// fnGetIsContinousLow(macdList, k) &&
 			fnGetIsHasIntervalMacdHigh(macdList, k, j);
 		if (is) {
 			console.log(
@@ -571,12 +573,12 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		(fnGetIsLoss(longHolding, mark_price) || longRatio > WIN_MAX);
-	//  || longRatio < LOSS_MAX || isUpperReverse
+		(fnGetIsLoss(longHolding, mark_price) || longRatio > WIN_MAX || isUpperReverse);
+	//  || longRatio < LOSS_MAX 
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		(fnGetIsLoss(shortHolding, mark_price) || shortRatio > WIN_MAX);
-	//  || shortRatio < LOSS_MAX || isLowerReverse
+		(fnGetIsLoss(shortHolding, mark_price) || shortRatio > WIN_MAX || isLowerReverse);
+	//  || shortRatio < LOSS_MAX 
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
