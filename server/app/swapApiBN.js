@@ -461,6 +461,8 @@ async function checkByStep(data, symbol) {
 				Number(availableBalance)
 			);
 			console.log(
+				'availableBalance',
+				availableBalance,
 				'currentTotalAsset',
 				currentTotalAsset,
 				'INIT_ASSETS',
