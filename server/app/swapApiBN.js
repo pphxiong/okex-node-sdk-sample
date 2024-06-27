@@ -43,7 +43,7 @@ const INIT_ASSETS_RATIO = 5;
 
 const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
 const WIN_MAX = -LOSS_MAX;
-let INIT_ASSETS = 120;
+let INIT_ASSETS = 1200;
 
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
@@ -460,14 +460,14 @@ async function checkByStep(data, symbol) {
 				COMPUTED_INIT_ASSETS,
 				Number(availableBalance)
 			);
-			console.log(
-				'availableBalance',
-				availableBalance,
-				'currentTotalAsset',
-				currentTotalAsset,
-				'INIT_ASSETS',
-				INIT_ASSETS
-			);
+			// console.log(
+			// 	'availableBalance',
+			// 	availableBalance,
+			// 	'currentTotalAsset',
+			// 	currentTotalAsset,
+			// 	'INIT_ASSETS',
+			// 	INIT_ASSETS
+			// );
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
