@@ -320,7 +320,7 @@ const fnIsUpperReverse = (macdList, i, j) => {
 	return isUpperReverse;
 };
 
-const fnIsMacdReverse = (macdList, atrList) => {
+const fnIsMacdReverse = (macdList, atrList, symbol) => {
 	const ATR = atrList[atrList.length - 1];
 
 	const isUpper =
@@ -343,6 +343,7 @@ const fnIsMacdReverse = (macdList, atrList) => {
 	if (isLower) {
 		if (isLatestContinousUpper) {
 			console.log('#############################################');
+			console.log('symbol', symbol);
 			console.log('isLatestContinousUpper', true);
 			console.log(
 				'macd',
@@ -382,6 +383,7 @@ const fnIsMacdReverse = (macdList, atrList) => {
 	} else if (isUpper) {
 		if (isLatestContinousLower) {
 			console.log('#############################################');
+			console.log('symbol', symbol);
 			console.log('isLatestContinousLower', true);
 			console.log(
 				'macd',
@@ -591,7 +593,8 @@ async function checkByStep(data, symbol) {
 
 	const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(
 		macdList,
-		atrList
+		atrList,
+		symbol
 	);
 
 	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
