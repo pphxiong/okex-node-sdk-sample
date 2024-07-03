@@ -342,6 +342,18 @@ const fnIsMacdReverse = (macdList, atrList) => {
 	let isLowerReverse = false;
 	if (isLower) {
 		if (isLatestContinousUpper) {
+			console.log('#############################################');
+			console.log('isLatestContinousUpper', true);
+			console.log(
+				'macd',
+				macdList.slice(-1).map(({ column, open, close, time }) => ({
+					column,
+					open,
+					close,
+					time,
+				}))
+			);
+			console.log('#############################################');
 			for (
 				let i = macdList.length - 3;
 				i > macdList.length - 78;
@@ -369,6 +381,18 @@ const fnIsMacdReverse = (macdList, atrList) => {
 		}
 	} else if (isUpper) {
 		if (isLatestContinousLower) {
+			console.log('#############################################');
+			console.log('isLatestContinousLower', true);
+			console.log(
+				'macd',
+				macdList.slice(-1).map(({ column, open, close, time }) => ({
+					column,
+					open,
+					close,
+					time,
+				}))
+			);
+			console.log('#############################################');
 			for (
 				let i = macdList.length - 3;
 				i > macdList.length - 78;
@@ -610,27 +634,23 @@ async function checkByStep(data, symbol) {
 			minuteList.includes(lastMinuteCharacter) &&
 			!secondList.includes(lastSecondCharacter));
 
-	console.log('************************************', currentTime);
-	console.log(
-		'symbol',
-		symbol,
-		'longRatio',
-		longRatio,
-		'shortRatio',
-		shortRatio,
-		// 'totalRatio',
-		// totalRatio,
-		'isUpperReverse',
-		isUpperReverse,
-		'isLowerReverse',
-		isLowerReverse,
-		'ATR',
-		atrList[atrList.length - 1],
-		'ATR_PRICE_OBJ',
-		ATR_PRICE_OBJ[symbol + '_ATR']
-		// 'winMax',
-		// WIN_MAX
-	);
+	// console.log('************************************', currentTime);
+	// console.log(
+	// 	'symbol',
+	// 	symbol,
+	// 	'longRatio',
+	// 	longRatio,
+	// 	'shortRatio',
+	// 	shortRatio,
+	// 	'isUpperReverse',
+	// 	isUpperReverse,
+	// 	'isLowerReverse',
+	// 	isLowerReverse,
+	// 	'ATR',
+	// 	atrList[atrList.length - 1],
+	// 	'ATR_PRICE_OBJ',
+	// 	ATR_PRICE_OBJ[symbol + '_ATR']
+	// );
 	// console.log(
 	// 	'macd',
 	// 	macdList.slice(-1).map(({ column, open, close, time }) => ({
@@ -641,7 +661,7 @@ async function checkByStep(data, symbol) {
 	// 	}))
 	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
-	console.log('************************************');
+	// console.log('************************************');
 
 	const patchPosition = async (holding, direction) => {
 		let positionAmt = Number(holding.positionAmt) * 2;
