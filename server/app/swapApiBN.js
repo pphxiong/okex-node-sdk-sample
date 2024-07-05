@@ -1584,6 +1584,7 @@ const readData = async () => {
 		EOSUSDT_ATR: dataConfig.EOSUSDT_ATR,
 		XRPUSDT_ATR: dataConfig.XRPUSDT_ATR,
 		DOGEUSDT_ATR: dataConfig.DOGEUSDT_ATR,
+		TRXUSDT_ATR: dataConfig.TRXUSDT_ATR,
 	};
 
 	console.log('read::MODE', MODE, moment().format('YYYY-MM-DD HH:mm:ss'));
