@@ -7,11 +7,17 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
+const LEVERAGE = 5;
+const ATR_WIN_RATIO = 2;
+const INIT_ASSETS_RATIO = 6;
+const EXCEED_HOLDING_NUM = 3;
+
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'ETHUSDT';
 const EOS_SYMBOL = 'EOSUSDT';
 const XRP_SYMBOL = 'XRPUSDT';
 const DOGE_SYMBOL = 'DOGEUSDT';
+const TRX_SYMBOL = 'TRXUSDT';
 
 const priceFixedMap = {
 	[BTC_SYMBOL]: 1,
@@ -19,6 +25,7 @@ const priceFixedMap = {
 	[EOS_SYMBOL]: 3,
 	[XRP_SYMBOL]: 4,
 	[DOGE_SYMBOL]: 5,
+	[TRX_SYMBOL]: 5,
 };
 
 const quantityFixedMap = {
@@ -27,6 +34,7 @@ const quantityFixedMap = {
 	[EOS_SYMBOL]: 1,
 	[XRP_SYMBOL]: 1,
 	[DOGE_SYMBOL]: 0,
+	[TRX_SYMBOL]: 0,
 };
 
 let ATR_PRICE_OBJ = {
@@ -36,10 +44,6 @@ let ATR_PRICE_OBJ = {
 	XRPUSDT_ATR: 0,
 	DOGEUSDT_ATR: 0,
 };
-
-const LEVERAGE = 5;
-const ATR_WIN_RATIO = 2;
-const INIT_ASSETS_RATIO = 6;
 
 const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
 const WIN_MAX = -LOSS_MAX;
@@ -158,6 +162,17 @@ const fnGetIsContinousLow = (macdList, i, j) => {
 		macdList[i - 1].column < macdList[i - 2].column &&
 		macdList[i].column < macdList[i + 1].column;
 	return is;
+};
+
+const fnGetIsHoldingExceed = (holding, direction) => {
+	const filterHolding = holding.filter(
+		(item) =>
+			item.positionSide &&
+			item.positionSide.toUpperCase() == direction.toUpperCase() &&
+			Math.abs(Number(item.positionAmt)) > 0
+	);
+
+	return filterHolding.length >= EXCEED_HOLDING_NUM;
 };
 
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
@@ -597,16 +612,20 @@ async function checkByStep(data, symbol) {
 		symbol
 	);
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
+	const isLongHoldingExceed = fnGetIsHoldingExceed(holding, 'long');
+	const isShortHoldingExceed = fnGetIsHoldingExceed(holding, 'short');
+
+	const MAIN_OPEN_LONG_CONDITION1 =
+		!longHolding && isLowerReverse && !isLongHoldingExceed;
+	const MAIN_OPEN_SHORT_CONDITION1 =
+		!shortHolding && isUpperReverse && !isShortHoldingExceed;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding &&
-		(fnGetIsLoss(longHolding, mark_price) || longRatio > WIN_MAX);
+		longHolding && (fnGetIsLoss(longHolding, mark_price) || isUpperReverse);
 	//  || isUpperReverse|| longRatio < LOSS_MAX
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		(fnGetIsLoss(shortHolding, mark_price) || shortRatio > WIN_MAX);
+		(fnGetIsLoss(shortHolding, mark_price) || isLowerReverse);
 	//   || isLowerReverse || shortRatio < LOSS_MAX
 
 	const MAIN_CLOSE_ALL_CONDITION =
@@ -637,23 +656,23 @@ async function checkByStep(data, symbol) {
 			minuteList.includes(lastMinuteCharacter) &&
 			!secondList.includes(lastSecondCharacter));
 
-	// console.log('************************************', currentTime);
-	// console.log(
-	// 	'symbol',
-	// 	symbol,
-	// 	'longRatio',
-	// 	longRatio,
-	// 	'shortRatio',
-	// 	shortRatio,
-	// 	'isUpperReverse',
-	// 	isUpperReverse,
-	// 	'isLowerReverse',
-	// 	isLowerReverse,
-	// 	'ATR',
-	// 	atrList[atrList.length - 1],
-	// 	'ATR_PRICE_OBJ',
-	// 	ATR_PRICE_OBJ[symbol + '_ATR']
-	// );
+	console.log('************************************', currentTime);
+	console.log(
+		'symbol',
+		symbol,
+		'longRatio',
+		longRatio,
+		'shortRatio',
+		shortRatio,
+		'isUpperReverse',
+		isUpperReverse,
+		'isLowerReverse',
+		isLowerReverse,
+		'ATR',
+		atrList[atrList.length - 1],
+		'ATR_PRICE_OBJ',
+		ATR_PRICE_OBJ[symbol + '_ATR']
+	);
 	// console.log(
 	// 	'macd',
 	// 	macdList.slice(-1).map(({ column, open, close, time }) => ({
@@ -1214,9 +1233,9 @@ const openPosition = async (params = {}, atrList) => {
 	}
 	await postOrder(position, mark_price);
 	await writeData(params, atrList);
-	setTimeout(async () => {
-		await fnCloseLimitOrder(params, atrList);
-	}, 1000 * 3);
+	// setTimeout(async () => {
+	// 	await fnCloseLimitOrder(params, atrList);
+	// }, 1000 * 3);
 };
 
 const fnCloseLimitOrder = async (params, atrList) => {
@@ -1540,12 +1559,14 @@ const startInterval = async () => {
 		const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
 		const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
 		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
+		const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
 
 		await checkDeal(btc_result, BTC_SYMBOL);
 		await checkDeal(eth_result, ETH_SYMBOL);
 		await checkDeal(eos_result, EOS_SYMBOL);
 		await checkDeal(xrp_result, XRP_SYMBOL);
 		await checkDeal(doge_result, DOGE_SYMBOL);
+		await checkDeal(trx_result, TRX_SYMBOL);
 
 		await waitTime((1000 * 56) / 2);
 		await startInterval();
