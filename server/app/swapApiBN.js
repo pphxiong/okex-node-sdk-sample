@@ -181,9 +181,9 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	for (let k = i + 5; k < j - 5; k += 1) {
 		is =
 			fnIsUpperReverse(macdList, i, k) &&
-			fnIsUpperReverse(macdList, k, j) &&
-			fnIsUpperReverse(macdList, i, j);
-		// fnGetIsContinousHigh(macdList, k) &&
+			// fnIsUpperReverse(macdList, k, j) &&
+			fnIsUpperReverse(macdList, i, j) &&
+			fnIsCurrentContinousUpper(macdList, k);
 		// && fnGetIsHasIntervalMacdLow(macdList, k, j);
 		if (is) {
 			console.log(
@@ -239,9 +239,9 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	for (let k = i + 5; k < j - 5; k += 1) {
 		is =
 			fnIsLowerReverse(macdList, i, k) &&
-			fnIsLowerReverse(macdList, k, j) &&
-			fnIsLowerReverse(macdList, i, j);
-		// fnGetIsContinousLow(macdList, k) &&
+			// fnIsLowerReverse(macdList, k, j) &&
+			fnIsLowerReverse(macdList, i, j) &&
+			fnIsCurrentContinousLower(macdList, k);
 		// && fnGetIsHasIntervalMacdHigh(macdList, k, j);
 		if (is) {
 			console.log(
