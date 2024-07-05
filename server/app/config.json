@@ -3,5 +3,6 @@
 	"ETHUSDT_ATR": "0",
 	"EOSUSDT_ATR": "0",
 	"XRPUSDT_ATR": "0",
-	"DOGEUSDT_ATR": "0"
+	"DOGEUSDT_ATR": "0",
+	"TRX_SYMBOL": 0
 }
