@@ -10,7 +10,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 const LEVERAGE = 5;
 const ATR_WIN_RATIO = 2;
 const INIT_ASSETS_RATIO = 6;
-const EXCEED_HOLDING_NUM = 3;
+const EXCEED_HOLDING_NUM = 2;
 
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'ETHUSDT';
@@ -622,11 +622,14 @@ async function checkByStep(data, symbol) {
 		!shortHolding && isUpperReverse && !isShortHoldingExceed;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && (fnGetIsLoss(longHolding, mark_price) || isUpperReverse);
+		longHolding &&
+		(fnGetIsLoss(longHolding, mark_price) || isUpperReverse) &&
+		longRatio > 0;
 	//  || isUpperReverse|| longRatio < LOSS_MAX
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		(fnGetIsLoss(shortHolding, mark_price) || isLowerReverse);
+		(fnGetIsLoss(shortHolding, mark_price) || isLowerReverse) &&
+		shortRatio > 0;
 	//   || isLowerReverse || shortRatio < LOSS_MAX
 
 	const MAIN_CLOSE_ALL_CONDITION =
