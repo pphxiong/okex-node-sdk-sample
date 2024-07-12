@@ -622,14 +622,10 @@ async function checkByStep(data, symbol) {
 		!shortHolding && isUpperReverse && !isShortHoldingExceed;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding &&
-		(fnGetIsLoss(longHolding, mark_price) || isUpperReverse) &&
-		longRatio > 0;
+		longHolding && fnGetIsLoss(longHolding, mark_price);
 	//  || isUpperReverse|| longRatio < LOSS_MAX
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding &&
-		(fnGetIsLoss(shortHolding, mark_price) || isLowerReverse) &&
-		shortRatio > 0;
+		shortHolding && fnGetIsLoss(shortHolding, mark_price);
 	//   || isLowerReverse || shortRatio < LOSS_MAX
 
 	const MAIN_CLOSE_ALL_CONDITION =
@@ -1237,9 +1233,9 @@ const openPosition = async (params = {}, atrList) => {
 	}
 	await postOrder(position, mark_price);
 	await writeData(params, atrList);
-	// setTimeout(async () => {
-	// 	await fnCloseLimitOrder(params, atrList);
-	// }, 1000 * 3);
+	setTimeout(async () => {
+		await fnCloseLimitOrder(params, atrList);
+	}, 1000 * 3);
 };
 
 const fnCloseLimitOrder = async (params, atrList) => {
