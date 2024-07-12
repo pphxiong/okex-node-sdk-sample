@@ -10,7 +10,7 @@ const customAuthClientBN = require('./customAuthClientBN');
 const LEVERAGE = 5;
 const ATR_WIN_RATIO = 2;
 const INIT_ASSETS_RATIO = 6;
-const EXCEED_HOLDING_NUM = 2;
+const EXCEED_HOLDING_NUM = 3;
 
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'ETHUSDT';
