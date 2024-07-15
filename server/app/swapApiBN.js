@@ -8,9 +8,9 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const ATR_WIN_RATIO = 2;
-const INIT_ASSETS_RATIO = 6;
-const EXCEED_HOLDING_NUM = 3;
+const ATR_WIN_RATIO = 1.5;
+const INIT_ASSETS_RATIO = 8;
+const EXCEED_HOLDING_NUM = 4;
 
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'ETHUSDT';
@@ -107,6 +107,24 @@ const fnIsCurrentContinousLower = (macdList, i) => {
 	);
 };
 
+const fnIsIntervalContinousUpper = (macdList, i) => {
+	return (
+		macdList[i - 1].column > 0 &&
+		macdList[i].column > macdList[i - 1].column &&
+		macdList[i - 1].column > macdList[i - 2].column &&
+		macdList[i].column > macdList[i + 1].column
+	);
+};
+
+const fnIsIntervalContinousLower = (macdList, i) => {
+	return (
+		macdList[i - 1].column < 0 &&
+		macdList[i].column < macdList[i - 1].column &&
+		macdList[i - 1].column < macdList[i - 2].column &&
+		macdList[i].column < macdList[i + 1].column
+	);
+};
+
 const fnGetIsUpperest = (macdList, i, j) => {
 	let upperest = macdList[j].close;
 	for (let k = i; k <= j; k += 1) {
@@ -181,9 +199,9 @@ const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	for (let k = i + 5; k < j - 5; k += 1) {
 		is =
 			fnIsUpperReverse(macdList, i, k) &&
-			// fnIsUpperReverse(macdList, k, j) &&
+			fnIsUpperReverse(macdList, k, j) &&
 			fnIsUpperReverse(macdList, i, j) &&
-			fnIsCurrentContinousUpper(macdList, k);
+			fnIsIntervalContinousUpper(macdList, k);
 		// && fnGetIsHasIntervalMacdLow(macdList, k, j);
 		if (is) {
 			console.log(
@@ -239,9 +257,9 @@ const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
 	for (let k = i + 5; k < j - 5; k += 1) {
 		is =
 			fnIsLowerReverse(macdList, i, k) &&
-			// fnIsLowerReverse(macdList, k, j) &&
+			fnIsLowerReverse(macdList, k, j) &&
 			fnIsLowerReverse(macdList, i, j) &&
-			fnIsCurrentContinousLower(macdList, k);
+			fnIsIntervalContinousLower(macdList, k);
 		// && fnGetIsHasIntervalMacdHigh(macdList, k, j);
 		if (is) {
 			console.log(
