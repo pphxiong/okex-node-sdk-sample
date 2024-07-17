@@ -8,9 +8,10 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const ATR_WIN_RATIO = 1.5;
-const INIT_ASSETS_RATIO = 8;
+const INIT_ASSETS_RATIO = 3;
+
 const EXCEED_HOLDING_NUM = 4;
+const ATR_WIN_RATIO = 1.5;
 
 const BTC_SYMBOL = 'BTCUSDT';
 const ETH_SYMBOL = 'ETHUSDT';
@@ -1006,6 +1007,12 @@ const checkDealList = async (symbolResultMap) => {
 		}
 	});
 
+	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+	console.log('minSymbol', minSymbol, 'minRatio', minRatio);
+	console.log('maxSymbol', maxSymbol, 'maxRatio', maxRatio);
+	console.log('symbolRatioMap', symbolRatioMap);
+	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+
 	try {
 		const positionResult = await cAuthClientBN.swap.getPosition();
 		const { positions: holding, availableBalance } = positionResult;
@@ -1030,14 +1037,11 @@ const checkDealList = async (symbolResultMap) => {
 		restart('getPosition');
 	}
 
-	let symbol;
-	let mark_price;
-	// const absRatioMax = Math.max(Math.abs())
-	if (Math.abs(maxRatio) > Math.minRatio) {
-		dealPositionBySymbol(minSymbol, 'long', INIT_ASSETS);
-	} else {
-		dealPositionBySymbol(maxSymbol, 'short', INIT_ASSETS);
-	}
+	// if (Math.abs(maxRatio) > Math.minRatio) {
+	// 	dealPositionBySymbol(minSymbol, 'long', INIT_ASSETS);
+	// } else {
+	// 	dealPositionBySymbol(maxSymbol, 'short', INIT_ASSETS);
+	// }
 };
 
 const checkDeal = async (oldData, symbol) => {
