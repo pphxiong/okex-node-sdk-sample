@@ -950,20 +950,42 @@ const dealPositionBySymbol = async (symbol, direction, assets) => {
 	let mark_price;
 	let currentHolding;
 	if (globalHolding.length) {
-		[currentHolding] = globalHolding;
-		if (currentHolding.symbol !== symbol) {
+		// [currentHolding] = globalHolding;
+		const currentLongHolding = globalHolding.find(
+			(item) => item.positionSide.toUpperCase() === 'LONG'
+		);
+		const currentShortHolding = globalHolding.find(
+			(item) => item.positionSide.toUpperCase() === 'SHORT'
+		);
+		const currentDirectionHolding = globalHolding.find(
+			(item) =>
+				item.positionSide.toUpperCase() === direction.toUpperCase()
+		);
+		currentHolding = currentShortHolding || currentDirectionHolding;
+		if (
+			currentHolding.positionSide.toUpperCase() !==
+			direction.toUpperCase()
+		) {
 			let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
+			const {
+				positionAmt,
+				positionSide,
+				symbol: currentSymbol,
+			} = currentHolding;
 			const payload = {
-				positionAmt: currentHolding.positionAmt,
+				positionAmt,
 				position: closePositionAmt,
-				side: currentHolding.positionSide,
-				positionSide: currentHolding.positionSide,
-				symbol: currentHolding.symbol,
+				side: positionSide,
+				positionSide,
+				symbol: currentSymbol,
 			};
 			await closePosition(payload);
 		}
 	}
-	if (!globalHolding.length || currentHolding.symbol !== symbol) {
+	if (
+		!globalHolding.length ||
+		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase()
+	) {
 		try {
 			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
 				symbol
