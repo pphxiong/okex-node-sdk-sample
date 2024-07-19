@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 3;
+const INIT_ASSETS_RATIO = 8 / 20;
 
 const EXCEED_HOLDING_NUM = 4;
 const ATR_WIN_RATIO = 1.5;
@@ -75,11 +75,7 @@ const dealPositionBySymbol = async (symbol, direction, assets) => {
 		const currentShortHolding = globalHolding.find(
 			(item) => item.positionSide.toUpperCase() === 'SHORT'
 		);
-		const currentDirectionHolding = globalHolding.find(
-			(item) =>
-				item.positionSide.toUpperCase() === direction.toUpperCase()
-		);
-		currentHolding = currentShortHolding || currentDirectionHolding;
+		currentHolding = currentLongHolding || currentShortHolding;
 		if (
 			currentHolding.positionSide.toUpperCase() !==
 			direction.toUpperCase()
@@ -166,7 +162,7 @@ const checkDealList = async (symbolResultMap) => {
 			.map((item) => Number(item.isolatedWallet))
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
-			(Number(availableBalance) + Number(currentTotalAsset)) /
+			(Number(availableBalance) + Number(currentTotalAsset)) *
 			INIT_ASSETS_RATIO;
 		INIT_ASSETS = Math.min(
 			INIT_ASSETS,
@@ -634,7 +630,7 @@ async function checkByStep(data, symbol) {
 			// 	.map((item) => Number(item.unrealizedProfit))
 			// 	.reduce((pre, cur) => pre + cur, 0);
 			const COMPUTED_INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) /
+				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
 			INIT_ASSETS = Math.min(
 				INIT_ASSETS,
