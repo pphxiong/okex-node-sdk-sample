@@ -64,6 +64,126 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
+const dealPositionBySymbol = async (symbol, direction, assets) => {
+	let mark_price;
+	let currentHolding;
+	if (globalHolding.length) {
+		// [currentHolding] = globalHolding;
+		const currentLongHolding = globalHolding.find(
+			(item) => item.positionSide.toUpperCase() === 'LONG'
+		);
+		const currentShortHolding = globalHolding.find(
+			(item) => item.positionSide.toUpperCase() === 'SHORT'
+		);
+		const currentDirectionHolding = globalHolding.find(
+			(item) =>
+				item.positionSide.toUpperCase() === direction.toUpperCase()
+		);
+		currentHolding = currentShortHolding || currentDirectionHolding;
+		if (
+			currentHolding.positionSide.toUpperCase() !==
+			direction.toUpperCase()
+		) {
+			let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
+			const {
+				positionAmt,
+				positionSide,
+				symbol: currentSymbol,
+			} = currentHolding;
+			const payload = {
+				positionAmt,
+				position: closePositionAmt,
+				side: positionSide,
+				positionSide,
+				symbol: currentSymbol,
+			};
+			await closePosition(payload);
+		}
+	}
+	if (
+		!globalHolding.length ||
+		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase()
+	) {
+		try {
+			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
+				symbol
+			);
+			mark_price = Number(markPrice);
+		} catch (e) {
+			restart('getMarkPrice');
+		}
+		let openPositionAmt = Number(
+			((assets * LEVERAGE) / mark_price).toFixed(quantityFixedMap[symbol])
+		);
+		await openPosition({
+			position: openPositionAmt,
+			openSide: direction,
+			mark_price,
+			symbol,
+		});
+	}
+};
+
+const checkDealList = async (symbolResultMap) => {
+	const symbolRatioMap = {};
+	let maxRatio = -Infinity;
+	let minRatio = Infinity;
+	let maxSymbol;
+	let minSymbol;
+	Object.entries(symbolResultMap).forEach(([symbol, data]) => {
+		const { macdList } = data;
+		const open = macdList[macdList.length - 24].open;
+		const close = macdList[macdList.length - 1].close;
+		let ratio = ((Number(close) - Number(open)) * 100) / Number(open);
+		ratio = toFixedAndToNumber(ratio, 2);
+		symbolRatioMap[symbol] = ratio;
+		if (ratio > maxRatio) {
+			maxRatio = ratio;
+			maxSymbol = symbol;
+		}
+		if (ratio < minRatio) {
+			minRatio = ratio;
+			minSymbol = symbol;
+		}
+	});
+
+	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+	console.log('minSymbol', minSymbol, 'minRatio', minRatio);
+	console.log('maxSymbol', maxSymbol, 'maxRatio', maxRatio);
+	console.log('symbolRatioMap', symbolRatioMap);
+	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+
+	try {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { positions: holding, availableBalance } = positionResult;
+
+		globalHolding =
+			holding.filter(
+				(item) =>
+					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+			) || [];
+		const currentTotalAsset = globalHolding
+			.map((item) => Number(item.isolatedWallet))
+			.reduce((pre, cur) => pre + cur, 0);
+		const COMPUTED_INIT_ASSETS =
+			(Number(availableBalance) + Number(currentTotalAsset)) /
+			INIT_ASSETS_RATIO;
+		INIT_ASSETS = Math.min(
+			INIT_ASSETS,
+			COMPUTED_INIT_ASSETS,
+			Number(availableBalance)
+		);
+	} catch (e) {
+		restart('getPosition');
+	}
+
+	// if (Math.abs(maxRatio) > Math.minRatio) {
+	// 	dealPositionBySymbol(minSymbol, 'long', INIT_ASSETS);
+	// } else {
+	// 	dealPositionBySymbol(maxSymbol, 'short', INIT_ASSETS);
+	// }
+};
+
 const fnIsLastUpOrLow = (macdList, bollList) => {
 	let isUp = false;
 	let isLow = false;
@@ -944,126 +1064,6 @@ const fnThirdHoldingHandler = async (
 		};
 		await closePosition(payload);
 	}
-};
-
-const dealPositionBySymbol = async (symbol, direction, assets) => {
-	let mark_price;
-	let currentHolding;
-	if (globalHolding.length) {
-		// [currentHolding] = globalHolding;
-		const currentLongHolding = globalHolding.find(
-			(item) => item.positionSide.toUpperCase() === 'LONG'
-		);
-		const currentShortHolding = globalHolding.find(
-			(item) => item.positionSide.toUpperCase() === 'SHORT'
-		);
-		const currentDirectionHolding = globalHolding.find(
-			(item) =>
-				item.positionSide.toUpperCase() === direction.toUpperCase()
-		);
-		currentHolding = currentShortHolding || currentDirectionHolding;
-		if (
-			currentHolding.positionSide.toUpperCase() !==
-			direction.toUpperCase()
-		) {
-			let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
-			const {
-				positionAmt,
-				positionSide,
-				symbol: currentSymbol,
-			} = currentHolding;
-			const payload = {
-				positionAmt,
-				position: closePositionAmt,
-				side: positionSide,
-				positionSide,
-				symbol: currentSymbol,
-			};
-			await closePosition(payload);
-		}
-	}
-	if (
-		!globalHolding.length ||
-		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase()
-	) {
-		try {
-			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
-				symbol
-			);
-			mark_price = Number(markPrice);
-		} catch (e) {
-			restart('getMarkPrice');
-		}
-		let openPositionAmt = Number(
-			((assets * LEVERAGE) / mark_price).toFixed(quantityFixedMap[symbol])
-		);
-		await openPosition({
-			position: openPositionAmt,
-			openSide: direction,
-			mark_price,
-			symbol,
-		});
-	}
-};
-
-const checkDealList = async (symbolResultMap) => {
-	const symbolRatioMap = {};
-	let maxRatio = -Infinity;
-	let minRatio = Infinity;
-	let maxSymbol;
-	let minSymbol;
-	Object.entries(symbolResultMap).forEach(([symbol, data]) => {
-		const { macdList } = data;
-		const open = macdList[macdList.length - 24].open;
-		const close = macdList[macdList.length - 1].close;
-		let ratio = ((Number(close) - Number(open)) * 100) / Number(open);
-		ratio = toFixedAndToNumber(ratio, 2);
-		symbolRatioMap[symbol] = ratio;
-		if (ratio > maxRatio) {
-			maxRatio = ratio;
-			maxSymbol = symbol;
-		}
-		if (ratio < minRatio) {
-			minRatio = ratio;
-			minSymbol = symbol;
-		}
-	});
-
-	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-	console.log('minSymbol', minSymbol, 'minRatio', minRatio);
-	console.log('maxSymbol', maxSymbol, 'maxRatio', maxRatio);
-	console.log('symbolRatioMap', symbolRatioMap);
-	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-
-	try {
-		const positionResult = await cAuthClientBN.swap.getPosition();
-		const { positions: holding, availableBalance } = positionResult;
-
-		globalHolding =
-			holding.filter(
-				(item) =>
-					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-			) || [];
-		const currentTotalAsset = globalHolding
-			.map((item) => Number(item.isolatedWallet))
-			.reduce((pre, cur) => pre + cur, 0);
-		const COMPUTED_INIT_ASSETS =
-			(Number(availableBalance) + Number(currentTotalAsset)) /
-			INIT_ASSETS_RATIO;
-		INIT_ASSETS = Math.min(
-			INIT_ASSETS,
-			COMPUTED_INIT_ASSETS,
-			Number(availableBalance)
-		);
-	} catch (e) {
-		restart('getPosition');
-	}
-
-	// if (Math.abs(maxRatio) > Math.minRatio) {
-	// 	dealPositionBySymbol(minSymbol, 'long', INIT_ASSETS);
-	// } else {
-	// 	dealPositionBySymbol(maxSymbol, 'short', INIT_ASSETS);
-	// }
 };
 
 const checkDeal = async (oldData, symbol) => {
