@@ -64,7 +64,7 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
-const dealPositionBySymbol = async (symbol, direction, assets) => {
+const dealPositionBySymbol = async (symbol, direction, assets, ratioSpace) => {
 	let mark_price;
 	let currentHolding;
 	if (globalHolding.length) {
@@ -111,12 +111,74 @@ const dealPositionBySymbol = async (symbol, direction, assets) => {
 		let openPositionAmt = Number(
 			((assets * LEVERAGE) / mark_price).toFixed(quantityFixedMap[symbol])
 		);
-		await openPosition({
+		const params = {
 			position: openPositionAmt,
 			openSide: direction,
 			mark_price,
 			symbol,
-		});
+		};
+		await openPosition(params);
+		setTimeout(async () => {
+			await fnCloseLimitOrderByRatio(params, ratioSpace / 2);
+		}, 1000 * 3);
+	}
+};
+
+const fnCloseLimitOrderByRatio = async (params, ratioSpace) => {
+	const { openSide = 'long', position, mark_price, symbol } = params;
+	const isLong = openSide.toUpperCase() == 'LONG';
+	const price = isLong
+		? mark_price * (1 + ratioSpace / 100)
+		: mark_price * (1 - ratioSpace / 100);
+	const side = isLong ? 'SELL' : 'BUY';
+	const positionSide = isLong ? 'LONG' : 'SHORT';
+	const payload = {
+		price,
+		symbol,
+		side,
+		positionSide,
+		position: Number(position) / 1,
+	};
+	await closeLimitPosition(payload);
+};
+
+const fnGetPositionAndDeal = async (currentResult, lastResult) => {
+	const { maxSymbol, maxRatio, minSymbol, minRatio } = currentResult;
+	const { maxRatio: maxRatioLast, minRatio: minRatioLast } = lastResult;
+	const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
+	const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
+	if (currentCondition !== lastCondition) {
+		try {
+			const positionResult = await cAuthClientBN.swap.getPosition();
+			const { positions: holding, availableBalance } = positionResult;
+
+			globalHolding =
+				holding.filter(
+					(item) =>
+						item.positionAmt &&
+						Math.abs(Number(item.positionAmt)) > 0
+				) || [];
+			const currentTotalAsset = globalHolding
+				.map((item) => Number(item.isolatedWallet))
+				.reduce((pre, cur) => pre + cur, 0);
+			const COMPUTED_INIT_ASSETS =
+				(Number(availableBalance) + Number(currentTotalAsset)) *
+				INIT_ASSETS_RATIO;
+			INIT_ASSETS = Math.min(
+				INIT_ASSETS,
+				COMPUTED_INIT_ASSETS,
+				Number(availableBalance)
+			);
+		} catch (e) {
+			restart('getPosition');
+		}
+
+		const ratioSpace = Math.abs(maxRatio - minRatio);
+		// if (Math.abs(maxRatio) > Math.abs(minRatio)) {
+		// 	dealPositionBySymbol(minSymbol, 'long', INIT_ASSETS, ratioSpace);
+		// } else {
+		// 	dealPositionBySymbol(maxSymbol, 'short', INIT_ASSETS, ratioSpace);
+		// }
 	}
 };
 
@@ -149,35 +211,13 @@ const checkDealList = async (symbolResultMap) => {
 	console.log('symbolRatioMap', symbolRatioMap);
 	console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
-	try {
-		const positionResult = await cAuthClientBN.swap.getPosition();
-		const { positions: holding, availableBalance } = positionResult;
-
-		globalHolding =
-			holding.filter(
-				(item) =>
-					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-			) || [];
-		const currentTotalAsset = globalHolding
-			.map((item) => Number(item.isolatedWallet))
-			.reduce((pre, cur) => pre + cur, 0);
-		const COMPUTED_INIT_ASSETS =
-			(Number(availableBalance) + Number(currentTotalAsset)) *
-			INIT_ASSETS_RATIO;
-		INIT_ASSETS = Math.min(
-			INIT_ASSETS,
-			COMPUTED_INIT_ASSETS,
-			Number(availableBalance)
-		);
-	} catch (e) {
-		restart('getPosition');
-	}
-
-	// if (Math.abs(maxRatio) > Math.minRatio) {
-	// 	dealPositionBySymbol(minSymbol, 'long', INIT_ASSETS);
-	// } else {
-	// 	dealPositionBySymbol(maxSymbol, 'short', INIT_ASSETS);
-	// }
+	const result = {
+		maxSymbol,
+		maxRatio,
+		minSymbol,
+		minRatio,
+	};
+	return result;
 };
 
 const fnIsLastUpOrLow = (macdList, bollList) => {
@@ -1713,7 +1753,19 @@ const startInterval = async () => {
 			[DOGE_SYMBOL]: doge_result,
 			[TRX_SYMBOL]: trx_result,
 		};
-		await checkDealList(symbolResultMap);
+		const symbolLastResultMap = {
+			[BTC_SYMBOL]: btc_result.slice(0, -1),
+			[ETH_SYMBOL]: eth_result,
+			[EOS_SYMBOL]: eos_result,
+			[XRP_SYMBOL]: xrp_result,
+			[DOGE_SYMBOL]: doge_result,
+			[TRX_SYMBOL]: trx_result,
+		};
+		// await checkDealList(symbolResultMap);
+		await fnGetPositionAndDeal(
+			checkDealList(symbolResultMap),
+			checkDealList(symbolLastResultMap)
+		);
 
 		// await checkDeal(btc_result, BTC_SYMBOL);
 		// await checkDeal(eth_result, ETH_SYMBOL);
