@@ -56,7 +56,7 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
-const DEFAULT_INTERVAL = '1h';
+const DEFAULT_INTERVAL = '30m';
 const INIT_POSITION = 100;
 let rsi1 = 8;
 let rsi2 = 12;
@@ -128,7 +128,7 @@ const checkDealList = async (symbolResultMap) => {
 	let minSymbol;
 	Object.entries(symbolResultMap).forEach(([symbol, data]) => {
 		const { macdList } = data;
-		const open = macdList[macdList.length - 24].open;
+		const open = macdList[macdList.length - 48].open;
 		const close = macdList[macdList.length - 1].close;
 		let ratio = ((Number(close) - Number(open)) * 100) / Number(open);
 		ratio = toFixedAndToNumber(ratio, 2);
