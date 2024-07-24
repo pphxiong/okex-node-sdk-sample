@@ -65,6 +65,24 @@ let rsi3 = 24;
 let maxWinRatio = 0;
 
 const dealPositionBySymbol = async (symbol, direction, assets, ratioSpace) => {
+  try {
+    const positionResult = await cAuthClientBN.swap.getPosition();
+    const { positions: holding, availableBalance } = positionResult;
+    globalHolding =
+      holding.filter(
+        (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+      ) || [];
+    const currentTotalAsset = globalHolding
+      .map((item) => Number(item.isolatedWallet))
+      .reduce((pre, cur) => pre + cur, 0);
+    const COMPUTED_INIT_ASSETS =
+      (Number(availableBalance) + Number(currentTotalAsset)) *
+      INIT_ASSETS_RATIO;
+    INIT_ASSETS = Math.min(INIT_ASSETS, COMPUTED_INIT_ASSETS);
+  } catch (e) {
+    restart("getPosition");
+  }
+
   let mark_price;
   let currentHolding;
   let isHasClose = false;
@@ -149,25 +167,6 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   console.log("lastCondition", lastCondition);
   console.log("********************************************");
   if (currentCondition !== lastCondition) {
-    try {
-      const positionResult = await cAuthClientBN.swap.getPosition();
-      const { positions: holding, availableBalance } = positionResult;
-
-      globalHolding =
-        holding.filter(
-          (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-        ) || [];
-      const currentTotalAsset = globalHolding
-        .map((item) => Number(item.isolatedWallet))
-        .reduce((pre, cur) => pre + cur, 0);
-      const COMPUTED_INIT_ASSETS =
-        (Number(availableBalance) + Number(currentTotalAsset)) *
-        INIT_ASSETS_RATIO;
-      INIT_ASSETS = Math.min(INIT_ASSETS, COMPUTED_INIT_ASSETS);
-    } catch (e) {
-      restart("getPosition");
-    }
-
     const ratioSpace = Math.abs(maxRatio - minRatio);
     if (Math.abs(maxRatio) > Math.abs(minRatio)) {
       dealPositionBySymbol(minSymbol, "long", INIT_ASSETS, ratioSpace);
