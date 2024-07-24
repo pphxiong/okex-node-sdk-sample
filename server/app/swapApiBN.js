@@ -1673,6 +1673,14 @@ const fnGetSymbolResult = async (symbol, payload) => {
   return result;
 };
 
+const fnGetLastResult = (data) => {
+  const obj = {};
+  Object.entries(data).forEach(([key, value]) => {
+    obj[key] = value.slice(-1);
+  });
+  return obj;
+};
+
 const startInterval = async () => {
   RESTART_TIME += 1;
   if (RESTART_TIME >= 1 * 14) {
@@ -1704,12 +1712,12 @@ const startInterval = async () => {
       [TRX_SYMBOL]: trx_result,
     };
     const symbolLastResultMap = {
-      [BTC_SYMBOL]: btc_result.slice(0, -1),
-      [ETH_SYMBOL]: eth_result.slice(0, -1),
-      [EOS_SYMBOL]: eos_result.slice(0, -1),
-      [XRP_SYMBOL]: xrp_result.slice(0, -1),
-      [DOGE_SYMBOL]: doge_result.slice(0, -1),
-      [TRX_SYMBOL]: trx_result.slice(0, -1),
+      [BTC_SYMBOL]: fnGetLastResult(btc_result),
+      [ETH_SYMBOL]: fnGetLastResult(eth_result),
+      [EOS_SYMBOL]: fnGetLastResult(eos_result),
+      [XRP_SYMBOL]: fnGetLastResult(xrp_result),
+      [DOGE_SYMBOL]: fnGetLastResult(doge_result),
+      [TRX_SYMBOL]: fnGetLastResult(trx_result),
     };
     // await checkDealList(symbolResultMap);
     await fnGetPositionAndDeal(
