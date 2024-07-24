@@ -186,6 +186,7 @@ const checkDealList = async (symbolResultMap) => {
   let currentTime;
   Object.entries(symbolResultMap).forEach(([symbol, data]) => {
     const { macdList } = data;
+    console.log(3, symbol, macdList.length);
     const open = macdList[macdList.length - 48].open;
     const close = macdList[macdList.length - 1].close;
     currentTime = macdList[macdList.length - 1].time;
@@ -1676,7 +1677,6 @@ const fnGetSymbolResult = async (symbol, payload) => {
 const fnGetLastResult = (data) => {
   const obj = {};
   Object.entries(data).forEach(([key, value]) => {
-    console.log(22, key, value);
     obj[key] = value.slice(-1);
   });
   return obj;
