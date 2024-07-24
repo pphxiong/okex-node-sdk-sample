@@ -1676,6 +1676,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 const fnGetLastResult = (data) => {
   const obj = {};
   Object.entries(data).forEach(([key, value]) => {
+    console.log(22, key, value);
     obj[key] = value.slice(-1);
   });
   return obj;
@@ -1719,7 +1720,6 @@ const startInterval = async () => {
       [DOGE_SYMBOL]: fnGetLastResult(doge_result),
       [TRX_SYMBOL]: fnGetLastResult(trx_result),
     };
-    console.log(2, symbolLastResultMap);
     // await checkDealList(symbolResultMap);
     await fnGetPositionAndDeal(
       checkDealList(symbolResultMap),
