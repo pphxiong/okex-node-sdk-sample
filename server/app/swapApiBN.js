@@ -144,6 +144,10 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   const { maxRatio: maxRatioLast, minRatio: minRatioLast } = lastResult;
   const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
   const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
+  console.log("********************************************");
+  console.log("currentCondition", currentCondition);
+  console.log("lastCondition", lastCondition);
+  console.log("********************************************");
   if (currentCondition !== lastCondition) {
     try {
       const positionResult = await cAuthClientBN.swap.getPosition();
@@ -202,12 +206,12 @@ const checkDealList = async (symbolResultMap) => {
     }
   });
 
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("###############################################");
   console.log("minSymbol", minSymbol, "minRatio", minRatio);
   console.log("maxSymbol", maxSymbol, "maxRatio", maxRatio);
   console.log("symbolRatioMap", symbolRatioMap);
   console.log("currentTime", currentTime);
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("###############################################");
 
   const result = {
     maxSymbol,
