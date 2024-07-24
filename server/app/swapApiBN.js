@@ -193,7 +193,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   }
 };
 
-const checkDealList = async (symbolResultMap) => {
+const checkDealList = (symbolResultMap) => {
   const symbolRatioMap = {};
   let maxRatio = -Infinity;
   let minRatio = Infinity;
