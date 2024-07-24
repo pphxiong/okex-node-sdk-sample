@@ -49,7 +49,7 @@ let ATR_PRICE_OBJ = {
 
 const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
 const WIN_MAX = -LOSS_MAX;
-let INIT_ASSETS = 1200;
+let INIT_ASSETS = 12000;
 
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
@@ -145,18 +145,6 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
   const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
   console.log("********************************************");
-  console.log(
-    "maxRatio",
-    maxRatio,
-    "minRatio",
-    minRatio,
-    lastResult,
-    "maxRatioLast",
-    maxRatioLast,
-    "minRatioLast",
-    minRatioLast,
-    Math.abs(maxRatioLast) > Math.abs(minRatioLast)
-  );
   console.log("currentCondition", currentCondition);
   console.log("lastCondition", lastCondition);
   console.log("********************************************");
@@ -175,11 +163,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
       const COMPUTED_INIT_ASSETS =
         (Number(availableBalance) + Number(currentTotalAsset)) *
         INIT_ASSETS_RATIO;
-      INIT_ASSETS = Math.min(
-        INIT_ASSETS,
-        COMPUTED_INIT_ASSETS,
-        Number(availableBalance)
-      );
+      INIT_ASSETS = Math.min(INIT_ASSETS, COMPUTED_INIT_ASSETS);
     } catch (e) {
       restart("getPosition");
     }
