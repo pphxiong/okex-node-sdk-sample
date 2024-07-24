@@ -145,6 +145,13 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
   const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
   console.log("********************************************");
+  console.log(
+    "maxRatioLast",
+    maxRatioLast,
+    "minRatioLast",
+    minRatioLast,
+    Math.abs(maxRatioLast) > Math.abs(minRatioLast)
+  );
   console.log("currentCondition", currentCondition);
   console.log("lastCondition", lastCondition);
   console.log("********************************************");
