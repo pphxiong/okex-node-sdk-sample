@@ -1719,6 +1719,7 @@ const startInterval = async () => {
       [DOGE_SYMBOL]: fnGetLastResult(doge_result),
       [TRX_SYMBOL]: fnGetLastResult(trx_result),
     };
+    console.log(2, symbolLastResultMap);
     // await checkDealList(symbolResultMap);
     await fnGetPositionAndDeal(
       checkDealList(symbolResultMap),
