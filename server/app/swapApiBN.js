@@ -172,7 +172,14 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 			(Number(availableBalance) + Number(currentTotalAsset)) *
 			INIT_ASSETS_RATIO;
 		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
-		console.log('currentTotalAsset', currentTotalAsset, availableBalance);
+		console.log(
+			'currentTotalAsset',
+			currentTotalAsset,
+			'availableBalance',
+			availableBalance,
+			'INIT_ASSETS',
+			INIT_ASSETS
+		);
 	} catch (e) {
 		restart('getPosition');
 	}
@@ -180,7 +187,6 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	console.log('********************************************');
 	console.log('currentCondition', currentCondition);
 	console.log('lastCondition', lastCondition);
-	console.log('INIT_ASSETS', INIT_ASSETS);
 	console.log('********************************************');
 
 	if (globalHolding.length) {
