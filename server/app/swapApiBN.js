@@ -64,14 +64,17 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
-const dealPositionBySymbol = async (
-	symbol,
-	direction,
-	ratioSpace,
-	mark_price
-) => {
+const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
+	let mark_price;
 	let currentHolding;
 	let isHasClose = false;
+
+	try {
+		const { markPrice } = await cAuthClientBN.common.getMarkPrice(symbol);
+		mark_price = Number(markPrice);
+	} catch (e) {
+		restart('getMarkPrice');
+	}
 
 	if (globalHolding.length) {
 		// [currentHolding] = globalHolding;
@@ -175,15 +178,17 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		restart('getPosition');
 	}
 
-	try {
-		const { markPrice } = await cAuthClientBN.common.getMarkPrice(symbol);
-		mark_price = Number(markPrice);
-	} catch (e) {
-		restart('getMarkPrice');
-	}
-
 	if (globalHolding.length) {
 		const [currentHolding] = globalHolding;
+		const { symbol } = currentHolding;
+		try {
+			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
+				symbol
+			);
+			mark_price = Number(markPrice);
+		} catch (e) {
+			restart('getMarkPrice');
+		}
 		const isLoss = fnGetIsLoss(currentHolding, mark_price);
 		if (isLoss) {
 			let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
@@ -200,6 +205,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 				symbol: currentSymbol,
 			};
 			await closePosition(payload);
+			await waitTime(1000 * 2);
 			globalHolding = [];
 		}
 	}
@@ -207,9 +213,9 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	if (currentCondition !== lastCondition) {
 		const ratioSpace = Math.abs(maxRatio - minRatio);
 		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-			dealPositionBySymbol(minSymbol, 'long', ratioSpace, mark_price);
+			dealPositionBySymbol(minSymbol, 'long', ratioSpace);
 		} else {
-			dealPositionBySymbol(maxSymbol, 'short', ratioSpace, mark_price);
+			dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
 		}
 	}
 };
