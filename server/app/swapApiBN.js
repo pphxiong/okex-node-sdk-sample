@@ -64,32 +64,15 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
-const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
-	try {
-		const positionResult = await cAuthClientBN.swap.getPosition();
-		const { positions: holding, availableBalance } = positionResult;
-		globalHolding =
-			holding.filter(
-				(item) =>
-					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-			) || [];
-		const currentTotalAsset = globalHolding
-			.map(
-				(item) =>
-					Number(item.initialMargin) - Number(item.unrealizedProfit)
-			)
-			.reduce((pre, cur) => pre + cur, 0);
-		const COMPUTED_INIT_ASSETS =
-			(Number(availableBalance) + Number(currentTotalAsset)) *
-			INIT_ASSETS_RATIO;
-		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
-	} catch (e) {
-		restart('getPosition');
-	}
-
-	let mark_price;
+const dealPositionBySymbol = async (
+	symbol,
+	direction,
+	ratioSpace,
+	mark_price
+) => {
 	let currentHolding;
 	let isHasClose = false;
+
 	if (globalHolding.length) {
 		// [currentHolding] = globalHolding;
 		const currentLongHolding = globalHolding.find(
@@ -124,14 +107,6 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 		!globalHolding.length ||
 		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase()
 	) {
-		try {
-			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
-				symbol
-			);
-			mark_price = Number(markPrice);
-		} catch (e) {
-			restart('getMarkPrice');
-		}
 		let openPositionAmt = Number(
 			((assets * LEVERAGE) / mark_price).toFixed(quantityFixedMap[symbol])
 		);
@@ -143,6 +118,7 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 		};
 		if (isHasClose) await waitTime(1000 * 2);
 		await openPosition(params);
+		await writeDataByRatioSpace(params, ratioSpace / 2);
 		await waitTime(1000 * 3);
 		await fnCloseLimitOrderByRatio(params, ratioSpace / 2);
 	}
@@ -176,12 +152,64 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	console.log('lastCondition', lastCondition);
 	console.log('********************************************');
 
+	let mark_price;
+	try {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { positions: holding, availableBalance } = positionResult;
+		globalHolding =
+			holding.filter(
+				(item) =>
+					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+			) || [];
+		const currentTotalAsset = globalHolding
+			.map(
+				(item) =>
+					Number(item.initialMargin) - Number(item.unrealizedProfit)
+			)
+			.reduce((pre, cur) => pre + cur, 0);
+		const COMPUTED_INIT_ASSETS =
+			(Number(availableBalance) + Number(currentTotalAsset)) *
+			INIT_ASSETS_RATIO;
+		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
+	} catch (e) {
+		restart('getPosition');
+	}
+
+	try {
+		const { markPrice } = await cAuthClientBN.common.getMarkPrice(symbol);
+		mark_price = Number(markPrice);
+	} catch (e) {
+		restart('getMarkPrice');
+	}
+
+	if (globalHolding.length) {
+		const [currentHolding] = globalHolding;
+		const isLoss = fnGetIsLoss(currentHolding, mark_price);
+		if (isLoss) {
+			let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
+			const {
+				positionAmt,
+				positionSide,
+				symbol: currentSymbol,
+			} = currentHolding;
+			const payload = {
+				positionAmt,
+				position: closePositionAmt,
+				side: positionSide,
+				positionSide,
+				symbol: currentSymbol,
+			};
+			await closePosition(payload);
+			globalHolding = [];
+		}
+	}
+
 	if (currentCondition !== lastCondition) {
 		const ratioSpace = Math.abs(maxRatio - minRatio);
 		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-			dealPositionBySymbol(minSymbol, 'long', ratioSpace);
+			dealPositionBySymbol(minSymbol, 'long', ratioSpace, mark_price);
 		} else {
-			dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
+			dealPositionBySymbol(maxSymbol, 'short', ratioSpace, mark_price);
 		}
 	}
 };
@@ -639,7 +667,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 		? Number(mark_price) < lossPrice
 		: Number(mark_price) > lossPrice;
 	// console.log(key, lossPrice, mark_price, isLoss, Number(ATR_PRICE_OBJ[key]));
-	return Number(ATR_PRICE_OBJ[key]) && isLoss && false;
+	return Number(ATR_PRICE_OBJ[key]) && isLoss;
 };
 
 async function checkByStep(data, symbol) {
@@ -1808,6 +1836,32 @@ const readData = async () => {
 	};
 
 	console.log('read::MODE', MODE, moment().format('YYYY-MM-DD HH:mm:ss'));
+};
+
+const writeDataByRatioSpace = async (params, ratioSpace) => {
+	const { mark_price, symbol } = params;
+	const ATR = (mark_price * ratioSpace) / 100;
+
+	let key = symbol + '_ATR';
+	//将修改后的配置写入文件前需要先转成json字符串格式
+	let dataConfig = Object.assign(ATR_PRICE_OBJ, {
+		[key]: String(ATR),
+	});
+	let jsonStr = JSON.stringify(dataConfig);
+
+	const result = await new Promise((resolve) => {
+		//将修改后的内容写入文件
+		fs.writeFile('./app/config.json', jsonStr, function (err) {
+			if (err) {
+				console.error(err);
+			} else {
+				console.log('----------修改成功-------------');
+				resolve(true);
+			}
+		});
+	});
+
+	return result;
 };
 
 const writeData = async (params, atrList) => {
