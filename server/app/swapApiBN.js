@@ -111,7 +111,9 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase()
 	) {
 		let openPositionAmt = Number(
-			((assets * LEVERAGE) / mark_price).toFixed(quantityFixedMap[symbol])
+			((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(
+				quantityFixedMap[symbol]
+			)
 		);
 		const params = {
 			position: openPositionAmt,
