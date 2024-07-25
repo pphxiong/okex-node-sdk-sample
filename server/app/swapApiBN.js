@@ -188,13 +188,12 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 			(Number(availableBalance) + Number(currentTotalAsset)) *
 			INIT_ASSETS_RATIO;
 		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
+
+		console.log(22, globalHolding);
+		console.log(availableBalance, currentTotalAsset, INIT_ASSETS);
 	} catch (e) {
 		restart('getPosition');
 	}
-
-	console.log(22, globalHolding);
-	console.log(availableBalance, currentTotalAsset, INIT_ASSETS);
-	return;
 
 	// if (currentCondition !== lastCondition) {
 	// 	const ratioSpace = Math.abs(maxRatio - minRatio);
