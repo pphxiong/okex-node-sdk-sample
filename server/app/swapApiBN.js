@@ -152,10 +152,6 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	const { maxRatio: maxRatioLast, minRatio: minRatioLast } = lastResult;
 	const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
 	const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
-	console.log('********************************************');
-	console.log('currentCondition', currentCondition);
-	console.log('lastCondition', lastCondition);
-	console.log('********************************************');
 
 	let mark_price;
 	try {
@@ -179,6 +175,12 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	} catch (e) {
 		restart('getPosition');
 	}
+
+	console.log('********************************************');
+	console.log('currentCondition', currentCondition);
+	console.log('lastCondition', lastCondition);
+	console.log('INIT_ASSETS', INIT_ASSETS);
+	console.log('********************************************');
 
 	if (globalHolding.length) {
 		const [currentHolding] = globalHolding;
