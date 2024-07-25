@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 16 / 20;
+const INIT_ASSETS_RATIO = 12 / 20;
 
 const EXCEED_HOLDING_NUM = 4;
 const ATR_WIN_RATIO = 1.5;
@@ -76,7 +76,7 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 		const currentTotalAsset = globalHolding
 			.map(
 				(item) =>
-					Number(item.initialMargin) + Number(item.unrealizedProfit)
+					Number(item.initialMargin) - Number(item.unrealizedProfit)
 			)
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
@@ -176,39 +176,14 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	console.log('lastCondition', lastCondition);
 	console.log('********************************************');
 
-	try {
-		const positionResult = await cAuthClientBN.swap.getPosition();
-		const { positions: holding, availableBalance } = positionResult;
-		globalHolding =
-			holding.filter(
-				(item) =>
-					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-			) || [];
-		const currentTotalAsset = globalHolding
-			.map(
-				(item) =>
-					Number(item.initialMargin) + Number(item.unrealizedProfit)
-			)
-			.reduce((pre, cur) => pre + cur, 0);
-		const COMPUTED_INIT_ASSETS =
-			(Number(availableBalance) + Number(currentTotalAsset)) *
-			INIT_ASSETS_RATIO;
-		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
-
-		console.log(22, globalHolding);
-		console.log(availableBalance, currentTotalAsset, INIT_ASSETS);
-	} catch (e) {
-		restart('getPosition');
+	if (currentCondition !== lastCondition) {
+		const ratioSpace = Math.abs(maxRatio - minRatio);
+		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
+			dealPositionBySymbol(minSymbol, 'long', ratioSpace);
+		} else {
+			dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
+		}
 	}
-
-	// if (currentCondition !== lastCondition) {
-	// 	const ratioSpace = Math.abs(maxRatio - minRatio);
-	// 	if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-	// 		dealPositionBySymbol(minSymbol, 'long', ratioSpace);
-	// 	} else {
-	// 		dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
-	// 	}
-	// }
 };
 
 const checkDealList = (symbolResultMap) => {
