@@ -210,14 +210,14 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		}
 	}
 
-	if (currentCondition !== lastCondition) {
-		const ratioSpace = Math.abs(maxRatio - minRatio);
-		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-			dealPositionBySymbol(minSymbol, 'long', ratioSpace);
-		} else {
-			dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
-		}
+	// if (currentCondition !== lastCondition) {
+	const ratioSpace = Math.abs(maxRatio - minRatio);
+	if (Math.abs(maxRatio) > Math.abs(minRatio)) {
+		dealPositionBySymbol(minSymbol, 'long', ratioSpace);
+	} else {
+		dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
 	}
+	// }
 };
 
 const checkDealList = (symbolResultMap) => {
