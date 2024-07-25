@@ -172,6 +172,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 			(Number(availableBalance) + Number(currentTotalAsset)) *
 			INIT_ASSETS_RATIO;
 		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
+		console.log('currentTotalAsset', currentTotalAsset, availableBalance);
 	} catch (e) {
 		restart('getPosition');
 	}
