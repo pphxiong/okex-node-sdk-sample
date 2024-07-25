@@ -74,7 +74,10 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 			) || [];
 		const currentTotalAsset = globalHolding
-			.map((item) => Number(item.isolatedWallet))
+			.map(
+				(item) =>
+					Number(item.initialMargin) + Number(item.unrealizedProfit)
+			)
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
 			(Number(availableBalance) + Number(currentTotalAsset)) *
@@ -182,7 +185,10 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 			) || [];
 		const currentTotalAsset = globalHolding
-			.map((item) => Number(item.isolatedWallet))
+			.map(
+				(item) =>
+					Number(item.initialMargin) + Number(item.unrealizedProfit)
+			)
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
 			(Number(availableBalance) + Number(currentTotalAsset)) *
