@@ -175,6 +175,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	console.log('currentCondition', currentCondition);
 	console.log('lastCondition', lastCondition);
 	console.log('********************************************');
+	dealPositionBySymbol(minSymbol, 'long', ratioSpace);
 	if (currentCondition !== lastCondition) {
 		const ratioSpace = Math.abs(maxRatio - minRatio);
 		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
