@@ -166,7 +166,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 			.map(
 				(item) =>
 					Number(item.initialMargin) -
-					Number(item.unrealizedProfit) * 1.2
+					(Number(item.unrealizedProfit) * 2) / INIT_ASSETS_RATIO
 			)
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
