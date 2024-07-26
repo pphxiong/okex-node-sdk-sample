@@ -242,6 +242,7 @@ const checkDealList = (symbolResultMap) => {
 	let maxSymbol;
 	let minSymbol;
 	let currentTime;
+	const symbolRatioList = [];
 	Object.entries(symbolResultMap).forEach(([symbol, data]) => {
 		const { macdList } = data;
 		const open = macdList[macdList.length - 48].open;
@@ -249,6 +250,7 @@ const checkDealList = (symbolResultMap) => {
 		currentTime = macdList[macdList.length - 1].time;
 		let ratio = ((Number(close) - Number(open)) * 100) / Number(open);
 		ratio = toFixedAndToNumber(ratio, 2);
+		symbolRatioList.push({ symbol, ratio });
 		symbolRatioMap[symbol] = ratio;
 		if (ratio > maxRatio) {
 			maxRatio = ratio;
@@ -259,11 +261,13 @@ const checkDealList = (symbolResultMap) => {
 			minSymbol = symbol;
 		}
 	});
+	symbolRatioList.sort((a, b) => a.ratio - b.ratio);
 
 	console.log('###############################################');
 	console.log('minSymbol', minSymbol, 'minRatio', minRatio);
 	console.log('maxSymbol', maxSymbol, 'maxRatio', maxRatio);
 	console.log('symbolRatioMap', symbolRatioMap);
+	console.log('symbolRatioList', symbolRatioList);
 	console.log('currentTime', currentTime);
 	console.log('###############################################');
 
