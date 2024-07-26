@@ -165,7 +165,8 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		const currentTotalAsset = globalHolding
 			.map(
 				(item) =>
-					Number(item.initialMargin) - Number(item.unrealizedProfit)
+					Number(item.initialMargin) -
+					Number(item.unrealizedProfit) * 1.2
 			)
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
@@ -184,7 +185,9 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		restart('getPosition');
 	}
 
+	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 	console.log('********************************************');
+	console.log('currentTime', currentTime);
 	console.log('currentCondition', currentCondition);
 	console.log('lastCondition', lastCondition);
 	console.log('********************************************');
