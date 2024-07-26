@@ -123,9 +123,9 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 		};
 		if (isHasClose) await waitTime(1000 * 2);
 		await openPosition(params);
-		await writeDataByRatioSpace(params, ratioSpace / 2);
+		await writeDataByRatioSpace(params, ratioSpace);
 		await waitTime(1000 * 3);
-		await fnCloseLimitOrderByRatio(params, ratioSpace / 2);
+		await fnCloseLimitOrderByRatio(params, ratioSpace);
 	}
 };
 
@@ -148,7 +148,8 @@ const fnCloseLimitOrderByRatio = async (params, ratioSpace) => {
 };
 
 const fnGetPositionAndDeal = async (currentResult, lastResult) => {
-	const { maxSymbol, maxRatio, minSymbol, minRatio } = currentResult;
+	const { maxSymbol, maxRatio, minSymbol, minRatio, symbolRatioList } =
+		currentResult;
 	const { maxRatio: maxRatioLast, minRatio: minRatioLast } = lastResult;
 	const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
 	const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
@@ -225,8 +226,11 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	}
 
 	if (currentCondition !== lastCondition) {
-		// const ratioSpace = Math.abs(maxRatio - minRatio);
-		const ratioSpace = Math.max(Math.abs(maxRatio), Math.abs(minRatio));
+		// let ratioSpace = Math.max(Math.abs(maxRatio), Math.abs(minRatio));
+		// const [{ symbol: queueSymbo, ratio: queueRatio }] =
+		// 	symbolRatioList.splice(3, 1);
+		// ratioSpace = Math.abs(ratioSpace - queueRatio) / 2;
+		const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
 		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
 			dealPositionBySymbol(minSymbol, 'long', ratioSpace);
 		} else {
@@ -266,8 +270,9 @@ const checkDealList = (symbolResultMap) => {
 	console.log('###############################################');
 	console.log('minSymbol', minSymbol, 'minRatio', minRatio);
 	console.log('maxSymbol', maxSymbol, 'maxRatio', maxRatio);
-	console.log('symbolRatioMap', symbolRatioMap);
-	console.log('symbolRatioList', symbolRatioList);
+	// console.log('symbolRatioMap:::', symbolRatioMap);
+	console.log('symbolRatioList:::');
+	console.log(symbolRatioList);
 	console.log('currentTime', currentTime);
 	console.log('###############################################');
 
@@ -276,6 +281,7 @@ const checkDealList = (symbolResultMap) => {
 		maxRatio,
 		minSymbol,
 		minRatio,
+		symbolRatioList,
 	};
 	return result;
 };
