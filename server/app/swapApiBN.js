@@ -268,7 +268,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	// 	symbolRatioList.splice(3, 1);
 	// ratioSpace = Math.abs(ratioSpace - queueRatio) / 2;
 	// const ratioSpace = Math.abs(Math.abs(maxRatio) - Math.abs(minRatio)) * 2;
-	const ratioSpace = Math.abs(Math.abs(maxRatio) - Math.abs(minRatio)) / 2;
+	const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
 	if (Math.abs(maxRatio) > Math.abs(minRatio)) {
 		dealPositionBySymbol(
 			minSymbol,
