@@ -64,7 +64,12 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
-const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
+const dealPositionBySymbol = async (
+	symbol,
+	direction,
+	ratioSpace,
+	isTradeContinouse
+) => {
 	let mark_price;
 	let currentHolding;
 	let isHasClose = false;
@@ -106,26 +111,29 @@ const dealPositionBySymbol = async (symbol, direction, ratioSpace) => {
 			isHasClose = true;
 		}
 	}
-	if (
-		!globalHolding.length ||
-		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase()
-	) {
-		let openPositionAmt = Number(
-			((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(
-				quantityFixedMap[symbol]
-			)
-		);
-		const params = {
-			position: openPositionAmt,
-			openSide: direction,
-			mark_price,
-			symbol,
-		};
-		if (isHasClose) await waitTime(1000 * 2);
-		await openPosition(params);
-		await writeDataByRatioSpace(params, ratioSpace);
-		await waitTime(1000 * 3);
-		await fnCloseLimitOrderByRatio(params, ratioSpace);
+	if (!isTradeContinouse) {
+		if (
+			!globalHolding.length ||
+			currentHolding.positionSide.toUpperCase() !==
+				direction.toUpperCase()
+		) {
+			let openPositionAmt = Number(
+				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(
+					quantityFixedMap[symbol]
+				)
+			);
+			const params = {
+				position: openPositionAmt,
+				openSide: direction,
+				mark_price,
+				symbol,
+			};
+			if (isHasClose) await waitTime(1000 * 2);
+			await openPosition(params);
+			await writeDataByRatioSpace(params, ratioSpace);
+			await waitTime(1000 * 3);
+			await fnCloseLimitOrderByRatio(params, ratioSpace);
+		}
 	}
 };
 
@@ -167,7 +175,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 			.map(
 				(item) =>
 					Number(item.initialMargin) -
-					(Number(item.unrealizedProfit) * 1) / INIT_ASSETS_RATIO
+					(Number(item.unrealizedProfit) * 1.2) / INIT_ASSETS_RATIO
 			)
 			.reduce((pre, cur) => pre + cur, 0);
 		const COMPUTED_INIT_ASSETS =
@@ -225,17 +233,16 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		}
 	}
 
-	if (currentCondition !== lastCondition) {
-		// let ratioSpace = Math.max(Math.abs(maxRatio), Math.abs(minRatio));
-		// const [{ symbol: queueSymbo, ratio: queueRatio }] =
-		// 	symbolRatioList.splice(3, 1);
-		// ratioSpace = Math.abs(ratioSpace - queueRatio) / 2;
-		const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
-		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-			dealPositionBySymbol(minSymbol, 'long', ratioSpace);
-		} else {
-			dealPositionBySymbol(maxSymbol, 'short', ratioSpace);
-		}
+	const isTradeContinouse = currentCondition === lastCondition;
+	// let ratioSpace = Math.max(Math.abs(maxRatio), Math.abs(minRatio));
+	// const [{ symbol: queueSymbo, ratio: queueRatio }] =
+	// 	symbolRatioList.splice(3, 1);
+	// ratioSpace = Math.abs(ratioSpace - queueRatio) / 2;
+	const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
+	if (Math.abs(maxRatio) > Math.abs(minRatio)) {
+		dealPositionBySymbol(minSymbol, 'long', ratioSpace, isTradeContinouse);
+	} else {
+		dealPositionBySymbol(maxSymbol, 'short', ratioSpace, isTradeContinouse);
 	}
 };
 
