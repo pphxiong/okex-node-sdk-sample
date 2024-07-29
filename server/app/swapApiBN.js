@@ -170,7 +170,12 @@ const fnCloseLimitOrderByRatio = async (params, ratioSpace) => {
 const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	const { maxSymbol, maxRatio, minSymbol, minRatio, symbolRatioList } =
 		currentResult;
-	const { maxRatio: maxRatioLast, minRatio: minRatioLast } = lastResult;
+	const {
+		maxRatio: maxRatioLast,
+		minRatio: minRatioLast,
+		maxSymbol: maxSymbolLast,
+		minSymbol: minSymbolLast,
+	} = lastResult;
 	const currentCondition = Math.abs(maxRatio) > Math.abs(minRatio);
 	const lastCondition = Math.abs(maxRatioLast) > Math.abs(minRatioLast);
 
@@ -206,13 +211,6 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		restart('getPosition');
 	}
 
-	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
-	console.log('********************************************');
-	console.log('currentTime', currentTime);
-	console.log('currentCondition', currentCondition);
-	console.log('lastCondition', lastCondition);
-	console.log('********************************************');
-
 	if (globalHolding.length) {
 		const [currentHolding] = globalHolding;
 		const { symbol } = currentHolding;
@@ -246,6 +244,25 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	}
 
 	const isTradeContinouse = currentCondition === lastCondition;
+
+	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+	console.log('********************************************');
+	console.log('currentTime', currentTime);
+	console.log('currentCondition', currentCondition);
+	console.log('lastCondition', lastCondition);
+	console.log('isTradeContinouse', isTradeContinouse);
+	console.log(
+		'maxSymbol',
+		maxSymbol,
+		'minSymbol',
+		minSymbol,
+		'maxSymbolLast',
+		maxSymbolLast,
+		'minSymbolLast',
+		minSymbolLast
+	);
+	console.log('********************************************');
+
 	// let ratioSpace = Math.max(Math.abs(maxRatio), Math.abs(minRatio));
 	// const [{ symbol: queueSymbo, ratio: queueRatio }] =
 	// 	symbolRatioList.splice(3, 1);
