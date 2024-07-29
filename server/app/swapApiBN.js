@@ -68,8 +68,13 @@ const dealPositionBySymbol = async (
 	symbol,
 	direction,
 	ratioSpace,
-	isTradeContinouse
+	isTradeContinouse,
+	currentResult,
+	lastResult
 ) => {
+	const { maxSymbol, minSymbol } = currentResult;
+	const { maxSymbol: maxSymbolLast, minSymbol: minSymbolLast } = lastResult;
+
 	let mark_price;
 	let currentHolding;
 	let isHasClose = false;
@@ -111,29 +116,36 @@ const dealPositionBySymbol = async (
 			isHasClose = true;
 		}
 	}
-	if (!isTradeContinouse) {
-		if (
-			!globalHolding.length ||
-			currentHolding.positionSide.toUpperCase() !==
-				direction.toUpperCase()
-		) {
-			let openPositionAmt = Number(
-				((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(
-					quantityFixedMap[symbol]
-				)
-			);
-			const params = {
-				position: openPositionAmt,
-				openSide: direction,
-				mark_price,
-				symbol,
-			};
-			if (isHasClose) await waitTime(1000 * 2);
-			await openPosition(params);
-			await writeDataByRatioSpace(params, ratioSpace);
-			await waitTime(1000 * 3);
-			await fnCloseLimitOrderByRatio(params, ratioSpace);
-		}
+	const hasPositionCondition =
+		globalHolding.length &&
+		!isTradeContinouse &&
+		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase();
+	const noPositionCondition =
+		!globalHolding.length &&
+		(!isTradeContinouse ||
+			(isTradeContinouse &&
+				((direction.toUpperCase() === 'LONG' &&
+					minSymbol !== minSymbolLast) ||
+					(direction.toUpperCase() === 'SHORT' &&
+						maxSymbol !== maxSymbolLast))));
+	const openCondition = hasPositionCondition || noPositionCondition;
+	if (openCondition) {
+		let openPositionAmt = Number(
+			((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(
+				quantityFixedMap[symbol]
+			)
+		);
+		const params = {
+			position: openPositionAmt,
+			openSide: direction,
+			mark_price,
+			symbol,
+		};
+		if (isHasClose) await waitTime(1000 * 2);
+		await openPosition(params);
+		await writeDataByRatioSpace(params, ratioSpace);
+		await waitTime(1000 * 3);
+		await fnCloseLimitOrderByRatio(params, ratioSpace);
 	}
 };
 
@@ -238,11 +250,26 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	// const [{ symbol: queueSymbo, ratio: queueRatio }] =
 	// 	symbolRatioList.splice(3, 1);
 	// ratioSpace = Math.abs(ratioSpace - queueRatio) / 2;
-	const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
+	// const ratioSpace = Math.abs(Math.abs(maxRatio) - Math.abs(minRatio)) * 2;
+	const ratioSpace = Math.abs(Math.abs(maxRatio) - Math.abs(minRatio)) / 2;
 	if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-		dealPositionBySymbol(minSymbol, 'long', ratioSpace, isTradeContinouse);
+		dealPositionBySymbol(
+			minSymbol,
+			'long',
+			ratioSpace,
+			isTradeContinouse,
+			currentResult,
+			lastResult
+		);
 	} else {
-		dealPositionBySymbol(maxSymbol, 'short', ratioSpace, isTradeContinouse);
+		dealPositionBySymbol(
+			maxSymbol,
+			'short',
+			ratioSpace,
+			isTradeContinouse,
+			currentResult,
+			lastResult
+		);
 	}
 };
 
