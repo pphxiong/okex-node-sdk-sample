@@ -248,8 +248,8 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 	console.log('********************************************');
 	console.log('currentTime', currentTime);
-	console.log('currentCondition', currentCondition);
-	console.log('lastCondition', lastCondition);
+	console.log('currentDirection', currentCondition ? 'LONG' : 'SHORT');
+	console.log('lastDirection', lastCondition ? 'LONG' : 'SHORT');
 	console.log('isTradeContinouse', isTradeContinouse);
 	console.log(
 		'maxSymbol',
