@@ -121,6 +121,7 @@ const dealPositionBySymbol = async (
 		!isTradeContinouse &&
 		currentHolding.positionSide.toUpperCase() !== direction.toUpperCase();
 	const noPositionCondition =
+		false &&
 		!globalHolding.length &&
 		(!isTradeContinouse ||
 			(isTradeContinouse &&
@@ -188,25 +189,27 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 				(item) =>
 					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 			) || [];
-		const currentTotalAsset = globalHolding
-			.map(
-				(item) =>
-					Number(item.initialMargin) -
-					(Number(item.unrealizedProfit) * 1.2) / INIT_ASSETS_RATIO
-			)
-			.reduce((pre, cur) => pre + cur, 0);
-		const COMPUTED_INIT_ASSETS =
-			(Number(availableBalance) + Number(currentTotalAsset)) *
-			INIT_ASSETS_RATIO;
-		INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
-		console.log(
-			'currentTotalAsset',
-			currentTotalAsset,
-			'availableBalance',
-			availableBalance,
-			'INIT_ASSETS',
-			INIT_ASSETS
-		);
+		if (globalHolding.length) {
+			const [currentHolding] = globalHolding;
+			const currentTotalAsset =
+				Number(currentHolding.initialMargin) -
+				(Number(currentHolding.unrealizedProfit) * 1) /
+					INIT_ASSETS_RATIO;
+			const COMPUTED_INIT_ASSETS =
+				(Number(availableBalance) + Number(currentTotalAsset)) *
+				INIT_ASSETS_RATIO;
+			INIT_ASSETS = Math.min(COMPUTED_INIT_ASSETS);
+			console.log(
+				'currentTotalAsset',
+				currentTotalAsset,
+				'availableBalance',
+				availableBalance,
+				'INIT_ASSETS',
+				INIT_ASSETS,
+				'currentHolding',
+				currentHolding
+			);
+		}
 	} catch (e) {
 		restart('getPosition');
 	}
@@ -269,24 +272,26 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	// ratioSpace = Math.abs(ratioSpace - queueRatio) / 2;
 	// const ratioSpace = Math.abs(Math.abs(maxRatio) - Math.abs(minRatio)) * 2;
 	const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
-	if (Math.abs(maxRatio) > Math.abs(minRatio)) {
-		dealPositionBySymbol(
-			minSymbol,
-			'long',
-			ratioSpace,
-			isTradeContinouse,
-			currentResult,
-			lastResult
-		);
-	} else {
-		dealPositionBySymbol(
-			maxSymbol,
-			'short',
-			ratioSpace,
-			isTradeContinouse,
-			currentResult,
-			lastResult
-		);
+	if (!isTradeContinouse) {
+		if (Math.abs(maxRatio) > Math.abs(minRatio)) {
+			dealPositionBySymbol(
+				minSymbol,
+				'long',
+				ratioSpace,
+				isTradeContinouse,
+				currentResult,
+				lastResult
+			);
+		} else {
+			dealPositionBySymbol(
+				maxSymbol,
+				'short',
+				ratioSpace,
+				isTradeContinouse,
+				currentResult,
+				lastResult
+			);
+		}
 	}
 };
 
