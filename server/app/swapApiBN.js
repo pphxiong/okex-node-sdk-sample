@@ -251,12 +251,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		'minSymbolLast',
 		minSymbolLast
 	);
-	console.log(
-		'availableBalance',
-		availableBalance,
-		'INIT_ASSETS',
-		INIT_ASSETS
-	);
+	console.log('INIT_ASSETS', INIT_ASSETS);
 	console.log('********************************************');
 
 	// let ratioSpace = Math.max(Math.abs(maxRatio), Math.abs(minRatio));
