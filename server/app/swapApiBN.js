@@ -140,7 +140,7 @@ const dealPositionBySymbol = async (
     await openPosition(params);
     await writeDataByRatioSpace(params, ratioSpace);
     await waitTime(1000 * 3);
-    await fnCloseLimitOrderByRatio(params, ratioSpace);
+    // await fnCloseLimitOrderByRatio(params, ratioSpace);
   }
 };
 
@@ -203,7 +203,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
     } catch (e) {
       restart("getMarkPrice");
     }
-    const isLoss = fnGetIsLoss(currentHolding, mark_price);
+    const isLoss = fnGetIsLoss(currentHolding, mark_price) && false;
     if (isLoss) {
       let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
       const {
