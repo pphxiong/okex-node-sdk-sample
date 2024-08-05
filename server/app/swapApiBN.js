@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 12 / 20;
+const INIT_ASSETS_RATIO = 10 / 20;
 
 const EXCEED_HOLDING_NUM = 4;
 const ATR_WIN_RATIO = 1.5;
