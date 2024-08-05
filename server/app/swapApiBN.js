@@ -188,7 +188,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		minSymbol: minSymbolLast,
 		symbolRatioList: symbolRatioListLast,
 	} = lastResult;
-	const { longNum, shortNum } = fnGetConditionNum(symbolRatioList);
+	const { longNum } = fnGetConditionNum(symbolRatioList);
 	const { longNum: longNumLast } = fnGetConditionNum(symbolRatioListLast);
 	const currentCondition = longNum >= 3;
 	const lastCondition = longNumLast >= 3;
@@ -265,8 +265,6 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		minSymbolLast,
 		'longNum',
 		longNum,
-		'shortNum',
-		shortNum,
 		'longNumLast',
 		longNumLast
 	);
