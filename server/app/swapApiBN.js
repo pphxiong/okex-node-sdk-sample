@@ -19,6 +19,7 @@ const EOS_SYMBOL = 'EOSUSDT';
 const XRP_SYMBOL = 'XRPUSDT';
 const DOGE_SYMBOL = 'DOGEUSDT';
 const TRX_SYMBOL = 'TRXUSDT';
+const LTC_SYMBOL = 'LTCUSDT';
 
 const priceFixedMap = {
 	[BTC_SYMBOL]: 1,
@@ -27,6 +28,7 @@ const priceFixedMap = {
 	[XRP_SYMBOL]: 4,
 	[DOGE_SYMBOL]: 5,
 	[TRX_SYMBOL]: 5,
+	[LTC_SYMBOL]: 2,
 };
 
 const quantityFixedMap = {
@@ -36,6 +38,7 @@ const quantityFixedMap = {
 	[XRP_SYMBOL]: 1,
 	[DOGE_SYMBOL]: 0,
 	[TRX_SYMBOL]: 0,
+	[LTC_SYMBOL]: 1,
 };
 
 let ATR_PRICE_OBJ = {
@@ -45,6 +48,7 @@ let ATR_PRICE_OBJ = {
 	XRPUSDT_ATR: 0,
 	DOGEUSDT_ATR: 0,
 	TRXUSDT_ATR: 0,
+	LTCUSDT_ATR: 0,
 };
 
 const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
@@ -190,8 +194,8 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	} = lastResult;
 	const { longNum } = fnGetConditionNum(symbolRatioList);
 	const { longNum: longNumLast } = fnGetConditionNum(symbolRatioListLast);
-	const currentCondition = longNum >= 3;
-	const lastCondition = longNumLast >= 3;
+	const currentCondition = longNum > 3;
+	const lastCondition = longNumLast > 3;
 
 	let mark_price;
 	try {
@@ -1925,6 +1929,7 @@ const readData = async () => {
 		XRPUSDT_ATR: dataConfig.XRPUSDT_ATR,
 		DOGEUSDT_ATR: dataConfig.DOGEUSDT_ATR,
 		TRXUSDT_ATR: dataConfig.TRXUSDT_ATR,
+		LTCUSDT_ATR: dataConfig.LTCUSDT_ATR,
 	};
 
 	console.log('read::MODE', MODE, moment().format('YYYY-MM-DD HH:mm:ss'));
