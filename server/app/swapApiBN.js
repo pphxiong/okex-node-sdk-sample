@@ -262,7 +262,11 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		'maxSymbolLast',
 		maxSymbolLast,
 		'minSymbolLast',
-		minSymbolLast
+		minSymbolLast,
+		'longNum',
+		longNum,
+		'longNumLast',
+		longNumLast
 	);
 	console.log('INIT_ASSETS', INIT_ASSETS);
 	console.log('********************************************');
