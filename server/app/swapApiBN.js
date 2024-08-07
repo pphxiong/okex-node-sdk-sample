@@ -254,7 +254,12 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 
 	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 	console.log('********************************************');
+	console.log('********************************************');
+	console.log('********************************************');
 	console.log('currentTime', currentTime);
+	console.log('********************************************');
+	console.log('********************************************');
+	console.log('********************************************');
 	console.log('currentDirection', currentCondition ? 'LONG' : 'SHORT');
 	console.log('lastDirection', lastCondition ? 'LONG' : 'SHORT');
 	console.log('isTradeContinouse', isTradeContinouse);
@@ -338,7 +343,7 @@ const checkDealList = (symbolResultMap) => {
 	// console.log('symbolRatioMap:::', symbolRatioMap);
 	console.log('symbolRatioList:::');
 	console.log(symbolRatioList);
-	console.log('currentTime', currentTime);
+	console.log('symbolTime', currentTime);
 	console.log('###############################################');
 
 	const result = {
@@ -1883,6 +1888,7 @@ const startInterval = async () => {
 		const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
 		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
 		const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
+		const ltc_result = await fnGetSymbolResult(LTC_SYMBOL, payload);
 
 		const symbolResultMap = {
 			[BTC_SYMBOL]: btc_result,
@@ -1891,6 +1897,7 @@ const startInterval = async () => {
 			[XRP_SYMBOL]: xrp_result,
 			[DOGE_SYMBOL]: doge_result,
 			[TRX_SYMBOL]: trx_result,
+			[LTC_SYMBOL]: ltc_result,
 		};
 		const symbolLastResultMap = {
 			[BTC_SYMBOL]: fnGetLastResult(btc_result),
@@ -1899,6 +1906,7 @@ const startInterval = async () => {
 			[XRP_SYMBOL]: fnGetLastResult(xrp_result),
 			[DOGE_SYMBOL]: fnGetLastResult(doge_result),
 			[TRX_SYMBOL]: fnGetLastResult(trx_result),
+			[LTC_SYMBOL]: fnGetLastResult(ltc_result),
 		};
 		// await checkDealList(symbolResultMap);
 		await fnGetPositionAndDeal(
