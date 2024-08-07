@@ -192,10 +192,13 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		minSymbol: minSymbolLast,
 		symbolRatioList: symbolRatioListLast,
 	} = lastResult;
-	const { longNum } = fnGetConditionNum(symbolRatioList);
-	const { longNum: longNumLast } = fnGetConditionNum(symbolRatioListLast);
-	const currentCondition = longNum > 3;
-	const lastCondition = longNumLast > 3;
+	const { longNum, shortNum } = fnGetConditionNum(symbolRatioList);
+	const { longNum: longNumLast, shortNum: shortNumLast } =
+		fnGetConditionNum(symbolRatioListLast);
+	const currentLongCondition = longNum > 3;
+	const lastLongCondition = longNumLast > 3;
+	const currentShortCondition = shortNum > 3;
+	const lastShortCondition = shortNumLast > 3;
 
 	let mark_price;
 	try {
@@ -250,7 +253,9 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 		}
 	}
 
-	const isTradeContinouse = currentCondition === lastCondition;
+	const isTradeContinouse =
+		(currentLongCondition && lastLongCondition) ||
+		(currentShortCondition && lastShortCondition);
 
 	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
 	console.log('********************************************');
@@ -260,8 +265,8 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	console.log('********************************************');
 	console.log('********************************************');
 	console.log('********************************************');
-	console.log('currentDirection', currentCondition ? 'LONG' : 'SHORT');
-	console.log('lastDirection', lastCondition ? 'LONG' : 'SHORT');
+	console.log('currentDirection', longNum, shortNum);
+	console.log('lastDirection', longNumLast, shortNumLast);
 	console.log('isTradeContinouse', isTradeContinouse);
 	console.log(
 		'maxSymbol',
@@ -287,7 +292,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 	// const ratioSpace = Math.abs(Math.abs(maxRatio) - Math.abs(minRatio)) * 2;
 	const ratioSpace = Math.abs(maxRatio - minRatio) / 2;
 	if (!isTradeContinouse) {
-		if (currentCondition) {
+		if (currentLongCondition) {
 			dealPositionBySymbol(
 				maxSymbol,
 				'long',
@@ -296,7 +301,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 				currentResult,
 				lastResult
 			);
-		} else {
+		} else if (currentShortCondition) {
 			dealPositionBySymbol(
 				minSymbol,
 				'short',
