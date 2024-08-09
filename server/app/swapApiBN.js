@@ -286,7 +286,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   if (!isTradeContinouse || true) {
     if (currentLongCondition) {
       dealPositionBySymbol(
-        maxSymbol,
+        minSymbol,
         "long",
         ratioSpace,
         isTradeContinouse,
@@ -295,7 +295,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
       );
     } else if (currentShortCondition) {
       dealPositionBySymbol(
-        minSymbol,
+        maxSymbol,
         "short",
         ratioSpace,
         isTradeContinouse,
