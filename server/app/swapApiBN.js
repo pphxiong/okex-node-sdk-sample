@@ -316,7 +316,7 @@ const checkDealList = (symbolResultMap) => {
   const symbolRatioList = [];
   Object.entries(symbolResultMap).forEach(([symbol, data]) => {
     const { macdList } = data;
-    const open = macdList[macdList.length - 48].open;
+    const open = macdList[macdList.length - 2].open;
     const close = macdList[macdList.length - 1].close;
     currentTime = macdList[macdList.length - 1].time;
     let ratio = ((Number(close) - Number(open)) * 100) / Number(open);
