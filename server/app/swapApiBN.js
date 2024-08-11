@@ -286,7 +286,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   if (!isTradeContinouse || true) {
     if (currentLongCondition) {
       dealPositionBySymbol(
-        symbolRatioList[3],
+        symbolRatioList[3].symbol,
         "long",
         ratioSpace,
         isTradeContinouse,
@@ -295,7 +295,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
       );
     } else if (currentShortCondition) {
       dealPositionBySymbol(
-        symbolRatioList[3],
+        symbolRatioList[3].symbol,
         "short",
         ratioSpace,
         isTradeContinouse,
