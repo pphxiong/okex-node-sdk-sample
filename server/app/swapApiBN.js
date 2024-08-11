@@ -286,7 +286,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
   if (!isTradeContinouse || true) {
     if (currentLongCondition) {
       dealPositionBySymbol(
-        minSymbol,
+        symbolRatioList[3],
         "long",
         ratioSpace,
         isTradeContinouse,
@@ -295,7 +295,7 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
       );
     } else if (currentShortCondition) {
       dealPositionBySymbol(
-        maxSymbol,
+        symbolRatioList[3],
         "short",
         ratioSpace,
         isTradeContinouse,
@@ -316,7 +316,7 @@ const checkDealList = (symbolResultMap) => {
   const symbolRatioList = [];
   Object.entries(symbolResultMap).forEach(([symbol, data]) => {
     const { macdList } = data;
-    const open = macdList[macdList.length - 12].open;
+    const open = macdList[macdList.length - 48].open;
     const close = macdList[macdList.length - 1].close;
     currentTime = macdList[macdList.length - 1].time;
     let ratio = ((Number(close) - Number(open)) * 100) / Number(open);
@@ -1784,7 +1784,7 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
   const list = await cAuthClientBN.common.getHistory(symbol, payload);
   const newList = JSON.parse(JSON.stringify(list));
-  newList.pop();
+  // newList.pop();
 
   const bollList = getCurrentBOLL(newList);
   const macdList = getCurrentMacd(newList);
