@@ -361,17 +361,6 @@ const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
 	console.log('********************************************');
 	console.log('INIT_ASSETS', INIT_ASSETS);
 	console.log('********************************************');
-
-	if (!globalHolding.length) {
-		const openTarget = symbolConditionList.find(
-			(item) => item.openLongCondition || item.openShortCondition
-		);
-		if (openTarget) {
-			const { symbol, openLongCondition } = openTarget;
-			const direction = openLongCondition ? 'long' : 'short';
-			dealBollPositionBySymbol(symbol, direction);
-		}
-	}
 };
 
 const fnSymbolConditionDeal = async (
