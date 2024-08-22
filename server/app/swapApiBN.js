@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 12 / 20;
+const INIT_ASSETS_RATIO = 2 / 5;
 
 const EXCEED_HOLDING_NUM = 4;
 const ATR_WIN_RATIO = 1.5;
@@ -51,7 +51,7 @@ let ATR_PRICE_OBJ = {
 	LTCUSDT_ATR: 0,
 };
 
-const LOSS_MAX = (-LEVERAGE * 6.18) / 100;
+const LOSS_MAX = (-LEVERAGE * 2) / 100;
 const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 12000;
 
@@ -207,10 +207,178 @@ const fnGetConditionNum = (list) => {
 	return numMap;
 };
 
+const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
+	const { maxSymbol } = symbolRatioMap;
+
+	let longHolding;
+	let shortHolding;
+	try {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { positions: holding, availableBalance } = positionResult;
+		INIT_ASSETS = Number(availableBalance) * INIT_ASSETS_RATIO;
+
+		globalHolding =
+			holding.filter(
+				(item) =>
+					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+			) || [];
+		if (holding && holding.length) {
+			longHolding = holding.find(
+				(item) =>
+					item.positionSide &&
+					item.positionSide.toUpperCase() == 'LONG' &&
+					Math.abs(Number(item.positionAmt)) > 0
+			);
+			shortHolding = holding.find(
+				(item) =>
+					item.positionSide &&
+					item.positionSide.toUpperCase() == 'SHORT' &&
+					Math.abs(Number(item.positionAmt)) > 0
+			);
+		}
+	} catch (e) {
+		restart('getPosition');
+	}
+
+	let long_mark_price;
+	let short_mark_price;
+	if (globalHolding && globalHolding.length) {
+		try {
+			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
+				BTC_SYMBOL
+			);
+			long_mark_price = Number(markPrice);
+		} catch (e) {
+			restart('getMarkPrice');
+		}
+		if (shortHolding) {
+			try {
+				const { symbol } = shortHolding;
+				const { markPrice } = await cAuthClientBN.common.getMarkPrice(
+					symbol
+				);
+				short_mark_price = Number(markPrice);
+			} catch (e) {
+				restart('getMarkPrice');
+			}
+		}
+	}
+
+	let longRatio = 0;
+	let shortRatio = 0;
+
+	if (longHolding) {
+		const { leverage, entryPrice: avg_cost } = longHolding;
+		longRatio =
+			((Number(long_mark_price) - Number(avg_cost)) * Number(leverage)) /
+			Number(long_mark_price);
+	}
+	if (shortHolding) {
+		const { leverage, entryPrice: avg_cost } = shortHolding;
+		shortRatio =
+			((Number(short_mark_price) - Number(avg_cost)) * Number(leverage)) /
+			Number(short_mark_price);
+		shortRatio = -shortRatio;
+	}
+
+	const totalRatio = longRatio + shortRatio;
+
+	const openLongCondition = !longHolding;
+	const openShortCondition = !shortHolding && longRatio < LOSS_MAX;
+	const closeLongCondition = totalRatio > WIN_MAX;
+	const closeShortCondition =
+		totalRatio > WIN_MAX / 2 || shortRatio < LOSS_MAX / 2;
+
+	if (closeLongCondition) {
+		const { symbol, positionAmt, positionSide } = longHolding;
+		let closePositionAmt = Math.abs(Number(longHolding.positionAmt));
+		const payload = {
+			positionAmt,
+			position: closePositionAmt,
+			side: positionSide,
+			positionSide,
+			symbol,
+		};
+		await closePosition(payload);
+	}
+
+	if (closeShortCondition) {
+		const { symbol, positionAmt, positionSide } = shortHolding;
+		let closePositionAmt = Math.abs(Number(shortHolding.positionAmt));
+		const payload = {
+			positionAmt,
+			position: closePositionAmt,
+			side: positionSide,
+			positionSide,
+			symbol,
+		};
+		await closePosition(payload);
+	}
+
+	if (openLongCondition) {
+		const openPositionAmt = Number(
+			((INIT_ASSETS * LEVERAGE) / long_mark_price).toFixed(
+				quantityFixedMap[BTC_SYMBOL]
+			)
+		);
+		const params = {
+			position: openPositionAmt,
+			openSide: 'long',
+			symbol: BTC_SYMBOL,
+		};
+		await openPosition(params);
+	}
+
+	if (openShortCondition) {
+		INIT_ASSETS = Number(longHolding.initialMargin);
+		const openPositionAmt = Number(
+			((INIT_ASSETS * LEVERAGE) / short_mark_price).toFixed(
+				quantityFixedMap[maxSymbol]
+			)
+		);
+		const params = {
+			position: openPositionAmt,
+			openSide: 'short',
+			symbol: maxSymbol,
+		};
+		await openPosition(params);
+	}
+
+	const currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+	console.log('********************************************');
+	console.log('********************************************');
+	console.log('********************************************');
+	console.log('currentTime', currentTime);
+	console.log('symbolRatioMap:::');
+	console.log(symbolRatioMap);
+	console.log('conditions:::');
+	console.log('openLongCondition', openLongCondition);
+	console.log('openShortCondition', openShortCondition);
+	console.log('closeLongCondition', closeLongCondition);
+	console.log('closeShortCondition', closeShortCondition);
+	console.log('********************************************');
+	console.log('********************************************');
+	console.log('********************************************');
+	console.log('INIT_ASSETS', INIT_ASSETS);
+	console.log('********************************************');
+
+	if (!globalHolding.length) {
+		const openTarget = symbolConditionList.find(
+			(item) => item.openLongCondition || item.openShortCondition
+		);
+		if (openTarget) {
+			const { symbol, openLongCondition } = openTarget;
+			const direction = openLongCondition ? 'long' : 'short';
+			dealBollPositionBySymbol(symbol, direction);
+		}
+	}
+};
+
 const fnSymbolConditionDeal = async (
 	symbolConditionMap,
 	symbolConditionList
 ) => {
+	let unrealizedProfit = 0;
 	try {
 		const positionResult = await cAuthClientBN.swap.getPosition();
 		const { positions: holding, availableBalance } = positionResult;
@@ -224,6 +392,7 @@ const fnSymbolConditionDeal = async (
 			INIT_ASSETS =
 				Number(currentHolding.initialMargin) -
 				Number(currentHolding.unrealizedProfit);
+			unrealizedProfit = Number(currentHolding.unrealizedProfit);
 		} else {
 			INIT_ASSETS = Number(availableBalance) * INIT_ASSETS_RATIO;
 		}
@@ -240,7 +409,7 @@ const fnSymbolConditionDeal = async (
 		const isCloseCondition =
 			(positionSide.toUpperCase() === 'LONG' && closeLongCondition) ||
 			(positionSide.toUpperCase() === 'SHORT' && closeShortCondition);
-		if (isCloseCondition) {
+		if (isCloseCondition && unrealizedProfit > 0) {
 			let closePositionAmt = Math.abs(Number(currentHolding.positionAmt));
 			const payload = {
 				positionAmt,
@@ -410,6 +579,36 @@ const fnGetPositionAndDeal = async (currentResult, lastResult) => {
 			);
 		}
 	}
+};
+
+const checkBollDealTwoSideList = async (symbolResultMap, symbolRatioMap) => {
+	const { maxSymbol, maxRatio, minSymbol, minRatio, symbolRatioList } =
+		symbolRatioMap;
+
+	const symbolConditionMap = {};
+	const symbolConditionList = [];
+	Object.entries(symbolResultMap).forEach(([symbol, data]) => {
+		const { macdList, bollList } = data;
+		const time = bollList[bollList.length - 1].time;
+
+		const openLongCondition = symbol === BTC_SYMBOL;
+		const openShortCondition = symbol === maxSymbol;
+		const closeLongCondition = false;
+		const closeShortCondition = symbol !== maxSymbol;
+
+		const obj = {
+			openLongCondition,
+			openShortCondition,
+			closeLongCondition,
+			closeShortCondition,
+			symbol,
+			time,
+		};
+		symbolConditionMap[symbol] = obj;
+		symbolConditionList.push(obj);
+	});
+
+	return { symbolConditionMap, symbolConditionList };
 };
 
 const checkBollDealList = async (symbolResultMap) => {
@@ -2054,9 +2253,16 @@ const startInterval = async () => {
 		// 	checkDealList(symbolResultMap),
 		// 	checkDealList(symbolLastResultMap)
 		// );
-		const { symbolConditionMap, symbolConditionList } =
-			await checkBollDealList(symbolResultMap);
-		await fnSymbolConditionDeal(symbolConditionMap, symbolConditionList);
+		// const { symbolConditionMap, symbolConditionList } =
+		// 	await checkBollDealList(symbolResultMap);
+		// await fnSymbolConditionDeal(symbolConditionMap, symbolConditionList);
+
+		// const { symbolConditionMap, symbolConditionList } =
+		// 	await checkBollDealTwoSideList(
+		// 		symbolResultMap,
+		// 		checkDealList(symbolResultMap)
+		// 	);
+		await fnSymbolConditionTwoSideDeal(checkDealList(symbolResultMap));
 
 		// await checkDeal(btc_result, BTC_SYMBOL);
 		// await checkDeal(eth_result, ETH_SYMBOL);
