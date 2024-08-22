@@ -366,6 +366,8 @@ const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
 	console.log('openShortCondition', openShortCondition);
 	console.log('closeLongCondition', closeLongCondition);
 	console.log('closeShortCondition', closeShortCondition);
+	console.log('longRatio', longRatio);
+	console.log('shortRatio', shortRatio);
 	console.log('********************************************');
 	console.log('********************************************');
 	console.log('********************************************');
