@@ -242,15 +242,16 @@ const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
 
 	let long_mark_price;
 	let short_mark_price;
+	try {
+		const { markPrice } = await cAuthClientBN.common.getMarkPrice(
+			BTC_SYMBOL
+		);
+		long_mark_price = Number(markPrice);
+	} catch (e) {
+		restart('getMarkPrice');
+	}
+
 	if (globalHolding && globalHolding.length) {
-		try {
-			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
-				BTC_SYMBOL
-			);
-			long_mark_price = Number(markPrice);
-		} catch (e) {
-			restart('getMarkPrice');
-		}
 		if (shortHolding) {
 			try {
 				const { symbol } = shortHolding;
@@ -330,6 +331,15 @@ const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
 	}
 
 	if (openShortCondition) {
+		try {
+			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
+				maxSymbol
+			);
+			short_mark_price = Number(markPrice);
+		} catch (e) {
+			restart('getMarkPrice');
+		}
+
 		INIT_ASSETS = Number(longHolding.initialMargin);
 		const openPositionAmt = Number(
 			((INIT_ASSETS * LEVERAGE) / short_mark_price).toFixed(
