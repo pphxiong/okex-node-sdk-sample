@@ -207,8 +207,10 @@ const fnGetConditionNum = (list) => {
 	return numMap;
 };
 
-const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
-	const { maxSymbol } = symbolRatioMap;
+const fnSymbolConditionTwoSideDeal = async (symbolResult) => {
+	const { symbolRatioList } = symbolResult;
+	const symbolIndex = symbolRatioList[3].symbol === BTC_SYMBOL ? 2 : 3;
+	const openShortSymbol = symbolRatioList[symbolIndex].symbol;
 
 	let longHolding;
 	let shortHolding;
@@ -333,7 +335,7 @@ const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
 	if (openShortCondition) {
 		try {
 			const { markPrice } = await cAuthClientBN.common.getMarkPrice(
-				maxSymbol
+				openShortSymbol
 			);
 			short_mark_price = Number(markPrice);
 		} catch (e) {
@@ -343,13 +345,13 @@ const fnSymbolConditionTwoSideDeal = async (symbolRatioMap) => {
 		INIT_ASSETS = Number(longHolding.initialMargin);
 		const openPositionAmt = Number(
 			((INIT_ASSETS * LEVERAGE) / short_mark_price).toFixed(
-				quantityFixedMap[maxSymbol]
+				quantityFixedMap[openShortSymbol]
 			)
 		);
 		const params = {
 			position: openPositionAmt,
 			openSide: 'short',
-			symbol: maxSymbol,
+			symbol: openShortSymbol,
 		};
 		await openPosition(params);
 	}
