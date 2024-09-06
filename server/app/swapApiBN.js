@@ -207,6 +207,10 @@ const fnGetConditionNum = (list) => {
 	return numMap;
 };
 
+const fnSymbolDeal = async (data, symbol) => {
+	await checkDeal(data, symbol);
+};
+
 const fnSymbolConditionTwoSideDeal = async (symbolResult) => {
 	const { symbolRatioList } = symbolResult;
 	const symbolIndex = symbolRatioList[3].symbol === BTC_SYMBOL ? 2 : 3;
@@ -1145,19 +1149,12 @@ async function checkByStep(data, symbol) {
 				) || [];
 			positionChange = false;
 			const currentTotalAsset = globalHolding
-				.map((item) => Number(item.isolatedWallet))
+				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
-			// const unrealizedProfitTotal = globalHolding
-			// 	.map((item) => Number(item.unrealizedProfit))
-			// 	.reduce((pre, cur) => pre + cur, 0);
 			const COMPUTED_INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
-			INIT_ASSETS = Math.min(
-				INIT_ASSETS,
-				COMPUTED_INIT_ASSETS,
-				Number(availableBalance)
-			);
+			INIT_ASSETS = currentTotalAsset || COMPUTED_INIT_ASSETS;
 			// console.log(
 			// 	'availableBalance',
 			// 	availableBalance,
@@ -1272,17 +1269,22 @@ async function checkByStep(data, symbol) {
 	const isLongHoldingExceed = fnGetIsHoldingExceed(holding, 'long');
 	const isShortHoldingExceed = fnGetIsHoldingExceed(holding, 'short');
 
+	const latestMacd = macdList[macdList.length - 1];
+
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && isLowerReverse && !isLongHoldingExceed;
+		!longHolding &&
+		latestMacd.ema20 > latestMacd.ema10 &&
+		latestMacd.close > latestMacd.ema20;
+
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && isUpperReverse && !isShortHoldingExceed;
+		!shortHolding &&
+		latestMacd.ema20 < latestMacd.ema10 &&
+		latestMacd.close < latestMacd.ema20;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && fnGetIsLoss(longHolding, mark_price);
-	//  || isUpperReverse|| longRatio < LOSS_MAX
+		longHolding && MAIN_OPEN_SHORT_CONDITION1;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && fnGetIsLoss(shortHolding, mark_price);
-	//   || isLowerReverse || shortRatio < LOSS_MAX
+		shortHolding && MAIN_OPEN_LONG_CONDITION1;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -2180,7 +2182,7 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	// newList.pop();
+	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
@@ -2228,31 +2230,34 @@ const startInterval = async () => {
 		};
 
 		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
-		const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
-		const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
-		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
-		const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
-		const ltc_result = await fnGetSymbolResult(LTC_SYMBOL, payload);
+		await fnSymbolDeal(btc_result, BTC_SYMBOL);
 
-		const symbolResultMap = {
-			[BTC_SYMBOL]: btc_result,
-			[ETH_SYMBOL]: eth_result,
-			[EOS_SYMBOL]: eos_result,
-			[XRP_SYMBOL]: xrp_result,
-			[DOGE_SYMBOL]: doge_result,
-			[TRX_SYMBOL]: trx_result,
-			[LTC_SYMBOL]: ltc_result,
-		};
-		const symbolLastResultMap = {
-			[BTC_SYMBOL]: fnGetLastResult(btc_result),
-			[ETH_SYMBOL]: fnGetLastResult(eth_result),
-			[EOS_SYMBOL]: fnGetLastResult(eos_result),
-			[XRP_SYMBOL]: fnGetLastResult(xrp_result),
-			[DOGE_SYMBOL]: fnGetLastResult(doge_result),
-			[TRX_SYMBOL]: fnGetLastResult(trx_result),
-			[LTC_SYMBOL]: fnGetLastResult(ltc_result),
-		};
+		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		// const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
+		// const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
+		// const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
+		// const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
+		// const ltc_result = await fnGetSymbolResult(LTC_SYMBOL, payload);
+
+		// const symbolResultMap = {
+		// 	[BTC_SYMBOL]: btc_result,
+		// 	[ETH_SYMBOL]: eth_result,
+		// 	[EOS_SYMBOL]: eos_result,
+		// 	[XRP_SYMBOL]: xrp_result,
+		// 	[DOGE_SYMBOL]: doge_result,
+		// 	[TRX_SYMBOL]: trx_result,
+		// 	[LTC_SYMBOL]: ltc_result,
+		// };
+		// const symbolLastResultMap = {
+		// 	[BTC_SYMBOL]: fnGetLastResult(btc_result),
+		// 	[ETH_SYMBOL]: fnGetLastResult(eth_result),
+		// 	[EOS_SYMBOL]: fnGetLastResult(eos_result),
+		// 	[XRP_SYMBOL]: fnGetLastResult(xrp_result),
+		// 	[DOGE_SYMBOL]: fnGetLastResult(doge_result),
+		// 	[TRX_SYMBOL]: fnGetLastResult(trx_result),
+		// 	[LTC_SYMBOL]: fnGetLastResult(ltc_result),
+		// };
+		// await fnSymbolConditionTwoSideDeal(checkDealList(symbolResultMap));
 		// await checkDealList(symbolResultMap);
 		// await fnGetPositionAndDeal(
 		// 	checkDealList(symbolResultMap),
@@ -2267,7 +2272,6 @@ const startInterval = async () => {
 		// 		symbolResultMap,
 		// 		checkDealList(symbolResultMap)
 		// 	);
-		await fnSymbolConditionTwoSideDeal(checkDealList(symbolResultMap));
 
 		// await checkDeal(btc_result, BTC_SYMBOL);
 		// await checkDeal(eth_result, ETH_SYMBOL);
