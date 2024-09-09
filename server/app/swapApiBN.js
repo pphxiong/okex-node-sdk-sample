@@ -1342,6 +1342,8 @@ async function checkByStep(data, symbol) {
 			open,
 			close,
 			time,
+			ema10,
+			ema20,
 		}))
 	);
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
