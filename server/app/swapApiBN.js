@@ -1318,34 +1318,34 @@ async function checkByStep(data, symbol) {
 			minuteList.includes(lastMinuteCharacter) &&
 			!secondList.includes(lastSecondCharacter));
 
-	// console.log('************************************', currentTime);
-	// console.log(
-	// 	'symbol',
-	// 	symbol,
-	// 	'longRatio',
-	// 	longRatio,
-	// 	'shortRatio',
-	// 	shortRatio,
-	// 	'isUpperReverse',
-	// 	isUpperReverse,
-	// 	'isLowerReverse',
-	// 	isLowerReverse,
-	// 	'ATR',
-	// 	atrList[atrList.length - 1],
-	// 	'ATR_PRICE_OBJ',
-	// 	ATR_PRICE_OBJ[symbol + '_ATR']
-	// );
-	// console.log(
-	// 	'macd',
-	// 	macdList.slice(-1).map(({ column, open, close, time }) => ({
-	// 		column,
-	// 		open,
-	// 		close,
-	// 		time,
-	// 	}))
-	// );
+	console.log('************************************', currentTime);
+	console.log(
+		'symbol',
+		symbol,
+		'longRatio',
+		longRatio,
+		'shortRatio',
+		shortRatio,
+		'isUpperReverse',
+		isUpperReverse,
+		'isLowerReverse',
+		isLowerReverse,
+		'ATR',
+		atrList[atrList.length - 1],
+		'ATR_PRICE_OBJ',
+		ATR_PRICE_OBJ[symbol + '_ATR']
+	);
+	console.log(
+		'macd',
+		macdList.slice(-1).map(({ column, open, close, time }) => ({
+			column,
+			open,
+			close,
+			time,
+		}))
+	);
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
-	// console.log('************************************');
+	console.log('************************************');
 
 	const patchPosition = async (holding, direction) => {
 		let positionAmt = Number(holding.positionAmt) * 2;
