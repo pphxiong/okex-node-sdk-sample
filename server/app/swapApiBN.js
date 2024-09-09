@@ -1271,7 +1271,7 @@ async function checkByStep(data, symbol) {
 
 	const latestMacd = macdList[macdList.length - 1];
 	const currentHolding = longHolding || shortHolding;
-	const isLoss = fnGetIsLoss(currentHolding, mark_price);
+	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
