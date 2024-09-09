@@ -1834,9 +1834,9 @@ const openPosition = async (params = {}, atrList) => {
   await postOrder(position, mark_price);
   if (atrList) {
     await writeData(params, atrList);
-    setTimeout(async () => {
-      await fnCloseLimitOrder(params, atrList);
-    }, 1000 * 3);
+    // setTimeout(async () => {
+    //   await fnCloseLimitOrder(params, atrList);
+    // }, 1000 * 3);
   }
 };
 
