@@ -1337,14 +1337,16 @@ async function checkByStep(data, symbol) {
 	);
 	console.log(
 		'macd',
-		macdList.slice(-1).map(({ column, open, close, time }) => ({
-			column,
-			open,
-			close,
-			time,
-			ema10,
-			ema20,
-		}))
+		macdList
+			.slice(-1)
+			.map(({ column, open, close, time, ema10, ema20 }) => ({
+				column,
+				open,
+				close,
+				time,
+				ema10,
+				ema20,
+			}))
 	);
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
@@ -1898,9 +1900,9 @@ const openPosition = async (params = {}, atrList) => {
 	await postOrder(position, mark_price);
 	if (atrList) {
 		await writeData(params, atrList);
-		setTimeout(async () => {
-			await fnCloseLimitOrder(params, atrList);
-		}, 1000 * 3);
+		// setTimeout(async () => {
+		// 	await fnCloseLimitOrder(params, atrList);
+		// }, 1000 * 3);
 	}
 };
 
