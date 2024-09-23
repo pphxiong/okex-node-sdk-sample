@@ -1277,12 +1277,12 @@ async function checkByStep(data, symbol) {
 		!longHolding &&
 		// latestMacd.ema20 > latestMacd.ema10 &&
 		// latestMacd.open < latestMacd.ema20 &&
-		latestMacd.close > latestMacd.ema20;
+		latestMacd.close > latestMacd.ema10;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
 		// latestMacd.ema20 < latestMacd.ema10 &&
 		// latestMacd.open > latestMacd.ema20 &&
-		latestMacd.close < latestMacd.ema20;
+		latestMacd.close < latestMacd.ema10;
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding && (MAIN_OPEN_SHORT_CONDITION1 || isLoss);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
