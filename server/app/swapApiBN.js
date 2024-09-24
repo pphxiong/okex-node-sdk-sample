@@ -1275,18 +1275,18 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
-		// latestMacd.ema20 > latestMacd.ema10 &&
-		// latestMacd.open < latestMacd.ema20 &&
+		latestMacd.ema20 < latestMacd.ema10 &&
+		latestMacd.open < latestMacd.ema10 &&
 		latestMacd.close > latestMacd.ema10;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
-		// latestMacd.ema20 < latestMacd.ema10 &&
-		// latestMacd.open > latestMacd.ema20 &&
+		latestMacd.ema20 > latestMacd.ema10 &&
+		latestMacd.open > latestMacd.ema10 &&
 		latestMacd.close < latestMacd.ema10;
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && (MAIN_OPEN_SHORT_CONDITION1 || isLoss);
+		longHolding && (latestMacd.close < latestMacd.ema20 || isLoss);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && (MAIN_OPEN_LONG_CONDITION1 || isLoss);
+		shortHolding && (latestMacd.close > latestMacd.ema20 || isLoss);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
