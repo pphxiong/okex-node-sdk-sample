@@ -1270,16 +1270,19 @@ async function checkByStep(data, symbol) {
 	const isShortHoldingExceed = fnGetIsHoldingExceed(holding, 'short');
 
 	const latestMacd = macdList[macdList.length - 1];
+	const secondLatestMacd = macdList[macdList.length - 2];
 	const currentHolding = longHolding || shortHolding;
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
+		secondLatestMacd.ema20 > secondLatestMacd.ema10 &&
 		latestMacd.ema20 < latestMacd.ema10 &&
 		// latestMacd.open < latestMacd.ema10 &&
 		latestMacd.close > latestMacd.ema10;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
+		secondLatestMacd.ema20 < secondLatestMacd.ema10 &&
 		latestMacd.ema20 > latestMacd.ema10 &&
 		// latestMacd.open > latestMacd.ema10 &&
 		latestMacd.close < latestMacd.ema10;
@@ -2188,7 +2191,7 @@ const countdownCancelAll = async (symbol, time = 1000 * 2) => {
 const fnGetSymbolResult = async (symbol, payload) => {
 	const list = await cAuthClientBN.common.getHistory(symbol, payload);
 	const newList = JSON.parse(JSON.stringify(list));
-	// newList.pop();
+	newList.pop();
 
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
