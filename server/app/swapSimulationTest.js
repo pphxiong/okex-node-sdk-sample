@@ -842,10 +842,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(isContinousLong(macdList, 2) || isContinousShort(macdList, 5));
+			(isContinousLong(macdList, 2) || isContinousShort(macdList, 6));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(isContinousShort(macdList, 2) || isContinousLong(macdList, 5));
+			(isContinousShort(macdList, 2) || isContinousLong(macdList, 6));
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
