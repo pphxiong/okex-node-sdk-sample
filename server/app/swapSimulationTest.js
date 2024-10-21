@@ -13,7 +13,7 @@ const fs = require('fs');
 
 const isContinousLong = (list, k) => {
 	let isC = true;
-	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
 		if (list[i].close < list[i].open) {
 			isC = false;
 			break;
@@ -24,7 +24,7 @@ const isContinousLong = (list, k) => {
 
 const isContinousShort = (list, k) => {
 	let isC = true;
-	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
 		if (list[i].close > list[i].open) {
 			isC = false;
 			break;
