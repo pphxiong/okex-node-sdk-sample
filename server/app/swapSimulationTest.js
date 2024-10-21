@@ -836,9 +836,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && isContinousShort(macdList, 4);
+			!longHolding && isContinousShort(macdList, 6);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && isContinousLong(macdList, 4);
+			!shortHolding && isContinousLong(macdList, 6);
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding && isContinousLong(macdList, 3);
