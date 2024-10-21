@@ -50,6 +50,28 @@ const INIT_MOST_LOSS = {
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
 
+const isContinousLong = (list, k) => {
+	const is = true;
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+		if (list[i].close < list[i].open) {
+			is = false;
+			break;
+		}
+	}
+	return is;
+};
+
+const isContinousShort = (list, k) => {
+	const is = true;
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+		if (list[i].close > list[i].open) {
+			is = false;
+			break;
+		}
+	}
+	return is;
+};
+
 const checkDeal = async (data) => {
 	await checkByStep({
 		macdList: data.macdList.slice(-80),
@@ -277,26 +299,14 @@ const checkDeal = async (data) => {
 		const CLOSE_ALL_SHORT_CONDITION = false;
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding &&
-			(OUT_LOW_CONDITION ||
-				(shortHolding && CONVERSE_UP_CONDITION) ||
-				(!shortHolding && CENTER_CROSS_LONG_CONDITION));
+			!longHolding && isContinousShort(macdList, 5);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
-			(OUT_HIGH_CONDITION ||
-				(longHolding && CONVERSE_LOW_CONDITION) ||
-				(!longHolding && CENTER_CROSS_SHORT_CONDITION));
+			!shortHolding && isContinousLong(macdList, 5);
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding &&
-			((!shortHolding && OUT_HIGH_CONDITION) ||
-				(shortHolding &&
-					(CENTER_CROSS_SHORT_CONDITION || OUT_LOW_CONDITION)));
+			longHolding && isContinousLong(macdList, 3);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			((!longHolding && OUT_LOW_CONDITION) ||
-				(longHolding &&
-					(CENTER_CROSS_LONG_CONDITION || OUT_HIGH_CONDITION)));
+			shortHolding && isContinousShort(macdList, 3);
 
 		const MAIN_OPEN_LONG_CONDITION2 =
 			!longHolding && CENTER_CROSS_SHORT_CONDITION;
