@@ -51,7 +51,7 @@ let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
 
 const isContinousLong = (list, k) => {
-	const is = true;
+	let is = true;
 	for (let i = list.length - 1; i > list.length - k; i -= 1) {
 		if (list[i].close < list[i].open) {
 			is = false;
@@ -62,7 +62,7 @@ const isContinousLong = (list, k) => {
 };
 
 const isContinousShort = (list, k) => {
-	const is = true;
+	let is = true;
 	for (let i = list.length - 1; i > list.length - k; i -= 1) {
 		if (list[i].close > list[i].open) {
 			is = false;
