@@ -34,7 +34,7 @@ const isContinousShort = (list, k) => {
 		}
 	}
 	const isBeforeShort =
-		list[list.length - k - 1] ||
+		!list[list.length - k - 1] ||
 		list[list.length - k - 1].close < list[list.length - k - 1].open;
 	return isC && isBeforeShort;
 };
