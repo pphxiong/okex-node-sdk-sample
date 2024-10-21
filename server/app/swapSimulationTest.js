@@ -85,6 +85,7 @@ let baoNumTotal = 0;
 
 let OPENCONTINOUS = 4;
 let CLOSECONTINOUS = 2;
+let ISCONTINOUSEAUTOCLOSE = false;
 
 let modeChange = false;
 
@@ -630,6 +631,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		limit = 1440,
 		openContinous,
 		closeContinous,
+		isContinousAutoClose,
 	} = query;
 	try {
 		const payload = {
@@ -649,6 +651,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		dealDetailList = [];
 		OPENCONTINOUS = openContinous;
 		CLOSECONTINOUS = closeContinous;
+		ISCONTINOUSEAUTOCLOSE = isContinousAutoClose;
 
 		const newList = JSON.parse(JSON.stringify(list));
 		const macdList = getCurrentMacd(newList).slice(-1400);
@@ -852,9 +855,15 @@ const checkDeal = async (data, isAutoReset = true) => {
 			!shortHolding && isContinousLong(macdList, OPENCONTINOUS);
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && isContinousLong(macdList, CLOSECONTINOUS);
+			longHolding &&
+			(isContinousLong(macdList, CLOSECONTINOUS) ||
+				(ISCONTINOUSEAUTOCLOSE &&
+					isContinousShort(macdList, CLOSECONTINOUS + 1)));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && isContinousShort(macdList, CLOSECONTINOUS);
+			shortHolding &&
+			(isContinousShort(macdList, CLOSECONTINOUS) ||
+				(ISCONTINOUSEAUTOCLOSE &&
+					isContinousLong(macdList, CLOSECONTINOUS + 1)));
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
