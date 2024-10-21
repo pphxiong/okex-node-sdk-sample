@@ -622,6 +622,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 app.get('/swap/getLatestProfit', async (req, response) => {
 	const { query = {} } = req;
 	const { time, interval = INTERVAL, limit = 1440 } = query;
+	console.log(11, query);
 	try {
 		const payload = {
 			interval,
@@ -835,7 +836,6 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
-		console.log(333, macdList.length - 1);
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding && isContinousShort(macdList, 5);
 		const MAIN_OPEN_SHORT_CONDITION1 =
