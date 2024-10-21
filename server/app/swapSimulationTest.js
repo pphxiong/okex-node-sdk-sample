@@ -11,6 +11,28 @@ const fs = require('fs');
 //读取配置文件，变量config的类型是Object类型
 // let dataConfig = require('./configETH.json');
 
+const isContinousLong = (list, k) => {
+	let isC = true;
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+		if (list[i].close < list[i].open) {
+			isC = false;
+			break;
+		}
+	}
+	return isC;
+};
+
+const isContinousShort = (list, k) => {
+	let isC = true;
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+		if (list[i].close > list[i].open) {
+			isC = false;
+			break;
+		}
+	}
+	return isC;
+};
+
 const generatePositionList = (init, num) => {
 	const arr = [init];
 	let i = 0;
@@ -999,21 +1021,35 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		const RATIO_MAX_DISTANCE =
 			TOTALRATIO && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
-		const MAIN_OPEN_LONG_BTC_CONDITION = !longHolding;
-		const MAIN_OPEN_SHORT_BTC_CONDITION = false;
-		const MAIN_OPEN_LONG_ETH_CONDITION = !shortHolding;
-		const MAIN_OPEN_SHORT_ETH_CONDITION = !shortHolding;
+		const MAIN_OPEN_LONG_CONDITION1 =
+			!longHolding && isContinousShort(macdList, 5);
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding && isContinousLong(macdList, 5);
 
-		let MAIN_CLOSE_LONG_BTC_CONDITION = longHolding && CLOSE_WIN_CONDITION;
-		let MAIN_CLOSE_SHORT_BTC_CONDITION = false;
-		let MAIN_CLOSE_LONG_ETH_CONDITION =
-			shortHolding &&
-			!fnGetIsShort(shortHolding) &&
-			(CLOSE_WIN_CONDITION || shortRatio > WIN_MAX);
-		let MAIN_CLOSE_SHORT_ETH_CONDITION =
-			shortHolding &&
-			fnGetIsShort(shortHolding) &&
-			(CLOSE_WIN_CONDITION || shortRatio > WIN_MAX);
+		const MAIN_CLOSE_LONG_CONDITION1 =
+			longHolding && isContinousLong(macdList, 3);
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding && isContinousShort(macdList, 3);
+
+		const MAIN_OPEN_LONG_CONDITION2 =
+			!longHolding && CENTER_CROSS_SHORT_CONDITION;
+		const MAIN_OPEN_SHORT_CONDITION2 =
+			!shortHolding && CENTER_CROSS_LONG_CONDITION;
+		const MAIN_CLOSE_LONG_CONDITION2 =
+			longHolding && CENTER_CROSS_LONG_CONDITION;
+		const MAIN_CLOSE_SHORT_CONDITION2 =
+			shortHolding && CENTER_CROSS_SHORT_CONDITION;
+
+		let openLongCondition =
+			MODE == 1 ? MAIN_OPEN_LONG_CONDITION1 : MAIN_OPEN_LONG_CONDITION2;
+		let openShortCondition =
+			MODE == 1 ? MAIN_OPEN_SHORT_CONDITION1 : MAIN_OPEN_SHORT_CONDITION2;
+		let closeLongCondition =
+			MODE == 1 ? MAIN_CLOSE_LONG_CONDITION1 : MAIN_CLOSE_LONG_CONDITION2;
+		let closeShortCondition =
+			MODE == 1
+				? MAIN_CLOSE_SHORT_CONDITION1
+				: MAIN_CLOSE_SHORT_CONDITION2;
 
 		const PATCH_CONDITION =
 			// false &&
@@ -1031,14 +1067,6 @@ const checkDeal = async (data, ethData, isAutoReset = true) => {
 		}
 
 		modeChange = false;
-		let openLongCondition =
-			MAIN_OPEN_LONG_BTC_CONDITION || MAIN_OPEN_LONG_ETH_CONDITION;
-		let openShortCondition =
-			MAIN_OPEN_SHORT_BTC_CONDITION || MAIN_OPEN_SHORT_ETH_CONDITION;
-		let closeLongCondition =
-			MAIN_CLOSE_LONG_BTC_CONDITION || MAIN_CLOSE_LONG_ETH_CONDITION;
-		let closeShortCondition =
-			MAIN_CLOSE_SHORT_BTC_CONDITION || MAIN_CLOSE_SHORT_ETH_CONDITION;
 
 		NEW_POSITION_RATIO = 1;
 		// if (longHolding || shortHolding) NEW_POSITION_RATIO = 2;
