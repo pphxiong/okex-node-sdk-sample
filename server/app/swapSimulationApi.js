@@ -51,25 +51,25 @@ let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
 
 const isContinousLong = (list, k) => {
-	let is = true;
+	let isC = true;
 	for (let i = list.length - 1; i > list.length - k; i -= 1) {
 		if (list[i].close < list[i].open) {
-			is = false;
+			isC = false;
 			break;
 		}
 	}
-	return is;
+	return isC;
 };
 
 const isContinousShort = (list, k) => {
-	let is = true;
+	let isC = true;
 	for (let i = list.length - 1; i > list.length - k; i -= 1) {
 		if (list[i].close > list[i].open) {
-			is = false;
+			isC = false;
 			break;
 		}
 	}
-	return is;
+	return isC;
 };
 
 const checkDeal = async (data) => {
