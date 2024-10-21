@@ -1690,9 +1690,9 @@ const writeData = async (data) => {
 (async () => {
 	// await startInterval();
 })();
-app.listen(8091);
+app.listen(8092);
 
-console.log('8091 server start');
+console.log('8092 server start');
 
 process.on('uncaughtException', function (err) {
 	//打印出错误
