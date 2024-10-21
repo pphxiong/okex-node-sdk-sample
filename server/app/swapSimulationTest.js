@@ -83,6 +83,9 @@ let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
 let baoNumTotal = 0;
 
+let OPENCONTINOUS = 4;
+let CLOSECONTINOUS = 2;
+
 let modeChange = false;
 
 const INIT_MOST_LOSS = {
@@ -621,7 +624,13 @@ app.get('/swap/startHearBeat', async (req, response) => {
 
 app.get('/swap/getLatestProfit', async (req, response) => {
 	const { query = {} } = req;
-	const { time, interval = INTERVAL, limit = 1440 } = query;
+	const {
+		time,
+		interval = INTERVAL,
+		limit = 1440,
+		openContinous,
+		closeContinous,
+	} = query;
 	try {
 		const payload = {
 			interval,
@@ -638,6 +647,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		mostLoss = INIT_MOST_LOSS;
 		maxWinRatio = 0;
 		dealDetailList = [];
+		OPENCONTINOUS = openContinous;
+		CLOSECONTINOUS = closeContinous;
 
 		const newList = JSON.parse(JSON.stringify(list));
 		const macdList = getCurrentMacd(newList).slice(-1400);
@@ -836,14 +847,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && isContinousShort(macdList, 3);
+			!longHolding && isContinousShort(macdList, OPENCONTINOUS);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && isContinousLong(macdList, 3);
+			!shortHolding && isContinousLong(macdList, OPENCONTINOUS);
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && isContinousLong(macdList, 1);
+			longHolding && isContinousLong(macdList, CLOSECONTINOUS);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && isContinousShort(macdList, 1);
+			shortHolding && isContinousShort(macdList, CLOSECONTINOUS);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
