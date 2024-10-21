@@ -68,6 +68,28 @@ let rsi3 = 24;
 
 let maxWinRatio = 0;
 
+const isContinousLong = (list, k) => {
+	let isC = true;
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+		if (list[i].close < list[i].open) {
+			isC = false;
+			break;
+		}
+	}
+	return isC;
+};
+
+const isContinousShort = (list, k) => {
+	let isC = true;
+	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+		if (list[i].close > list[i].open) {
+			isC = false;
+			break;
+		}
+	}
+	return isC;
+};
+
 const dealBollPositionBySymbol = async (symbol, direction) => {
 	let mark_price;
 
@@ -1275,27 +1297,14 @@ async function checkByStep(data, symbol) {
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding &&
-		latestMacd.ema20 < latestMacd.ema10 &&
-		latestMacd.close < latestMacd.ema20 &&
-		secondLatestMacd.ema20 < secondLatestMacd.ema10 &&
-		secondLatestMacd.close > secondLatestMacd.ema20;
-
+		!longHolding && isContinousShort(macdList, 5);
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding &&
-		latestMacd.ema20 > latestMacd.ema10 &&
-		latestMacd.close > latestMacd.ema20 &&
-		secondLatestMacd.ema20 > secondLatestMacd.ema10 &&
-		secondLatestMacd.close < secondLatestMacd.ema20;
+		!shortHolding && isContinousLong(macdList, 5);
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding &&
-		// latestMacd.close < latestMacd.ema10 &&
-		latestMacd.ema20 > latestMacd.ema10;
+		longHolding && isContinousLong(macdList, 3);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding &&
-		// latestMacd.close > latestMacd.ema10 &&
-		latestMacd.ema20 < latestMacd.ema10;
+		shortHolding && isContinousShort(macdList, 3);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);

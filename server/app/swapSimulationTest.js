@@ -13,7 +13,7 @@ const fs = require('fs');
 
 const isContinousLong = (list, k) => {
 	let isC = true;
-	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
 		if (list[i].close < list[i].open) {
 			isC = false;
 			break;
@@ -24,7 +24,7 @@ const isContinousLong = (list, k) => {
 
 const isContinousShort = (list, k) => {
 	let isC = true;
-	for (let i = list.length - 1; i > list.length - k; i -= 1) {
+	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
 		if (list[i].close > list[i].open) {
 			isC = false;
 			break;
@@ -836,14 +836,16 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && isContinousShort(macdList, 5);
+			!longHolding && isContinousShort(macdList, 4);
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && isContinousLong(macdList, 5);
+			!shortHolding && isContinousLong(macdList, 4);
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && isContinousLong(macdList, 3);
+			longHolding &&
+			(isContinousLong(macdList, 2) || isContinousShort(macdList, 5));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && isContinousShort(macdList, 3);
+			shortHolding &&
+			(isContinousShort(macdList, 2) || isContinousLong(macdList, 5));
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
