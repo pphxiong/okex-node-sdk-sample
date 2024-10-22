@@ -64,7 +64,7 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
-const DEFAULT_INTERVAL = '5m';
+const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 let rsi1 = 8;
 let rsi2 = 12;

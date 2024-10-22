@@ -18,7 +18,7 @@
 		"start:all": "pm2 start startBN.js && pm2 start startProduct.js",
 		"restart": "pm2 restart 0",
 		"restart:product": "pm2 restart 1",
-		"restart:test": "pm2 restart 1",
+		"restart:test": "pm2 restart 2",
 		"restart:all": "pm2 restart all",
 		"stop": "pm2 delete 0",
 		"stop:product": "pm2 delete 1",
