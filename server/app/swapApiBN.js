@@ -55,6 +55,10 @@ const LOSS_MAX = (-LEVERAGE * 2) / 100;
 const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 12000;
 
+const OPENCONTINOUS = 4;
+const CLOSECONTINOUS = 1;
+const ISCONTINOUSEAUTOCLOSE = true;
+
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
 const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
@@ -70,24 +74,30 @@ let maxWinRatio = 0;
 
 const isContinousLong = (list, k) => {
 	let isC = true;
-	for (let i = list.length - 1; i > list.length - k; i -= 1) {
-		if (list[i].close < list[i].open) {
+	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
+		if (list[i] && list[i].close < list[i].open) {
 			isC = false;
 			break;
 		}
 	}
-	return isC;
+	const isBeforeLong =
+		!list[list.length - k - 1] ||
+		list[list.length - k - 1].close > list[list.length - k - 1].open;
+	return isC && isBeforeLong;
 };
 
 const isContinousShort = (list, k) => {
 	let isC = true;
-	for (let i = list.length - 1; i > list.length - k; i -= 1) {
-		if (list[i].close > list[i].open) {
+	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
+		if (list[i] && list[i].close > list[i].open) {
 			isC = false;
 			break;
 		}
 	}
-	return isC;
+	const isBeforeShort =
+		!list[list.length - k - 1] ||
+		list[list.length - k - 1].close < list[list.length - k - 1].open;
+	return isC && isBeforeShort;
 };
 
 const dealBollPositionBySymbol = async (symbol, direction) => {
@@ -1297,14 +1307,20 @@ async function checkByStep(data, symbol) {
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && isContinousShort(macdList, 5);
+		!longHolding && isContinousShort(macdList, OPENCONTINOUS);
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && isContinousLong(macdList, 5);
+		!shortHolding && isContinousLong(macdList, OPENCONTINOUS);
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && isContinousLong(macdList, 3);
+		longHolding &&
+		(isContinousLong(macdList, CLOSECONTINOUS) ||
+			(ISCONTINOUSEAUTOCLOSE &&
+				isContinousShort(macdList, CLOSECONTINOUS + 1)));
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && isContinousShort(macdList, 3);
+		shortHolding &&
+		(isContinousShort(macdList, CLOSECONTINOUS) ||
+			(ISCONTINOUSEAUTOCLOSE &&
+				isContinousLong(macdList, CLOSECONTINOUS + 1)));
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
