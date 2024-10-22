@@ -863,12 +863,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(isContinousLong(macdList, CLOSECONTINOUS) ||
+			(true ||
+				isContinousLong(macdList, CLOSECONTINOUS) ||
 				(ISCONTINOUSEAUTOCLOSE &&
 					isContinousShort(macdList, CLOSECONTINOUS + 1)));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(isContinousShort(macdList, CLOSECONTINOUS) ||
+			(true ||
+				isContinousShort(macdList, CLOSECONTINOUS) ||
 				(ISCONTINOUSEAUTOCLOSE &&
 					isContinousLong(macdList, CLOSECONTINOUS + 1)));
 
