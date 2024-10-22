@@ -22,11 +22,11 @@
 		"restart:all": "pm2 restart all",
 		"stop": "pm2 delete 0",
 		"stop:product": "pm2 delete 1",
-		"stop:test": "pm2 delete 1",
+		"stop:test": "pm2 delete 2",
 		"stop:all": "pm2 delete all",
 		"log": "pm2 log 0",
 		"log:product": "pm2 log 1",
-		"log:test": "pm2 log 1",
+		"log:test": "pm2 log 2",
 		"fix-memory-limit": "cross-env LIMIT=32768 increase-memory-limit"
 	},
 	"dependencies": {
