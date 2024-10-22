@@ -2256,7 +2256,7 @@ const fnGetLastResult = (data) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= 1 * 14 * 2) {
+	if (RESTART_TIME >= (1 * 14) / 2) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -2320,7 +2320,7 @@ const startInterval = async () => {
 		// await checkDeal(doge_result, DOGE_SYMBOL);
 		// await checkDeal(trx_result, TRX_SYMBOL);
 
-		await waitTime((1000 * 56) / 2);
+		await waitTime(1000 * 56 * 2);
 		await startInterval();
 	} catch (e) {
 		restart(e);
