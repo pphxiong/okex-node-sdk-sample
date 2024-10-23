@@ -23,7 +23,7 @@ const isContinousLong = (list, k) => {
 		k > 1 &&
 		(!list[list.length - k - 1] ||
 			list[list.length - k - 1].close > list[list.length - k - 1].open);
-	return isC && isBeforeLong;
+	return isC;
 };
 
 const isContinousShort = (list, k) => {
@@ -38,7 +38,7 @@ const isContinousShort = (list, k) => {
 		k > 1 &&
 		(!list[list.length - k - 1] ||
 			list[list.length - k - 1].close < list[list.length - k - 1].open);
-	return isC && isBeforeShort;
+	return isC;
 };
 
 const generatePositionList = (init, num) => {
