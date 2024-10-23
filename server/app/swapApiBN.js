@@ -81,9 +81,11 @@ const isContinousLong = (list, k) => {
 		}
 	}
 	const isBeforeLong =
-		k > 1 &&
-		(!list[list.length - k - 1] ||
-			list[list.length - k - 1].close > list[list.length - k - 1].open);
+		(k > 1 &&
+			(!list[list.length - k - 1] ||
+				list[list.length - k - 1].close >
+					list[list.length - k - 1].open)) ||
+		k == 1;
 	return isC && isBeforeLong;
 };
 
@@ -96,9 +98,11 @@ const isContinousShort = (list, k) => {
 		}
 	}
 	const isBeforeShort =
-		k > 1 &&
-		(!list[list.length - k - 1] ||
-			list[list.length - k - 1].close < list[list.length - k - 1].open);
+		(k > 1 &&
+			(!list[list.length - k - 1] ||
+				list[list.length - k - 1].close <
+					list[list.length - k - 1].open)) ||
+		k == 1;
 	return isC && isBeforeShort;
 };
 
