@@ -64,7 +64,7 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
-const DEFAULT_INTERVAL = '1h';
+const DEFAULT_INTERVAL = '30m';
 const INIT_POSITION = 100;
 let rsi1 = 8;
 let rsi2 = 12;
@@ -88,7 +88,6 @@ const isContinousLong = (list, k) => {
 		k == 1;
 	return isC && isBeforeLong;
 };
-
 const isContinousShort = (list, k) => {
 	let isC = true;
 	for (let i = list.length - 1; i >= list.length - k; i -= 1) {
@@ -1321,12 +1320,12 @@ async function checkByStep(data, symbol) {
 		longHolding &&
 		(isContinousLong(macdList, CLOSECONTINOUS) ||
 			(ISCONTINOUSEAUTOCLOSE &&
-				isContinousShort(macdList, CLOSECONTINOUS + 1)));
+				isContinousShort(macdList, OPENCONTINOUS + 1)));
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
 		(isContinousShort(macdList, CLOSECONTINOUS) ||
 			(ISCONTINOUSEAUTOCLOSE &&
-				isContinousLong(macdList, CLOSECONTINOUS + 1)));
+				isContinousLong(macdList, OPENCONTINOUS + 1)));
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
