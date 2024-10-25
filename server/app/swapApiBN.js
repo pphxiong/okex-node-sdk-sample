@@ -1317,9 +1317,9 @@ async function checkByStep(data, symbol) {
 		!shortHolding && rsiList[rsiList.length - 1].RSI1 > OPENCONTINOUS;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS;
+		longHolding && rsiList[rsiList.length - 1].RSI1 > CLOSECONTINOUS;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && rsiList[rsiList.length - 1].RSI1 > CLOSECONTINOUS;
+		shortHolding && rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
