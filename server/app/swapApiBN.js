@@ -2225,7 +2225,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 
 	const bollList = getCurrentBOLL(newList);
 	const macdList = getCurrentMacd(newList);
-	// const rsiList = getCurrentRSI(newList);
+	const rsiList = getCurrentRSI(newList);
 	const atrList = getATRByPeriod(newList);
 
 	// const result = {
@@ -2238,7 +2238,7 @@ const fnGetSymbolResult = async (symbol, payload) => {
 	const result = {
 		macdList: macdList.slice(-80),
 		bollList: bollList.slice(-80),
-		rsiList: [],
+		rsiList: rsiList.slice(-80),
 		atrList: atrList.slice(-80),
 	};
 
