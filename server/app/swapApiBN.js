@@ -1158,7 +1158,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 };
 
 async function checkByStep(data, symbol) {
-	const { macdList, bollList, atrList } = data;
+	const { macdList, rsiList, atrList } = data;
 	let mark_price;
 	try {
 		const data = await cAuthClientBN.common.getMarkPrice(symbol);
