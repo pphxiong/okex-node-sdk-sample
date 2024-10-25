@@ -94,8 +94,8 @@ let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
 let baoNumTotal = 0;
 
-let OPENCONTINOUS = 4;
-let CLOSECONTINOUS = 2;
+let OPENCONTINOUS = 80;
+let CLOSECONTINOUS = 50;
 let ISCONTINOUSEAUTOCLOSE = false;
 
 let modeChange = false;
@@ -124,7 +124,7 @@ let totalProfit = 0;
 let dealDetailList = [];
 let mostLoss = INIT_MOST_LOSS;
 let maxWinRatio = 0;
-let rsi1 = 5;
+let rsi1 = 6;
 let rsi2 = 14;
 let rsi3 = 24;
 
@@ -860,29 +860,21 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && isContinousShort(macdList, OPENCONTINOUS);
+			!longHolding &&
+			rsiList[rsiList.length - 1].RSI1 < 100 - OPENCONTINOUS;
 		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding && isContinousLong(macdList, OPENCONTINOUS);
+			!shortHolding && rsiList[rsiList.length - 1].RSI1 > OPENCONTINOUS;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding &&
-			(isContinousLong(macdList, CLOSECONTINOUS) ||
-				(ISCONTINOUSEAUTOCLOSE &&
-					isContinousShort(macdList, OPENCONTINOUS + 1)));
+			longHolding && rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS;
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			(isContinousShort(macdList, CLOSECONTINOUS) ||
-				(ISCONTINOUSEAUTOCLOSE &&
-					isContinousLong(macdList, OPENCONTINOUS + 1)));
+			shortHolding && rsiList[rsiList.length - 1].RSI1 > CLOSECONTINOUS;
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
 		const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
-
 		const MAIN_OPEN_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION1;
-
 		const MAIN_CLOSE_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION2;
-
 		const MAIN_CLOSE_SHORT_CONDITION2 = MAIN_OPEN_LONG_CONDITION2;
 
 		modeChange = false;
