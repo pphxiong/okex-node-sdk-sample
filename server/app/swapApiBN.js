@@ -55,8 +55,8 @@ const LOSS_MAX = (-LEVERAGE * 2) / 100;
 const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 12000;
 
-const OPENCONTINOUS = 30;
-const CLOSECONTINOUS = 80;
+const OPENCONTINOUS = 40;
+const CLOSECONTINOUS = 50;
 const ISCONTINOUSEAUTOCLOSE = true;
 
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
@@ -1312,17 +1312,17 @@ async function checkByStep(data, symbol) {
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && rsiList[rsiList.length - 1].RSI1 < OPENCONTINOUS;
+		!longHolding && rsiList[rsiList.length - 1].RSI1 > OPENCONTINOUS;
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && rsiList[rsiList.length - 1].RSI1 > 100 - OPENCONTINOUS;
+		!shortHolding && rsiList[rsiList.length - 1].RSI1 < 100 - OPENCONTINOUS;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		rsiList[rsiList.length - 1].RSI1 > CLOSECONTINOUS &&
+		rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS &&
 		longRatio > 0;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		rsiList[rsiList.length - 1].RSI1 < 100 - CLOSECONTINOUS &&
+		rsiList[rsiList.length - 1].RSI1 > 100 - CLOSECONTINOUS &&
 		shortRatio > 0;
 
 	const MAIN_CLOSE_ALL_CONDITION =
