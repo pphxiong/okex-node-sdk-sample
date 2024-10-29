@@ -1293,8 +1293,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// }
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
-					if (totalCapital * LEVERAGE < openPositionAmt)
-						openPositionAmt = 0;
+					// if (totalCapital * LEVERAGE < openPositionAmt)
+					// 	openPositionAmt = 0;
 					totalCapital += -0.02 * 0.01 * openPositionAmt;
 					totalProfit += -0.02 * 0.01 * openPositionAmt;
 					totalPosition += openPositionAmt;
@@ -1362,8 +1362,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 					// }
 					// if(modeChange) openPositionAmt = INIT_POSITION;
 
-					if (totalCapital * LEVERAGE < openPositionAmt)
-						openPositionAmt = 0;
+					// if (totalCapital * LEVERAGE < openPositionAmt)
+					// 	openPositionAmt = 0;
 					totalCapital += -0.02 * 0.01 * openPositionAmt;
 					totalProfit += -0.02 * 0.01 * openPositionAmt;
 					totalPosition += openPositionAmt;
