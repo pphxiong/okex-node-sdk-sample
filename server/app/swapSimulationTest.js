@@ -711,13 +711,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 				macdList: data.macdList.slice(i, i + 10),
 				rsiList: data.rsiList.slice(i, i + 10),
 			},
-			isAutoReset
+			i == data.macdList.length - 10
 			// && i == data.macdList.length - 10
 		);
 	}
 
 	function checkByStep(data, isForceDeal) {
-		isForceDeal = false;
+		// isForceDeal = false;
 		const { macdList, rsiList } = data;
 		const mark_price = macdList[macdList.length - 1].close;
 
@@ -867,12 +867,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			rsiList[rsiList.length - 1].RSI1 > 100 - CLOSECONTINOUS &&
-			longRatio > 0;
+			((rsiList[rsiList.length - 1].RSI1 > 100 - CLOSECONTINOUS &&
+				longRatio > 0) ||
+				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS &&
-			shortRatio > 0;
+			((rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS &&
+				shortRatio > 0) ||
+				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
