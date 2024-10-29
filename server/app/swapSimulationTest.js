@@ -727,11 +727,11 @@ const checkDeal = async (data, isAutoReset = true) => {
 		let holding;
 
 		if (longPosition && longPosition.positionAmt) {
-			longHolding = longPosition;
+			longHolding = JSON.parse(JSON.stringify(longPosition));
 			holding = longHolding;
 		}
 		if (shortPosition && shortPosition.positionAmt) {
-			shortHolding = shortPosition;
+			shortHolding = JSON.parse(JSON.stringify(shortPosition));
 			holding = shortHolding;
 		}
 
