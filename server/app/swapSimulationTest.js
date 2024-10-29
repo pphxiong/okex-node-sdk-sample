@@ -871,7 +871,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((rsiList[rsiList.length - 1].RSI1 < 100 - OPENCONTINOUS &&
+			((rsiList[rsiList.length - 1].RSI1 < OPENCONTINOUS &&
 				shortRatio > 0) ||
 				isForceDeal);
 
