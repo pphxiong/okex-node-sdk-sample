@@ -61,7 +61,7 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = 'BTCUSDT';
-const LEVERAGE = 20;
+const LEVERAGE = 5;
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
@@ -653,9 +653,9 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
 		const list = data;
 		totalProfit = 0;
-		// currentPosition = {};
-		// longPosition = {};
-		// shortPosition = {};
+		currentPosition = {};
+		longPosition = {};
+		shortPosition = {};
 		dealDetailList = [];
 		mostLoss = INIT_MOST_LOSS;
 		maxWinRatio = 0;
@@ -716,7 +716,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 	}
 
 	function checkByStep(data, isForceDeal) {
-		isForceDeal = false;
+		// isForceDeal = false;
 		const { macdList, rsiList } = data;
 		const mark_price = macdList[macdList.length - 1].close;
 
