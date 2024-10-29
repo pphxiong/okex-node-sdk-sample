@@ -56,7 +56,7 @@ const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 12000;
 
 const OPENCONTINOUS = 30;
-const CLOSECONTINOUS = 70;
+const CLOSECONTINOUS = 80;
 const ISCONTINOUSEAUTOCLOSE = true;
 
 const INIT_LONG_SHORT_ASSETS_RATIO = 1;
@@ -1318,11 +1318,11 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS &&
+		rsiList[rsiList.length - 1].RSI1 > CLOSECONTINOUS &&
 		longRatio > 0;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		rsiList[rsiList.length - 1].RSI1 > 100 - CLOSECONTINOUS &&
+		rsiList[rsiList.length - 1].RSI1 < 100 - CLOSECONTINOUS &&
 		shortRatio > 0;
 
 	const MAIN_CLOSE_ALL_CONDITION =
