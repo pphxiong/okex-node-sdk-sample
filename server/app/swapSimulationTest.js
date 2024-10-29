@@ -653,9 +653,9 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
 		const list = data;
 		totalProfit = 0;
-		currentPosition = {};
-		longPosition = {};
-		shortPosition = {};
+		// currentPosition = {};
+		// longPosition = {};
+		// shortPosition = {};
 		dealDetailList = [];
 		mostLoss = INIT_MOST_LOSS;
 		maxWinRatio = 0;
@@ -716,7 +716,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 	}
 
 	function checkByStep(data, isForceDeal) {
-		// isForceDeal = false;
+		isForceDeal = false;
 		const { macdList, rsiList } = data;
 		const mark_price = macdList[macdList.length - 1].close;
 
@@ -859,19 +859,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
 		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding && rsiList[rsiList.length - 1].RSI1 < OPENCONTINOUS;
+			!longHolding && rsiList[rsiList.length - 1].RSI3 < OPENCONTINOUS;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			rsiList[rsiList.length - 1].RSI1 > 100 - OPENCONTINOUS;
+			rsiList[rsiList.length - 1].RSI3 > 100 - OPENCONTINOUS;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((rsiList[rsiList.length - 1].RSI1 > CLOSECONTINOUS &&
+			((rsiList[rsiList.length - 1].RSI3 > CLOSECONTINOUS &&
 				longRatio > 0) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((rsiList[rsiList.length - 1].RSI1 < 100 - CLOSECONTINOUS &&
+			((rsiList[rsiList.length - 1].RSI3 < 100 - CLOSECONTINOUS &&
 				shortRatio > 0) ||
 				isForceDeal);
 
