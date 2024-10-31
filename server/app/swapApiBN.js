@@ -1312,9 +1312,13 @@ async function checkByStep(data, symbol) {
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding && rsiList[rsiList.length - 1].RSI1 > OPENCONTINOUS;
+		!longHolding &&
+		rsiList[rsiList.length - 1].RSI1 > OPENCONTINOUS &&
+		rsiList[rsiList.length - 2].RSI1 < OPENCONTINOUS;
 	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding && rsiList[rsiList.length - 1].RSI1 < 100 - OPENCONTINOUS;
+		!shortHolding &&
+		rsiList[rsiList.length - 1].RSI1 < 100 - OPENCONTINOUS &&
+		rsiList[rsiList.length - 2].RSI1 > 100 - OPENCONTINOUS;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
