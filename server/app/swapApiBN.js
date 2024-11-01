@@ -1313,22 +1313,22 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
-		rsiList[rsiList.length - 1].RSI1 > OPENCONTINOUS &&
-		rsiList[rsiList.length - 2].RSI1 < OPENCONTINOUS;
+		rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
+		rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
-		rsiList[rsiList.length - 1].RSI1 < 100 - OPENCONTINOUS &&
-		rsiList[rsiList.length - 2].RSI1 > 100 - OPENCONTINOUS;
+		rsiList[rsiList.length - 1].RSI2 < 100 - OPENCONTINOUS &&
+		rsiList[rsiList.length - 2].RSI2 > 100 - OPENCONTINOUS;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		rsiList[rsiList.length - 1].RSI1 < CLOSECONTINOUS &&
-		rsiList[rsiList.length - 2].RSI1 > CLOSECONTINOUS &&
+		rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
+		rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS &&
 		longRatio > 0;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		rsiList[rsiList.length - 1].RSI1 > 100 - CLOSECONTINOUS &&
-		rsiList[rsiList.length - 2].RSI1 < 100 - CLOSECONTINOUS &&
+		rsiList[rsiList.length - 1].RSI2 > 100 - CLOSECONTINOUS &&
+		rsiList[rsiList.length - 2].RSI2 < 100 - CLOSECONTINOUS &&
 		shortRatio > 0;
 
 	const MAIN_CLOSE_ALL_CONDITION =
