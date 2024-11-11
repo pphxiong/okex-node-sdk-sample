@@ -67,7 +67,7 @@ let MODE = 1;
 const DEFAULT_INTERVAL = '1h';
 const INIT_POSITION = 100;
 let rsi1 = 6;
-let rsi2 = 12;
+let rsi2 = 14;
 let rsi3 = 24;
 
 let maxWinRatio = 0;
@@ -1388,6 +1388,14 @@ async function checkByStep(data, symbol) {
 				ema10,
 				ema20,
 			}))
+	);
+	console.log(
+		'rsi',
+		rsiList.slice(-1).map(({ RSI1, RSI2, RSI3 }) => ({
+			RSI1,
+			RSI2,
+			RSI3,
+		}))
 	);
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');

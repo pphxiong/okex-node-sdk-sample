@@ -10,6 +10,7 @@ import {
   message,
   Row,
   Col,
+  Switch,
 } from 'antd';
 import SearchTable, { refreshTable } from '@/components/SearchTable';
 import moment from 'moment';
@@ -61,6 +62,10 @@ export default (props) => {
   const [dayStep, setDayStep] = useState(0);
   const [date, setDate] = useState('');
   const [yearPeriodStep, setYearPeriodStep] = useState(3);
+
+  const [openContinous, setOpenContinous] = useState(80);
+  const [closeContinous, setCloseContinous] = useState(50);
+  const [isContinousAutoClose, setIsContinousAutoClose] = useState(false);
 
   const [winMax, setWinMax] = useState(0.82);
   const [lossMax, setLossMax] = useState(0.482);
@@ -582,7 +587,14 @@ export default (props) => {
       const yP = new Promise((resolveP) => {
         const fnGetP = (timeP) => {
           const p = new Promise((resolve) => {
-            const payload = { time: timeP, interval, limit: latestInterval };
+            const payload = {
+              time: timeP,
+              interval,
+              limit: latestInterval,
+              openContinous,
+              closeContinous,
+              isContinousAutoClose,
+            };
             getLatestProfit(payload).then((res) => {
               const { data } = res;
               if (data) {
@@ -973,7 +985,7 @@ export default (props) => {
           </Col> */}
         </Row>
 
-        {/* <Row style={{ marginTop: 10 }} gutter={12}>
+        <Row style={{ marginTop: 10 }} gutter={12}>
           <Col>
             RSI1: <InputNumber step={1} value={rsi1} onChange={(v) => setRsi1(v)} />
             RSI2: <InputNumber step={1} value={rsi2} onChange={(v) => setRsi2(v)} />
@@ -982,7 +994,7 @@ export default (props) => {
               RSI设置
             </Button>
           </Col>
-        </Row> */}
+        </Row>
 
         <Row style={{ marginTop: 10 }} gutter={12}>
           <Col>
@@ -991,6 +1003,18 @@ export default (props) => {
           <Col>
             年数:{' '}
             <InputNumber step={1} value={yearPeriodStep} onChange={(v) => setYearPeriodStep(v)} />
+          </Col>
+          <Col>
+            OPENCONTINOUS:{' '}
+            <InputNumber step={1} value={openContinous} onChange={(v) => setOpenContinous(v)} />
+          </Col>
+          <Col>
+            CLOSECONTINOUS:{' '}
+            <InputNumber step={1} value={closeContinous} onChange={(v) => setCloseContinous(v)} />
+          </Col>
+          <Col>
+            ISCONTINOUSEAUTOCLOSE:{' '}
+            <Switch checked={isContinousAutoClose} onChange={(v) => setIsContinousAutoClose(v)} />
           </Col>
           <Col>
             <Select
