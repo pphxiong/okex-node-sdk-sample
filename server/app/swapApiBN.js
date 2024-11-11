@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 2 / 5;
+const INIT_ASSETS_RATIO = 45 / 100;
 
 const EXCEED_HOLDING_NUM = 4;
 const ATR_WIN_RATIO = 1.5;
@@ -55,7 +55,7 @@ const LOSS_MAX = (-LEVERAGE * 2) / 100;
 const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 12000;
 
-const OPENCONTINOUS = 40;
+const OPENCONTINOUS = 50;
 const CLOSECONTINOUS = 50;
 const ISCONTINOUSEAUTOCLOSE = true;
 
@@ -1189,9 +1189,13 @@ async function checkByStep(data, symbol) {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			const COMPUTED_INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) *
+				(Number(availableBalance) + Number(currentTotalAsset)) /
 				INIT_ASSETS_RATIO;
-			INIT_ASSETS = currentTotalAsset || COMPUTED_INIT_ASSETS;
+			INIT_ASSETS = Math.min(
+				COMPUTED_INIT_ASSETS,
+				INIT_ASSETS,
+				Number(availableBalance)
+			);
 			// console.log(
 			// 	'availableBalance',
 			// 	availableBalance,
@@ -1463,7 +1467,6 @@ async function checkByStep(data, symbol) {
 		}
 	};
 
-	//平多仓条件
 	if (closeLongCondition && isFiveM) {
 		try {
 			await closeLongPosition();
@@ -1472,7 +1475,6 @@ async function checkByStep(data, symbol) {
 		}
 	}
 
-	//平空仓条件
 	if (closeShortCondition && isFiveM) {
 		try {
 			await closeShortPosition();
@@ -1481,7 +1483,12 @@ async function checkByStep(data, symbol) {
 		}
 	}
 
-	//开多仓条件
+	const OPEN_POSITION_AMT = Number(
+		((INIT_ASSETS * LEVERAGE) / mark_price).toFixed(
+			quantityFixedMap[symbol]
+		)
+	);
+
 	if (openLongCondition) {
 		try {
 			let openPositionAmt = Number(
@@ -1506,7 +1513,6 @@ async function checkByStep(data, symbol) {
 		}
 	}
 
-	//开空仓条件
 	if (openShortCondition) {
 		try {
 			let openPositionAmt = Number(
