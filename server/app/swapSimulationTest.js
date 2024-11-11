@@ -716,7 +716,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 	}
 
 	function checkByStep(data, isForceDeal) {
-		// isForceDeal = false;
+		isForceDeal = false;
 		const { macdList, rsiList } = data;
 		const mark_price = macdList[macdList.length - 1].close;
 
