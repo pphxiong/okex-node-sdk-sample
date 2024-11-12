@@ -870,12 +870,14 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-				rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS) ||
+				rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS &&
+				longRatio > 0) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((rsiList[rsiList.length - 1].RSI2 > 100 - CLOSECONTINOUS &&
-				rsiList[rsiList.length - 2].RSI2 < 100 - CLOSECONTINOUS) ||
+				rsiList[rsiList.length - 2].RSI2 < 100 - CLOSECONTINOUS &&
+				shortRatio > 0) ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
