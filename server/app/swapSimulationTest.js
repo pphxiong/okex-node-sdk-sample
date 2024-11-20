@@ -860,22 +860,23 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS &&
-			rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS - 10;
+			rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
+			rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS - 10;
+
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS &&
-			rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS + 10;
+			rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
+			rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS + 10;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS - 10 ||
-				rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS ||
+			(rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS + 20 ||
+				rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS - 10 ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS + 10 ||
-				rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS ||
+			(rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS - 20 ||
+				rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS + 10 ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
