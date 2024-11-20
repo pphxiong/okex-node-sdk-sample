@@ -860,23 +860,29 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
-			rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS;
+			((rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
+				rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS) ||
+				(rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS + 20 &&
+					rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS + 20 &&
+					shortHolding));
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-			rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS;
+			((rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
+				rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS) ||
+				(rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS - 20 &&
+					rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS - 20 &&
+					longHolding));
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS &&
-				rsiList[rsiList.length - 2].RSI2 > OPENCONTINOUS &&
+			((rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS + 20 &&
+				rsiList[rsiList.length - 2].RSI2 > OPENCONTINOUS + 20 &&
 				(longRatio > 0 || (longRatio < 0 && shortRatio < 0))) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS &&
-				rsiList[rsiList.length - 2].RSI2 < CLOSECONTINOUS &&
+			((rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS - 20 &&
+				rsiList[rsiList.length - 2].RSI2 < CLOSECONTINOUS - 20 &&
 				(shortRatio > 0 || (longRatio < 0 && shortRatio < 0))) ||
 				isForceDeal);
 
