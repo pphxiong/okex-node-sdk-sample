@@ -870,12 +870,12 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS + 20 ||
+			(rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS + 10 ||
 				rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS - 20 ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS - 20 ||
+			(rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS - 10 ||
 				rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS + 20 ||
 				isForceDeal);
 
