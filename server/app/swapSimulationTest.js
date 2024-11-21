@@ -64,8 +64,8 @@ const BN_SYMBOL = 'BTCUSDT';
 const LEVERAGE = 5;
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
-const LOSS_MAX = ((-0.1 / 2) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
+const WIN_MAX = ((0.1 / 1) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
@@ -863,11 +863,11 @@ const fnIsMacdReverse = (macdList) => {
 };
 
 const checkDeal = async (data, isAutoReset = true) => {
-	for (let i = 0; i < data.macdList.length - 79; i++) {
+	for (let i = 0; i < data.macdList.length - 49; i++) {
 		checkByStep(
 			{
-				macdList: data.macdList.slice(i, i + 80),
-				rsiList: data.rsiList.slice(i, i + 80),
+				macdList: data.macdList.slice(i, i + 50),
+				rsiList: data.rsiList.slice(i, i + 50),
 			},
 			i == data.macdList.length - 10
 			// && i == data.macdList.length - 10
