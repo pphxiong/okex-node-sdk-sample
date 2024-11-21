@@ -829,8 +829,8 @@ const fnIsMacdReverse = (macdList) => {
 						macdList[macdList.length - 2].close >=
 							macdList[i].close &&
 						macdList[macdList.length - 2].column <
-							macdList[i].column &&
-						isUpperest;
+							macdList[i].column;
+					//  && isUpperest;
 					break;
 				}
 			}
@@ -852,8 +852,8 @@ const fnIsMacdReverse = (macdList) => {
 						macdList[macdList.length - 2].close <=
 							macdList[i].close &&
 						macdList[macdList.length - 2].column >
-							macdList[i].column &&
-						isLowerest;
+							macdList[i].column;
+					// && isLowerest;
 					break;
 				}
 			}
