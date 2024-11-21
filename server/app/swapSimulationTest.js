@@ -703,6 +703,165 @@ function fibonacci(n) {
 	return fibonacci(n - 2) + fibonacci(n - 1);
 }
 
+const fnIsLastUpOrLow = (macdList, bollList) => {
+	let isUp = false;
+	let isLow = false;
+	for (let i = macdList.length - 1; i > 0; i -= 1) {
+		const isCurrentUp =
+			macdList[i].close < bollList[i].UP &&
+			macdList[i - 1].close > bollList[i - 1].UP &&
+			macdList[i].close > bollList[i].MA;
+		const isCurrentLow =
+			macdList[i].close > bollList[i].DN &&
+			macdList[i - 1].close < bollList[i - 1].DN &&
+			macdList[i].close < bollList[i].MA;
+		if (isCurrentUp) {
+			isUp = true;
+			break;
+		}
+		if (isCurrentLow) {
+			isLow = true;
+			break;
+		}
+	}
+	return { isUp, isLow };
+};
+
+const fnIsCurrentContinousUpper = (macdList, i) => {
+	return (
+		macdList[i].column > 0 &&
+		macdList[i].column > macdList[i - 1].column &&
+		macdList[i - 1].column > macdList[i - 2].column &&
+		macdList[i - 2].column > macdList[i - 3].column &&
+		macdList[i].column > macdList[i + 1].column
+	);
+};
+
+const fnIsCurrentContinousLower = (macdList, i) => {
+	return (
+		macdList[i].column < 0 &&
+		macdList[i].column < macdList[i - 1].column &&
+		macdList[i - 1].column < macdList[i - 2].column &&
+		macdList[i - 2].column < macdList[i - 3].column &&
+		macdList[i].column < macdList[i + 1].column
+	);
+};
+
+const fnGetIsUpperest = (macdList, i, j) => {
+	let upperest = macdList[j].close;
+	for (let k = i; k <= j; k += 1) {
+		upperest = Math.max(upperest, macdList[k].close);
+	}
+	return upperest === macdList[j].close;
+};
+
+const fnGetIsLowerest = (macdList, i, j) => {
+	let lowerest = macdList[j].close;
+	for (let k = i; k <= j; k += 1) {
+		lowerest = Math.min(lowerest, macdList[k].close);
+	}
+	return lowerest === macdList[j].close;
+};
+
+const fnGetIsHasIntervalUpper = (macdList, i, j) => {
+	let is = false;
+	for (let k = i; k < j; k += 1) {
+		is =
+			macdList[k].column > 0 &&
+			macdList[k + 1].column > 0 &&
+			macdList[k - 1].column > 0 &&
+			macdList[k].column < macdList[k - 1].column &&
+			macdList[k].column < macdList[k + 1].column;
+	}
+	return is;
+};
+
+const fnGetIsHasIntervalLower = (macdList, i, j) => {
+	let is = false;
+	for (let k = i; k < j; k += 1) {
+		is =
+			macdList[k].column < 0 &&
+			macdList[k + 1].column < 0 &&
+			macdList[k - 1].column < 0 &&
+			macdList[k].column > macdList[k - 1].column &&
+			macdList[k].column > macdList[k + 1].column;
+	}
+	return is;
+};
+
+const fnIsMacdReverse = (macdList) => {
+	const isUpper =
+		macdList[macdList.length - 1].column >
+		macdList[macdList.length - 2].column;
+	const isLower =
+		macdList[macdList.length - 1].column <
+		macdList[macdList.length - 2].column;
+
+	const isLatestContinousUpper = fnIsCurrentContinousUpper(
+		macdList,
+		macdList.length - 2
+	);
+	const isLatestContinousLower = fnIsCurrentContinousLower(
+		macdList,
+		macdList.length - 2
+	);
+	let isUpperReverse = false;
+	let isLowerReverse = false;
+	if (isLower) {
+		if (isLatestContinousUpper) {
+			for (let i = macdList.length - 5; i > 3; i -= 1) {
+				const isCurrentContinousUpper = fnIsCurrentContinousUpper(
+					macdList,
+					i
+				);
+				if (isCurrentContinousUpper) {
+					const isUpperest = fnGetIsUpperest(
+						macdList,
+						i,
+						macdList.length - 2
+					);
+					// const isHasIntervalUpper = fnGetIsHasIntervalUpper(
+					// 	macdList,
+					// 	i,
+					// 	macdList.length - 2
+					// );
+					isUpperReverse =
+						macdList[macdList.length - 2].close >=
+							macdList[i].close &&
+						macdList[macdList.length - 2].column <
+							macdList[i].column &&
+						isUpperest;
+					break;
+				}
+			}
+		}
+	} else if (isUpper) {
+		if (isLatestContinousLower) {
+			for (let i = macdList.length - 5; i > 3; i -= 1) {
+				const isCurrentContinousLower = fnIsCurrentContinousLower(
+					macdList,
+					i
+				);
+				if (isCurrentContinousLower) {
+					const isLowerest = fnGetIsLowerest(
+						macdList,
+						i,
+						macdList.length - 2
+					);
+					isLowerReverse =
+						macdList[macdList.length - 2].close <=
+							macdList[i].close &&
+						macdList[macdList.length - 2].column >
+							macdList[i].column &&
+						isLowerest;
+					break;
+				}
+			}
+		}
+	}
+	return { isUpperReverse, isLowerReverse };
+};
+
 const checkDeal = async (data, isAutoReset = true) => {
 	for (let i = 0; i < data.macdList.length - 9; i++) {
 		checkByStep(
@@ -858,41 +1017,51 @@ const checkDeal = async (data, isAutoReset = true) => {
 		// rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
 		// (longRatio >= 0 || longRatio <= LOSS_MAX);
 
-		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding &&
-			((rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
-				rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS) ||
-				(rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS + 20 &&
-					rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS + 20 &&
-					shortHolding));
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
-			((rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-				rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS) ||
-				(rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS - 20 &&
-					rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS - 20 &&
-					longHolding));
+		// const MAIN_OPEN_LONG_CONDITION1 =
+		// 	!longHolding &&
+		// 	((rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
+		// 		rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS) ||
+		// 		(rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS + 20 &&
+		// 			rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS + 20 &&
+		// 			shortHolding));
+		// const MAIN_OPEN_SHORT_CONDITION1 =
+		// 	!shortHolding &&
+		// 	((rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
+		// 		rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS) ||
+		// 		(rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS - 20 &&
+		// 			rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS - 20 &&
+		// 			longHolding));
+
+		// const MAIN_CLOSE_LONG_CONDITION1 =
+		// 	longHolding &&
+		// 	((rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS + 20 &&
+		// 		rsiList[rsiList.length - 2].RSI2 > OPENCONTINOUS + 20 &&
+		// 		(longRatio > 0 ||
+		// 			(longRatio < 0 &&
+		// 				shortRatio < 0 &&
+		// 				rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
+		// 				rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS))) ||
+		// 		isForceDeal);
+		// const MAIN_CLOSE_SHORT_CONDITION1 =
+		// 	shortHolding &&
+		// 	((rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS - 20 &&
+		// 		rsiList[rsiList.length - 2].RSI2 < CLOSECONTINOUS - 20 &&
+		// 		(shortRatio > 0 ||
+		// 			(longRatio < 0 &&
+		// 				shortRatio < 0 &&
+		// 				rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
+		// 				rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS))) ||
+		// 		isForceDeal);
+
+		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
+
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding &&
-			((rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS + 20 &&
-				rsiList[rsiList.length - 2].RSI2 > OPENCONTINOUS + 20 &&
-				(longRatio > 0 ||
-					(longRatio < 0 &&
-						shortRatio < 0 &&
-						rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-						rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS))) ||
-				isForceDeal);
+			longHolding && (longRatio < -WIN_MAX || longRatio > WIN_MAX);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			((rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS - 20 &&
-				rsiList[rsiList.length - 2].RSI2 < CLOSECONTINOUS - 20 &&
-				(shortRatio > 0 ||
-					(longRatio < 0 &&
-						shortRatio < 0 &&
-						rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
-						rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS))) ||
-				isForceDeal);
+			shortHolding && (shortRatio < -WIN_MAX || shortRatio > WIN_MAX);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
