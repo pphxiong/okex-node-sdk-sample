@@ -61,7 +61,9 @@ function getRandomNumberByRange(start, end) {
 
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = 'BTCUSDT';
-const LEVERAGE = 5;
+const LEVERAGE = 10;
+const INIT_ASSETS_RATIO = 65 / 100;
+
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
@@ -94,8 +96,8 @@ let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
 let baoNumTotal = 0;
 
-let OPENCONTINOUS = 40;
-let CLOSECONTINOUS = 50;
+let OPENCONTINOUS = 10;
+let CLOSECONTINOUS = 10;
 let ISCONTINOUSEAUTOCLOSE = false;
 
 let modeChange = false;
@@ -1685,7 +1687,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 				) {
 					// closeShort()
 					// const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-					let openPositionAmt = INIT_POSITION;
+					// let openPositionAmt = INIT_POSITION;
+					let openPositionAmt = totalCapital * INIT_ASSETS_RATIO;
 					const ratio = shortRatio;
 					const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
 					const decreasePosition = INCREASE_FI_LIST[0];
@@ -1754,7 +1757,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 				) {
 					// closeLong()
 					// const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-					let openPositionAmt = INIT_POSITION;
+					// let openPositionAmt = INIT_POSITION;
+					let openPositionAmt = totalCapital * INIT_ASSETS_RATIO;
+
 					const ratio = longRatio;
 					const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
 					const decreasePosition = INCREASE_FI_LIST[0];
