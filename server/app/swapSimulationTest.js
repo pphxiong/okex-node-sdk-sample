@@ -62,7 +62,7 @@ function getRandomNumberByRange(start, end) {
 // const OK_INSTRUMENT_ID = "ETH-USDT-SWAP";
 const BN_SYMBOL = 'BTCUSDT';
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 65 / 100;
+const INIT_ASSETS_RATIO = 40 / 100;
 
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;

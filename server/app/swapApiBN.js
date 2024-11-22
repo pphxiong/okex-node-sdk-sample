@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const LEVERAGE = 10;
+const LEVERAGE = 5;
 const INIT_ASSETS_RATIO = 40 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
