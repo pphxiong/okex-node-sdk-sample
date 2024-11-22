@@ -729,7 +729,7 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		macdList[i - 2].column > 0 &&
+		macdList[i].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
 		macdList[i - 1].column > macdList[i - 2].column &&
 		macdList[i - 2].column > macdList[i - 3].column
@@ -739,7 +739,7 @@ const fnIsCurrentContinousUpper = (macdList, i) => {
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		macdList[i - 2].column < 0 &&
+		macdList[i].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
 		macdList[i - 1].column < macdList[i - 2].column &&
 		macdList[i - 2].column < macdList[i - 3].column
@@ -1059,9 +1059,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (longRatio < LOSS_MAX || longRatio > WIN_MAX);
+			longHolding &&
+			(longRatio < -CLOSECONTINOUS / 100 ||
+				longRatio > OPENCONTINOUS / 100);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (shortRatio < LOSS_MAX || shortRatio > WIN_MAX);
+			shortHolding &&
+			(shortRatio < -CLOSECONTINOUS / 100 ||
+				shortRatio > OPENCONTINOUS / 100);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
