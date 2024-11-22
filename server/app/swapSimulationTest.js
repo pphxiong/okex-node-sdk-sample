@@ -729,21 +729,21 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		macdList[i].column > 0 &&
+		macdList[i - 2].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
 		macdList[i - 1].column > macdList[i - 2].column &&
-		macdList[i - 2].column > macdList[i - 3].column &&
-		macdList[i].column > macdList[i + 1].column
+		macdList[i - 2].column > macdList[i - 3].column
+		//  &&macdList[i].column > macdList[i + 1].column
 	);
 };
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		macdList[i].column < 0 &&
+		macdList[i - 2].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
 		macdList[i - 1].column < macdList[i - 2].column &&
-		macdList[i - 2].column < macdList[i - 3].column &&
-		macdList[i].column < macdList[i + 1].column
+		macdList[i - 2].column < macdList[i - 3].column
+		//  &&macdList[i].column < macdList[i + 1].column
 	);
 };
 
@@ -809,7 +809,7 @@ const fnIsMacdReverse = (macdList) => {
 	let isLowerReverse = false;
 	if (isLower) {
 		if (isLatestContinousUpper) {
-			for (let i = macdList.length - 5; i > 3; i -= 1) {
+			for (let i = macdList.length - 13 + 3; i > 3; i -= 1) {
 				const isCurrentContinousUpper = fnIsCurrentContinousUpper(
 					macdList,
 					i
@@ -837,7 +837,7 @@ const fnIsMacdReverse = (macdList) => {
 		}
 	} else if (isUpper) {
 		if (isLatestContinousLower) {
-			for (let i = macdList.length - 5; i > 3; i -= 1) {
+			for (let i = macdList.length - 13 + 3; i > 3; i -= 1) {
 				const isCurrentContinousLower = fnIsCurrentContinousLower(
 					macdList,
 					i
