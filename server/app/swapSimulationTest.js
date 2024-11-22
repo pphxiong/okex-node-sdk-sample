@@ -992,39 +992,39 @@ const fnIsMacdReverse = (macdList) => {
 					macdList,
 					i
 				);
-				// if (isCurrentContinousUpper) {
-				// 	const isUpperest = fnGetIsUpperest(
-				// 		macdList,
-				// 		i,
-				// 		macdList.length - 2
-				// 	);
-				// 	// const isHasIntervalUpper = fnGetIsHasIntervalUpper(
-				// 	// 	macdList,
-				// 	// 	i,
-				// 	// 	macdList.length - 2
-				// 	// );
-				// 	isUpperReverse =
-				// 		macdList[macdList.length - 2].close >=
-				// 			macdList[i].close &&
-				// 		macdList[macdList.length - 2].column <
-				// 			macdList[i].column;
-				// 	//  && isUpperest;
-				// 	break;
-				// }
-				const isStartEndReverse = fnIsUpperReverse(
-					macdList,
-					i,
-					macdList.length - 2
-				);
-				if (isCurrentContinousUpper && isStartEndReverse) {
+				if (isCurrentContinousUpper) {
+					const isUpperest = fnGetIsUpperest(
+						macdList,
+						i,
+						macdList.length - 2
+					);
+					// const isHasIntervalUpper = fnGetIsHasIntervalUpper(
+					// 	macdList,
+					// 	i,
+					// 	macdList.length - 2
+					// );
 					isUpperReverse =
-						fnGetIsHasIntervalUpperReverse(
-							macdList,
-							i,
-							macdList.length - 2
-						) && i + 10 < macdList.length - 2;
-					if (isUpperReverse) break;
+						macdList[macdList.length - 2].close >=
+							macdList[i].close &&
+						macdList[macdList.length - 2].column <
+							macdList[i].column;
+					//  && isUpperest;
+					break;
 				}
+				// const isStartEndReverse = fnIsUpperReverse(
+				// 	macdList,
+				// 	i,
+				// 	macdList.length - 2
+				// );
+				// if (isCurrentContinousUpper && isStartEndReverse) {
+				// 	isUpperReverse =
+				// 		fnGetIsHasIntervalUpperReverse(
+				// 			macdList,
+				// 			i,
+				// 			macdList.length - 2
+				// 		) && i + 10 < macdList.length - 2;
+				// 	if (isUpperReverse) break;
+				// }
 			}
 		}
 	} else if (isUpper) {
@@ -1034,40 +1034,40 @@ const fnIsMacdReverse = (macdList) => {
 					macdList,
 					i
 				);
-				// if (isCurrentContinousLower) {
-				// 	const isLowerest = fnGetIsLowerest(
-				// 		macdList,
-				// 		i,
-				// 		macdList.length - 2
-				// 	);
-				// 	isLowerReverse =
-				// 		macdList[macdList.length - 2].close <=
-				// 			macdList[i].close &&
-				// 		macdList[macdList.length - 2].column >
-				// 			macdList[i].column;
-				// 	// && isLowerest;
-				// 	break;
-				// }
-				const isStartEndReverse = fnIsLowerReverse(
-					macdList,
-					i,
-					macdList.length - 2
-				);
-				if (isCurrentContinousLower && isStartEndReverse) {
+				if (isCurrentContinousLower) {
+					const isLowerest = fnGetIsLowerest(
+						macdList,
+						i,
+						macdList.length - 2
+					);
 					isLowerReverse =
-						fnGetIsHasIntervalLowerReverse(
-							macdList,
-							i,
-							macdList.length - 2
-						) &&
-						fnGetIsHasIntervalMacdHigh(
-							macdList,
-							i,
-							macdList.length - 2
-						) &&
-						i + 10 < macdList.length - 2;
-					if (isLowerReverse) break;
+						macdList[macdList.length - 2].close <=
+							macdList[i].close &&
+						macdList[macdList.length - 2].column >
+							macdList[i].column;
+					// && isLowerest;
+					break;
 				}
+				// const isStartEndReverse = fnIsLowerReverse(
+				// 	macdList,
+				// 	i,
+				// 	macdList.length - 2
+				// );
+				// if (isCurrentContinousLower && isStartEndReverse) {
+				// 	isLowerReverse =
+				// 		fnGetIsHasIntervalLowerReverse(
+				// 			macdList,
+				// 			i,
+				// 			macdList.length - 2
+				// 		) &&
+				// 		fnGetIsHasIntervalMacdHigh(
+				// 			macdList,
+				// 			i,
+				// 			macdList.length - 2
+				// 		) &&
+				// 		i + 10 < macdList.length - 2;
+				// 	if (isLowerReverse) break;
+				// }
 			}
 		}
 	}
