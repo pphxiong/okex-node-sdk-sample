@@ -8,7 +8,10 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 45 / 100;
+const INIT_ASSETS_RATIO = 65 / 100;
+
+const WIN_MAX = (LEVERAGE * 1) / 100;
+const LOSS_MAX = -WIN_MAX;
 
 const EXCEED_HOLDING_NUM = 4;
 const ATR_WIN_RATIO = 1.5;
@@ -51,8 +54,6 @@ let ATR_PRICE_OBJ = {
 	LTCUSDT_ATR: 0,
 };
 
-const LOSS_MAX = (-LEVERAGE * 2) / 100;
-const WIN_MAX = -LOSS_MAX;
 let INIT_ASSETS = 12000;
 
 const OPENCONTINOUS = 55;
@@ -768,21 +769,19 @@ const fnIsLastUpOrLow = (macdList, bollList) => {
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
 	return (
-		macdList[i - 2].column > 0 &&
-		// macdList[i].column > 0 &&
+		macdList[i].column > 0 &&
 		macdList[i].column > macdList[i - 1].column &&
 		macdList[i - 1].column > macdList[i - 2].column &&
-		macdList[i].column > macdList[i + 1].column
+		macdList[i - 2].column > macdList[i - 3].column
 	);
 };
 
 const fnIsCurrentContinousLower = (macdList, i) => {
 	return (
-		macdList[i - 2].column < 0 &&
-		// macdList[i].column < 0 &&
+		macdList[i].column < 0 &&
 		macdList[i].column < macdList[i - 1].column &&
 		macdList[i - 1].column < macdList[i - 2].column &&
-		macdList[i].column < macdList[i + 1].column
+		macdList[i - 2].column < macdList[i - 3].column
 	);
 };
 
@@ -1068,29 +1067,33 @@ const fnIsMacdReverse = (macdList, atrList, symbol) => {
 				}))
 			);
 			console.log('#############################################');
-			for (
-				let i = macdList.length - 3;
-				i > macdList.length - 72;
-				i -= 1
-			) {
+			for (let i = macdList.length - 13 + 3; i > 3; i -= 1) {
 				const isCurrentContinousUpper = fnIsCurrentContinousUpper(
 					macdList,
 					i
 				);
-				const isStartEndReverse = fnIsUpperReverse(
-					macdList,
-					i,
-					macdList.length - 2
-				);
-				if (isCurrentContinousUpper && isStartEndReverse) {
+				if (isCurrentContinousUpper) {
 					isUpperReverse =
-						fnGetIsHasIntervalUpperReverse(
-							macdList,
-							i,
-							macdList.length - 2
-						) && i + 10 < macdList.length - 2;
-					if (isUpperReverse) break;
+						macdList[macdList.length - 2].close >=
+							macdList[i].close &&
+						macdList[macdList.length - 2].column <
+							macdList[i].column;
+					break;
 				}
+				// const isStartEndReverse = fnIsUpperReverse(
+				// 	macdList,
+				// 	i,
+				// 	macdList.length - 2
+				// );
+				// if (isCurrentContinousUpper && isStartEndReverse) {
+				// 	isUpperReverse =
+				// 		fnGetIsHasIntervalUpperReverse(
+				// 			macdList,
+				// 			i,
+				// 			macdList.length - 2
+				// 		) && i + 10 < macdList.length - 2;
+				// 	if (isUpperReverse) break;
+				// }
 			}
 		}
 	} else if (isUpper) {
@@ -1108,35 +1111,39 @@ const fnIsMacdReverse = (macdList, atrList, symbol) => {
 				}))
 			);
 			console.log('#############################################');
-			for (
-				let i = macdList.length - 3;
-				i > macdList.length - 72;
-				i -= 1
-			) {
+			for (let i = macdList.length - 13 + 3; i > 3; i -= 1) {
 				const isCurrentContinousLower = fnIsCurrentContinousLower(
 					macdList,
 					i
 				);
-				const isStartEndReverse = fnIsLowerReverse(
-					macdList,
-					i,
-					macdList.length - 2
-				);
-				if (isCurrentContinousLower && isStartEndReverse) {
+				if (isCurrentContinousLower) {
 					isLowerReverse =
-						fnGetIsHasIntervalLowerReverse(
-							macdList,
-							i,
-							macdList.length - 2
-						) &&
-						fnGetIsHasIntervalMacdHigh(
-							macdList,
-							i,
-							macdList.length - 2
-						) &&
-						i + 10 < macdList.length - 2;
-					if (isLowerReverse) break;
+						macdList[macdList.length - 2].close <=
+							macdList[i].close &&
+						macdList[macdList.length - 2].column >
+							macdList[i].column;
+					break;
 				}
+				// const isStartEndReverse = fnIsLowerReverse(
+				// 	macdList,
+				// 	i,
+				// 	macdList.length - 2
+				// );
+				// if (isCurrentContinousLower && isStartEndReverse) {
+				// 	isLowerReverse =
+				// 		fnGetIsHasIntervalLowerReverse(
+				// 			macdList,
+				// 			i,
+				// 			macdList.length - 2
+				// 		) &&
+				// 		fnGetIsHasIntervalMacdHigh(
+				// 			macdList,
+				// 			i,
+				// 			macdList.length - 2
+				// 		) &&
+				// 		i + 10 < macdList.length - 2;
+				// 	if (isLowerReverse) break;
+				// }
 			}
 		}
 	}
@@ -1315,25 +1322,13 @@ async function checkByStep(data, symbol) {
 	const currentHolding = longHolding || shortHolding;
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
-	const MAIN_OPEN_LONG_CONDITION1 =
-		!longHolding &&
-		rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
-		rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS;
-	const MAIN_OPEN_SHORT_CONDITION1 =
-		!shortHolding &&
-		rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-		rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS;
+	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
+	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding &&
-		rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS &&
-		rsiList[rsiList.length - 2].RSI2 > OPENCONTINOUS &&
-		(longRatio > 0 || (longRatio < 0 && shortRatio < 0));
+		longHolding && (longRatio > WIN_MAX || longRatio < LOSS_MAX);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding &&
-		rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS &&
-		rsiList[rsiList.length - 2].RSI2 < CLOSECONTINOUS &&
-		(shortRatio > 0 || (longRatio < 0 && shortRatio < 0));
+		shortHolding && (shortRatio > WIN_MAX || shortRatio < LOSS_MAX);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -1358,10 +1353,9 @@ async function checkByStep(data, symbol) {
 	);
 
 	const isFiveM =
-		true ||
-		(minuteDiff < 90 &&
-			minuteList.includes(lastMinuteCharacter) &&
-			!secondList.includes(lastSecondCharacter));
+		minuteDiff < 90 &&
+		minuteList.includes(lastMinuteCharacter) &&
+		!secondList.includes(lastSecondCharacter);
 
 	console.log('************************************', currentTime);
 	console.log(
@@ -2279,7 +2273,7 @@ const fnGetLastResult = (data) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= (1 * 14) / 2) {
+	if (RESTART_TIME >= ((1 * 14) / 2) * 4) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -2343,7 +2337,7 @@ const startInterval = async () => {
 		// await checkDeal(doge_result, DOGE_SYMBOL);
 		// await checkDeal(trx_result, TRX_SYMBOL);
 
-		await waitTime(1000 * 56 * 2);
+		await waitTime((1000 * 56 * 2) / 4);
 		await startInterval();
 	} catch (e) {
 		restart(e);

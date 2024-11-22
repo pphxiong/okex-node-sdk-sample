@@ -789,6 +789,166 @@ const fnGetIsHasIntervalLower = (macdList, i, j) => {
 	return is;
 };
 
+const fnIsLowerReverse = (macdList, i, j) => {
+	// const differ = Math.abs(macdList[i].column - macdList[j].column);
+	const isLowerReverse =
+		(macdList[j].low <= macdList[i].low ||
+			macdList[j].close <= macdList[i].close) &&
+		macdList[j].column > macdList[i].column;
+	// && differ > ATR / 240;
+	const isExtraReverse =
+		macdList[j].close >= macdList[i].close &&
+		macdList[j].column < macdList[i].column;
+	return isLowerReverse;
+};
+
+const fnIsUpperReverse = (macdList, i, j) => {
+	// const differ = Math.abs(macdList[i].column - macdList[j].column);
+	const isUpperReverse =
+		(macdList[j].high >= macdList[i].high ||
+			macdList[j].close >= macdList[i].close) &&
+		macdList[j].column < macdList[i].column;
+	// && differ > ATR / 240;
+	const isExtraReverse =
+		macdList[j].close <= macdList[i].close &&
+		macdList[j].column > macdList[i].column;
+	return isUpperReverse;
+};
+
+const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
+	let is = false;
+	for (let k = i + 5; k < j - 5; k += 1) {
+		is =
+			fnIsUpperReverse(macdList, i, k) &&
+			fnIsUpperReverse(macdList, k, j) &&
+			fnIsUpperReverse(macdList, i, j) &&
+			fnIsIntervalContinousUpper(macdList, k);
+		// && fnGetIsHasIntervalMacdLow(macdList, k, j);
+		if (is) {
+			console.log(
+				'############fnGetIsHasIntervalUpperReverse############'
+			);
+			console.log(
+				'i',
+				i,
+				macdList
+					.slice(i, i + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'k',
+				k,
+				macdList
+					.slice(k, k + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'j',
+				j,
+				macdList
+					.slice(j, j + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					}))
+			);
+			console.log('########################');
+			break;
+		}
+	}
+	return is;
+};
+
+const fnGetIsHasIntervalLowerReverse = (macdList, i, j) => {
+	let is = false;
+	for (let k = i + 5; k < j - 5; k += 1) {
+		is =
+			fnIsLowerReverse(macdList, i, k) &&
+			fnIsLowerReverse(macdList, k, j) &&
+			fnIsLowerReverse(macdList, i, j) &&
+			fnIsIntervalContinousLower(macdList, k);
+		// && fnGetIsHasIntervalMacdHigh(macdList, k, j);
+		if (is) {
+			console.log(
+				'############fnGetIsHasIntervalLowerReverse############'
+			);
+			console.log(
+				'i',
+				i,
+				macdList
+					.slice(i, i + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'k',
+				k,
+				macdList
+					.slice(k, k + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					})),
+				'j',
+				j,
+				macdList
+					.slice(j, j + 1)
+					.map(({ column, open, close, high, low, time }) => ({
+						column,
+						open,
+						close,
+						high,
+						low,
+						time,
+					}))
+			);
+			console.log('########################');
+			break;
+		}
+	}
+	return is;
+};
+
+const fnGetIsHasIntervalMacdLow = (macdList, i, j) => {
+	let is = false;
+	for (let k = i + 1; k < j; k += 1) {
+		is = macdList[k].column <= 0;
+		if (is) break;
+	}
+	return is;
+};
+
+const fnGetIsHasIntervalMacdHigh = (macdList, i, j) => {
+	let is = false;
+	for (let k = i + 1; k < j; k += 1) {
+		is = macdList[k].column >= 0;
+		if (is) break;
+	}
+	return is;
+};
+
 const fnIsMacdReverse = (macdList) => {
 	const isUpper =
 		macdList[macdList.length - 1].column >
@@ -814,24 +974,38 @@ const fnIsMacdReverse = (macdList) => {
 					macdList,
 					i
 				);
-				if (isCurrentContinousUpper) {
-					const isUpperest = fnGetIsUpperest(
-						macdList,
-						i,
-						macdList.length - 2
-					);
-					// const isHasIntervalUpper = fnGetIsHasIntervalUpper(
-					// 	macdList,
-					// 	i,
-					// 	macdList.length - 2
-					// );
+				// if (isCurrentContinousUpper) {
+				// 	const isUpperest = fnGetIsUpperest(
+				// 		macdList,
+				// 		i,
+				// 		macdList.length - 2
+				// 	);
+				// 	// const isHasIntervalUpper = fnGetIsHasIntervalUpper(
+				// 	// 	macdList,
+				// 	// 	i,
+				// 	// 	macdList.length - 2
+				// 	// );
+				// 	isUpperReverse =
+				// 		macdList[macdList.length - 2].close >=
+				// 			macdList[i].close &&
+				// 		macdList[macdList.length - 2].column <
+				// 			macdList[i].column;
+				// 	//  && isUpperest;
+				// 	break;
+				// }
+				const isStartEndReverse = fnIsUpperReverse(
+					macdList,
+					i,
+					macdList.length - 2
+				);
+				if (isCurrentContinousUpper && isStartEndReverse) {
 					isUpperReverse =
-						macdList[macdList.length - 2].close >=
-							macdList[i].close &&
-						macdList[macdList.length - 2].column <
-							macdList[i].column;
-					//  && isUpperest;
-					break;
+						fnGetIsHasIntervalUpperReverse(
+							macdList,
+							i,
+							macdList.length - 2
+						) && i + 10 < macdList.length - 2;
+					if (isUpperReverse) break;
 				}
 			}
 		}
@@ -842,19 +1016,39 @@ const fnIsMacdReverse = (macdList) => {
 					macdList,
 					i
 				);
-				if (isCurrentContinousLower) {
-					const isLowerest = fnGetIsLowerest(
-						macdList,
-						i,
-						macdList.length - 2
-					);
+				// if (isCurrentContinousLower) {
+				// 	const isLowerest = fnGetIsLowerest(
+				// 		macdList,
+				// 		i,
+				// 		macdList.length - 2
+				// 	);
+				// 	isLowerReverse =
+				// 		macdList[macdList.length - 2].close <=
+				// 			macdList[i].close &&
+				// 		macdList[macdList.length - 2].column >
+				// 			macdList[i].column;
+				// 	// && isLowerest;
+				// 	break;
+				// }
+				const isStartEndReverse = fnIsLowerReverse(
+					macdList,
+					i,
+					macdList.length - 2
+				);
+				if (isCurrentContinousLower && isStartEndReverse) {
 					isLowerReverse =
-						macdList[macdList.length - 2].close <=
-							macdList[i].close &&
-						macdList[macdList.length - 2].column >
-							macdList[i].column;
-					// && isLowerest;
-					break;
+						fnGetIsHasIntervalLowerReverse(
+							macdList,
+							i,
+							macdList.length - 2
+						) &&
+						fnGetIsHasIntervalMacdHigh(
+							macdList,
+							i,
+							macdList.length - 2
+						) &&
+						i + 10 < macdList.length - 2;
+					if (isLowerReverse) break;
 				}
 			}
 		}
