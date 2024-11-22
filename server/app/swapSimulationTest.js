@@ -65,7 +65,7 @@ const LEVERAGE = 5;
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
 const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
-const WIN_MAX = ((0.1 / 1) * LEVERAGE) / 10;
+const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
 const ORIGIN_INIT_POSITION = 2;
@@ -1059,9 +1059,9 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && (longRatio < -WIN_MAX || longRatio > WIN_MAX);
+			longHolding && (longRatio < LOSS_MAX || longRatio > WIN_MAX);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && (shortRatio < -WIN_MAX || shortRatio > WIN_MAX);
+			shortHolding && (shortRatio < LOSS_MAX || shortRatio > WIN_MAX);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
