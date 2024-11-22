@@ -815,6 +815,24 @@ const fnIsUpperReverse = (macdList, i, j) => {
 	return isUpperReverse;
 };
 
+const fnIsIntervalContinousUpper = (macdList, i) => {
+	return (
+		macdList[i - 1].column > 0 &&
+		macdList[i].column > macdList[i - 1].column &&
+		macdList[i - 1].column > macdList[i - 2].column &&
+		macdList[i].column > macdList[i + 1].column
+	);
+};
+
+const fnIsIntervalContinousLower = (macdList, i) => {
+	return (
+		macdList[i - 1].column < 0 &&
+		macdList[i].column < macdList[i - 1].column &&
+		macdList[i - 1].column < macdList[i - 2].column &&
+		macdList[i].column < macdList[i + 1].column
+	);
+};
+
 const fnGetIsHasIntervalUpperReverse = (macdList, i, j) => {
 	let is = false;
 	for (let k = i + 5; k < j - 5; k += 1) {
