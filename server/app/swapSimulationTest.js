@@ -1291,6 +1291,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     // const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
+    console.log(234, bollList[bollList.length - 1]);
     const MAIN_OPEN_LONG_CONDITION1 =
       !longHolding &&
       macdList[macdList.length - 1].close < bollList[bollList.length - 1].DN;
