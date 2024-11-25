@@ -175,7 +175,7 @@ function send(res, ret) {
 
 function getCurrentMacd(list, last) {
   let macdList = [];
-  list.map((item, index) => {
+  list.forEach((item, index) => {
     let result = {};
     if (index == 0) {
       result = last || {
@@ -740,6 +740,7 @@ function getBOLL(list) {
 }
 
 function getCurrentBOLL(list) {
+  console.log(11222, list.length);
   const newList = JSON.parse(JSON.stringify(list));
   const result = [];
 
@@ -751,7 +752,6 @@ function getCurrentBOLL(list) {
     result.push(currentBOLL);
   }
   result.reverse();
-  console.log(newList.length, result.length);
   return result;
 }
 
