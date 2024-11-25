@@ -1083,7 +1083,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 				macdList: data.macdList.slice(i, i + 50),
 				rsiList: data.rsiList.slice(i, i + 50),
 			},
-			i == data.macdList.length - 1
+			i == data.macdList.length - 50
 			// && i == data.macdList.length - 10
 		);
 	}
