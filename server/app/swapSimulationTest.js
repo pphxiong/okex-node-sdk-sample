@@ -1102,7 +1102,7 @@ const fnIsMacdReverse = (macdList) => {
 };
 
 const checkDeal = async (data, isAutoReset = true) => {
-  console.log(334, data.bollList.length);
+  console.log(334, data.bollList.length, data.macdList.length);
   for (let i = 0; i < data.bollList.length - 3; i++) {
     checkByStep(
       {
