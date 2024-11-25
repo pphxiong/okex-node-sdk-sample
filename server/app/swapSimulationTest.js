@@ -1275,11 +1275,13 @@ const checkDeal = async (data, isAutoReset = true) => {
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			(longRatio < -CLOSECONTINOUS / 100 ||
-				longRatio > OPENCONTINOUS / 100);
+				longRatio > OPENCONTINOUS / 100 ||
+				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			(shortRatio < -CLOSECONTINOUS / 100 ||
-				shortRatio > OPENCONTINOUS / 100);
+				shortRatio > OPENCONTINOUS / 100 ||
+				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
