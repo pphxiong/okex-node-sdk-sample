@@ -667,9 +667,9 @@ app.get("/swap/getLatestProfit", async (req, response) => {
       isContinousAutoClose === true || isContinousAutoClose === "true";
 
     const newList = JSON.parse(JSON.stringify(list));
+    const bollList = getCurrentBOLL(newList).slice(-1400);
     const macdList = getCurrentMacd(newList).slice(-1400);
     const rsiList = getCurrentRSI(newList).slice(-1400);
-    const bollList = getCurrentBOLL(newList).slice(-1400);
 
     const result = {
       macdList,
@@ -740,7 +740,6 @@ function getBOLL(list) {
 }
 
 function getCurrentBOLL(list) {
-  console.log(11222, list.length);
   const newList = JSON.parse(JSON.stringify(list));
   const result = [];
 
