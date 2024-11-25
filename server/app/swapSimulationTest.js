@@ -670,6 +670,7 @@ app.get("/swap/getLatestProfit", async (req, response) => {
     const macdList = getCurrentMacd(newList).slice(-1400);
     const rsiList = getCurrentRSI(newList).slice(-1400);
     const bollList = getCurrentBOLL(newList).slice(-1400);
+    console.log(234, bollList.length);
 
     const result = {
       macdList,
@@ -753,30 +754,6 @@ function getCurrentBOLL(list) {
   result.reverse();
   return result;
 }
-
-const fnIsLastUpOrLow = (macdList, bollList) => {
-  let isUp = false;
-  let isLow = false;
-  for (let i = macdList.length - 1; i > 0; i -= 1) {
-    const isCurrentUp =
-      macdList[i].close < bollList[i].UP &&
-      macdList[i - 1].close > bollList[i - 1].UP &&
-      macdList[i].close > bollList[i].MA;
-    const isCurrentLow =
-      macdList[i].close > bollList[i].DN &&
-      macdList[i - 1].close < bollList[i - 1].DN &&
-      macdList[i].close < bollList[i].MA;
-    if (isCurrentUp) {
-      isUp = true;
-      break;
-    }
-    if (isCurrentLow) {
-      isLow = true;
-      break;
-    }
-  }
-  return { isUp, isLow };
-};
 
 const fnIsCurrentContinousUpper = (macdList, i) => {
   return (
@@ -1102,7 +1079,6 @@ const fnIsMacdReverse = (macdList) => {
 };
 
 const checkDeal = async (data, isAutoReset = true) => {
-  console.log(334, data.bollList.length, data.macdList.length);
   for (let i = 0; i < data.bollList.length - 3; i++) {
     checkByStep(
       {
