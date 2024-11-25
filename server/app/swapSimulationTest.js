@@ -94,7 +94,7 @@ let lastWinOrLoss = 0; // 0: loss, 1: win
 let lastPosition = INIT_POSITION;
 let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
-let baoNumTotal = 0;
+let lossNumTotal = 0;
 let winNumTotal = 0;
 
 let OPENCONTINOUS = 10;
@@ -626,7 +626,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 				maxContinuousLoss,
 				longPosition,
 				shortPosition,
-				baoNumTotal,
+				lossNumTotal,
 				winNumTotal,
 				lastWinOrLoss,
 				lastPosition,
@@ -689,7 +689,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 				maxContinuousLoss,
 				longPosition,
 				shortPosition,
-				baoNumTotal,
+				lossNumTotal,
 				winNumTotal,
 				lastWinOrLoss,
 				lastPosition,
@@ -1080,13 +1080,13 @@ const fnIsMacdReverse = (macdList) => {
 };
 
 const checkDeal = async (data, isAutoReset = true) => {
-	for (let i = 0; i < data.macdList.length - 49; i++) {
+	for (let i = 0; i < data.macdList.length; i++) {
 		checkByStep(
 			{
-				macdList: data.macdList.slice(i, i + 50),
-				rsiList: data.rsiList.slice(i, i + 50),
+				macdList: data.macdList,
+				rsiList: data.rsiList,
 			},
-			i == data.macdList.length - 50
+			i == data.macdList.length - 1
 			// && i == data.macdList.length - 10
 		);
 	}
@@ -1523,7 +1523,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 				) {
 					if (longRatio < 0) modeChange = true;
 					if (longRatio < LOSS_MAX) {
-						baoNumTotal++;
+						lossNumTotal++;
 						// openLongCondition = false;
 						// openShortCondition = true;
 					} else if (longRatio > WIN_MAX) {
@@ -1588,7 +1588,7 @@ const checkDeal = async (data, isAutoReset = true) => {
 					true
 				) {
 					if (shortRatio < LOSS_MAX) {
-						baoNumTotal++;
+						lossNumTotal++;
 						// openLongCondition = true;
 						// openShortCondition = false;
 					} else if (longRatio > WIN_MAX) {
