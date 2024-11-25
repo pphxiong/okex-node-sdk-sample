@@ -1276,11 +1276,19 @@ const checkDeal = async (data, isAutoReset = true) => {
 
     const MAIN_CLOSE_LONG_CONDITION1 =
       longHolding &&
-      (macdList[macdList.length - 1].close < bollList[bollList.length - 1].MA ||
+      ((macdList[macdList.length - 1].close <
+        bollList[bollList.length - 1].MA &&
+        longRatio > 0) ||
+        macdList[macdList.length - 1].close <
+          bollList[bollList.length - 1].DN ||
         isForceDeal);
     const MAIN_CLOSE_SHORT_CONDITION1 =
       shortHolding &&
-      (macdList[macdList.length - 1].close > bollList[bollList.length - 1].MA ||
+      ((macdList[macdList.length - 1].close >
+        bollList[bollList.length - 1].MA &&
+        shortRatio > 0) ||
+        macdList[macdList.length - 1].close >
+          bollList[bollList.length - 1].UP ||
         isForceDeal);
 
     if (modeChange) lastMode = lastMode ? 0 : 1;
