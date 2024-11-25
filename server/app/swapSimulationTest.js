@@ -1083,10 +1083,10 @@ const checkDeal = async (data, isAutoReset = true) => {
 	for (let i = 0; i < data.macdList.length; i++) {
 		checkByStep(
 			{
-				macdList: data.macdList,
-				rsiList: data.rsiList,
+				macdList: data.macdList.slice(i, i + 1),
+				rsiList: data.rsiList.slice(i, i + 1),
 			},
-			i == data.macdList.length - 1
+			i === data.macdList.length - 1
 			// && i == data.macdList.length - 10
 		);
 	}
