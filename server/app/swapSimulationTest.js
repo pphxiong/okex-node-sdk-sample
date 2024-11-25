@@ -603,8 +603,8 @@ app.get('/swap/startHearBeat', async (req, response) => {
 		lastRSI = rsiList[rsiList.length - 1];
 
 		const result = {
-			macdList,
-			rsiList,
+			macdList: macdList.slice(0, 30),
+			rsiList: rsiList.slice(0, 30),
 		};
 
 		await checkDeal(result, isAutoReset);
