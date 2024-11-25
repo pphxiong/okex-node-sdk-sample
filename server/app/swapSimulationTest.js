@@ -1289,7 +1289,7 @@ const checkDeal = async (data, isAutoReset = true) => {
     // 				rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS))) ||
     // 		isForceDeal);
 
-    const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
+    // const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
     const MAIN_OPEN_LONG_CONDITION1 =
       !longHolding &&
