@@ -95,6 +95,7 @@ let lastPosition = INIT_POSITION;
 let maxContinuousWin = 0;
 let maxContinuousLoss = 0;
 let baoNumTotal = 0;
+let winNumTotal = 0;
 
 let OPENCONTINOUS = 10;
 let CLOSECONTINOUS = 10;
@@ -626,6 +627,7 @@ app.get('/swap/startHearBeat', async (req, response) => {
 				longPosition,
 				shortPosition,
 				baoNumTotal,
+				winNumTotal,
 				lastWinOrLoss,
 				lastPosition,
 			},
@@ -688,6 +690,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 				longPosition,
 				shortPosition,
 				baoNumTotal,
+				winNumTotal,
 				lastWinOrLoss,
 				lastPosition,
 			},
@@ -1523,6 +1526,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 						baoNumTotal++;
 						// openLongCondition = false;
 						// openShortCondition = true;
+					} else if (longRatio > WIN_MAX) {
+						winNumTotal++;
 					}
 					const currentProfit =
 						(longRatio * longHolding.positionAmt) / LEVERAGE -
@@ -1586,6 +1591,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 						baoNumTotal++;
 						// openLongCondition = true;
 						// openShortCondition = false;
+					} else if (longRatio > WIN_MAX) {
+						winNumTotal++;
 					}
 					if (shortRatio < 0) modeChange = true;
 					const currentProfit =
