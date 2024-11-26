@@ -66,7 +66,7 @@ const INIT_ASSETS_RATIO = 40 / 100;
 
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
-const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
+const LOSS_MAX = (-0.1 * 2 * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
