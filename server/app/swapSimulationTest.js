@@ -1312,18 +1312,18 @@ const checkDeal = async (data, isForceDeal = false) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((macdList[macdList.length - 1].close >
-				bollList[bollList.length - 1].DN &&
-				macdList[macdList.length - 2].close <
-					bollList[bollList.length - 2].DN &&
-				longRatio > 0) ||
-				isForceDeal);
-		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
 			((macdList[macdList.length - 1].close <
 				bollList[bollList.length - 1].UP &&
 				macdList[macdList.length - 2].close >
 					bollList[bollList.length - 2].UP &&
+				longRatio > 0) ||
+				isForceDeal);
+		const MAIN_CLOSE_SHORT_CONDITION1 =
+			shortHolding &&
+			((macdList[macdList.length - 1].close >
+				bollList[bollList.length - 1].DN &&
+				macdList[macdList.length - 2].close <
+					bollList[bollList.length - 2].DN &&
 				shortRatio > 0) ||
 				isForceDeal);
 
