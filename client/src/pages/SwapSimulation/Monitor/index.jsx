@@ -635,7 +635,7 @@ export default (props) => {
           });
         };
 
-        fnGetP(time);
+        fnGetP(time, y === 1);
       });
 
       yP.then((data) => {
