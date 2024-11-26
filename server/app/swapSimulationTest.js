@@ -1317,6 +1317,10 @@ const checkDeal = async (data, isForceDeal = false) => {
 				macdList[macdList.length - 2].close >
 					bollList[bollList.length - 2].MA &&
 				longRatio > 0) ||
+				(macdList[macdList.length - 1].close <
+					bollList[bollList.length - 1].DN &&
+					macdList[macdList.length - 2].close >
+						bollList[bollList.length - 2].DN) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
@@ -1325,6 +1329,10 @@ const checkDeal = async (data, isForceDeal = false) => {
 				macdList[macdList.length - 2].close <
 					bollList[bollList.length - 2].MA &&
 				shortRatio > 0) ||
+				(macdList[macdList.length - 1].close >
+					bollList[bollList.length - 1].UP &&
+					macdList[macdList.length - 2].close <
+						bollList[bollList.length - 2].UP) ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
