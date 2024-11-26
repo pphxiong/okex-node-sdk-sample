@@ -579,13 +579,15 @@ export default (props) => {
     try {
       setPageLoading(true);
 
-      let y = 0;
+      let y = lastStep;
 
-      const time = moment().valueOf();
+      const time = moment()
+        .subtract(intervalDaysMap[interval] * y, 'days')
+        .valueOf();
       const profitList = [];
       // let tProfit = 0;
       const yP = new Promise((resolveP) => {
-        const fnGetP = (timeP) => {
+        const fnGetP = (timeP, isLast = false) => {
           const p = new Promise((resolve) => {
             const payload = {
               time: timeP,
@@ -594,6 +596,7 @@ export default (props) => {
               openContinous,
               closeContinous,
               isContinousAutoClose,
+              isForceDeal: isLast,
             };
             getLatestProfit(payload).then((res) => {
               const { data } = res;
@@ -616,9 +619,9 @@ export default (props) => {
           p.then(() => {
             // tProfit += data.totalProfit;
 
-            y += 1;
+            y -= 1;
             // eslint-disable-next-line eqeqeq
-            if (y >= lastStep) {
+            if (y <= 0) {
               resolveP(profitList);
               return profitList;
             }
@@ -626,7 +629,7 @@ export default (props) => {
             const newTime = moment()
               .subtract(intervalDaysMap[interval] * y, 'days')
               .valueOf();
-            fnGetP(newTime);
+            fnGetP(newTime, y <= 0);
 
             return false;
           });
