@@ -1299,46 +1299,30 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			((macdList[macdList.length - 1].close <
-				bollList[bollList.length - 1].MA &&
-				macdList[macdList.length - 1].close >
-					bollList[bollList.length - 1].DN &&
-				macdList[macdList.length - 2].close >
-					bollList[bollList.length - 2].MA &&
-				shortHolding) ||
-				(macdList[macdList.length - 1].close >
-					bollList[bollList.length - 1].MA &&
-					macdList[macdList.length - 2].close <
-						bollList[bollList.length - 2].MA));
+			macdList[macdList.length - 1].close <
+				macdList[macdList.length - 2].close &&
+			bollList[bollList.length - 1].column >
+				bollList[bollList.length - 2].column;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			((macdList[macdList.length - 1].close >
-				bollList[bollList.length - 1].MA &&
-				macdList[macdList.length - 1].close <
-					bollList[bollList.length - 1].UP &&
-				macdList[macdList.length - 2].close <
-					bollList[bollList.length - 2].MA &&
-				longHolding) ||
-				(macdList[macdList.length - 1].close <
-					bollList[bollList.length - 1].MA &&
-					macdList[macdList.length - 2].close >
-						bollList[bollList.length - 2].MA));
+			macdList[macdList.length - 1].close >
+				macdList[macdList.length - 2].close &&
+			bollList[bollList.length - 1].column <
+				bollList[bollList.length - 2].column;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((macdList[macdList.length - 1].close <
-				bollList[bollList.length - 1].MA &&
-				longRatio > 0) ||
-				macdList[macdList.length - 1].close <
-					bollList[bollList.length - 1].DN ||
+			((macdList[macdList.length - 1].close >
+				macdList[macdList.length - 2].close &&
+				bollList[bollList.length - 1].column <
+					bollList[bollList.length - 2].column) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((macdList[macdList.length - 1].close >
-				bollList[bollList.length - 1].MA &&
-				shortRatio > 0) ||
-				macdList[macdList.length - 1].close >
-					bollList[bollList.length - 1].UP ||
+			((macdList[macdList.length - 1].close <
+				macdList[macdList.length - 2].close &&
+				bollList[bollList.length - 1].column >
+					bollList[bollList.length - 2].column) ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
