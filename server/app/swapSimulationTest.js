@@ -66,7 +66,7 @@ const INIT_ASSETS_RATIO = 40 / 100;
 
 const INTERVAL = '5m';
 const BAO_RATIO = (-0.25 * LEVERAGE) / 10;
-const LOSS_MAX = (((-0.1 * 10) / 1) * LEVERAGE) / 10;
+const LOSS_MAX = ((-0.1 / 1) * LEVERAGE) / 10;
 const WIN_MAX = ((0.1 / 2) * LEVERAGE) / 10;
 // const BAO_RATIO = LOSS_MAX * 2;
 const CAPITAL_RATIO = 1;
@@ -1318,7 +1318,7 @@ const checkDeal = async (data, isForceDeal = false) => {
 					bollList[bollList.length - 2].UP &&
 				longRatio > 0) ||
 				isForceDeal ||
-				longRatio < LOSS_MAX);
+				(longRatio < LOSS_MAX && shortRatio < LOSS_MAX));
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((macdList[macdList.length - 1].close >
@@ -1327,7 +1327,7 @@ const checkDeal = async (data, isForceDeal = false) => {
 					bollList[bollList.length - 2].DN &&
 				shortRatio > 0) ||
 				isForceDeal ||
-				shortRatio < LOSS_MAX);
+				(longRatio < LOSS_MAX && shortRatio < LOSS_MAX));
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
