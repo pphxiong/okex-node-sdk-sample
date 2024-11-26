@@ -1299,30 +1299,30 @@ const checkDeal = async (data, isForceDeal = false) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			macdList[macdList.length - 1].close <
-				bollList[bollList.length - 1].UP &&
-			macdList[macdList.length - 2].close >
-				bollList[bollList.length - 2].UP;
+			macdList[macdList.length - 1].close >
+				bollList[bollList.length - 1].MA &&
+			macdList[macdList.length - 2].close <
+				bollList[bollList.length - 2].MA;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			macdList[macdList.length - 1].close >
-				bollList[bollList.length - 1].DN &&
-			macdList[macdList.length - 2].close <
-				bollList[bollList.length - 2].DN;
+			macdList[macdList.length - 1].close <
+				bollList[bollList.length - 1].MA &&
+			macdList[macdList.length - 2].close >
+				bollList[bollList.length - 2].MA;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((macdList[macdList.length - 1].close >
+			((macdList[macdList.length - 1].close <
 				bollList[bollList.length - 1].MA &&
-				macdList[macdList.length - 2].close <
+				macdList[macdList.length - 2].close >
 					bollList[bollList.length - 2].MA &&
 				longRatio > 0) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((macdList[macdList.length - 1].close <
+			((macdList[macdList.length - 1].close >
 				bollList[bollList.length - 1].MA &&
-				macdList[macdList.length - 2].close >
+				macdList[macdList.length - 2].close <
 					bollList[bollList.length - 2].MA &&
 				shortRatio > 0) ||
 				isForceDeal);
