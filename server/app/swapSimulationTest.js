@@ -679,7 +679,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			bollList,
 			rsiList,
 		};
-		await checkDeal(result, isForceDeal);
+		await checkDeal(result, isForceDeal === true || isForceDeal === 'true');
 		send(response, {
 			errcode: 0,
 			errmsg: 'ok',

@@ -629,7 +629,7 @@ export default (props) => {
             const newTime = moment()
               .subtract(intervalDaysMap[interval] * y, 'days')
               .valueOf();
-            fnGetP(newTime, y <= 0);
+            fnGetP(newTime, y <= 1);
 
             return false;
           });
