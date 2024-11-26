@@ -647,6 +647,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		openContinous,
 		closeContinous,
 		isContinousAutoClose,
+		isForceDeal,
 	} = query;
 	try {
 		const payload = {
@@ -678,7 +679,7 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 			bollList,
 			rsiList,
 		};
-		await checkDeal(result);
+		await checkDeal(result, isForceDeal);
 		send(response, {
 			errcode: 0,
 			errmsg: 'ok',
@@ -1103,7 +1104,7 @@ const fnIsMacdReverse = (macdList) => {
 	return { isUpperReverse, isLowerReverse };
 };
 
-const checkDeal = async (data, isAutoReset = true) => {
+const checkDeal = async (data, isForceDeal = false) => {
 	for (let i = 0; i < data.bollList.length - 3; i++) {
 		checkByStep(
 			{
@@ -1111,8 +1112,8 @@ const checkDeal = async (data, isAutoReset = true) => {
 				rsiList: data.rsiList.slice(i, i + 2),
 				bollList: data.bollList.slice(i, i + 2),
 			},
-			i === data.bollList.length - 4
-			// && i == data.macdList.length - 10
+			// i === data.bollList.length - 4
+			isForceDeal
 		);
 	}
 
