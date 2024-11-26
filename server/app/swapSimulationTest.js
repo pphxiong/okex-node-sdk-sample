@@ -1299,29 +1299,30 @@ const checkDeal = async (data, isAutoReset = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			macdList[macdList.length - 1].close <
-				macdList[macdList.length - 2].close &&
-			macdList[macdList.length - 1].column >
-				macdList[macdList.length - 2].column;
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
 			macdList[macdList.length - 1].close >
 				macdList[macdList.length - 2].close &&
 			macdList[macdList.length - 1].column <
 				macdList[macdList.length - 2].column;
 
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding &&
+			macdList[macdList.length - 1].close <
+				macdList[macdList.length - 2].close &&
+			macdList[macdList.length - 1].column >
+				macdList[macdList.length - 2].column;
+
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((macdList[macdList.length - 1].close >
+			((macdList[macdList.length - 1].close <
 				macdList[macdList.length - 2].close &&
-				macdList[macdList.length - 1].column <
+				macdList[macdList.length - 1].column >
 					macdList[macdList.length - 2].column) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((macdList[macdList.length - 1].close <
+			((macdList[macdList.length - 1].close >
 				macdList[macdList.length - 2].close &&
-				macdList[macdList.length - 1].column >
+				macdList[macdList.length - 1].column <
 					macdList[macdList.length - 2].column) ||
 				isForceDeal);
 
