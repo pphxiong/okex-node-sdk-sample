@@ -1105,14 +1105,14 @@ const fnIsMacdReverse = (macdList) => {
 };
 
 const checkDeal = async (data, isForceDeal = false) => {
-	for (let i = 0; i < data.bollList.length - 3; i++) {
+	for (let i = 0; i < data.bollList.length; i++) {
 		checkByStep(
 			{
-				macdList: data.macdList.slice(i, i + 2),
-				rsiList: data.rsiList.slice(i, i + 2),
-				bollList: data.bollList.slice(i, i + 2),
+				macdList: data.macdList,
+				rsiList: data.rsiList,
+				bollList: data.bollList,
 			},
-			i === data.bollList.length - 4 && isForceDeal
+			i === data.bollList.length - 1 && isForceDeal
 		);
 	}
 
