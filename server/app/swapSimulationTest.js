@@ -1295,36 +1295,20 @@ const checkDeal = async (data, isForceDeal = false) => {
 		// 				rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS))) ||
 		// 		isForceDeal);
 
-		// const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
+		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
-		const MAIN_OPEN_LONG_CONDITION1 =
-			!longHolding &&
-			macdList[macdList.length - 1].close >
-				bollList[bollList.length - 1].DN &&
-			macdList[macdList.length - 2].close <
-				bollList[bollList.length - 2].DN;
-		const MAIN_OPEN_SHORT_CONDITION1 =
-			!shortHolding &&
-			macdList[macdList.length - 1].close <
-				bollList[bollList.length - 1].UP &&
-			macdList[macdList.length - 2].close >
-				bollList[bollList.length - 2].UP;
+		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
+		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((macdList[macdList.length - 1].close <
-				bollList[bollList.length - 1].UP &&
-				macdList[macdList.length - 2].close >
-					bollList[bollList.length - 2].UP &&
-				longRatio > 0) ||
+			(longRatio < -CLOSECONTINOUS / 100 ||
+				longRatio > OPENCONTINOUS / 100 ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((macdList[macdList.length - 1].close >
-				bollList[bollList.length - 1].DN &&
-				macdList[macdList.length - 2].close <
-					bollList[bollList.length - 2].DN &&
-				shortRatio > 0) ||
+			(shortRatio < -CLOSECONTINOUS / 100 ||
+				shortRatio > OPENCONTINOUS / 100 ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
