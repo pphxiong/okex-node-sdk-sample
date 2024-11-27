@@ -1302,15 +1302,9 @@ const checkDeal = async (data, isForceDeal = false) => {
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding &&
-			(longRatio < -CLOSECONTINOUS / 100 ||
-				longRatio > OPENCONTINOUS / 100 ||
-				isForceDeal);
+			longHolding && (longRatio > OPENCONTINOUS / 100 || isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding &&
-			(shortRatio < -CLOSECONTINOUS / 100 ||
-				shortRatio > OPENCONTINOUS / 100 ||
-				isForceDeal);
+			shortHolding && (shortRatio > OPENCONTINOUS / 100 || isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
