@@ -672,7 +672,8 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		const newList = JSON.parse(JSON.stringify(list));
 		const macdList = getCurrentMacd(newList).slice(-1400);
 		const rsiList = getCurrentRSI(newList).slice(-1400);
-		const bollList = getCurrentBOLL(newList).slice(-1400);
+		// const bollList = getCurrentBOLL(newList).slice(-1400);
+		const bollList = [];
 
 		const result = {
 			macdList,
