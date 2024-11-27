@@ -1297,6 +1297,13 @@ const checkDeal = async (data, isForceDeal = false) => {
 
 		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
+		console.log(
+			223,
+			isUpperReverse,
+			isLowerReverse,
+			macdList[macdList.length - 1]
+		);
+
 		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
 		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
 
