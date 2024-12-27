@@ -1207,23 +1207,23 @@ const checkDeal = async (data, isForceDeal = false) => {
 			});
 
 		const latestMacdList = macdList.slice(-6);
-		const latestRsiList = rsiList.slice(-6);
-		let ifRSIPositiveContinuity = latestMacdList.every(
-			(item, index, arr) => {
-				return (
-					// latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
-					latestRsiList[index].RSI1 > latestRsiList[index].RSI3
-				);
-			}
-		);
-		let ifRSINegativeContinuity = latestMacdList.every(
-			(item, index, arr) => {
-				return (
-					// latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
-					latestRsiList[index].RSI1 < latestRsiList[index].RSI3
-				);
-			}
-		);
+		// const latestRsiList = rsiList.slice(-6);
+		// let ifRSIPositiveContinuity = latestMacdList.every(
+		// 	(item, index, arr) => {
+		// 		return (
+		// 			// latestRsiList[index].RSI1 > latestRsiList[index].RSI2 &&
+		// 			latestRsiList[index].RSI1 > latestRsiList[index].RSI3
+		// 		);
+		// 	}
+		// );
+		// let ifRSINegativeContinuity = latestMacdList.every(
+		// 	(item, index, arr) => {
+		// 		return (
+		// 			// latestRsiList[index].RSI1 < latestRsiList[index].RSI2 &&
+		// 			latestRsiList[index].RSI1 < latestRsiList[index].RSI3
+		// 		);
+		// 	}
+		// );
 		// let ifMacdPositiveContinuity = latestMacdList.every((item, index, arr) => {
 		//   if (index == 0) return true;
 		//   return latestMacdList[index].column > latestMacdList[index - 1].column;
@@ -1253,63 +1253,13 @@ const checkDeal = async (data, isForceDeal = false) => {
 		//   );
 		// });
 
-		const MAIN_LONG_BASIC_CONDITION =
-			Number(macdList[macdList.length - 1].column) > 0 &&
-			rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
-		// Number(macdList[macdList.length - 1].column) > 0 &&
-		// rsiList[rsiList.length - 1].RSI1 > rsiList[rsiList.length - 1].RSI3 &&
-		// rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
-		// rsiList[rsiList.length - 2].RSI3 < LONG_CONDITION;
-		// rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-		// rsiList[rsiList.length - 2].RSI1 > rsiList[rsiList.length - 2].RSI3 &&
-		// rsiList[rsiList.length - 2].RSI1 < LONG_CONDITION;
-		// (shortRatio >= 0 || shortRatio <= LOSS_MAX);
+		// const MAIN_LONG_BASIC_CONDITION =
+		// 	Number(macdList[macdList.length - 1].column) > 0 &&
+		// 	rsiList[rsiList.length - 1].RSI3 > LONG_CONDITION;
 
-		const MAIN_SHORT_BASIC_CONDITION =
-			Number(macdList[macdList.length - 1].column) < 0 &&
-			rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
-		// rsiList[rsiList.length - 1].RSI1 < rsiList[rsiList.length - 1].RSI3 &&
-		// rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION;
-		// Number(macdList[macdList.length - 1].column) < 0 &&
-		// rsiList[rsiList.length - 1].RSI3 < rsiList[rsiList.length - 2].RSI3 &&
-		// rsiList[rsiList.length - 1].RSI3 < SHORT_CONDITION &&
-		// (longRatio >= 0 || longRatio <= LOSS_MAX);
-
-		// const MAIN_OPEN_LONG_CONDITION1 =
-		// 	!longHolding &&
-		// 	((rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
-		// 		rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS) ||
-		// 		(rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS + 20 &&
-		// 			rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS + 20 &&
-		// 			shortHolding));
-		// const MAIN_OPEN_SHORT_CONDITION1 =
-		// 	!shortHolding &&
-		// 	((rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-		// 		rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS) ||
-		// 		(rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS - 20 &&
-		// 			rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS - 20 &&
-		// 			longHolding));
-
-		// const MAIN_CLOSE_LONG_CONDITION1 =
-		// 	longHolding &&
-		// 	((rsiList[rsiList.length - 1].RSI2 < OPENCONTINOUS + 20 &&
-		// 		rsiList[rsiList.length - 2].RSI2 > OPENCONTINOUS + 20 &&
-		// 		(longRatio > 0 ||
-		// 			(longRatio < 0 &&
-		// 				shortRatio < 0 &&
-		// 				rsiList[rsiList.length - 1].RSI2 < CLOSECONTINOUS &&
-		// 				rsiList[rsiList.length - 2].RSI2 > CLOSECONTINOUS))) ||
-		// 		isForceDeal);
-		// const MAIN_CLOSE_SHORT_CONDITION1 =
-		// 	shortHolding &&
-		// 	((rsiList[rsiList.length - 1].RSI2 > CLOSECONTINOUS - 20 &&
-		// 		rsiList[rsiList.length - 2].RSI2 < CLOSECONTINOUS - 20 &&
-		// 		(shortRatio > 0 ||
-		// 			(longRatio < 0 &&
-		// 				shortRatio < 0 &&
-		// 				rsiList[rsiList.length - 1].RSI2 > OPENCONTINOUS &&
-		// 				rsiList[rsiList.length - 2].RSI2 < OPENCONTINOUS))) ||
-		// 		isForceDeal);
+		// const MAIN_SHORT_BASIC_CONDITION =
+		// 	Number(macdList[macdList.length - 1].column) < 0 &&
+		// 	rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
 
 		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
