@@ -183,6 +183,8 @@ function getCurrentMacd(list, last) {
 			result = last || {
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
+				ema7: Number(item[4]),
+				ema99: Number(item[4]),
 				diff: 0,
 				dea: 0,
 				column: 0,
@@ -199,6 +201,8 @@ function getCurrentMacd(list, last) {
 			const payload = {
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
+				lastEma7: lastResult.ema7,
+				lastEma99: lastResult.ema99,
 				lastDea: lastResult.dea,
 				open: Number(item[1]),
 				high: Number(item[2]),
@@ -270,6 +274,15 @@ function getMacd(params) {
 		4
 	);
 
+	const ema7 = toFixedAndToNumber(
+		(2 / (7 + 1)) * price + (6 / (7 + 1)) * lastEma12,
+		4
+	);
+	const ema99 = toFixedAndToNumber(
+		(2 / (99 + 1)) * price + (98 / (99 + 1)) * lastEma26,
+		4
+	);
+
 	const diff = toFixedAndToNumber(ema12 - ema26, 2);
 	const dea = toFixedAndToNumber(
 		(2 / (9 + 1)) * diff + (8 / (9 + 1)) * lastDea,
@@ -291,6 +304,8 @@ function getMacd(params) {
 		quantity,
 		time,
 		week,
+		ema7,
+		ema99,
 	};
 
 	return result;
@@ -1298,13 +1313,31 @@ const checkDeal = async (data, isForceDeal = false) => {
 
 		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
-		const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
-		const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
+		const MAIN_OPEN_LONG_CONDITION1 =
+			!longHolding &&
+			macdList[macdList.length - 1].ema7 >=
+				macdList[macdList.length - 1].ema99 &&
+			macdList[macdList.length - 1].ema7 <=
+				macdList[macdList.length - 1].ema99;
+		const MAIN_OPEN_SHORT_CONDITION1 =
+			!shortHolding &&
+			macdList[macdList.length - 1].ema7 <=
+				macdList[macdList.length - 1].ema99 &&
+			macdList[macdList.length - 1].ema7 >=
+				macdList[macdList.length - 1].ema99;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
-			longHolding && ((isUpperReverse && longRatio > 0) || isForceDeal);
+			longHolding &&
+			macdList[macdList.length - 1].ema7 <=
+				macdList[macdList.length - 1].ema99 &&
+			macdList[macdList.length - 1].ema7 >=
+				macdList[macdList.length - 1].ema99;
 		const MAIN_CLOSE_SHORT_CONDITION1 =
-			shortHolding && ((isLowerReverse && shortRatio > 0) || isForceDeal);
+			shortHolding &&
+			macdList[macdList.length - 1].ema7 >=
+				macdList[macdList.length - 1].ema99 &&
+			macdList[macdList.length - 1].ema7 <=
+				macdList[macdList.length - 1].ema99;
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
