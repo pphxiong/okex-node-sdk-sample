@@ -1313,6 +1313,8 @@ const checkDeal = async (data, isForceDeal = false) => {
 
 		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
+		console.log('ddd', macdList[macdList.length - 1]);
+
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
 			macdList[macdList.length - 1].ema7 >=
