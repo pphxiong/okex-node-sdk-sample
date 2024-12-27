@@ -1124,8 +1124,8 @@ const checkDeal = async (data, isForceDeal = false) => {
 	for (let i = 0; i < data.macdList.length; i++) {
 		checkByStep(
 			{
-				macdList: data.macdList.slice(i, i + 1),
-				rsiList: data.rsiList.slice(i, i + 1),
+				macdList: data.macdList.slice(i, i + 2),
+				rsiList: data.rsiList.slice(i, i + 2),
 				// bollList: data.bollList,
 			},
 			i === data.macdList.length - 1 && isForceDeal
@@ -1261,7 +1261,7 @@ const checkDeal = async (data, isForceDeal = false) => {
 		// 	Number(macdList[macdList.length - 1].column) < 0 &&
 		// 	rsiList[rsiList.length - 2].RSI3 > SHORT_CONDITION;
 
-		const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
+		// const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(macdList);
 
 		console.log('ddd', macdList[macdList.length - 1]);
 
