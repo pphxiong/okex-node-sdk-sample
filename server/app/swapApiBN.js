@@ -1198,11 +1198,11 @@ async function checkByStep(data, symbol) {
 			const COMPUTED_INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
-			INIT_ASSETS = Math.min(
-				COMPUTED_INIT_ASSETS,
-				INIT_ASSETS,
-				Number(availableBalance)
-			);
+			// INIT_ASSETS = Math.min(
+			// 	COMPUTED_INIT_ASSETS,
+			// 	INIT_ASSETS,
+			// 	Number(availableBalance)
+			// );
 			console.log(
 				'availableBalance',
 				availableBalance,
