@@ -1382,37 +1382,41 @@ async function checkByStep(data, symbol) {
 		'longRatio',
 		longRatio,
 		'shortRatio',
-		shortRatio,
-		'isUpperReverse',
-		isUpperReverse,
-		'isLowerReverse',
-		isLowerReverse,
-		'ATR',
-		atrList[atrList.length - 1],
-		'ATR_PRICE_OBJ',
-		ATR_PRICE_OBJ[symbol + '_ATR']
+		shortRatio
+		// 'isUpperReverse',
+		// isUpperReverse,
+		// 'isLowerReverse',
+		// isLowerReverse,
+		// 'ATR',
+		// atrList[atrList.length - 1],
+		// 'ATR_PRICE_OBJ',
+		// ATR_PRICE_OBJ[symbol + '_ATR']
 	);
 	console.log(
 		'macd',
 		macdList
-			.slice(-1)
-			.map(({ column, open, close, time, ema10, ema20 }) => ({
-				column,
-				open,
-				close,
-				time,
-				ema10,
-				ema20,
-			}))
+			.slice(-2)
+			.map(
+				({ column, open, close, time, ema10, ema20, ema7, ema99 }) => ({
+					column,
+					open,
+					close,
+					time,
+					ema10,
+					ema20,
+					ema7,
+					ema99,
+				})
+			)
 	);
-	console.log(
-		'rsi',
-		rsiList.slice(-1).map(({ RSI1, RSI2, RSI3 }) => ({
-			RSI1,
-			RSI2,
-			RSI3,
-		}))
-	);
+	// console.log(
+	// 	'rsi',
+	// 	rsiList.slice(-1).map(({ RSI1, RSI2, RSI3 }) => ({
+	// 		RSI1,
+	// 		RSI2,
+	// 		RSI3,
+	// 	}))
+	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
 

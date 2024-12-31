@@ -1301,31 +1301,31 @@ const checkDeal = async (data, isForceDeal = true) => {
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
 			macdList[macdList.length - 1].ema7 >=
-				macdList[macdList.length - 1].ema60 &&
+				macdList[macdList.length - 1].ema99 &&
 			macdList[macdList.length - 2].ema7 <=
-				macdList[macdList.length - 2].ema60 &&
+				macdList[macdList.length - 2].ema99 &&
 			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
 			macdList[macdList.length - 1].ema7 <=
-				macdList[macdList.length - 1].ema60 &&
+				macdList[macdList.length - 1].ema99 &&
 			macdList[macdList.length - 2].ema7 >=
-				macdList[macdList.length - 2].ema60 &&
+				macdList[macdList.length - 2].ema99 &&
 			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((macdList[macdList.length - 1].ema7 <=
-				macdList[macdList.length - 1].ema60 &&
+				macdList[macdList.length - 1].ema99 &&
 				macdList[macdList.length - 2].ema7 >=
-					macdList[macdList.length - 2].ema60) ||
+					macdList[macdList.length - 2].ema99) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((macdList[macdList.length - 1].ema7 >=
-				macdList[macdList.length - 1].ema60 &&
+				macdList[macdList.length - 1].ema99 &&
 				macdList[macdList.length - 2].ema7 <=
-					macdList[macdList.length - 2].ema60) ||
+					macdList[macdList.length - 2].ema99) ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
