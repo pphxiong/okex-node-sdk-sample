@@ -7,8 +7,8 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const LEVERAGE = 5;
-const INIT_ASSETS_RATIO = 40 / 100;
+const LEVERAGE = 10;
+const INIT_ASSETS_RATIO = 70 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
 const LOSS_MAX = -WIN_MAX;
@@ -1198,11 +1198,11 @@ async function checkByStep(data, symbol) {
 			const COMPUTED_INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
-			// INIT_ASSETS = Math.min(
-			// 	COMPUTED_INIT_ASSETS,
-			// 	INIT_ASSETS,
-			// 	Number(availableBalance)
-			// );
+			INIT_ASSETS = Math.min(
+				COMPUTED_INIT_ASSETS,
+				INIT_ASSETS,
+				Number(availableBalance)
+			);
 			console.log(
 				'availableBalance',
 				availableBalance,
@@ -2379,12 +2379,12 @@ const startInterval = async () => {
 		// 	);
 
 		await checkDeal(btc_result, BTC_SYMBOL);
-		await checkDeal(eth_result, ETH_SYMBOL);
-		await checkDeal(eos_result, EOS_SYMBOL);
-		await checkDeal(xrp_result, XRP_SYMBOL);
+		// await checkDeal(eth_result, ETH_SYMBOL);
+		// await checkDeal(eos_result, EOS_SYMBOL);
+		// await checkDeal(xrp_result, XRP_SYMBOL);
 		await checkDeal(doge_result, DOGE_SYMBOL);
 		await checkDeal(trx_result, TRX_SYMBOL);
-		await checkDeal(ltc_result, LTC_SYMBOL);
+		// await checkDeal(ltc_result, LTC_SYMBOL);
 
 		await waitTime(1000 * 56 * 2);
 		await startInterval();

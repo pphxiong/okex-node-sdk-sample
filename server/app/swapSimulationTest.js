@@ -1732,7 +1732,6 @@ const checkDeal = async (data, isForceDeal = true) => {
 					!longHolding ||
 					!Number(longHolding.positionAmt)
 					// &&
-					// &&
 					// !shortPatchNum
 					// (!shortHolding || !Number(shortHolding.positionAmt))
 				) {
