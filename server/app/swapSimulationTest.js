@@ -256,6 +256,8 @@ function getMacd(params) {
 		close: price,
 		lastEma12,
 		lastEma26,
+		lastEma7,
+		lastEma99,
 		lastDea,
 		high,
 		low,
@@ -275,11 +277,11 @@ function getMacd(params) {
 	);
 
 	const ema7 = toFixedAndToNumber(
-		(2 / (7 + 1)) * price + (6 / (7 + 1)) * lastEma12,
+		(2 / (7 + 1)) * price + (6 / (7 + 1)) * lastEma7,
 		4
 	);
 	const ema99 = toFixedAndToNumber(
-		(2 / (99 + 1)) * price + (98 / (99 + 1)) * lastEma26,
+		(2 / (99 + 1)) * price + (98 / (99 + 1)) * lastEma99,
 		4
 	);
 
@@ -1281,16 +1283,16 @@ const checkDeal = async (data, isForceDeal = true) => {
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((macdList[macdList.length - 1].ema7 <=
-				macdList[macdList.length - 1].ema26 &&
+				macdList[macdList.length - 1].ema99 &&
 				macdList[macdList.length - 2].ema7 >=
-					macdList[macdList.length - 2].ema26) ||
+					macdList[macdList.length - 2].ema99) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			((macdList[macdList.length - 1].ema7 >=
-				macdList[macdList.length - 1].ema26 &&
+				macdList[macdList.length - 1].ema99 &&
 				macdList[macdList.length - 2].ema7 <=
-					macdList[macdList.length - 2].ema26) ||
+					macdList[macdList.length - 2].ema99) ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;

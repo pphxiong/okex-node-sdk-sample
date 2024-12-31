@@ -1322,13 +1322,31 @@ async function checkByStep(data, symbol) {
 	const currentHolding = longHolding || shortHolding;
 	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
-	const MAIN_OPEN_LONG_CONDITION1 = !longHolding && isLowerReverse;
-	const MAIN_OPEN_SHORT_CONDITION1 = !shortHolding && isUpperReverse;
+	const MAIN_OPEN_LONG_CONDITION1 =
+		!longHolding &&
+		macdList[macdList.length - 1].ema7 >=
+			macdList[macdList.length - 1].ema99 &&
+		macdList[macdList.length - 2].ema7 <=
+			macdList[macdList.length - 2].ema99;
+	const MAIN_OPEN_SHORT_CONDITION1 =
+		!shortHolding &&
+		macdList[macdList.length - 1].ema7 <=
+			macdList[macdList.length - 1].ema99 &&
+		macdList[macdList.length - 2].ema7 >=
+			macdList[macdList.length - 2].ema99;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
-		longHolding && (longRatio > WIN_MAX || longRatio < LOSS_MAX);
+		longHolding &&
+		macdList[macdList.length - 1].ema7 <=
+			macdList[macdList.length - 1].ema99 &&
+		macdList[macdList.length - 2].ema7 >=
+			macdList[macdList.length - 2].ema99;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
-		shortHolding && (shortRatio > WIN_MAX || shortRatio < LOSS_MAX);
+		shortHolding &&
+		macdList[macdList.length - 1].ema7 >=
+			macdList[macdList.length - 1].ema99 &&
+		macdList[macdList.length - 2].ema7 <=
+			macdList[macdList.length - 2].ema99;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -1710,6 +1728,8 @@ function getCurrentMacd(list, last) {
 				ema60: Number(item[4]),
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
+				ema7: Number(item[4]),
+				ema99: Number(item[4]),
 				diff: 0,
 				dea: 0,
 				column: 0,
@@ -1730,6 +1750,8 @@ function getCurrentMacd(list, last) {
 				lastEma60: lastResult.ema60,
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
+				lastEma7: lastResult.ema7,
+				lastEma99: lastResult.ema99,
 				lastDea: lastResult.dea,
 				open: Number(item[1]),
 				high: Number(item[2]),
@@ -2078,6 +2100,8 @@ function getMacd(params) {
 		lastEma60,
 		lastEma12,
 		lastEma26,
+		lastEma7,
+		lastEma99,
 		lastDea,
 		high,
 		low,
@@ -2117,6 +2141,15 @@ function getMacd(params) {
 		8
 	);
 
+	const ema7 = toFixedAndToNumber(
+		(2 / (7 + 1)) * price + (6 / (7 + 1)) * lastEma7,
+		4
+	);
+	const ema99 = toFixedAndToNumber(
+		(2 / (99 + 1)) * price + (98 / (99 + 1)) * lastEma99,
+		4
+	);
+
 	const diff = toFixedAndToNumber(ema12 - ema26, 8);
 	const dea = toFixedAndToNumber(
 		(2 / (p3 + 1)) * diff + ((p3 - 1) / (p3 + 1)) * lastDea,
@@ -2134,6 +2167,8 @@ function getMacd(params) {
 		ema60,
 		ema12,
 		ema26,
+		ema7,
+		ema99,
 		diff,
 		dea,
 		column,
