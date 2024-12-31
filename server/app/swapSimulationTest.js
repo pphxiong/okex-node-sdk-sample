@@ -280,37 +280,37 @@ function getMacd(params) {
 	} = params;
 
 	const ema5 = toFixedAndToNumber(
-		(2 / (5 + 1)) * price + (4 / (5 + 1)) * lastEma5,
+		(2 / (5 + 1)) * price + (1 - 2 / (5 + 1)) * lastEma5,
 		4
 	);
 	const ema10 = toFixedAndToNumber(
-		(2 / (10 + 1)) * price + (9 / (10 + 1)) * lastEma10,
+		(2 / (10 + 1)) * price + (1 - 2 / (10 + 1)) * lastEma10,
 		4
 	);
 	const ema20 = toFixedAndToNumber(
-		(2 / (20 + 1)) * price + (19 / (20 + 1)) * lastEma20,
+		(2 / (20 + 1)) * price + (1 - 2 / (20 + 1)) * lastEma20,
 		4
 	);
 	const ema60 = toFixedAndToNumber(
-		(2 / (59 + 1)) * price + (59 / (60 + 1)) * lastEma60,
+		(2 / (60 + 1)) * price + (1 - 2 / (60 + 1)) * lastEma60,
 		4
 	);
 
 	const ema12 = toFixedAndToNumber(
-		(2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
+		(2 / (12 + 1)) * price + (1 - 2 / (12 + 1)) * lastEma12,
 		4
 	);
 	const ema26 = toFixedAndToNumber(
-		(2 / (26 + 1)) * price + (25 / (26 + 1)) * lastEma26,
+		(2 / (26 + 1)) * price + (1 - 2 / (26 + 1)) * lastEma26,
 		4
 	);
 
 	const ema7 = toFixedAndToNumber(
-		(2 / (7 + 1)) * price + (6 / (7 + 1)) * lastEma7,
+		(2 / (7 + 1)) * price + (1 - 2 / (7 + 1)) * lastEma7,
 		4
 	);
 	const ema99 = toFixedAndToNumber(
-		(2 / (99 + 1)) * price + (98 / (99 + 1)) * lastEma99,
+		(2 / (99 + 1)) * price + (1 - 2 / (99 + 1)) * lastEma99,
 		4
 	);
 
