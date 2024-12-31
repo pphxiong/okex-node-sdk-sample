@@ -181,6 +181,10 @@ function getCurrentMacd(list, last) {
 		let result = {};
 		if (index == 0) {
 			result = last || {
+				ema5: Number(item[4]),
+				ema10: Number(item[4]),
+				ema20: Number(item[4]),
+				ema60: Number(item[4]),
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
 				ema7: Number(item[4]),
@@ -199,6 +203,10 @@ function getCurrentMacd(list, last) {
 		} else {
 			const lastResult = macdList[macdList.length - 1];
 			const payload = {
+				lastEma5: lastResult.ema5,
+				lastEma10: lastResult.ema10,
+				lastEma20: lastResult.ema20,
+				lastEma60: lastResult.ema60,
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
 				lastEma7: lastResult.ema7,
@@ -254,6 +262,10 @@ app.get('/test', function (req, res) {
 function getMacd(params) {
 	const {
 		close: price,
+		lastEma5,
+		lastEma10,
+		lastEma20,
+		lastEma60,
 		lastEma12,
 		lastEma26,
 		lastEma7,
@@ -266,6 +278,23 @@ function getMacd(params) {
 		quantity,
 		open,
 	} = params;
+
+	const ema5 = toFixedAndToNumber(
+		(2 / (5 + 1)) * price + (4 / (5 + 1)) * lastEma5,
+		4
+	);
+	const ema10 = toFixedAndToNumber(
+		(2 / (10 + 1)) * price + (9 / (10 + 1)) * lastEma10,
+		4
+	);
+	const ema20 = toFixedAndToNumber(
+		(2 / (20 + 1)) * price + (19 / (20 + 1)) * lastEma20,
+		4
+	);
+	const ema60 = toFixedAndToNumber(
+		(2 / (59 + 1)) * price + (59 / (60 + 1)) * lastEma60,
+		4
+	);
 
 	const ema12 = toFixedAndToNumber(
 		(2 / (12 + 1)) * price + (11 / (12 + 1)) * lastEma12,
@@ -296,6 +325,10 @@ function getMacd(params) {
 	const result = {
 		open,
 		close: price,
+		ema5,
+		ema10,
+		ema20,
+		ema60,
 		ema12,
 		ema26,
 		diff,
@@ -1268,24 +1301,24 @@ const checkDeal = async (data, isForceDeal = true) => {
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
 			macdList[macdList.length - 1].ema7 >=
-				macdList[macdList.length - 1].ema99 &&
+				macdList[macdList.length - 1].ema60 &&
 			macdList[macdList.length - 2].ema7 <=
-				macdList[macdList.length - 2].ema99 &&
+				macdList[macdList.length - 2].ema60 &&
 			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
 			macdList[macdList.length - 1].ema7 <=
-				macdList[macdList.length - 1].ema99 &&
+				macdList[macdList.length - 1].ema60 &&
 			macdList[macdList.length - 2].ema7 >=
-				macdList[macdList.length - 2].ema99 &&
+				macdList[macdList.length - 2].ema60 &&
 			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
 			((macdList[macdList.length - 1].ema7 <=
-				macdList[macdList.length - 1].ema99 &&
+				macdList[macdList.length - 1].ema60 &&
 				macdList[macdList.length - 2].ema7 >=
-					macdList[macdList.length - 2].ema99) ||
+					macdList[macdList.length - 2].ema60) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&

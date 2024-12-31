@@ -2317,7 +2317,7 @@ const startInterval = async () => {
 		const time = moment().valueOf();
 		const payload = {
 			interval: DEFAULT_INTERVAL,
-			limit: 100,
+			limit: 1440,
 			endTime: time,
 		};
 
