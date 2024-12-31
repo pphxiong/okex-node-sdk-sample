@@ -1196,21 +1196,21 @@ async function checkByStep(data, symbol) {
 				.map((item) => Number(item.initialMargin))
 				.reduce((pre, cur) => pre + cur, 0);
 			const COMPUTED_INIT_ASSETS =
-				(Number(availableBalance) + Number(currentTotalAsset)) /
+				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
 			INIT_ASSETS = Math.min(
 				COMPUTED_INIT_ASSETS,
 				INIT_ASSETS,
 				Number(availableBalance)
 			);
-			// console.log(
-			// 	'availableBalance',
-			// 	availableBalance,
-			// 	'currentTotalAsset',
-			// 	currentTotalAsset,
-			// 	'INIT_ASSETS',
-			// 	INIT_ASSETS
-			// );
+			console.log(
+				'availableBalance',
+				availableBalance,
+				'currentTotalAsset',
+				currentTotalAsset,
+				'INIT_ASSETS',
+				INIT_ASSETS
+			);
 
 			// if (longHolding) {
 			// 	INIT_ASSETS =
@@ -1379,6 +1379,14 @@ async function checkByStep(data, symbol) {
 	console.log(
 		'symbol',
 		symbol,
+		'openLongCondition',
+		openLongCondition,
+		'openShortCondition',
+		openShortCondition,
+		'closeLongCondition',
+		closeLongCondition,
+		'closeShortCondition',
+		closeShortCondition,
 		'longRatio',
 		longRatio,
 		'shortRatio',
