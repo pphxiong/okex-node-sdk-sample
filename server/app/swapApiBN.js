@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const LEVERAGE = 5;
+const LEVERAGE = 10;
 const INIT_ASSETS_RATIO = 70 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
@@ -54,7 +54,7 @@ let ATR_PRICE_OBJ = {
 	LTCUSDT_ATR: 0,
 };
 
-let INIT_ASSETS = 500;
+let INIT_ASSETS = 800;
 
 const OPENCONTINOUS = 55;
 const CLOSECONTINOUS = 45;
