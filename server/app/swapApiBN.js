@@ -1338,15 +1338,11 @@ async function checkByStep(data, symbol) {
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
 		macdList[macdList.length - 1].ema7 <=
-			macdList[macdList.length - 1].ema99 &&
-		macdList[macdList.length - 2].ema7 >=
-			macdList[macdList.length - 2].ema99;
+			macdList[macdList.length - 1].ema99;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
 		macdList[macdList.length - 1].ema7 >=
-			macdList[macdList.length - 1].ema99 &&
-		macdList[macdList.length - 2].ema7 <=
-			macdList[macdList.length - 2].ema99;
+			macdList[macdList.length - 1].ema99;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
