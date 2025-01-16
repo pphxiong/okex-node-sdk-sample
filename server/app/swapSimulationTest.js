@@ -1738,8 +1738,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 				) {
 					// closeShort()
 					// const openPositionAmt = shortRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-					// let openPositionAmt = INIT_POSITION;
-					let openPositionAmt = totalCapital * INIT_ASSETS_RATIO;
+					let openPositionAmt = INIT_POSITION;
+					// let openPositionAmt = totalCapital * INIT_ASSETS_RATIO;
 					const ratio = shortRatio;
 					const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
 					const decreasePosition = INCREASE_FI_LIST[0];
@@ -1808,8 +1808,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 				) {
 					// closeLong()
 					// const openPositionAmt = longRatio < LOSS_MAX ? INIT_POSITION * 2 : INIT_POSITION
-					// let openPositionAmt = INIT_POSITION;
-					let openPositionAmt = totalCapital * INIT_ASSETS_RATIO;
+					let openPositionAmt = INIT_POSITION;
+					// let openPositionAmt = totalCapital * INIT_ASSETS_RATIO;
 
 					const ratio = longRatio;
 					const increasePosition = INCREASE_FI_LIST[fiIndex + 1];
