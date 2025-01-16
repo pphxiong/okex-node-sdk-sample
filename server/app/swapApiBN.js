@@ -1351,8 +1351,8 @@ async function checkByStep(data, symbol) {
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
 
-	let openLongCondition = MAIN_OPEN_LONG_CONDITION1;
-	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
+	let openLongCondition = MAIN_OPEN_LONG_CONDITION1 && false;
+	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1 && false;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
