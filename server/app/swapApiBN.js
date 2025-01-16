@@ -1324,25 +1324,29 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
-		macdList[macdList.length - 1].ema7 >=
+		macdList[macdList.length - 1].ema7 >
 			macdList[macdList.length - 1].ema60 &&
-		macdList[macdList.length - 2].ema7 <=
+		macdList[macdList.length - 2].ema7 <
 			macdList[macdList.length - 2].ema60;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
-		macdList[macdList.length - 1].ema7 <=
+		macdList[macdList.length - 1].ema7 <
 			macdList[macdList.length - 1].ema60 &&
-		macdList[macdList.length - 2].ema7 >=
+		macdList[macdList.length - 2].ema7 >
 			macdList[macdList.length - 2].ema60;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		macdList[macdList.length - 1].ema7 <=
-			macdList[macdList.length - 1].ema60;
+		macdList[macdList.length - 1].ema7 <
+			macdList[macdList.length - 1].ema60 &&
+		macdList[macdList.length - 2].ema7 >
+			macdList[macdList.length - 2].ema60;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		macdList[macdList.length - 1].ema7 >=
-			macdList[macdList.length - 1].ema60;
+		macdList[macdList.length - 1].ema7 >
+			macdList[macdList.length - 1].ema60 &&
+		macdList[macdList.length - 2].ema7 <
+			macdList[macdList.length - 2].ema60;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -1409,10 +1413,10 @@ async function checkByStep(data, symbol) {
 					time,
 					ema10,
 					ema20,
-					ema7,
-					ema99,
 					ema5,
+					ema7,
 					ema60,
+					ema99,
 				}) => ({
 					column,
 					open,
@@ -1420,10 +1424,10 @@ async function checkByStep(data, symbol) {
 					time,
 					ema10,
 					ema20,
-					ema7,
-					ema99,
 					ema5,
+					ema7,
 					ema60,
+					ema99,
 				})
 			)
 	);
