@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 10;
-const INIT_ASSETS_RATIO = 80 / 100;
+const INIT_ASSETS_RATIO = 70 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
 const LOSS_MAX = -WIN_MAX;
@@ -1324,29 +1324,29 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
-		macdList[macdList.length - 1].ema7 >
-			macdList[macdList.length - 1].ema60 &&
-		macdList[macdList.length - 2].ema7 <
-			macdList[macdList.length - 2].ema60;
+		macdList[macdList.length - 1].ema26 >
+			macdList[macdList.length - 1].ema99 &&
+		macdList[macdList.length - 1].column > 0 &&
+		macdList[macdList.length - 2].column < 0;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
-		macdList[macdList.length - 1].ema7 <
-			macdList[macdList.length - 1].ema60 &&
-		macdList[macdList.length - 2].ema7 >
-			macdList[macdList.length - 2].ema60;
+		macdList[macdList.length - 1].ema26 <
+			macdList[macdList.length - 1].ema99 &&
+		macdList[macdList.length - 1].column < 0 &&
+		macdList[macdList.length - 2].column > 0;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		macdList[macdList.length - 1].ema7 <
-			macdList[macdList.length - 1].ema60 &&
-		macdList[macdList.length - 2].ema7 >
-			macdList[macdList.length - 2].ema60;
+		(macdList[macdList.length - 1].ema26 <
+			macdList[macdList.length - 1].ema99 ||
+			(macdList[macdList.length - 1].column < 0 &&
+				macdList[macdList.length - 2].column > 0));
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		macdList[macdList.length - 1].ema7 >
-			macdList[macdList.length - 1].ema60 &&
-		macdList[macdList.length - 2].ema7 <
-			macdList[macdList.length - 2].ema60;
+		(macdList[macdList.length - 1].ema26 >
+			macdList[macdList.length - 1].ema99 ||
+			(macdList[macdList.length - 1].column > 0 &&
+				macdList[macdList.length - 2].column < 0));
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -1441,8 +1441,6 @@ async function checkByStep(data, symbol) {
 	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
-
-	return;
 
 	const patchPosition = async (holding, direction) => {
 		let positionAmt = Number(holding.positionAmt) * 2;
@@ -2141,7 +2139,7 @@ function getMacd(params) {
 
 	const p1 = 13;
 	const p2 = 34;
-	const p3 = 5;
+	const p3 = 9;
 
 	const ema5 = toFixedAndToNumber(
 		(2 / (5 + 1)) * price + (1 - 2 / (5 + 1)) * lastEma5,
