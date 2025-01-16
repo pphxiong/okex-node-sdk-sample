@@ -1402,7 +1402,7 @@ async function checkByStep(data, symbol) {
 		macdList
 			.slice(-2)
 			.map(
-				({ column, open, close, time, ema10, ema20, ema7, ema99 }) => ({
+				({
 					column,
 					open,
 					close,
@@ -1411,6 +1411,19 @@ async function checkByStep(data, symbol) {
 					ema20,
 					ema7,
 					ema99,
+					ema5,
+					ema60,
+				}) => ({
+					column,
+					open,
+					close,
+					time,
+					ema10,
+					ema20,
+					ema7,
+					ema99,
+					ema5,
+					ema60,
 				})
 			)
 	);
