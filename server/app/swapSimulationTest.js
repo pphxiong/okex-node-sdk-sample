@@ -1169,7 +1169,7 @@ const checkDeal = async (data, isForceDeal = true) => {
 	}
 
 	function checkByStep(data, isForceDeal) {
-		// isForceDeal = false;
+		isForceDeal = false;
 		const { macdList, rsiList, bollList } = data;
 		const mark_price = macdList[macdList.length - 1].close;
 
