@@ -54,7 +54,7 @@ let ATR_PRICE_OBJ = {
 	LTCUSDT_ATR: 0,
 };
 
-let INIT_ASSETS = 800;
+let INIT_ASSETS = 10000;
 
 const OPENCONTINOUS = 55;
 const CLOSECONTINOUS = 45;
@@ -65,7 +65,7 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
-const DEFAULT_INTERVAL = '4h';
+const DEFAULT_INTERVAL = '1m';
 const INIT_POSITION = 100;
 let rsi1 = 6;
 let rsi2 = 14;
@@ -1198,11 +1198,11 @@ async function checkByStep(data, symbol) {
 			const COMPUTED_INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
-			INIT_ASSETS = Math.min(
-				COMPUTED_INIT_ASSETS,
-				INIT_ASSETS,
-				Number(availableBalance)
-			);
+			// INIT_ASSETS = Math.min(
+			// 	COMPUTED_INIT_ASSETS,
+			// 	INIT_ASSETS,
+			// 	Number(availableBalance)
+			// );
 			console.log(
 				'availableBalance',
 				availableBalance,
@@ -2320,7 +2320,7 @@ const fnGetLastResult = (data) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= (1 * 14) / 2 / 2) {
+	if (RESTART_TIME >= 1 * 14) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -2336,13 +2336,13 @@ const startInterval = async () => {
 		// const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
 		// await fnSymbolDeal(btc_result, BTC_SYMBOL);
 
-		const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
-		const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
-		const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
-		const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
+		// const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
+		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
+		// const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
+		// const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
 		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
-		const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
-		const ltc_result = await fnGetSymbolResult(LTC_SYMBOL, payload);
+		// const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
+		// const ltc_result = await fnGetSymbolResult(LTC_SYMBOL, payload);
 
 		// const symbolResultMap = {
 		// 	[BTC_SYMBOL]: btc_result,
@@ -2378,15 +2378,15 @@ const startInterval = async () => {
 		// 		checkDealList(symbolResultMap)
 		// 	);
 
-		await checkDeal(btc_result, BTC_SYMBOL);
+		// await checkDeal(btc_result, BTC_SYMBOL);
 		// await checkDeal(eth_result, ETH_SYMBOL);
 		// await checkDeal(eos_result, EOS_SYMBOL);
 		// await checkDeal(xrp_result, XRP_SYMBOL);
 		await checkDeal(doge_result, DOGE_SYMBOL);
-		await checkDeal(trx_result, TRX_SYMBOL);
+		// await checkDeal(trx_result, TRX_SYMBOL);
 		// await checkDeal(ltc_result, LTC_SYMBOL);
 
-		await waitTime(1000 * 56 * 2);
+		await waitTime((1000 * 56) / 2);
 		await startInterval();
 	} catch (e) {
 		restart(e);
