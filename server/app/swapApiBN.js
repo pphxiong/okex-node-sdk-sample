@@ -1371,9 +1371,10 @@ async function checkByStep(data, symbol) {
 	);
 
 	const isFiveM =
-		minuteDiff < 90 &&
-		minuteList.includes(lastMinuteCharacter) &&
-		!secondList.includes(lastSecondCharacter);
+		true ||
+		(minuteDiff < 90 &&
+			minuteList.includes(lastMinuteCharacter) &&
+			!secondList.includes(lastSecondCharacter));
 
 	console.log('************************************', currentTime);
 	console.log(
