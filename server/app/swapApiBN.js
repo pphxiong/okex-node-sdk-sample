@@ -1308,19 +1308,19 @@ async function checkByStep(data, symbol) {
 	const CLOSE_WIN_CONDITION = holding && TOTALRATIO > WIN_MAX;
 	const CLOSE_LOSS_CONDITION = longRatio < LOSS_MAX && shortRatio < LOSS_MAX;
 
-	const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(
-		macdList,
-		atrList,
-		symbol
-	);
+	// const { isUpperReverse, isLowerReverse } = fnIsMacdReverse(
+	// 	macdList,
+	// 	atrList,
+	// 	symbol
+	// );
 
-	const isLongHoldingExceed = fnGetIsHoldingExceed(holding, 'long');
-	const isShortHoldingExceed = fnGetIsHoldingExceed(holding, 'short');
+	// const isLongHoldingExceed = fnGetIsHoldingExceed(holding, 'long');
+	// const isShortHoldingExceed = fnGetIsHoldingExceed(holding, 'short');
 
-	const latestMacd = macdList[macdList.length - 1];
-	const secondLatestMacd = macdList[macdList.length - 2];
-	const currentHolding = longHolding || shortHolding;
-	const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
+	// const latestMacd = macdList[macdList.length - 1];
+	// const secondLatestMacd = macdList[macdList.length - 2];
+	// const currentHolding = longHolding || shortHolding;
+	// const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
