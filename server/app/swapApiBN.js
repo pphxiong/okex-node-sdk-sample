@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 10;
-const INIT_ASSETS_RATIO = 70 / 100;
+const INIT_ASSETS_RATIO = 80 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
 const LOSS_MAX = -WIN_MAX;
@@ -1198,11 +1198,11 @@ async function checkByStep(data, symbol) {
 			const COMPUTED_INIT_ASSETS =
 				(Number(availableBalance) + Number(currentTotalAsset)) *
 				INIT_ASSETS_RATIO;
-			// INIT_ASSETS = Math.min(
-			// 	COMPUTED_INIT_ASSETS,
-			// 	INIT_ASSETS,
-			// 	Number(availableBalance)
-			// );
+			INIT_ASSETS = Math.min(
+				COMPUTED_INIT_ASSETS,
+				INIT_ASSETS,
+				Number(availableBalance)
+			);
 			console.log(
 				'availableBalance',
 				availableBalance,
