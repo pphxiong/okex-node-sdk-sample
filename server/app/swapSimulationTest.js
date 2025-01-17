@@ -1305,6 +1305,7 @@ const checkDeal = async (data, isForceDeal = true) => {
 				macdList[macdList.length - 1].ema99 &&
 			macdList[macdList.length - 1].column >
 				macdList[macdList.length - 2].column &&
+			macdList[macdList.length - 1].column < 0 &&
 			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
@@ -1312,6 +1313,7 @@ const checkDeal = async (data, isForceDeal = true) => {
 				macdList[macdList.length - 1].ema99 &&
 			macdList[macdList.length - 1].column <
 				macdList[macdList.length - 2].column &&
+			macdList[macdList.length - 1].column > 0 &&
 			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
