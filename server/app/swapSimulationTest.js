@@ -1157,7 +1157,7 @@ const fnIsMacdReverse = (macdList) => {
 };
 
 const checkDeal = async (data, isForceDeal = true) => {
-	for (let i = 0; i < data.macdList.length - 1; i++) {
+	for (let i = 0; i < data.macdList.length - 2; i++) {
 		checkByStep(
 			{
 				macdList: data.macdList.slice(i, i + 2),
