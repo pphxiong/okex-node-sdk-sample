@@ -1329,6 +1329,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 					macdList[macdList.length - 2].column ||
 				isForceDeal);
 
+		console.log(22, macdList);
+
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
 		const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
