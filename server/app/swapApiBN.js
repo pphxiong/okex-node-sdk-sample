@@ -7,7 +7,8 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const LEVERAGE = 10;
+const LEVERAGE = 5;
+let INIT_ASSETS = 3000;
 const INIT_ASSETS_RATIO = 70 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
@@ -53,8 +54,6 @@ let ATR_PRICE_OBJ = {
 	TRXUSDT_ATR: 0,
 	LTCUSDT_ATR: 0,
 };
-
-let INIT_ASSETS = 10000;
 
 const OPENCONTINOUS = 55;
 const CLOSECONTINOUS = 45;
@@ -1326,27 +1325,27 @@ async function checkByStep(data, symbol) {
 		!longHolding &&
 		macdList[macdList.length - 1].ema26 >
 			macdList[macdList.length - 1].ema99 &&
-		macdList[macdList.length - 1].column > 0 &&
-		macdList[macdList.length - 2].column < 0;
+		macdList[macdList.length - 1].column >
+			macdList[macdList.length - 2].column;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
 		macdList[macdList.length - 1].ema26 <
 			macdList[macdList.length - 1].ema99 &&
-		macdList[macdList.length - 1].column < 0 &&
-		macdList[macdList.length - 2].column > 0;
+		macdList[macdList.length - 1].column <
+			macdList[macdList.length - 2].column;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
 		(macdList[macdList.length - 1].ema26 <
 			macdList[macdList.length - 1].ema99 ||
-			(macdList[macdList.length - 1].column < 0 &&
-				macdList[macdList.length - 2].column > 0));
+			macdList[macdList.length - 1].column <
+				macdList[macdList.length - 2].column);
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
 		(macdList[macdList.length - 1].ema26 >
 			macdList[macdList.length - 1].ema99 ||
-			(macdList[macdList.length - 1].column > 0 &&
-				macdList[macdList.length - 2].column < 0));
+			macdList[macdList.length - 1].column >
+				macdList[macdList.length - 2].column);
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
