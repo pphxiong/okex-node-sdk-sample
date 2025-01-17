@@ -282,46 +282,46 @@ function getMacd(params) {
 
 	const ema5 = toFixedAndToNumber(
 		(2 / (5 + 1)) * price + (1 - 2 / (5 + 1)) * lastEma5,
-		4
+		8
 	);
 	const ema10 = toFixedAndToNumber(
 		(2 / (10 + 1)) * price + (1 - 2 / (10 + 1)) * lastEma10,
-		4
+		8
 	);
 	const ema20 = toFixedAndToNumber(
 		(2 / (20 + 1)) * price + (1 - 2 / (20 + 1)) * lastEma20,
-		4
+		8
 	);
 	const ema60 = toFixedAndToNumber(
 		(2 / (60 + 1)) * price + (1 - 2 / (60 + 1)) * lastEma60,
-		4
+		8
 	);
 
 	const ema12 = toFixedAndToNumber(
 		(2 / (12 + 1)) * price + (1 - 2 / (12 + 1)) * lastEma12,
-		4
+		8
 	);
 	const ema26 = toFixedAndToNumber(
 		(2 / (26 + 1)) * price + (1 - 2 / (26 + 1)) * lastEma26,
-		4
+		8
 	);
 
 	const ema7 = toFixedAndToNumber(
 		(2 / (7 + 1)) * price + (1 - 2 / (7 + 1)) * lastEma7,
-		4
+		8
 	);
 	const ema99 = toFixedAndToNumber(
 		(2 / (99 + 1)) * price + (1 - 2 / (99 + 1)) * lastEma99,
-		4
+		8
 	);
 
-	const diff = toFixedAndToNumber(ema12 - ema26, 2);
+	const diff = toFixedAndToNumber(ema12 - ema26, 8);
 	const dea = toFixedAndToNumber(
 		(2 / (9 + 1)) * diff + (8 / (9 + 1)) * lastDea,
-		2
+		8
 	);
 
-	const column = toFixedAndToNumber(2 * (diff - dea), 2);
+	const column = toFixedAndToNumber(2 * (diff - dea), 8);
 
 	const result = {
 		open,
