@@ -1355,6 +1355,8 @@ async function checkByStep(data, symbol) {
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
 
+	return;
+
 	let isMarketDeal = true;
 	let dealRatio = 0.01;
 

@@ -1318,18 +1318,18 @@ const checkDeal = async (data, isForceDeal = true) => {
 			longHolding &&
 			(macdList[macdList.length - 1].ema26 <
 				macdList[macdList.length - 1].ema99 ||
-				macdList[macdList.length - 1].column <
-					macdList[macdList.length - 2].column ||
+				(macdList[macdList.length - 1].column <
+					macdList[macdList.length - 2].column &&
+					longRatio > 0) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
 			(macdList[macdList.length - 1].ema26 >
 				macdList[macdList.length - 1].ema99 ||
-				macdList[macdList.length - 1].column >
-					macdList[macdList.length - 2].column ||
+				(macdList[macdList.length - 1].column >
+					macdList[macdList.length - 2].column &&
+					shortRatio > 0) ||
 				isForceDeal);
-
-		console.log(22, macdList);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
