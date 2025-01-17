@@ -1164,7 +1164,7 @@ const checkDeal = async (data, isForceDeal = true) => {
 				rsiList: data.rsiList.slice(i, i + 2),
 				// bollList: data.bollList,
 			},
-			i === data.macdList.length - 1 && isForceDeal
+			i === data.macdList.length - 3 && isForceDeal
 		);
 	}
 
