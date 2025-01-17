@@ -64,7 +64,7 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
-const DEFAULT_INTERVAL = '5m';
+const DEFAULT_INTERVAL = '15m';
 const INIT_POSITION = 100;
 let rsi1 = 6;
 let rsi2 = 14;
@@ -2333,7 +2333,7 @@ const fnGetLastResult = (data) => {
 
 const startInterval = async () => {
 	RESTART_TIME += 1;
-	if (RESTART_TIME >= 1 * 14) {
+	if (RESTART_TIME >= (1 * 14) / 4) {
 		RESTART_TIME = 0;
 		restart('normal');
 		return;
@@ -2399,7 +2399,7 @@ const startInterval = async () => {
 		// await checkDeal(trx_result, TRX_SYMBOL);
 		// await checkDeal(ltc_result, LTC_SYMBOL);
 
-		await waitTime((1000 * 56) / 2);
+		await waitTime(1000 * 56 * 2);
 		await startInterval();
 	} catch (e) {
 		restart(e);
