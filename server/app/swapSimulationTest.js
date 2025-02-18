@@ -1306,8 +1306,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 			rsiList[rsiList.length - 1].rsi3 > 50 &&
 			rsiList[rsiList.length - 2].rsi1 < 50 &&
 			rsiList[rsiList.length - 2].rsi2 < 50 &&
-			rsiList[rsiList.length - 2].rsi3 < 50;
-		!isForceDeal;
+			rsiList[rsiList.length - 2].rsi3 < 50 &&
+			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
 			rsiList[rsiList.length - 1].rsi1 < 50 &&
@@ -1315,9 +1315,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 			rsiList[rsiList.length - 1].rsi3 < 50 &&
 			rsiList[rsiList.length - 2].rsi1 > 50 &&
 			rsiList[rsiList.length - 2].rsi2 > 50 &&
-			rsiList[rsiList.length - 2].rsi3 > 50;
-
-		!isForceDeal;
+			rsiList[rsiList.length - 2].rsi3 > 50 &&
+			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
