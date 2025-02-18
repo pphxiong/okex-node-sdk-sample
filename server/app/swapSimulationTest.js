@@ -1331,6 +1331,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 				rsiList[rsiList.length - 1].rsi3 > 50) ||
 				isForceDeal);
 
+		console.log(234, rsiList[rsiList.length - 1]);
+
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
 		const MAIN_OPEN_LONG_CONDITION2 = MAIN_OPEN_SHORT_CONDITION1;
