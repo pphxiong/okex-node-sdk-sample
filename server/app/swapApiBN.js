@@ -7,8 +7,8 @@ const fs = require('fs');
 
 const customAuthClientBN = require('./customAuthClientBN');
 
-const LEVERAGE = 5;
-let INIT_ASSETS = 3000;
+const LEVERAGE = 20;
+let INIT_ASSETS = 500;
 const INIT_ASSETS_RATIO = 70 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
@@ -64,7 +64,7 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 
 let RESTART_TIME = 0;
 let MODE = 1;
-const DEFAULT_INTERVAL = '15m';
+const DEFAULT_INTERVAL = '1m';
 const INIT_POSITION = 100;
 let rsi1 = 6;
 let rsi2 = 14;
@@ -1323,29 +1323,31 @@ async function checkByStep(data, symbol) {
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
-		macdList[macdList.length - 1].ema26 >
-			macdList[macdList.length - 1].ema99 &&
-		macdList[macdList.length - 1].column >
-			macdList[macdList.length - 2].column;
+		rsiList[rsiList.length - 1].rsi1 > 50 &&
+		rsiList[rsiList.length - 1].rsi2 > 50 &&
+		rsiList[rsiList.length - 1].rsi3 > 50 &&
+		rsiList[rsiList.length - 2].rsi1 < 50 &&
+		rsiList[rsiList.length - 2].rsi2 < 50 &&
+		rsiList[rsiList.length - 2].rsi3 < 50;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
-		macdList[macdList.length - 1].ema26 <
-			macdList[macdList.length - 1].ema99 &&
-		macdList[macdList.length - 1].column <
-			macdList[macdList.length - 2].column;
+		rsiList[rsiList.length - 1].rsi1 < 50 &&
+		rsiList[rsiList.length - 1].rsi2 < 50 &&
+		rsiList[rsiList.length - 1].rsi3 < 50 &&
+		rsiList[rsiList.length - 2].rsi1 > 50 &&
+		rsiList[rsiList.length - 2].rsi2 > 50 &&
+		rsiList[rsiList.length - 2].rsi3 > 50;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		(macdList[macdList.length - 1].ema26 <
-			macdList[macdList.length - 1].ema99 ||
-			macdList[macdList.length - 1].column <
-				macdList[macdList.length - 2].column);
+		rsiList[rsiList.length - 1].rsi1 < 50 &&
+		rsiList[rsiList.length - 1].rsi2 < 50 &&
+		rsiList[rsiList.length - 1].rsi3 < 50;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		(macdList[macdList.length - 1].ema26 >
-			macdList[macdList.length - 1].ema99 ||
-			macdList[macdList.length - 1].column >
-				macdList[macdList.length - 2].column);
+		rsiList[rsiList.length - 1].rsi1 > 50 &&
+		rsiList[rsiList.length - 1].rsi2 > 50 &&
+		rsiList[rsiList.length - 1].rsi3 > 50;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);

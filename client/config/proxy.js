@@ -15,7 +15,7 @@ export default {
       },
     },
     '/okex/': {
-      target: 'http://129.226.191.40:8090',
+      target: 'http://47.83.240.134:8090',
       // target: 'http://localhost:8090',
       changeOrigin: true,
       pathRewrite: {
@@ -23,7 +23,7 @@ export default {
       },
     },
     '/okexSwap/': {
-      target: 'http://129.226.191.40:8092',
+      target: 'http://47.83.240.134:8092',
       // target: 'http://localhost:8092',
       changeOrigin: true,
       pathRewrite: {
@@ -31,7 +31,7 @@ export default {
       },
     },
     '/bn/': {
-      target: 'http://129.226.191.40:8092',
+      target: 'http://47.83.240.134:8092',
       // target: 'http://localhost:8092',
       changeOrigin: true,
       pathRewrite: {
@@ -40,7 +40,7 @@ export default {
       secure: false,
     },
     // '/swap/':{
-    //   target: 'http://129.226.191.40:8092',
+    //   target: 'http://47.83.240.134:8092',
     //   changeOrigin: true,
     // }
   },

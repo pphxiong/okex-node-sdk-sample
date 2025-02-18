@@ -1301,24 +1301,35 @@ const checkDeal = async (data, isForceDeal = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			macdList[macdList.length - 1].ema26 <
-				macdList[macdList.length - 1].close;
+			rsiList[rsiList.length - 1].rsi1 > 50 &&
+			rsiList[rsiList.length - 1].rsi2 > 50 &&
+			rsiList[rsiList.length - 1].rsi3 > 50 &&
+			rsiList[rsiList.length - 2].rsi1 < 50 &&
+			rsiList[rsiList.length - 2].rsi2 < 50 &&
+			rsiList[rsiList.length - 2].rsi3 < 50;
 		!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			macdList[macdList.length - 1].ema26 >
-				macdList[macdList.length - 1].close;
+			rsiList[rsiList.length - 1].rsi1 < 50 &&
+			rsiList[rsiList.length - 1].rsi2 < 50 &&
+			rsiList[rsiList.length - 1].rsi3 < 50 &&
+			rsiList[rsiList.length - 2].rsi1 > 50 &&
+			rsiList[rsiList.length - 2].rsi2 > 50 &&
+			rsiList[rsiList.length - 2].rsi3 > 50;
+
 		!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(macdList[macdList.length - 1].ema26 >
-				macdList[macdList.length - 1].close ||
+			((rsiList[rsiList.length - 1].rsi1 < 50 &&
+				rsiList[rsiList.length - 1].rsi2 < 50 &&
+				rsiList[rsiList.length - 1].rsi3 < 50) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(macdList[macdList.length - 1].ema26 <
-				macdList[macdList.length - 1].close ||
+			((rsiList[rsiList.length - 1].rsi1 > 50 &&
+				rsiList[rsiList.length - 1].rsi2 > 50 &&
+				rsiList[rsiList.length - 1].rsi3 > 50) ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
