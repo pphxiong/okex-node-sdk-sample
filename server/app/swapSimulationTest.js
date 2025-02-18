@@ -1314,15 +1314,15 @@ const checkDeal = async (data, isForceDeal = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((rsiList[rsiList.length - 1].RSI1 < 50 &&
-				rsiList[rsiList.length - 1].RSI2 < 50 &&
-				rsiList[rsiList.length - 1].RSI3 < 50) ||
+			(rsiList[rsiList.length - 1].RSI1 < 50 ||
+				rsiList[rsiList.length - 1].RSI2 < 50 ||
+				rsiList[rsiList.length - 1].RSI3 < 50 ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((rsiList[rsiList.length - 1].RSI1 > 50 &&
-				rsiList[rsiList.length - 1].RSI2 > 50 &&
-				rsiList[rsiList.length - 1].RSI3 > 50) ||
+			(rsiList[rsiList.length - 1].RSI1 > 50 ||
+				rsiList[rsiList.length - 1].RSI2 > 50 ||
+				rsiList[rsiList.length - 1].RSI3 > 50 ||
 				isForceDeal);
 
 		console.log(234, rsiList[rsiList.length - 1]);
