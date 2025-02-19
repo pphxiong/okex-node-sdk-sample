@@ -708,6 +708,17 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		};
 		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
 		const list = data;
+
+		const otherPayload = {
+			interval: '3m',
+			limit,
+			startTime: time,
+		};
+		const otherData = await cAuthClientBN.common.getHistory(
+			BN_SYMBOL,
+			payload
+		);
+
 		totalProfit = 0;
 		// currentPosition = {};
 		// longPosition = {};
@@ -726,10 +737,14 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		// const bollList = getCurrentBOLL(newList).slice(-limit);
 		const bollList = [];
 
+		const otherList = JSON.parse(JSON.stringify(otherData));
+		const otherRsiList = getCurrentRSI(otherList).slice(-limit);
+
 		const result = {
 			macdList,
 			bollList,
 			rsiList,
+			otherRsiList,
 		};
 		await checkDeal(result, isForceDeal === true || isForceDeal === 'true');
 		send(response, {
@@ -1162,6 +1177,7 @@ const checkDeal = async (data, isForceDeal = true) => {
 			{
 				macdList: data.macdList.slice(i, i + 2),
 				rsiList: data.rsiList.slice(i, i + 2),
+				otherRsiList: data.otherRsiList.slice(i, i + 2),
 				// bollList: data.bollList,
 			},
 			i === data.macdList.length - 3 && isForceDeal
@@ -1301,31 +1317,33 @@ const checkDeal = async (data, isForceDeal = true) => {
 
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
-			(rsiList[rsiList.length - 1].RSI1 < 50 ||
-				rsiList[rsiList.length - 1].RSI2 < 50 ||
-				rsiList[rsiList.length - 1].RSI3 < 50) &&
+			macdList[macdList.length - 1].close >
+				macdList[macdList.length - 1].open &&
+			macdList[macdList.length - 2].close >
+				macdList[macdList.length - 2].open &&
 			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
-			(rsiList[rsiList.length - 1].RSI1 > 50 ||
-				rsiList[rsiList.length - 1].RSI2 > 50 ||
-				rsiList[rsiList.length - 1].RSI3 > 50) &&
+			macdList[macdList.length - 1].close <
+				macdList[macdList.length - 1].open &&
+			macdList[macdList.length - 2].close <
+				macdList[macdList.length - 2].open &&
 			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((rsiList[rsiList.length - 1].RSI1 > 50 &&
-				rsiList[rsiList.length - 1].RSI2 > 50 &&
-				rsiList[rsiList.length - 1].RSI3 > 50) ||
+			((macdList[macdList.length - 1].close <
+				macdList[macdList.length - 1].open &&
+				macdList[macdList.length - 2].close <
+					macdList[macdList.length - 2].open) ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((rsiList[rsiList.length - 1].RSI1 < 50 &&
-				rsiList[rsiList.length - 1].RSI2 < 50 &&
-				rsiList[rsiList.length - 1].RSI3 < 50) ||
+			((macdList[macdList.length - 1].close >
+				macdList[macdList.length - 1].open &&
+				macdList[macdList.length - 2].close >
+					macdList[macdList.length - 2].open) ||
 				isForceDeal);
-
-		console.log(234, rsiList[rsiList.length - 1]);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
 
