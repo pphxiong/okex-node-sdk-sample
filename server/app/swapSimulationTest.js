@@ -1332,17 +1332,13 @@ const checkDeal = async (data, isForceDeal = true) => {
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			((macdList[macdList.length - 1].close <
-				macdList[macdList.length - 1].open &&
-				macdList[macdList.length - 2].close <
-					macdList[macdList.length - 2].open) ||
+			(macdList[macdList.length - 1].close <
+				macdList[macdList.length - 1].open ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			((macdList[macdList.length - 1].close >
-				macdList[macdList.length - 1].open &&
-				macdList[macdList.length - 2].close >
-					macdList[macdList.length - 2].open) ||
+			(macdList[macdList.length - 1].close >
+				macdList[macdList.length - 1].open ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
