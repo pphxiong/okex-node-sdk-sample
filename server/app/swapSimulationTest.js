@@ -717,16 +717,6 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		const data = await cAuthClientBN.common.getHistory(BN_SYMBOL, payload);
 		const list = data;
 
-		const otherPayload = {
-			interval: '3m',
-			limit,
-			startTime: time,
-		};
-		const otherData = await cAuthClientBN.common.getHistory(
-			BN_SYMBOL,
-			payload
-		);
-
 		totalProfit = 0;
 		// currentPosition = {};
 		// longPosition = {};
@@ -745,14 +735,36 @@ app.get('/swap/getLatestProfit', async (req, response) => {
 		// const bollList = getCurrentBOLL(newList).slice(-limit);
 		const bollList = [];
 
-		const otherList = JSON.parse(JSON.stringify(otherData));
-		const otherRsiList = getCurrentRSI(otherList).slice(-limit);
+		const otherPayload1 = {
+			interval: '5m',
+			limit,
+			startTime: time,
+		};
+		const otherData1 = await cAuthClientBN.common.getHistory(
+			BN_SYMBOL,
+			otherPayload1
+		);
+		const otherList1 = JSON.parse(JSON.stringify(otherData1));
+		const otherMacdList1 = getCurrentRSI(otherList1).slice(-limit);
+
+		const otherPayload2 = {
+			interval: '15m',
+			limit,
+			startTime: time,
+		};
+		const otherData2 = await cAuthClientBN.common.getHistory(
+			BN_SYMBOL,
+			otherPayload2
+		);
+		const otherList2 = JSON.parse(JSON.stringify(otherData2));
+		const otherMacdList2 = getCurrentRSI(otherList2).slice(-limit);
 
 		const result = {
 			macdList,
 			bollList,
 			rsiList,
-			otherRsiList,
+			otherMacdList1,
+			otherMacdList2,
 		};
 		await checkDeal(result, isForceDeal === true || isForceDeal === 'true');
 		send(response, {
@@ -1194,7 +1206,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 
 	function checkByStep(data, isForceDeal) {
 		// isForceDeal = false;
-		const { macdList, rsiList, bollList } = data;
+		const { macdList, rsiList, bollList, otherMacdList1, otherMacdList2 } =
+			data;
 		const mark_price = macdList[macdList.length - 1].close;
 
 		let longHolding;
@@ -1329,6 +1342,10 @@ const checkDeal = async (data, isForceDeal = true) => {
 				macdList[macdList.length - 1].ema50 &&
 			macdList[macdList.length - 1].close >
 				macdList[macdList.length - 1].ema20 &&
+			otherMacdList1[otherMacdList1.length - 1].ema20 >
+				otherMacdList1[otherMacdList1.length - 1].ema50 &&
+			otherMacdList2[otherMacdList2.length - 1].ema20 >
+				otherMacdList2[otherMacdList2.length - 1].ema50 &&
 			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
@@ -1336,6 +1353,10 @@ const checkDeal = async (data, isForceDeal = true) => {
 				macdList[macdList.length - 1].ema50 &&
 			macdList[macdList.length - 1].close <
 				macdList[macdList.length - 1].ema20 &&
+			otherMacdList1[otherMacdList1.length - 1].ema20 <
+				otherMacdList1[otherMacdList1.length - 1].ema50 &&
+			otherMacdList2[otherMacdList2.length - 1].ema20 <
+				otherMacdList2[otherMacdList2.length - 1].ema50 &&
 			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
