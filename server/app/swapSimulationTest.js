@@ -1197,7 +1197,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 			{
 				macdList: data.macdList.slice(i, i + 2),
 				rsiList: data.rsiList.slice(i, i + 2),
-				otherRsiList: data.otherRsiList.slice(i, i + 2),
+				otherMacdList1: data.otherMacdList1.slice(i, i + 2),
+				otherMacdList2: data.otherMacdList2.slice(i, i + 2),
 				// bollList: data.bollList,
 			},
 			i === data.macdList.length - 3 && isForceDeal
