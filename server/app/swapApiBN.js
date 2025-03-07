@@ -1331,7 +1331,9 @@ async function checkByStep(data, symbol) {
 
 	const IS_ALL_SHORT =
 		macdListSecond[macdListSecond.length - 1].ema21 <=
-		macdListSecond[macdListSecond.length - 1].ema89;
+			macdListSecond[macdListSecond.length - 1].ema89 &&
+		macdListThird[macdListThird.length - 1].ema55 <=
+			macdListThird[macdListThird.length - 1].ema100;
 
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
@@ -1460,8 +1462,6 @@ async function checkByStep(data, symbol) {
 	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
-
-	return;
 
 	const patchPosition = async (holding, direction) => {
 		let positionAmt = Number(holding.positionAmt) * 2;
