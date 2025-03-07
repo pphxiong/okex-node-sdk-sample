@@ -1197,8 +1197,8 @@ const checkDeal = async (data, isForceDeal = true) => {
 			{
 				macdList: data.macdList.slice(i, i + 2),
 				rsiList: data.rsiList.slice(i, i + 2),
-				otherMacdList1: data.otherMacdList1.slice(i, i + 2),
-				otherMacdList2: data.otherMacdList2.slice(i, i + 2),
+				// otherMacdList1: data.otherMacdList1.slice(i, i + 2),
+				// otherMacdList2: data.otherMacdList2.slice(i, i + 2),
 				// bollList: data.bollList,
 			},
 			i === data.macdList.length - 3 && isForceDeal
@@ -1207,8 +1207,7 @@ const checkDeal = async (data, isForceDeal = true) => {
 
 	function checkByStep(data, isForceDeal) {
 		// isForceDeal = false;
-		const { macdList, rsiList, bollList, otherMacdList1, otherMacdList2 } =
-			data;
+		const { macdList, rsiList, bollList } = data;
 		const mark_price = macdList[macdList.length - 1].close;
 
 		let longHolding;
@@ -1340,35 +1339,23 @@ const checkDeal = async (data, isForceDeal = true) => {
 		const MAIN_OPEN_LONG_CONDITION1 =
 			!longHolding &&
 			macdList[macdList.length - 1].ema20 >
-				macdList[macdList.length - 1].ema50 &&
-			macdList[macdList.length - 1].close >
-				macdList[macdList.length - 1].ema20 &&
-			otherMacdList1[otherMacdList1.length - 1].ema20 >
-				otherMacdList1[otherMacdList1.length - 1].ema50 &&
-			otherMacdList2[otherMacdList2.length - 1].ema20 >
-				otherMacdList2[otherMacdList2.length - 1].ema50 &&
+				macdList[macdList.length - 1].ema99 &&
 			!isForceDeal;
 		const MAIN_OPEN_SHORT_CONDITION1 =
 			!shortHolding &&
 			macdList[macdList.length - 1].ema20 <
-				macdList[macdList.length - 1].ema50 &&
-			macdList[macdList.length - 1].close <
-				macdList[macdList.length - 1].ema20 &&
-			otherMacdList1[otherMacdList1.length - 1].ema20 <
-				otherMacdList1[otherMacdList1.length - 1].ema50 &&
-			otherMacdList2[otherMacdList2.length - 1].ema20 <
-				otherMacdList2[otherMacdList2.length - 1].ema50 &&
+				macdList[macdList.length - 1].ema99 &&
 			!isForceDeal;
 
 		const MAIN_CLOSE_LONG_CONDITION1 =
 			longHolding &&
-			(macdList[macdList.length - 1].close <
-				macdList[macdList.length - 1].ema20 ||
+			(macdList[macdList.length - 1].ema20 <
+				macdList[macdList.length - 1].ema99 ||
 				isForceDeal);
 		const MAIN_CLOSE_SHORT_CONDITION1 =
 			shortHolding &&
-			(macdList[macdList.length - 1].close >
-				macdList[macdList.length - 1].ema20 ||
+			(macdList[macdList.length - 1].ema20 >
+				macdList[macdList.length - 1].ema99 ||
 				isForceDeal);
 
 		if (modeChange) lastMode = lastMode ? 0 : 1;
