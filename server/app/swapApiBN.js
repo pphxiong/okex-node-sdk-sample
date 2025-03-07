@@ -8,7 +8,7 @@ const fs = require('fs');
 const customAuthClientBN = require('./customAuthClientBN');
 
 const LEVERAGE = 20;
-let INIT_ASSETS = 500;
+let INIT_ASSETS = 65;
 const INIT_ASSETS_RATIO = 70 / 100;
 
 const WIN_MAX = (LEVERAGE * 2) / 100;
@@ -65,6 +65,8 @@ const MAX_OFFSET_RATIO = Math.abs(LOSS_MAX);
 let RESTART_TIME = 0;
 let MODE = 1;
 const DEFAULT_INTERVAL = '1m';
+const SECOND_INTERVAL = '5m';
+const THIRD_INTERVAL = '5m';
 const INIT_POSITION = 100;
 let rsi1 = 6;
 let rsi2 = 14;
@@ -1164,7 +1166,7 @@ const fnGetIsLoss = (holding, mark_price) => {
 };
 
 async function checkByStep(data, symbol) {
-	const { macdList, rsiList, atrList } = data;
+	const { macdList, rsiList, atrList, macdListSecond, macdListThird } = data;
 	let mark_price;
 	try {
 		const data = await cAuthClientBN.common.getMarkPrice(symbol);
@@ -1321,33 +1323,49 @@ async function checkByStep(data, symbol) {
 	// const currentHolding = longHolding || shortHolding;
 	// const isLoss = currentHolding && fnGetIsLoss(currentHolding, mark_price);
 
+	const IS_ALL_LONG =
+		macdListSecond[macdListSecond.length - 1].ema21 >=
+			macdListSecond[macdListSecond.length - 1].ema89 &&
+		macdListThird[macdListThird.length - 1].ema55 >=
+			macdListThird[macdListThird.length - 1].ema100;
+
+	const IS_ALL_SHORT =
+		macdListSecond[macdListSecond.length - 1].ema21 <=
+		macdListSecond[macdListSecond.length - 1].ema89;
+
 	const MAIN_OPEN_LONG_CONDITION1 =
 		!longHolding &&
-		rsiList[rsiList.length - 1].rsi1 > 50 &&
-		rsiList[rsiList.length - 1].rsi2 > 50 &&
-		rsiList[rsiList.length - 1].rsi3 > 50 &&
-		rsiList[rsiList.length - 2].rsi1 < 50 &&
-		rsiList[rsiList.length - 2].rsi2 < 50 &&
-		rsiList[rsiList.length - 2].rsi3 < 50;
+		(macdListSecond[macdListSecond.length - 1].ema21 >=
+			macdListSecond[macdListSecond.length - 1].ema89 ||
+			macdListThird[macdListThird.length - 1].ema55 >=
+				macdListThird[macdListThird.length - 1].ema100) &&
+		macdList[macdList.length - 1].ema7 >=
+			macdList[macdList.length - 1].ema30 &&
+		macdList[macdList.length - 2].ema7 <=
+			macdList[macdList.length - 2].ema30;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
-		rsiList[rsiList.length - 1].rsi1 < 50 &&
-		rsiList[rsiList.length - 1].rsi2 < 50 &&
-		rsiList[rsiList.length - 1].rsi3 < 50 &&
-		rsiList[rsiList.length - 2].rsi1 > 50 &&
-		rsiList[rsiList.length - 2].rsi2 > 50 &&
-		rsiList[rsiList.length - 2].rsi3 > 50;
+		(macdListSecond[macdListSecond.length - 1].ema21 <=
+			macdListSecond[macdListSecond.length - 1].ema89 ||
+			macdListThird[macdListThird.length - 1].ema55 <=
+				macdListThird[macdListThird.length - 1].ema100) &&
+		macdList[macdList.length - 1].ema7 <=
+			macdList[macdList.length - 1].ema30 &&
+		macdList[macdList.length - 2].ema7 >=
+			macdList[macdList.length - 2].ema30;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
-		rsiList[rsiList.length - 1].rsi1 < 50 &&
-		rsiList[rsiList.length - 1].rsi2 < 50 &&
-		rsiList[rsiList.length - 1].rsi3 < 50;
+		macdList[macdList.length - 1].ema7 <=
+			macdList[macdList.length - 1].ema30 &&
+		macdList[macdList.length - 2].ema7 >=
+			macdList[macdList.length - 2].ema30;
 	const MAIN_CLOSE_SHORT_CONDITION1 =
 		shortHolding &&
-		rsiList[rsiList.length - 1].rsi1 > 50 &&
-		rsiList[rsiList.length - 1].rsi2 > 50 &&
-		rsiList[rsiList.length - 1].rsi3 > 50;
+		macdList[macdList.length - 1].ema7 >=
+			macdList[macdList.length - 1].ema30 &&
+		macdList[macdList.length - 2].ema7 <=
+			macdList[macdList.length - 2].ema30;
 
 	const MAIN_CLOSE_ALL_CONDITION =
 		false && (CLOSE_WIN_CONDITION || CLOSE_LOSS_CONDITION);
@@ -1356,8 +1374,6 @@ async function checkByStep(data, symbol) {
 	let openShortCondition = MAIN_OPEN_SHORT_CONDITION1;
 	let closeLongCondition = MAIN_CLOSE_LONG_CONDITION1;
 	let closeShortCondition = MAIN_CLOSE_SHORT_CONDITION1;
-
-	return;
 
 	let isMarketDeal = true;
 	let dealRatio = 0.01;
@@ -1414,23 +1430,23 @@ async function checkByStep(data, symbol) {
 					open,
 					close,
 					time,
-					ema10,
-					ema20,
-					ema5,
 					ema7,
-					ema60,
-					ema99,
+					ema30,
+					ema21,
+					ema89,
+					ema55,
+					ema200,
 				}) => ({
 					column,
 					open,
 					close,
 					time,
-					ema10,
-					ema20,
-					ema5,
 					ema7,
-					ema60,
-					ema99,
+					ema30,
+					ema21,
+					ema89,
+					ema55,
+					ema200,
 				})
 			)
 	);
@@ -1444,6 +1460,8 @@ async function checkByStep(data, symbol) {
 	// );
 	// console.log('w_Position', w_Position, 't_Position', t_Position);
 	console.log('************************************');
+
+	return;
 
 	const patchPosition = async (holding, direction) => {
 		let positionAmt = Number(holding.positionAmt) * 2;
@@ -1537,6 +1555,7 @@ async function checkByStep(data, symbol) {
 					quantityFixedMap[symbol]
 				)
 			);
+			if (IS_ALL_LONG) openPositionAmt = openPositionAmt * 2;
 			if (isFiveM /* && avail >= openPositionAmt */) {
 				await openPosition(
 					{
@@ -1561,7 +1580,7 @@ async function checkByStep(data, symbol) {
 					quantityFixedMap[symbol]
 				)
 			);
-
+			if (IS_ALL_SHORT) openPositionAmt = openPositionAmt * 2;
 			if (isFiveM /* && avail >= openPositionAmt */) {
 				await openPosition(
 					{
@@ -1689,14 +1708,18 @@ const fnThirdHoldingHandler = async (
 	}
 };
 
-const checkDeal = async (oldData, symbol) => {
+const checkDeal = async (oldData, secondData, thirdData, symbol) => {
 	const data = cloneDeep(oldData);
+	const second_data = cloneDeep(secondData);
+	const third_data = cloneDeep(thirdData);
 	return await checkByStep(
 		{
 			macdList: data.macdList.slice(-80),
 			rsiList: data.rsiList.slice(-80),
 			bollList: data.bollList.slice(-80),
 			atrList: data.atrList.slice(-80),
+			macdListSecond: second_data.macdList.slice(-80),
+			macdListThird: third_data.macdList.slice(-80),
 		},
 		symbol
 	);
@@ -1757,8 +1780,13 @@ function getCurrentMacd(list, last) {
 				ema60: Number(item[4]),
 				ema12: Number(item[4]),
 				ema26: Number(item[4]),
-				ema7: Number(item[4]),
 				ema99: Number(item[4]),
+				ema7: Number(item[4]),
+				ema30: Number(item[4]),
+				ema21: Number(item[4]),
+				ema89: Number(item[4]),
+				ema55: Number(item[4]),
+				ema200: Number(item[4]),
 				diff: 0,
 				dea: 0,
 				column: 0,
@@ -1779,8 +1807,13 @@ function getCurrentMacd(list, last) {
 				lastEma60: lastResult.ema60,
 				lastEma12: lastResult.ema12,
 				lastEma26: lastResult.ema26,
-				lastEma7: lastResult.ema7,
 				lastEma99: lastResult.ema99,
+				lastEma7: lastResult.ema7,
+				lastEma30: lastResult.ema30,
+				lastEma21: lastResult.ema21,
+				lastEma89: lastResult.ema89,
+				lastEma55: lastResult.ema55,
+				lastEma200: lastResult.ema200,
 				lastDea: lastResult.dea,
 				open: Number(item[1]),
 				high: Number(item[2]),
@@ -2129,8 +2162,13 @@ function getMacd(params) {
 		lastEma60,
 		lastEma12,
 		lastEma26,
-		lastEma7,
 		lastEma99,
+		lastEma7,
+		lastEma30,
+		lastEma21,
+		lastEma89,
+		lastEma55,
+		lastEma200,
 		lastDea,
 		high,
 		low,
@@ -2174,6 +2212,27 @@ function getMacd(params) {
 		(2 / (7 + 1)) * price + (1 - 2 / (7 + 1)) * lastEma7,
 		8
 	);
+	const ema30 = toFixedAndToNumber(
+		(2 / (30 + 1)) * price + (1 - 2 / (30 + 1)) * lastEma30,
+		8
+	);
+	const ema21 = toFixedAndToNumber(
+		(2 / (21 + 1)) * price + (1 - 2 / (21 + 1)) * lastEma21,
+		8
+	);
+	const ema89 = toFixedAndToNumber(
+		(2 / (89 + 1)) * price + (1 - 2 / (89 + 1)) * lastEma89,
+		8
+	);
+	const ema55 = toFixedAndToNumber(
+		(2 / (55 + 1)) * price + (1 - 2 / (55 + 1)) * lastEma55,
+		8
+	);
+	const ema200 = toFixedAndToNumber(
+		(2 / (200 + 1)) * price + (1 - 2 / (200 + 1)) * lastEma200,
+		8
+	);
+
 	const ema99 = toFixedAndToNumber(
 		(2 / (99 + 1)) * price + (1 - 2 / (99 + 1)) * lastEma99,
 		8
@@ -2196,8 +2255,13 @@ function getMacd(params) {
 		ema60,
 		ema12,
 		ema26,
-		ema7,
 		ema99,
+		ema7,
+		ema30,
+		ema21,
+		ema89,
+		ema55,
+		ema200,
 		diff,
 		dea,
 		column,
@@ -2349,6 +2413,34 @@ const startInterval = async () => {
 			limit: 1440,
 			endTime: time,
 		};
+		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
+
+		const payload_second = {
+			interval: SECOND_INTERVAL,
+			limit: 1440,
+			endTime: time,
+		};
+		const doge_result_second = await fnGetSymbolResult(
+			DOGE_SYMBOL,
+			payload_second
+		);
+
+		const payload_third = {
+			interval: THIRD_INTERVAL,
+			limit: 1440,
+			endTime: time,
+		};
+		const doge_result_third = await fnGetSymbolResult(
+			DOGE_SYMBOL,
+			payload_third
+		);
+
+		await checkDeal(
+			doge_result,
+			doge_result_second,
+			doge_result_third,
+			DOGE_SYMBOL
+		);
 
 		// const btc_result = await fnGetSymbolResult(BTC_SYMBOL, payload);
 		// await fnSymbolDeal(btc_result, BTC_SYMBOL);
@@ -2357,7 +2449,7 @@ const startInterval = async () => {
 		// const eth_result = await fnGetSymbolResult(ETH_SYMBOL, payload);
 		// const eos_result = await fnGetSymbolResult(EOS_SYMBOL, payload);
 		// const xrp_result = await fnGetSymbolResult(XRP_SYMBOL, payload);
-		const doge_result = await fnGetSymbolResult(DOGE_SYMBOL, payload);
+
 		// const trx_result = await fnGetSymbolResult(TRX_SYMBOL, payload);
 		// const ltc_result = await fnGetSymbolResult(LTC_SYMBOL, payload);
 
@@ -2399,7 +2491,7 @@ const startInterval = async () => {
 		// await checkDeal(eth_result, ETH_SYMBOL);
 		// await checkDeal(eos_result, EOS_SYMBOL);
 		// await checkDeal(xrp_result, XRP_SYMBOL);
-		await checkDeal(doge_result, DOGE_SYMBOL);
+
 		// await checkDeal(trx_result, TRX_SYMBOL);
 		// await checkDeal(ltc_result, LTC_SYMBOL);
 
