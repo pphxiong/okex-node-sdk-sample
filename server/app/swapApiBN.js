@@ -1342,9 +1342,9 @@ async function checkByStep(data, symbol) {
 			macdListThird[macdListThird.length - 1].ema55 >=
 				macdListThird[macdListThird.length - 1].ema100) &&
 		macdList[macdList.length - 1].ema7 >=
-			macdList[macdList.length - 1].ema30;
-	// && macdList[macdList.length - 2].ema7 <=
-	// macdList[macdList.length - 2].ema30;
+			macdList[macdList.length - 1].ema30 &&
+		macdList[macdList.length - 2].ema7 <=
+			macdList[macdList.length - 2].ema30;
 	const MAIN_OPEN_SHORT_CONDITION1 =
 		!shortHolding &&
 		(macdListSecond[macdListSecond.length - 1].ema21 <=
@@ -1352,7 +1352,9 @@ async function checkByStep(data, symbol) {
 			macdListThird[macdListThird.length - 1].ema55 <=
 				macdListThird[macdListThird.length - 1].ema100) &&
 		macdList[macdList.length - 1].ema7 <=
-			macdList[macdList.length - 1].ema30;
+			macdList[macdList.length - 1].ema30 &&
+		macdList[macdList.length - 2].ema7 >=
+			macdList[macdList.length - 2].ema30;
 
 	const MAIN_CLOSE_LONG_CONDITION1 =
 		longHolding &&
