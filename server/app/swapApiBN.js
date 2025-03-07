@@ -1450,7 +1450,29 @@ async function checkByStep(data, symbol) {
 					ema55,
 					ema200,
 				})
-			)
+			),
+		'macdSecond',
+		macdListSecond
+			.slice(-1)
+			.map(({ column, open, close, time, ema21, ema89 }) => ({
+				column,
+				open,
+				close,
+				time,
+				ema21,
+				ema89,
+			})),
+		'macdListThird',
+		macdListThird
+			.slice(-1)
+			.map(({ column, open, close, time, ema55, ema200 }) => ({
+				column,
+				open,
+				close,
+				time,
+				ema55,
+				ema200,
+			}))
 	);
 	// console.log(
 	// 	'rsi',
