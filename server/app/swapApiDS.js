@@ -1,11 +1,22 @@
 import moment from 'moment';
 import helper from '../utils/index';
 
-const { cloneDeep } = helper;
-
-const fs = require('fs');
-
 const customAuthClientBN = require('./customAuthClientBN');
+
+const express = require('express');
+const app = express();
+
+app.all('*', function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+	res.header('Access-Control-Allow-Headers', 'content-type');
+	res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+	res.header('X-Powered-By', ' 3.2.1');
+	res.header('Content-Type', 'application/json;charset=utf-8');
+	if (req.method.toLowerCase() == 'options') res.send(200);
+	//让options尝试请求快速结束
+	else next();
+});
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
