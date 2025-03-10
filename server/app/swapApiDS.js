@@ -204,7 +204,7 @@ class DogePerpBot extends EventEmitter {
 		const liquidity = this.checkLiquidity();
 
 		console.log(
-			this.state.marketData.slice(-1),
+			this.state.marketData['1m'].slice(-1),
 			this.isBullish(emaValues),
 			this.isBearish(emaValues)
 		);
