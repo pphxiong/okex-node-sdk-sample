@@ -96,7 +96,7 @@ class DogePerpBot extends EventEmitter {
 		];
 
 		const ws = new ccxt.pro.binance().stream({
-			method: 'SUBSCRIBE',
+			// method: 'SUBSCRIBE',
 			method: 'publicGetAggTrades',
 			params: streams,
 		});
