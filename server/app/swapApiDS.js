@@ -48,15 +48,22 @@ class DogePerpBot extends EventEmitter {
 		this.config = {
 			symbol: 'DOGE/USDT',
 			timeframes: ['15m', '5m', '1m'],
+			dynamicEMA: true,
 			emaSettings: {
 				periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
 				slopeThreshold: 0.1, // EMA斜率阈值
 			},
 			riskControl: {
+				baseRisk: 0.02,
+				volatilityMultiplier: 1.5,
 				maxLoss: 0.05, // 单日最大亏损5%
 				perTradeRisk: 0.02, // 单笔风险2%
-				leverage: 3,
+				leverage: 20,
 				coolingPeriod: 180, // 基础冷却时间(秒)
+			},
+			modelPaths: {
+				lstm: './models/lstm_model/',
+				volatility: './models/volatility_predictor/',
 			},
 		};
 
@@ -76,6 +83,71 @@ class DogePerpBot extends EventEmitter {
 			},
 		};
 	}
+
+	predictVolatility() {
+		const closes = this.state.marketData['15m'].map((d) => d.close);
+		const lastClose = closes[closes.length - 1];
+		const maxClose = Math.max(...closes);
+	}
+
+	// 动态EMA计算
+	async calculateDynamicEMA(timeframe) {
+		// const atr = this.calculateATR(14);
+		let periods;
+
+		if (this.config.dynamicEMA) {
+			const prediction = await this.predictVolatility();
+			periods =
+				prediction > 0.7
+					? { fast: 7, slow: 21 }
+					: prediction > 0.4
+					? { fast: 13, slow: 34 }
+					: { fast: 21, slow: 55 };
+		} else {
+			periods = { fast: 13, slow: 34 };
+		}
+
+		const closes = this.state.marketData[timeframe].map((d) => d.close);
+		const [emaFast, emaSlow] = await Promise.all([
+			this.calculateEMA(periods.fast, closes),
+			this.calculateEMA(periods.slow, closes),
+		]);
+
+		return { emaFast, emaSlow, periods };
+	}
+
+	// // 增强信号生成
+	// async generateEnhancedSignal() {
+	// 	const conditions = {
+	// 		trend: await this.checkTrendCondition(),
+	// 		momentum: this.checkMomentum(),
+	// 		volume: this.checkVolumeProfile(),
+	// 		orderBook: this.checkOrderBookImbalance(),
+	// 		sentiment: await this.checkSentiment(),
+	// 	};
+
+	// 	const mlPrediction = await this.getLSTMPrediction();
+
+	// 	return {
+	// 		long:
+	// 			conditions.trend.up &&
+	// 			conditions.momentum > 0.7 &&
+	// 			conditions.volume &&
+	// 			mlPrediction > 0.65,
+	// 		short:
+	// 			conditions.trend.down &&
+	// 			conditions.momentum < 0.3 &&
+	// 			conditions.volume &&
+	// 			mlPrediction < 0.35,
+	// 	};
+	// }
+
+	// async loadMLModels() {
+	//   this.models.lstm = await tf.loadLayersModel(`${this.config.modelPaths.lstm}model.json`);
+	//   this.models.volatility = await tf.loadGraphModel(
+	//     `${this.config.modelPaths.volatility}model.json`
+	//   );
+	// }
 
 	async getHistory(symbol, interval) {
 		const time = moment().valueOf();
@@ -204,14 +276,6 @@ class DogePerpBot extends EventEmitter {
 		const volumeValid = this.checkVolume();
 		const liquidity = this.checkLiquidity();
 
-		console.log(
-			this.state.marketData['1m'].slice(-1),
-			this.isBullish(emaValues),
-			this.isBearish(emaValues),
-			emaValues['1m'],
-			emaValues['5m'],
-			emaValues['15m']
-		);
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
 			short: this.isBearish(emaValues) && volumeValid && liquidity,
@@ -273,6 +337,12 @@ class DogePerpBot extends EventEmitter {
 		const { emaFast } = emaValues[tf];
 		const lastTwo = emaFast.slice(-2);
 		return (lastTwo[1] - lastTwo[0]) / lastTwo[0];
+	}
+
+	async calculatePositionSize() {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { postions, availableBalance } = positionResult;
+		return 150;
 	}
 
 	async executeTrade(side) {
