@@ -95,13 +95,15 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		const ws = new ccxt.pro.binance().stream({
-			method: 'SUBSCRIBE',
-			// method: 'publicGetAggTrades',
-			params: streams,
+		this.exchange.websocket.on('message', (data) => {
+			console.log('收到数据:', data);
 		});
-		console.log(11, ws);
-		ws.on('data', (data) => this.handleData(data));
+
+		// const ws = new ccxt.pro.binance().stream({
+		// 	method: 'SUBSCRIBE',
+		// 	params: streams,
+		// });
+		// ws.on('data', (data) => this.handleData(data));
 	}
 
 	handleData(data) {
