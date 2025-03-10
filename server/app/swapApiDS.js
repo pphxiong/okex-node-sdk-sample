@@ -370,6 +370,8 @@ class DogePerpBot extends EventEmitter {
 		}, 5000);
 	}
 
+	updateCoolingStatus() {}
+
 	checkDailyLossLimit() {
 		if (this.state.dailyMetrics.profit < -this.config.riskControl.maxLoss) {
 			console.error('触发最大日亏损限制，停止交易');
