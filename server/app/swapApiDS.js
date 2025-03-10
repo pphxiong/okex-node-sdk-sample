@@ -22,14 +22,13 @@ const tulind = require('tulind');
 const EventEmitter = require('events');
 require('dotenv').config();
 
+const key = 'KHWMagGDpPqZGYZV4XX7O2mep6fAQf2M39O8E47C7YuQehkqDryy5qSEM5x2amvM';
+const secret =
+	'apfsxbVkv6jln0ZbLnaY3ybXGhN1pA2uR3WkpIS3t4bNoqaWZZJudC1pomivFEXa';
+
 class DogePerpBot extends EventEmitter {
 	constructor() {
 		super();
-
-		const key =
-			'KHWMagGDpPqZGYZV4XX7O2mep6fAQf2M39O8E47C7YuQehkqDryy5qSEM5x2amvM';
-		const secret =
-			'apfsxbVkv6jln0ZbLnaY3ybXGhN1pA2uR3WkpIS3t4bNoqaWZZJudC1pomivFEXa';
 
 		// 初始化交易所连接
 		this.exchange = new ccxt.binance({
@@ -95,13 +94,15 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		console.log('收到数据:', this.exchange.stream);
-
-		// const ws = new ccxt.pro.binance().stream({
-		// 	method: 'SUBSCRIBE',
-		// 	params: streams,
-		// });
-		// ws.on('data', (data) => this.handleData(data));
+		const ws = new ccxt.pro.binance({
+			apiKey: key,
+			secret: secret,
+			enableRateLimit: true,
+		}).stream({
+			method: 'SUBSCRIBE',
+			params: streams,
+		});
+		ws.on('data', (data) => this.handleData(data));
 	}
 
 	handleData(data) {
