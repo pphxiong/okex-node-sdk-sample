@@ -84,19 +84,13 @@ class DogePerpBot extends EventEmitter {
 		};
 	}
 
-	predictVolatility() {
-		const closes = this.state.marketData['15m'].map((d) => d.close);
-		const lastClose = closes[closes.length - 1];
-		const maxClose = Math.max(...closes);
-	}
-
 	// 动态EMA计算
 	async calculateDynamicEMA(timeframe) {
 		// const atr = this.calculateATR(14);
 		let periods;
 
 		if (this.config.dynamicEMA) {
-			const prediction = await this.predictVolatility();
+			const prediction = await this.calculateVolatility();
 			periods =
 				prediction > 0.7
 					? { fast: 7, slow: 21 }
@@ -351,6 +345,20 @@ class DogePerpBot extends EventEmitter {
 		return 150;
 	}
 
+	async calculateSL(side) {
+		// const entryPrice = this.state.position.entryPrice;
+		const entryPrice = await this.getMarkPrice();
+		const stopLoss = side === 'buy' ? entryPrice * 0.95 : entryPrice * 1.05;
+		return stopLoss;
+	}
+
+	async calculateTP(side) {
+		// const entryPrice = this.state.position.entryPrice;
+		const entryPrice = await this.getMarkPrice();
+		const takeProfit = side === 'buy' ? entryPrice * 1.1 : entryPrice * 0.9;
+		return takeProfit;
+	}
+
 	async executeTrade(side) {
 		try {
 			const size = await this.calculatePositionSize();
@@ -399,17 +407,23 @@ class DogePerpBot extends EventEmitter {
 		}
 	}
 
-	async checkPositionSL() {
-		if (!this.state.position) return;
-
-		let currentPrice;
+	async getMarkPrice() {
+		let price;
 		try {
 			const symbol = this.config.symbol.replace('/', '');
 			const data = await cAuthClientBN.common.getMarkPrice(symbol);
-			currentPrice = Number(data.markPrice);
+			price = Number(data.markPrice);
 		} catch (e) {
 			restart('getMarkPrice');
 		}
+
+		return price;
+	}
+
+	async checkPositionSL() {
+		if (!this.state.position) return;
+
+		const currentPrice = await this.getMarkPrice();
 
 		// 止损检查
 		if (
