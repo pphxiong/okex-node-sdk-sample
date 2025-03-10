@@ -18,7 +18,6 @@ app.all('*', function (req, res, next) {
 });
 
 const ccxt = require('ccxt');
-require('ccxt.pro');
 const tulind = require('tulind');
 const EventEmitter = require('events');
 require('dotenv').config();
@@ -95,7 +94,7 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		const ws = new ccxt.pro.binance().stream({
+		const ws = new ccxt.binance().stream({
 			method: 'SUBSCRIBE',
 			params: streams,
 		});
