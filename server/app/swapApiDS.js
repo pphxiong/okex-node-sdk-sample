@@ -95,13 +95,23 @@ class DogePerpBot extends EventEmitter {
 		const list1 = await this.getHistory(symbol, '15m');
 		const list2 = await this.getHistory(symbol, '5m');
 		const list3 = await this.getHistory(symbol, '1m');
-		console.log(22, list3.slice(-1));
+	}
+
+	parseKLine(data) {
+		return {
+			timestamp: data[0],
+			open: parseFloat(data[1]),
+			high: parseFloat(data[2]),
+			low: parseFloat(data[3]),
+			close: parseFloat(data[4]),
+			volume: parseFloat(data[5]),
+		};
 	}
 
 	async initialize() {
 		await this.loadMarkets();
+		// this.getHistoryDatas();
 		// this.setupWebSocket();
-		this.getHistoryDatas();
 		this.startRiskEngine();
 		console.log('=== 交易系统启动 ===');
 	}
@@ -151,7 +161,31 @@ class DogePerpBot extends EventEmitter {
 		}
 	}
 
-	async checkTradingSignal(tf) {
+	// 同步历史K线数据
+	async syncAllTimeframes() {
+		for (const tf of Object.keys(this.state.marketData)) {
+			const data = await this.exchange.fetchOHLCV(
+				'DOGE/USDT',
+				tf,
+				undefined,
+				100
+			);
+			this.state.marketData[tf] = data.map((d) => this.parseKLine(d));
+		}
+	}
+
+	parseKLine(data) {
+		return {
+			timestamp: moment(data[0]).format('YYYY-MM-DD HH:mm:ss'),
+			open: parseFloat(data[1]),
+			high: parseFloat(data[2]),
+			low: parseFloat(data[3]),
+			close: parseFloat(data[4]),
+			volume: parseFloat(data[5]),
+		};
+	}
+
+	async checkTradingSignal() {
 		if (this.isCoolingDown() || this.state.position) return;
 
 		const signals = await this.generateSignal();
@@ -165,14 +199,27 @@ class DogePerpBot extends EventEmitter {
 			emaValues[tf] = await this.calculateEMA(tf);
 		}
 
-		const price = this.getLastPrice();
+		// const price = this.getLastPrice();
 		const volumeValid = this.checkVolume();
 		const liquidity = this.checkLiquidity();
 
+		console.log(
+			this.state.marketData.slice(-1),
+			this.isBullish(emaValues),
+			this.isBearish(emaValues)
+		);
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
 			short: this.isBearish(emaValues) && volumeValid && liquidity,
 		};
+	}
+
+	checkVolume() {
+		return true;
+	}
+
+	checkLiquidity() {
+		return true;
 	}
 
 	async calculateEMA(tf) {
@@ -272,12 +319,54 @@ class DogePerpBot extends EventEmitter {
 		}
 	}
 
+	async checkPositionSL() {
+		if (!this.state.position) return;
+
+		let currentPrice;
+		try {
+			const symbol = this.config.symbol.replace('/', '');
+			const data = await cAuthClientBN.common.getMarkPrice(symbol);
+			currentPrice = Number(data.markPrice);
+		} catch (e) {
+			restart('getMarkPrice');
+		}
+
+		// 止损检查
+		if (
+			(this.state.position.side === 'long' &&
+				currentPrice <= this.state.position.stopLoss) ||
+			(this.state.position.side === 'short' &&
+				currentPrice >= this.state.position.stopLoss)
+		) {
+			await this.closePosition('止损触发');
+		}
+
+		// 止盈检查
+		if (
+			(this.state.position.side === 'long' &&
+				currentPrice >= this.state.position.takeProfit) ||
+			(this.state.position.side === 'short' &&
+				currentPrice <= this.state.position.takeProfit)
+		) {
+			await this.closePosition('止盈触发');
+		}
+
+		// // 时间止损
+		// const duration = Date.now() - this.state.position.openedAt;
+		// if (duration > 30 * 60 * 1000) {
+		// 	// 30分钟
+		// 	await this.closePosition('时间止损');
+		// }
+	}
+
 	// 风险管理系统
 	startRiskEngine() {
-		setInterval(() => {
+		setInterval(async () => {
 			this.checkDailyLossLimit();
 			this.checkPositionSL();
 			this.updateCoolingStatus();
+			await this.syncAllTimeframes();
+			await this.checkTradingSignal();
 		}, 5000);
 	}
 
