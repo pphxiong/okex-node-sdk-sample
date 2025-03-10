@@ -276,6 +276,9 @@ class DogePerpBot extends EventEmitter {
 		const volumeValid = this.checkVolume();
 		const liquidity = this.checkLiquidity();
 
+		console.log('long', this.isBullish(emaValues));
+		console.log('short', this.isBearish(emaValues));
+
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
 			short: this.isBearish(emaValues) && volumeValid && liquidity,
