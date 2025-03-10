@@ -278,6 +278,9 @@ class DogePerpBot extends EventEmitter {
 
 		console.log('long', this.isBullish(emaValues));
 		console.log('short', this.isBearish(emaValues));
+		console.log(this.checkEMASlope('5m', emaValues));
+		console.log(this.checkEMACross('15m', emaValues, false));
+		console.log(this.checkEMACross('1m', emaValues, false));
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
