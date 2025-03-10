@@ -91,9 +91,10 @@ class DogePerpBot extends EventEmitter {
 	}
 
 	async getHistoryDatas() {
-		const list1 = await this.getHistory(this.config.symbol, '15m');
-		const list2 = await this.getHistory(this.config.symbol, '5m');
-		const list3 = await this.getHistory(this.config.symbol, '1m');
+		const symbol = this.config.symbol.replace('/', '');
+		const list1 = await this.getHistory(symbol, '15m');
+		const list2 = await this.getHistory(symbol, '5m');
+		const list3 = await this.getHistory(symbol, '1m');
 		console.log(22, list3.slice(-1));
 	}
 
