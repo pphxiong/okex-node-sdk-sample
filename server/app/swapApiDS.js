@@ -94,11 +94,14 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		const ohlcv = await this.exchange.fetchOHLCV(
-			this.config.symbol,
-			'15m',
-			1000
-		);
+		// const ohlcv = await this.exchange.fetchOHLCV(
+		// 	this.config.symbol,
+		// 	'15m',
+		// 	1000
+		// );
+		// console.log(11, ohlcv);
+
+		const ohlcv = await this.exchange.watchTrades(this.config.symbol);
 		console.log(11, ohlcv);
 
 		// const ws = new ccxt.pro.binance().stream({
