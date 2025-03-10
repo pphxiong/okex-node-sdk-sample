@@ -22,9 +22,12 @@ const tulind = require('tulind');
 const EventEmitter = require('events');
 require('dotenv').config();
 
-const key = 'KHWMagGDpPqZGYZV4XX7O2mep6fAQf2M39O8E47C7YuQehkqDryy5qSEM5x2amvM';
-const secret =
-	'apfsxbVkv6jln0ZbLnaY3ybXGhN1pA2uR3WkpIS3t4bNoqaWZZJudC1pomivFEXa';
+const configBN = require('./configBN2');
+const cAuthClientBN = new customAuthClientBN(
+	configBN.httpkey,
+	configBN.httpsecret,
+	configBN.urlHost
+);
 
 class DogePerpBot extends EventEmitter {
 	constructor() {
@@ -32,8 +35,8 @@ class DogePerpBot extends EventEmitter {
 
 		// 初始化交易所连接
 		this.exchange = new ccxt.binance({
-			apiKey: key,
-			secret: secret,
+			apiKey: configBN.httpkey,
+			secret: configBN.httpsecret,
 			options: {
 				defaultType: 'future',
 				adjustForTimeDifference: true,
@@ -74,9 +77,30 @@ class DogePerpBot extends EventEmitter {
 		};
 	}
 
+	async getHistory(symbol, interval) {
+		const time = moment().valueOf();
+		const payload = {
+			interval,
+			limit: 1440,
+			endTime: time,
+		};
+		const list = await cAuthClientBN.common.getHistory(symbol, payload);
+		const newList = JSON.parse(JSON.stringify(list));
+		newList.pop();
+		return newList;
+	}
+
+	async getHistoryDatas() {
+		const list1 = await this.getHistory(this.config.symbol, '15m');
+		const list2 = await this.getHistory(this.config.symbol, '5m');
+		const list3 = await this.getHistory(this.config.symbol, '1m');
+		console.log(22, list3.slice(-1));
+	}
+
 	async initialize() {
 		await this.loadMarkets();
-		this.setupWebSocket();
+		// this.setupWebSocket();
+		this.getHistoryDatas();
 		this.startRiskEngine();
 		console.log('=== 交易系统启动 ===');
 	}
@@ -94,21 +118,11 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		// const ohlcv = await this.exchange.fetchOHLCV(
-		// 	this.config.symbol,
-		// 	'15m',
-		// 	1000
-		// );
-		// console.log(11, ohlcv);
-
-		const ohlcv = await this.exchange.fetchTrades(this.config.symbol);
-		console.log(11, ohlcv);
-
-		// const ws = new ccxt.pro.binance().stream({
-		// 	method: 'SUBSCRIBE',
-		// 	params: streams,
-		// });
-		// ws.on('data', (data) => this.handleData(data));
+		const ws = new ccxt.pro.binance().stream({
+			method: 'SUBSCRIBE',
+			params: streams,
+		});
+		ws.on('data', (data) => this.handleData(data));
 	}
 
 	handleData(data) {
