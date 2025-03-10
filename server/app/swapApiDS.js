@@ -207,7 +207,10 @@ class DogePerpBot extends EventEmitter {
 		console.log(
 			this.state.marketData['1m'].slice(-1),
 			this.isBullish(emaValues),
-			this.isBearish(emaValues)
+			this.isBearish(emaValues),
+			emaValues['1m'].slice(-1),
+			emaValues['5m'].slice(-1),
+			emaValues['15m'].slice(-1)
 		);
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
