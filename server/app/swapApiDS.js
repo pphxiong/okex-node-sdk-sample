@@ -1,6 +1,6 @@
 import moment from 'moment';
 import helper from '../utils/index';
-
+console.log(process.versions);
 const customAuthClientBN = require('./customAuthClientBN');
 
 const express = require('express');
