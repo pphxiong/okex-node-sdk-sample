@@ -86,7 +86,7 @@ class DogePerpBot extends EventEmitter {
 		console.log('市场数据加载完成');
 	}
 
-	setupWebSocket() {
+	async setupWebSocket() {
 		const streams = [
 			`${this.config.symbol.replace('/', '').toLowerCase()}@kline_15m`,
 			`${this.config.symbol.replace('/', '').toLowerCase()}@kline_5m`,
@@ -94,11 +94,18 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		const ws = new ccxt.binance().stream({
-			method: 'SUBSCRIBE',
-			params: streams,
-		});
-		ws.on('data', (data) => this.handleData(data));
+		const ohlcv = await this.exchange.fetchOHLCV(
+			this.config.symbol,
+			'15m',
+			1000
+		);
+		console.log(11, ohlcv);
+
+		// const ws = new ccxt.pro.binance().stream({
+		// 	method: 'SUBSCRIBE',
+		// 	params: streams,
+		// });
+		// ws.on('data', (data) => this.handleData(data));
 	}
 
 	handleData(data) {
