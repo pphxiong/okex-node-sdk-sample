@@ -1,6 +1,5 @@
 import moment from 'moment';
 import helper from '../utils/index';
-console.log(process.versions);
 const customAuthClientBN = require('./customAuthClientBN');
 
 const express = require('express');
@@ -27,10 +26,15 @@ class DogePerpBot extends EventEmitter {
 	constructor() {
 		super();
 
+		const key =
+			'KHWMagGDpPqZGYZV4XX7O2mep6fAQf2M39O8E47C7YuQehkqDryy5qSEM5x2amvM';
+		const secret =
+			'apfsxbVkv6jln0ZbLnaY3ybXGhN1pA2uR3WkpIS3t4bNoqaWZZJudC1pomivFEXa';
+
 		// 初始化交易所连接
 		this.exchange = new ccxt.binance({
-			apiKey: process.env.BINANCE_API_KEY,
-			secret: process.env.BINANCE_API_SECRET,
+			apiKey: key,
+			secret: secret,
 			options: {
 				defaultType: 'future',
 				adjustForTimeDifference: true,
