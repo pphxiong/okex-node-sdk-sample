@@ -95,9 +95,7 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		this.exchange.websocket.on('message', (data) => {
-			console.log('收到数据:', data);
-		});
+		console.log('收到数据:', this.exchange.stream);
 
 		// const ws = new ccxt.pro.binance().stream({
 		// 	method: 'SUBSCRIBE',
