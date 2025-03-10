@@ -84,7 +84,7 @@ class DogePerpBot extends EventEmitter {
 
 	async loadMarkets() {
 		await this.exchange.loadMarkets();
-		console.log('市场数据加载完成');
+		console.log('市场数据加载完成', this.exchange);
 	}
 
 	setupWebSocket() {
@@ -95,11 +95,11 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		const ws = new ccxt.pro.binance().stream({
-			method: 'SUBSCRIBE',
-			params: streams,
-		});
-		ws.on('data', (data) => this.handleData(data));
+		// const ws = new ccxt.pro.binance().stream({
+		// 	method: 'SUBSCRIBE',
+		// 	params: streams,
+		// });
+		// ws.on('data', (data) => this.handleData(data));
 	}
 
 	handleData(data) {
