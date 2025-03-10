@@ -101,7 +101,7 @@ class DogePerpBot extends EventEmitter {
 		// );
 		// console.log(11, ohlcv);
 
-		const ohlcv = await this.exchange.watchTrades(this.config.symbol);
+		const ohlcv = await this.exchange.fetchTrades(this.config.symbol);
 		console.log(11, ohlcv);
 
 		// const ws = new ccxt.pro.binance().stream({
