@@ -509,7 +509,7 @@ class DogePerpBot extends EventEmitter {
   }
 
   async calculatePositionSize() {
-    return 1500 * 5;
+    return 1500 * 5 * 2;
   }
 
   async calculateSL(side, entryPrice) {
@@ -735,7 +735,7 @@ class DogePerpBot extends EventEmitter {
 
     process.on("SIGINT", async () => {
       console.log("\n安全关闭中...");
-      if (bot.state.position) await bot.closePosition("系统关闭");
+      //   if (bot.state.position) await bot.closePosition("系统关闭");
       process.exit();
     });
   } catch (err) {
