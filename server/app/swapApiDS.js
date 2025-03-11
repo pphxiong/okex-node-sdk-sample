@@ -280,15 +280,14 @@ class DogePerpBot extends EventEmitter {
 				(item) =>
 					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 			);
-			console.log(11, holding);
 			if (holding) {
 				this.state.position = {
-					side: holding.positionSide,
-					size: Number(holding.positionAmt),
+					side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
+					size: Math.abs(Number(holding.positionAmt)),
 					entryPrice: Number(holding.entryPrice),
 					// stopLoss: Number(holding.stopPrice),
 					// takeProfit: Number(holding.stopPrice) * 1.5,
-					timestamp: Date.now(),
+					timestamp: holding.updateTime,
 				};
 			}
 		}
