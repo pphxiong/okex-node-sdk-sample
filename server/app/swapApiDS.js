@@ -115,6 +115,45 @@ class DogePerpBot extends EventEmitter {
 		return { emaFast, emaSlow, periods };
 	}
 
+	// 根据波动率缩放倍数
+	async dynamicMultiplier(atr) {
+		const medianATR = await this.calculateAverageATR();
+		const ratio = atr / medianATR;
+		return ratio > 1.5 ? 2.0 : 1.5; // 高波动时放大容忍空间
+	}
+
+	async calculateAverageATR() {
+		try {
+			const atrPeriod = this.config.atrSettings.period;
+			// 获取K线数据（需要至少atrPeriod+1根K线）
+			const klines = this.state.marketData['1m'];
+
+			// 提取高、低、收盘价
+			const highs = klines.map((k) => k.high);
+			const lows = klines.map((k) => k.low);
+			const closes = klines.map((k) => k.close);
+
+			// 使用tulind计算ATR
+			const atrResults = await new Promise((resolve, reject) => {
+				tulind.indicators.atr.indicator(
+					[highs, lows, closes],
+					[atrPeriod],
+					(err, results) => {
+						if (err) reject(err);
+						else resolve(results[0]);
+					}
+				);
+			});
+
+			const total = atrResults.reduce((acc, curr) => acc + curr, 0);
+			const averageATR = total / atrResults.length;
+			return averageATR.toFixed(6);
+		} catch (error) {
+			console.error('计算ATR失败:', error.message);
+			return null;
+		}
+	}
+
 	async calculateATR() {
 		try {
 			const atrPeriod = this.config.atrSettings.period;
@@ -189,7 +228,7 @@ class DogePerpBot extends EventEmitter {
 		};
 		const list = await cAuthClientBN.common.getHistory(symbol, payload);
 		const newList = JSON.parse(JSON.stringify(list));
-		// newList.pop();
+		newList.pop();
 		return newList;
 	}
 
@@ -217,6 +256,9 @@ class DogePerpBot extends EventEmitter {
 		// this.getHistoryDatas();
 		// this.setupWebSocket();
 		this.startRiskEngine();
+		setInterval(() => {
+			this.startRiskEngine();
+		}, 5000 * 2);
 		console.log('=== 交易系统启动 ===');
 	}
 
@@ -410,7 +452,7 @@ class DogePerpBot extends EventEmitter {
 	}
 
 	async calculatePositionSize() {
-		return 1500;
+		return 1500 * 3;
 	}
 
 	async calculateSL(side, entryPrice) {
@@ -504,7 +546,6 @@ class DogePerpBot extends EventEmitter {
 		} catch (e) {
 			restart('getMarkPrice');
 		}
-
 		return price;
 	}
 
@@ -518,15 +559,29 @@ class DogePerpBot extends EventEmitter {
 		const { stopLossMultiplier, takeProfitMultiplier, period } =
 			this.config.atrSettings;
 
+		const ratio = await this.dynamicMultiplier(currentATR);
+
 		// 计算止损止盈价格（做多为例）
 		const stopLossPrice =
 			this.state.position.side === 'long'
-				? (currentPrice - currentATR * stopLossMultiplier).toFixed(6)
-				: (currentPrice + currentATR * stopLossMultiplier).toFixed(6);
+				? (
+						currentPrice -
+						currentATR * stopLossMultiplier * ratio
+				  ).toFixed(6)
+				: (
+						currentPrice +
+						currentATR * stopLossMultiplier * ratio
+				  ).toFixed(6);
 		const takeProfitPrice =
 			this.state.position.side === 'long'
-				? (currentPrice + currentATR * takeProfitMultiplier).toFixed(6)
-				: (currentPrice - currentATR * takeProfitMultiplier).toFixed(6);
+				? (
+						currentPrice +
+						currentATR * takeProfitMultiplier * ratio
+				  ).toFixed(6)
+				: (
+						currentPrice -
+						currentATR * takeProfitMultiplier * ratio
+				  ).toFixed(6);
 
 		console.log(`当前价格: ${currentPrice}`);
 		console.log(`ATR(${period}): ${currentATR}`);
@@ -546,7 +601,6 @@ class DogePerpBot extends EventEmitter {
 
 		// 止盈检查
 		if (
-			true ||
 			(this.state.position.side === 'long' &&
 				currentPrice >= takeProfitPrice) ||
 			(this.state.position.side === 'short' &&
@@ -564,14 +618,12 @@ class DogePerpBot extends EventEmitter {
 	}
 
 	// 风险管理系统
-	startRiskEngine() {
-		setInterval(async () => {
-			// this.checkDailyLossLimit();
-			this.updateCoolingStatus();
-			await this.checkPositionSL();
-			await this.syncAllTimeframes();
-			await this.checkTradingSignal();
-		}, 5000 * 2);
+	async startRiskEngine() {
+		// this.checkDailyLossLimit();
+		this.updateCoolingStatus();
+		await this.checkPositionSL();
+		await this.syncAllTimeframes();
+		await this.checkTradingSignal();
 	}
 
 	updateCoolingStatus() {}
