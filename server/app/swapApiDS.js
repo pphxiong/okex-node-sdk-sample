@@ -51,7 +51,7 @@ class DogePerpBot extends EventEmitter {
 			dynamicEMA: true,
 			emaSettings: {
 				periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
-				slopeThreshold: 0.2 / 100, // EMA斜率阈值
+				slopeThreshold: 0.12 / 100, // EMA斜率阈值
 			},
 			atrSettings: {
 				period: 7,
@@ -96,6 +96,7 @@ class DogePerpBot extends EventEmitter {
 
 		if (this.config.dynamicEMA) {
 			const prediction = await this.calculateVolatility();
+			console.log(1123, prediction);
 			periods =
 				prediction > 0.7
 					? { fast: 7, slow: 21 }
@@ -218,6 +219,65 @@ class DogePerpBot extends EventEmitter {
 	//     `${this.config.modelPaths.volatility}model.json`
 	//   );
 	// }
+
+	// 增强信号生成
+	generateEnhancedSignal(indicators) {
+		const price = indicators.currentPrice;
+		const emaConditions =
+			indicators.emas[0].value > indicators.emas[1].value &&
+			indicators.emas[1].value > indicators.emas[2].value;
+
+		// 动态阈值调整
+		const dynamicThreshold = 0.15 + indicators.volatilityRatio * 100 * 0.1;
+		const slope = this.calculateEMASlope(indicators.emas[0].values);
+
+		// 复合信号条件
+		const buyCondition =
+			emaConditions &&
+			slope > dynamicThreshold &&
+			indicators.socialSentiment > 0.6 &&
+			this.checkVolumeSpike();
+
+		// const sellCondition = /* 反向逻辑... */
+
+		return { action: buyCondition ? 'LONG' : 'NEUTRAL' };
+	}
+
+	// 动态指标计算
+	calculateDynamicIndicators(data) {
+		// 多周期EMA
+		const emas = config.emaPeriods.map((p) => ({
+			period: p,
+			value: this.calculateEMA(
+				data.tf1.map((d) => d.c),
+				p
+			),
+		}));
+
+		// 波动率调整参数
+		const atr = this.calculateATR(data.tf1);
+		const volatilityRatio = atr / data.tf1.slice(-1)[0].c;
+
+		// 市场情绪指标
+		const socialSentiment = this.fetchSocialSentiment();
+
+		return { emas, atr, volatilityRatio, socialSentiment };
+	}
+
+	// 增强功能模块
+	async fetchSocialSentiment() {
+		const response = await axios.get(
+			'https://api.social-sentiment.com/doge'
+		);
+		return response.data.sentimentIndex;
+	}
+
+	checkVolumeSpike() {
+		const volumes = this.state.marketData['1m'].map((d) => d.volume);
+		const currentVol = volumes.slice(-1)[0];
+		const avgVol = volumes.slice(-10).reduce((a, b) => a + b) / 10;
+		return currentVol > avgVol * 1.5;
+	}
 
 	async getHistory(symbol, interval) {
 		const time = moment().valueOf();
@@ -372,7 +432,11 @@ class DogePerpBot extends EventEmitter {
 	async generateSignal() {
 		const emaValues = {};
 		for (const tf of this.config.timeframes) {
-			emaValues[tf] = await this.calculateEMA(tf);
+			if (tf === '15m') {
+				emaValues[tf] = await this.calculateDynamicEMA(tf);
+			} else {
+				emaValues[tf] = await this.calculateEMA(tf);
+			}
 		}
 
 		// const price = this.getLastPrice();
