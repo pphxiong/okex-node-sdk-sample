@@ -51,7 +51,12 @@ class DogePerpBot extends EventEmitter {
 			dynamicEMA: true,
 			emaSettings: {
 				periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
-				slopeThreshold: 0.1, // EMA斜率阈值
+				slopeThreshold: 0.2 / 100, // EMA斜率阈值
+			},
+			atrSettings: {
+				period: 7,
+				stopLossMultiplier: 1.5,
+				takeProfitMultiplier: 2.5,
 			},
 			riskControl: {
 				baseRisk: 0.02,
@@ -110,6 +115,38 @@ class DogePerpBot extends EventEmitter {
 		return { emaFast, emaSlow, periods };
 	}
 
+	async calculateATR() {
+		try {
+			const atrPeriod = this.config.atrSettings.period;
+			// 获取K线数据（需要至少atrPeriod+1根K线）
+			const klines = this.state.marketData['1m'];
+
+			// 提取高、低、收盘价
+			const highs = klines.map((k) => k.high);
+			const lows = klines.map((k) => k.low);
+			const closes = klines.map((k) => k.close);
+
+			// 使用tulind计算ATR
+			const atrResults = await new Promise((resolve, reject) => {
+				tulind.indicators.atr.indicator(
+					[highs, lows, closes],
+					[atrPeriod],
+					(err, results) => {
+						if (err) reject(err);
+						else resolve(results[0]);
+					}
+				);
+			});
+
+			// 最新ATR值
+			const currentATR = atrResults[atrResults.length - 1];
+			return currentATR.toFixed(6);
+		} catch (error) {
+			console.error('计算ATR失败:', error.message);
+			return null;
+		}
+	}
+
 	// // 增强信号生成
 	// async generateEnhancedSignal() {
 	// 	const conditions = {
@@ -152,7 +189,7 @@ class DogePerpBot extends EventEmitter {
 		};
 		const list = await cAuthClientBN.common.getHistory(symbol, payload);
 		const newList = JSON.parse(JSON.stringify(list));
-		newList.pop();
+		// newList.pop();
 		return newList;
 	}
 
@@ -177,7 +214,7 @@ class DogePerpBot extends EventEmitter {
 	async initialize() {
 		await this.loadMarkets();
 		// this.getHistoryDatas();
-		// this.setupWebSocket();
+		this.setupWebSocket();
 		this.startRiskEngine();
 		console.log('=== 交易系统启动 ===');
 	}
@@ -195,11 +232,17 @@ class DogePerpBot extends EventEmitter {
 			`${this.config.symbol.replace('/', '').toLowerCase()}@bookTicker`,
 		];
 
-		const ws = new ccxt.pro.binance().stream({
-			method: 'SUBSCRIBE',
-			params: streams,
+		// const ws = new ccxt.pro.binance().stream({
+		// 	method: 'SUBSCRIBE',
+		// 	params: streams,
+		// });
+		// ws.on('data', (data) => this.handleData(data));
+		const ws = new ccxt.pro.binance().websocket;
+		ws.subscribe(this.config.symbol, '5m', 'kline');
+		ws.on('kline', (symbol, timeframe, kline) => {
+			console.log(11, kline);
+			// if (kline.closed) executeStrategy(); // 每根K线结束时触发
 		});
-		ws.on('data', (data) => this.handleData(data));
 	}
 
 	handleData(data) {
@@ -312,18 +355,20 @@ class DogePerpBot extends EventEmitter {
 	isBullish(emaValues) {
 		return (
 			this.checkEMACross('15m', emaValues) &&
+			this.checkEMACross('5m', emaValues) &&
+			this.checkEMACross('1m', emaValues) &&
 			this.checkEMASlope('5m', emaValues) >
-				this.config.emaSettings.slopeThreshold &&
-			this.checkEMACross('1m', emaValues)
+				this.config.emaSettings.slopeThreshold
 		);
 	}
 
 	isBearish(emaValues) {
 		return (
 			this.checkEMACross('15m', emaValues, false) &&
+			this.checkEMACross('5m', emaValues, false) &&
+			this.checkEMACross('1m', emaValues, false) &&
 			this.checkEMASlope('5m', emaValues) <
-				-this.config.emaSettings.slopeThreshold &&
-			this.checkEMACross('1m', emaValues, false)
+				-this.config.emaSettings.slopeThreshold
 		);
 	}
 
@@ -346,16 +391,16 @@ class DogePerpBot extends EventEmitter {
 		return 150;
 	}
 
-	async calculateSL(side) {
+	async calculateSL(side, entryPrice) {
 		// const entryPrice = this.state.position.entryPrice;
-		const entryPrice = await this.getMarkPrice();
+		// const entryPrice = await this.getMarkPrice();
 		const stopLoss = side === 'buy' ? entryPrice * 0.95 : entryPrice * 1.05;
 		return stopLoss;
 	}
 
-	async calculateTP(side) {
+	async calculateTP(side, entryPrice) {
 		// const entryPrice = this.state.position.entryPrice;
-		const entryPrice = await this.getMarkPrice();
+		// const entryPrice = await this.getMarkPrice();
 		const takeProfit = side === 'buy' ? entryPrice * 1.1 : entryPrice * 0.9;
 		return takeProfit;
 	}
@@ -371,8 +416,8 @@ class DogePerpBot extends EventEmitter {
 				null,
 				{
 					leverage: this.config.riskControl.leverage,
-					stopLoss: this.calculateSL(side),
-					takeProfit: this.calculateTP(side),
+					// stopLoss: this.calculateSL(side),
+					// takeProfit: this.calculateTP(side),
 				}
 			);
 
@@ -380,8 +425,8 @@ class DogePerpBot extends EventEmitter {
 				side,
 				size: order.amount,
 				entryPrice: order.price,
-				sl: order.stopLoss,
-				tp: order.takeProfit,
+				stopLoss: this.calculateSL(side, order.price),
+				takeProfit: this.calculateTP(side, order.price),
 				timestamp: Date.now(),
 			};
 
@@ -406,6 +451,15 @@ class DogePerpBot extends EventEmitter {
 		} catch (err) {
 			this.handleOrderError(err);
 		}
+	}
+
+	logTrade(direction, order, reason) {
+		console.log('########################');
+		console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
+		console.log('reason::', reason);
+		console.log('direction::', direction);
+		console.log('order::', order);
+		console.log('########################');
 	}
 
 	async getMarkPrice() {
@@ -447,7 +501,7 @@ class DogePerpBot extends EventEmitter {
 		}
 
 		// // 时间止损
-		// const duration = Date.now() - this.state.position.openedAt;
+		// const duration = Date.now() - this.state.position.timestamp;
 		// if (duration > 30 * 60 * 1000) {
 		// 	// 30分钟
 		// 	await this.closePosition('时间止损');
@@ -457,7 +511,7 @@ class DogePerpBot extends EventEmitter {
 	// 风险管理系统
 	startRiskEngine() {
 		setInterval(async () => {
-			this.checkDailyLossLimit();
+			// this.checkDailyLossLimit();
 			this.checkPositionSL();
 			this.updateCoolingStatus();
 			await this.syncAllTimeframes();
