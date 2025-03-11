@@ -95,9 +95,9 @@ class DogePerpBot extends EventEmitter {
 		let periods;
 
 		if (this.config.dynamicEMA) {
-			const prediction = await this.calculateVolatility();
+			const volatility = await this.calculateVolatility();
 			const currentATR = await this.calculateATR();
-			console.log(1123, prediction, currentATR);
+			const prediction = currentATR / volatility;
 			periods =
 				prediction > 0.7
 					? { fast: 7, slow: 21 }
