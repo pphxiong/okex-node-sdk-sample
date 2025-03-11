@@ -214,7 +214,7 @@ class DogePerpBot extends EventEmitter {
 	async initialize() {
 		await this.loadMarkets();
 		// this.getHistoryDatas();
-		this.setupWebSocket();
+		// this.setupWebSocket();
 		this.startRiskEngine();
 		console.log('=== 交易系统启动 ===');
 	}
@@ -237,12 +237,13 @@ class DogePerpBot extends EventEmitter {
 		// 	params: streams,
 		// });
 		// ws.on('data', (data) => this.handleData(data));
-		const ws = new ccxt.pro.binance().websocket;
-		ws.subscribe(this.config.symbol, '5m', 'kline');
-		ws.on('kline', (symbol, timeframe, kline) => {
-			console.log(11, kline);
-			// if (kline.closed) executeStrategy(); // 每根K线结束时触发
-		});
+
+		// const ws = new ccxt.pro.binance().websocket;
+		// ws.subscribe(this.config.symbol, '5m', 'kline');
+		// ws.on('kline', (symbol, timeframe, kline) => {
+		// 	console.log(11, kline);
+		// 	if (kline.closed) executeStrategy(); // 每根K线结束时触发
+		// });
 	}
 
 	handleData(data) {
@@ -322,7 +323,8 @@ class DogePerpBot extends EventEmitter {
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
-			short: this.isBearish(emaValues) && volumeValid && liquidity,
+			short:
+				true || (this.isBearish(emaValues) && volumeValid && liquidity),
 		};
 	}
 
@@ -388,7 +390,7 @@ class DogePerpBot extends EventEmitter {
 	async calculatePositionSize() {
 		const positionResult = await cAuthClientBN.swap.getPosition();
 		const { postions, availableBalance } = positionResult;
-		return 150;
+		return 15;
 	}
 
 	async calculateSL(side, entryPrice) {
@@ -479,13 +481,33 @@ class DogePerpBot extends EventEmitter {
 		if (!this.state.position) return;
 
 		const currentPrice = await this.getMarkPrice();
+		const currentATR = await this.calculateATR();
 
+		const { stopLossMultiplier, takeProfitMultiplier, period } =
+			this.config.atrSettings;
+
+		// 计算止损止盈价格（做多为例）
+		const stopLossPrice =
+			this.state.position.side === 'long'
+				? (currentPrice - currentATR * stopLossMultiplier).toFixed(6)
+				: (currentPrice + currentATR * stopLossMultiplier).toFixed(6);
+		const takeProfitPrice =
+			this.state.position.side === 'long'
+				? (currentPrice + currentATR * takeProfitMultiplier).toFixed(6)
+				: (currentPrice - currentATR * takeProfitMultiplier).toFixed(6);
+
+		console.log(`当前价格: ${currentPrice}`);
+		console.log(`ATR(${period}): ${currentATR}`);
+		console.log(`动态止损价: ${stopLossPrice}`);
+		console.log(`动态止盈价: ${takeProfitPrice}`);
+
+		// const { stopLoss, takeProfit } = this.state.position;
 		// 止损检查
 		if (
 			(this.state.position.side === 'long' &&
-				currentPrice <= this.state.position.stopLoss) ||
+				currentPrice <= stopLossPrice) ||
 			(this.state.position.side === 'short' &&
-				currentPrice >= this.state.position.stopLoss)
+				currentPrice >= stopLossPrice)
 		) {
 			await this.closePosition('止损触发');
 		}
@@ -493,9 +515,9 @@ class DogePerpBot extends EventEmitter {
 		// 止盈检查
 		if (
 			(this.state.position.side === 'long' &&
-				currentPrice >= this.state.position.takeProfit) ||
+				currentPrice >= takeProfitPrice) ||
 			(this.state.position.side === 'short' &&
-				currentPrice <= this.state.position.takeProfit)
+				currentPrice <= takeProfitPrice)
 		) {
 			await this.closePosition('止盈触发');
 		}
