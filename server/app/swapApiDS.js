@@ -323,8 +323,7 @@ class DogePerpBot extends EventEmitter {
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
-			short:
-				true || (this.isBearish(emaValues) && volumeValid && liquidity),
+			short: this.isBearish(emaValues) && volumeValid && liquidity,
 		};
 	}
 
@@ -485,7 +484,8 @@ class DogePerpBot extends EventEmitter {
 	async checkPositionSL() {
 		if (!this.state.position) return;
 
-		const currentPrice = await this.getMarkPrice();
+		// const currentPrice = await this.getMarkPrice();
+		const currentPrice = this.state.position.entryPrice;
 		const currentATR = await this.calculateATR();
 
 		const { stopLossMultiplier, takeProfitMultiplier, period } =
