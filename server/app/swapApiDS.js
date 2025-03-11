@@ -213,6 +213,7 @@ class DogePerpBot extends EventEmitter {
 
 	async initialize() {
 		await this.loadMarkets();
+		await this.initPositionData();
 		// this.getHistoryDatas();
 		// this.setupWebSocket();
 		this.startRiskEngine();
@@ -268,6 +269,25 @@ class DogePerpBot extends EventEmitter {
 				volume: parseFloat(kline.v),
 			});
 			this.checkTradingSignal(tf);
+		}
+	}
+
+	async initPositionData() {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { postions, availableBalance } = positionResult;
+		const holding = postions.find(
+			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+		);
+		console.log(11, holding);
+		if (holding) {
+			this.state.position = {
+				side: holding.positionSide,
+				size: Number(holding.positionAmt),
+				entryPrice: Number(holding.entryPrice),
+				// stopLoss: Number(holding.stopPrice),
+				// takeProfit: Number(holding.stopPrice) * 1.5,
+				timestamp: Date.now(),
+			};
 		}
 	}
 
@@ -387,8 +407,6 @@ class DogePerpBot extends EventEmitter {
 	}
 
 	async calculatePositionSize() {
-		const positionResult = await cAuthClientBN.swap.getPosition();
-		const { postions, availableBalance } = positionResult;
 		return 1500;
 	}
 
