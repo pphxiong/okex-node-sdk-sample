@@ -345,7 +345,6 @@ class DogePerpBot extends EventEmitter {
 		// const ws = new ccxt.pro.binance().websocket;
 		// ws.subscribe(this.config.symbol, '5m', 'kline');
 		// ws.on('kline', (symbol, timeframe, kline) => {
-		// 	console.log(11, kline);
 		// 	if (kline.closed) executeStrategy(); // 每根K线结束时触发
 		// });
 	}
@@ -445,8 +444,6 @@ class DogePerpBot extends EventEmitter {
 		const liquidity = this.checkLiquidity();
 
 		console.log(this.state.marketData['1m'].slice(-2));
-		console.log('long', this.isBullish(emaValues));
-		console.log('short', this.isBearish(emaValues));
 		console.log('checkEMASlope', this.checkEMASlope('5m', emaValues));
 
 		return {
