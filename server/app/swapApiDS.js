@@ -688,7 +688,7 @@ class DogePerpBot extends EventEmitter {
   async startRiskEngine() {
     // this.checkDailyLossLimit();
     this.updateCoolingStatus();
-    // await this.checkPositionSL();
+    await this.checkPositionSL();
     if (this.isCoolingDown() || this.state.position) return;
     await this.syncAllTimeframes();
     await this.checkTradingSignal();
