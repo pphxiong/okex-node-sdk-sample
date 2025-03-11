@@ -55,8 +55,8 @@ class DogePerpBot extends EventEmitter {
 			},
 			atrSettings: {
 				period: 7,
-				stopLossMultiplier: 1.5,
-				takeProfitMultiplier: 2.5,
+				stopLossMultiplier: 1.25,
+				takeProfitMultiplier: 2,
 			},
 			riskControl: {
 				baseRisk: 0.02,
@@ -515,7 +515,7 @@ class DogePerpBot extends EventEmitter {
 	}
 
 	async calculatePositionSize() {
-		return 1500 * 3;
+		return 1500 * 5;
 	}
 
 	async calculateSL(side, entryPrice) {
