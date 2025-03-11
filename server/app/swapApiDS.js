@@ -55,8 +55,8 @@ class DogePerpBot extends EventEmitter {
 			},
 			atrSettings: {
 				period: 7,
-				stopLossMultiplier: 1.25,
-				takeProfitMultiplier: 2,
+				stopLossMultiplier: 1.5,
+				takeProfitMultiplier: 2.5,
 			},
 			riskControl: {
 				baseRisk: 0.02,
@@ -384,7 +384,7 @@ class DogePerpBot extends EventEmitter {
 			);
 			if (holding) {
 				this.state.position = {
-					side: holding.positionSide.toLowerCase(),
+					side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
 					size: Math.abs(Number(holding.positionAmt)),
 					entryPrice: Number(holding.entryPrice),
 					// stopLoss: Number(holding.stopPrice),
