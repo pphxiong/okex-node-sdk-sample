@@ -390,7 +390,7 @@ class DogePerpBot extends EventEmitter {
 	async calculatePositionSize() {
 		const positionResult = await cAuthClientBN.swap.getPosition();
 		const { postions, availableBalance } = positionResult;
-		return 15;
+		return 1500;
 	}
 
 	async calculateSL(side, entryPrice) {
