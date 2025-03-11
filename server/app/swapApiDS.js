@@ -51,7 +51,7 @@ class DogePerpBot extends EventEmitter {
       dynamicEMA: true,
       emaSettings: {
         periods: { "15m": [13, 34], "5m": [5, 21], "1m": [3, 8] },
-        slopeThreshold: 0.12 / 100, // EMA斜率阈值
+        slopeThreshold: 0.1 / 100, // EMA斜率阈值
       },
       atrSettings: {
         period: 7,
@@ -435,8 +435,6 @@ class DogePerpBot extends EventEmitter {
         emaValues[tf] = await this.calculateEMA(tf);
       }
     }
-
-    // const price = this.getLastPrice();
     const volumeValid = this.checkVolume();
     const liquidity = this.checkLiquidity();
 
@@ -481,7 +479,8 @@ class DogePerpBot extends EventEmitter {
       this.checkEMACross("5m", emaValues) &&
       this.checkEMACross("1m", emaValues) &&
       this.checkEMASlope("5m", emaValues) >
-        this.config.emaSettings.slopeThreshold
+        this.config.emaSettings.slopeThreshold &&
+      this.checkPriceEMACross("1m", emaValues)
     );
   }
 
@@ -491,8 +490,21 @@ class DogePerpBot extends EventEmitter {
       this.checkEMACross("5m", emaValues, false) &&
       this.checkEMACross("1m", emaValues, false) &&
       this.checkEMASlope("5m", emaValues) <
-        -this.config.emaSettings.slopeThreshold
+        -this.config.emaSettings.slopeThreshold &&
+      this.checkPriceEMACross("1m", emaValues, false)
     );
+  }
+
+  checkPriceEMACross(tf, emaValues, isBullish = true) {
+    const dataList = this.state.marketData[tf];
+    const { emaFast } = emaValues[tf];
+    const lastFast = emaFast.slice(-2)[0];
+    const currentFast = emaFast.slice(-2)[1];
+    const lastClose = dataList.slice(-2)[0].close;
+    const currentClose = dataList.slice(-2)[1].close;
+    return isBullish
+      ? lastClose < lastFast && currentClose > currentFast
+      : lastClose > lastFast && currentClose < currentFast;
   }
 
   checkEMACross(tf, emaValues, isBullish = true) {
@@ -528,29 +540,6 @@ class DogePerpBot extends EventEmitter {
 
   async executeTrade(side) {
     try {
-      const currentPrice = await this.getMarkPrice();
-      // const currentPrice = this.state.position.entryPrice;
-      const currentATR = await this.calculateATR();
-
-      const { stopLossMultiplier, takeProfitMultiplier, period } =
-        this.config.atrSettings;
-
-      const ratio = await this.dynamicMultiplier(currentATR);
-
-      // 计算止损止盈价格（做多为例）
-      const stopLossPrice =
-        side === "buy"
-          ? (currentPrice - currentATR * stopLossMultiplier * ratio).toFixed(6)
-          : (currentPrice + currentATR * stopLossMultiplier * ratio).toFixed(6);
-      const takeProfitPrice = "buy"
-        ? (currentPrice + currentATR * takeProfitMultiplier * ratio).toFixed(6)
-        : (currentPrice - currentATR * takeProfitMultiplier * ratio).toFixed(6);
-
-      console.log(`开仓价格: ${currentPrice}`);
-      console.log(`ATR(${period}): ${currentATR}`);
-      console.log(`动态止损价: ${stopLossPrice}`);
-      console.log(`动态止盈价: ${takeProfitPrice}`);
-
       const size = await this.calculatePositionSize();
       const order = await this.exchange.createOrder(
         this.config.symbol,
@@ -561,8 +550,8 @@ class DogePerpBot extends EventEmitter {
         {
           positionSide: side === "buy" ? "LONG" : "SHORT",
           leverage: this.config.riskControl.leverage,
-          stopLoss: stopLossPrice,
-          takeProfit: takeProfitPrice,
+          //   stopLoss: stopLossPrice,
+          //   takeProfit: takeProfitPrice,
         }
       );
 
@@ -570,8 +559,8 @@ class DogePerpBot extends EventEmitter {
         side,
         size: order.amount,
         entryPrice: order.price,
-        stopLoss: order.stopLoss,
-        takeProfit: order.takeProfit,
+        // stopLoss: order.stopLoss,
+        // takeProfit: order.takeProfit,
         timestamp: Date.now(),
         positionSide: side === "buy" ? "LONG" : "SHORT",
       };
@@ -628,11 +617,68 @@ class DogePerpBot extends EventEmitter {
     return price;
   }
 
+  async checkPositionSLNew() {
+    if (!this.state.position) return;
+
+    // const currentPrice = this.state.position.entryPrice;
+    const currentPrice = await this.getMarkPrice();
+    const currentATR = await this.calculateATR();
+    if (!currentATR) return;
+
+    const { stopLossMultiplier, takeProfitMultiplier, period } =
+      this.config.atrSettings;
+
+    const ratio = await this.dynamicMultiplier(currentATR);
+
+    // 计算止损止盈价格（做多为例）
+    const stopLossPrice =
+      this.state.position.side === "buy"
+        ? (currentPrice - currentATR * stopLossMultiplier * ratio).toFixed(6)
+        : (currentPrice + currentATR * stopLossMultiplier * ratio).toFixed(6);
+    const takeProfitPrice =
+      this.state.position.side === "buy"
+        ? (currentPrice + currentATR * takeProfitMultiplier * ratio).toFixed(6)
+        : (currentPrice - currentATR * takeProfitMultiplier * ratio).toFixed(6);
+
+    console.log(`开仓价格: ${currentPrice}`);
+    console.log(`ATR(${period}): ${currentATR}`);
+    console.log(`动态止损价: ${stopLossPrice}`);
+    console.log(`动态止盈价: ${takeProfitPrice}`);
+
+    const dataList = this.state.marketData["1m"];
+    const { emaFast } = this.calculateEMA["1m"];
+    const lastFast = emaFast.slice(-2)[0];
+    const currentFast = emaFast.slice(-2)[1];
+    const lastClose = dataList.slice(-2)[0].close;
+    const currentClose = dataList.slice(-2)[1].close;
+
+    // const { stopLoss, takeProfit } = this.state.position;
+    // 止损检查
+    if (
+      this.state.position &&
+      ((this.state.position.side === "buy" && currentPrice <= stopLossPrice) ||
+        (this.state.position.side === "sell" && currentPrice >= stopLossPrice))
+    ) {
+      await this.closePosition("止损触发");
+    }
+
+    // 止盈检查
+    if (
+      this.state.position &&
+      ((this.state.position.side === "buy" &&
+        currentPrice >= takeProfitPrice) ||
+        (this.state.position.side === "sell" &&
+          currentPrice <= takeProfitPrice))
+    ) {
+      await this.closePosition("止盈触发");
+    }
+  }
+
   async checkPositionSL() {
     if (!this.state.position) return;
 
-    // const currentPrice = await this.getMarkPrice();
-    const currentPrice = this.state.position.entryPrice;
+    const currentPrice = await this.getMarkPrice();
+    // const currentPrice = this.state.position.entryPrice;
     const currentATR = await this.calculateATR();
     if (!currentATR) return;
 
@@ -691,7 +737,8 @@ class DogePerpBot extends EventEmitter {
     this.updateCoolingStatus();
     // if (this.isCoolingDown() || this.state.position) return;
     await this.syncAllTimeframes();
-    await this.checkPositionSL();
+    // await this.checkPositionSL();
+    await this.checkPositionSLNew();
     await this.checkTradingSignal();
   }
 
