@@ -417,6 +417,7 @@ class DogePerpBot extends EventEmitter {
 				size,
 				null,
 				{
+					positionSide: side === 'buy' ? 'LONG' : 'SHORT',
 					leverage: this.config.riskControl.leverage,
 					// stopLoss: this.calculateSL(side),
 					// takeProfit: this.calculateTP(side),
