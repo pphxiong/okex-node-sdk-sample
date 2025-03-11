@@ -634,6 +634,7 @@ class DogePerpBot extends EventEmitter {
     // const currentPrice = await this.getMarkPrice();
     const currentPrice = this.state.position.entryPrice;
     const currentATR = await this.calculateATR();
+    if (!currentATR) return;
 
     const { stopLossMultiplier, takeProfitMultiplier, period } =
       this.config.atrSettings;
