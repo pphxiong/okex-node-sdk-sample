@@ -274,20 +274,23 @@ class DogePerpBot extends EventEmitter {
 
 	async initPositionData() {
 		const positionResult = await cAuthClientBN.swap.getPosition();
-		const { postions, availableBalance } = positionResult;
-		const holding = postions.find(
-			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-		);
-		console.log(11, holding);
-		if (holding) {
-			this.state.position = {
-				side: holding.positionSide,
-				size: Number(holding.positionAmt),
-				entryPrice: Number(holding.entryPrice),
-				// stopLoss: Number(holding.stopPrice),
-				// takeProfit: Number(holding.stopPrice) * 1.5,
-				timestamp: Date.now(),
-			};
+		const { positions, availableBalance } = positionResult;
+		if (positions) {
+			const holding = positions.find(
+				(item) =>
+					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+			);
+			console.log(11, holding);
+			if (holding) {
+				this.state.position = {
+					side: holding.positionSide,
+					size: Number(holding.positionAmt),
+					entryPrice: Number(holding.entryPrice),
+					// stopLoss: Number(holding.stopPrice),
+					// takeProfit: Number(holding.stopPrice) * 1.5,
+					timestamp: Date.now(),
+				};
+			}
 		}
 	}
 
