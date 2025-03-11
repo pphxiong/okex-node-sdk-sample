@@ -623,7 +623,7 @@ class DogePerpBot extends EventEmitter {
 
 		// 计算止损止盈价格（做多为例）
 		const stopLossPrice =
-			this.state.position.side === 'long'
+			this.state.position.side === 'buy'
 				? (
 						currentPrice -
 						currentATR * stopLossMultiplier * ratio
@@ -633,7 +633,7 @@ class DogePerpBot extends EventEmitter {
 						currentATR * stopLossMultiplier * ratio
 				  ).toFixed(6);
 		const takeProfitPrice =
-			this.state.position.side === 'long'
+			this.state.position.side === 'buy'
 				? (
 						currentPrice +
 						currentATR * takeProfitMultiplier * ratio
@@ -651,9 +651,9 @@ class DogePerpBot extends EventEmitter {
 		// const { stopLoss, takeProfit } = this.state.position;
 		// 止损检查
 		if (
-			(this.state.position.side === 'long' &&
+			(this.state.position.side === 'buy' &&
 				currentPrice <= stopLossPrice) ||
-			(this.state.position.side === 'short' &&
+			(this.state.position.side === 'sell' &&
 				currentPrice >= stopLossPrice)
 		) {
 			await this.closePosition('止损触发');
@@ -661,9 +661,9 @@ class DogePerpBot extends EventEmitter {
 
 		// 止盈检查
 		if (
-			(this.state.position.side === 'long' &&
+			(this.state.position.side === 'buy' &&
 				currentPrice >= takeProfitPrice) ||
-			(this.state.position.side === 'short' &&
+			(this.state.position.side === 'sell' &&
 				currentPrice <= takeProfitPrice)
 		) {
 			await this.closePosition('止盈触发');
