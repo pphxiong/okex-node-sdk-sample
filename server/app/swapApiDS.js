@@ -109,8 +109,8 @@ class DogePerpBot extends EventEmitter {
 
 		const closes = this.state.marketData[timeframe].map((d) => d.close);
 		const [emaFast, emaSlow] = await Promise.all([
-			this.calculateEMA(periods.fast, closes),
-			this.calculateEMA(periods.slow, closes),
+			this.calculateSingleEMA(periods.fast, closes),
+			this.calculateSingleEMA(periods.slow, closes),
 		]);
 
 		return { emaFast, emaSlow, periods };
