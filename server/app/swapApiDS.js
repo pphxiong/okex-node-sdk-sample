@@ -282,7 +282,7 @@ class DogePerpBot extends EventEmitter {
 			);
 			if (holding) {
 				this.state.position = {
-					side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
+					side: holding.positionSide.toLowerCase(),
 					size: Math.abs(Number(holding.positionAmt)),
 					entryPrice: Number(holding.entryPrice),
 					// stopLoss: Number(holding.stopPrice),
@@ -336,12 +336,12 @@ class DogePerpBot extends EventEmitter {
 		const volumeValid = this.checkVolume();
 		const liquidity = this.checkLiquidity();
 
-		console.log(this.state.marketData['1m'].slice(-2));
-		console.log('long', this.isBullish(emaValues));
-		console.log('short', this.isBearish(emaValues));
-		console.log(this.checkEMASlope('5m', emaValues));
-		console.log(this.checkEMACross('15m', emaValues, false));
-		console.log(this.checkEMACross('1m', emaValues, false));
+		// console.log(this.state.marketData['1m'].slice(-2));
+		// console.log('long', this.isBullish(emaValues));
+		// console.log('short', this.isBearish(emaValues));
+		// console.log(this.checkEMASlope('5m', emaValues));
+		// console.log(this.checkEMACross('15m', emaValues, false));
+		// console.log(this.checkEMACross('1m', emaValues, false));
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
@@ -539,6 +539,7 @@ class DogePerpBot extends EventEmitter {
 
 		// 止盈检查
 		if (
+			true ||
 			(this.state.position.side === 'long' &&
 				currentPrice >= takeProfitPrice) ||
 			(this.state.position.side === 'short' &&
@@ -559,8 +560,8 @@ class DogePerpBot extends EventEmitter {
 	startRiskEngine() {
 		setInterval(async () => {
 			// this.checkDailyLossLimit();
-			this.checkPositionSL();
 			this.updateCoolingStatus();
+			await this.checkPositionSL();
 			await this.syncAllTimeframes();
 			await this.checkTradingSignal();
 		}, 5000 * 2);
