@@ -288,6 +288,7 @@ class DogePerpBot extends EventEmitter {
 					// stopLoss: Number(holding.stopPrice),
 					// takeProfit: Number(holding.stopPrice) * 1.5,
 					timestamp: holding.updateTime,
+					positionSide: holding.positionSide,
 				};
 			}
 		}
@@ -450,6 +451,7 @@ class DogePerpBot extends EventEmitter {
 				stopLoss: this.calculateSL(side, order.price),
 				takeProfit: this.calculateTP(side, order.price),
 				timestamp: Date.now(),
+				positionSide: side === 'buy' ? 'LONG' : 'SHORT',
 			};
 
 			this.logTrade('open', order);
@@ -468,7 +470,12 @@ class DogePerpBot extends EventEmitter {
 				this.config.symbol,
 				'market',
 				this.state.position.side === 'buy' ? 'sell' : 'buy',
-				this.state.position.size
+				this.state.position.size,
+				null,
+				{
+					positionSide:
+						this.state.position.positionSide.toUpperCase(),
+				}
 			);
 
 			this.logTrade('close', order, reason);
