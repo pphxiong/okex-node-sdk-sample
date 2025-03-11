@@ -438,6 +438,10 @@ class DogePerpBot extends EventEmitter {
 		}
 	}
 
+	handleOrderError(err) {
+		console.log('订单错误::', err);
+	}
+
 	async closePosition(reason) {
 		try {
 			const order = await this.exchange.createOrder(
