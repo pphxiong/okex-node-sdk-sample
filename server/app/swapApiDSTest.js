@@ -19,7 +19,7 @@ app.all('*', function (req, res, next) {
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
-const { plot } = require('nodeplotlib');
+// const { plot } = require('nodeplotlib');
 
 // 策略参数配置
 const config = {
@@ -188,7 +188,7 @@ function plotEquityCurve(history) {
 			data[0].y.push(t.capitalAfter);
 		});
 
-	plot(data);
+	// plot(data);
 }
 
 // 主程序
