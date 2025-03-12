@@ -50,19 +50,28 @@ async function fetchHistoricalData() {
 	let since = new Date(config.startTime).getTime();
 	const allOHLCV = [];
 
-	while (true) {
-		const ohlcv = await exchange.fetchOHLCV(
-			config.symbol,
-			config.timeframe,
-			since,
-			1000
-		);
-		console.log(11, ohlcv);
-		if (ohlcv.length === 0) break;
-		allOHLCV.push(...ohlcv);
-		since = ohlcv[ohlcv.length - 1][0] + 1;
-		if (since > new Date(config.endTime).getTime()) break;
-	}
+	// while (true) {
+	// 	const ohlcv = await exchange.fetchOHLCV(
+	// 		config.symbol,
+	// 		config.timeframe,
+	// 		since,
+	// 		1000
+	// 	);
+	// 	console.log(11, ohlcv);
+	// 	if (ohlcv.length === 0) break;
+	// 	allOHLCV.push(...ohlcv);
+	// 	since = ohlcv[ohlcv.length - 1][0] + 1;
+	// 	if (since > new Date(config.endTime).getTime()) break;
+	// }
+
+	const ohlcv = await exchange.fetchOHLCV(
+		config.symbol,
+		config.timeframe,
+		since,
+		1000
+	);
+	console.log(11, ohlcv);
+	allOHLCV.push(...ohlcv);
 
 	return allOHLCV.reverse(); // 确保旧数据在前
 }
