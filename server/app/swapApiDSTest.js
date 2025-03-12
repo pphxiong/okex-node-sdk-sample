@@ -57,6 +57,7 @@ async function fetchHistoricalData() {
 			since,
 			1000
 		);
+		console.log(11, ohlcv);
 		if (ohlcv.length === 0) break;
 		allOHLCV.push(...ohlcv);
 		since = ohlcv[ohlcv.length - 1][0] + 1;
