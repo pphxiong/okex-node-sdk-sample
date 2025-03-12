@@ -657,9 +657,9 @@ class DogePerpBot extends EventEmitter {
 		if (
 			this.state.position &&
 			((this.state.position.side === 'buy' &&
-				this.checkPriceEMACross('1m', emaValues, false)) ||
+				this.checkPriceEMACross('5m', emaValues, false)) ||
 				(this.state.position.side === 'sell' &&
-					this.checkPriceEMACross('1m', emaValues)))
+					this.checkPriceEMACross('5m', emaValues)))
 		) {
 			await this.closePosition('止盈触发');
 		}
