@@ -509,7 +509,7 @@ class DogePerpBot extends EventEmitter {
 	checkPriceEMACross(tf, emaValues, isBullish = true) {
 		const dataList = this.state.marketData[tf];
 		const { emaFast, emaSlow } = emaValues[tf];
-		const indicator = tf === '1m' ? emaSlow : emaFast;
+		const indicator = tf === '1m' ? emaSlow : emaSlow;
 		const lastFast = indicator.slice(-2)[0];
 		const currentFast = indicator.slice(-2)[1];
 		const lastClose = dataList.slice(-2)[0].close;
