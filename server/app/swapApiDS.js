@@ -410,7 +410,7 @@ class DogePerpBot extends EventEmitter {
         undefined,
         100
       );
-      data.pop();
+      //   data.pop();
       this.state.marketData[tf] = data.map((d) => this.parseKLine(d));
     }
   }
