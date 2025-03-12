@@ -51,7 +51,7 @@ class DogePerpBot extends EventEmitter {
 			dynamicEMA: false,
 			emaSettings: {
 				periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
-				slopeThreshold: 0.1 / 100, // EMA斜率阈值
+				slopeThreshold: 0.1 / 2 / 100, // EMA斜率阈值
 			},
 			atrSettings: {
 				period: 7,
