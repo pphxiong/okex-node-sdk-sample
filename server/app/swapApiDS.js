@@ -656,19 +656,23 @@ class DogePerpBot extends EventEmitter {
   async checkPositionSLNew() {
     if (!this.state.position) return;
 
-    const currentPrice = await this.getMarkPrice();
+    const markPrice = await this.getMarkPrice();
     const emaValues = await this.getEmaValues();
     // const { stopLoss, takeProfit } = this.state.position;
 
-    this.monitorLog(emaValues, currentPrice);
+    const { entryPrice, side } = this.state.position;
+
+    const isWin =
+      side === "buy" ? markPrice > entryPrice : markPrice < entryPrice;
+
+    this.monitorLog(emaValues, markPrice);
 
     // 止损检查
     if (
       this.state.position &&
-      ((this.state.position.side === "buy" &&
-        this.checkPriceEMACross(currentPrice, emaValues, false)) ||
-        (this.state.position.side === "sell" &&
-          this.checkPriceEMACross(currentPrice, emaValues)))
+      ((side === "buy" &&
+        this.checkPriceEMACross(markPrice, emaValues, false)) ||
+        (side === "sell" && this.checkPriceEMACross(markPrice, emaValues)))
     ) {
       await this.closePosition("止损触发");
     }
@@ -676,10 +680,9 @@ class DogePerpBot extends EventEmitter {
     // 止盈检查
     if (
       this.state.position &&
-      ((this.state.position.side === "buy" &&
-        this.checkEMACross("1m", emaValues, false)) ||
-        (this.state.position.side === "sell" &&
-          this.checkEMACross("1m", emaValues)))
+      isWin &&
+      ((side === "buy" && this.checkEMACross("1m", emaValues, false)) ||
+        (side === "sell" && this.checkEMACross("1m", emaValues)))
     ) {
       await this.closePosition("止盈触发");
     }
