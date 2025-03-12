@@ -532,7 +532,7 @@ class DogePerpBot extends EventEmitter {
 	}
 
 	async calculatePositionSize() {
-		return 1500 * 5 * 2;
+		return 1500 * 5 * 2 * 1.5;
 	}
 
 	async calculateSL(side, entryPrice) {
