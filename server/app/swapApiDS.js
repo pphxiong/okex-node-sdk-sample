@@ -53,7 +53,7 @@ class DogePerpBot extends EventEmitter {
       dynamicEMA: false,
       emaSettings: {
         periods: { "15m": [13, 34], "5m": [5, 21], "1m": [3, 8] },
-        slopeThreshold: 0.0618 / 100, // EMA斜率阈值
+        slopeThreshold: 0.1 / 100, // EMA斜率阈值
       },
       atrSettings: {
         period: 7,
@@ -449,7 +449,7 @@ class DogePerpBot extends EventEmitter {
   monitorLog(emaValues, markPrice) {
     console.log(this.state.marketData["1m"].slice(-2));
     console.log("markPrice", markPrice);
-    console.log("checkEMASlope", this.checkEMASlope("5m", emaValues));
+    console.log("checkEMASlope", this.checkEMASlope("1m", emaValues));
     console.log("1m", this.getLatestEma("1m", emaValues));
     console.log("5m", this.getLatestEma("5m", emaValues));
     console.log("15m", this.getLatestEma("15m", emaValues));
@@ -501,7 +501,7 @@ class DogePerpBot extends EventEmitter {
       this.checkEMACross("15m", emaValues) &&
       this.checkEMACross("5m", emaValues) &&
       this.checkEMACross("1m", emaValues) &&
-      this.checkEMASlope("5m", emaValues) >
+      this.checkEMASlope("1m", emaValues) >
         this.config.emaSettings.slopeThreshold
       // && this.checkPriceEMACross("1m", emaValues)
     );
@@ -512,7 +512,7 @@ class DogePerpBot extends EventEmitter {
       this.checkEMACross("15m", emaValues, false) &&
       this.checkEMACross("5m", emaValues, false) &&
       this.checkEMACross("1m", emaValues, false) &&
-      this.checkEMASlope("5m", emaValues) <
+      this.checkEMASlope("1m", emaValues) <
         -this.config.emaSettings.slopeThreshold
       // && this.checkPriceEMACross('1m', emaValues, false)
     );
