@@ -576,8 +576,8 @@ class DogePerpBot extends EventEmitter {
 				side === 'buy' ? ema - 0.001 * 0.2 : ema + 0.001 * 0.2;
 			const takeProfitPrice =
 				side === 'buy'
-					? price + distance * 1.5
-					: price - distance * 1.5;
+					? price + distance * 1.618
+					: price - distance * 1.618;
 
 			const size = await this.calculatePositionSize();
 			const order = await this.exchange.createOrder(
