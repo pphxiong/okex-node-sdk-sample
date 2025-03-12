@@ -441,16 +441,22 @@ class DogePerpBot extends EventEmitter {
 		return emaValues;
 	}
 
+	monitorLog(emaValues, markPrice) {
+		console.log(this.state.marketData['1m'].slice(-2));
+		console.log('markPrice', markPrice);
+		console.log('checkEMASlope', this.checkEMASlope('5m', emaValues));
+		console.log('1m', this.getLatestEma('1m', emaValues));
+		console.log('5m', this.getLatestEma('5m', emaValues));
+		console.log('15m', this.getLatestEma('15m', emaValues));
+	}
+
 	async generateSignal() {
 		const emaValues = await this.getEmaValues();
 		const volumeValid = this.checkVolume();
 		const liquidity = this.checkLiquidity();
 
-		console.log(this.state.marketData['1m'].slice(-2));
-		console.log('checkEMASlope', this.checkEMASlope('5m', emaValues));
-		console.log('1m', this.getLatestEma('1m', emaValues));
-		console.log('5m', this.getLatestEma('5m', emaValues));
-		console.log('15m', this.getLatestEma('15m', emaValues));
+		const currentPrice = await this.getMarkPrice();
+		this.monitorLog(emaValues, currentPrice);
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
@@ -506,17 +512,11 @@ class DogePerpBot extends EventEmitter {
 		);
 	}
 
-	checkPriceEMACross(tf, emaValues, isBullish = true) {
-		const dataList = this.state.marketData[tf];
-		const { emaFast, emaSlow } = emaValues[tf];
-		const indicator = tf === '1m' ? emaSlow : emaSlow;
-		const lastFast = indicator.slice(-2)[0];
-		const currentFast = indicator.slice(-2)[1];
-		const lastClose = dataList.slice(-2)[0].close;
-		const currentClose = dataList.slice(-2)[1].close;
-		return isBullish
-			? lastClose < lastFast && currentClose > currentFast
-			: lastClose > lastFast && currentClose < currentFast;
+	checkPriceEMACross(markPrice, emaValues, isBullish = true) {
+		const { emaFast, emaSlow } = emaValues['5m'];
+		const ema = emaSlow.slice(-1)[0];
+
+		return isBullish ? markPrice > ema : markPrice < ema;
 	}
 
 	getLatestEma(tf, emaValues) {
@@ -640,15 +640,19 @@ class DogePerpBot extends EventEmitter {
 	async checkPositionSLNew() {
 		if (!this.state.position) return;
 
+		const currentPrice = await this.getMarkPrice();
 		const emaValues = await this.getEmaValues();
 		// const { stopLoss, takeProfit } = this.state.position;
+
+		this.monitorLog(emaValues, currentPrice);
+
 		// 止损检查
 		if (
 			this.state.position &&
 			((this.state.position.side === 'buy' &&
-				this.checkPriceEMACross('5m', emaValues, false)) ||
+				this.checkPriceEMACross(currentPrice, emaValues, false)) ||
 				(this.state.position.side === 'sell' &&
-					this.checkPriceEMACross('5m', emaValues)))
+					this.checkPriceEMACross(currentPrice, emaValues)))
 		) {
 			await this.closePosition('止损触发');
 		}
@@ -657,9 +661,9 @@ class DogePerpBot extends EventEmitter {
 		if (
 			this.state.position &&
 			((this.state.position.side === 'buy' &&
-				this.checkPriceEMACross('5m', emaValues, false)) ||
+				this.checkPriceEMACross(currentPrice, emaValues, false)) ||
 				(this.state.position.side === 'sell' &&
-					this.checkPriceEMACross('5m', emaValues)))
+					this.checkPriceEMACross(currentPrice, emaValues)))
 		) {
 			await this.closePosition('止盈触发');
 		}
