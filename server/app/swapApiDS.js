@@ -104,6 +104,7 @@ class DogePerpBot extends EventEmitter {
 					: prediction > 0.4
 					? { fast: 13, slow: 34 }
 					: { fast: 21, slow: 55 };
+			console.log(23, prediction);
 		} else {
 			periods = { fast: 13, slow: 34 };
 		}
@@ -114,13 +115,7 @@ class DogePerpBot extends EventEmitter {
 			this.calculateSingleEMA(periods.slow, closes),
 		]);
 
-		console.log(
-			1133,
-			periods,
-			prediction,
-			emaFast.slice(-2),
-			emaSlow.slice(-2)
-		);
+		console.log(1133, periods, emaFast.slice(-2), emaSlow.slice(-2));
 
 		return { emaFast, emaSlow, periods };
 	}
