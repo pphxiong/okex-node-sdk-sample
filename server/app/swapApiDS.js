@@ -48,7 +48,7 @@ class DogePerpBot extends EventEmitter {
 		this.config = {
 			symbol: 'DOGE/USDT',
 			timeframes: ['15m', '5m', '1m'],
-			dynamicEMA: true,
+			dynamicEMA: false,
 			emaSettings: {
 				periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
 				slopeThreshold: 0.1 / 100, // EMA斜率阈值
@@ -104,7 +104,6 @@ class DogePerpBot extends EventEmitter {
 					: prediction > 0.4
 					? { fast: 13, slow: 34 }
 					: { fast: 21, slow: 55 };
-			console.log(23, prediction);
 		} else {
 			periods = { fast: 13, slow: 34 };
 		}
@@ -114,8 +113,6 @@ class DogePerpBot extends EventEmitter {
 			this.calculateSingleEMA(periods.fast, closes),
 			this.calculateSingleEMA(periods.slow, closes),
 		]);
-
-		console.log(1133, periods, emaFast.slice(-2), emaSlow.slice(-2));
 
 		return { emaFast, emaSlow, periods };
 	}
