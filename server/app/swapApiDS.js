@@ -91,12 +91,12 @@ class DogePerpBot extends EventEmitter {
 
 	// 动态EMA计算
 	async calculateDynamicEMA(timeframe) {
-		// const atr = this.calculateATR(14);
+		// const atr = this.calculateCurrentATR(14);
 		let periods;
 
 		if (this.config.dynamicEMA) {
 			const volatility = await this.calculateVolatility();
-			const currentATR = await this.calculateATR();
+			const currentATR = await this.calculateCurrentATR();
 			const prediction = currentATR / volatility;
 			periods =
 				prediction > 0.7
@@ -156,7 +156,7 @@ class DogePerpBot extends EventEmitter {
 		}
 	}
 
-	async calculateATR() {
+	async calculateCurrentATR() {
 		try {
 			const atrPeriod = this.config.atrSettings.period;
 			// 获取K线数据（需要至少atrPeriod+1根K线）
@@ -256,7 +256,7 @@ class DogePerpBot extends EventEmitter {
 		}));
 
 		// 波动率调整参数
-		const atr = this.calculateATR(data.tf1);
+		const atr = this.calculateCurrentATR(data.tf1);
 		const volatilityRatio = atr / data.tf1.slice(-1)[0].c;
 
 		// 市场情绪指标
@@ -659,7 +659,7 @@ class DogePerpBot extends EventEmitter {
 
 		const currentPrice = await this.getMarkPrice();
 		// const currentPrice = this.state.position.entryPrice;
-		const currentATR = await this.calculateATR();
+		const currentATR = await this.calculateCurrentATR();
 		if (!currentATR) return;
 
 		const { stopLossMultiplier, takeProfitMultiplier, period } =
