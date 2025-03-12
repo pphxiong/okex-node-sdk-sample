@@ -321,13 +321,13 @@ class DogePerpBot extends EventEmitter {
 		this.startRiskEngine();
 		setInterval(() => {
 			RESTART_TIME += 1;
-			if (RESTART_TIME >= 6 * 5) {
+			if (RESTART_TIME >= 3 * 5) {
 				RESTART_TIME = 0;
 				restart('normal');
 				return;
 			}
 			this.startRiskEngine();
-		}, 5000 * 2);
+		}, 1000 * 20);
 		console.log('=== 交易系统启动 ===');
 	}
 
