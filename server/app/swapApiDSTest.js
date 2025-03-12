@@ -29,8 +29,8 @@ const config = {
 	fee: 0.0005, // 交易手续费率(0.05%)
 	emaShortPeriod: 9, // 短期EMA周期
 	emaLongPeriod: 21, // 长期EMA周期
-	startTime: '2024-01-01T00:00:00Z', // 回测起始时间
-	endTime: '2024-03-01T00:00:00Z', // 回测结束时间
+	startTime: '2024-10-01T00:00:00Z', // 回测起始时间
+	endTime: '2024-12-01T00:00:00Z', // 回测结束时间
 };
 
 // 计算技术指标（Promise封装）

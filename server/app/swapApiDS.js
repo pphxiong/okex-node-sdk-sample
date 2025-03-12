@@ -29,6 +29,8 @@ const cAuthClientBN = new customAuthClientBN(
 	configBN.urlHost
 );
 
+let RESTART_TIME = 0;
+
 class DogePerpBot extends EventEmitter {
 	constructor() {
 		super();
@@ -51,7 +53,7 @@ class DogePerpBot extends EventEmitter {
 			dynamicEMA: false,
 			emaSettings: {
 				periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
-				slopeThreshold: 0.0618 / 100, // EMA斜率阈值
+				slopeThreshold: 0.1 / 100, // EMA斜率阈值
 			},
 			atrSettings: {
 				period: 7,
@@ -318,6 +320,12 @@ class DogePerpBot extends EventEmitter {
 		// this.setupWebSocket();
 		this.startRiskEngine();
 		setInterval(() => {
+			RESTART_TIME += 1;
+			if (RESTART_TIME >= (1 * 14) / 4) {
+				RESTART_TIME = 0;
+				restart('normal');
+				return;
+			}
 			this.startRiskEngine();
 		}, 5000 * 2);
 		console.log('=== 交易系统启动 ===');
@@ -424,9 +432,9 @@ class DogePerpBot extends EventEmitter {
 	async checkTradingSignal() {
 		if (this.isCoolingDown() || this.state.position) return;
 
-		const signals = await this.generateSignal();
-		if (signals.long) this.executeTrade('buy');
-		if (signals.short) this.executeTrade('sell');
+		const { long, short, markPrice } = await this.generateSignal();
+		if (long) this.executeTrade('buy', markPrice);
+		if (short) this.executeTrade('sell', markPrice);
 	}
 
 	async getEmaValues() {
@@ -455,12 +463,13 @@ class DogePerpBot extends EventEmitter {
 		const volumeValid = this.checkVolume();
 		const liquidity = this.checkLiquidity();
 
-		const currentPrice = await this.getMarkPrice();
-		this.monitorLog(emaValues, currentPrice);
+		const markPrice = await this.getMarkPrice();
+		this.monitorLog(emaValues, markPrice);
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
 			short: this.isBearish(emaValues) && volumeValid && liquidity,
+			markPrice,
 		};
 	}
 
@@ -557,8 +566,14 @@ class DogePerpBot extends EventEmitter {
 		return takeProfit;
 	}
 
-	async executeTrade(side) {
+	async executeTrade(side, price) {
 		try {
+			const emaValues = await this.getEmaValues();
+			const { emaSlow } = emaValues['5m'];
+			const ema = emaSlow.slice(-1)[0];
+			const stopLossPrice =
+				side === 'buy' ? ema - 0.001 * 0.2 : ema + 0.001 * 0.2;
+
 			const size = await this.calculatePositionSize();
 			const order = await this.exchange.createOrder(
 				this.config.symbol,
@@ -569,7 +584,7 @@ class DogePerpBot extends EventEmitter {
 				{
 					positionSide: side === 'buy' ? 'LONG' : 'SHORT',
 					leverage: this.config.riskControl.leverage,
-					//   stopLoss: stopLossPrice,
+					stopLoss: stopLossPrice,
 					//   takeProfit: takeProfitPrice,
 				}
 			);
