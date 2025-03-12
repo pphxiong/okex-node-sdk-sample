@@ -47,7 +47,7 @@ async function calculateIndicator(data, indicatorConfig) {
 // 获取历史数据
 async function fetchHistoricalData() {
 	const exchange = new ccxt.binance({ enableRateLimit: true });
-	const since = new Date(config.startTime).getTime();
+	let since = new Date(config.startTime).getTime();
 	const allOHLCV = [];
 
 	while (true) {
