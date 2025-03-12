@@ -571,8 +571,11 @@ class DogePerpBot extends EventEmitter {
 			const emaValues = await this.getEmaValues();
 			const { emaSlow } = emaValues['5m'];
 			const ema = emaSlow.slice(-1)[0];
+			const distance = side === 'buy' ? price - ema : ema - price;
 			const stopLossPrice =
 				side === 'buy' ? ema - 0.001 * 0.2 : ema + 0.001 * 0.2;
+			const takeProfitPrice =
+				side === 'buy' ? price + distance * 2 : price - distance * 2;
 
 			const size = await this.calculatePositionSize();
 			const order = await this.exchange.createOrder(
@@ -585,7 +588,7 @@ class DogePerpBot extends EventEmitter {
 					positionSide: side === 'buy' ? 'LONG' : 'SHORT',
 					leverage: this.config.riskControl.leverage,
 					stopLoss: stopLossPrice,
-					//   takeProfit: takeProfitPrice,
+					takeProfit: takeProfitPrice,
 				}
 			);
 
@@ -669,19 +672,19 @@ class DogePerpBot extends EventEmitter {
 				(this.state.position.side === 'sell' &&
 					this.checkPriceEMACross(currentPrice, emaValues)))
 		) {
-			await this.closePosition('止损触发');
+			await this.closePosition('止损止盈触发');
 		}
 
-		// 止盈检查
-		if (
-			this.state.position &&
-			((this.state.position.side === 'buy' &&
-				this.checkPriceEMACross(currentPrice, emaValues, false)) ||
-				(this.state.position.side === 'sell' &&
-					this.checkPriceEMACross(currentPrice, emaValues)))
-		) {
-			await this.closePosition('止盈触发');
-		}
+		// // 止盈检查
+		// if (
+		// 	this.state.position &&
+		// 	((this.state.position.side === 'buy' &&
+		// 		this.checkPriceEMACross(currentPrice, emaValues, false)) ||
+		// 		(this.state.position.side === 'sell' &&
+		// 			this.checkPriceEMACross(currentPrice, emaValues)))
+		// ) {
+		// 	await this.closePosition('止盈触发');
+		// }
 	}
 
 	async checkPositionSL() {
