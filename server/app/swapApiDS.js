@@ -448,6 +448,9 @@ class DogePerpBot extends EventEmitter {
 
 		console.log(this.state.marketData['1m'].slice(-2));
 		console.log('checkEMASlope', this.checkEMASlope('5m', emaValues));
+		console.log('1m', this.getLatestEma('1m', emaValues));
+		console.log('5m', this.getLatestEma('5m', emaValues));
+		console.log('15m', this.getLatestEma('15m', emaValues));
 
 		return {
 			long: this.isBullish(emaValues) && volumeValid && liquidity,
@@ -513,6 +516,13 @@ class DogePerpBot extends EventEmitter {
 		return isBullish
 			? lastClose < lastFast && currentClose > currentFast
 			: lastClose > lastFast && currentClose < currentFast;
+	}
+
+	getLatestEma(tf, emaValues) {
+		const { emaFast, emaSlow } = emaValues[tf];
+		const lastFast = emaFast.slice(-1)[0];
+		const lastSlow = emaSlow.slice(-1)[0];
+		return [lastFast, lastSlow];
 	}
 
 	checkEMACross(tf, emaValues, isBullish = true) {
