@@ -321,7 +321,7 @@ class DogePerpBot extends EventEmitter {
 		this.startRiskEngine();
 		setInterval(() => {
 			RESTART_TIME += 1;
-			if (RESTART_TIME >= (1 * 14) / 4) {
+			if (RESTART_TIME >= 6 * 5) {
 				RESTART_TIME = 0;
 				restart('normal');
 				return;
