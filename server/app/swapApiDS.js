@@ -166,6 +166,12 @@ async function generateSignal() {
 	const ema21Current = ema21[ema21.length - 1];
 	const ema55Current = ema55[ema55.length - 1];
 
+	console.log('################################');
+	console.log('time', candles[candles.length - 1]);
+	console.log('ema', ema9Current, ema21Current, ema55Current);
+	console.log('currentClose', currentClose);
+	console.log('################################');
+
 	return {
 		buySignal:
 			// ema9Last <= ema21Last &&
