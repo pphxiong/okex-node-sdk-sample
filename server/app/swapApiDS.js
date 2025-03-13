@@ -356,7 +356,7 @@ async function strategyLoop() {
       undefined,
       100
     );
-    candles.pop();
+    // candles.pop();
     const currentPrice = candles[candles.length - 1][4];
 
     // 步骤1: 清理过期订单
