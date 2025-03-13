@@ -79,7 +79,7 @@ function parseKLine(data) {
 
 // EMA计算函数
 async function calculateEMA(candles, period) {
-	const formatCandles = parseKLine(candles);
+	const formatCandles = candles.map(parseKLine);
 	const closes = formatCandles.map((c) => c.close);
 	return new Promise((resolve) => {
 		tulind.indicators.ema.indicator([closes], [period], (err, results) => {
