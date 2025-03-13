@@ -302,7 +302,7 @@ async function initPositionData() {
 		if (holding) {
 			state = {
 				activeOrders: [], // 活跃限价单
-				position: Math.abs(Number(holding.positionAmt)), // 当前持仓数量
+				position: Number(holding.positionAmt), // 当前持仓数量
 				entryPrice: Number(holding.entryPrice), // 持仓均价
 				highestPrice: Number(holding.entryPrice), // 持仓期间最高价
 				lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
