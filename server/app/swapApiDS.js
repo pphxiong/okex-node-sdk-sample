@@ -42,6 +42,8 @@ const config = {
 	stopLoss: 0.005, // 硬止损(0.5%)
 	takeProfit: 0.01, // 硬止盈(1%)
 	coolingPeriod: 180, // 基础冷却时间(秒)
+	numSegments: 5, // 分段数量
+	icebergRatio: 0.2, // 冰山可见部分比例
 };
 
 // 全局状态
@@ -131,6 +133,7 @@ class OrderManager {
 				await this.cancelOrder(order.id);
 			}
 			state.activeOrders = [];
+			return;
 		}
 
 		for (const order of [...state.activeOrders]) {
@@ -142,6 +145,7 @@ class OrderManager {
 
 			// 检查订单状态
 			const status = await exchange.fetchOrder(order.id, config.symbol);
+
 			if (status.filled > 0) {
 				console.log(
 					`订单部分成交: ${status.id} ${status.filled}/${status.amount}`
@@ -162,6 +166,55 @@ class OrderManager {
 						(o) => o.id !== status.id
 					);
 				}
+			}
+		}
+	}
+
+	// 执行分段冰山订单
+	static async executeSegmentedIcebergOrder() {
+		const { side } = state;
+		const {
+			symbol,
+			tradeAmount: totalAmount,
+			numSegments,
+			icebergRatio,
+		} = config;
+		const segmentAmount = totalAmount / numSegments;
+
+		for (let i = 0; i < numSegments; i++) {
+			try {
+				// 获取最新价格
+				const ticker = await exchange.fetchTicker(symbol);
+				const price = ticker.last;
+
+				// 计算冰山订单参数
+				const visibleAmount = segmentAmount * icebergRatio;
+				const icebergQty = visibleAmount.toFixed(6);
+
+				// 创建冰山订单
+				const order = await exchange.createOrder(
+					symbol,
+					'limit',
+					side,
+					segmentAmount,
+					price,
+					{
+						icebergQty: icebergQty,
+						timeInForce: 'GTC',
+						positionSide: side === 'buy' ? 'LONG' : 'SHORT',
+					}
+				);
+
+				console.log(
+					`第 ${i + 1}/${numSegments} 段订单已执行:`,
+					order.id
+				);
+
+				// 等待间隔（避免触发风控）
+				await new Promise((resolve) => setTimeout(resolve, 3 * 1000));
+			} catch (error) {
+				console.error('订单创建失败:', error.message);
+				break;
 			}
 		}
 	}
@@ -343,7 +396,7 @@ async function strategyLoop() {
 			}
 		}
 	} catch (err) {
-		console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
+		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.error('策略错误:', err.message);
 		restart(err.message);
 	}
