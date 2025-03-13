@@ -34,7 +34,7 @@ require("dotenv").config();
 const config = {
   symbol: "DOGE/USDT",
   timeframe: "1m",
-  emaPeriods: [5, 15, 55], // 三EMA周期
+  emaPeriods: [5, 20, 55], // 三EMA周期
   orderDepth: 0.001 / 2, // 限价单挂单深度 (0.1%)
   tradeAmount: 2000, // 每单交易金额(USDT)
   maxOrderAge: 10000, // 限价单最长存活时间(30秒)
