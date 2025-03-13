@@ -206,7 +206,8 @@ class RiskManager {
 			currentPrice,
 			trailingStopPrice,
 			hardStopPrice,
-			finalStopPrice
+			finalStopPrice,
+			state.position
 		);
 
 		return side === 'buy'
