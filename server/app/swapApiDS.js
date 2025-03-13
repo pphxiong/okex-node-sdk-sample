@@ -281,21 +281,21 @@ class RiskManager {
 
     // 计算止盈止损价
     if (side === "buy") {
+      hardStopPrice = state.entryPrice * (1 - config.stopLoss);
+      hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
       if (currentPrice < state.entryPrice) {
-        hardStopPrice = state.entryPrice * (1 - config.stopLoss);
         isStop = isStop || currentPrice <= hardStopPrice;
       } else {
         trailingStopPrice = state.highestPrice * (1 - config.trailingStop);
-        hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
         isStop = currentPrice >= hardTakeProfitPrice;
       }
     } else {
+      hardStopPrice = state.entryPrice * (1 + config.stopLoss);
+      hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
       if (currentPrice > state.entryPrice) {
-        hardStopPrice = state.entryPrice * (1 + config.stopLoss);
         isStop = isStop || currentPrice >= hardStopPrice;
       } else {
         trailingStopPrice = state.lowestPrice * (1 + config.trailingStop);
-        hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
         isStop = currentPrice <= hardTakeProfitPrice;
       }
     }
