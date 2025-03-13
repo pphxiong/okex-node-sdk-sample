@@ -35,7 +35,7 @@ const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '1m',
 	emaPeriods: [9, 21, 55], // 三EMA周期
-	orderDepth: 0.002, // 限价单挂单深度 (0.2%)
+	orderDepth: 0.001, // 限价单挂单深度 (0.1%)
 	tradeAmount: 1000, // 每单交易金额(USDT)
 	maxOrderAge: 30000, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
