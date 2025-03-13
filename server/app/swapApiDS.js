@@ -188,6 +188,8 @@ async function generateSignal(candles, currentPrice) {
 	);
 	console.log('ema', ema9Current, ema21Current, ema55Current);
 	console.log('currentPrice', currentPrice);
+	console.log('position', state.position);
+	console.log('side', state.side);
 	console.log('################################');
 
 	return {
