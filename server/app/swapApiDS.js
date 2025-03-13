@@ -245,7 +245,7 @@ async function strategyLoop() {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				console.log(1221, amount);
+				console.log(1221, amount, limitPrice);
 
 				await OrderManager.createLimitOrder('buy', amount, limitPrice);
 				console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
