@@ -223,11 +223,11 @@ class RiskManager {
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
 
-		await exchange.createMarketOrder(config.symbol, side, amount);
-
 		console.log(
 			`强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice}`
 		);
+
+		await exchange.createMarketOrder(config.symbol, side, amount);
 
 		// 重置状态
 		state.position = 0;
