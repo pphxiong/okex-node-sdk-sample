@@ -200,7 +200,14 @@ class RiskManager {
 			finalStopPrice = Math.min(trailingStopPrice, hardStopPrice);
 		}
 
-		console.log(23, trailingStopPrice, hardStopPrice, finalStopPrice);
+		console.log(
+			23,
+			side,
+			currentPrice,
+			trailingStopPrice,
+			hardStopPrice,
+			finalStopPrice
+		);
 
 		return side === 'buy'
 			? currentPrice <= finalStopPrice
@@ -288,6 +295,7 @@ async function initPositionData() {
 (async () => {
 	await exchange.loadMarkets();
 	await initPositionData();
+	await strategyLoop();
 	setInterval(strategyLoop, 15000); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
