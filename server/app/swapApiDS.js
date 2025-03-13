@@ -247,13 +247,14 @@ async function generateSignal(candles, currentPrice) {
       // ema9Last <= ema21Last &&
       ema9Current > ema21Current &&
       currentPrice > ema9Current &&
-      candles[candles.length - 1][4] > candles[candles.length - 2][2],
-    //   && Math.abs(ema9Current - ema21Current) > currentPrice * 0.002,
+      candles[candles.length - 1][4] > candles[candles.length - 2][2] &&
+      Math.abs(ema9Current - ema21Current) > currentPrice * 0.001,
     sellSignal:
       // ema9Last >= ema21Last &&
       ema9Current < ema21Current &&
       currentPrice < ema9Current &&
-      candles[candles.length - 1][4] < candles[candles.length - 2][3],
+      candles[candles.length - 1][4] < candles[candles.length - 2][3] &&
+      Math.abs(ema9Current - ema21Current) > currentPrice * 0.001,
     price: currentPrice,
   };
 }
@@ -268,7 +269,7 @@ class RiskManager {
     const { side } = state;
     let isStop = false;
 
-    // isStop = side === "buy" ? sellSignal : buySignal;
+    isStop = side === "buy" ? sellSignal : buySignal;
 
     // 更新价格极值
     state.highestPrice = Math.max(state.highestPrice, currentPrice);
@@ -287,7 +288,7 @@ class RiskManager {
         isStop = isStop || currentPrice <= hardStopPrice;
       } else {
         trailingStopPrice = state.highestPrice * (1 - config.trailingStop);
-        isStop = currentPrice >= hardTakeProfitPrice;
+        isStop = isStop || currentPrice >= hardTakeProfitPrice;
       }
     } else {
       hardStopPrice = state.entryPrice * (1 + config.stopLoss);
@@ -296,7 +297,7 @@ class RiskManager {
         isStop = isStop || currentPrice >= hardStopPrice;
       } else {
         trailingStopPrice = state.lowestPrice * (1 + config.trailingStop);
-        isStop = currentPrice <= hardTakeProfitPrice;
+        isStop = isStop || currentPrice <= hardTakeProfitPrice;
       }
     }
     console.log("***********************************");
@@ -356,7 +357,7 @@ async function strategyLoop() {
       undefined,
       100
     );
-    // candles.pop();
+    candles.pop();
     const currentPrice = candles[candles.length - 1][4];
 
     // 步骤1: 清理过期订单
