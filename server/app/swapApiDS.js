@@ -36,11 +36,12 @@ const config = {
 	timeframe: '1m',
 	emaPeriods: [9, 21, 55], // 三EMA周期
 	orderDepth: 0.002, // 限价单挂单深度 (0.2%)
-	tradeAmount: 100, // 每单交易金额(USDT)
+	tradeAmount: 1000, // 每单交易金额(USDT)
 	maxOrderAge: 30000, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.005, // 硬止损(0.5%)
 	takeProfit: 0.01, // 硬止盈(1%)
+	coolingPeriod: 180, // 基础冷却时间(秒)
 };
 
 // 全局状态
@@ -51,6 +52,7 @@ let state = {
 	highestPrice: 0, // 持仓期间最高价
 	lowestPrice: Infinity, // 持仓期间最低价
 	side: 'buy', // 交易方向
+	coolingUntil: 0, // 基础冷却结束时间
 };
 
 // 初始化交易所
@@ -162,15 +164,11 @@ async function generateSignal() {
 
 	return {
 		buySignal:
-			true ||
-			(ema9Last <= ema21Last &&
-				ema9Current >= ema21Current &&
-				currentClose > ema55Current),
+			// ema9Last <= ema21Last &&
+			ema9Current >= ema21Current && currentClose > ema55Current,
 		sellSignal:
-			true ||
-			(ema9Last >= ema21Last &&
-				ema9Current <= ema21Current &&
-				currentClose < ema55Current),
+			// ema9Last >= ema21Last &&
+			ema9Current <= ema21Current && currentClose < ema55Current,
 		price: currentClose,
 	};
 }
@@ -185,34 +183,40 @@ class RiskManager {
 		state.lowestPrice = Math.min(state.lowestPrice, currentPrice);
 
 		const { side } = state;
+		let isStop = false;
+
 		let trailingStopPrice;
 		let hardStopPrice;
 		let finalStopPrice;
+		let hardTakeProfitPrice;
 
 		// 计算止盈止损价
 		if (side === 'buy') {
-			trailingStopPrice = state.highestPrice * (1 - config.trailingStop);
-			hardStopPrice = state.entryPrice * (1 - config.stopLoss);
-			finalStopPrice = Math.max(trailingStopPrice, hardStopPrice);
+			if (currentPrice < state.entryPrice) {
+				hardStopPrice = state.entryPrice * (1 - config.stopLoss);
+				isStop = currentPrice <= hardStopPrice;
+			} else {
+				trailingStopPrice =
+					state.highestPrice * (1 - config.trailingStop);
+				isStop = currentPrice <= trailingStopPrice;
+				// hardTakeProfitPrice =
+				// 	state.entryPrice * (1 + config.takeProfit);
+				// finalStopPrice = Math.max(trailingStopPrice, hardStopPrice);
+			}
 		} else {
-			trailingStopPrice = state.lowestPrice * (1 + config.trailingStop);
-			hardStopPrice = state.entryPrice * (1 + config.stopLoss);
-			finalStopPrice = Math.min(trailingStopPrice, hardStopPrice);
+			if (currentPrice > state.entryPrice) {
+				hardStopPrice = state.entryPrice * (1 + config.stopLoss);
+				isStop = currentPrice >= hardStopPrice;
+			} else {
+				trailingStopPrice =
+					state.lowestPrice * (1 + config.trailingStop);
+				isStop = currentPrice >= trailingStopPrice;
+				// trailingStopPrice = state.lowestPrice * (1 + config.trailingStop);
+				// hardStopPrice = state.entryPrice * (1 + config.stopLoss);
+				// finalStopPrice = Math.min(trailingStopPrice, hardStopPrice);
+			}
 		}
-
-		console.log(
-			23,
-			side,
-			currentPrice,
-			trailingStopPrice,
-			hardStopPrice,
-			finalStopPrice,
-			state.position
-		);
-
-		return side === 'buy'
-			? currentPrice <= finalStopPrice
-			: currentPrice >= finalStopPrice;
+		return isStop;
 	}
 
 	static async closePosition() {
@@ -230,6 +234,22 @@ class RiskManager {
 		state.entryPrice = 0;
 		state.highestPrice = 0;
 		state.lowestPrice = 0;
+
+		this.activateCooldown();
+	}
+
+	static activateCooldown() {
+		const base = config.coolingPeriod;
+		// const lossFactor = this.state.dailyMetrics.winRate < 0.5 ? 1.5 : 1;
+		const lossFactor = 1;
+		const cooldown = base * lossFactor * 1000;
+
+		state.coolingUntil = Date.now() + cooldown;
+		console.log(`交易冷却激活，持续时间：${cooldown / 1000}秒`);
+	}
+
+	static isCoolingDown() {
+		return Date.now() < state.coolingUntil;
 	}
 }
 
@@ -245,12 +265,12 @@ async function strategyLoop() {
 
 		// 步骤3: 检查强制平仓
 		if (await RiskManager.checkStopConditions(signal.price)) {
-			// await RiskManager.closePosition();
+			await RiskManager.closePosition();
 			return;
 		}
 
 		// 步骤4: 生成限价单
-		if (state.position === 0) {
+		if (state.position === 0 && !RiskManager.isCoolingDown()) {
 			if (signal.buySignal && orderBook.spread < orderBook.ask * 0.001) {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
