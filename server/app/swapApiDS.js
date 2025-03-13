@@ -39,8 +39,8 @@ const config = {
   tradeAmount: 2000, // 每单交易金额(USDT)
   maxOrderAge: 10000, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
-  stopLoss: 0.005, // 硬止损(0.5%)
-  takeProfit: 0.01, // 硬止盈(1%)
+  stopLoss: 0.008, // 硬止损(0.5%)
+  takeProfit: 0.012, // 硬止盈(1%)
   coolingPeriod: 180, // 基础冷却时间(秒)
   numSegments: 5, // 分段数量
   icebergRatio: 0.2, // 冰山可见部分比例
@@ -245,10 +245,15 @@ async function generateSignal(candles, currentPrice) {
   return {
     buySignal:
       // ema9Last <= ema21Last &&
-      ema9Current > ema21Current && currentPrice > ema9Current,
+      ema9Current > ema21Current &&
+      currentPrice > ema9Current &&
+      candles[candles.length - 1][4] > candles[candles.length - 2][2],
+    //   && Math.abs(ema9Current - ema21Current) > currentPrice * 0.002,
     sellSignal:
       // ema9Last >= ema21Last &&
-      ema9Current < ema21Current && currentPrice < ema9Current,
+      ema9Current < ema21Current &&
+      currentPrice < ema9Current &&
+      candles[candles.length - 1][4] < candles[candles.length - 2][3],
     price: currentPrice,
   };
 }
@@ -263,7 +268,7 @@ class RiskManager {
     const { side } = state;
     let isStop = false;
 
-    isStop = side === "buy" ? sellSignal : buySignal;
+    // isStop = side === "buy" ? sellSignal : buySignal;
 
     // 更新价格极值
     state.highestPrice = Math.max(state.highestPrice, currentPrice);
@@ -272,7 +277,7 @@ class RiskManager {
     let hardStopPrice;
     let trailingStopPrice;
     // let finalStopPrice;
-    // let hardTakeProfitPrice;
+    let hardTakeProfitPrice;
 
     // 计算止盈止损价
     if (side === "buy") {
@@ -281,7 +286,8 @@ class RiskManager {
         isStop = isStop || currentPrice <= hardStopPrice;
       } else {
         trailingStopPrice = state.highestPrice * (1 - config.trailingStop);
-        // isStop = currentPrice <= trailingStopPrice;
+        hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
+        isStop = currentPrice >= hardTakeProfitPrice;
       }
     } else {
       if (currentPrice > state.entryPrice) {
@@ -289,12 +295,14 @@ class RiskManager {
         isStop = isStop || currentPrice >= hardStopPrice;
       } else {
         trailingStopPrice = state.lowestPrice * (1 + config.trailingStop);
-        // isStop = currentPrice >= trailingStopPrice;
+        hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
+        isStop = currentPrice <= hardTakeProfitPrice;
       }
     }
     console.log("***********************************");
     console.log("entryPrice", state.entryPrice);
     console.log("hardStopPrice", hardStopPrice);
+    console.log("hardTakeProfitPrice", hardTakeProfitPrice);
     console.log("trailingStopPrice", trailingStopPrice);
     console.log("highestPrice", state.highestPrice);
     console.log("lowestPrice", state.lowestPrice);
@@ -348,6 +356,7 @@ async function strategyLoop() {
       undefined,
       100
     );
+    candles.pop();
     const currentPrice = candles[candles.length - 1][4];
 
     // 步骤1: 清理过期订单
