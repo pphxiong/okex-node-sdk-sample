@@ -247,6 +247,7 @@ class RiskManager {
 			}
 		}
 		console.log('***********************************');
+		console.log('entryPrice', state.entryPrice);
 		console.log('hardStopPrice', hardStopPrice);
 		console.log('trailingStopPrice', trailingStopPrice);
 		console.log('isStop', isStop);
