@@ -209,6 +209,8 @@ class RiskManager {
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
 
+		console.log(2333, amount);
+
 		await exchange.createMarketOrder(config.symbol, side, amount);
 
 		console.log(
@@ -255,6 +257,7 @@ async function strategyLoop() {
 				const limitPrice = orderBook.ask * (1 + config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
+				console.log(1221, amount, limitPrice);
 				await OrderManager.createLimitOrder('sell', amount, limitPrice);
 				console.log(`挂卖单 | 价格:${limitPrice} 数量:${amount}`);
 			}
