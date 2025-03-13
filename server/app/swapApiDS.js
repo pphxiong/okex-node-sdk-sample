@@ -227,7 +227,9 @@ class RiskManager {
 			`强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice}`
 		);
 
-		await exchange.createMarketOrder(config.symbol, side, amount);
+		await exchange.createMarketOrder(config.symbol, side, amount, null, {
+			positionSide: side === 'sell' ? 'LONG' : 'SHORT',
+		});
 
 		// 重置状态
 		state.position = 0;
