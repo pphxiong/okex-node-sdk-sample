@@ -154,13 +154,21 @@ async function generateSignal() {
 	]);
 
 	const currentClose = candles[candles.length - 1][4];
+	const ema9Last = ema9[ema9.length - 2];
+	const ema21Last = ema21[ema21.length - 2];
 	const ema9Current = ema9[ema9.length - 1];
 	const ema21Current = ema21[ema21.length - 1];
 	const ema55Current = ema55[ema55.length - 1];
 
 	return {
-		buySignal: ema9Current > ema21Current && currentClose > ema55Current,
-		sellSignal: ema9Current < ema21Current && currentClose < ema55Current,
+		buySignal:
+			ema9Last <= ema21Last &&
+			ema9Current >= ema21Current &&
+			currentClose > ema55Current,
+		sellSignal:
+			ema9Last >= ema21Last &&
+			ema9Current <= ema21Current &&
+			currentClose < ema55Current,
 		price: currentClose,
 	};
 }
