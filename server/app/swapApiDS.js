@@ -200,6 +200,8 @@ class RiskManager {
 			finalStopPrice = Math.min(trailingStopPrice, hardStopPrice);
 		}
 
+		console.log(23, trailingStopPrice, hardStopPrice, finalStopPrice);
+
 		return side === 'buy'
 			? currentPrice <= finalStopPrice
 			: currentPrice >= finalStopPrice;
@@ -208,8 +210,6 @@ class RiskManager {
 	static async closePosition() {
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
-
-		console.log(2333, amount);
 
 		await exchange.createMarketOrder(config.symbol, side, amount);
 
@@ -237,7 +237,7 @@ async function strategyLoop() {
 
 		// 步骤3: 检查强制平仓
 		if (await RiskManager.checkStopConditions(signal.price)) {
-			await RiskManager.closePosition();
+			// await RiskManager.closePosition();
 			return;
 		}
 
@@ -247,8 +247,6 @@ async function strategyLoop() {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				console.log(1221, amount, limitPrice);
-
 				await OrderManager.createLimitOrder('buy', amount, limitPrice);
 				console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
 			}
@@ -257,7 +255,6 @@ async function strategyLoop() {
 				const limitPrice = orderBook.ask * (1 + config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				console.log(1221, amount, limitPrice);
 				await OrderManager.createLimitOrder('sell', amount, limitPrice);
 				console.log(`挂卖单 | 价格:${limitPrice} 数量:${amount}`);
 			}
@@ -277,7 +274,7 @@ async function initPositionData() {
 		if (holding) {
 			state = {
 				activeOrders: [], // 活跃限价单
-				position: 1, // 当前持仓数量
+				position: Math.abs(Number(holding.positionAmt)), // 当前持仓数量
 				entryPrice: Number(holding.entryPrice), // 持仓均价
 				highestPrice: 0, // 持仓期间最高价
 				lowestPrice: 0, // 持仓期间最低价
