@@ -125,7 +125,14 @@ class OrderManager {
 		state.activeOrders = state.activeOrders.filter((o) => o.id !== orderId);
 	}
 
-	static async checkOrderStatus() {
+	static async checkOrderStatus(currentPrice) {
+		if (Math.abs(state.position) >= config.tradeAmount / currentPrice) {
+			for (const order of [...state.activeOrders]) {
+				await this.cancelOrder(order.id);
+			}
+			state.activeOrders = [];
+		}
+
 		for (const order of [...state.activeOrders]) {
 			// 处理超时订单
 			if (Date.now() - order.timestamp > config.maxOrderAge) {
@@ -161,20 +168,13 @@ class OrderManager {
 }
 
 // 交易信号生成
-async function generateSignal() {
-	const candles = await exchange.fetchOHLCV(
-		config.symbol,
-		config.timeframe,
-		undefined,
-		100
-	);
+async function generateSignal(candles, currentPrice) {
 	const [ema9, ema21, ema55] = await Promise.all([
 		calculateEMA(candles, config.emaPeriods[0]),
 		calculateEMA(candles, config.emaPeriods[1]),
 		calculateEMA(candles, config.emaPeriods[2]),
 	]);
 
-	const currentClose = candles[candles.length - 1][4];
 	const ema9Last = ema9[ema9.length - 2];
 	const ema21Last = ema21[ema21.length - 2];
 	const ema9Current = ema9[ema9.length - 1];
@@ -187,7 +187,7 @@ async function generateSignal() {
 		moment(candles[candles.length - 1][0]).format('YYYY-MM-DD HH:mm:ss')
 	);
 	console.log('ema', ema9Current, ema21Current, ema55Current);
-	console.log('currentClose', currentClose);
+	console.log('currentPrice', currentPrice);
 	console.log('################################');
 
 	return {
@@ -293,11 +293,19 @@ class RiskManager {
 // 策略主逻辑
 async function strategyLoop() {
 	try {
+		const candles = await exchange.fetchOHLCV(
+			config.symbol,
+			config.timeframe,
+			undefined,
+			100
+		);
+		const currentPrice = candles[candles.length - 1][4];
+
 		// 步骤1: 清理过期订单
-		await OrderManager.checkOrderStatus();
+		await OrderManager.checkOrderStatus(currentPrice);
 
 		// 步骤2: 获取信号
-		const signal = await generateSignal();
+		const signal = await generateSignal(candles, currentPrice);
 		const orderBook = await getOrderBook();
 
 		// 步骤3: 检查强制平仓
