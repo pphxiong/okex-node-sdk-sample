@@ -223,12 +223,12 @@ class RiskManager {
 		return isStop;
 	}
 
-	static async closePosition() {
+	static async closePosition(currentPrice) {
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
 
 		console.log(
-			`强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice}`
+			`强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`
 		);
 
 		await exchange.createOrder(
@@ -277,8 +277,8 @@ async function strategyLoop() {
 		const orderBook = await getOrderBook();
 
 		// 步骤3: 检查强制平仓
-		if ((await RiskManager.checkStopConditions(signal.price)) || true) {
-			await RiskManager.closePosition();
+		if (await RiskManager.checkStopConditions(signal.price)) {
+			await RiskManager.closePosition(signal.price);
 			return;
 		}
 
