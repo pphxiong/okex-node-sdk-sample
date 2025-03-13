@@ -250,6 +250,8 @@ class RiskManager {
 		console.log('entryPrice', state.entryPrice);
 		console.log('hardStopPrice', hardStopPrice);
 		console.log('trailingStopPrice', trailingStopPrice);
+		console.log('highestPrice', state.highestPrice);
+		console.log('lowestPrice', state.lowestPrice);
 		console.log('isStop', isStop);
 		console.log('***********************************');
 		return isStop;
