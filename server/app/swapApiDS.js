@@ -66,9 +66,21 @@ const exchange = new ccxt.binance({
 	},
 });
 
+function parseKLine(data) {
+	return {
+		timestamp: data[0],
+		open: parseFloat(data[1]),
+		high: parseFloat(data[2]),
+		low: parseFloat(data[3]),
+		close: parseFloat(data[4]),
+		volume: parseFloat(data[5]),
+	};
+}
+
 // EMA计算函数
 async function calculateEMA(candles, period) {
-	const closes = candles.map((c) => c.close);
+	const formatCandles = parseKLine(candles);
+	const closes = formatCandles.map((c) => c.close);
 	return new Promise((resolve) => {
 		tulind.indicators.ema.indicator([closes], [period], (err, results) => {
 			resolve(results[0]);
@@ -167,7 +179,10 @@ async function generateSignal() {
 	const ema55Current = ema55[ema55.length - 1];
 
 	console.log('################################');
-	console.log('time', candles[candles.length - 1]);
+	console.log(
+		'time',
+		moment(candles[candles.length - 1][0]).format('YYYY-MM-DD HH:mm:ss')
+	);
 	console.log('ema', ema9Current, ema21Current, ema55Current);
 	console.log('currentClose', currentClose);
 	console.log('################################');
