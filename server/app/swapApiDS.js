@@ -36,8 +36,8 @@ const config = {
 	timeframe: '1m',
 	emaPeriods: [9, 21, 55], // 三EMA周期
 	orderDepth: 0.001 / 2, // 限价单挂单深度 (0.1%)
-	tradeAmount: 1000, // 每单交易金额(USDT)
-	maxOrderAge: 30000, // 限价单最长存活时间(30秒)
+	tradeAmount: 2000, // 每单交易金额(USDT)
+	maxOrderAge: 10000, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.005, // 硬止损(0.5%)
 	takeProfit: 0.01, // 硬止盈(1%)
@@ -245,12 +245,12 @@ class RiskManager {
 				// hardStopPrice = state.entryPrice * (1 + config.stopLoss);
 				// finalStopPrice = Math.min(trailingStopPrice, hardStopPrice);
 			}
-			console.log('***********************************');
-			console.log('hardStopPrice', hardStopPrice);
-			console.log('trailingStopPrice', trailingStopPrice);
-			console.log('isStop', isStop);
-			console.log('***********************************');
 		}
+		console.log('***********************************');
+		console.log('hardStopPrice', hardStopPrice);
+		console.log('trailingStopPrice', trailingStopPrice);
+		console.log('isStop', isStop);
+		console.log('***********************************');
 		return isStop;
 	}
 
@@ -340,7 +340,9 @@ async function strategyLoop() {
 			}
 		}
 	} catch (err) {
+		console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.error('策略错误:', err.message);
+		restart(err.message);
 	}
 }
 
