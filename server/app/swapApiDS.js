@@ -245,6 +245,11 @@ class RiskManager {
 				// hardStopPrice = state.entryPrice * (1 + config.stopLoss);
 				// finalStopPrice = Math.min(trailingStopPrice, hardStopPrice);
 			}
+			console.log('***********************************');
+			console.log('hardStopPrice', hardStopPrice);
+			console.log('trailingStopPrice', trailingStopPrice);
+			console.log('isStop', isStop);
+			console.log('***********************************');
 		}
 		return isStop;
 	}
