@@ -244,17 +244,17 @@ async function generateSignal(candles, currentPrice) {
 
   return {
     buySignal:
-      // ema9Last <= ema21Last &&
+      ema9Last <= ema21Last &&
       ema9Current > ema21Current &&
-      currentPrice > ema9Current &&
-      candles[candles.length - 1][4] > candles[candles.length - 2][2] &&
-      Math.abs(ema9Current - ema21Current) > currentPrice * 0.001,
+      currentPrice > ema9Current,
+    //   candles[candles.length - 1][4] > candles[candles.length - 2][2] &&
+    //   Math.abs(ema9Current - ema21Current) > currentPrice * 0.001,
     sellSignal:
-      // ema9Last >= ema21Last &&
+      ema9Last >= ema21Last &&
       ema9Current < ema21Current &&
-      currentPrice < ema9Current &&
-      candles[candles.length - 1][4] < candles[candles.length - 2][3] &&
-      Math.abs(ema9Current - ema21Current) > currentPrice * 0.001,
+      currentPrice < ema9Current,
+    //   candles[candles.length - 1][4] < candles[candles.length - 2][3] &&
+    //   Math.abs(ema9Current - ema21Current) > currentPrice * 0.001,
     price: currentPrice,
   };
 }
