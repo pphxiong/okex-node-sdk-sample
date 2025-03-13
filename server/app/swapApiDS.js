@@ -277,7 +277,7 @@ async function strategyLoop() {
 		const orderBook = await getOrderBook();
 
 		// 步骤3: 检查强制平仓
-		if (await RiskManager.checkStopConditions(signal.price)) {
+		if ((await RiskManager.checkStopConditions(signal.price)) || true) {
 			await RiskManager.closePosition();
 			return;
 		}
