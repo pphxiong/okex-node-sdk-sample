@@ -193,11 +193,11 @@ async function generateSignal(candles, currentPrice) {
 	return {
 		buySignal:
 			// ema9Last <= ema21Last &&
-			ema9Current >= ema21Current && currentClose > ema55Current,
+			ema9Current >= ema21Current && currentPrice > ema55Current,
 		sellSignal:
 			// ema9Last >= ema21Last &&
-			ema9Current <= ema21Current && currentClose < ema55Current,
-		price: currentClose,
+			ema9Current <= ema21Current && currentPrice < ema55Current,
+		price: currentPrice,
 	};
 }
 
