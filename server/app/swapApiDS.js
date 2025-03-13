@@ -105,7 +105,10 @@ class OrderManager {
 			config.symbol,
 			side,
 			amount,
-			price
+			price,
+			{
+				positionSide: side === 'buy' ? 'LONG' : 'SHORT',
+			}
 		);
 		state.activeOrders.push({
 			id: order.id,
