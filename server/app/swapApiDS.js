@@ -59,7 +59,11 @@ let state = {
 const exchange = new ccxt.binance({
 	apiKey: configBN.httpkey,
 	secret: configBN.httpsecret,
-	options: { adjustForTimeDifference: true },
+	options: {
+		adjustForTimeDifference: true,
+		defaultType: 'future',
+		hedgeMode: true,
+	},
 });
 
 // EMA计算函数
