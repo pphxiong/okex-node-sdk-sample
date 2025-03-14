@@ -209,7 +209,6 @@ class TradingStrategy {
   constructor(config) {
     this.config = config;
     this.position = null;
-    this.tradeHistory = [];
   }
 
   checkEntrySignal(indicators) {
@@ -257,6 +256,7 @@ class Backtester {
       peakCapital: STRATEGY_CONFIG.initialCapital,
     };
     this.currentCandle = {};
+    this.tradeHistory = [];
   }
 
   async executeBacktest() {
@@ -404,7 +404,7 @@ console.log("8092 server start");
 
 process.on("uncaughtException", function (e) {
   //打印出错误
-  restart(e);
+  //   restart(e);
 });
 
 let exec = require("child_process").exec;
