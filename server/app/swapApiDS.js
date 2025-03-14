@@ -99,6 +99,7 @@ class HighFrequencyStrategy {
 	// 处理K线更新
 	async handleKlineUpdate(msg) {
 		const kline = msg.k;
+		console.log(23, kline);
 		if (!kline.x) return; // 仅处理闭合K线
 
 		// 更新OHLCV数据
