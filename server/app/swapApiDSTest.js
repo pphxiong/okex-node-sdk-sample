@@ -51,7 +51,7 @@ async function fetchOHLCV() {
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles = allCandles.concat(candles);
-			if (allCandles.length > 2000) break; // 控制数据量
+			if (allCandles.length > 1000) break; // 控制数据量
 		}
 		return allCandles.map((c) => ({
 			timestamp: c[0],
@@ -67,6 +67,14 @@ async function fetchOHLCV() {
 	}
 }
 
+async function calculateSingleEMA(period, data) {
+	return new Promise((resolve) => {
+		tulind.indicators.ema.indicator([data], [period], (err, res) => {
+			resolve(res[0]);
+		});
+	});
+}
+
 // 2. 计算技术指标
 async function calculateIndicators(data) {
 	// 计算布林带
@@ -77,12 +85,19 @@ async function calculateIndicators(data) {
 		});
 	});
 
+	const [emaFast, emaSlow] = await Promise.all([
+		calculateSingleEMA(5, closes),
+		calculateSingleEMA(20, closes),
+	]);
+
 	// 合并指标到数据
 	return data.map((d, i) =>
 		Object.assign(d, {
 			bb_middle: middle[i],
 			bb_upper: upper[i],
 			bb_lower: lower[i],
+			emaFast: emaFast[i],
+			emaSlow: emaSlow[i],
 		})
 	);
 }
@@ -98,10 +113,8 @@ function generateSignals(data) {
 
 		// 买入信号
 		if (
-			(!position &&
-				current.close > current.bb_middle &&
-				prev.close <= prev.bb_middle) || // 上穿中线
-			(prev.close < prev.bb_lower && current.close > current.bb_middle) // 下轨反弹至中线
+			!position &&
+			current.emaFast > current.emaSlow // 下轨反弹至中线
 		) {
 			position = {
 				entryPrice: current.close,
@@ -115,9 +128,7 @@ function generateSignals(data) {
 		// 卖出信号
 		if (
 			position &&
-			(current.close < current.bb_middle || // 下穿中线
-				current.close >= position.takeProfit || // 触及止盈
-				current.close <= position.stopLoss) // 触及止损
+			current.emaFast < current.emaSlow // 触及止损
 		) {
 			signals.push({
 				type: 'sell',
