@@ -322,6 +322,7 @@ class Backtester {
       takeProfit,
       entryTime: indicators.timestamp,
     };
+    this.strategy.position = this.state.position;
     this.state.capital -= cost;
   }
 
@@ -345,6 +346,7 @@ class Backtester {
     });
 
     this.state.position = null;
+    this.strategy.position = null;
 
     // 更新最大回撤
     if (this.state.capital > this.state.peakCapital) {
