@@ -171,6 +171,7 @@ function backtest(data, signals) {
 
 // 5. 统计指标
 function calculateMetrics(trades, maxDrawdown) {
+	console.log(34, trades);
 	const profitable = trades.filter((t) => t.exit > t.entry).length;
 	const loss = trades.filter((t) => t.exit <= t.entry).length;
 	const winRate = profitable / (profitable + loss);
@@ -193,7 +194,6 @@ function calculateMetrics(trades, maxDrawdown) {
 async function main() {
 	// 获取数据
 	const rawData = await fetchOHLCV();
-	console.log(45, rawData, rawData.length);
 	if (rawData.length === 0) return;
 
 	// 计算指标
