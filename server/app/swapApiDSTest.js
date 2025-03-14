@@ -72,7 +72,7 @@ async function fetchOHLCV() {
 async function calculateIndicators(data) {
 	// 计算布林带
 	const closes = data.map((d) => d.close);
-	const [middle, upper, lower] = await new Promise((resolve) => {
+	const [lower, middle, upper] = await new Promise((resolve) => {
 		tulind.indicators.bbands.indicator([closes], [20, 2], (err, res) => {
 			resolve(res);
 		});
@@ -171,7 +171,7 @@ function backtest(data, signals) {
 
 // 5. 统计指标
 function calculateMetrics(trades, maxDrawdown) {
-	console.log(34, trades);
+	console.log(34, trades.length);
 	const profitable = trades.filter((t) => t.exit > t.entry).length;
 	const loss = trades.filter((t) => t.exit <= t.entry).length;
 	const winRate = profitable / (profitable + loss);
