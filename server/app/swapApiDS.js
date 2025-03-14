@@ -563,6 +563,81 @@ async function handleKlineUpdate(msg) {
 	await strategyLoop();
 }
 
+// // 加载历史数据
+// async function loadHistoricalData(days = 30) {
+// 	const since = moment().subtract(days, 'days').valueOf();
+// 	const klines = await exchange.fetchOHLCV(
+// 		config.symbol,
+// 		config.timeframe,
+// 		since,
+// 		null,
+// 		{ limit: 1000 }
+// 	);
+//   return klines
+// }
+
+// // 回测运行
+// async function backtest(days) {
+// 	const klines = await this.loadHistoricalData(days);
+
+// 	for (let i = config.bollPeriod; i < klines.length; i++) {
+// 		this.ohlcv = this.ohlcv.slice(0, i + 1);
+// 		const signal = await this.generateSignal();
+// 		if (signal) await this.executeTrade(signal);
+// 		await this.checkExitConditions();
+// 	}
+
+// 	this.generateReport();
+// }
+
+// // 生成报告
+// function generateReport() {
+// 	const wins = this.tradeHistory.filter((t) => t.pnl > 0);
+// 	const losses = this.tradeHistory.filter((t) => t.pnl <= 0);
+
+// 	console.log(`
+//     === 策略回测报告 ===
+//     总交易次数: ${this.tradeHistory.length}
+//     胜率: ${((wins.length / this.tradeHistory.length) * 100).toFixed(1)}%
+//     平均盈利: ${(
+// 		(wins.reduce((s, t) => s + t.pnl, 0) / wins.length) *
+// 		100
+// 	).toFixed(2)}%
+//     平均亏损: ${(
+// 		(losses.reduce((s, t) => s + t.pnl, 0) / losses.length) *
+// 		100
+// 	).toFixed(2)}%
+//     最大回撤: ${this.calculateMaxDrawdown().toFixed(2)}%
+//     夏普比率: ${this.calculateSharpeRatio().toFixed(2)}
+//   `);
+// }
+
+// function calculateMaxDrawdown() {
+// 	let peak = 0;
+// 	let maxDrawdown = 0;
+// 	let equity = 0;
+
+// 	this.tradeHistory.forEach((trade) => {
+// 		equity += trade.pnl;
+// 		if (equity > peak) peak = equity;
+// 		const dd = (peak - equity) / peak;
+// 		if (dd > maxDrawdown) maxDrawdown = dd;
+// 	});
+
+// 	return maxDrawdown * 100;
+// }
+
+// function calculateSharpeRatio(riskFreeRate = 0.03) {
+// 	const returns = this.tradeHistory.map((t) => t.pnl);
+// 	const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
+// 	const stdDev = Math.sqrt(
+// 		returns
+// 			.map((x) => Math.pow(x - avgReturn, 2))
+// 			.reduce((a, b) => a + b, 0) / returns.length
+// 	);
+// 	return (avgReturn - riskFreeRate) / stdDev;
+// }
+
 // 启动策略
 (async () => {
 	await exchange.loadMarkets();

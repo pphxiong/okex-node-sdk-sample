@@ -75,11 +75,9 @@ class BollingerMacdStrategy {
 		this.ohlcv = await exchange.fetchOHLCV(
 			config.symbol,
 			config.timeframe,
-			// since,
-			// null,
-			// { limit: 1000 }
-			undefined,
-			1000
+			since,
+			null,
+			{ limit: 1000 }
 		);
 	}
 
@@ -256,7 +254,7 @@ class BollingerMacdStrategy {
 	// 回测运行
 	async backtest(days = 30) {
 		await this.loadHistoricalData(days);
-
+		console.log(23, this.ohlcv);
 		for (let i = config.bollPeriod; i < this.ohlcv.length; i++) {
 			this.ohlcv = this.ohlcv.slice(0, i + 1);
 			const signal = await this.generateSignal();
