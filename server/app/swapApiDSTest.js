@@ -31,7 +31,7 @@ const { performance } = require("perf_hooks");
 // #################### 策略配置 ####################
 const STRATEGY_CONFIG = {
   symbol: "DOGE/USDT",
-  timeframe: "1m", // K线周期
+  timeframe: "5m", // K线周期
   warmupPeriod: 1000, // 预热K线数量(确保指标稳定)
 
   // EMA参数
@@ -51,7 +51,7 @@ const STRATEGY_CONFIG = {
   entryRules: {
     emaSlopeThreshold: 0.0012, // EMA斜率阈值
     rsiDispersionBuy: -6, // RSI离散买入阈值
-    atrVolatilityRatio: 1.5, // ATR波动率倍数
+    atrVolatilityRatio: 1.5 / 100, // ATR波动率倍数
   },
 
   exitRules: {
