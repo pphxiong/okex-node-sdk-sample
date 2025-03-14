@@ -166,15 +166,16 @@ function generateSignals() {
 			const hardStopPrice = position.entryPrice * (1 - config.stopLoss);
 			const hardTakeProfitPrice =
 				position.entryPrice * (1 + config.takeProfit);
-			isCloseCondition =
-				current.close < hardStopPrice ||
-				current.close > hardTakeProfitPrice;
+			// isCloseCondition =
+			// 	current.close < hardStopPrice ||
+			// 	current.close > hardTakeProfitPrice;
+			isCloseCondition = current.close < target_5.emaFast;
 		}
 
 		// 卖出信号
 		if (
 			position &&
-			(current.emaFast < current.emaSlow || isCloseCondition) // 触及止损
+			isCloseCondition // 触及止损
 		) {
 			signals.push({
 				type: 'sell',
