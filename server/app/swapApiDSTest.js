@@ -79,7 +79,7 @@ class BollingerMacdStrategy {
 			// null,
 			// { limit: 1000 }
 			undefined,
-			50
+			1000
 		);
 	}
 
@@ -88,16 +88,16 @@ class BollingerMacdStrategy {
 		const closes = this.ohlcv.map((t) => t[4]);
 
 		// 计算BOLL
-		const boll = await tulind.indicators.bbands.indicator(
-			[closes],
-			[config.bollPeriod, config.bollStdDev]
-		);
-
-		// 计算MACD
-		const macd = await tulind.indicators.macd.indicator(
-			[closes],
-			[config.macdFast, config.macdSlow, config.macdSignal]
-		);
+		const [boll, macd] = await Promise.all([
+			tulind.indicators.bbands.indicator(
+				[closes],
+				[config.bollPeriod, config.bollStdDev]
+			),
+			tulind.indicators.macd.indicator(
+				[closes],
+				[config.macdFast, config.macdSlow, config.macdSignal]
+			),
+		]);
 		console.log(23, macd);
 
 		return {
