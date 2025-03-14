@@ -54,7 +54,7 @@ async function fetchOHLCV() {
 				timeframe,
 				sinceParam
 			);
-			console.log(45, candles);
+			console.log(45, candles.length);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles = allCandles.concat(candles);
