@@ -235,8 +235,10 @@ class TradingStrategy {
   }
 
   calculatePositionSize(price, stopLoss) {
+    console.log(price, stopLoss);
     const riskAmount = this.config.initialCapital * this.config.riskPerTrade;
     const stopLossDistance = price - stopLoss;
+    console.log(riskAmount, stopLossDistance);
     return riskAmount / Math.abs(stopLossDistance);
   }
 }
@@ -296,7 +298,7 @@ class Backtester {
     const takeProfit =
       indicators.price +
       indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
-    console.log(indicators.price, stopLoss);
+
     const positionSize = this.strategy.calculatePositionSize(
       indicators.price,
       stopLoss
