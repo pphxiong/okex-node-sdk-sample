@@ -185,6 +185,7 @@ class HighFrequencyStrategy {
 				this.ohlcv[this.ohlcv.length - 2][5] * 1.2;
 
 		console.log('################################');
+		console.log(11, lastIndex, indicators.upper);
 		console.log(
 			'time',
 			moment(this.ohlcv[this.ohlcv.length - 1][0]).format(
