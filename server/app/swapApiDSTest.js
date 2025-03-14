@@ -49,7 +49,7 @@ const STRATEGY_CONFIG = {
 
   // 交易规则
   entryRules: {
-    emaSlopeThreshold: 0.0012 / 2, // EMA斜率阈值
+    emaSlopeThreshold: 0.0012, // EMA斜率阈值
     rsiDispersionBuy: -6, // RSI离散买入阈值
     atrVolatilityRatio: 1.5 / 100, // ATR波动率倍数
   },
@@ -225,9 +225,8 @@ class TradingStrategy {
     if (!this.position) return false;
 
     const exitConditions = [
-      indicators.emaSlope < -this.config.entryRules.emaSlopeThreshold / 2,
-      //   indicators.price <= this.position.stopLoss,
-      //   indicators.price >= this.position.takeProfit,
+      indicators.price <= this.position.stopLoss,
+      indicators.price >= this.position.takeProfit,
       //   indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
