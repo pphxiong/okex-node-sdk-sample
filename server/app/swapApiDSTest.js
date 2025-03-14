@@ -301,13 +301,12 @@ class Backtester {
       indicators.price,
       stopLoss
     );
-    console.log(123, positionSize);
 
     // 扣除手续费和滑点
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
     const cost = positionSize * entryPrice * (1 + STRATEGY_CONFIG.feeRate);
 
-    console.log(11, cose, this.state.capital);
+    console.log(11, cost, this.state.capital);
     if (cost > this.state.capital) {
       console.log("资金不足");
       return; // 资金不足
