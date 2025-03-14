@@ -56,7 +56,7 @@ const STRATEGY_CONFIG = {
 
   exitRules: {
     stopLossMultiplier: 1.8, // 止损ATR倍数
-    takeProfitMultiplier: 2.5, // 止盈ATR倍数
+    takeProfitMultiplier: 1.8, // 止盈ATR倍数
     rsiDispersionSell: 8, // RSI离散卖出阈值
   },
 
