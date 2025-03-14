@@ -117,7 +117,6 @@ class HighFrequencyStrategy {
 			this.ohlcv.shift();
 		}
 		this.ohlcv.push(newBar);
-		console.log(11, kline);
 		// 生成交易信号
 		const signal = await this.generateSignal();
 		if (signal) {
@@ -183,6 +182,25 @@ class HighFrequencyStrategy {
 			macdLine < signalLine && // MACD死叉
 			histogram < prevHistogram && // 动量减弱
 			this.ohlcv[lastIndex][5] > this.ohlcv[lastIndex - 1][5] * 1.2;
+
+		console.log('################################');
+		console.log(
+			'time',
+			moment(this.ohlcv[lastIndex]).format('YYYY-MM-DD HH:mm:ss')
+		);
+		console.log('price', price);
+		console.log('uper', upper);
+		console.log('lower', lower);
+		console.log('macdLine', macdLine);
+		console.log('signalLine', signalLine);
+		console.log('histogram', histogram);
+		console.log('prevHistogram', prevHistogram);
+		console.log(
+			'volumn',
+			this.ohlcv[lastIndex][5],
+			this.ohlcv[lastIndex - 1][5]
+		);
+		console.log('################################');
 
 		if (longCondition) return { action: 'BUY', price };
 		if (shortCondition) return { action: 'SELL', price };
