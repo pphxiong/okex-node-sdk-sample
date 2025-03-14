@@ -234,9 +234,9 @@ class TradingStrategy {
     return exitConditions.some((c) => c);
   }
 
-  calculatePositionSize(price, atr) {
+  calculatePositionSize(price, stopLoss) {
     const riskAmount = this.config.initialCapital * this.config.riskPerTrade;
-    const stopLossDistance = price - this.position.stopLoss;
+    const stopLossDistance = price - stopLoss;
     return riskAmount / Math.abs(stopLossDistance);
   }
 }
