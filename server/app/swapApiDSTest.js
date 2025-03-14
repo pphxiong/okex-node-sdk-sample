@@ -263,7 +263,7 @@ class Backtester {
     const startTime = performance.now();
 
     // 获取历史数据
-    const rawData = await this.dataFetcher.fetchHistoricalData(2000);
+    const rawData = await this.dataFetcher.fetchHistoricalData(3000);
     console.log(
       rawData.map((item) =>
         moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss")
