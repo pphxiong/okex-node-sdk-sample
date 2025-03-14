@@ -125,6 +125,8 @@ class BollingerMacdStrategy {
 		const prevHistogram =
 			indicators.histogram[indicators.histogram.length - 2];
 
+		console.log(23, indicators);
+
 		// 多头信号
 		if (
 			price <= lower &&
