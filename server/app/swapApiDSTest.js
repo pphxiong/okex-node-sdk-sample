@@ -78,7 +78,6 @@ class BollingerMacdStrategy {
 			since,
 			1000
 		);
-		console.log(34, this.ohlcv);
 	}
 
 	// 计算技术指标
@@ -302,7 +301,7 @@ class BollingerMacdStrategy {
 		const stdDev = Math.sqrt(
 			returns
 				.map((x) => Math.pow(x - avgReturn, 2))
-				.reduce((a, b) => a + b) / returns.length
+				.reduce((a, b) => a + b, 0) / returns.length
 		);
 		return (avgReturn - riskFreeRate) / stdDev;
 	}
