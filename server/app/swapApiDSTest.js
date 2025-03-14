@@ -77,7 +77,7 @@ class DataFetcher {
   async fetchHistoricalData(limit = 5000) {
     try {
       const since = this.exchange.milliseconds() - limit * 60 * 1000;
-      const candles = await this.exchange.fetch_ohlcv(
+      const candles = await this.exchange.fetchOHLCV(
         this.config.symbol,
         this.config.timeframe,
         since,
@@ -263,7 +263,7 @@ class Backtester {
     const startTime = performance.now();
 
     // 获取历史数据
-    const rawData = await this.dataFetcher.fetchHistoricalData(20000);
+    const rawData = await this.dataFetcher.fetchHistoricalData();
     console.log(rawData.length);
     // 逐根K线回测
     for (const candle of rawData) {
