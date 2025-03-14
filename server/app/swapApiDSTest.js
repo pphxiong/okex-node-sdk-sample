@@ -233,7 +233,7 @@ function calculateMetrics(trades, maxDrawdown) {
 async function main() {
 	const { periods } = config.emaSettings;
 	const tfs = Object.keys(periods);
-	const numList = [100, 300, 1500];
+	const numList = [100, 300, 1000];
 
 	let i = 0;
 	while (true) {
