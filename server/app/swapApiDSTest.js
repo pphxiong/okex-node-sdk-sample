@@ -230,17 +230,26 @@ function calculateMetrics(trades, maxDrawdown) {
 // 6. 执行主程序
 async function main() {
 	const { periods } = config.emaSettings;
-	Object.entries(periods).forEach(async ([period, times]) => {
-		// 获取数据
+	for (let i = 0; i < periods.length; i += 1) {
+		const period = periods[i];
 		const rawData = await fetchOHLCV(period, 500);
 		marketData[period] = rawData;
 
 		// 计算指标
 		const dataWithIndicators = await calculateIndicators(rawData);
 		dataWithIndicatorsMap[period] = dataWithIndicators;
+	}
+	// Object.entries(periods).forEach(async ([period, times]) => {
+	// 	// 获取数据
+	// 	const rawData = await fetchOHLCV(period, 500);
+	// 	marketData[period] = rawData;
 
-		console.log(marketData, dataWithIndicatorsMap);
-	});
+	// 	// 计算指标
+	// 	const dataWithIndicators = await calculateIndicators(rawData);
+	// 	dataWithIndicatorsMap[period] = dataWithIndicators;
+
+	// 	console.log(marketData, dataWithIndicatorsMap);
+	// });
 	// // 获取数据
 	// const rawData = await fetchOHLCV();
 	// if (rawData.length === 0) return;
