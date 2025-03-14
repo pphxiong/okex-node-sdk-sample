@@ -31,7 +31,7 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	exchange: 'binance',
-	timeframe: '5m',
+	timeframe: '1m',
 
 	// BOLL参数
 	bollPeriod: 14,
@@ -81,7 +81,6 @@ class BollingerMacdStrategy {
 			undefined,
 			1000
 		);
-		console.log(33, this.ohlcv);
 	}
 
 	// 计算技术指标
