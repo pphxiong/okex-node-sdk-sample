@@ -26,7 +26,7 @@ const cAuthClientBN = new customAuthClientBN(
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
-const { SMA, STDDEV } = require('tulind/indicators');
+// const { SMA, STDDEV } = require('tulind/indicators');
 
 // 0. 环境配置
 const exchange = new ccxt.binance({
