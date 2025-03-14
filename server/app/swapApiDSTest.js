@@ -124,7 +124,9 @@ async function calculateIndicators(data) {
 }
 
 // 3. 策略逻辑
-function generateSignals(data) {
+function generateSignals() {
+	const data = dataWithIndicatorsMap['1m'];
+
 	let position = null;
 	const signals = [];
 
@@ -174,7 +176,7 @@ function generateSignals(data) {
 }
 
 // 4. 回测引擎
-function backtest(data, signals) {
+function backtest(signals) {
 	let balance = 1000; // 初始资金
 	let maxBalance = balance;
 	let maxDrawdown = 0;
@@ -231,12 +233,13 @@ function calculateMetrics(trades, maxDrawdown) {
 async function main() {
 	const { periods } = config.emaSettings;
 	const tfs = Object.keys(periods);
+	const numList = [100, 300, 1500];
 
 	let i = 0;
 	while (true) {
 		try {
 			const period = tfs[i];
-			const rawData = await fetchOHLCV(period, 500);
+			const rawData = await fetchOHLCV(period, numList[i]);
 			marketData[period] = rawData;
 
 			// 计算指标
@@ -264,20 +267,14 @@ async function main() {
 	// const rawData = await fetchOHLCV();
 	// if (rawData.length === 0) return;
 
-	console.log(marketData, dataWithIndicatorsMap);
-	return;
-
 	// 计算指标
-	const dataWithIndicators = await calculateIndicators(rawData);
+	// const dataWithIndicators = await calculateIndicators(rawData);
 
 	// 生成信号
-	const signals = generateSignals(dataWithIndicators);
+	const signals = generateSignals();
 
 	// 执行回测
-	const { balance, maxDrawdown, trades } = backtest(
-		dataWithIndicators,
-		signals
-	);
+	const { balance, maxDrawdown, trades } = backtest(signals);
 
 	// 输出结果
 	console.log('===== 回测结果 =====');
