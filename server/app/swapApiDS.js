@@ -320,7 +320,8 @@ async function generateSignal(candles, currentPrice) {
 	console.log(
 		'volumn',
 		ohlcv[ohlcv.length - 1][5],
-		ohlcv[ohlcv.length - 2][5]
+		ohlcv[ohlcv.length - 2][5],
+		ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2
 	);
 	// console.log('ema', ema9Current, ema21Current, ema55Current);
 	console.log('position', state.position);
@@ -416,7 +417,7 @@ class RiskManager {
 		state.highestPrice = 0;
 		state.lowestPrice = 0;
 
-		// this.activateCooldown();
+		this.activateCooldown();
 	}
 
 	static activateCooldown() {
