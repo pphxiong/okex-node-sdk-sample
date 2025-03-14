@@ -563,6 +563,7 @@ async function handleKlineUpdate(msg) {
 // 启动策略
 (async () => {
 	await exchange.loadMarkets();
+	await initialize();
 	await initPositionData();
 	connectWebSocket();
 	// await strategyLoop();
