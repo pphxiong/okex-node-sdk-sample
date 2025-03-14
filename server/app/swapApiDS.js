@@ -152,21 +152,25 @@ class HighFrequencyStrategy {
 		};
 	}
 
+	getLastIndicators(indicators, key) {
+		return indicators[key][indicators[key].length - 1];
+	}
+
 	// 生成交易信号
 	async generateSignal() {
 		if (this.ohlcv.length < config.coldStartBars) return null;
 
 		const indicators = await this.calculateIndicators();
-		const lastIndex = indicators.upper.length - 1;
 
 		// 当前指标值
 		const price = this.ohlcv[this.ohlcv.length - 1][4];
-		const upper = indicators.upper[lastIndex];
-		const lower = indicators.lower[lastIndex];
-		const macdLine = indicators.macdLine[lastIndex];
-		const signalLine = indicators.signalLine[lastIndex];
-		const histogram = indicators.histogram[lastIndex];
-		const prevHistogram = indicators.histogram[lastIndex - 1];
+		const upper = this.getLastIndicators(indicators, 'upper');
+		const lower = this.getLastIndicators(indicators, 'lower');
+		const macdLine = this.getLastIndicators(indicators, 'macdLine');
+		const signalLine = this.getLastIndicators(indicators, 'signalLine');
+		const histogram = this.getLastIndicators(indicators, 'histogram');
+		const prevHistogram =
+			indicators.histogram[indicators.histogram.length - 2];
 
 		// 多头信号条件
 		const longCondition =
@@ -185,7 +189,6 @@ class HighFrequencyStrategy {
 				this.ohlcv[this.ohlcv.length - 2][5] * 1.2;
 
 		console.log('################################');
-		console.log(11, lastIndex, indicators);
 		console.log(
 			'time',
 			moment(this.ohlcv[this.ohlcv.length - 1][0]).format(
