@@ -31,11 +31,11 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	exchange: 'binance',
-	timeframe: '1m',
+	timeframe: '5m',
 
 	// BOLL参数
 	bollPeriod: 14,
-	bollStdDev: 3.0,
+	bollStdDev: 2.8,
 
 	// MACD参数
 	macdFast: 8,
@@ -79,6 +79,7 @@ class BollingerMacdStrategy {
 			null,
 			{ limit: 1000 }
 		);
+		console.log(34, this.ohlcv);
 	}
 
 	// 计算技术指标
@@ -86,47 +87,41 @@ class BollingerMacdStrategy {
 		const closes = this.ohlcv.map((t) => t[4]);
 
 		// 计算BOLL
-		const [boll, macd] = await Promise.all([
-			tulind.indicators.bbands.indicator(
-				[closes],
-				[config.bollPeriod, config.bollStdDev]
-			),
-			tulind.indicators.macd.indicator(
-				[closes],
-				[config.macdFast, config.macdSlow, config.macdSignal]
-			),
-		]);
-		console.log(23, this.ohlcv, this.ohlcv.length);
+		const boll = await tulind.indicators.bbands.indicator(
+			[closes],
+			[config.bollPeriod, config.bollStdDev]
+		);
+
+		// 计算MACD
+		const macd = await tulind.indicators.macd.indicator(
+			[closes],
+			[config.macdFast, config.macdSlow, config.macdSignal]
+		);
 
 		return {
-			lower: boll[0],
+			upper: boll[0],
 			middle: boll[1],
-			upper: boll[2],
+			lower: boll[2],
 			macdLine: macd[0],
 			signalLine: macd[1],
 			histogram: macd[2],
 		};
 	}
 
-	getLastIndicators(indicators, key) {
-		return indicators[key][indicators[key].length - 1];
-	}
-
 	// 生成交易信号
 	async generateSignal() {
 		const indicators = await this.calculateIndicators();
+		const lastIndex = this.ohlcv.length - 1;
 
 		// 当前价格和指标值
-		const price = this.ohlcv[this.ohlcv.length - 1][4];
-		const upper = this.getLastIndicators(indicators, 'upper');
-		const lower = this.getLastIndicators(indicators, 'lower');
-		const macdLine = this.getLastIndicators(indicators, 'macdLine');
-		const signalLine = this.getLastIndicators(indicators, 'signalLine');
-		const histogram = this.getLastIndicators(indicators, 'histogram');
-		const prevHistogram =
-			indicators.histogram[indicators.histogram.length - 2];
-		console.log(11, this.ohlcv);
-		console.log(22, indicators);
+		const price = this.ohlcv[lastIndex][4];
+		const upper = indicators.upper[lastIndex];
+		const lower = indicators.lower[lastIndex];
+		const macdLine = indicators.macdLine[lastIndex];
+		const signalLine = indicators.signalLine[lastIndex];
+		const histogram = indicators.histogram[lastIndex];
+		const prevHistogram = indicators.histogram[lastIndex - 1];
+
 		// 多头信号
 		if (
 			price <= lower &&
@@ -178,14 +173,13 @@ class BollingerMacdStrategy {
 			);
 
 			// 记录持仓
-			this.positions.push(
-				Object.assign(order, {
-					entryPrice: order.price,
-					stopLoss: order.stopLossPrice,
-					takeProfit: order.takeProfitPrice,
-					timestamp: Date.now(),
-				})
-			);
+			this.positions.push({
+				...order,
+				entryPrice: order.price,
+				stopLoss: order.stopLossPrice,
+				takeProfit: order.takeProfitPrice,
+				timestamp: Date.now(),
+			});
 
 			console.log(`执行交易：${signal.signal} @ ${order.price}`);
 		} catch (err) {
@@ -240,13 +234,12 @@ class BollingerMacdStrategy {
 				? (exitPrice - position.entryPrice) / position.entryPrice
 				: (position.entryPrice - exitPrice) / position.entryPrice;
 
-		this.tradeHistory.push(
-			Object.assign(position, {
-				exitPrice,
-				pnl,
-				isStopLoss,
-			})
-		);
+		this.tradeHistory.push({
+			...position,
+			exitPrice,
+			pnl,
+			isStopLoss,
+		});
 
 		this.dailyProfit += pnl;
 	}
@@ -254,7 +247,7 @@ class BollingerMacdStrategy {
 	// 回测运行
 	async backtest(days = 30) {
 		await this.loadHistoricalData(days);
-		console.log(23, this.ohlcv);
+
 		for (let i = config.bollPeriod; i < this.ohlcv.length; i++) {
 			this.ohlcv = this.ohlcv.slice(0, i + 1);
 			const signal = await this.generateSignal();
@@ -308,7 +301,7 @@ class BollingerMacdStrategy {
 		const stdDev = Math.sqrt(
 			returns
 				.map((x) => Math.pow(x - avgReturn, 2))
-				.reduce((a, b) => a + b, 0) / returns.length
+				.reduce((a, b) => a + b) / returns.length
 		);
 		return (avgReturn - riskFreeRate) / stdDev;
 	}
@@ -321,24 +314,24 @@ class BollingerMacdStrategy {
 	// 运行回测
 	await strategy.backtest(90);
 
-	// // 实盘循环
-	// setInterval(async () => {
-	// 	// 更新K线数据
-	// 	const newOhlcv = await exchange.fetchOHLCV(
-	// 		config.symbol,
-	// 		config.timeframe,
-	// 		undefined,
-	// 		5
-	// 	);
-	// 	strategy.ohlcv = [...strategy.ohlcv, ...newOhlcv].slice(-100);
+	// 实盘循环
+	setInterval(async () => {
+		// 更新K线数据
+		const newOhlcv = await exchange.fetchOHLCV(
+			config.symbol,
+			config.timeframe,
+			undefined,
+			5
+		);
+		strategy.ohlcv = [...strategy.ohlcv, ...newOhlcv].slice(-100);
 
-	// 	// 生成信号
-	// 	const signal = await strategy.generateSignal();
-	// 	if (signal) await strategy.executeTrade(signal);
+		// 生成信号
+		const signal = await strategy.generateSignal();
+		if (signal) await strategy.executeTrade(signal);
 
-	// 	// 检查平仓
-	// 	await strategy.checkExitConditions();
-	// }, 300000); // 每5分钟运行一次
+		// 检查平仓
+		await strategy.checkExitConditions();
+	}, 300000); // 每5分钟运行一次
 })();
 
 app.listen(8092);
