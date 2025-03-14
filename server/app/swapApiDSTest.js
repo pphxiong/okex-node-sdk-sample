@@ -265,7 +265,7 @@ class Backtester {
     const startTime = performance.now();
 
     // 获取历史数据
-    const rawData = await this.dataFetcher.fetchHistoricalData(15000);
+    const rawData = await this.dataFetcher.fetchHistoricalData();
 
     // 逐根K线回测
     for (const candle of rawData) {
