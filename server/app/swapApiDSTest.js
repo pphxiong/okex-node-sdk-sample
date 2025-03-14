@@ -297,7 +297,10 @@ class Backtester {
       indicators.price +
       indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
 
-    const positionSize = this.calculatePositionSize(indicators.price, stopLoss);
+    const positionSize = this.strategy.calculatePositionSize(
+      indicators.price,
+      stopLoss
+    );
 
     // 扣除手续费和滑点
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
