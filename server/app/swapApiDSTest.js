@@ -51,7 +51,7 @@ const STRATEGY_CONFIG = {
   entryRules: {
     emaSlopeThreshold: 0.0012, // EMA斜率阈值
     rsiDispersionBuy: -6, // RSI离散买入阈值
-    atrVolatilityRatio: 1.5 / 100, // ATR波动率倍数
+    atrVolatilityRatio: 1.5, // ATR波动率倍数
   },
 
   exitRules: {
@@ -197,7 +197,7 @@ class IndicatorEngine {
         [highs, lows, closes],
         [this.config.atrPeriod],
         (err, res) => {
-          resolve(res[0]);
+          resolve(res[0] / 100);
         }
       );
     });
