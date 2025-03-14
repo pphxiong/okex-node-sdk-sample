@@ -36,6 +36,12 @@ const symbol = 'DOGE/USDT';
 const timeframe = '1m';
 const since = exchange.parse8601('2023-01-01T00:00:00Z');
 
+// 配置参数
+const config = {
+	stopLoss: 0.008, // 硬止损(0.5%)
+	takeProfit: 0.012, // 硬止盈(1%)
+};
+
 // 1. 获取历史数据
 async function fetchOHLCV() {
 	try {
@@ -125,12 +131,20 @@ function generateSignals(data) {
 			signals.push(Object.assign({ type: 'buy', index: i }, position));
 		}
 
+		let isCloseCondition = false;
+		if (position) {
+			const hardStopPrice = position.entryPrice * (1 - config.stopLoss);
+			const hardTakeProfitPrice =
+				position.entryPrice * (1 + config.takeProfit);
+			isCloseCondition =
+				current.close < hardStopPrice ||
+				current.close > hardTakeProfitPrice;
+		}
+
 		// 卖出信号
 		if (
 			position &&
-			(current.emaFast < current.emaSlow || // 下穿中线
-				current.close >= position.takeProfit || // 触及止盈
-				current.close <= position.stopLoss) // 触及止损
+			(current.emaFast < current.emaSlow || isCloseCondition) // 触及止损
 		) {
 			signals.push({
 				type: 'sell',
