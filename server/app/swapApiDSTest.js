@@ -75,11 +75,11 @@ class BollingerMacdStrategy {
 		this.ohlcv = await exchange.fetchOHLCV(
 			config.symbol,
 			config.timeframe,
-			// since,
-			// null,
-			// { limit: 1000 }
-			undefined,
-			1000
+			since,
+			null,
+			{ limit: 1000 }
+			// undefined,
+			// 1000
 		);
 	}
 
@@ -323,24 +323,24 @@ class BollingerMacdStrategy {
 	// 运行回测
 	await strategy.backtest(90);
 
-	// 实盘循环
-	setInterval(async () => {
-		// 更新K线数据
-		const newOhlcv = await exchange.fetchOHLCV(
-			config.symbol,
-			config.timeframe,
-			undefined,
-			5
-		);
-		strategy.ohlcv = [...strategy.ohlcv, ...newOhlcv].slice(-100);
+	// // 实盘循环
+	// setInterval(async () => {
+	// 	// 更新K线数据
+	// 	const newOhlcv = await exchange.fetchOHLCV(
+	// 		config.symbol,
+	// 		config.timeframe,
+	// 		undefined,
+	// 		5
+	// 	);
+	// 	strategy.ohlcv = [...strategy.ohlcv, ...newOhlcv].slice(-100);
 
-		// 生成信号
-		const signal = await strategy.generateSignal();
-		if (signal) await strategy.executeTrade(signal);
+	// 	// 生成信号
+	// 	const signal = await strategy.generateSignal();
+	// 	if (signal) await strategy.executeTrade(signal);
 
-		// 检查平仓
-		await strategy.checkExitConditions();
-	}, 300000); // 每5分钟运行一次
+	// 	// 检查平仓
+	// 	await strategy.checkExitConditions();
+	// }, 300000); // 每5分钟运行一次
 })();
 
 app.listen(8092);
