@@ -38,8 +38,8 @@ const since = exchange.parse8601('2023-01-01T00:00:00Z');
 
 // 配置参数
 const config = {
-	stopLoss: 0.008, // 硬止损(0.5%)
-	takeProfit: 0.015, // 硬止盈(1%)
+	stopLoss: 0.015, // 硬止损(0.5%)
+	takeProfit: 0.025, // 硬止盈(1%)
 	emaSettings: {
 		periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
 		slopeThreshold: 0.1 / 100, // EMA斜率阈值
