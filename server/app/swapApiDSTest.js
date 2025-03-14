@@ -128,7 +128,9 @@ function generateSignals(data) {
 		// 卖出信号
 		if (
 			position &&
-			current.emaFast < current.emaSlow // 触及止损
+			(current.emaFast < current.emaSlow || // 下穿中线
+				current.close >= position.takeProfit || // 触及止盈
+				current.close <= position.stopLoss) // 触及止损
 		) {
 			signals.push({
 				type: 'sell',
