@@ -75,9 +75,11 @@ class BollingerMacdStrategy {
 		this.ohlcv = await exchange.fetchOHLCV(
 			config.symbol,
 			config.timeframe,
-			since,
-			null,
-			{ limit: 1000 }
+			// since,
+			// null,
+			// { limit: 1000 }
+			undefined,
+			1000
 		);
 		console.log(33, this.ohlcv);
 	}
