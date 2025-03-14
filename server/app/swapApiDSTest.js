@@ -50,7 +50,7 @@ async function fetchOHLCV() {
 			);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
-			allCandles.push(...candles);
+			allCandles.concat(candles);
 			if (allCandles.length > 1000) break; // 控制数据量
 		}
 
@@ -79,12 +79,13 @@ async function calculateIndicators(data) {
 	});
 
 	// 合并指标到数据
-	return data.map((d, i) => ({
-		...d,
-		bb_middle: middle[i],
-		bb_upper: upper[i],
-		bb_lower: lower[i],
-	}));
+	return data.map((d, i) =>
+		Object.assign(d, {
+			bb_middle: middle[i],
+			bb_upper: upper[i],
+			bb_lower: lower[i],
+		})
+	);
 }
 
 // 3. 策略逻辑
@@ -109,7 +110,7 @@ function generateSignals(data) {
 				stopLoss: current.bb_lower,
 				takeProfit: current.bb_upper,
 			};
-			signals.push({ type: 'buy', ...position, index: i });
+			signals.push(Object.assign({ type: 'buy', index: i }, position));
 		}
 
 		// 卖出信号
