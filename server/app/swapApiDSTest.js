@@ -218,7 +218,7 @@ class TradingStrategy {
       indicators.atr >
         (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
     ];
-
+    console.log(33, indicators, entryConditions);
     return entryConditions.every((c) => c);
   }
 
@@ -265,7 +265,6 @@ class Backtester {
 
     // 获取历史数据
     const rawData = await this.dataFetcher.fetchHistoricalData();
-    console.log(234, rawData);
 
     // 逐根K线回测
     for (const candle of rawData) {
