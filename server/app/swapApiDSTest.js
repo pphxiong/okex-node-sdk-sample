@@ -40,24 +40,39 @@ const since = exchange.parse8601('2023-01-01T00:00:00Z');
 const config = {
 	stopLoss: 0.008, // 硬止损(0.5%)
 	takeProfit: 0.008, // 硬止盈(1%)
+	emaSettings: {
+		periods: { '15m': [13, 34], '5m': [5, 21], '1m': [3, 8] },
+		slopeThreshold: 0.1 / 100, // EMA斜率阈值
+	},
+	atrSettings: {
+		period: 7,
+		stopLossMultiplier: 1.5,
+		takeProfitMultiplier: 2.5,
+	},
+};
+const marketData = {
+	'15m': [],
+	'5m': [],
+	'1m': [],
+};
+const dataWithIndicatorsMap = {
+	'15m': [],
+	'5m': [],
+	'1m': [],
 };
 
 // 1. 获取历史数据
-async function fetchOHLCV() {
+async function fetchOHLCV(tf, num) {
 	try {
 		let allCandles = [];
 		let sinceParam = since;
 
 		while (true) {
-			const candles = await exchange.fetch_ohlcv(
-				symbol,
-				timeframe,
-				sinceParam
-			);
+			const candles = await exchange.fetch_ohlcv(symbol, tf, sinceParam);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles = allCandles.concat(candles);
-			if (allCandles.length > 1000 * 2) break; // 控制数据量
+			if (allCandles.length > num) break; // 控制数据量
 		}
 		return allCandles.map((c) => ({
 			timestamp: c[0],
@@ -118,10 +133,7 @@ function generateSignals(data) {
 		const prev = data[i - 1];
 
 		// 买入信号
-		if (
-			!position &&
-			current.emaFast > current.emaSlow // 下轨反弹至中线
-		) {
+		if (!position && current.emaFast > current.emaSlow) {
 			position = {
 				entryPrice: current.close,
 				entryTime: current.timestamp,
@@ -217,9 +229,22 @@ function calculateMetrics(trades, maxDrawdown) {
 
 // 6. 执行主程序
 async function main() {
-	// 获取数据
-	const rawData = await fetchOHLCV();
-	if (rawData.length === 0) return;
+	const { periods } = config.emaSettings;
+	Object.entries(periods).forEach(async ([period, times]) => {
+		// 获取数据
+		const rawData = await fetchOHLCV(period, 500);
+		marketData[period] = rawData;
+
+		// 计算指标
+		const dataWithIndicators = await calculateIndicators(rawData);
+		dataWithIndicatorsMap[period] = dataWithIndicators;
+	});
+	// // 获取数据
+	// const rawData = await fetchOHLCV();
+	// if (rawData.length === 0) return;
+
+	console.log(marketData, dataWithIndicatorsMap);
+	return;
 
 	// 计算指标
 	const dataWithIndicators = await calculateIndicators(rawData);
