@@ -172,13 +172,14 @@ class BollingerMacdStrategy {
 			);
 
 			// 记录持仓
-			this.positions.push({
-				...order,
-				entryPrice: order.price,
-				stopLoss: order.stopLossPrice,
-				takeProfit: order.takeProfitPrice,
-				timestamp: Date.now(),
-			});
+			this.positions.push(
+				Object.assign(order, {
+					entryPrice: order.price,
+					stopLoss: order.stopLossPrice,
+					takeProfit: order.takeProfitPrice,
+					timestamp: Date.now(),
+				})
+			);
 
 			console.log(`执行交易：${signal.signal} @ ${order.price}`);
 		} catch (err) {
