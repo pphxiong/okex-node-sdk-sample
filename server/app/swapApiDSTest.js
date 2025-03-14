@@ -235,10 +235,8 @@ class TradingStrategy {
   }
 
   calculatePositionSize(price, stopLoss) {
-    console.log(price, stopLoss);
     const riskAmount = this.config.initialCapital * this.config.riskPerTrade;
     const stopLossDistance = price - stopLoss;
-    console.log(riskAmount, stopLossDistance);
     return riskAmount / Math.abs(stopLossDistance);
   }
 }
@@ -303,6 +301,7 @@ class Backtester {
       indicators.price,
       stopLoss
     );
+    console.log(123, positionSize);
 
     // 扣除手续费和滑点
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
