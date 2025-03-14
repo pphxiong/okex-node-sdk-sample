@@ -107,6 +107,7 @@ class IndicatorEngine {
   }
 
   async addNewCandle(candle) {
+    this.currentCandle = candle;
     this.data.push(candle);
     if (this.data.length > this.config.warmupPeriod) {
       this.data.shift();
@@ -255,6 +256,7 @@ class Backtester {
       maxDrawdown: 0,
       peakCapital: STRATEGY_CONFIG.initialCapital,
     };
+    this.currentCandle = {};
   }
 
   async executeBacktest() {
