@@ -516,9 +516,9 @@ function connectWebSocket() {
 (async () => {
 	await exchange.loadMarkets();
 	connectWebSocket();
-	await initPositionData();
-	await strategyLoop();
-	setInterval(strategyLoop, 15000); // 每15秒运行一次
+	// await initPositionData();
+	// await strategyLoop();
+	// setInterval(strategyLoop, 15000); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
