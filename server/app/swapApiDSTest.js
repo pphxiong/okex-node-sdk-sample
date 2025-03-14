@@ -98,6 +98,7 @@ class BollingerMacdStrategy {
 			[closes],
 			[config.macdFast, config.macdSlow, config.macdSignal]
 		);
+		console.log(23, macd);
 
 		return {
 			lower: boll[0],
