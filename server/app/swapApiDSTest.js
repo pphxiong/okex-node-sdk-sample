@@ -35,7 +35,7 @@ const config = {
 
 	// BOLL参数
 	bollPeriod: 14,
-	bollStdDev: 2.8,
+	bollStdDev: 3.0,
 
 	// MACD参数
 	macdFast: 8,
