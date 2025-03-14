@@ -51,7 +51,7 @@ const STRATEGY_CONFIG = {
   entryRules: {
     emaSlopeThreshold: 0.0012, // EMA斜率阈值
     rsiDispersionBuy: -6, // RSI离散买入阈值
-    atrVolatilityRatio: 1.5, // ATR波动率倍数
+    atrVolatilityRatio: 1.5 / 100, // ATR波动率倍数
   },
 
   exitRules: {
@@ -197,7 +197,7 @@ class IndicatorEngine {
         [highs, lows, closes],
         [this.config.atrPeriod],
         (err, res) => {
-          resolve(res[0] / 100);
+          resolve(res[0]);
         }
       );
     });
@@ -301,10 +301,8 @@ class Backtester {
       indicators.price +
       indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
 
-    const positionSize = this.strategy.calculatePositionSize(
-      indicators.price,
-      stopLoss
-    );
+    const positionSize =
+      this.strategy.calculatePositionSize(indicators.price, stopLoss) / 100;
 
     // 扣除手续费和滑点
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
