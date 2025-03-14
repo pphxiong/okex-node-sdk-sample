@@ -27,7 +27,6 @@ const cAuthClientBN = new customAuthClientBN(
 const ccxt = require('ccxt');
 const tulind = require('tulind');
 const WebSocket = require('ws');
-const moment = require('moment');
 
 // 配置参数
 const config = {
