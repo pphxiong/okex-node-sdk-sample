@@ -134,8 +134,24 @@ function generateSignals() {
 		const current = data[i];
 		const prev = data[i - 1];
 
+		const target_5 = marketData['5m'].find(
+			(d) =>
+				d.timestamp >= current.timestamp &&
+				d.timestamp < current.timestamp + 5 * 60 * 1000
+		);
+		const target_15 = marketData['15m'].find(
+			(d) =>
+				d.timestamp >= current.timestamp &&
+				d.timestamp < current.timestamp + 15 * 60 * 1000
+		);
+
 		// 买入信号
-		if (!position && current.emaFast > current.emaSlow) {
+		if (
+			!position &&
+			current.emaFast > current.emaSlow &&
+			target_5.emaFast > target_5.emaSlow &&
+			target_15.emaFast > target_15.emaSlow
+		) {
 			position = {
 				entryPrice: current.close,
 				entryTime: current.timestamp,
@@ -233,7 +249,7 @@ function calculateMetrics(trades, maxDrawdown) {
 async function main() {
 	const { periods } = config.emaSettings;
 	const tfs = Object.keys(periods);
-	const numList = [100, 300, 1000];
+	const numList = [100, 300, 1500];
 
 	let i = 0;
 	while (true) {
