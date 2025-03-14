@@ -145,9 +145,9 @@ class HighFrequencyStrategy {
 		console.log('macd', macd);
 
 		return {
-			upper: boll[0],
+			lower: boll[0],
 			middle: boll[1],
-			lower: boll[2],
+			upper: boll[2],
 			macdLine: macd[0],
 			signalLine: macd[1],
 			histogram: macd[2],
@@ -230,6 +230,7 @@ class HighFrequencyStrategy {
 				{
 					stopLoss: this.calculateStopPrice(signal),
 					takeProfit: this.calculateTakeProfit(signal),
+					positionSide: signal.action === 'BUY' ? 'LONG' : 'SHORT',
 				}
 			);
 
