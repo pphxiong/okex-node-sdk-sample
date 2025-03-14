@@ -218,7 +218,6 @@ class TradingStrategy {
       indicators.atr >
         (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
     ];
-    console.log(33, indicators, entryConditions);
     return entryConditions.every((c) => c);
   }
 
