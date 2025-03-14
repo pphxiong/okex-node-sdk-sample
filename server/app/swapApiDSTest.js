@@ -31,7 +31,7 @@ const { performance } = require("perf_hooks");
 // #################### 策略配置 ####################
 const STRATEGY_CONFIG = {
   symbol: "DOGE/USDT",
-  timeframe: "5m", // K线周期
+  timeframe: "1m", // K线周期
   warmupPeriod: 1000, // 预热K线数量(确保指标稳定)
 
   // EMA参数
@@ -303,7 +303,11 @@ class Backtester {
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
     const cost = positionSize * entryPrice * (1 + STRATEGY_CONFIG.feeRate);
 
-    if (cost > this.state.capital) return; // 资金不足
+    console.log(11, cose, this.state.capital);
+    if (cost > this.state.capital) {
+      console.log("资金不足");
+      return; // 资金不足
+    }
 
     this.state.position = {
       entryPrice,
