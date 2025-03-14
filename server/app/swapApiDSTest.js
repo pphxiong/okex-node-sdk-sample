@@ -26,310 +26,195 @@ const cAuthClientBN = new customAuthClientBN(
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
+const { SMA, STDDEV } = require('tulind/indicators');
 
-// 策略配置
-const config = {
-	symbol: 'DOGE/USDT',
-	exchange: 'binance',
-	timeframe: '5m',
-
-	// BOLL参数
-	bollPeriod: 14,
-	bollStdDev: 2.8,
-
-	// MACD参数
-	macdFast: 8,
-	macdSlow: 17,
-	macdSignal: 5,
-
-	// 交易参数
-	tradeAmount: 1000, // 基础交易量
-	stopLossPct: 1.5, // 止损百分比
-	takeProfitPct: 3, // 止盈百分比
-	maxLeverage: 3, // 最大杠杆
-
-	// 风控参数
-	dailyLossLimit: -5, // 单日最大亏损百分比
-	maxPositions: 3, // 最大同时持仓数
-};
-
-// 初始化交易所
+// 0. 环境配置
 const exchange = new ccxt.binance({
-	apiKey: configBN.httpkey,
-	secret: configBN.httpsecret,
-	options: { defaultType: 'future' }, // 永续合约
 	enableRateLimit: true,
 });
+const symbol = 'DOGE/USDT';
+const timeframe = '1h';
+const since = exchange.parse8601('2023-01-01T00:00:00Z');
 
-class BollingerMacdStrategy {
-	constructor() {
-		this.ohlcv = [];
-		this.positions = [];
-		this.tradeHistory = [];
-		this.dailyProfit = 0;
-	}
+// 1. 获取历史数据
+async function fetchOHLCV() {
+	try {
+		const allCandles = [];
+		let sinceParam = since;
 
-	// 加载历史数据
-	async loadHistoricalData(days = 30) {
-		const since = moment().subtract(days, 'days').valueOf();
-		this.ohlcv = await exchange.fetch_ohlcv(
-			config.symbol,
-			config.timeframe,
-			since,
-			1000
-		);
-	}
-
-	// 计算技术指标
-	async calculateIndicators() {
-		const closes = this.ohlcv.map((t) => t[4]);
-
-		// 计算BOLL
-		const boll = await tulind.indicators.bbands.indicator(
-			[closes],
-			[config.bollPeriod, config.bollStdDev]
-		);
-
-		// 计算MACD
-		const macd = await tulind.indicators.macd.indicator(
-			[closes],
-			[config.macdFast, config.macdSlow, config.macdSignal]
-		);
-
-		return {
-			lower: boll[0],
-			middle: boll[1],
-			upper: boll[2],
-			macdLine: macd[0],
-			signalLine: macd[1],
-			histogram: macd[2],
-		};
-	}
-
-	getLastIndicators(indicators, key) {
-		return indicators[key][indicators[key].length - 1];
-	}
-
-	// 生成交易信号
-	async generateSignal() {
-		const indicators = await this.calculateIndicators();
-
-		// 当前价格和指标值
-		const price = this.ohlcv[this.ohlcv.length - 1][4];
-		const upper = this.getLastIndicators(indicators, 'upper');
-		const lower = this.getLastIndicators(indicators, 'lower');
-		const middle = this.getLastIndicators(indicators, 'middle');
-		const macdLine = this.getLastIndicators(indicators, 'macdLine');
-		const signalLine = this.getLastIndicators(indicators, 'signalLine');
-		const histogram = this.getLastIndicators(indicators, 'histogram');
-		const prevHistogram =
-			indicators.histogram[indicators.histogram.length - 2];
-
-		// 多头信号
-		if (price > middle) {
-			return { signal: 'BUY', triggerPrice: price };
-		}
-
-		// 空头信号
-		if (price < middle) {
-			return { signal: 'SELL', triggerPrice: price };
-		}
-
-		return null;
-	}
-
-	// 执行交易
-	async executeTrade(signal) {
-		try {
-			// 检查风控
-			if (!this.checkRiskManagement()) return;
-
-			// 创建订单
-			const order = await exchange.createOrder(
-				config.symbol,
-				'market',
-				signal.signal.toLowerCase(),
-				config.tradeAmount,
-				null,
-				{
-					stopLossPrice:
-						signal.signal === 'BUY'
-							? signal.triggerPrice *
-							  (1 - config.stopLossPct / 100)
-							: signal.triggerPrice *
-							  (1 + config.stopLossPct / 100),
-					takeProfitPrice:
-						signal.signal === 'BUY'
-							? signal.triggerPrice *
-							  (1 + config.takeProfitPct / 100)
-							: signal.triggerPrice *
-							  (1 - config.takeProfitPct / 100),
-				}
+		while (true) {
+			const candles = await exchange.fetchOHLCV(
+				symbol,
+				timeframe,
+				sinceParam
 			);
-
-			// 记录持仓
-			this.positions.push(
-				Object.assign(order, {
-					entryPrice: order.price,
-					stopLoss: order.stopLossPrice,
-					takeProfit: order.takeProfitPrice,
-					timestamp: Date.now(),
-				})
-			);
-
-			console.log(`执行交易：${signal.signal} @ ${order.price}`);
-		} catch (err) {
-			console.error('订单错误:', err);
-		}
-	}
-
-	// 风控检查
-	checkRiskManagement() {
-		// 单日亏损限制
-		if (this.dailyProfit < config.dailyLossLimit) {
-			console.log('触发单日亏损限制，停止交易');
-			return false;
+			if (!candles.length) break;
+			sinceParam = candles[candles.length - 1][0] + 1;
+			allCandles.push(...candles);
+			if (allCandles.length > 1000) break; // 控制数据量
 		}
 
-		// 最大持仓限制
-		if (this.positions.length >= config.maxPositions) {
-			console.log('达到最大持仓限制');
-			return false;
-		}
-
-		return true;
-	}
-
-	// 监控平仓条件
-	async checkExitConditions() {
-		const ticker = await exchange.fetchTicker(config.symbol);
-		const currentPrice = ticker.last;
-
-		this.positions = this.positions.filter((position) => {
-			const isLong = position.side === 'buy';
-			const stopHit = isLong
-				? currentPrice <= position.stopLoss
-				: currentPrice >= position.stopLoss;
-
-			const profitHit = isLong
-				? currentPrice >= position.takeProfit
-				: currentPrice <= position.takeProfit;
-
-			if (stopHit || profitHit) {
-				this.recordTradeResult(position, currentPrice, stopHit);
-				return false;
-			}
-			return true;
-		});
-	}
-
-	// 记录交易结果
-	recordTradeResult(position, exitPrice, isStopLoss) {
-		const pnl =
-			position.side === 'buy'
-				? (exitPrice - position.entryPrice) / position.entryPrice
-				: (position.entryPrice - exitPrice) / position.entryPrice;
-
-		this.tradeHistory.push(
-			Object.assign(position, {
-				exitPrice,
-				pnl,
-				isStopLoss,
-			})
-		);
-
-		this.dailyProfit += pnl;
-	}
-
-	// 回测运行
-	async backtest(days = 30) {
-		await this.loadHistoricalData(days);
-
-		for (let i = config.bollPeriod; i < this.ohlcv.length; i++) {
-			this.ohlcv = this.ohlcv.slice(0, i + 1);
-			const signal = await this.generateSignal();
-			if (signal) await this.executeTrade(signal);
-			await this.checkExitConditions();
-		}
-
-		this.generateReport();
-	}
-
-	// 生成报告
-	generateReport() {
-		const wins = this.tradeHistory.filter((t) => t.pnl > 0);
-		const losses = this.tradeHistory.filter((t) => t.pnl <= 0);
-
-		console.log(`
-      === 策略回测报告 ===
-      总交易次数: ${this.tradeHistory.length}
-      胜率: ${((wins.length / this.tradeHistory.length) * 100).toFixed(1)}%
-      平均盈利: ${(
-			(wins.reduce((s, t) => s + t.pnl, 0) / wins.length) *
-			100
-		).toFixed(2)}%
-      平均亏损: ${(
-			(losses.reduce((s, t) => s + t.pnl, 0) / losses.length) *
-			100
-		).toFixed(2)}%
-      最大回撤: ${this.calculateMaxDrawdown().toFixed(2)}%
-      夏普比率: ${this.calculateSharpeRatio().toFixed(2)}
-    `);
-	}
-
-	calculateMaxDrawdown() {
-		let peak = 0;
-		let maxDrawdown = 0;
-		let equity = 0;
-
-		this.tradeHistory.forEach((trade) => {
-			equity += trade.pnl;
-			if (equity > peak) peak = equity;
-			const dd = (peak - equity) / peak;
-			if (dd > maxDrawdown) maxDrawdown = dd;
-		});
-
-		return maxDrawdown * 100;
-	}
-
-	calculateSharpeRatio(riskFreeRate = 0.03) {
-		const returns = this.tradeHistory.map((t) => t.pnl);
-		const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
-		const stdDev = Math.sqrt(
-			returns
-				.map((x) => Math.pow(x - avgReturn, 2))
-				.reduce((a, b) => a + b, 0) / returns.length
-		);
-		return (avgReturn - riskFreeRate) / stdDev;
+		return allCandles.map((c) => ({
+			timestamp: c[0],
+			open: c[1],
+			high: c[2],
+			low: c[3],
+			close: c[4],
+			volume: c[5],
+		}));
+	} catch (e) {
+		console.error('获取数据失败:', e);
+		return [];
 	}
 }
 
-// 实盘运行
-(async () => {
-	const strategy = new BollingerMacdStrategy();
+// 2. 计算技术指标
+async function calculateIndicators(data) {
+	// 计算布林带
+	const closes = data.map((d) => d.close);
+	const [middle, upper, lower] = await new Promise((resolve) => {
+		tulind.indicators.bbands.indicator([closes], [20, 2], (err, res) => {
+			resolve(res);
+		});
+	});
 
-	// 运行回测
-	await strategy.backtest(90);
+	// 合并指标到数据
+	return data.map((d, i) => ({
+		...d,
+		bb_middle: middle[i],
+		bb_upper: upper[i],
+		bb_lower: lower[i],
+	}));
+}
 
-	// // 实盘循环
-	// setInterval(async () => {
-	// 	// 更新K线数据
-	// 	const newOhlcv = await exchange.fetchOHLCV(
-	// 		config.symbol,
-	// 		config.timeframe,
-	// 		undefined,
-	// 		5
-	// 	);
-	// 	strategy.ohlcv = [...strategy.ohlcv, ...newOhlcv].slice(-100);
+// 3. 策略逻辑
+function generateSignals(data) {
+	let position = null;
+	const signals = [];
 
-	// 	// 生成信号
-	// 	const signal = await strategy.generateSignal();
-	// 	if (signal) await strategy.executeTrade(signal);
+	for (let i = 1; i < data.length; i++) {
+		const current = data[i];
+		const prev = data[i - 1];
 
-	// 	// 检查平仓
-	// 	await strategy.checkExitConditions();
-	// }, 300000); // 每5分钟运行一次
-})();
+		// 买入信号
+		if (
+			(!position &&
+				current.close > current.bb_middle &&
+				prev.close <= prev.bb_middle) || // 上穿中线
+			(prev.close < prev.bb_lower && current.close > current.bb_middle) // 下轨反弹至中线
+		) {
+			position = {
+				entryPrice: current.close,
+				entryTime: current.timestamp,
+				stopLoss: current.bb_lower,
+				takeProfit: current.bb_upper,
+			};
+			signals.push({ type: 'buy', ...position, index: i });
+		}
+
+		// 卖出信号
+		if (
+			position &&
+			(current.close < current.bb_middle || // 下穿中线
+				current.close >= position.takeProfit || // 触及止盈
+				current.close <= position.stopLoss) // 触及止损
+		) {
+			signals.push({
+				type: 'sell',
+				exitPrice: current.close,
+				exitTime: current.timestamp,
+				return:
+					(current.close - position.entryPrice) / position.entryPrice,
+				index: i,
+			});
+			position = null;
+		}
+	}
+
+	return signals;
+}
+
+// 4. 回测引擎
+function backtest(data, signals) {
+	let balance = 1000; // 初始资金
+	let maxBalance = balance;
+	let maxDrawdown = 0;
+	const trades = [];
+
+	for (const signal of signals) {
+		if (signal.type === 'buy') {
+			const trade = {
+				entry: signal.entryPrice,
+				entryTime: signal.entryTime,
+				exit: null,
+				exitTime: null,
+				quantity: balance / signal.entryPrice,
+			};
+			balance = 0;
+			trades.push(trade);
+		} else if (trades.length > 0) {
+			const trade = trades[trades.length - 1];
+			trade.exit = signal.exitPrice;
+			trade.exitTime = signal.exitTime;
+			balance = trade.quantity * signal.exitPrice;
+
+			// 计算最大回撤
+			maxBalance = Math.max(maxBalance, balance);
+			const drawdown = (maxBalance - balance) / maxBalance;
+			maxDrawdown = Math.max(maxDrawdown, drawdown);
+		}
+	}
+
+	return { balance, maxDrawdown, trades };
+}
+
+// 5. 统计指标
+function calculateMetrics(trades) {
+	const profitable = trades.filter((t) => t.exit > t.entry).length;
+	const loss = trades.filter((t) => t.exit <= t.entry).length;
+	const winRate = profitable / (profitable + loss);
+
+	const returns = trades.map((t) => (t.exit - t.entry) / t.entry);
+	const avgWin =
+		returns.filter((r) => r > 0).reduce((a, b) => a + b, 0) / profitable;
+	const avgLoss =
+		returns.filter((r) => r <= 0).reduce((a, b) => a + b, 0) / loss;
+
+	return {
+		totalTrades: trades.length,
+		winRate: winRate.toFixed(2),
+		profitFactor: (avgWin / Math.abs(avgLoss)).toFixed(2),
+		maxDrawdown: (maxDrawdown * 100).toFixed(1) + '%',
+	};
+}
+
+// 6. 执行主程序
+async function main() {
+	// 获取数据
+	const rawData = await fetchOHLCV();
+	if (rawData.length === 0) return;
+
+	// 计算指标
+	const dataWithIndicators = await calculateIndicators(rawData);
+
+	// 生成信号
+	const signals = generateSignals(dataWithIndicators);
+
+	// 执行回测
+	const { balance, maxDrawdown, trades } = backtest(
+		dataWithIndicators,
+		signals
+	);
+
+	// 输出结果
+	console.log('===== 回测结果 =====');
+	console.log('最终余额:', balance.toFixed(2));
+	console.log('总交易次数:', trades.length);
+	console.log(calculateMetrics(trades));
+	console.log('最大回撤:', (maxDrawdown * 100).toFixed(1) + '%');
+}
+
+main();
 
 app.listen(8092);
 
