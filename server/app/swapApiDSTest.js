@@ -72,12 +72,11 @@ class BollingerMacdStrategy {
 	// 加载历史数据
 	async loadHistoricalData(days = 30) {
 		const since = moment().subtract(days, 'days').valueOf();
-		this.ohlcv = await exchange.fetchOHLCV(
+		this.ohlcv = await exchange.fetch_ohlcv(
 			config.symbol,
 			config.timeframe,
 			since,
-			null,
-			{ limit: 1000 }
+			limit
 		);
 		console.log(34, this.ohlcv);
 	}
