@@ -99,7 +99,6 @@ class HighFrequencyStrategy {
 	// 处理K线更新
 	async handleKlineUpdate(msg) {
 		const kline = msg.k;
-		console.log(23, kline);
 		if (!kline.x) return; // 仅处理闭合K线
 
 		// 更新OHLCV数据
@@ -158,10 +157,10 @@ class HighFrequencyStrategy {
 		if (this.ohlcv.length < config.coldStartBars) return null;
 
 		const indicators = await this.calculateIndicators();
-		const lastIndex = this.ohlcv.length - 1;
+		const lastIndex = indicators.length - 1;
 
 		// 当前指标值
-		const price = this.ohlcv[lastIndex][4];
+		const price = this.ohlcv[this.ohlcv.length - 1][4];
 		const upper = indicators.upper[lastIndex];
 		const lower = indicators.lower[lastIndex];
 		const macdLine = indicators.macdLine[lastIndex];
@@ -174,20 +173,23 @@ class HighFrequencyStrategy {
 			price <= lower && // 价格触及下轨
 			macdLine > signalLine && // MACD金叉
 			histogram > prevHistogram && // 动量增强
-			this.ohlcv[lastIndex][5] > this.ohlcv[lastIndex - 1][5] * 1.2; // 成交量放大
+			this.ohlcv[this.ohlcv.length - 1][5] >
+				this.ohlcv[this.ohlcv.length - 2][5] * 1.2; // 成交量放大
 
 		// 空头信号条件
 		const shortCondition =
 			price >= upper && // 价格触及上轨
 			macdLine < signalLine && // MACD死叉
 			histogram < prevHistogram && // 动量减弱
-			this.ohlcv[lastIndex][5] > this.ohlcv[lastIndex - 1][5] * 1.2;
+			this.ohlcv[this.ohlcv.length - 1][5] >
+				this.ohlcv[this.ohlcv.length - 2][5] * 1.2;
 
 		console.log('################################');
-		console.log(indicators);
 		console.log(
 			'time',
-			moment(this.ohlcv[lastIndex][0]).format('YYYY-MM-DD HH:mm:ss')
+			moment(this.ohlcv[this.ohlcv.length - 1][0]).format(
+				'YYYY-MM-DD HH:mm:ss'
+			)
 		);
 		console.log('price', price);
 		console.log('uper', upper);
