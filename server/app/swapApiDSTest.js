@@ -56,7 +56,7 @@ const STRATEGY_CONFIG = {
 
   exitRules: {
     stopLossMultiplier: 1.8, // 止损ATR倍数
-    takeProfitMultiplier: 1.8, // 止盈ATR倍数
+    takeProfitMultiplier: 2.5, // 止盈ATR倍数
     rsiDispersionSell: 8, // RSI离散卖出阈值
   },
 
@@ -225,8 +225,9 @@ class TradingStrategy {
     if (!this.position) return false;
 
     const exitConditions = [
-      indicators.price <= this.position.stopLoss,
-      indicators.price >= this.position.takeProfit,
+      indicators.emaSlope < -this.config.entryRules.emaSlopeThreshold / 2,
+      //   indicators.price <= this.position.stopLoss,
+      //   indicators.price >= this.position.takeProfit,
       //   indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
