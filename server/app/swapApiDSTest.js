@@ -39,7 +39,7 @@ const since = exchange.parse8601('2023-01-01T00:00:00Z');
 // 1. 获取历史数据
 async function fetchOHLCV() {
 	try {
-		const allCandles = [];
+		let allCandles = [];
 		let sinceParam = since;
 
 		while (true) {
@@ -50,7 +50,7 @@ async function fetchOHLCV() {
 			);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
-			allCandles.concat(candles);
+			allCandles = allCandles.concat(candles);
 			if (allCandles.length > 1000) break; // 控制数据量
 		}
 		console.log(23, allCandles);
