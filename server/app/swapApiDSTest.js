@@ -264,7 +264,7 @@ class Backtester {
 
     // 获取历史数据
     const rawData = await this.dataFetcher.fetchHistoricalData(20000);
-
+    console.log(rawData.length);
     // 逐根K线回测
     for (const candle of rawData) {
       const indicators = await this.indicatorEngine.addNewCandle(candle);
