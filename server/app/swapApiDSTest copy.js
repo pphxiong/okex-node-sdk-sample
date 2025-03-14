@@ -115,7 +115,9 @@ function generateSignals(data) {
 		// 卖出信号
 		if (
 			position &&
-			current.close < current.bb_middle // 触及止损
+			(current.close < current.bb_middle || // 下穿中线
+				current.close >= position.takeProfit || // 触及止盈
+				current.close <= position.stopLoss) // 触及止损
 		) {
 			signals.push({
 				type: 'sell',
