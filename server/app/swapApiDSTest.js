@@ -170,7 +170,7 @@ function backtest(data, signals) {
 }
 
 // 5. 统计指标
-function calculateMetrics(trades) {
+function calculateMetrics(trades, maxDrawdown) {
 	const profitable = trades.filter((t) => t.exit > t.entry).length;
 	const loss = trades.filter((t) => t.exit <= t.entry).length;
 	const winRate = profitable / (profitable + loss);
@@ -212,7 +212,7 @@ async function main() {
 	console.log('===== 回测结果 =====');
 	console.log('最终余额:', balance.toFixed(2));
 	console.log('总交易次数:', trades.length);
-	console.log(calculateMetrics(trades));
+	console.log(calculateMetrics(trades, maxDrawdown));
 	console.log('最大回撤:', (maxDrawdown * 100).toFixed(1) + '%');
 }
 
