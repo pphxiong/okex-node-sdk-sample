@@ -116,7 +116,6 @@ class HighFrequencyStrategy {
 			this.ohlcv.shift();
 		}
 		this.ohlcv.push(newBar);
-		console.log(44, this.ohlcv, this.ohlcv.length);
 		// 生成交易信号
 		const signal = await this.generateSignal();
 		if (signal) {
