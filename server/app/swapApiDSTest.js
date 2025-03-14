@@ -33,7 +33,7 @@ const exchange = new ccxt.binance({
 	enableRateLimit: true,
 });
 const symbol = 'DOGE/USDT';
-const timeframe = '1h';
+const timeframe = '1m';
 const since = exchange.parse8601('2023-01-01T00:00:00Z');
 
 // 1. 获取历史数据
@@ -115,7 +115,9 @@ function generateSignals(data) {
 		// 卖出信号
 		if (
 			position &&
-			current.close < current.bb_middle // 触及止损
+			(current.close < current.bb_middle || // 下穿中线
+				current.close >= position.takeProfit || // 触及止盈
+				current.close <= position.stopLoss) // 触及止损
 		) {
 			signals.push({
 				type: 'sell',
