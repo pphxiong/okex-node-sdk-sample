@@ -157,7 +157,7 @@ class HighFrequencyStrategy {
 		if (this.ohlcv.length < config.coldStartBars) return null;
 
 		const indicators = await this.calculateIndicators();
-		const lastIndex = indicators.length - 1;
+		const lastIndex = indicators.upper.length - 1;
 
 		// 当前指标值
 		const price = this.ohlcv[this.ohlcv.length - 1][4];
