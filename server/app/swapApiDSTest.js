@@ -215,8 +215,8 @@ class TradingStrategy {
     const entryConditions = [
       indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
       indicators.rsiDispersion < this.config.entryRules.rsiDispersionBuy,
-      indicators.atr >
-        (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
+      //   indicators.atr >
+      //     (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
     ];
     return entryConditions.every((c) => c);
   }
@@ -227,7 +227,7 @@ class TradingStrategy {
     const exitConditions = [
       indicators.price <= this.position.stopLoss,
       indicators.price >= this.position.takeProfit,
-      indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
+      //   indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
     return exitConditions.some((c) => c);
@@ -263,12 +263,12 @@ class Backtester {
     const startTime = performance.now();
 
     // 获取历史数据
-    const rawData = await this.dataFetcher.fetchHistoricalData(3000);
-    console.log(
-      rawData.map((item) =>
-        moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss")
-      )
-    );
+    const rawData = await this.dataFetcher.fetchHistoricalData();
+    // console.log(
+    //   rawData.map((item) =>
+    //     moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss")
+    //   )
+    // );
     // 逐根K线回测
     for (const candle of rawData) {
       const indicators = await this.indicatorEngine.addNewCandle(candle);
