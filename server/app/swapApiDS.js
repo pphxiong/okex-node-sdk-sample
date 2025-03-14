@@ -200,8 +200,8 @@ class HighFrequencyStrategy {
 		console.log('prevHistogram', prevHistogram);
 		console.log(
 			'volumn',
-			this.ohlcv[lastIndex][5],
-			this.ohlcv[lastIndex - 1][5]
+			this.ohlcv[this.ohlcv.length - 1][5],
+			this.ohlcv[this.ohlcv.length - 2][5]
 		);
 		console.log('################################');
 
