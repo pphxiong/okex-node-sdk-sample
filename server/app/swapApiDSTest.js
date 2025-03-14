@@ -272,7 +272,11 @@ class Backtester {
 
       // 生成交易信号
       if (!this.state.position && this.strategy.checkEntrySignal(indicators)) {
-        console.log(23, indicators);
+        console.log(
+          "entrySignal",
+          moment(indicators.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          indicators
+        );
         this.executeEntry(indicators);
       } else if (
         this.state.position &&
@@ -306,6 +310,7 @@ class Backtester {
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
     const cost = positionSize * entryPrice * (1 + STRATEGY_CONFIG.feeRate);
 
+    console.log(cost, this.state.capital);
     if (cost > this.state.capital) {
       console.log("资金不足");
       return; // 资金不足
