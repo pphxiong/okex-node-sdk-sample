@@ -515,7 +515,6 @@ function connectWebSocket() {
 
 	ws.on('message', async (data) => {
 		const msg = JSON.parse(data);
-		console.log(11, msg);
 		// await this.handleKlineUpdate(msg);
 	});
 
@@ -527,10 +526,10 @@ function connectWebSocket() {
 // 启动策略
 (async () => {
 	await exchange.loadMarkets();
-	connectWebSocket();
-	// await initPositionData();
-	// await strategyLoop();
-	// setInterval(strategyLoop, 15000); // 每15秒运行一次
+	// connectWebSocket();
+	await initPositionData();
+	await strategyLoop();
+	setInterval(strategyLoop, 15000); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
