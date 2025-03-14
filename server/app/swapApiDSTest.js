@@ -125,23 +125,13 @@ class BollingerMacdStrategy {
 		const prevHistogram =
 			indicators.histogram[indicators.histogram.length - 2];
 
-		console.log(23, indicators);
-
 		// 多头信号
-		if (
-			price <= lower &&
-			macdLine > signalLine &&
-			histogram > prevHistogram
-		) {
+		if (price > middle) {
 			return { signal: 'BUY', triggerPrice: price };
 		}
 
 		// 空头信号
-		if (
-			price >= upper &&
-			macdLine < signalLine &&
-			histogram < prevHistogram
-		) {
+		if (price < middle) {
 			return { signal: 'SELL', triggerPrice: price };
 		}
 
