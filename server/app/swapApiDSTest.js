@@ -214,7 +214,7 @@ class TradingStrategy {
   checkEntrySignal(indicators) {
     const entryConditions = [
       indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
-      indicators.rsiDispersion < this.config.entryRules.rsiDispersionBuy,
+      //   indicators.rsiDispersion < this.config.entryRules.rsiDispersionBuy,
       //   indicators.atr >
       //     (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
     ];
