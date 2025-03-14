@@ -28,6 +28,7 @@ let RESTART_TIME = 0;
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
+const WebSocket = require('ws');
 require('dotenv').config();
 
 // 配置参数
