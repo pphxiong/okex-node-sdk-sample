@@ -39,7 +39,7 @@ const since = exchange.parse8601('2023-01-01T00:00:00Z');
 // 配置参数
 const config = {
 	stopLoss: 0.008, // 硬止损(0.5%)
-	takeProfit: 0.012, // 硬止盈(1%)
+	takeProfit: 0.008, // 硬止盈(1%)
 };
 
 // 1. 获取历史数据
@@ -54,7 +54,6 @@ async function fetchOHLCV() {
 				timeframe,
 				sinceParam
 			);
-			console.log(45, candles.length);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles = allCandles.concat(candles);
