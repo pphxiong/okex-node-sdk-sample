@@ -76,7 +76,7 @@ class BollingerMacdStrategy {
 			config.symbol,
 			config.timeframe,
 			since,
-			limit
+			1000
 		);
 		console.log(34, this.ohlcv);
 	}
