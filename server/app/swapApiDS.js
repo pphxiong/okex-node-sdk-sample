@@ -184,9 +184,10 @@ class HighFrequencyStrategy {
 			this.ohlcv[lastIndex][5] > this.ohlcv[lastIndex - 1][5] * 1.2;
 
 		console.log('################################');
+		console.log(indicators);
 		console.log(
 			'time',
-			moment(this.ohlcv[lastIndex]).format('YYYY-MM-DD HH:mm:ss')
+			moment(this.ohlcv[lastIndex][0]).format('YYYY-MM-DD HH:mm:ss')
 		);
 		console.log('price', price);
 		console.log('uper', upper);
