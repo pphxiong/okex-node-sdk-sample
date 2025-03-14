@@ -43,11 +43,12 @@ async function fetchOHLCV() {
 		let sinceParam = since;
 
 		while (true) {
-			const candles = await exchange.fetchOHLCV(
+			const candles = await exchange.fetch_ohlcv(
 				symbol,
 				timeframe,
 				sinceParam
 			);
+			console.log(candles, 11);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles.concat(candles);
