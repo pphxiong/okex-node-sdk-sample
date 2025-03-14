@@ -306,7 +306,7 @@ class BollingerMacdStrategy {
 		const stdDev = Math.sqrt(
 			returns
 				.map((x) => Math.pow(x - avgReturn, 2))
-				.reduce((a, b) => a + b) / returns.length
+				.reduce((a, b) => a + b, 0) / returns.length
 		);
 		return (avgReturn - riskFreeRate) / stdDev;
 	}
