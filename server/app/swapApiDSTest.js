@@ -48,7 +48,6 @@ async function fetchOHLCV() {
 				timeframe,
 				sinceParam
 			);
-			console.log(candles, 11);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles.concat(candles);
@@ -194,6 +193,7 @@ function calculateMetrics(trades) {
 async function main() {
 	// 获取数据
 	const rawData = await fetchOHLCV();
+	console.log(45, rawData, rawData.length);
 	if (rawData.length === 0) return;
 
 	// 计算指标
