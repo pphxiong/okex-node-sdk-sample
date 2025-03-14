@@ -51,12 +51,12 @@ const config = {
 	},
 };
 const marketData = {
-	'15m': [],
+	'30m': [],
 	'5m': [],
 	'1m': [],
 };
 const dataWithIndicatorsMap = {
-	'15m': [],
+	'30m': [],
 	'5m': [],
 	'1m': [],
 };
@@ -142,7 +142,7 @@ function generateSignals() {
 		const target_15 = marketData['15m'].find(
 			(d) =>
 				d.timestamp >= current.timestamp &&
-				d.timestamp < current.timestamp + 15 * 60 * 1000
+				d.timestamp < current.timestamp + 30 * 60 * 1000
 		);
 
 		// 买入信号
@@ -249,7 +249,7 @@ function calculateMetrics(trades, maxDrawdown) {
 async function main() {
 	const { periods } = config.emaSettings;
 	const tfs = Object.keys(periods);
-	const numList = [100, 300, 1500];
+	const numList = [100, 600, 3000];
 
 	let i = 0;
 	while (true) {
