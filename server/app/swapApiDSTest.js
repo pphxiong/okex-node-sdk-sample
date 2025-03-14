@@ -54,10 +54,11 @@ async function fetchOHLCV() {
 				timeframe,
 				sinceParam
 			);
+			console.log(45, candles);
 			if (!candles.length) break;
 			sinceParam = candles[candles.length - 1][0] + 1;
 			allCandles = allCandles.concat(candles);
-			if (allCandles.length > 1000 * 1) break; // 控制数据量
+			if (allCandles.length > 1000 * 2) break; // 控制数据量
 		}
 		return allCandles.map((c) => ({
 			timestamp: c[0],
