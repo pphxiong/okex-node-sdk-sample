@@ -79,6 +79,7 @@ class BollingerMacdStrategy {
 			null,
 			{ limit: 1000 }
 		);
+		console.log(33, this.ohlcv);
 	}
 
 	// 计算技术指标
