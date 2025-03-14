@@ -225,13 +225,15 @@ class HighFrequencyStrategy {
 			);
 
 			// 记录持仓
-			this.positions.set(order.id, {
-				...order,
-				entryPrice: order.average,
-				stopLoss: order.stopLoss,
-				takeProfit: order.takeProfit,
-				timestamp: Date.now(),
-			});
+			this.positions.set(
+				order.id,
+				Object.assign(order, {
+					entryPrice: order.average,
+					stopLoss: order.stopLoss,
+					takeProfit: order.takeProfit,
+					timestamp: Date.now(),
+				})
+			);
 
 			this.tradeCount++;
 			console.log(
