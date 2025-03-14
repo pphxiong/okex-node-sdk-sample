@@ -52,6 +52,7 @@ const config = {
 	macdFast: 8,
 	macdSlow: 17,
 	macdSignal: 5,
+	coldStartBars: 100, // 冷启动期间的K线数量
 };
 
 // 全局状态
@@ -431,17 +432,29 @@ class RiskManager {
 	}
 }
 
+// 初始化历史数据
+async function initialize() {
+	console.log('正在获取历史数据...');
+	ohlcv = await exchange.fetchOHLCV(
+		config.symbol,
+		config.timeframe,
+		undefined,
+		config.coldStartBars
+	);
+	console.log(`已加载${ohlcv.length}根历史K线`);
+}
+
 // 策略主逻辑
 async function strategyLoop() {
 	try {
-		const candles = await exchange.fetchOHLCV(
-			config.symbol,
-			config.timeframe,
-			undefined,
-			100
-		);
-		// candles.pop();
-		ohlcv = candles;
+		// const candles = await exchange.fetchOHLCV(
+		// 	config.symbol,
+		// 	config.timeframe,
+		// 	undefined,
+		// 	100
+		// );
+		// ohlcv = candles;
+		const candles = ohlcv;
 		const currentPrice = candles[candles.length - 1][4];
 
 		// 步骤1: 清理过期订单
@@ -515,7 +528,7 @@ function connectWebSocket() {
 
 	ws.on('message', async (data) => {
 		const msg = JSON.parse(data);
-		// await this.handleKlineUpdate(msg);
+		await handleKlineUpdate(msg);
 	});
 
 	ws.on('error', (err) => {
@@ -523,13 +536,37 @@ function connectWebSocket() {
 	});
 }
 
+// 处理K线更新
+async function handleKlineUpdate(msg) {
+	const kline = msg.k;
+	if (!kline.x) return; // 仅处理闭合K线
+
+	// 更新OHLCV数据
+	const newBar = [
+		kline.t, // 时间戳
+		parseFloat(kline.o), // 开盘价
+		parseFloat(kline.h), // 最高价
+		parseFloat(kline.l), // 最低价
+		parseFloat(kline.c), // 收盘价
+		parseFloat(kline.v), // 成交量
+	];
+
+	// 维护固定长度的数据窗口
+	if (ohlcv.length >= config.coldStartBars) {
+		ohlcv.shift();
+	}
+	ohlcv.push(newBar);
+
+	await strategyLoop();
+}
+
 // 启动策略
 (async () => {
 	await exchange.loadMarkets();
-	// connectWebSocket();
 	await initPositionData();
-	await strategyLoop();
-	setInterval(strategyLoop, 15000); // 每15秒运行一次
+	connectWebSocket();
+	// await strategyLoop();
+	// setInterval(strategyLoop, 15000); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
