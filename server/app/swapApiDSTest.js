@@ -53,7 +53,6 @@ async function fetchOHLCV() {
 			allCandles = allCandles.concat(candles);
 			if (allCandles.length > 1000) break; // 控制数据量
 		}
-		console.log(23, allCandles);
 		return allCandles.map((c) => ({
 			timestamp: c[0],
 			open: c[1],
@@ -171,7 +170,7 @@ function backtest(data, signals) {
 
 // 5. 统计指标
 function calculateMetrics(trades, maxDrawdown) {
-	console.log(34, trades.length);
+	console.log(34, trades);
 	const profitable = trades.filter((t) => t.exit > t.entry).length;
 	const loss = trades.filter((t) => t.exit <= t.entry).length;
 	const winRate = profitable / (profitable + loss);
