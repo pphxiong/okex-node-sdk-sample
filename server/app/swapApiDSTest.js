@@ -296,7 +296,7 @@ class Backtester {
     const takeProfit =
       indicators.price +
       indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
-
+    console.log(indicators.price, stopLoss);
     const positionSize = this.strategy.calculatePositionSize(
       indicators.price,
       stopLoss
