@@ -238,6 +238,8 @@ async function main() {
 		// 计算指标
 		const dataWithIndicators = await calculateIndicators(rawData);
 		dataWithIndicatorsMap[period] = dataWithIndicators;
+
+		console.log(marketData, dataWithIndicatorsMap);
 	});
 	// // 获取数据
 	// const rawData = await fetchOHLCV();
