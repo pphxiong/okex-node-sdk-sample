@@ -141,6 +141,8 @@ class HighFrequencyStrategy {
 				[config.macdFast, config.macdSlow, config.macdSignal]
 			),
 		]);
+		console.log('boll', boll);
+		console.log('macd', macd);
 
 		return {
 			upper: boll[0],
