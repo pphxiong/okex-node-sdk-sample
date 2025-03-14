@@ -107,19 +107,23 @@ class BollingerMacdStrategy {
 		};
 	}
 
+	getLastIndicators(indicators, key) {
+		return indicators[key][indicators[key].length - 1];
+	}
+
 	// 生成交易信号
 	async generateSignal() {
 		const indicators = await this.calculateIndicators();
-		const lastIndex = this.ohlcv.length - 1;
 
 		// 当前价格和指标值
-		const price = this.ohlcv[lastIndex][4];
-		const upper = indicators.upper[lastIndex];
-		const lower = indicators.lower[lastIndex];
-		const macdLine = indicators.macdLine[lastIndex];
-		const signalLine = indicators.signalLine[lastIndex];
-		const histogram = indicators.histogram[lastIndex];
-		const prevHistogram = indicators.histogram[lastIndex - 1];
+		const price = this.ohlcv[this.ohlcv.length - 1][4];
+		const upper = this.getLastIndicators(indicators, 'upper');
+		const lower = this.getLastIndicators(indicators, 'lower');
+		const macdLine = this.getLastIndicators(indicators, 'macdLine');
+		const signalLine = this.getLastIndicators(indicators, 'signalLine');
+		const histogram = this.getLastIndicators(indicators, 'histogram');
+		const prevHistogram =
+			indicators.histogram[indicators.histogram.length - 2];
 
 		// 多头信号
 		if (
