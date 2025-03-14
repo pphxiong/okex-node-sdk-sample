@@ -230,6 +230,8 @@ class TradingStrategy {
       indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
+    console.log(11, exitConditions, indicators.rsiDispersion);
+
     return exitConditions.some((c) => c);
   }
 
@@ -302,13 +304,12 @@ class Backtester {
       indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
 
     const positionSize =
-      this.strategy.calculatePositionSize(indicators.price, stopLoss) / 100;
+      this.strategy.calculatePositionSize(indicators.price, stopLoss) / 10;
 
     // 扣除手续费和滑点
     const entryPrice = indicators.price * (1 + STRATEGY_CONFIG.slippage);
     const cost = positionSize * entryPrice * (1 + STRATEGY_CONFIG.feeRate);
 
-    console.log(cost, this.state.capital);
     if (cost > this.state.capital) {
       console.log("资金不足");
       return; // 资金不足
