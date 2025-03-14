@@ -234,12 +234,13 @@ class BollingerMacdStrategy {
 				? (exitPrice - position.entryPrice) / position.entryPrice
 				: (position.entryPrice - exitPrice) / position.entryPrice;
 
-		this.tradeHistory.push({
-			...position,
-			exitPrice,
-			pnl,
-			isStopLoss,
-		});
+		this.tradeHistory.push(
+			Object.assign(position, {
+				exitPrice,
+				pnl,
+				isStopLoss,
+			})
+		);
 
 		this.dailyProfit += pnl;
 	}
