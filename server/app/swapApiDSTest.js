@@ -230,8 +230,6 @@ class TradingStrategy {
       indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
-    console.log(11, exitConditions, indicators.rsiDispersion);
-
     return exitConditions.some((c) => c);
   }
 
@@ -265,7 +263,7 @@ class Backtester {
     const startTime = performance.now();
 
     // 获取历史数据
-    const rawData = await this.dataFetcher.fetchHistoricalData();
+    const rawData = await this.dataFetcher.fetchHistoricalData(20000);
 
     // 逐根K线回测
     for (const candle of rawData) {
