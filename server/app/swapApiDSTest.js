@@ -349,7 +349,7 @@ class Backtester {
       timestamp: Date.now(),
       capital:
         this.state.capital +
-        (this.state.position?.positionSize || 0) *
+        (this.state.position ? this.state.position.positionSize : 0) *
           this.indicatorEngine.currentCandle.close,
     });
   }
