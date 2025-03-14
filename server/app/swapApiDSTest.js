@@ -230,11 +230,12 @@ function calculateMetrics(trades, maxDrawdown) {
 // 6. 执行主程序
 async function main() {
 	const { periods } = config.emaSettings;
+	const tfs = Object.keys(periods);
 
 	let i = 0;
 	while (true) {
 		try {
-			const period = periods[i];
+			const period = tfs[i];
 			const rawData = await fetchOHLCV(period, 500);
 			marketData[period] = rawData;
 
@@ -243,7 +244,7 @@ async function main() {
 			dataWithIndicatorsMap[period] = dataWithIndicators;
 
 			i += 1;
-			if (i >= periods.length) break;
+			if (i >= tfs.length) break;
 		} catch (e) {
 			console.log(e);
 		}
