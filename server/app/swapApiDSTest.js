@@ -49,7 +49,9 @@ async function fetchOHLCV() {
 				sinceParam
 			);
 			if (!candles.length) break;
+			console.log(candles, 2);
 			sinceParam = candles[candles.length - 1][0] + 1;
+			console.log(sinceParam, 3);
 			allCandles.concat(candles);
 			if (allCandles.length > 1000) break; // 控制数据量
 		}
