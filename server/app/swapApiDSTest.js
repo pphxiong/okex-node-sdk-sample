@@ -231,7 +231,7 @@ class TradingStrategy {
       indicators.emaFast > indicators.emaSlow,
       indicators.price > indicators.emaFast,
       // indicators.price >= high,
-      // indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
+      indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
       //   indicators.rsiDispersion < this.config.entryRules.rsiDispersionBuy,
       //   indicators.atr >
       //     (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
@@ -243,10 +243,10 @@ class TradingStrategy {
     if (!this.position) return false;
 
     const exitConditions = [
-      indicators.price < indicators.emaSlow,
+      // indicators.price < indicators.emaSlow,
       // indicators.emaSlope < -this.config.entryRules.emaSlopeThreshold,
-      // indicators.price <= this.position.stopLoss,
-      // indicators.price >= this.position.takeProfit,
+      indicators.price <= this.position.stopLoss,
+      indicators.price >= this.position.takeProfit,
       //   indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
