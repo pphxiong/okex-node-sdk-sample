@@ -160,9 +160,10 @@ async function backtest() {
         entryPrice,
         stopLoss,
         takeProfit:
-          signal === "LONG"
-            ? entryPrice + (riskPerUnit * 2) / 100
-            : entryPrice - (riskPerUnit * 2) / 100,
+          // signal === "LONG"
+          //   ? entryPrice + (riskPerUnit * 2) / 100
+          //   : entryPrice - (riskPerUnit * 2) / 100,
+          signal === "LONG" ? entryPrice * 1.015 : entryPrice * 0.985,
         size: positionSize,
         entryTime: current.time,
       };
