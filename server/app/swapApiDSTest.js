@@ -215,10 +215,10 @@ class TradingStrategy {
     let high = 0;
     let low = Infinity;
     candles.slice(-period).forEach((candle) => {
-      if (candle.high > high) {
+      if (candle.close > high) {
         high = candle.high;
       }
-      if (candle.low < low) {
+      if (candle.close < low) {
         low = candle.low;
       }
     });
