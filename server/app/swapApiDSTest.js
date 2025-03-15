@@ -131,8 +131,6 @@ async function backtest() {
     const prev = data[i - 1];
     let signal = null;
 
-    console.log(233, current.close, resistance, support);
-
     // 多单条件：突破阻力 + 放量 + 高于EMA20
     if (
       current.close > resistance &&
@@ -169,6 +167,8 @@ async function backtest() {
         entryTime: current.time,
       };
     }
+
+    console.log(position.direction, position.stopLoss, position.takeProfit);
 
     // 平仓逻辑（下一根K线）
     if (position) {
