@@ -178,7 +178,8 @@ async function backtest() {
         nextCandle.high,
         position.direction,
         position.stopLoss,
-        position.takeProfit
+        position.takeProfit,
+        peaks.slice(-3)
       );
       const isHitSL =
         (position.direction === "LONG" &&
