@@ -243,14 +243,15 @@ class TradingStrategy {
     if (!this.position) return false;
 
     const exitConditions = [
+      indicators.emaFast < indicators.emaSlow,
       indicators.price < indicators.emaSlow,
-      indicators.emaSlope < -this.config.entryRules.emaSlopeThreshold,
+      // indicators.emaSlope < -this.config.entryRules.emaSlopeThreshold,
       // indicators.price <= this.position.stopLoss,
       // indicators.price >= this.position.takeProfit,
       //   indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
-    return exitConditions.every((c) => c);
+    return exitConditions.some((c) => c);
   }
 
   calculatePositionSize(price, stopLoss) {
