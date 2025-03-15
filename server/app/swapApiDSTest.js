@@ -148,6 +148,8 @@ async function backtest() {
       signal = "SHORT";
     }
 
+    console.log(11, current, resistance, ema20[i - 20]);
+
     // 开仓逻辑
     if (signal && !position) {
       const entryPrice = current.close;
