@@ -172,6 +172,8 @@ async function backtest() {
     if (position) {
       const nextCandle = data[i + 1];
       console.log(
+        i,
+        current.close,
         nextCandle.low,
         nextCandle.high,
         position.direction,
