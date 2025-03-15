@@ -226,7 +226,7 @@ class TradingStrategy {
   }
 
   checkEntrySignal(indicators, candles) {
-    const { high, low } = this.getLatestHighAndLow(candles, 10);
+    const { high, low } = this.getLatestHighAndLow(candles, 20);
     const entryConditions = [
       indicators.price >= high,
       // indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
@@ -322,7 +322,7 @@ class Backtester {
     const stopLoss = indicators.price * 0.995;
     // indicators.price -
     // indicators.atr * STRATEGY_CONFIG.exitRules.stopLossMultiplier;
-    const takeProfit = indicators.price * 1.001;
+    const takeProfit = indicators.price * 1.005;
     // indicators.price +
     // indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
 
