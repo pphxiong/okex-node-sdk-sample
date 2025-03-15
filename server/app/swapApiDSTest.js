@@ -244,12 +244,13 @@ class TradingStrategy {
 
     const exitConditions = [
       indicators.price < indicators.emaSlow,
+      indicators.emaSlope < -this.config.entryRules.emaSlopeThreshold,
       // indicators.price <= this.position.stopLoss,
       // indicators.price >= this.position.takeProfit,
       //   indicators.rsiDispersion > this.config.exitRules.rsiDispersionSell,
     ];
 
-    return exitConditions.some((c) => c);
+    return exitConditions.every((c) => c);
   }
 
   calculatePositionSize(price, stopLoss) {
