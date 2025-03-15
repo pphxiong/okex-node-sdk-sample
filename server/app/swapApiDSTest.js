@@ -28,7 +28,7 @@ const ccxt = require("ccxt");
 const tulind = require("tulind");
 
 // 配置参数
-const SYMBOL = "DOGE/USDT:USDT"; // 币安永续合约
+const SYMBOL = "DOGE/USDT"; // 币安永续合约
 const TIMEFRAME = "1m";
 const START_DATE = "2024-03-01T00:00:00Z";
 const END_DATE = "2024-03-02T00:00:00Z";
