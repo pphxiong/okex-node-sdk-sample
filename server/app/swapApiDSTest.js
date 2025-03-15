@@ -179,7 +179,8 @@ async function backtest() {
         position.direction,
         position.stopLoss,
         position.takeProfit,
-        peaks.slice(-3)
+        peaks.slice(-3),
+        position
       );
       const isHitSL =
         (position.direction === "LONG" &&
