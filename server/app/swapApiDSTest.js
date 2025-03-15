@@ -134,7 +134,7 @@ async function backtest() {
     // 多单条件：突破阻力 + 放量 + 高于EMA20
     if (
       current.close > resistance &&
-      // current.volume > prev.volume * 1.2 &&
+      current.volume > prev.volume * 1.2 &&
       current.close > ema20[i - 20]
     ) {
       signal = "LONG";
@@ -142,7 +142,7 @@ async function backtest() {
     // 空单条件：跌破支撑 + 放量 + 低于布林带上轨
     else if (
       current.close < support &&
-      // current.volume > prev.volume * 1.2 &&
+      current.volume > prev.volume * 1.2 &&
       current.close < bbUpper[i - 20]
     ) {
       signal = "SHORT";
