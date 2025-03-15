@@ -55,8 +55,8 @@ const STRATEGY_CONFIG = {
   },
 
   exitRules: {
-    stopLossMultiplier: 1.8, // 止损ATR倍数
-    takeProfitMultiplier: 2.5, // 止盈ATR倍数
+    stopLossMultiplier: 1, // 止损ATR倍数
+    takeProfitMultiplier: 1, // 止盈ATR倍数
     rsiDispersionSell: 8, // RSI离散卖出阈值
   },
 
@@ -211,9 +211,25 @@ class TradingStrategy {
     this.position = null;
   }
 
-  checkEntrySignal(indicators) {
+  getLatestHighAndLow(candles, period) {
+    let high = 0;
+    let low = Infinity;
+    candles.slice(-period).forEach((candle) => {
+      if (candle.high > high) {
+        high = candle.high;
+      }
+      if (candle.low < low) {
+        low = candle.low;
+      }
+    });
+    return { high, low };
+  }
+
+  checkEntrySignal(indicators, candles) {
+    const { high, low } = this.getLatestHighAndLow(candles, 10);
     const entryConditions = [
-      indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
+      indicators.price >= high,
+      // indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
       //   indicators.rsiDispersion < this.config.entryRules.rsiDispersionBuy,
       //   indicators.atr >
       //     (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
@@ -254,6 +270,7 @@ class Backtester {
       maxDrawdown: 0,
       peakCapital: STRATEGY_CONFIG.initialCapital,
     };
+    this.candles = [];
     this.currentCandle = {};
     this.tradeHistory = [];
   }
@@ -264,6 +281,7 @@ class Backtester {
 
     // 获取历史数据
     const rawData = await this.dataFetcher.fetchHistoricalData();
+    this.candles = rawData;
     // console.log(
     //   rawData.map((item) =>
     //     moment(item.timestamp).format("YYYY-MM-DD HH:mm:ss")
@@ -275,7 +293,10 @@ class Backtester {
       if (!indicators) continue; // 忽略预热期数据
 
       // 生成交易信号
-      if (!this.state.position && this.strategy.checkEntrySignal(indicators)) {
+      if (
+        !this.state.position &&
+        this.strategy.checkEntrySignal(indicators, this.candles)
+      ) {
         console.log(
           "entrySignal",
           moment(indicators.timestamp).format("YYYY-MM-DD HH:mm:ss"),
