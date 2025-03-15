@@ -121,7 +121,7 @@ async function backtest() {
     const { peaks, valleys } = findExtremes(currentData);
     const { ema20, bbUpper } = await calculateLevels(currentData);
 
-    console.log(55, currentData, peaks.slice(-3), valleys.slice(-3));
+    console.log(55, currentData.slice(-3), peaks.slice(-3), valleys.slice(-3));
 
     // 静态关键位
     const resistance =
