@@ -31,7 +31,7 @@ const { performance } = require("perf_hooks");
 // #################### 策略配置 ####################
 const STRATEGY_CONFIG = {
   symbol: "DOGE/USDT",
-  timeframe: "5m", // K线周期
+  timeframe: "1m", // K线周期
   warmupPeriod: 1000, // 预热K线数量(确保指标稳定)
 
   // EMA参数
