@@ -148,8 +148,6 @@ async function backtest() {
       signal = "SHORT";
     }
 
-    console.log(11, current.close, resistance, support, ema20[i - 20]);
-
     // 开仓逻辑
     if (signal && !position) {
       const entryPrice = current.close;
@@ -170,6 +168,8 @@ async function backtest() {
       };
     }
 
+    console.log(11, position);
+
     // 平仓逻辑（下一根K线）
     if (position) {
       const nextCandle = data[i + 1];
@@ -183,6 +183,9 @@ async function backtest() {
           nextCandle.high >= position.takeProfit) ||
         (position.direction === "SHORT" &&
           nextCandle.low <= position.takeProfit);
+
+      console.log(23, isHitSL);
+      console.log(24, isHitTP);
 
       if (isHitSL || isHitTP) {
         const exitPrice = isHitSL ? position.stopLoss : position.takeProfit;
