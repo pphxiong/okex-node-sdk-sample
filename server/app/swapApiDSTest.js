@@ -226,7 +226,7 @@ class TradingStrategy {
   }
 
   checkEntrySignal(indicators, candles) {
-    const { high, low } = this.getLatestHighAndLow(candles, 6);
+    const { high, low } = this.getLatestHighAndLow(candles, 10);
     const entryConditions = [
       indicators.price >= high,
       // indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
