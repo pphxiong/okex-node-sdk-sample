@@ -121,8 +121,6 @@ async function backtest() {
     const { peaks, valleys } = findExtremes(currentData);
     const { ema20, bbUpper } = await calculateLevels(currentData);
 
-    console.log(55, currentData.slice(-3), peaks.slice(-3), valleys.slice(-3));
-
     // 静态关键位
     const resistance =
       peaks.slice(-3).reduce((a, p) => a + p.price, 0) / 3 || 0;
@@ -132,6 +130,8 @@ async function backtest() {
     const current = data[i];
     const prev = data[i - 1];
     let signal = null;
+
+    console.log(233, current.close, resistance, support);
 
     // 多单条件：突破阻力 + 放量 + 高于EMA20
     if (
@@ -183,9 +183,6 @@ async function backtest() {
           nextCandle.high >= position.takeProfit) ||
         (position.direction === "SHORT" &&
           nextCandle.low <= position.takeProfit);
-
-      console.log(23, isHitSL, nextCandle, position);
-      console.log(24, isHitTP);
 
       if (isHitSL || isHitTP) {
         const exitPrice = isHitSL ? position.stopLoss : position.takeProfit;
