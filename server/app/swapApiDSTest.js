@@ -168,11 +168,16 @@ async function backtest() {
       };
     }
 
-    console.log(position.direction, position.stopLoss, position.takeProfit);
-
     // 平仓逻辑（下一根K线）
     if (position) {
       const nextCandle = data[i + 1];
+      console.log(
+        nextCandle.low,
+        nextCandle.high,
+        position.direction,
+        position.stopLoss,
+        position.takeProfit
+      );
       const isHitSL =
         (position.direction === "LONG" &&
           nextCandle.low <= position.stopLoss) ||
