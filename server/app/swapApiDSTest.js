@@ -322,7 +322,7 @@ class Backtester {
     const stopLoss = indicators.price * 0.995;
     // indicators.price -
     // indicators.atr * STRATEGY_CONFIG.exitRules.stopLossMultiplier;
-    const takeProfit = indicators.price * 1.005;
+    const takeProfit = indicators.price * 1.001;
     // indicators.price +
     // indicators.atr * STRATEGY_CONFIG.exitRules.takeProfitMultiplier;
 
