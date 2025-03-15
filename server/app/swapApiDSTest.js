@@ -226,12 +226,12 @@ class TradingStrategy {
   }
 
   checkEntrySignal(indicators, candles) {
-    const { high, low } = this.getLatestHighAndLow(candles, 30);
+    const { high, low } = this.getLatestHighAndLow(candles, 20);
     const entryConditions = [
-      indicators.emaFast > indicators.emaSlow,
-      indicators.price > indicators.emaFast,
-      // indicators.price >= high,
-      indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
+      // indicators.emaFast > indicators.emaSlow,
+      // indicators.price > indicators.emaFast,
+      indicators.price >= high,
+      // indicators.emaSlope > this.config.entryRules.emaSlopeThreshold,
       //   indicators.rsiDispersion < this.config.entryRules.rsiDispersionBuy,
       //   indicators.atr >
       //     (indicators.price * this.config.entryRules.atrVolatilityRatio) / 100,
