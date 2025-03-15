@@ -168,8 +168,6 @@ async function backtest() {
       };
     }
 
-    console.log(11, position);
-
     // 平仓逻辑（下一根K线）
     if (position) {
       const nextCandle = data[i + 1];
@@ -184,7 +182,7 @@ async function backtest() {
         (position.direction === "SHORT" &&
           nextCandle.low <= position.takeProfit);
 
-      console.log(23, isHitSL);
+      console.log(23, isHitSL, nextCandle, position);
       console.log(24, isHitTP);
 
       if (isHitSL || isHitTP) {
