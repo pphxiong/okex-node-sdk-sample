@@ -107,7 +107,6 @@ async function calculateLevels(data) {
 // 回测主逻辑
 async function backtest() {
   const data = await fetchHistoricalData();
-  console.log(11, data);
   if (data.length < 100) {
     console.log("数据不足");
     return;
