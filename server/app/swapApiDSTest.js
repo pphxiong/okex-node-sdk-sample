@@ -340,6 +340,7 @@ class WaveBacktester {
     console.log(this.results.equityCurve, 1);
     // 基础统计
     this.results.metrics = {
+      equityCurve: this.results.equityCurve.slice(-1)[0],
       totalTrades: trades.length,
       profitableTrades: trades.filter((t) => t.netProfit > 0).length,
       losingTrades: trades.filter((t) => t.netProfit <= 0).length,
