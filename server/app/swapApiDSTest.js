@@ -248,6 +248,8 @@ class WaveBacktester {
     const volumeValid =
       candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i));
 
+    console.log(11, indicators, candle, waveStatus);
+
     // 多头信号条件
     if (
       waveStatus.isUpTrend &&
