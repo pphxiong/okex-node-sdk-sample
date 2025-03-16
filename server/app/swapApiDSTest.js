@@ -224,14 +224,14 @@ class WaveBacktester {
     return {
       isUpTrend:
         lastHighs.length >= 3 &&
-        lastHighs[2].price < lastHighs[1].price &&
-        lastHighs[1].price < lastHighs[0].price &&
-        lastLows[1].price < lastLows[0].price,
-      isDownTrend:
-        lastHighs.length >= 3 &&
         lastHighs[2].price > lastHighs[1].price &&
         lastHighs[1].price > lastHighs[0].price &&
         lastLows[1].price > lastLows[0].price,
+      isDownTrend:
+        lastHighs.length >= 3 &&
+        lastHighs[2].price < lastHighs[1].price &&
+        lastHighs[1].price < lastHighs[0].price &&
+        lastLows[1].price < lastLows[0].price,
       waveCount: Math.max(
         this.countConsecutiveWaves(lastHighs, "asc"),
         this.countConsecutiveWaves(lastLows, "desc")
