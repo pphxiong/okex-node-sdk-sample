@@ -290,6 +290,9 @@ class WaveBacktester {
       takeProfit: signal.takeProfit,
       status: "open",
     };
+    position.netProfit = 0;
+    position.netProfit -= 0.0007; // 手续费
+    position.netProfit -= 0.0005; // 0.05%滑点
 
     this.results.trades.push(position);
     return position;
@@ -326,8 +329,9 @@ class WaveBacktester {
     // 更新权益曲线
     const currentEquity =
       this.results.equityCurve[this.results.equityCurve.length - 1];
-    console.log(34, position.netProfit, currentEquity);
-    this.results.equityCurve.push(currentEquity * (1 + position.netProfit));
+    this.results.equityCurve.push(
+      currentEquity * (1 + position.netProfit || 0)
+    );
   }
 
   calculateMetrics() {
