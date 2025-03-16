@@ -192,7 +192,9 @@ class WaveBacktester {
       const signal = this.generateSignal(
         waveStatus,
         currentIndicators,
-        currentCandle
+        currentCandle,
+        candles,
+        i
       );
 
       // 执行交易
@@ -238,9 +240,9 @@ class WaveBacktester {
     return count;
   }
 
-  generateSignal(waveStatus, indicators, candle) {
+  generateSignal(waveStatus, indicators, candle, candles, i) {
     const volumeValid =
-      candle.volume > this.calculateAverageVolume(this.candles.slice(i - 5, i));
+      candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i));
 
     // 多头信号条件
     if (
