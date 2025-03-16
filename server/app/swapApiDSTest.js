@@ -260,7 +260,7 @@ class WaveBacktester {
     // 多头信号条件
     if (
       waveStatus.isUpTrend &&
-      waveStatus.waveCount >= 3 &&
+      waveStatus.waveCount >= 2 &&
       candle.close > indicators.ema20 &&
       indicators.rsi14 > 50 &&
       volumeValid
@@ -275,7 +275,7 @@ class WaveBacktester {
     // 空头信号条件
     if (
       waveStatus.isDownTrend &&
-      waveStatus.waveCount >= 3 &&
+      waveStatus.waveCount >= 2 &&
       candle.close < indicators.ema20 &&
       indicators.rsi14 < 50 &&
       volumeValid
@@ -338,8 +338,11 @@ class WaveBacktester {
     // 更新权益曲线
     const currentEquity =
       this.results.equityCurve[this.results.equityCurve.length - 1];
+    // this.results.equityCurve.push(
+    //   currentEquity * (1 + position.netProfit || 0)
+    // );
     this.results.equityCurve.push(
-      currentEquity * (1 + position.netProfit || 0)
+      currentEquity + 1000 * position.netProfit || 0
     );
   }
 
@@ -354,7 +357,7 @@ class WaveBacktester {
       losingTrades: trades.filter((t) => t.netProfit <= 0).length,
       totalReturn: this.results.equityCurve.slice(-1)[0] / 10000 - 1,
       maxDrawdown: this.calculateMaxDrawdown(),
-      // sharpeRatio: this.calculateSharpeRatio(),
+      sharpeRatio: this.calculateSharpeRatio(),
     };
 
     // 详细指标
