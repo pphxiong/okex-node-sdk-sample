@@ -64,7 +64,7 @@ class WaveBacktester {
   }
 
   async fetchHistoricalData(start, end) {
-    const allCandles = [];
+    let allCandles = [];
     let since = new Date(start).getTime();
     const endTime = new Date(end).getTime();
 
