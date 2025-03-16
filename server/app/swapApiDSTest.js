@@ -293,8 +293,8 @@ class WaveBacktester {
       status: "open",
     };
     position.netProfit = 0;
-    position.netProfit -= 0.0007; // 手续费
-    position.netProfit -= 0.0005; // 0.05%滑点
+    position.netProfit -= 0.0004; // 手续费
+    // position.netProfit -= 0.0005; // 0.05%滑点
 
     this.results.trades.push(position);
     return position;
@@ -310,8 +310,8 @@ class WaveBacktester {
     position.status = "closed";
 
     // 扣除手续费和滑点
-    position.netProfit = position.profit - 0.0007; // 0.07%手续费
-    position.netProfit -= 0.0005; // 0.05%滑点
+    position.netProfit = position.profit - 0.0004; // 0.07%手续费
+    // position.netProfit -= 0.0005; // 0.05%滑点
   }
 
   updateEquity(position, candle) {
