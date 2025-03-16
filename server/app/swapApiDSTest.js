@@ -318,6 +318,13 @@ class WaveBacktester {
 
     // 扣除手续费和滑点
     position.netProfit = position.profit - 0.0004; // 0.07%手续费
+    console.log(
+      33,
+      position.direction,
+      position.profit,
+      exitCandle.close,
+      position.entryPrice
+    );
     // position.netProfit -= 0.0005; // 0.05%滑点
   }
 
