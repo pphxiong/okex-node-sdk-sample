@@ -224,12 +224,12 @@ class WaveBacktester {
     return {
       isUpTrend:
         lastHighs.length >= 2 &&
-        lastHighs[1].price > lastHighs[0].price &&
-        lastLows[1].price > lastLows[0].price,
-      isDownTrend:
-        lastHighs.length >= 2 &&
         lastHighs[1].price < lastHighs[0].price &&
         lastLows[1].price < lastLows[0].price,
+      isDownTrend:
+        lastHighs.length >= 2 &&
+        lastHighs[1].price > lastHighs[0].price &&
+        lastLows[1].price > lastLows[0].price,
       waveCount: Math.max(
         this.countConsecutiveWaves(lastHighs, "asc"),
         this.countConsecutiveWaves(lastLows, "desc")
@@ -424,7 +424,7 @@ class WaveBacktester {
 
 // 执行回测
 const backtester = new WaveBacktester();
-backtester.runBacktest("2024-01-01", "2024-05-30").then((results) => {
+backtester.runBacktest("2024-01-01", "2024-01-30").then((results) => {
   console.log("回测结果:");
   console.table(results.metrics);
   // console.log("详细交易记录:", results.trades);
