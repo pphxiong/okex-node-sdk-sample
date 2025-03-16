@@ -300,7 +300,7 @@ class WaveBacktester {
       status: "open",
     };
     position.netProfit = 0;
-    position.netProfit -= 0.0004; // 手续费
+    position.netProfit -= 0.0002; // 手续费
     // position.netProfit -= 0.0005; // 0.05%滑点
 
     this.results.trades.push(position);
