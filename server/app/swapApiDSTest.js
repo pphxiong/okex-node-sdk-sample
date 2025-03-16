@@ -332,6 +332,7 @@ class WaveBacktester {
   calculateMetrics() {
     const trades = this.results.trades.filter((t) => t.status === "closed");
 
+    console.log(this.results.equityCurve, 1);
     // 基础统计
     this.results.metrics = {
       totalTrades: trades.length,
@@ -406,10 +407,10 @@ class WaveBacktester {
 
 // 执行回测
 const backtester = new WaveBacktester();
-backtester.runBacktest("2024-01-01", "2024-03-30").then((results) => {
+backtester.runBacktest("2024-01-01", "2024-01-30").then((results) => {
   console.log("回测结果:");
   console.table(results.metrics);
-  console.log("详细交易记录:", results.trades);
+  // console.log("详细交易记录:", results.trades);
 });
 
 app.listen(8092);
