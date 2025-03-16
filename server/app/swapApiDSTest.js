@@ -38,6 +38,13 @@ class WaveBacktester {
       metrics: {},
     };
     this.candles = [];
+    this.config = {
+      waveConfirmation: 3, // 波浪确认次数
+      volumeMultiplier: 2.0, // 成交量阈值倍数
+      maxLeverage: 10, // 最大杠杆
+      baseOrderSize: 0.1, // 基础仓位比例
+      riskFactor: 0.02, // 单笔风险系数
+    };
   }
 
   async runBacktest(startDate, endDate) {
@@ -248,12 +255,12 @@ class WaveBacktester {
     const volumeValid =
       candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i));
 
-    console.log(11, indicators, candle, waveStatus);
+    // console.log(11, indicators, candle, waveStatus);
 
     // 多头信号条件
     if (
       waveStatus.isUpTrend &&
-      waveStatus.waveCount >= 2 &&
+      waveStatus.waveCount >= 3 &&
       candle.close > indicators.ema20 &&
       indicators.rsi14 > 50 &&
       volumeValid
@@ -268,7 +275,7 @@ class WaveBacktester {
     // 空头信号条件
     if (
       waveStatus.isDownTrend &&
-      waveStatus.waveCount >= 2 &&
+      waveStatus.waveCount >= 3 &&
       candle.close < indicators.ema20 &&
       indicators.rsi14 < 50 &&
       volumeValid
@@ -339,7 +346,6 @@ class WaveBacktester {
   calculateMetrics() {
     const trades = this.results.trades.filter((t) => t.status === "closed");
 
-    console.log(this.results.equityCurve, 1);
     // 基础统计
     this.results.metrics = {
       equityCurve: this.results.equityCurve.slice(-1)[0],
