@@ -265,10 +265,16 @@ class WaveBacktester {
       indicators.rsi14 > 50 &&
       volumeValid
     ) {
+      const atrMultiple = waveStatus.waveCount > 3 ? 1.5 : 2.0;
+      const riskReward = waveStatus.waveCount > 3 ? 2.5 : 3.0;
+      const stopLoss = candle.close - indicators.atr14 * atrMultiple;
+      const takeProfit = candle.close + (candle.close - stopLoss) * riskReward;
       return {
         action: "long",
-        stopLoss: candle.low - indicators.atr14 * 1.5,
-        takeProfit: candle.close + indicators.atr14 * 3,
+        stopLoss,
+        takeProfit,
+        // stopLoss: candle.low - indicators.atr14 * atrMultiple,
+        // takeProfit: candle.close + indicators.atr14 * 3,
       };
     }
 
@@ -280,10 +286,16 @@ class WaveBacktester {
       indicators.rsi14 < 50 &&
       volumeValid
     ) {
+      const atrMultiple = waveStatus.waveCount > 3 ? 1.5 : 2.0;
+      const riskReward = waveStatus.waveCount > 3 ? 2.5 : 3.0;
+      const stopLoss = candle.close + indicators.atr14 * atrMultiple;
+      const takeProfit = candle.close - (candle.close - stopLoss) * riskReward;
       return {
         action: "short",
-        stopLoss: candle.high + indicators.atr14 * 1.5,
-        takeProfit: candle.close - indicators.atr14 * 3,
+        stopLoss,
+        takeProfit,
+        // stopLoss: candle.high + indicators.atr14 * 1.5,
+        // takeProfit: candle.close - indicators.atr14 * 3,
       };
     }
 
@@ -322,8 +334,9 @@ class WaveBacktester {
       33,
       position.direction,
       position.profit,
-      exitCandle.close,
-      position.entryPrice
+      position.netProfit,
+      position.entryPrice,
+      exitCandle.close
     );
     // position.netProfit -= 0.0005; // 0.05%滑点
   }
