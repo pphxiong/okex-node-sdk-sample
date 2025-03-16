@@ -326,6 +326,7 @@ class WaveBacktester {
     // 更新权益曲线
     const currentEquity =
       this.results.equityCurve[this.results.equityCurve.length - 1];
+    console.log(34, position.netProfit, currentEquity);
     this.results.equityCurve.push(currentEquity * (1 + position.netProfit));
   }
 
