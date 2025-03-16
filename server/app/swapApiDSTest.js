@@ -267,7 +267,7 @@ class WaveBacktester {
     ) {
       const atrMultiple = waveStatus.waveCount > 3 ? 1.5 : 2.0;
       const riskReward = waveStatus.waveCount > 3 ? 2.5 : 3.0;
-      const stopLoss = candle.close - indicators.atr14 * atrMultiple;
+      const stopLoss = candle.low - indicators.atr14 * atrMultiple;
       const takeProfit = candle.close + (candle.close - stopLoss) * riskReward;
       return {
         action: "long",
@@ -288,7 +288,7 @@ class WaveBacktester {
     ) {
       const atrMultiple = waveStatus.waveCount > 3 ? 1.5 : 2.0;
       const riskReward = waveStatus.waveCount > 3 ? 2.5 : 3.0;
-      const stopLoss = candle.close + indicators.atr14 * atrMultiple;
+      const stopLoss = candle.high + indicators.atr14 * atrMultiple;
       const takeProfit = candle.close - (candle.close - stopLoss) * riskReward;
       return {
         action: "short",
