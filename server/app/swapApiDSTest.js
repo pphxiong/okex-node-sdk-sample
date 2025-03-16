@@ -240,6 +240,10 @@ class WaveBacktester {
     return count;
   }
 
+  calculateAverageVolume(candles) {
+    return candles.reduce((a, p) => a + p.volume, 0) / candles.length || 0;
+  }
+
   generateSignal(waveStatus, indicators, candle, candles, i) {
     const volumeValid =
       candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i));
