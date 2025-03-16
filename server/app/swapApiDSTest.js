@@ -262,7 +262,7 @@ class WaveBacktester {
     // 多头信号条件
     if (
       waveStatus.isUpTrend &&
-      waveStatus.waveCount >= 2 &&
+      waveStatus.waveCount >= 3 &&
       candle.close > indicators.ema20 &&
       indicators.rsi14 > 50 &&
       volumeValid
@@ -283,7 +283,7 @@ class WaveBacktester {
     // 空头信号条件
     if (
       waveStatus.isDownTrend &&
-      waveStatus.waveCount >= 2 &&
+      waveStatus.waveCount >= 3 &&
       candle.close < indicators.ema20 &&
       indicators.rsi14 < 50 &&
       volumeValid
