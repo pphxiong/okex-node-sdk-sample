@@ -253,7 +253,7 @@ class WaveBacktester {
 
   generateSignal(waveStatus, indicators, candle, candles, i) {
     const volumeValid =
-      candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i));
+      candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i)) * 2;
 
     // console.log(11, indicators, candle, waveStatus);
 
@@ -330,14 +330,14 @@ class WaveBacktester {
 
     // 扣除手续费和滑点
     position.netProfit = position.profit - 0.0004; // 0.07%手续费
-    console.log(
-      33,
-      position.direction,
-      position.profit,
-      position.netProfit,
-      position.entryPrice,
-      exitCandle.close
-    );
+    // console.log(
+    //   33,
+    //   position.direction,
+    //   position.profit,
+    //   position.netProfit,
+    //   position.entryPrice,
+    //   exitCandle.close
+    // );
     // position.netProfit -= 0.0005; // 0.05%滑点
   }
 
