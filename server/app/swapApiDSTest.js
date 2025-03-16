@@ -37,12 +37,14 @@ class WaveBacktester {
       equityCurve: [10000], // 初始本金10000 USDT
       metrics: {},
     };
+    this.candles = [];
   }
 
   async runBacktest(startDate, endDate) {
     try {
       // 1. 获取历史数据
       const candles = await this.fetchHistoricalData(startDate, endDate);
+      this.candles = candles;
 
       // 2. 计算技术指标
       const indicators = await this.calculateIndicators(candles);
@@ -238,7 +240,7 @@ class WaveBacktester {
 
   generateSignal(waveStatus, indicators, candle) {
     const volumeValid =
-      candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i));
+      candle.volume > this.calculateAverageVolume(this.candles.slice(i - 5, i));
 
     // 多头信号条件
     if (
