@@ -354,7 +354,7 @@ class WaveBacktester {
       losingTrades: trades.filter((t) => t.netProfit <= 0).length,
       totalReturn: this.results.equityCurve.slice(-1)[0] / 10000 - 1,
       maxDrawdown: this.calculateMaxDrawdown(),
-      sharpeRatio: this.calculateSharpeRatio(),
+      // sharpeRatio: this.calculateSharpeRatio(),
     };
 
     // 详细指标
