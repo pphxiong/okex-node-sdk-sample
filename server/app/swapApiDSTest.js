@@ -255,7 +255,7 @@ class WaveBacktester {
 
   generateSignal(waveStatus, indicators, candle, candles, i) {
     const volumeValid =
-      candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i)) * 2;
+      candle.volume > this.calculateAverageVolume(candles.slice(i - 5, i)) * 1;
 
     // console.log(11, indicators, candle, waveStatus);
 
