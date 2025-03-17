@@ -328,12 +328,8 @@ async function generateSignal(candles, currentPrice) {
 	const histogram = getLastIndicators(indicators, 'histogram');
 	const prevHistogram = indicators.histogram[indicators.histogram.length - 2];
 
-	const lastHighs = indicators.swingPoints.highs
-		.filter((h) => h.index < index)
-		.slice(-3);
-	const lastLows = indicators.swingPoints.lows
-		.filter((l) => l.index < index)
-		.slice(-3);
+	const lastHighs = indicators.swingPoints.highs.slice(-3);
+	const lastLows = indicators.swingPoints.lows.slice(-3);
 
 	const highest = Math.max.apply(
 		null,
