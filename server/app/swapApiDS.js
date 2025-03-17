@@ -41,7 +41,7 @@ const config = {
 	maxOrderAge: 10000, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.008, // 硬止损(0.5%)
-	takeProfit: 0.012, // 硬止盈(1%)
+	takeProfit: 0.02, // 硬止盈(1%)
 	coolingPeriod: 180, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
@@ -80,6 +80,45 @@ const exchange = new ccxt.binance({
 	},
 });
 
+function findSwingPoints(candles) {
+	const swingPoints = { highs: [], lows: [] };
+
+	for (let i = 2; i < candles.length - 2; i++) {
+		const window = candles.slice(i - 2, i + 3);
+		const center = window[2];
+
+		if (
+			center.high ===
+			Math.max.apply(
+				null,
+				window.map((w) => w.high)
+			)
+		) {
+			swingPoints.highs.push({
+				index: i,
+				price: center.high,
+				timestamp: center.timestamp,
+			});
+		}
+
+		if (
+			center.low ===
+			Math.min.apply(
+				null,
+				window.map((w) => w.low)
+			)
+		) {
+			swingPoints.lows.push({
+				index: i,
+				price: center.low,
+				timestamp: center.timestamp,
+			});
+		}
+	}
+
+	return swingPoints;
+}
+
 // 计算技术指标
 async function calculateIndicators() {
 	const closes = ohlcv.map((t) => t[4]);
@@ -103,6 +142,7 @@ async function calculateIndicators() {
 		macdLine: macd[0],
 		signalLine: macd[1],
 		histogram: macd[2],
+		swingPoints: findSwingPoints(ohlcv.map(parseKLine)),
 	};
 }
 
@@ -288,21 +328,37 @@ async function generateSignal(candles, currentPrice) {
 	const histogram = getLastIndicators(indicators, 'histogram');
 	const prevHistogram = indicators.histogram[indicators.histogram.length - 2];
 
+	const lastHighs = indicators.swingPoints.highs
+		.filter((h) => h.index < index)
+		.slice(-3);
+	const lastLows = indicators.swingPoints.lows
+		.filter((l) => l.index < index)
+		.slice(-3);
+
+	const highest = Math.max.apply(
+		null,
+		lastHighs.map((h) => h.price)
+	);
+	const lowest = Math.min.apply(
+		null,
+		lastLows.map((h) => h.price)
+	);
+
 	// 多头信号条件
-	const longCondition =
-		// price <= lower && // 价格触及下轨
-		price > middle && // 价格触及中轨
-		macdLine > signalLine && // MACD金叉
-		histogram > prevHistogram && // 动量增强
-		ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2; // 成交量放大
+	const longCondition = currentPrice > highest;
+	// price <= lower && // 价格触及下轨
+	// price > middle && // 价格触及中轨
+	// macdLine > signalLine && // MACD金叉
+	// histogram > prevHistogram && // 动量增强
+	// ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2; // 成交量放大
 
 	// 空头信号条件
-	const shortCondition =
-		// price >= upper && // 价格触及上轨
-		price < middle && // 价格触及中轨
-		macdLine < signalLine && // MACD死叉
-		histogram < prevHistogram && // 动量减弱
-		ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2;
+	const shortCondition = currentPrice < lowest;
+	// price >= upper && // 价格触及上轨
+	// price < middle && // 价格触及中轨
+	// macdLine < signalLine && // MACD死叉
+	// histogram < prevHistogram && // 动量减弱
+	// ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2;
 
 	console.log('################################');
 	console.log(
@@ -310,22 +366,26 @@ async function generateSignal(candles, currentPrice) {
 		moment(candles[candles.length - 1][0]).format('YYYY-MM-DD HH:mm:ss')
 	);
 	console.log('currentPrice', currentPrice);
-	console.log('uper', upper);
-	console.log('lower', lower);
-	console.log('middle', middle);
-	console.log('macdLine', macdLine);
-	console.log('signalLine', signalLine);
-	console.log('histogram', histogram);
-	console.log('prevHistogram', prevHistogram);
-	console.log(
-		'volumn',
-		ohlcv[ohlcv.length - 1][5],
-		ohlcv[ohlcv.length - 2][5],
-		ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2
-	);
+	// console.log('uper', upper);
+	// console.log('lower', lower);
+	// console.log('middle', middle);
+	// console.log('macdLine', macdLine);
+	// console.log('signalLine', signalLine);
+	// console.log('histogram', histogram);
+	// console.log('prevHistogram', prevHistogram);
+	// console.log(
+	// 	'volumn',
+	// 	ohlcv[ohlcv.length - 1][5],
+	// 	ohlcv[ohlcv.length - 2][5],
+	// 	ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2
+	// );
 	// console.log('ema', ema9Current, ema21Current, ema55Current);
 	console.log('position', state.position);
 	console.log('side', state.side);
+	console.log('lastHighs', lastHighs);
+	console.log('lastLows', lastLows);
+	console.log('highest', highest);
+	console.log('lowest', lowest);
 	console.log('longCondition', longCondition);
 	console.log('shortCondition', shortCondition);
 	console.log('################################');
