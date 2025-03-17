@@ -38,7 +38,7 @@ const config = {
 	emaPeriods: [5, 20, 55], // 三EMA周期
 	orderDepth: 0.001 / 2, // 限价单挂单深度 (0.1%)
 	tradeAmount: 500, // 每单交易金额(USDT)
-	maxOrderAge: 1000 * 8, // 限价单最长存活时间(30秒)
+	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.008, // 硬止损(0.5%)
 	takeProfit: 0.02, // 硬止盈(1%)
@@ -576,16 +576,22 @@ async function strategyLoop() {
 
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
-			if (signal.buySignal && orderBook.spread < orderBook.ask * 0.001) {
-				const limitPrice = orderBook.bid * (1 - config.orderDepth);
+			if (
+				signal.buySignal /*&& orderBook.spread < orderBook.ask * 0.001*/
+			) {
+				// const limitPrice = orderBook.bid * (1 - config.orderDepth);
+				const limitPrice = 1;
 				const amount = config.tradeAmount / limitPrice;
 
 				await OrderManager.createLimitOrder('buy', amount, limitPrice);
 				console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
 			}
 
-			if (signal.sellSignal && orderBook.spread < orderBook.bid * 0.001) {
-				const limitPrice = orderBook.ask * (1 + config.orderDepth);
+			if (
+				signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
+			) {
+				// const limitPrice = orderBook.ask * (1 + config.orderDepth);
+				const limitPrice = 1;
 				const amount = config.tradeAmount / limitPrice;
 
 				await OrderManager.createLimitOrder('sell', amount, limitPrice);
