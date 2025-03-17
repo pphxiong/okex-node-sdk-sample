@@ -215,13 +215,13 @@ class OrderManager {
 				positionSide: side === 'buy' ? 'LONG' : 'SHORT',
 			}
 		);
-		// state.activeOrders.push({
-		// 	id: order.id,
-		// 	side,
-		// 	amount,
-		// 	price: order.price,
-		// 	timestamp: Date.now(),
-		// });
+		state.activeOrders.push({
+			id: order.id,
+			side,
+			amount,
+			price: order.price,
+			timestamp: Date.now(),
+		});
 		return order;
 	}
 
