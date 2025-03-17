@@ -40,8 +40,8 @@ const config = {
 	tradeAmount: 500, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
-	stopLoss: 0.008, // 硬止损(0.5%)
-	takeProfit: 0.02, // 硬止盈(1%)
+	stopLoss: 0.01, // 硬止损(0.5%)
+	takeProfit: 0.04, // 硬止盈(1%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
