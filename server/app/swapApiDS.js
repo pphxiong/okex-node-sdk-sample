@@ -40,8 +40,8 @@ const config = {
 	tradeAmount: 500, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 8, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
-	stopLoss: 0.002, // 硬止损(0.5%)
-	takeProfit: 0.008, // 硬止盈(1%)
+	stopLoss: 0.008, // 硬止损(0.5%)
+	takeProfit: 0.02, // 硬止盈(1%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
@@ -326,7 +326,15 @@ function getHighsAndLows(indicators) {
 		null,
 		lastLows.map((h) => h.price)
 	);
-	return { lastHighs, lastLows, highest, lowest };
+	const highLower = Math.min.apply(
+		null,
+		lastHighs.map((h) => h.price)
+	);
+	const lowHigher = Math.max.apply(
+		null,
+		lastLows.map((h) => h.price)
+	);
+	return { lastHighs, lastLows, highest, lowest, highLower, lowHigher };
 }
 
 // 交易信号生成
@@ -424,13 +432,16 @@ class RiskManager {
 			indicators,
 		} = signal;
 
-		const { lastHighs, lastLows, highest, lowest } =
+		const { lastHighs, lastLows, highest, lowest, highLower, lowHigher } =
 			getHighsAndLows(indicators);
 
 		const { side } = state;
 		let isStop = false;
 
-		isStop = side === 'buy' ? sellSignal : buySignal;
+		isStop =
+			side === 'buy'
+				? currentPrice < lowHigher
+				: currentPrice > highLower;
 
 		// 更新价格极值
 		state.highestPrice = Math.max(state.highestPrice, currentPrice);
@@ -446,7 +457,7 @@ class RiskManager {
 			hardStopPrice = state.entryPrice * (1 - config.stopLoss);
 			hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
 			if (currentPrice < state.entryPrice) {
-				// isStop = isStop || currentPrice <= hardStopPrice;
+				isStop = isStop || currentPrice <= hardStopPrice;
 			} else {
 				trailingStopPrice =
 					state.highestPrice * (1 - config.trailingStop);
@@ -456,7 +467,7 @@ class RiskManager {
 			hardStopPrice = state.entryPrice * (1 + config.stopLoss);
 			hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
 			if (currentPrice > state.entryPrice) {
-				// isStop = isStop || currentPrice >= hardStopPrice;
+				isStop = isStop || currentPrice >= hardStopPrice;
 			} else {
 				trailingStopPrice =
 					state.lowestPrice * (1 + config.trailingStop);
