@@ -40,8 +40,8 @@ const config = {
 	tradeAmount: 500, // 每单交易金额(USDT)
 	maxOrderAge: 10000, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
-	stopLoss: 0.004, // 硬止损(0.5%)
-	takeProfit: 0.004, // 硬止盈(1%)
+	stopLoss: 0.002, // 硬止损(0.5%)
+	takeProfit: 0.008, // 硬止盈(1%)
 	coolingPeriod: 180, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
@@ -546,7 +546,9 @@ async function strategyLoop() {
 		// );
 		// ohlcv = candles;
 		const candles = ohlcv;
-		const currentPrice = candles[candles.length - 1][4];
+		// const currentPrice = candles[candles.length - 1][4];
+		const ticker = await exchange.fetchTicker(config.symbol);
+		const currentPrice = ticker.last;
 
 		// 步骤1: 清理过期订单
 		await OrderManager.checkOrderStatus(currentPrice);
@@ -648,7 +650,7 @@ async function handleKlineUpdate(msg) {
 	}
 	ohlcv.push(newBar);
 
-	await strategyLoop();
+	// await strategyLoop();
 }
 
 // // 加载历史数据
@@ -733,7 +735,15 @@ async function handleKlineUpdate(msg) {
 	await initPositionData();
 	connectWebSocket();
 	// await strategyLoop();
-	// setInterval(strategyLoop, 15000); // 每15秒运行一次
+	setInterval(() => {
+		RESTART_TIME += 1;
+		if (RESTART_TIME >= 3 * 5 * 2) {
+			RESTART_TIME = 0;
+			restart('normal');
+			return;
+		}
+		strategyLoop();
+	}, 1000 * 10); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
