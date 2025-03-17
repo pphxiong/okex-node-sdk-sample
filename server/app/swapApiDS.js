@@ -309,14 +309,14 @@ function getHighsAndLows(indicators) {
 				timestamp: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
 			})
 		)
-		.slice(-3);
+		.slice(-2);
 	const lastLows = indicators.swingPoints.lows
 		.map((i) =>
 			Object.assign(i, {
 				timestamp: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
 			})
 		)
-		.slice(-3);
+		.slice(-2);
 
 	const highest = Math.max.apply(
 		null,
@@ -446,7 +446,7 @@ class RiskManager {
 			hardStopPrice = state.entryPrice * (1 - config.stopLoss);
 			hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
 			if (currentPrice < state.entryPrice) {
-				isStop = isStop || currentPrice <= hardStopPrice;
+				// isStop = isStop || currentPrice <= hardStopPrice;
 			} else {
 				trailingStopPrice =
 					state.highestPrice * (1 - config.trailingStop);
@@ -456,7 +456,7 @@ class RiskManager {
 			hardStopPrice = state.entryPrice * (1 + config.stopLoss);
 			hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
 			if (currentPrice > state.entryPrice) {
-				isStop = isStop || currentPrice >= hardStopPrice;
+				// isStop = isStop || currentPrice >= hardStopPrice;
 			} else {
 				trailingStopPrice =
 					state.lowestPrice * (1 + config.trailingStop);
