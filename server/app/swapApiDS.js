@@ -516,7 +516,7 @@ class RiskManager {
 		state.highestPrice = 0;
 		state.lowestPrice = 0;
 
-		this.activateCooldown();
+		// this.activateCooldown();
 	}
 
 	static activateCooldown() {
