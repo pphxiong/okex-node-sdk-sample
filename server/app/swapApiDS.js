@@ -302,6 +302,21 @@ class OrderManager {
 	}
 }
 
+function getHighsAndLows(indicators) {
+	const lastHighs = indicators.swingPoints.highs.slice(-3);
+	const lastLows = indicators.swingPoints.lows.slice(-3);
+
+	const highest = Math.max.apply(
+		null,
+		lastHighs.map((h) => h.price)
+	);
+	const lowest = Math.min.apply(
+		null,
+		lastLows.map((h) => h.price)
+	);
+	return { lastHighs, lastLows, highest, lowest };
+}
+
 // 交易信号生成
 async function generateSignal(candles, currentPrice) {
 	// const [ema9, ema21, ema55] = await Promise.all([
@@ -328,17 +343,8 @@ async function generateSignal(candles, currentPrice) {
 	const histogram = getLastIndicators(indicators, 'histogram');
 	const prevHistogram = indicators.histogram[indicators.histogram.length - 2];
 
-	const lastHighs = indicators.swingPoints.highs.slice(-3);
-	const lastLows = indicators.swingPoints.lows.slice(-3);
-
-	const highest = Math.max.apply(
-		null,
-		lastHighs.map((h) => h.price)
-	);
-	const lowest = Math.min.apply(
-		null,
-		lastLows.map((h) => h.price)
-	);
+	const { lastHighs, lastLows, highest, lowest } =
+		getHighsAndLows(indicators);
 
 	// 多头信号条件
 	const longCondition = currentPrice > highest;
@@ -390,6 +396,7 @@ async function generateSignal(candles, currentPrice) {
 		buySignal: longCondition,
 		sellSignal: shortCondition,
 		price: currentPrice,
+		indicators,
 	};
 }
 
@@ -398,7 +405,15 @@ class RiskManager {
 	static checkStopConditions(signal) {
 		if (state.position === 0) return false;
 
-		const { buySignal, sellSignal, price: currentPrice } = signal;
+		const {
+			buySignal,
+			sellSignal,
+			price: currentPrice,
+			indicators,
+		} = signal;
+
+		const { lastHighs, lastLows, highest, lowest } =
+			getHighsAndLows(indicators);
 
 		const { side } = state;
 		let isStop = false;
@@ -441,6 +456,10 @@ class RiskManager {
 		console.log('currentPrice', currentPrice);
 		console.log('hardStopPrice', hardStopPrice);
 		console.log('hardTakeProfitPrice', hardTakeProfitPrice);
+		console.log('lastHighs', lastHighs);
+		console.log('lastLows', lastLows);
+		console.log('highest', highest);
+		console.log('lowest', lowest);
 		// console.log('trailingStopPrice', trailingStopPrice);
 		// console.log('highestPrice', state.highestPrice);
 		// console.log('lowestPrice', state.lowestPrice);
