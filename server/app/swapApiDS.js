@@ -204,6 +204,27 @@ class OrderManager {
 		return order;
 	}
 
+	static async createMarketOrder(side, amount, price) {
+		const order = await exchange.createOrder(
+			config.symbol,
+			'market',
+			side,
+			amount,
+			null,
+			{
+				positionSide: side === 'buy' ? 'LONG' : 'SHORT',
+			}
+		);
+		state.activeOrders.push({
+			id: order.id,
+			side,
+			amount,
+			price: order.price,
+			timestamp: Date.now(),
+		});
+		return order;
+	}
+
 	static async cancelOrder(orderId) {
 		await exchange.cancelOrder(orderId, config.symbol);
 		state.activeOrders = state.activeOrders.filter((o) => o.id !== orderId);
@@ -580,7 +601,7 @@ async function strategyLoop() {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				await OrderManager.createLimitOrder('buy', amount, limitPrice);
+				await OrderManager.createMarketOrder('buy', amount, limitPrice);
 				console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
 			}
 
@@ -588,7 +609,11 @@ async function strategyLoop() {
 				const limitPrice = orderBook.ask * (1 + config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				await OrderManager.createLimitOrder('sell', amount, limitPrice);
+				await OrderManager.createMarketOrder(
+					'sell',
+					amount,
+					limitPrice
+				);
 				console.log(`挂卖单 | 价格:${limitPrice} 数量:${amount}`);
 			}
 		}
