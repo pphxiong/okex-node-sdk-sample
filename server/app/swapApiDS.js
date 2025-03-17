@@ -41,7 +41,7 @@ const config = {
 	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.005, // 硬止损(0.5%)
-	takeProfit: 0.0025, // 硬止盈(1%)
+	takeProfit: 0.005, // 硬止盈(1%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
@@ -482,7 +482,7 @@ class RiskManager {
 			} else {
 				trailingStopPrice =
 					state.highestPrice * (1 - config.trailingStop);
-				// isStop = isStop || currentPrice >= hardTakeProfitPrice;
+				isStop = isStop || currentPrice >= hardTakeProfitPrice;
 			}
 		} else {
 			hardStopPrice = state.entryPrice * (1 + config.stopLoss);
@@ -492,7 +492,7 @@ class RiskManager {
 			} else {
 				trailingStopPrice =
 					state.lowestPrice * (1 + config.trailingStop);
-				// isStop = isStop || currentPrice <= hardTakeProfitPrice;
+				isStop = isStop || currentPrice <= hardTakeProfitPrice;
 			}
 		}
 		console.log('***********************************');
