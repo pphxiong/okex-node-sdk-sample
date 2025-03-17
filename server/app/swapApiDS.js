@@ -52,7 +52,7 @@ const config = {
 	macdFast: 8,
 	macdSlow: 17,
 	macdSignal: 5,
-	coldStartBars: 100, // 冷启动期间的K线数量
+	coldStartBars: 50, // 冷启动期间的K线数量
 };
 
 // 全局状态
@@ -423,7 +423,7 @@ class RiskManager {
 			hardStopPrice = state.entryPrice * (1 - config.stopLoss);
 			hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
 			if (currentPrice < state.entryPrice) {
-				isStop = isStop || currentPrice <= hardStopPrice;
+				// isStop = isStop || currentPrice <= hardStopPrice;
 			} else {
 				trailingStopPrice =
 					state.highestPrice * (1 - config.trailingStop);
@@ -433,7 +433,7 @@ class RiskManager {
 			hardStopPrice = state.entryPrice * (1 + config.stopLoss);
 			hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
 			if (currentPrice > state.entryPrice) {
-				isStop = isStop || currentPrice >= hardStopPrice;
+				// isStop = isStop || currentPrice >= hardStopPrice;
 			} else {
 				trailingStopPrice =
 					state.lowestPrice * (1 + config.trailingStop);
@@ -444,9 +444,9 @@ class RiskManager {
 		console.log('entryPrice', state.entryPrice);
 		console.log('hardStopPrice', hardStopPrice);
 		console.log('hardTakeProfitPrice', hardTakeProfitPrice);
-		console.log('trailingStopPrice', trailingStopPrice);
-		console.log('highestPrice', state.highestPrice);
-		console.log('lowestPrice', state.lowestPrice);
+		// console.log('trailingStopPrice', trailingStopPrice);
+		// console.log('highestPrice', state.highestPrice);
+		// console.log('lowestPrice', state.lowestPrice);
 		console.log('isStop', isStop);
 		console.log('***********************************');
 		return isStop;
