@@ -38,7 +38,7 @@ const config = {
 	emaPeriods: [5, 20, 55], // 三EMA周期
 	orderDepth: 0.001 / 2, // 限价单挂单深度 (0.1%)
 	tradeAmount: 500, // 每单交易金额(USDT)
-	maxOrderAge: 10000, // 限价单最长存活时间(30秒)
+	maxOrderAge: 1000 * 8, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.002, // 硬止损(0.5%)
 	takeProfit: 0.008, // 硬止盈(1%)
@@ -743,7 +743,7 @@ async function handleKlineUpdate(msg) {
 			return;
 		}
 		strategyLoop();
-	}, 1000 * 10); // 每15秒运行一次
+	}, 1000 * 8); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
