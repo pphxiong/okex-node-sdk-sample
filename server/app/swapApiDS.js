@@ -303,8 +303,20 @@ class OrderManager {
 }
 
 function getHighsAndLows(indicators) {
-	const lastHighs = indicators.swingPoints.highs.slice(-3);
-	const lastLows = indicators.swingPoints.lows.slice(-3);
+	const lastHighs = indicators.swingPoints.highs
+		.map((i) =>
+			Object.assign(i, {
+				timestamp: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+			})
+		)
+		.slice(-3);
+	const lastLows = indicators.swingPoints.lows
+		.map((i) =>
+			Object.assign(i, {
+				timestamp: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+			})
+		)
+		.slice(-3);
 
 	const highest = Math.max.apply(
 		null,
