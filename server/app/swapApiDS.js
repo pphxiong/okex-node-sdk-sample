@@ -630,8 +630,7 @@ function connectWebSocket() {
 // 处理K线更新
 async function handleKlineUpdate(msg) {
 	const kline = msg.k;
-	console.log(123, kline);
-	if (!kline.x) return; // 仅处理闭合K线
+	// if (!kline.x) return; // 仅处理闭合K线
 
 	// 更新OHLCV数据
 	const newBar = [
