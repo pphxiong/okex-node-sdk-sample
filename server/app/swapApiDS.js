@@ -40,8 +40,8 @@ const config = {
 	tradeAmount: 500, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
-	stopLoss: 0.01, // 硬止损(0.5%)
-	takeProfit: 0.04, // 硬止盈(1%)
+	stopLoss: 0.005, // 硬止损(0.5%)
+	takeProfit: 0.0025, // 硬止盈(1%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
@@ -375,7 +375,7 @@ async function generateSignal(candles, currentPrice) {
 	const indicators = await calculateIndicators();
 
 	// 当前指标值
-	const price = ohlcv[ohlcv.length - 1][4];
+	const lastPrice = ohlcv[ohlcv.length - 1][4];
 	const upper = getLastIndicators(indicators, 'upper');
 	const lower = getLastIndicators(indicators, 'lower');
 	const middle = getLastIndicators(indicators, 'middle');
@@ -388,7 +388,7 @@ async function generateSignal(candles, currentPrice) {
 		getHighsAndLows(indicators);
 
 	// 多头信号条件
-	const longCondition = currentPrice > highest;
+	const longCondition = currentPrice > highest && lastPrice < highest;
 	// price <= lower && // 价格触及下轨
 	// price > middle && // 价格触及中轨
 	// macdLine > signalLine && // MACD金叉
@@ -396,7 +396,7 @@ async function generateSignal(candles, currentPrice) {
 	// ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2; // 成交量放大
 
 	// 空头信号条件
-	const shortCondition = currentPrice < lowest;
+	const shortCondition = currentPrice < lowest && lastPrice > lowest;
 	// price >= upper && // 价格触及上轨
 	// price < middle && // 价格触及中轨
 	// macdLine < signalLine && // MACD死叉
