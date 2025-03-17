@@ -42,7 +42,7 @@ const config = {
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.002, // 硬止损(0.5%)
 	takeProfit: 0.008, // 硬止盈(1%)
-	coolingPeriod: 180, // 基础冷却时间(秒)
+	coolingPeriod: 120, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
 	// BOLL参数
