@@ -215,13 +215,13 @@ class OrderManager {
 				positionSide: side === 'buy' ? 'LONG' : 'SHORT',
 			}
 		);
-		state.activeOrders.push({
-			id: order.id,
-			side,
-			amount,
-			price: order.price,
-			timestamp: Date.now(),
-		});
+		// state.activeOrders.push({
+		// 	id: order.id,
+		// 	side,
+		// 	amount,
+		// 	price: order.price,
+		// 	timestamp: Date.now(),
+		// });
 		return order;
 	}
 
@@ -597,7 +597,9 @@ async function strategyLoop() {
 
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
-			if (signal.buySignal && orderBook.spread < orderBook.ask * 0.001) {
+			if (
+				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
+			) {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
@@ -605,7 +607,9 @@ async function strategyLoop() {
 				console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
 			}
 
-			if (signal.sellSignal && orderBook.spread < orderBook.bid * 0.001) {
+			if (
+				signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
+			) {
 				const limitPrice = orderBook.ask * (1 + config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
