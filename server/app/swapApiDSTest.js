@@ -156,8 +156,6 @@ class Backtester {
 				// )[0][0];
 			}
 
-			console.log(45, d);
-
 			// 生成信号
 			const signal = this.generateSignal(d);
 
