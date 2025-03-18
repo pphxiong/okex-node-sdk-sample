@@ -185,7 +185,7 @@ class Backtester {
 		return new Promise((resolve) => {
 			tulind.indicators.atr.indicator(
 				[highs, lows, closes],
-				[this.config.atrPeriod],
+				[14],
 				(err, res) => {
 					resolve(res[0]);
 				}
