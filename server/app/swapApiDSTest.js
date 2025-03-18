@@ -44,7 +44,7 @@ const config = {
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 0.0004, // 交易手续费0.04%
-	slippage: 0.0003, // 滑点率
+	slippage: 0.00015, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
 };
 
@@ -163,7 +163,7 @@ class Backtester {
 		while (since < endTime) {
 			const candles = await this.exchange.fetchOHLCV(
 				'DOGE/USDT',
-				'5m',
+				'15m',
 				since,
 				1000
 			);
