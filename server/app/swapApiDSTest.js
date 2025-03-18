@@ -82,7 +82,6 @@ class Backtester {
 
 	async calculateIndicators() {
 		try {
-			console.log(34, this.data);
 			// 计算布林带
 			const closes = this.data.map((d) => d.close);
 			const bollinger = await tulind.indicators.bbands.indicator(
@@ -95,6 +94,8 @@ class Backtester {
 				[closes],
 				[config.emaSlope.period]
 			);
+
+			console.log(ema[0]);
 
 			// 计算EMA斜率
 			const emaSlopes = [];
