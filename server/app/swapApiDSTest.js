@@ -322,7 +322,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2024-10-18', '2025-03-17');
+	await backtester.loadHistoricalData('2024-03-18', '2025-03-17');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
