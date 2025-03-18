@@ -44,6 +44,7 @@ const config = {
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 0.0004, // 交易手续费0.04%
+	slippage: 0.0003, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
 };
 
@@ -149,9 +150,9 @@ class Backtester {
 
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
-		return riskAmount / (atr * 2 * 10); // 2倍ATR止损
+		// return riskAmount / (atr * 2); // 2倍ATR止损
 		// return 5000;
-		// return this.balance / 2;
+		return this.balance / 2;
 	}
 
 	async fetchHistoricalData(start, end) {
@@ -274,7 +275,8 @@ class Backtester {
 
 	openPosition(candle, atr, direction) {
 		const positionSize = this.getPositionSize(candle.close, atr);
-		const fee = positionSize * candle.close * config.feeRate;
+		const fee =
+			positionSize * candle.close * (config.feeRate + config.slippage);
 
 		const position = {
 			entryPrice: candle.close,
@@ -297,7 +299,10 @@ class Backtester {
 	}
 
 	closePosition(position, exitCandle) {
-		const fee = position.size * exitCandle.close * config.feeRate;
+		const fee =
+			position.size *
+			exitCandle.close *
+			(config.feeRate + config.slippage);
 		const profit =
 			position.direction === 'long'
 				? (exitCandle.close - position.entryPrice) * position.size
