@@ -30,7 +30,7 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
+	timeframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -222,8 +222,8 @@ class Backtester {
 
 				// const isReverse =
 				// 	position.direction === 'long'
-				// 		? d.emaSlope < 0
-				// 		: d.emaSlope > 0;
+				// 		? d.emaSlope < 0.05 * 0.01
+				// 		: d.emaSlope > 0.05 * 0.01;
 
 				const isReverse =
 					signal && position.direction === 'long'
@@ -286,12 +286,12 @@ class Backtester {
 
 		this.balance -= fee; // 扣除手续费
 		this.totalFee += fee;
-		console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-		console.log(candle.close, candle.middle, candle.emaSlope);
-		console.log('direction', position.direction);
-		console.log('middle', candle.middle);
-		console.log('high', candle.high);
-		console.log('low', candle.low);
+		// console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+		// console.log(candle.close, candle.middle, candle.emaSlope);
+		// console.log('direction', position.direction);
+		// console.log('middle', candle.middle);
+		// console.log('high', candle.high);
+		// console.log('low', candle.low);
 		return position;
 	}
 
