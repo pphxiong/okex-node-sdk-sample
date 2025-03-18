@@ -101,6 +101,7 @@ class Backtester {
 				[highs, lows, closes],
 				[14]
 			)[0];
+			console.log(6, atr);
 
 			// 计算EMA斜率
 			const emaSlopes = [];
