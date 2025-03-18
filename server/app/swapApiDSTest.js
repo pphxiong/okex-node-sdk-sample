@@ -97,10 +97,7 @@ class Backtester {
 				[config.emaSlope.period]
 			);
 
-			const atr = await tulind.indicators.atr.indicator(
-				[highs, lows, closes],
-				[14]
-			)[0];
+			const atr = await this.calculateATR(highs, lows, closes);
 			console.log(6, atr);
 
 			// 计算EMA斜率
