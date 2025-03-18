@@ -46,7 +46,7 @@ const config = {
 		// ATR参数
 		atrPeriod: 14,
 		stopLoss: 1.2,
-		takeProfit: 2.4,
+		takeProfit: 1.8,
 	},
 
 	// 风险参数
@@ -213,7 +213,7 @@ class Backtester {
 				// 		: d.emaSlope > 0.05 * 0.01;
 
 				const isReverse =
-					signal && position.direction === 'long'
+					false && signal && position.direction === 'long'
 						? signal.direction === 'short'
 						: signal.direction === 'long';
 
@@ -337,7 +337,7 @@ class Backtester {
       手续费:       ${this.totalFee}
       =============================
     `);
-		console.log('\n最近5笔交易:');
+		console.log('\n最近20笔交易:');
 		console.table(this.trades.slice(-20));
 	}
 }
