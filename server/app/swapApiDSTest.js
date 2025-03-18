@@ -198,12 +198,12 @@ class Backtester {
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
-		if (/* candle.close <= candle.lower && */ candle.emaSlope > 0.005) {
+		if (/* candle.close <= candle.lower && */ candle.emaSlope > 0) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
-		if (/* candle.close >= candle.upper && */ candle.emaSlope < -0.005) {
+		if (/* candle.close >= candle.upper && */ candle.emaSlope < 0) {
 			return { direction: 'short' };
 		}
 
