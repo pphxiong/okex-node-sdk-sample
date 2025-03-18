@@ -86,6 +86,7 @@ class Backtester {
 
 			console.log(`Loaded ${this.data.length} candles`);
 			console.log(
+				this.data.slice(-1)[0].timestamp,
 				moment(this.data.slice(-1)[0].timestamp).format(
 					'YYYY-MM-DD HH:mm:ss'
 				)
