@@ -140,10 +140,10 @@ class Backtester {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
 				const low = this.data.slice(i - 14, i).map((x) => x.low);
 				const closes = this.data.slice(i - 14, i).map((x) => x.close);
-				atr = await tulind.indicators.atr.indicator(
-					[high, low, closes],
-					[14]
-				)[0][0];
+				// atr = await tulind.indicators.atr.indicator(
+				// 	[high, low, closes],
+				// 	[14]
+				// )[0][0];
 			}
 
 			console.log(45, d);
