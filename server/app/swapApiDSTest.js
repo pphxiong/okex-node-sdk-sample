@@ -208,7 +208,12 @@ class Backtester {
 						? d.close <= position.entryPrice - position.stopLoss
 						: d.close >= position.entryPrice + position.stopLoss;
 
-				if (isProfitTarget || isStopLoss) {
+				const isReverse =
+					signal.direction && signal.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long';
+
+				if (/* isProfitTarget || isStopLoss || */ isReverse) {
 					this.closePosition(position, d);
 					position = null;
 				}
