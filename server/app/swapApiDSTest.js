@@ -279,6 +279,10 @@ class Backtester {
 		this.totalFee += fee;
 		console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
 		console.log(candle.close, candle.middle, candle.emaSlope);
+		console.log('direction', position.direction);
+		console.log('middle', candle.middle);
+		console.log('high', candle.high);
+		console.log('low', candle.low);
 		return position;
 	}
 
