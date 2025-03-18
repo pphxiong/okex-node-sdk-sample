@@ -30,7 +30,7 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
+	timeframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -153,35 +153,6 @@ class Backtester {
 		// return riskAmount / (atr * 2); // 2倍ATR止损
 		// return 5000;
 		return this.balance / 2;
-	}
-
-	async fetchHistoricalData(start, end) {
-		let allCandles = [];
-		let since = new Date(start).getTime();
-		const endTime = new Date(end).getTime();
-
-		while (since < endTime) {
-			const candles = await this.exchange.fetchOHLCV(
-				'DOGE/USDT',
-				'15m',
-				since,
-				1000
-			);
-			allCandles = allCandles.concat(candles);
-			since = candles[candles.length - 1][0] + 1;
-
-			// 防止请求过频
-			await new Promise((resolve) => setTimeout(resolve, 200));
-		}
-
-		return allCandles.map((c) => ({
-			timestamp: c[0],
-			open: parseFloat(c[1]),
-			high: parseFloat(c[2]),
-			low: parseFloat(c[3]),
-			close: parseFloat(c[4]),
-			volume: parseFloat(c[5]),
-		}));
 	}
 
 	runBacktest() {
