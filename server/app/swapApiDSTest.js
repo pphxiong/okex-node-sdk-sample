@@ -194,16 +194,21 @@ class Backtester {
 	}
 
 	generateSignal(candle) {
-		console.log(34, candle.upper, candle.emaSlope);
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
-		if (/* candle.close <= candle.lower && */ candle.emaSlope > 0) {
+		if (
+			/* candle.close <= candle.lower && */ candle.emaSlope >
+			0.05 * 0.01
+		) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
-		if (/* candle.close >= candle.upper && */ candle.emaSlope < 0) {
+		if (
+			/* candle.close >= candle.upper && */ candle.emaSlope <
+			-0.05 * 0.01
+		) {
 			return { direction: 'short' };
 		}
 
@@ -235,13 +240,13 @@ class Backtester {
 				: (position.entryPrice - exitCandle.close) * position.size;
 
 		this.balance += profit - fee;
-		console.log(123, this.balance, profit);
 		this.trades.push({
 			entry: position.entryPrice,
 			exit: exitCandle.close,
 			profit: profit,
 			duration: exitCandle.timestamp - position.entryTime,
 		});
+		console.log(23, this.balance);
 	}
 
 	showResults() {
