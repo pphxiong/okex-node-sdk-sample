@@ -220,15 +220,15 @@ class Backtester {
 						? d.close <= position.entryPrice - position.stopLoss
 						: d.close >= position.entryPrice + position.stopLoss;
 
-				const isReverse =
-					position.direction === 'long'
-						? d.emaSlope < 0.05 * 0.01
-						: d.emaSlope > 0.05 * 0.01;
-
 				// const isReverse =
-				// 	signal && position.direction === 'long'
-				// 		? signal.direction === 'short'
-				// 		: signal.direction === 'long';
+				// 	position.direction === 'long'
+				// 		? d.emaSlope < 0.05 * 0.01
+				// 		: d.emaSlope > 0.05 * 0.01;
+
+				const isReverse =
+					signal && position.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long';
 
 				if (isProfitTarget || isStopLoss || isReverse) {
 					this.closePosition(position, d);
