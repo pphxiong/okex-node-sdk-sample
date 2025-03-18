@@ -85,6 +85,11 @@ class Backtester {
 			}));
 
 			console.log(`Loaded ${this.data.length} candles`);
+			console.log(
+				moment(this.data.slice(-1)[0].timestamp).format(
+					'YYYY-MM-DD hh:mm:ss'
+				)
+			);
 		} catch (e) {
 			console.error('数据加载失败:', e.message);
 		}
