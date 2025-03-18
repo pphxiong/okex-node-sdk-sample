@@ -30,7 +30,7 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
+	timeframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -347,7 +347,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2024-10-01', '2025-03-18');
+	await backtester.loadHistoricalData('2024-12-01', '2025-03-18');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
