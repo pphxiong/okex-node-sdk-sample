@@ -209,8 +209,8 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? d.emaSlope < 0.05 * 0.01
-						: d.emaSlope > 0.05 * 0.01;
+						? d.emaSlope < -config.emaSlope.emaSlopeThreshold
+						: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
 				// const isReverse =
 				// 	signal && position.direction === 'long'
