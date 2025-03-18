@@ -133,14 +133,14 @@ class Backtester {
 				}
 				d.atr = atr[i];
 			});
-			this.data.slice(-100).forEach((d) => {
-				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-				console.log(d.emaSlope);
-				console.log(d.atr);
-				console.log(d.upper);
-				console.log(d.middle);
-				console.log(d.lower);
-			});
+			// this.data.slice(-100).forEach((d) => {
+			// 	console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+			// 	console.log(d.emaSlope);
+			// 	console.log(d.atr);
+			// 	console.log(d.upper);
+			// 	console.log(d.middle);
+			// 	console.log(d.lower);
+			// });
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
@@ -187,7 +187,7 @@ class Backtester {
 
 		this.data.forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
-			if (i < 50) return;
+			// if (i < 50) return;
 			// 计算ATR
 			if (i >= 14) {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
