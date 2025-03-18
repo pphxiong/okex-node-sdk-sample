@@ -46,6 +46,8 @@ const config = {
 	feeRate: 0.0004, // 交易手续费0.04%
 	slippage: 0.00015, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
+	// ATR参数
+	atrPeriod: 14,
 };
 
 class Backtester {
@@ -327,7 +329,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2024-10-18', '2025-03-17');
+	await backtester.loadHistoricalData('2024-01-01', '2024-04-01');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
