@@ -63,8 +63,8 @@ class Backtester {
 
 			while (since < endTime) {
 				const candles = await this.exchange.fetchOHLCV(
-					'DOGE/USDT',
-					'15m',
+					config.symbol,
+					config.timeframe,
 					since,
 					1000
 				);
@@ -75,7 +75,7 @@ class Backtester {
 				await new Promise((resolve) => setTimeout(resolve, 200));
 			}
 
-			allCandles.map((c) => ({
+			this.data = allCandles.map((c) => ({
 				timestamp: c[0],
 				open: parseFloat(c[1]),
 				high: parseFloat(c[2]),
@@ -83,8 +83,6 @@ class Backtester {
 				close: parseFloat(c[4]),
 				volume: parseFloat(c[5]),
 			}));
-
-			this.data = allCandles;
 
 			console.log(`Loaded ${this.data.length} candles`);
 		} catch (e) {
