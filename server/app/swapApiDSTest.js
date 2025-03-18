@@ -85,12 +85,6 @@ class Backtester {
 			}));
 
 			console.log(`Loaded ${this.data.length} candles`);
-			console.log(
-				this.data.slice(-1)[0].timestamp,
-				moment(this.data.slice(-1)[0].timestamp).format(
-					'YYYY-MM-DD HH:mm:ss'
-				)
-			);
 		} catch (e) {
 			console.error('数据加载失败:', e.message);
 		}
@@ -138,6 +132,14 @@ class Backtester {
 					d.emaSlope = emaSlopes[slopeIndex];
 				}
 				d.atr = atr[i];
+			});
+			this.data.slice(-10).forEach((d) => {
+				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+				console.log(d.emaSlope);
+				console.log(d.atr);
+				console.log(d.upper);
+				console.log(d.middle);
+				console.log(d.lower);
 			});
 		} catch (e) {
 			console.error('指标计算错误:', e);
