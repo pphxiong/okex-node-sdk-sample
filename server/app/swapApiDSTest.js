@@ -163,7 +163,7 @@ class WaveBacktester {
 			atr14: await this.calculateATR(candles, 14),
 			rsi14: this.calculateRSI(closes, 14),
 			swingPoints: this.findSwingPoints(candles),
-			bolls,
+			boll: bolls[bolls.length - 1],
 		};
 
 		return indicators;
@@ -245,6 +245,7 @@ class WaveBacktester {
 				ema20: indicators.ema20[i],
 				atr14: indicators.atr14[i],
 				rsi14: indicators.rsi14[i],
+				bolls: {},
 			};
 
 			// 波浪状态检测
@@ -336,7 +337,7 @@ class WaveBacktester {
 		i,
 		indicators
 	) {
-		const latestIndicator = indicators[indicators.length - 1];
+		const latestIndicator = indicators;
 
 		const volumeValid =
 			candle.volume >
@@ -346,8 +347,8 @@ class WaveBacktester {
 
 		// 多头信号条件
 		if (
-			candle.close <= latestIndicator.lower &&
-			latestIndicator.emaSlope > 0
+			candle.close <= latestIndicator.boll.lower &&
+			latestIndicator.boll.emaSlope > 0
 			// waveStatus.isUpTrend
 			// waveStatus.waveCount >= 3 &&
 			// candle.close > indicators.ema20 &&
@@ -370,8 +371,8 @@ class WaveBacktester {
 
 		// 空头信号条件
 		if (
-			candle.close >= latestIndicator.upper &&
-			latestIndicator.emaSlope < 0
+			candle.close >= latestIndicator.boll.upper &&
+			latestIndicator.boll.emaSlope < 0
 			// waveStatus.isDownTrend
 			// waveStatus.waveCount >= 3 &&
 			// candle.close < indicators.ema20 &&
