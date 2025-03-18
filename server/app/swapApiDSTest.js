@@ -194,6 +194,7 @@ class Backtester {
 	}
 
 	generateSignal(candle) {
+		console.log(34, candle.upper, candle.emaSlope);
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
