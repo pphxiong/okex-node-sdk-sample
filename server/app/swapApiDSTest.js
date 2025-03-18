@@ -34,13 +34,13 @@ const config = {
 	// 布林线参数
 	bollinger: {
 		period: 20,
-		stdDev: 1.6,
+		stdDev: 1.8,
 	},
 	// EMA斜率参数
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0.05 * 0.01, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
