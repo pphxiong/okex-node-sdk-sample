@@ -30,7 +30,7 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '5m',
+	timeframe: '15m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -210,27 +210,27 @@ class Backtester {
 				// console.log(d.emaSlope);
 				// console.log('direction', position.direction);
 
-				// const isProfitTarget =
-				// 	signal.direction === 'long'
-				// 		? d.close >= position.entryPrice + position.takeProfit
-				// 		: d.close <= position.entryPrice - position.takeProfit;
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >= position.entryPrice + position.takeProfit
+						: d.close <= position.entryPrice - position.takeProfit;
 
-				// const isStopLoss =
-				// 	signal.direction === 'long'
-				// 		? d.close <= position.entryPrice - position.stopLoss
-				// 		: d.close >= position.entryPrice + position.stopLoss;
-
-				// const isReverse =
-				// 	position.direction === 'long'
-				// 		? d.emaSlope < 0.05 * 0.01
-				// 		: d.emaSlope > 0.05 * 0.01;
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice - position.stopLoss
+						: d.close >= position.entryPrice + position.stopLoss;
 
 				const isReverse =
-					signal && position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long';
+					position.direction === 'long'
+						? d.emaSlope < 0.05 * 0.01
+						: d.emaSlope > 0.05 * 0.01;
 
-				if (/* isProfitTarget || isStopLoss || */ isReverse) {
+				// const isReverse =
+				// 	signal && position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long';
+
+				if (isProfitTarget || isStopLoss || isReverse) {
 					this.closePosition(position, d);
 					position = null;
 				}
