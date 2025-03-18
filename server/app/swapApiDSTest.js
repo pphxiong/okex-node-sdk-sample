@@ -53,6 +53,7 @@ class Backtester {
 		this.data = [];
 		this.trades = [];
 		this.balance = config.initialBalance;
+		this.totalFee = 0;
 	}
 
 	async loadHistoricalData(start, end) {
@@ -247,8 +248,6 @@ class Backtester {
 
 	generateSignal(candle) {
 		if (!candle.upper || !candle.emaSlope) return null;
-		console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-		console.log(candle.close, candle.middle, candle.emaSlope);
 
 		// 多头信号
 		if (candle.close <= candle.middle && candle.emaSlope > 0.05 * 0.01) {
@@ -277,6 +276,9 @@ class Backtester {
 		};
 
 		this.balance -= fee; // 扣除手续费
+		this.totalFee += fee;
+		console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+		console.log(candle.close, candle.middle, candle.emaSlope);
 		return position;
 	}
 
@@ -288,6 +290,7 @@ class Backtester {
 				: (position.entryPrice - exitCandle.close) * position.size;
 
 		this.balance += profit - fee;
+		this.totalFee += fee;
 		this.trades.push({
 			size: position.size,
 			direction: position.direction,
@@ -321,6 +324,7 @@ class Backtester {
       盈亏比:        ${profitFactor.toFixed(2)}
       最大单笔盈利:  ${Math.max(...this.trades.map((t) => t.profit)).toFixed(2)}
       最大单笔亏损:  ${Math.min(...this.trades.map((t) => t.profit)).toFixed(2)}
+      手续费:       ${this.totalFee}
       =============================
     `);
 		console.log('\n最近5笔交易:');
