@@ -44,6 +44,14 @@ class WaveBacktester {
 			maxLeverage: 10, // 最大杠杆
 			baseOrderSize: 0.1, // 基础仓位比例
 			riskFactor: 0.02, // 单笔风险系数
+			bollinger: {
+				period: 20,
+				stdDev: 1.8,
+			},
+			emaSlope: {
+				emaPeriod: 10,
+				slopePeriod: 5,
+			},
 		};
 	}
 
@@ -80,7 +88,7 @@ class WaveBacktester {
 		while (since < endTime) {
 			const candles = await this.exchange.fetchOHLCV(
 				'DOGE/USDT',
-				'5m',
+				'15m',
 				since,
 				1000
 			);
@@ -106,12 +114,59 @@ class WaveBacktester {
 		const highs = candles.map((c) => c.high);
 		const lows = candles.map((c) => c.low);
 
-		return {
+		// 计算布林带
+		const bollinger = await tulind.indicators.bbands.indicator(
+			[closes],
+			[this.config.bollinger.period, this.config.bollinger.stdDev]
+		);
+
+		// 计算EMA斜率
+		const ema = await tulind.indicators.ema.indicator(
+			[closes],
+			[this.config.emaSlope.emaPeriod]
+		);
+
+		const emaSlope = [];
+		for (let i = this.config.emaSlope.slopePeriod; i < ema[0].length; i++) {
+			const slope =
+				(ema[0][i] - ema[0][i - this.config.emaSlope.slopePeriod]) /
+				this.config.emaSlope.slopePeriod;
+			emaSlope.push(slope);
+		}
+
+		const bolls = [];
+		// 关联指标到K线
+		candles.forEach((candle, index) => {
+			const target = {};
+			if (index >= this.config.bollinger.period) {
+				const bbIndex = index - this.config.bollinger.period;
+				target.upper = bollinger[0][bbIndex];
+				target.middle = bollinger[1][bbIndex];
+				target.lower = bollinger[2][bbIndex];
+			}
+			if (
+				index >=
+				this.config.emaSlope.emaPeriod +
+					this.config.emaSlope.slopePeriod
+			) {
+				const slopeIndex =
+					index -
+					this.config.emaSlope.emaPeriod -
+					this.config.emaSlope.slopePeriod;
+				target.emaSlope = emaSlope[slopeIndex];
+			}
+			bolls.push(target);
+		});
+
+		const indicators = {
 			ema20: await this.calculateEMA(closes, 20),
 			atr14: await this.calculateATR(candles, 14),
 			rsi14: this.calculateRSI(closes, 14),
 			swingPoints: this.findSwingPoints(candles),
+			bolls,
 		};
+
+		return indicators;
 	}
 
 	async calculateEMA(prices, period) {
@@ -205,7 +260,8 @@ class WaveBacktester {
 				currentIndicators,
 				currentCandle,
 				candles,
-				i
+				i,
+				indicators
 			);
 
 			// 执行交易
@@ -272,7 +328,9 @@ class WaveBacktester {
 		return candles.reduce((a, p) => a + p.volume, 0) / candles.length || 0;
 	}
 
-	generateSignal(waveStatus, indicators, candle, candles, i) {
+	generateSignal(waveStatus, indicators, candle, candles, i, indicators) {
+		const latestIndicator = indicators[indicators.length - 1];
+
 		const volumeValid =
 			candle.volume >
 			this.calculateAverageVolume(candles.slice(i - 5, i)) * 1;
@@ -281,7 +339,9 @@ class WaveBacktester {
 
 		// 多头信号条件
 		if (
-			waveStatus.isUpTrend
+			candle.close <= latestIndicator.lower &&
+			latestIndicator.emaSlope > 0
+			// waveStatus.isUpTrend
 			// waveStatus.waveCount >= 3 &&
 			// candle.close > indicators.ema20 &&
 			// indicators.rsi14 > 50 &&
@@ -303,7 +363,9 @@ class WaveBacktester {
 
 		// 空头信号条件
 		if (
-			waveStatus.isDownTrend
+			candle.close >= latestIndicator.upper &&
+			latestIndicator.emaSlope < 0
+			// waveStatus.isDownTrend
 			// waveStatus.waveCount >= 3 &&
 			// candle.close < indicators.ema20 &&
 			// indicators.rsi14 < 50 &&
