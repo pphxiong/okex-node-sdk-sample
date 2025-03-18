@@ -209,8 +209,8 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long';
+						? d.emaSlope < 0
+						: d.emaSlope > 0;
 
 				if (/* isProfitTarget || isStopLoss || */ isReverse) {
 					this.closePosition(position, d);
