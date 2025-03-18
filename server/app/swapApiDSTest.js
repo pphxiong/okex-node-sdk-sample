@@ -33,21 +33,27 @@ const config = {
 	timeframe: '15m',
 	// 布林线参数
 	bollinger: {
-		period: 20,
-		stdDev: 1.8,
+		period: 22,
+		stdDev: 2.0,
 	},
 	// EMA斜率参数
 	emaSlope: {
-		period: 10,
-		lookback: 5, // 计算5根K线斜率
+		period: 8,
+		lookback: 3, // 计算5根K线斜率
+		emaSlopeThreshold: 0.007, // EMA斜率阈值
 	},
+	atrParam: {
+		// ATR参数
+		atrPeriod: 14,
+		stopLoss: 1.2,
+		takeProfit: 1.8,
+	},
+
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 0.0004, // 交易手续费0.04%
 	slippage: 0.00015, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
-	// ATR参数
-	atrPeriod: 14,
 };
 
 class Backtester {
@@ -165,13 +171,19 @@ class Backtester {
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
 			// 计算ATR
-			if (i >= 14) {
-				const high = this.data.slice(i - 14, i).map((x) => x.high);
-				const low = this.data.slice(i - 14, i).map((x) => x.low);
-				const closes = this.data.slice(i - 14, i).map((x) => x.close);
+			if (i >= config.atrParam.atrPeriod) {
+				const high = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.high);
+				const low = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.low);
+				const closes = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.close);
 				// atr = await tulind.indicators.atr.indicator(
 				// 	[high, low, closes],
-				// 	[14]
+				// 	[config.atrParam.atrPeriod]
 				// )[0][0];
 				atr = d.atr;
 			}
@@ -222,7 +234,7 @@ class Backtester {
 		return new Promise((resolve) => {
 			tulind.indicators.atr.indicator(
 				[highs, lows, closes],
-				[14],
+				[config.atrParam.atrPeriod],
 				(err, res) => {
 					resolve(res[0]);
 				}
@@ -234,12 +246,18 @@ class Backtester {
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
-		if (candle.close <= candle.low && candle.emaSlope > 0.05 * 0.01) {
+		if (
+			candle.close <= candle.middle &&
+			candle.emaSlope > config.emaSlope.emaSlopeThreshold
+		) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
-		if (candle.close >= candle.high && candle.emaSlope < -0.05 * 0.01) {
+		if (
+			candle.close >= candle.middle &&
+			candle.emaSlope < -config.emaSlope.emaSlopeThreshold
+		) {
 			return { direction: 'short' };
 		}
 
@@ -256,8 +274,8 @@ class Backtester {
 			entryTime: candle.timestamp,
 			direction: direction,
 			size: positionSize,
-			takeProfit: atr * 1.8,
-			stopLoss: atr * 1.2,
+			takeProfit: atr * config.atrParam.takeProfit,
+			stopLoss: atr * config.atrParam.stopLoss,
 		};
 
 		this.balance -= fee; // 扣除手续费
