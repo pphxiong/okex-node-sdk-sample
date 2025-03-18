@@ -87,7 +87,7 @@ class Backtester {
 			console.log(`Loaded ${this.data.length} candles`);
 			console.log(
 				moment(this.data.slice(-1)[0].timestamp).format(
-					'YYYY-MM-DD hh:mm:ss'
+					'YYYY-MM-DD HH:mm:ss'
 				)
 			);
 		} catch (e) {
@@ -290,9 +290,9 @@ class Backtester {
 			exit: exitCandle.close,
 			profit: profit,
 			duration: exitCandle.timestamp - position.entryTime,
-			entryTime: moment(position.entryTime).format('YYYY-MM-DD hh:mm:ss'),
+			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
 			exitTime: moment(exitCandle.timestamp).format(
-				'YYYY-MM-DD hh:mm:ss'
+				'YYYY-MM-DD HH:mm:ss'
 			),
 		});
 	}
