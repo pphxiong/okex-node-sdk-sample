@@ -45,8 +45,8 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1.2 / 10,
-		takeProfit: 1.8 / 10,
+		stopLoss: 1.2 / 5,
+		takeProfit: 1.8 / 5,
 	},
 
 	// 风险参数
