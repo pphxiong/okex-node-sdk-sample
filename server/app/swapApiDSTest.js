@@ -46,7 +46,7 @@ const config = {
 		// ATR参数
 		atrPeriod: 14,
 		stopLoss: 1.2,
-		takeProfit: 1.8,
+		takeProfit: 2.4,
 	},
 
 	// 风险参数
@@ -347,7 +347,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2023-10-01', '2024-03-18');
+	await backtester.loadHistoricalData('2024-10-01', '2025-03-18');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
