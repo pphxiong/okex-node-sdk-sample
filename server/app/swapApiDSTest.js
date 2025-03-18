@@ -328,7 +328,14 @@ class WaveBacktester {
 		return candles.reduce((a, p) => a + p.volume, 0) / candles.length || 0;
 	}
 
-	generateSignal(waveStatus, indicators, candle, candles, i, indicators) {
+	generateSignal(
+		waveStatus,
+		currentIndicator,
+		candle,
+		candles,
+		i,
+		indicators
+	) {
 		const latestIndicator = indicators[indicators.length - 1];
 
 		const volumeValid =
@@ -349,7 +356,7 @@ class WaveBacktester {
 		) {
 			const atrMultiple = waveStatus.waveCount > 3 ? 1.5 : 2.0;
 			const riskReward = waveStatus.waveCount > 3 ? 2.5 : 3.0;
-			const stopLoss = candle.low - indicators.atr14 * atrMultiple;
+			const stopLoss = candle.low - latestIndicator.atr14 * atrMultiple;
 			const takeProfit =
 				candle.close + (candle.close - stopLoss) * riskReward;
 			return {
@@ -373,7 +380,7 @@ class WaveBacktester {
 		) {
 			const atrMultiple = waveStatus.waveCount > 3 ? 1.5 : 2.0;
 			const riskReward = waveStatus.waveCount > 3 ? 2.5 : 3.0;
-			const stopLoss = candle.high + indicators.atr14 * atrMultiple;
+			const stopLoss = candle.high + latestIndicator.atr14 * atrMultiple;
 			const takeProfit =
 				candle.close - (candle.close - stopLoss) * riskReward;
 			return {
