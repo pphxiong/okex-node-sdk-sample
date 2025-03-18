@@ -272,7 +272,7 @@ class WaveBacktester {
 			}
 
 			// 更新权益曲线
-			this.updateEquity(position, currentCandle);
+			this.updateEquity(position, currentCandle, indicators);
 		}
 	}
 
@@ -347,7 +347,7 @@ class WaveBacktester {
 
 		// 多头信号条件
 		if (
-			candle.close <= latestIndicator.boll.lower &&
+			// candle.close <= latestIndicator.boll.lower &&
 			latestIndicator.boll.emaSlope > 0
 			// waveStatus.isUpTrend
 			// waveStatus.waveCount >= 3 &&
@@ -371,7 +371,7 @@ class WaveBacktester {
 
 		// 空头信号条件
 		if (
-			candle.close >= latestIndicator.boll.upper &&
+			// candle.close >= latestIndicator.boll.upper &&
 			latestIndicator.boll.emaSlope < 0
 			// waveStatus.isDownTrend
 			// waveStatus.waveCount >= 3 &&
@@ -436,17 +436,24 @@ class WaveBacktester {
 		// position.netProfit -= 0.0005; // 0.05%滑点
 	}
 
-	updateEquity(position, candle) {
+	updateEquity(position, candle, indicators) {
+		const { boll } = indicators;
 		if (!position || position.status !== 'open') return;
 
 		// 检查止损/止盈
+		// if (
+		// 	(position.direction === 'long' &&
+		// 		(candle.low <= position.stopLoss ||
+		// 			candle.high >= position.takeProfit)) ||
+		// 	(position.direction === 'short' &&
+		// 		(candle.high >= position.stopLoss ||
+		// 			candle.low <= position.takeProfit))
+		// ) {
+		// 	this.closePosition(position, candle);
+		// }
 		if (
-			(position.direction === 'long' &&
-				(candle.low <= position.stopLoss ||
-					candle.high >= position.takeProfit)) ||
-			(position.direction === 'short' &&
-				(candle.high >= position.stopLoss ||
-					candle.low <= position.takeProfit))
+			(position.direction === 'long' && indicators.boll.emaSlope < 0) ||
+			(position.direction === 'short' && indicators.boll.emaSlope > 0)
 		) {
 			this.closePosition(position, candle);
 		}
