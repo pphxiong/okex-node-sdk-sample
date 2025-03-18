@@ -132,17 +132,15 @@ class Backtester {
 		let position = null;
 		let atr = 0;
 
-		this.data.forEach((d, i) => {
-			console.log(i);
+		this.data.forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
-			console.log(i);
 			// 计算ATR
 			if (i >= 14) {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
 				const low = this.data.slice(i - 14, i).map((x) => x.low);
 				const closes = this.data.slice(i - 14, i).map((x) => x.close);
-				atr = tulind.indicators.atr.indicator(
+				atr = await tulind.indicators.atr.indicator(
 					[high, low, closes],
 					[14]
 				)[0][0];
