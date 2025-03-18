@@ -33,13 +33,13 @@ const config = {
 	timeframe: '15m',
 	// 布林线参数
 	bollinger: {
-		period: 20,
-		stdDev: 1.8,
+		period: 22,
+		stdDev: 2.0,
 	},
 	// EMA斜率参数
 	emaSlope: {
-		period: 10,
-		lookback: 5, // 计算5根K线斜率
+		period: 8,
+		lookback: 3, // 计算5根K线斜率
 		emaSlopeThreshold: 0.07 * 0.01, // EMA斜率阈值
 	},
 	atrParam: {
@@ -247,7 +247,7 @@ class Backtester {
 
 		// 多头信号
 		if (
-			candle.close <= candle.low &&
+			candle.close <= candle.middle &&
 			candle.emaSlope > config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'long' };
@@ -255,7 +255,7 @@ class Backtester {
 
 		// 空头信号
 		if (
-			candle.close >= candle.high &&
+			candle.close >= candle.middle &&
 			candle.emaSlope < -config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'short' };
