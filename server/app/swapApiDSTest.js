@@ -152,7 +152,7 @@ class Backtester {
 		while (since < endTime) {
 			const candles = await this.exchange.fetchOHLCV(
 				'DOGE/USDT',
-				'15m',
+				'5m',
 				since,
 				1000
 			);
