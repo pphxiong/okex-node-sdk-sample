@@ -133,7 +133,7 @@ class Backtester {
 				}
 				d.atr = atr[i];
 			});
-			this.data.slice(-10).forEach((d) => {
+			this.data.slice(-100).forEach((d) => {
 				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
 				console.log(d.emaSlope);
 				console.log(d.atr);
