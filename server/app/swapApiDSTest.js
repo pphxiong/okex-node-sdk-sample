@@ -45,8 +45,8 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1.2,
-		takeProfit: 1.8,
+		stopLoss: 1.2 / 10,
+		takeProfit: 1.8 / 10,
 	},
 
 	// 风险参数
@@ -213,7 +213,7 @@ class Backtester {
 				// 		: d.emaSlope > 0.05 * 0.01;
 
 				const isReverse =
-					false && signal && position.direction === 'long'
+					signal && position.direction === 'long'
 						? signal.direction === 'short'
 						: signal.direction === 'long';
 
