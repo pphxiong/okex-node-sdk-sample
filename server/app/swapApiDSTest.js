@@ -305,9 +305,10 @@ class Backtester {
       盈亏比:        ${profitFactor.toFixed(2)}
       最大单笔盈利:  ${Math.max(...this.trades.map((t) => t.profit)).toFixed(2)}
       最大单笔亏损:  ${Math.min(...this.trades.map((t) => t.profit)).toFixed(2)}
-      详情:    ${this.trades.slice(-20)}
       =============================
     `);
+		console.log('\n最近5笔交易:');
+		console.table(this.trades.slice(-20));
 	}
 }
 
