@@ -30,7 +30,7 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
+	timeframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -108,7 +108,6 @@ class Backtester {
 			);
 
 			const atr = await this.calculateATR(highs, lows, closes);
-			console.log(6, atr);
 
 			// 计算EMA斜率
 			const emaSlopes = [];
@@ -242,18 +241,12 @@ class Backtester {
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
-		if (
-			/* candle.close <= candle.lower && */ candle.emaSlope >
-			0.05 * 0.01
-		) {
+		if (candle.close <= candle.middle && candle.emaSlope > 0.05 * 0.01) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
-		if (
-			/* candle.close >= candle.upper && */ candle.emaSlope <
-			-0.05 * 0.01
-		) {
+		if (candle.close >= candle.middle && candle.emaSlope < -0.05 * 0.01) {
 			return { direction: 'short' };
 		}
 
@@ -322,7 +315,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2021-03-18', '2025-03-17');
+	await backtester.loadHistoricalData('2024-03-18', '2025-03-17');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
