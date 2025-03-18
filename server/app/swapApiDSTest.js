@@ -40,13 +40,13 @@ const config = {
 	emaSlope: {
 		period: 8,
 		lookback: 3, // 计算5根K线斜率
-		emaSlopeThreshold: 0.0007, // EMA斜率阈值
+		emaSlopeThreshold: 0.0005, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1.2,
-		takeProfit: 1.8,
+		stopLoss: 1.5,
+		takeProfit: 2.5,
 	},
 
 	// 风险参数
