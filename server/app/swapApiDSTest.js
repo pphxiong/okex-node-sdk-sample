@@ -40,7 +40,7 @@ const config = {
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.05 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0.07 * 0.01, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
@@ -247,7 +247,7 @@ class Backtester {
 
 		// 多头信号
 		if (
-			candle.close <= candle.middle &&
+			candle.close <= candle.low &&
 			candle.emaSlope > config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'long' };
@@ -255,7 +255,7 @@ class Backtester {
 
 		// 空头信号
 		if (
-			candle.close >= candle.middle &&
+			candle.close >= candle.high &&
 			candle.emaSlope < -config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'short' };
