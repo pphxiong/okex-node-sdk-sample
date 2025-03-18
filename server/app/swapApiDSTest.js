@@ -134,14 +134,14 @@ class Backtester {
 				}
 				d.atr = atr[i];
 			});
-			this.data.slice(-100).forEach((d) => {
-				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-				console.log(d.emaSlope);
-				console.log(d.atr);
-				console.log(d.upper);
-				console.log(d.middle);
-				console.log(d.lower);
-			});
+			// this.data.slice(-100).forEach((d) => {
+			// 	console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+			// 	console.log(d.emaSlope);
+			// 	console.log(d.atr);
+			// 	console.log(d.upper);
+			// 	console.log(d.middle);
+			// 	console.log(d.lower);
+			// });
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
@@ -206,6 +206,10 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
+				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+				console.log(d.emaSlope);
+				console.log('direction', position.direction);
+
 				const isProfitTarget =
 					signal.direction === 'long'
 						? d.close >= position.entryPrice + position.takeProfit
