@@ -253,7 +253,7 @@ class Backtester {
 		const profitFactor =
 			wins.reduce((s, t) => s + t.profit, 0) /
 			Math.abs(losses.reduce((s, t) => s + t.profit, 0));
-
+		console.log(wins.length, losses.length);
 		console.log(`
       ========== 回测结果 ==========
       总交易次数:     ${this.trades.length}
