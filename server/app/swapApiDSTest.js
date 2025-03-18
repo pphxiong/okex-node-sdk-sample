@@ -206,19 +206,19 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-				console.log(d.emaSlope);
-				console.log('direction', position.direction);
+				// console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+				// console.log(d.emaSlope);
+				// console.log('direction', position.direction);
 
-				const isProfitTarget =
-					signal.direction === 'long'
-						? d.close >= position.entryPrice + position.takeProfit
-						: d.close <= position.entryPrice - position.takeProfit;
+				// const isProfitTarget =
+				// 	signal.direction === 'long'
+				// 		? d.close >= position.entryPrice + position.takeProfit
+				// 		: d.close <= position.entryPrice - position.takeProfit;
 
-				const isStopLoss =
-					signal.direction === 'long'
-						? d.close <= position.entryPrice - position.stopLoss
-						: d.close >= position.entryPrice + position.stopLoss;
+				// const isStopLoss =
+				// 	signal.direction === 'long'
+				// 		? d.close <= position.entryPrice - position.stopLoss
+				// 		: d.close >= position.entryPrice + position.stopLoss;
 
 				const isReverse =
 					position.direction === 'long'
