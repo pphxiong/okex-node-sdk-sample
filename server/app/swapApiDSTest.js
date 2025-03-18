@@ -280,8 +280,8 @@ class Backtester {
 			entryTime: candle.timestamp,
 			direction: direction,
 			size: positionSize,
-			takeProfit: atr * 1.8,
-			stopLoss: atr * 0.6,
+			takeProfit: atr * 4,
+			stopLoss: atr * 2,
 		};
 
 		this.balance -= fee; // 扣除手续费
