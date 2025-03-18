@@ -45,7 +45,7 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1,
+		stopLoss: 1.2,
 		takeProfit: 1.8,
 	},
 
