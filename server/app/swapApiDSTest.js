@@ -45,8 +45,8 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1.2 / 5,
-		takeProfit: 1.8 / 5,
+		stopLoss: 1.2,
+		takeProfit: 1.8,
 	},
 
 	// 风险参数
@@ -207,15 +207,15 @@ class Backtester {
 						? d.close <= position.entryPrice - position.stopLoss
 						: d.close >= position.entryPrice + position.stopLoss;
 
-				// const isReverse =
-				// 	position.direction === 'long'
-				// 		? d.emaSlope < 0.05 * 0.01
-				// 		: d.emaSlope > 0.05 * 0.01;
-
 				const isReverse =
-					signal && position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long';
+					position.direction === 'long'
+						? d.emaSlope < 0.05 * 0.01
+						: d.emaSlope > 0.05 * 0.01;
+
+				// const isReverse =
+				// 	signal && position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long';
 
 				if (isProfitTarget || isStopLoss || isReverse) {
 					this.closePosition(position, d);
