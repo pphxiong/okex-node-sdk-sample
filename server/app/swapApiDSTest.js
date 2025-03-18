@@ -55,17 +55,27 @@ class Backtester {
 		this.balance = config.initialBalance;
 	}
 
-	async loadHistoricalData(limit = 500) {
+	async loadHistoricalData(start, end) {
 		try {
-			const since = moment().subtract(30, 'days').valueOf();
-			const candles = await this.exchange.fetchOHLCV(
-				config.symbol,
-				config.timeframe,
-				since,
-				limit
-			);
+			let allCandles = [];
+			let since = new Date(start).getTime();
+			const endTime = new Date(end).getTime();
 
-			this.data = candles.map((c) => ({
+			while (since < endTime) {
+				const candles = await this.exchange.fetchOHLCV(
+					'DOGE/USDT',
+					'15m',
+					since,
+					1000
+				);
+				allCandles = allCandles.concat(candles);
+				since = candles[candles.length - 1][0] + 1;
+
+				// 防止请求过频
+				await new Promise((resolve) => setTimeout(resolve, 200));
+			}
+
+			allCandles.map((c) => ({
 				timestamp: c[0],
 				open: parseFloat(c[1]),
 				high: parseFloat(c[2]),
@@ -73,6 +83,8 @@ class Backtester {
 				close: parseFloat(c[4]),
 				volume: parseFloat(c[5]),
 			}));
+
+			this.data = allCandles;
 
 			console.log(`Loaded ${this.data.length} candles`);
 		} catch (e) {
@@ -134,6 +146,35 @@ class Backtester {
 		return riskAmount / (atr * 2); // 2倍ATR止损
 	}
 
+	async fetchHistoricalData(start, end) {
+		let allCandles = [];
+		let since = new Date(start).getTime();
+		const endTime = new Date(end).getTime();
+
+		while (since < endTime) {
+			const candles = await this.exchange.fetchOHLCV(
+				'DOGE/USDT',
+				'15m',
+				since,
+				1000
+			);
+			allCandles = allCandles.concat(candles);
+			since = candles[candles.length - 1][0] + 1;
+
+			// 防止请求过频
+			await new Promise((resolve) => setTimeout(resolve, 200));
+		}
+
+		return allCandles.map((c) => ({
+			timestamp: c[0],
+			open: parseFloat(c[1]),
+			high: parseFloat(c[2]),
+			low: parseFloat(c[3]),
+			close: parseFloat(c[4]),
+			volume: parseFloat(c[5]),
+		}));
+	}
+
 	runBacktest() {
 		let position = null;
 		let atr = 0;
@@ -146,11 +187,11 @@ class Backtester {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
 				const low = this.data.slice(i - 14, i).map((x) => x.low);
 				const closes = this.data.slice(i - 14, i).map((x) => x.close);
-				atr = d.atr;
 				// atr = await tulind.indicators.atr.indicator(
 				// 	[high, low, closes],
 				// 	[14]
 				// )[0][0];
+				atr = d.atr;
 			}
 
 			// 生成信号
@@ -278,7 +319,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData(1000);
+	await backtester.loadHistoricalData('2025-01-01', '2025-01-30');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
