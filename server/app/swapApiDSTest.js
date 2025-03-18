@@ -30,7 +30,7 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '5m',
+	timeframe: '15m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
