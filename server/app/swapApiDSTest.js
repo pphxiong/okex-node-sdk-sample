@@ -187,7 +187,7 @@ class Backtester {
 
 		this.data.forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
-			// if (i < 50) return;
+			if (i < 50) return;
 			// 计算ATR
 			if (i >= 14) {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
@@ -247,6 +247,8 @@ class Backtester {
 
 	generateSignal(candle) {
 		if (!candle.upper || !candle.emaSlope) return null;
+		console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+		console.log(candle.close, candle.middle, candle.emaSlope);
 
 		// 多头信号
 		if (candle.close <= candle.middle && candle.emaSlope > 0.05 * 0.01) {
