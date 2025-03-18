@@ -84,6 +84,8 @@ class Backtester {
 		try {
 			// 计算布林带
 			const closes = this.data.map((d) => d.close);
+			const highs = this.data.map((d) => d.high);
+			const lows = this.data.map((d) => d.low);
 			const bollinger = await tulind.indicators.bbands.indicator(
 				[closes],
 				[config.bollinger.period, config.bollinger.stdDev]
@@ -94,6 +96,11 @@ class Backtester {
 				[closes],
 				[config.emaSlope.period]
 			);
+
+			const atr = await tulind.indicators.atr.indicator(
+				[highs, lows, closes],
+				[14]
+			)[0];
 
 			// 计算EMA斜率
 			const emaSlopes = [];
@@ -117,6 +124,7 @@ class Backtester {
 						i - config.emaSlope.period - config.emaSlope.lookback;
 					d.emaSlope = emaSlopes[slopeIndex];
 				}
+				d.atr = atr[i];
 			});
 		} catch (e) {
 			console.error('指标计算错误:', e);
@@ -140,6 +148,7 @@ class Backtester {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
 				const low = this.data.slice(i - 14, i).map((x) => x.low);
 				const closes = this.data.slice(i - 14, i).map((x) => x.close);
+				atr = d.atr;
 				// atr = await tulind.indicators.atr.indicator(
 				// 	[high, low, closes],
 				// 	[14]
@@ -173,6 +182,18 @@ class Backtester {
 			if (!position && signal) {
 				position = this.openPosition(d, atr, signal.direction);
 			}
+		});
+	}
+
+	async calculateATR(highs, lows, closes) {
+		return new Promise((resolve) => {
+			tulind.indicators.atr.indicator(
+				[highs, lows, closes],
+				[this.config.atrPeriod],
+				(err, res) => {
+					resolve(res[0]);
+				}
+			);
 		});
 	}
 
