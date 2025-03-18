@@ -118,7 +118,6 @@ class Backtester {
 					d.emaSlope = emaSlopes[slopeIndex];
 				}
 			});
-			console.log(123, this.data.slice(-2));
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
@@ -147,6 +146,8 @@ class Backtester {
 					[14]
 				)[0][0];
 			}
+
+			console.log(45, d);
 
 			// 生成信号
 			const signal = this.generateSignal(d);
@@ -177,7 +178,6 @@ class Backtester {
 	}
 
 	generateSignal(candle) {
-		console.log(123, candle);
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
