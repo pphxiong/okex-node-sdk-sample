@@ -95,8 +95,6 @@ class Backtester {
 				[config.emaSlope.period]
 			);
 
-			console.log(23, ema[0]);
-
 			// 计算EMA斜率
 			const emaSlopes = [];
 			for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
@@ -120,6 +118,7 @@ class Backtester {
 					d.emaSlope = emaSlopes[slopeIndex];
 				}
 			});
+			console.log(123, this.data.slice(-2));
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
