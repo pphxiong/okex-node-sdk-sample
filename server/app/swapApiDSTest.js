@@ -95,7 +95,7 @@ class Backtester {
 				[config.emaSlope.period]
 			);
 
-			console.log(ema[0]);
+			console.log(23, ema[0]);
 
 			// 计算EMA斜率
 			const emaSlopes = [];
