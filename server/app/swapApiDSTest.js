@@ -133,9 +133,10 @@ class Backtester {
 		let atr = 0;
 
 		this.data.forEach((d, i) => {
+			console.log(i);
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
-
+			console.log(i);
 			// 计算ATR
 			if (i >= 14) {
 				const high = this.data.slice(i - 14, i).map((x) => x.high);
