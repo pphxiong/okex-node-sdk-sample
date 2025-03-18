@@ -247,7 +247,7 @@ class Backtester {
 
 		// 多头信号
 		if (
-			candle.close <= candle.middle &&
+			// candle.close <= candle.middle &&
 			candle.emaSlope > config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'long' };
@@ -255,7 +255,7 @@ class Backtester {
 
 		// 空头信号
 		if (
-			candle.close >= candle.middle &&
+			// candle.close >= candle.middle &&
 			candle.emaSlope < -config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'short' };
