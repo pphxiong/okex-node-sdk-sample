@@ -40,7 +40,7 @@ const config = {
 	emaSlope: {
 		period: 8,
 		lookback: 3, // 计算5根K线斜率
-		emaSlopeThreshold: 0.007, // EMA斜率阈值
+		emaSlopeThreshold: 0.0007, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
