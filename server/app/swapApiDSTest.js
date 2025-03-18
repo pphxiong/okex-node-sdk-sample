@@ -140,8 +140,8 @@ class Backtester {
 
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
-		return riskAmount / (atr * 2); // 2倍ATR止损
-		// return 2000;
+		// return riskAmount / (atr * 2); // 2倍ATR止损
+		return 5000;
 	}
 
 	async fetchHistoricalData(start, end) {
@@ -280,6 +280,7 @@ class Backtester {
 		this.balance += profit - fee;
 		this.trades.push({
 			size: position.size,
+			direction: position.direction,
 			entry: position.entryPrice,
 			exit: exitCandle.close,
 			profit: profit,
