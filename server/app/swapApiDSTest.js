@@ -268,22 +268,18 @@ class Backtester {
       // 	atr = d.atr;
       // }
 
+      const lastKline5M = JSON.parse(JSON.stringify(this.data["5m"][index]));
+
       const candle = {
-        "1h": this.getTimeStampBefore(
-          this.data["1h"],
-          this.data["5m"][index].timestamp
-        ),
-        "15m": this.getTimeStampBefore(
-          this.data["15m"],
-          this.data["5m"][index].timestamp
-        ),
-        "5m": this.data["5m"][index],
+        "1h": this.getTimeStampBefore(this.data["1h"], lastKline5M.timestamp),
+        "15m": this.getTimeStampBefore(this.data["15m"], lastKline5M.timestamp),
+        "5m": lastKline5M,
       };
-      console.log(
-        candle["5m"].emaSlope,
-        candle["15m"].emaSlope,
-        candle["1h"].emaSlope
-      );
+      // console.log(
+      //   candle["5m"].emaSlope,
+      //   candle["15m"].emaSlope,
+      //   candle["1h"].emaSlope
+      // );
       if (
         !candle["5m"].emaSlope ||
         !candle["15m"].emaSlope ||
