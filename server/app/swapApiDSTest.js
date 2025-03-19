@@ -249,7 +249,7 @@ class Backtester {
 		let position = null;
 		// let atr = 0;
 
-		this.data['15m'].forEach(async (d, i) => {
+		this.data['5m'].forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
 			// // 计算ATR
@@ -267,7 +267,7 @@ class Backtester {
 			// }
 
 			// 生成信号
-			const signal = this.generateSignal(d);
+			const signal = this.generateSignal(i);
 
 			// 处理平仓
 			if (position) {
@@ -320,21 +320,44 @@ class Backtester {
 		});
 	}
 
-	generateSignal(candle) {
-		if (!candle.upper || !candle.emaSlope) return null;
+	generateSignal(index) {
+		const candle = {
+			'15m': this.getTimeStampBefore(
+				this.data['15m'],
+				this.data['5m'][index].timestamp
+			),
+			'5m': this.data['5m'][index],
+		};
+		if (!candle['15m'].upper || !candle['15m'].emaSlope) return null;
+
+		// // 多头信号
+		// if (
+		// 	candle.close <= candle.middle &&
+		// 	candle.emaSlope > config.emaSlope.emaSlopeThreshold
+		// ) {
+		// 	return { direction: 'long' };
+		// }
+
+		// // 空头信号
+		// if (
+		// 	candle.close >= candle.middle &&
+		// 	candle.emaSlope < -config.emaSlope.emaSlopeThreshold
+		// ) {
+		// 	return { direction: 'short' };
+		// }
 
 		// 多头信号
 		if (
-			candle.close <= candle.middle &&
-			candle.emaSlope > config.emaSlope.emaSlopeThreshold
+			candle['5m'].emaSlope > config.emaSlope.emaSlopeThreshold &&
+			candle['15m'].emaSlope > config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
 		if (
-			candle.close >= candle.middle &&
-			candle.emaSlope < -config.emaSlope.emaSlopeThreshold
+			candle['5m'].emaSlope < config.emaSlope.emaSlopeThreshold &&
+			candle['15m'].emaSlope < config.emaSlope.emaSlopeThreshold
 		) {
 			return { direction: 'short' };
 		}
