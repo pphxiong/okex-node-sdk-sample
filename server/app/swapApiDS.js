@@ -471,6 +471,24 @@ async function generateSignal(currentPrice) {
   console.log("side", state.side);
   console.log("longCondition", longCondition);
   console.log("shortCondition", shortCondition);
+  console.log(
+    "5m",
+    Object.assign(candle["5m"], {
+      timestamp: moment(candle["5m"].timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    })
+  );
+  console.log(
+    "15m",
+    Object.assign(candle["15m"], {
+      timestamp: moment(candle["15m"].timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    })
+  );
+  console.log(
+    "1h",
+    Object.assign(candle["1h"], {
+      timestamp: moment(candle["1h"].timestamp).format("YYYY-MM-DD HH:mm:ss"),
+    })
+  );
   console.log("################################");
 
   return {
