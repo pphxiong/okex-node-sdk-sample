@@ -594,6 +594,8 @@ async function initialize() {
   console.log(`已加载1h${marketData["1h"].length}根历史K线`);
   console.log(`已加载15m${marketData["15m"].length}根历史K线`);
   console.log(`已加载5m${marketData["5m"].length}根历史K线`);
+
+  mergeTimeframes();
 }
 
 // 策略主逻辑
@@ -727,6 +729,19 @@ async function handleKlineUpdate(msg, tf) {
     marketData[tf].shift();
   }
   marketData[tf].push(newBar.map(parseKLine));
+  mergeTimeframes();
+}
+
+// 多周期时间戳对齐
+function mergeTimeframes() {
+  const baseTimestamps = marketData["5m"].map((c) => c.timestamp);
+
+  config.timeframes.forEach((tf) => {
+    if (tf === "5m") return;
+    marketData[tf] = marketData[tf].filter((c) =>
+      baseTimestamps.includes(c.timestamp)
+    );
+  });
 }
 
 // 启动策略
@@ -735,6 +750,7 @@ async function handleKlineUpdate(msg, tf) {
   await initialize();
   await initPositionData();
   connectWebSocket();
+  await strategyLoop();
   setInterval(() => {
     RESTART_TIME += 1;
     if (RESTART_TIME >= 3 * 5) {
