@@ -136,7 +136,7 @@ class Backtester {
   }
 
   getTimeStampBefore(dataList, timestamp) {
-    // dataList = JSON.parse(JSON.stringify(dataList));
+    dataList = JSON.parse(JSON.stringify(dataList));
     let data;
     let i = 0;
     while (true) {
@@ -279,6 +279,11 @@ class Backtester {
         ),
         "5m": this.data["5m"][index],
       };
+      console.log(
+        candle["5m"].emaSlope,
+        candle["15m"].emaSlope,
+        candle["1h"].emaSlope
+      );
       if (
         !candle["5m"].emaSlope ||
         !candle["15m"].emaSlope ||
