@@ -207,6 +207,7 @@ class MultiEMAStrategy {
 			if (i < 100) return; // 跳过初始数据不足阶段
 
 			const signal = this.generateSignal(i);
+			console.log(23, signal);
 			const atr = atrValues[i];
 
 			if (this.currentPosition) {
@@ -264,8 +265,6 @@ class MultiEMAStrategy {
 		) {
 			closeReason = 'takeProfit';
 		}
-
-		console.log(23, this.data['15m']);
 
 		// 时间止损（持仓超过24根15分钟K线）
 		const duration =
