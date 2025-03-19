@@ -701,8 +701,8 @@ function connectWebSocket() {
 
       if (!msg.data.k.x) return; // 仅处理闭合K线
 
-      console.log(`更新: ${symbol} ${period} K线`);
-      // console.log('K线数据:', klineData);
+      console.log(`更新: ${symbol} ${periodMap[period]} K线`);
+      //   console.log('K线数据:', msg.data);
       await handleKlineUpdate(msg.data, periodMap[period]);
       //   console.log("-----------------------------------");
     }
@@ -716,7 +716,7 @@ function connectWebSocket() {
 // 处理K线更新
 async function handleKlineUpdate(msg, tf) {
   const kline = msg.k;
-  if (!kline.x) return; // 仅处理闭合K线
+  //   if (!kline.x) return; // 仅处理闭合K线
 
   // 更新OHLCV数据
   const newBar = [
