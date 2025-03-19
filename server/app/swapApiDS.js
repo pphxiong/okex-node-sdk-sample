@@ -68,7 +68,7 @@ const config = {
   macdFast: 8,
   macdSlow: 17,
   macdSignal: 5,
-  coldStartBars: 50, // 冷启动期间的K线数量
+  coldStartBars: 100, // 冷启动期间的K线数量
 };
 
 // 全局状态
@@ -670,7 +670,7 @@ function connectWebSocket() {
       // console.log(`更新: ${klineData.symbol} ${klineData.interval} K线`);
       // console.log('K线数据:', klineData);
       await handleKlineUpdate(msg.data, periodMap[period]);
-      console.log("-----------------------------------");
+      //   console.log("-----------------------------------");
     }
   });
 
