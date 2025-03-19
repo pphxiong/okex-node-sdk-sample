@@ -284,7 +284,12 @@ class Backtester {
 				),
 				'5m': this.data['5m'][index],
 			};
-			if (!candle['5m'].upper || !candle['5m'].emaSlope) return;
+			if (
+				!candle['5m'].emaSlope ||
+				!candle['15m'].emaSlope ||
+				!candle['1h'].emaSlope
+			)
+				return;
 
 			// 生成信号
 			const signal = this.generateSignal(candle);
