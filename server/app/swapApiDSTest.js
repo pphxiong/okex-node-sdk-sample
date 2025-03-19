@@ -100,6 +100,30 @@ class MultiEMAStrategy {
 				baseTimestamps.includes(d.time)
 			);
 		});
+
+		const merged = baseTimestamps.map((ts, idx) => ({
+			timestamp: ts,
+			'5m': this.data['5m'][idx],
+			'15m': this.getTimeStampBefore(this.data['15m'], ts),
+			'1h': this.getTimeStampBefore(this.data['1h'], ts),
+		}));
+
+		this.data = merged;
+	}
+
+	getTimeStampBefore(dataList, timestamp) {
+		let data;
+		let i = 0;
+		while (true) {
+			const time = moment(timestamp).subtract(5 * i, 'minutes');
+			const target = dataList.find((c) => c.timestamp === time.valueOf());
+			if (target) {
+				data = target;
+				break;
+			}
+			i += 1;
+		}
+		return data;
 	}
 
 	async calculateEMASlopes() {
