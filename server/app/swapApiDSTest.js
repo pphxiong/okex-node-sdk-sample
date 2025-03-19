@@ -425,7 +425,7 @@ class Backtester {
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
 	console.log(
-		this.data['15m'].slice(-3).map((c) =>
+		backtester.data['15m'].slice(-3).map((c) =>
 			Object.assign(c, {
 				timestamp: moment(c.timestamp).format('YYYY-MM-DD HH:mm:ss'),
 			})
