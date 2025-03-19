@@ -31,17 +31,6 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: ['1h', '15m', '5m'], // 多周期参数
-	emaSettings: {
-		'1h': { period: 34, slopeWindow: 5 },
-		'15m': { period: 10, slopeWindow: 5 },
-		'5m': { period: 13, slopeWindow: 2 },
-	},
-	slopeThreshold: {
-		'1h': 0.00025,
-		'15m': 0.05 * 0.01,
-		'5m': 0.0006,
-	}, // 斜率阈值
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -70,7 +59,7 @@ const config = {
 class Backtester {
 	constructor() {
 		this.exchange = new ccxt.binance();
-		this.data = { '5m': [], '15m': [], '1h': [], merged: [] };
+		this.data = [];
 		this.trades = [];
 		this.balance = config.initialBalance;
 		this.totalFee = 0;
@@ -78,162 +67,90 @@ class Backtester {
 
 	async loadHistoricalData(start, end) {
 		try {
-			const since = moment(start).valueOf();
-			const until = moment(end).valueOf();
+			let allCandles = [];
+			let since = new Date(start).getTime();
+			const endTime = new Date(end).getTime();
 
-			// 多周期并行数据加载
-			await Promise.all(
-				config.timeframes.map(async (tf) => {
-					let allCandles = [];
-					let currentSince = since;
+			while (since < endTime) {
+				const candles = await this.exchange.fetchOHLCV(
+					config.symbol,
+					config.timeframe,
+					since,
+					1000
+				);
+				allCandles = allCandles.concat(candles);
+				since = candles[candles.length - 1][0] + 1;
 
-					while (currentSince < until) {
-						const candles = await this.exchange.fetchOHLCV(
-							config.symbol,
-							tf,
-							currentSince,
-							1000
-						);
-
-						if (candles.length === 0) break;
-
-						allCandles = allCandles.concat(candles);
-						currentSince = candles[candles.length - 1][0] + 1;
-
-						// 限速处理
-						await new Promise((resolve) =>
-							setTimeout(resolve, 200)
-						);
-					}
-
-					this.data[tf] = allCandles.map((c) => this.parseCandle(c));
-					console.log(`Loaded ${this.data[tf].length} ${tf} candles`);
-				})
-			);
-
-			this.mergeTimeframes();
-		} catch (e) {
-			console.error('Data loading failed:', e.message);
-			process.exit(1);
-		}
-	}
-
-	// 多周期时间戳对齐
-	mergeTimeframes() {
-		const baseTimestamps = this.data['5m'].map((c) => c.timestamp);
-
-		config.timeframes.forEach((tf) => {
-			if (tf === '5m') return;
-			this.data[tf] = this.data[tf].filter((c) =>
-				baseTimestamps.includes(c.timestamp)
-			);
-		});
-
-		// this.data.merged = baseTimestamps.map((ts, idx) => ({
-		// 	timestamp: ts,
-		// 	'5m': this.data['5m'][idx],
-		// 	'15m': this.getTimeStampBefore(this.data['15m'], ts),
-		// 	'1h': this.getTimeStampBefore(this.data['1h'], ts),
-		// }));
-	}
-
-	getTimeStampBefore(dataList, timestamp) {
-		let data;
-		let i = 0;
-		while (true) {
-			const time = moment(timestamp).subtract(5 * i, 'minutes');
-			const target = dataList.find((c) => c.timestamp === time.valueOf());
-			if (target) {
-				data = target;
-				break;
+				// 防止请求过频
+				await new Promise((resolve) => setTimeout(resolve, 200));
 			}
-			i += 1;
-		}
-		return data;
-	}
 
-	parseCandle(c) {
-		return {
-			timestamp: c[0],
-			open: parseFloat(c[1]),
-			high: parseFloat(c[2]),
-			low: parseFloat(c[3]),
-			close: parseFloat(c[4]),
-			volume: parseFloat(c[5]),
-		};
+			this.data = allCandles.map((c) => ({
+				timestamp: c[0],
+				open: parseFloat(c[1]),
+				high: parseFloat(c[2]),
+				low: parseFloat(c[3]),
+				close: parseFloat(c[4]),
+				volume: parseFloat(c[5]),
+			}));
+
+			console.log(`Loaded ${this.data.length} candles`);
+		} catch (e) {
+			console.error('数据加载失败:', e.message);
+		}
 	}
 
 	async calculateIndicators() {
 		try {
-			const indicatorPromises = [];
+			// 计算布林带
+			const closes = this.data.map((d) => d.close);
+			const highs = this.data.map((d) => d.high);
+			const lows = this.data.map((d) => d.low);
+			const bollinger = await tulind.indicators.bbands.indicator(
+				[closes],
+				[config.bollinger.period, config.bollinger.stdDev]
+			);
 
-			config.timeframes.forEach(async (tf) => {
-				// 计算布林带
-				const closes = this.data[tf].map((d) => d.close);
-				const highs = this.data[tf].map((d) => d.high);
-				const lows = this.data[tf].map((d) => d.low);
+			// 计算EMA
+			const ema = await tulind.indicators.ema.indicator(
+				[closes],
+				[config.emaSlope.period]
+			);
 
-				indicatorPromises.push(
-					tulind.indicators.ema.indicator(
-						[closes],
-						[config.emaSlope.period]
-					)
-				);
+			const atr = await this.calculateATR(highs, lows, closes);
 
-				indicatorPromises.push(
-					tulind.indicators.bbands.indicator(
-						[closes],
-						[config.bollinger.period, config.bollinger.stdDev]
-					)
-				);
-
-				indicatorPromises.push(
-					tulind.indicators.atr.indicator(
-						[highs, lows, closes],
-						[config.atrParam.atrPeriod]
-					)
-				);
-			});
-
-			const result = await Promise.all(indicatorPromises);
+			// 计算EMA斜率
+			const emaSlopes = [];
+			for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
+				const slope =
+					(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
+					config.emaSlope.lookback;
+				emaSlopes.push(slope);
+			}
 
 			// 合并指标到数据
-			config.timeframes.forEach((tf, index) => {
-				const [ema, bollinger, atr] = result.slice(
-					index * 3,
-					index * 3 + 3
-				);
-				// 计算EMA斜率
-				const emaSlopes = [];
-				for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
-					const slope =
-						(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
-						config.emaSlope.lookback;
-					emaSlopes.push(slope);
+			this.data.forEach((d, i) => {
+				if (i >= config.bollinger.period) {
+					const bbIndex = i - config.bollinger.period;
+					d.upper = bollinger[0][bbIndex];
+					d.middle = bollinger[1][bbIndex];
+					d.lower = bollinger[2][bbIndex];
 				}
-
-				// 合并指标到数据
-				this.data[tf].forEach((d, i) => {
-					if (i >= config.bollinger.period) {
-						const bbIndex = i - config.bollinger.period;
-						d.upper = bollinger[0][bbIndex];
-						d.middle = bollinger[1][bbIndex];
-						d.lower = bollinger[2][bbIndex];
-					}
-					if (
-						i >=
-						config.emaSlope.period + config.emaSlope.lookback
-					) {
-						const slopeIndex =
-							i -
-							config.emaSlope.period -
-							config.emaSlope.lookback;
-						d.emaSlope = emaSlopes[slopeIndex];
-					}
-					d.atr = atr[0][i];
-					console.log(d.atr, 1);
-				});
+				if (i >= config.emaSlope.period + config.emaSlope.lookback) {
+					const slopeIndex =
+						i - config.emaSlope.period - config.emaSlope.lookback;
+					d.emaSlope = emaSlopes[slopeIndex];
+				}
+				d.atr = atr[i];
 			});
+			// this.data.slice(-100).forEach((d) => {
+			// 	console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+			// 	console.log(d.emaSlope);
+			// 	console.log(d.atr);
+			// 	console.log(d.upper);
+			// 	console.log(d.middle);
+			// 	console.log(d.lower);
+			// });
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
@@ -248,24 +165,28 @@ class Backtester {
 
 	runBacktest() {
 		let position = null;
-		// let atr = 0;
+		let atr = 0;
 
-		this.data['15m'].forEach(async (d, i) => {
+		this.data.forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
-			// // 计算ATR
-			// if (i >= config.atrParam.atrPeriod) {
-			// 	const high = this.data
-			// 		.slice(i - config.atrParam.atrPeriod, i)
-			// 		.map((x) => x.high);
-			// 	const low = this.data
-			// 		.slice(i - config.atrParam.atrPeriod, i)
-			// 		.map((x) => x.low);
-			// 	const closes = this.data
-			// 		.slice(i - config.atrParam.atrPeriod, i)
-			// 		.map((x) => x.close);
-			// 	atr = d.atr;
-			// }
+			// 计算ATR
+			if (i >= config.atrParam.atrPeriod) {
+				const high = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.high);
+				const low = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.low);
+				const closes = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.close);
+				// atr = await tulind.indicators.atr.indicator(
+				// 	[high, low, closes],
+				// 	[config.atrParam.atrPeriod]
+				// )[0][0];
+				atr = d.atr;
+			}
 
 			// 生成信号
 			const signal = this.generateSignal(d);
@@ -304,7 +225,7 @@ class Backtester {
 
 			// 处理开仓
 			if (!position && signal) {
-				position = this.openPosition(d, d.atr, signal.direction);
+				position = this.openPosition(d, atr, signal.direction);
 			}
 		});
 	}
@@ -430,13 +351,7 @@ class Backtester {
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
-	console.log(
-		backtester.data['15m'].slice(-3).map((c) =>
-			Object.assign(c, {
-				timestamp: moment(c.timestamp).format('YYYY-MM-DD HH:mm:ss'),
-			})
-		)
-	);
+
 	// 步骤3: 运行回测
 	backtester.runBacktest();
 
