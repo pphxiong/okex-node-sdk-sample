@@ -257,7 +257,7 @@ class Backtester {
 
 		this.data['5m'].forEach(async (d, index) => {
 			// 跳过前50根K线确保指标稳定
-			if (i < 50) return;
+			if (index < 50) return;
 			// // 计算ATR
 			// if (i >= config.atrParam.atrPeriod) {
 			// 	const high = this.data
@@ -279,7 +279,6 @@ class Backtester {
 				),
 				'5m': this.data['5m'][index],
 			};
-			console.log(23, candle);
 			if (!candle['15m'].upper || !candle['15m'].emaSlope) return;
 
 			// 生成信号
