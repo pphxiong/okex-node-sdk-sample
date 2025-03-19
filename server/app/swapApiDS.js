@@ -591,7 +591,7 @@ async function strategyLoop() {
     await calculateIndicators();
 
     // 步骤2: 获取信号
-    const signal = await generateSignal();
+    const signal = await generateSignal(currentPrice);
     const orderBook = await getOrderBook();
 
     // 步骤3: 检查强制平仓
