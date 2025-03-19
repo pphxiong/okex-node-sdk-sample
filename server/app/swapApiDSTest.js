@@ -100,15 +100,15 @@ class MultiEMAStrategy {
 				baseTimestamps.includes(d.time)
 			);
 		});
-		const merged = baseTimestamps.map((ts, idx) => ({
-			time: ts,
-			'5m': this.data['5m'][idx],
-			'15m': this.getTimeStampBefore(this.data['15m'], ts),
-			'1h': this.getTimeStampBefore(this.data['1h'], ts),
-		}));
+		// const merged = baseTimestamps.map((ts, idx) => ({
+		// 	time: ts,
+		// 	'5m': this.data['5m'][idx],
+		// 	'15m': this.getTimeStampBefore(this.data['15m'], ts),
+		// 	'1h': this.getTimeStampBefore(this.data['1h'], ts),
+		// }));
 
-		this.data = merged;
-		console.log(6, merged);
+		// this.data = merged;
+		console.log(6, this.data);
 	}
 
 	getTimeStampBefore(dataList, timestamp) {
