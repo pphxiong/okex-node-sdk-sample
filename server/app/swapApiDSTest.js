@@ -146,6 +146,8 @@ class MultiEMAStrategy {
 			'5m': this.data['5m'][index],
 		};
 
+		console.log(current);
+
 		// 多周期条件验证
 		const bullCondition =
 			current['1h'].slope > 0.003 &&
