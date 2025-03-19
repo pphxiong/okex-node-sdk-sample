@@ -167,20 +167,22 @@ class MultiEMAStrategy {
 			'5m': this.data['5m'][index],
 		};
 
+		console.log(current);
+
 		// 多周期条件验证
 		const bullCondition =
 			current['1h'].slope &&
-			current['1h'].slope > 0.003 &&
-			current['15m'].slope > 0.005 &&
-			current['5m'].slope > 0.008 &&
-			current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
+			current['1h'].slope > 0.0003 &&
+			current['15m'].slope > 0.0005 &&
+			current['5m'].slope > 0.0008;
+		// current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
 
 		const bearCondition =
 			current['1h'].slope &&
-			current['1h'].slope < -0.003 &&
-			current['15m'].slope < -0.005 &&
-			current['5m'].slope < -0.008 &&
-			current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
+			current['1h'].slope < -0.0003 &&
+			current['15m'].slope < -0.0005 &&
+			current['5m'].slope < -0.0008;
+		// current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
 
 		if (bullCondition) return 'long';
 		if (bearCondition) return 'short';
@@ -214,7 +216,6 @@ class MultiEMAStrategy {
 
 			const signal = this.generateSignal(i);
 			const atr = atrValues[i];
-			console.log(45, atrValues.length);
 
 			if (this.currentPosition) {
 				this.checkExit(d, atr, i);
