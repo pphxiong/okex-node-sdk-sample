@@ -190,30 +190,43 @@ class Backtester {
 				indicatorPromises.push(this.calculateATR(highs, lows, closes));
 			});
 
-			const [ema, bollinger, atr] = await Promise.all(indicatorPromises);
-			// 计算EMA斜率
-			const emaSlopes = [];
-			for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
-				const slope =
-					(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
-					config.emaSlope.lookback;
-				emaSlopes.push(slope);
-			}
+			const result = await Promise.all(indicatorPromises);
 
 			// 合并指标到数据
-			this.data[tf].forEach((d, i) => {
-				if (i >= config.bollinger.period) {
-					const bbIndex = i - config.bollinger.period;
-					d.upper = bollinger[0][bbIndex];
-					d.middle = bollinger[1][bbIndex];
-					d.lower = bollinger[2][bbIndex];
+			config.timeframes.forEach((tf, index) => {
+				const [ema, bollinger, atr] = result.slice(
+					index * 3,
+					index * 3 + 3
+				);
+				// 计算EMA斜率
+				const emaSlopes = [];
+				for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
+					const slope =
+						(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
+						config.emaSlope.lookback;
+					emaSlopes.push(slope);
 				}
-				if (i >= config.emaSlope.period + config.emaSlope.lookback) {
-					const slopeIndex =
-						i - config.emaSlope.period - config.emaSlope.lookback;
-					d.emaSlope = emaSlopes[slopeIndex];
-				}
-				d.atr = atr[i];
+
+				// 合并指标到数据
+				this.data[tf].forEach((d, i) => {
+					if (i >= config.bollinger.period) {
+						const bbIndex = i - config.bollinger.period;
+						d.upper = bollinger[0][bbIndex];
+						d.middle = bollinger[1][bbIndex];
+						d.lower = bollinger[2][bbIndex];
+					}
+					if (
+						i >=
+						config.emaSlope.period + config.emaSlope.lookback
+					) {
+						const slopeIndex =
+							i -
+							config.emaSlope.period -
+							config.emaSlope.lookback;
+						d.emaSlope = emaSlopes[slopeIndex];
+					}
+					d.atr = atr[i];
+				});
 			});
 		} catch (e) {
 			console.error('指标计算错误:', e);
