@@ -30,178 +30,211 @@ const tulind = require('tulind');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframes: ['1h', '15m', '5m'], // 多周期参数
-	emaSettings: {
-		'1h': { period: 50, slopeWindow: 5 },
-		'15m': { period: 20, slopeWindow: 3 },
-		'5m': { period: 10, slopeWindow: 2 },
+	timeframe: '15m',
+	// 布林线参数
+	bollinger: {
+		period: 20,
+		stdDev: 1.8,
 	},
-	riskParams: {
-		riskPerTrade: 0.02, // 每笔交易风险2%
-		maxLeverage: 3,
-		stopLoss: 1.5, // ATR倍数
-		takeProfit: 2.2,
+	// EMA斜率参数
+	emaSlope: {
+		period: 10,
+		lookback: 5, // 计算5根K线斜率
+		emaSlopeThreshold: 0.05 * 0.01, // EMA斜率阈值
 	},
-	initialBalance: 10000, // 初始本金
+	atrParam: {
+		// ATR参数
+		atrPeriod: 14,
+		stopLoss: 1.2,
+		takeProfit: 1.8,
+	},
+
+	// 风险参数
+	riskPerTrade: 0.02, // 每笔交易风险2%
+	feeRate: 0.0004, // 交易手续费0.04%
+	slippage: 0.00015, // 滑点率
+	initialBalance: 10000, // 初始本金10000 USDT
 };
 
-class MultiEMAStrategy {
+class Backtester {
 	constructor() {
-		this.exchange = new ccxt.binanceusdm();
-		this.data = {
-			'1h': [],
-			'15m': [],
-			'5m': [],
-		};
+		this.exchange = new ccxt.binance();
+		this.data = [];
 		this.trades = [];
 		this.balance = config.initialBalance;
-		this.currentPosition = null;
+		this.totalFee = 0;
 	}
 
-	async loadData(days = 30) {
+	async loadHistoricalData(start, end) {
 		try {
-			const since = moment().subtract(days, 'days').valueOf();
+			let allCandles = [];
+			let since = new Date(start).getTime();
+			const endTime = new Date(end).getTime();
 
-			// 多周期数据并行获取
-			await Promise.all(
-				config.timeframes.map(async (tf) => {
-					const candles = await this.exchange.fetchOHLCV(
-						config.symbol,
-						tf,
-						since,
-						1000
-					);
-					this.data[tf] = candles.map((c) => ({
-						time: c[0],
-						open: c[1],
-						high: c[2],
-						low: c[3],
-						close: c[4],
-						volume: c[5],
-					}));
-					console.log(`Loaded ${this.data[tf].length} ${tf} candles`);
-				})
-			);
+			while (since < endTime) {
+				const candles = await this.exchange.fetchOHLCV(
+					config.symbol,
+					config.timeframe,
+					since,
+					1000
+				);
+				allCandles = allCandles.concat(candles);
+				since = candles[candles.length - 1][0] + 1;
 
-			// 时间轴对齐
-			this.alignTimestamps();
+				// 防止请求过频
+				await new Promise((resolve) => setTimeout(resolve, 200));
+			}
+
+			this.data = allCandles.map((c) => ({
+				timestamp: c[0],
+				open: parseFloat(c[1]),
+				high: parseFloat(c[2]),
+				low: parseFloat(c[3]),
+				close: parseFloat(c[4]),
+				volume: parseFloat(c[5]),
+			}));
+
+			console.log(`Loaded ${this.data.length} candles`);
 		} catch (e) {
 			console.error('数据加载失败:', e.message);
 		}
 	}
 
-	alignTimestamps() {
-		// 以5分钟数据为基准对齐时间戳
-		const baseTimestamps = this.data['5m'].map((d) => d.time);
-
-		config.timeframes.forEach((tf) => {
-			if (tf === '5m') return;
-			this.data[tf] = this.data[tf].filter((d) =>
-				baseTimestamps.includes(d.time)
+	async calculateIndicators() {
+		try {
+			// 计算布林带
+			const closes = this.data.map((d) => d.close);
+			const highs = this.data.map((d) => d.high);
+			const lows = this.data.map((d) => d.low);
+			const bollinger = await tulind.indicators.bbands.indicator(
+				[closes],
+				[config.bollinger.period, config.bollinger.stdDev]
 			);
+
+			// 计算EMA
+			const ema = await tulind.indicators.ema.indicator(
+				[closes],
+				[config.emaSlope.period]
+			);
+
+			const atr = await this.calculateATR(highs, lows, closes);
+
+			// 计算EMA斜率
+			const emaSlopes = [];
+			for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
+				const slope =
+					(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
+					config.emaSlope.lookback;
+				emaSlopes.push(slope);
+			}
+
+			// 合并指标到数据
+			this.data.forEach((d, i) => {
+				if (i >= config.bollinger.period) {
+					const bbIndex = i - config.bollinger.period;
+					d.upper = bollinger[0][bbIndex];
+					d.middle = bollinger[1][bbIndex];
+					d.lower = bollinger[2][bbIndex];
+				}
+				if (i >= config.emaSlope.period + config.emaSlope.lookback) {
+					const slopeIndex =
+						i - config.emaSlope.period - config.emaSlope.lookback;
+					d.emaSlope = emaSlopes[slopeIndex];
+				}
+				d.atr = atr[i];
+			});
+			// this.data.slice(-100).forEach((d) => {
+			// 	console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+			// 	console.log(d.emaSlope);
+			// 	console.log(d.atr);
+			// 	console.log(d.upper);
+			// 	console.log(d.middle);
+			// 	console.log(d.lower);
+			// });
+		} catch (e) {
+			console.error('指标计算错误:', e);
+		}
+	}
+
+	getPositionSize(price, atr) {
+		const riskAmount = this.balance * config.riskPerTrade;
+		// return riskAmount / (atr * 2); // 2倍ATR止损
+		// return 5000;
+		return this.balance / 2;
+	}
+
+	runBacktest() {
+		let position = null;
+		let atr = 0;
+
+		this.data.forEach(async (d, i) => {
+			// 跳过前50根K线确保指标稳定
+			if (i < 50) return;
+			// 计算ATR
+			if (i >= config.atrParam.atrPeriod) {
+				const high = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.high);
+				const low = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.low);
+				const closes = this.data
+					.slice(i - config.atrParam.atrPeriod, i)
+					.map((x) => x.close);
+				// atr = await tulind.indicators.atr.indicator(
+				// 	[high, low, closes],
+				// 	[config.atrParam.atrPeriod]
+				// )[0][0];
+				atr = d.atr;
+			}
+
+			// 生成信号
+			const signal = this.generateSignal(d);
+
+			// 处理平仓
+			if (position) {
+				// console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+				// console.log(d.emaSlope);
+				// console.log('direction', position.direction);
+
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >= position.entryPrice + position.takeProfit
+						: d.close <= position.entryPrice - position.takeProfit;
+
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice - position.stopLoss
+						: d.close >= position.entryPrice + position.stopLoss;
+
+				// const isReverse =
+				// 	position.direction === 'long'
+				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
+				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
+
+				const isReverse =
+					signal && position.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long';
+
+				if (isStopLoss || isReverse) {
+					this.closePosition(position, d);
+					position = null;
+				}
+			}
+
+			// 处理开仓
+			if (!position && signal) {
+				position = this.openPosition(d, atr, signal.direction);
+			}
 		});
 	}
 
-	getTimeStampBefore(dataList, timestamp) {
-		let data;
-		let i = 0;
-		while (true) {
-			const time = moment(timestamp).subtract(5 * i, 'minutes');
-			const target = dataList.find((c) => c.time === time.valueOf());
-			if (target) {
-				data = target;
-				break;
-			}
-			i += 1;
-		}
-		return data;
-	}
-
-	async calculateEMASlopes() {
-		try {
-			// 多周期EMA斜率计算
-			for (const tf of config.timeframes) {
-				const closes = this.data[tf].map((d) => d.close);
-				const period = config.emaSettings[tf].period;
-				const slopeWindow = config.emaSettings[tf].slopeWindow;
-
-				// 计算EMA
-				const emaResults = await tulind.indicators.ema.indicator(
-					[closes],
-					[period]
-				);
-				const emaValues = emaResults[0];
-
-				// 计算斜率
-				const slopes = [];
-				for (let i = slopeWindow; i < emaValues.length; i++) {
-					const slope =
-						(emaValues[i] - emaValues[i - slopeWindow]) /
-						slopeWindow;
-					slopes.push(slope);
-				}
-
-				// 合并数据
-				this.data[tf].forEach((d, i) => {
-					if (i >= period + slopeWindow) {
-						d.ema = emaValues[i - period];
-						d.slope = slopes[i - period - slopeWindow];
-					}
-				});
-			}
-		} catch (e) {
-			console.error('指标计算失败:', e);
-		}
-	}
-
-	generateSignal(index) {
-		const current = {
-			'1h': this.getTimeStampBefore(
-				this.data['1h'],
-				this.data['5m'][index].time
-			),
-			'15m': this.getTimeStampBefore(
-				this.data['15m'],
-				this.data['5m'][index].time
-			),
-			'5m': this.data['5m'][index],
-		};
-
-		console.log(current);
-
-		// 多周期条件验证
-		const bullCondition =
-			current['1h'].slope &&
-			current['1h'].slope > 0.0003 &&
-			current['15m'].slope > 0.0005 &&
-			current['5m'].slope > 0.0008;
-		// current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
-
-		const bearCondition =
-			current['1h'].slope &&
-			current['1h'].slope < -0.0003 &&
-			current['15m'].slope < -0.0005 &&
-			current['5m'].slope < -0.0008;
-		// current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
-
-		if (bullCondition) return 'long';
-		if (bearCondition) return 'short';
-		return null;
-	}
-
-	sma(values, period) {
-		const sum = values.slice(-period).reduce((a, b) => a + b, 0);
-		return sum / period;
-	}
-
-	async calculateATR(timeframe = '5m') {
-		const highs = this.data[timeframe].map((d) => d.high);
-		const lows = this.data[timeframe].map((d) => d.low);
-		const closes = this.data[timeframe].map((d) => d.close);
+	async calculateATR(highs, lows, closes) {
 		return new Promise((resolve) => {
 			tulind.indicators.atr.indicator(
 				[highs, lows, closes],
-				[14],
+				[config.atrParam.atrPeriod],
 				(err, res) => {
 					resolve(res[0]);
 				}
@@ -209,171 +242,121 @@ class MultiEMAStrategy {
 		});
 	}
 
-	async runBacktest() {
-		const atrValues = await this.calculateATR('5m');
-		this.data['5m'].forEach((d, i) => {
-			if (i < 100) return; // 跳过初始数据不足阶段
+	generateSignal(candle) {
+		if (!candle.upper || !candle.emaSlope) return null;
 
-			const signal = this.generateSignal(i);
-			const atr = atrValues[i];
+		// 多头信号
+		if (
+			candle.close <= candle.middle &&
+			candle.emaSlope > config.emaSlope.emaSlopeThreshold
+		) {
+			return { direction: 'long' };
+		}
 
-			if (this.currentPosition) {
-				this.checkExit(d, atr, i, signal);
-			} else if (signal) {
-				this.openPosition(d, atr, signal, i);
-			}
-		});
+		// 空头信号
+		if (
+			candle.close >= candle.middle &&
+			candle.emaSlope < -config.emaSlope.emaSlopeThreshold
+		) {
+			return { direction: 'short' };
+		}
+
+		return null;
 	}
 
-	openPosition(candle, atr, direction, index) {
-		const positionSize = this.calculatePositionSize(atr);
-		const fee = positionSize * candle.close * 0.0004; // 手续费
+	openPosition(candle, atr, direction) {
+		const positionSize = this.getPositionSize(candle.close, atr);
+		const fee =
+			positionSize * candle.close * (config.feeRate + config.slippage);
 
-		this.currentPosition = {
+		const position = {
 			entryPrice: candle.close,
-			entryTime: candle.time,
+			entryTime: candle.timestamp,
 			direction: direction,
 			size: positionSize,
-			stopLoss:
-				direction === 'long'
-					? candle.close - atr * config.riskParams.stopLoss
-					: candle.close + atr * config.riskParams.stopLoss,
-			takeProfit:
-				direction === 'long'
-					? candle.close + atr * config.riskParams.takeProfit
-					: candle.close - atr * config.riskParams.takeProfit,
-			atr: atr,
+			takeProfit: atr * config.atrParam.takeProfit,
+			stopLoss: atr * config.atrParam.stopLoss,
 		};
 
-		this.balance -= fee;
+		this.balance -= fee; // 扣除手续费
+		this.totalFee += fee;
+		// console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+		// console.log(candle.close, candle.middle, candle.emaSlope);
+		// console.log('direction', position.direction);
+		// console.log('middle', candle.middle);
+		// console.log('high', candle.high);
+		// console.log('low', candle.low);
+		return position;
 	}
 
-	calculatePositionSize(atr) {
-		const riskAmount = this.balance * config.riskParams.riskPerTrade;
-		return riskAmount / (atr * config.riskParams.stopLoss);
-	}
-
-	checkExit(candle, atr, index, signal) {
-		const pos = this.currentPosition;
-		let closeReason = null;
-
-		// 止损检查
-		if (
-			(pos.direction === 'long' && candle.low <= pos.stopLoss) ||
-			(pos.direction === 'short' && candle.high >= pos.stopLoss)
-		) {
-			closeReason = 'stopLoss';
-		}
-
-		// 止盈检查
-		if (
-			(pos.direction === 'long' && candle.high >= pos.takeProfit) ||
-			(pos.direction === 'short' && candle.low <= pos.takeProfit)
-		) {
-			closeReason = 'takeProfit';
-		}
-
-		if (pos.direction === 'long' && signal === 'short')
-			closeReason = 'switch';
-
-		if (pos.direction === 'short' && signal === 'long')
-			closeReason = 'switch';
-
-		// 时间止损（持仓超过24根15分钟K线）
-		const duration =
-			index - this.data['15m'].findIndex((d) => d.time === pos.entryTime);
-		if (duration >= 24) closeReason = 'timeout';
-
-		if (closeReason) {
-			this.closePosition(candle, closeReason);
-		} else {
-			// 动态更新止损
-			this.updateTrailingStop(candle, atr);
-		}
-	}
-
-	updateTrailingStop(candle, atr) {
-		const pos = this.currentPosition;
-		const moveThreshold = atr * 0.5;
-
-		if (pos.direction === 'long') {
-			const newStop = candle.close - moveThreshold;
-			pos.stopLoss = Math.max(pos.stopLoss, newStop);
-		} else {
-			const newStop = candle.close + moveThreshold;
-			pos.stopLoss = Math.min(pos.stopLoss, newStop);
-		}
-	}
-
-	closePosition(candle, reason) {
-		const fee = this.currentPosition.size * candle.close * 0.0004;
+	closePosition(position, exitCandle) {
+		const fee =
+			position.size *
+			exitCandle.close *
+			(config.feeRate + config.slippage);
 		const profit =
-			this.currentPosition.direction === 'long'
-				? (candle.close - this.currentPosition.entryPrice) *
-				  this.currentPosition.size
-				: (this.currentPosition.entryPrice - candle.close) *
-				  this.currentPosition.size;
+			position.direction === 'long'
+				? (exitCandle.close - position.entryPrice) * position.size
+				: (position.entryPrice - exitCandle.close) * position.size;
 
 		this.balance += profit - fee;
-
+		this.totalFee += fee;
 		this.trades.push({
-			entry: this.currentPosition.entryPrice,
-			exit: candle.close,
+			size: position.size,
+			direction: position.direction,
+			entry: position.entryPrice,
+			exit: exitCandle.close,
 			profit: profit,
-			duration:
-				(candle.time - this.currentPosition.entryTime) / (60 * 1000),
-			reason: reason,
+			duration: exitCandle.timestamp - position.entryTime,
+			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
+			exitTime: moment(exitCandle.timestamp).format(
+				'YYYY-MM-DD HH:mm:ss'
+			),
 		});
-
-		this.currentPosition = null;
 	}
 
 	showResults() {
-		const profitableTrades = this.trades.filter((t) => t.profit > 0);
-		const winRate = (
-			(profitableTrades.length / this.trades.length) *
-			100
-		).toFixed(1);
+		const wins = this.trades.filter((t) => t.profit > 0);
+		const losses = this.trades.filter((t) => t.profit <= 0);
+
+		const totalProfit = this.trades.reduce((sum, t) => sum + t.profit, 0);
+		const winRate = ((wins.length / this.trades.length) * 100).toFixed(2);
+		const profitFactor =
+			wins.reduce((s, t) => s + t.profit, 0) /
+			Math.abs(losses.reduce((s, t) => s + t.profit, 0));
 
 		console.log(`
       ========== 回测结果 ==========
-      时间范围:     ${moment(this.data['15m'][0].time).format('YYYY-MM-DD')} 至 
-                   ${moment(this.data['15m'].slice(-1)[0].time).format(
-						'YYYY-MM-DD'
-					)}
-      总交易次数:   ${this.trades.length}
-      胜率:        ${winRate}%
-      总收益:      ${this.balance - config.initialBalance} USDT
-      期末余额:    ${this.balance.toFixed(2)} USDT
-      最大回撤:    ${this.calculateMaxDrawdown().toFixed(2)}%
+      总交易次数:     ${this.trades.length}
+      胜率:          ${winRate}%
+      总收益:        ${totalProfit.toFixed(2)} USDT
+      期末余额:      ${this.balance.toFixed(2)} USDT
+      盈亏比:        ${profitFactor.toFixed(2)}
+      最大单笔盈利:  ${Math.max(...this.trades.map((t) => t.profit)).toFixed(2)}
+      最大单笔亏损:  ${Math.min(...this.trades.map((t) => t.profit)).toFixed(2)}
+      手续费:       ${this.totalFee}
       =============================
     `);
-	}
-
-	calculateMaxDrawdown() {
-		let peak = config.initialBalance;
-		let maxDrawdown = 0;
-
-		this.trades.reduce((balance, trade) => {
-			const current = balance + trade.profit;
-			if (current > peak) peak = current;
-			const dd = ((peak - current) / peak) * 100;
-			if (dd > maxDrawdown) maxDrawdown = dd;
-			return current;
-		}, config.initialBalance);
-
-		return maxDrawdown;
+		console.log('\n最近20笔交易:');
+		console.table(this.trades.slice(-20));
 	}
 }
 
 // 执行回测
 (async () => {
-	const strategy = new MultiEMAStrategy();
+	const backtester = new Backtester();
 
-	await strategy.loadData(60); // 加载60天数据
-	await strategy.calculateEMASlopes();
-	await strategy.runBacktest();
-	strategy.showResults();
+	// 步骤1: 加载历史数据
+	await backtester.loadHistoricalData('2024-10-01', '2025-03-18');
+
+	// 步骤2: 计算指标
+	await backtester.calculateIndicators();
+
+	// 步骤3: 运行回测
+	backtester.runBacktest();
+
+	// 步骤4: 显示结果
+	backtester.showResults();
 })();
 
 app.listen(8092);
