@@ -171,12 +171,14 @@ class MultiEMAStrategy {
 
 		// 多周期条件验证
 		const bullCondition =
+			current['1h'].slope &&
 			current['1h'].slope > 0.003 &&
 			current['15m'].slope > 0.005 &&
 			current['5m'].slope > 0.008 &&
 			current['15m'].volume > this.sma(current['15m'].volume, 5) * 1.2;
 
 		const bearCondition =
+			current['1h'].slope &&
 			current['1h'].slope < -0.003 &&
 			current['15m'].slope < -0.005 &&
 			current['5m'].slope < -0.008 &&
