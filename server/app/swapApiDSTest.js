@@ -305,15 +305,15 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				// const isReverse =
-				// 	signal && position.direction === 'long'
-				// 		? signal.direction === 'short'
-				// 		: signal.direction === 'long';
-
 				const isReverse =
-					position && position.direction === 'long'
-						? candle['5m'].emaSlope < config.slopeThreshold['5m']
-						: candle['5m'].emaSlope > -config.slopeThreshold['5m'];
+					signal && position.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long';
+
+				// const isReverse =
+				// 	position && position.direction === 'long'
+				// 		? candle['5m'].emaSlope < config.slopeThreshold['5m']
+				// 		: candle['5m'].emaSlope > -config.slopeThreshold['5m'];
 
 				if (isReverse) {
 					this.closePosition(position, d);
