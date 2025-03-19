@@ -302,7 +302,11 @@ class Backtester {
 					)
 				);
 				console.log(candle['15m'].emaSlope);
-				console.log('direction', position.direction);
+				console.log(
+					'direction',
+					position.direction,
+					moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss')
+				);
 
 				const isProfitTarget =
 					position.direction === 'long'
