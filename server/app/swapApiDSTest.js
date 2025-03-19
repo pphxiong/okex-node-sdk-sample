@@ -139,6 +139,21 @@ class EnhancedTripleEMAStrategy {
 		};
 	}
 
+	getTimeStampBefore(dataList, timestamp) {
+		let data;
+		let i = 0;
+		while (true) {
+			const time = moment(timestamp).subtract(5 * i, 'minutes');
+			target = dataList.find((c) => c.timestamp === time.valueOf());
+			if (target) {
+				data = target;
+				break;
+			}
+			i += 1;
+		}
+		return data;
+	}
+
 	// 多周期时间戳对齐
 	mergeTimeframes() {
 		const baseTimestamps = this.data['5m'].map((c) => c.timestamp);
@@ -153,8 +168,8 @@ class EnhancedTripleEMAStrategy {
 		this.data.merged = baseTimestamps.map((ts, idx) => ({
 			timestamp: ts,
 			'5m': this.data['5m'][idx],
-			'15m': this.data['15m'].find((c) => c.timestamp === ts),
-			'1h': this.data['1h'].find((c) => c.timestamp === ts),
+			'15m': this.getTimeStampBefore(this.data['15m'], ts),
+			'1h': this.getTimeStampBefore(this.data['1h'], ts),
 		}));
 	}
 
