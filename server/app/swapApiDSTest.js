@@ -38,7 +38,7 @@ const config = {
 		'5m': { period: 6, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0.02 * 0.01,
+		'1h': 0.025 * 0.01,
 		'15m': 0.04 * 0.01,
 		'5m': 0.04 * 0.01,
 	}, // 斜率阈值
