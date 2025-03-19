@@ -471,7 +471,17 @@ class Backtester {
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
-
+	console.log(
+		backtester.data['5m']
+			.slice(-3)
+			.map((d) =>
+				Object.assign(d, {
+					timestamp: moment(d.timestamp).format(
+						'YYYY-MM-DD HH:mm:ss'
+					),
+				})
+			)
+	);
 	// 步骤3: 运行回测
 	backtester.runBacktest();
 
