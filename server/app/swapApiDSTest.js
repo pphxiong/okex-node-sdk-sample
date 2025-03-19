@@ -165,6 +165,7 @@ class Backtester {
 
 	async calculateIndicators() {
 		try {
+			console.log(123, this.data);
 			config.timeframes.forEach(async (tf) => {
 				// 计算布林带
 				const closes = this.data[tf].map((d) => d.close);
