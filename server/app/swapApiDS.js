@@ -34,7 +34,7 @@ require('dotenv').config();
 // 配置参数
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '1m',
+	// timeframe: '1m',
 	timeframes: ['1h', '15m', '5m'], // 多周期参数
 	emaSettings: {
 		'1h': { period: 20, slopeWindow: 5 },
@@ -701,15 +701,20 @@ function connectWebSocket() {
 		const msg = JSON.parse(data);
 		if (msg.stream && msg.data) {
 			const streamInfo = msg.stream.split('@');
+			const [symbol, period] = streamInfo;
+			const periodMap = {
+				kline_1h: '1h',
+				kline_5m: '5m',
+				kline_15m: '15m',
+			};
 			console.log(streamInfo);
 			console.log(msg.data);
-			// const klineData = parseKlineData(data.data.k);
 
 			// console.log(`更新: ${klineData.symbol} ${klineData.interval} K线`);
 			// console.log('K线数据:', klineData);
+			await handleKlineUpdate(msg.data, periodMap[period]);
 			console.log('-----------------------------------');
 		}
-		// await handleKlineUpdate(msg);
 	});
 
 	ws.on('error', (err) => {
@@ -718,7 +723,7 @@ function connectWebSocket() {
 }
 
 // 处理K线更新
-async function handleKlineUpdate(msg) {
+async function handleKlineUpdate(msg, tf) {
 	const kline = msg.k;
 	if (!kline.x) return; // 仅处理闭合K线
 
