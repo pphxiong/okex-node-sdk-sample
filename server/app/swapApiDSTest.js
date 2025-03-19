@@ -296,17 +296,17 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				console.log(
-					moment(candle['15m'].timestamp).format(
-						'YYYY-MM-DD HH:mm:ss'
-					)
-				);
-				console.log(candle['15m'].emaSlope);
-				console.log(
-					'direction',
-					position.direction,
-					moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss')
-				);
+				// console.log(
+				// 	moment(candle['15m'].timestamp).format(
+				// 		'YYYY-MM-DD HH:mm:ss'
+				// 	)
+				// );
+				// console.log(candle['15m'].emaSlope);
+				// console.log(
+				// 	'direction',
+				// 	position.direction,
+				// 	moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss')
+				// );
 
 				const isProfitTarget =
 					position.direction === 'long'
@@ -481,8 +481,8 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
-	// await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
+	// await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
+	await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
