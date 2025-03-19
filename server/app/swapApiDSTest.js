@@ -34,7 +34,7 @@ const config = {
 	timeframes: ['1h', '15m', '5m'], // 多周期参数
 	emaSettings: {
 		'1h': { period: 34, slopeWindow: 5 },
-		'15m': { period: 10, slopeWindow: 5 },
+		'15m': { period: 21, slopeWindow: 3 },
 		'5m': { period: 13, slopeWindow: 2 },
 	},
 	slopeThreshold: {
@@ -477,18 +477,18 @@ class Backtester {
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
-	console.log(
-		backtester.data['15m']
-			.filter((d) => !!d.emaSlope)
-			.slice(-3)
-			.map((d) =>
-				Object.assign(d, {
-					timestamp: moment(d.timestamp).format(
-						'YYYY-MM-DD HH:mm:ss'
-					),
-				})
-			)
-	);
+	// console.log(
+	// 	backtester.data['15m']
+	// 		.filter((d) => !!d.emaSlope)
+	// 		.slice(-3)
+	// 		.map((d) =>
+	// 			Object.assign(d, {
+	// 				timestamp: moment(d.timestamp).format(
+	// 					'YYYY-MM-DD HH:mm:ss'
+	// 				),
+	// 			})
+	// 		)
+	// );
 	// 步骤3: 运行回测
 	backtester.runBacktest();
 
