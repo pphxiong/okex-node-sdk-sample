@@ -301,7 +301,7 @@ class Backtester {
 						? signal.direction === 'short'
 						: signal.direction === 'long';
 
-				if (isStopLoss || isReverse) {
+				if (isReverse) {
 					this.closePosition(position, d);
 					position = null;
 				}
