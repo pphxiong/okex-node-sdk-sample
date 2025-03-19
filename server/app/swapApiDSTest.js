@@ -35,12 +35,12 @@ const config = {
 	emaSettings: {
 		// '1h': { period: 34, slopeWindow: 5 },
 		'15m': { period: 10, slopeWindow: 5 },
-		'5m': { period: 10, slopeWindow: 5 },
+		'5m': { period: 6, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		// '1h': 0.025 * 0.01,
 		'15m': 0.05 * 0.01,
-		'5m': 0.05 * 0.01,
+		'5m': 0.06 * 0.01,
 	}, // 斜率阈值
 	// 布林线参数
 	bollinger: {
@@ -255,7 +255,7 @@ class Backtester {
 		let position = null;
 		// let atr = 0;
 
-		this.data['5m'].forEach(async (d, i) => {
+		this.data['5m'].forEach(async (d, index) => {
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
 			// // 计算ATR
@@ -272,8 +272,17 @@ class Backtester {
 			// 	atr = d.atr;
 			// }
 
+			const candle = {
+				'15m': this.getTimeStampBefore(
+					this.data['15m'],
+					this.data['5m'][index].timestamp
+				),
+				'5m': this.data['5m'][index],
+			};
+			if (!candle['15m'].upper || !candle['15m'].emaSlope) return null;
+
 			// 生成信号
-			const signal = this.generateSignal(i);
+			const signal = this.generateSignal(candle);
 
 			// 处理平仓
 			if (position) {
@@ -296,10 +305,15 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
+				// const isReverse =
+				// 	signal && position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long';
+
 				const isReverse =
-					signal && position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long';
+					position && position.direction === 'long'
+						? candle['5m'].emaSlope < config.slopeThreshold['5m']
+						: candle['5m'].emaSlope > config.slopeThreshold['5m'];
 
 				if (isReverse) {
 					this.closePosition(position, d);
@@ -327,15 +341,6 @@ class Backtester {
 	}
 
 	generateSignal(index) {
-		const candle = {
-			'15m': this.getTimeStampBefore(
-				this.data['15m'],
-				this.data['5m'][index].timestamp
-			),
-			'5m': this.data['5m'][index],
-		};
-		if (!candle['15m'].upper || !candle['15m'].emaSlope) return null;
-
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
