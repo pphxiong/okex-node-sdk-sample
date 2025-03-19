@@ -232,6 +232,8 @@ class EnhancedTripleEMAStrategy {
 	generateSignal(mergedCandle) {
 		const { '1h': h1, '15m': m15, '5m': m5 } = mergedCandle;
 
+		console.log('h1:', h1, 'm15:', m15, 'm5:', m5);
+
 		// 基础斜率条件
 		const bullSlope =
 			h1.slope > 0.0025 && m15.slope > 0.004 && m5.slope > 0.006;
@@ -286,8 +288,6 @@ class EnhancedTripleEMAStrategy {
 		let balance = config.backtest.initialBalance;
 		let maxBalance = balance;
 		let drawdown = 0;
-
-		console.log(this.data.merged, 2);
 
 		for (const [index, merged] of this.data.merged.entries()) {
 			if (index < 100) continue; // 跳过初始化阶段
