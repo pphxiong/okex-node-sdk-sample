@@ -296,8 +296,12 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-				console.log(d.emaSlope);
+				console.log(
+					moment(candle['15m'].timestamp).format(
+						'YYYY-MM-DD HH:mm:ss'
+					)
+				);
+				console.log(candle['15m'].emaSlope);
 				console.log('direction', position.direction);
 
 				const isProfitTarget =
