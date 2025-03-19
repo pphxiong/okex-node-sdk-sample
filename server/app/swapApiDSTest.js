@@ -227,12 +227,12 @@ class Backtester {
 					}
 					if (
 						i >=
-						config.emaSettings[tf].period +
-							config.emaSettings[tf].slopeWindow
+						// config.emaSettings[tf].period +
+						config.emaSettings[tf].slopeWindow
 					) {
 						const slopeIndex =
 							i -
-							config.emaSettings[tf].period -
+							// config.emaSettings[tf].period -
 							config.emaSettings[tf].slopeWindow;
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
