@@ -187,7 +187,12 @@ class Backtester {
 					)
 				);
 
-				indicatorPromises.push(this.calculateATR(highs, lows, closes));
+				indicatorPromises.push(
+					tulind.indicators.atr.indicator(
+						[highs, lows, closes],
+						[config.atrParam.atrPeriod]
+					)
+				);
 			});
 
 			const result = await Promise.all(indicatorPromises);
@@ -207,6 +212,8 @@ class Backtester {
 					emaSlopes.push(slope);
 				}
 
+				console.log(atr[0], 1);
+
 				// 合并指标到数据
 				this.data[tf].forEach((d, i) => {
 					if (i >= config.bollinger.period) {
@@ -225,7 +232,7 @@ class Backtester {
 							config.emaSlope.lookback;
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
-					d.atr = atr[i];
+					d.atr = atr[0][i];
 				});
 			});
 		} catch (e) {
