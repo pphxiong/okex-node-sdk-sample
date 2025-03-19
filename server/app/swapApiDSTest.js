@@ -112,9 +112,7 @@ class Backtester {
 			);
 
 			this.mergeTimeframes();
-			console.log(
-				`Loaded ${this.data['15m'].slice(-1)[0]} ${'15m'} candles`
-			);
+			console.log(this.data['15m'].slice(-1)[0]);
 		} catch (e) {
 			console.error('Data loading failed:', e.message);
 			process.exit(1);
