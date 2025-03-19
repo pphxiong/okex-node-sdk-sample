@@ -35,6 +35,17 @@ require('dotenv').config();
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '1m',
+	timeframes: ['1h', '15m', '5m'], // 多周期参数
+	emaSettings: {
+		'1h': { period: 20, slopeWindow: 5 },
+		'15m': { period: 10, slopeWindow: 3 },
+		'5m': { period: 6, slopeWindow: 2 },
+	},
+	slopeThreshold: {
+		'1h': 0 * 0.01,
+		'15m': 0 * 0.01,
+		'5m': 0 * 0.01,
+	}, // 斜率阈值
 	emaPeriods: [5, 20, 55], // 三EMA周期
 	orderDepth: 0.001 / 2, // 限价单挂单深度 (0.1%)
 	tradeAmount: 500, // 每单交易金额(USDT)
@@ -66,6 +77,11 @@ let state = {
 	coolingUntil: 0, // 基础冷却结束时间
 };
 let ohlcv = [];
+let marketData = {
+	'1h': [],
+	'15m': [],
+	'5m': [],
+};
 let ws = null;
 let dailyPnL = 0;
 
@@ -558,13 +574,27 @@ class RiskManager {
 // 初始化历史数据
 async function initialize() {
 	console.log('正在获取历史数据...');
-	ohlcv = await exchange.fetchOHLCV(
-		config.symbol,
-		config.timeframe,
-		undefined,
-		config.coldStartBars
+	const candlePromises = [];
+	config.timeframes.forEach((timeframe) => {
+		candlePromises.push(
+			exchange.fetchOHLCV(
+				config.symbol,
+				timeframe,
+				undefined,
+				config.coldStartBars
+			)
+		);
+	});
+
+	const [candles1h, candles15m, candles5m] = await Promise.all(
+		candlePromises
 	);
-	console.log(`已加载${ohlcv.length}根历史K线`);
+
+	marketData['1h'] = candles1h;
+	marketData['15m'] = candles15m;
+	marketData['5m'] = candles5m;
+
+	console.log(`已加载5分钟${marketData['5m'].length}根历史K线`);
 }
 
 // 策略主逻辑
@@ -651,8 +681,16 @@ async function initPositionData() {
 // 实时数据订阅
 function connectWebSocket() {
 	const symbolForWS = config.symbol.replace('/', '').toLowerCase();
+	const streams = [
+		`${symbolForWS}@kline_1h`,
+		`${symbolForWS}@kline_5m`,
+		`${symbolForWS}@kline_15m`,
+	];
+	// ws = new WebSocket(
+	// 	'wss://fstream.binance.com/ws/' + symbolForWS + '@kline_1m'
+	// );
 	ws = new WebSocket(
-		'wss://fstream.binance.com/ws/' + symbolForWS + '@kline_1m'
+		`wss://stream.binance.com:9443/stream?streams=${streams.join('/')}`
 	);
 
 	ws.on('open', () => {
@@ -661,6 +699,15 @@ function connectWebSocket() {
 
 	ws.on('message', async (data) => {
 		const msg = JSON.parse(data);
+		if (msg.stream && msg.data) {
+			const streamInfo = msg.stream.split('@');
+			console.log(streamInfo);
+			// const klineData = parseKlineData(data.data.k);
+
+			// console.log(`更新: ${klineData.symbol} ${klineData.interval} K线`);
+			// console.log('K线数据:', klineData);
+			console.log('-----------------------------------');
+		}
 		await handleKlineUpdate(msg);
 	});
 
@@ -772,18 +819,17 @@ async function handleKlineUpdate(msg) {
 (async () => {
 	await exchange.loadMarkets();
 	await initialize();
-	await initPositionData();
+	// await initPositionData();
 	connectWebSocket();
-	// await strategyLoop();
-	setInterval(() => {
-		RESTART_TIME += 1;
-		if (RESTART_TIME >= 3 * 5 * 2) {
-			RESTART_TIME = 0;
-			restart('normal');
-			return;
-		}
-		strategyLoop();
-	}, 1000 * 8); // 每15秒运行一次
+	// setInterval(() => {
+	// 	RESTART_TIME += 1;
+	// 	if (RESTART_TIME >= 3 * 5 * 2) {
+	// 		RESTART_TIME = 0;
+	// 		restart('normal');
+	// 		return;
+	// 	}
+	// 	strategyLoop();
+	// }, 1000 * 8); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
