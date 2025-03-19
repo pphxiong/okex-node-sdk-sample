@@ -243,11 +243,16 @@ class EnhancedTripleEMAStrategy {
 		return config.riskParams.baseRisk * riskMultiplier;
 	}
 
+	sma(period) {
+		const dataList = this.data['15m'].slice(-period);
+		const sum = dataList.reduce((total, item) => total + item.volume, 0);
+		const avg = sum / period;
+		return avg;
+	}
+
 	// 增强信号生成（多条件过滤）
 	generateSignal(mergedCandle) {
 		const { '1h': h1, '15m': m15, '5m': m5 } = mergedCandle;
-
-		console.log('h1:', h1, 'm15:', m15, 'm5:', m5);
 
 		// 基础斜率条件
 		const bullSlope =
@@ -259,7 +264,7 @@ class EnhancedTripleEMAStrategy {
 		// 成交量过滤
 		const volumeFilter = config.filters.volume.enabled
 			? m15.volume >
-			  this.sma(m15.volume, config.filters.volume.period) *
+			  this.sma(config.filters.volume.period) *
 					config.filters.volume.multiplier
 			: true;
 
@@ -345,6 +350,11 @@ class EnhancedTripleEMAStrategy {
 			maxDrawdown: drawdown * 100,
 			tradeCount: this.trades.length,
 		};
+	}
+
+	applySlippage(candle, direction) {
+		const slippage = direction === 'long' ? 0.0004 : -0.0004;
+		return candle.close * (1 + slippage);
 	}
 
 	// 增强交易执行（含滑点模拟）
