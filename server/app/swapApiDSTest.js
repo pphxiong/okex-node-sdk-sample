@@ -231,7 +231,6 @@ class Backtester {
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					d.atr = atr[0][i];
-					console.log(d.atr, 1);
 				});
 			});
 		} catch (e) {
@@ -250,7 +249,7 @@ class Backtester {
 		let position = null;
 		// let atr = 0;
 
-		this.data['5m'].forEach(async (d, i) => {
+		this.data['15m'].forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
 			if (i < 50) return;
 			// // 计算ATR
