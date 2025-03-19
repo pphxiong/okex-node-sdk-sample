@@ -100,7 +100,6 @@ class MultiEMAStrategy {
 				baseTimestamps.includes(d.time)
 			);
 		});
-		console.log(23, this.data);
 		const merged = baseTimestamps.map((ts, idx) => ({
 			time: ts,
 			'5m': this.data['5m'][idx],
@@ -115,6 +114,7 @@ class MultiEMAStrategy {
 	getTimeStampBefore(dataList, timestamp) {
 		let data;
 		let i = 0;
+		console.log(24, dataList, timestamp);
 		while (true) {
 			const time = moment(timestamp).subtract(5 * i, 'minutes');
 			const target = dataList.find((c) => c.time === time.valueOf());
