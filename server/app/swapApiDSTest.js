@@ -289,20 +289,10 @@ class Backtester {
 
       // 生成信号
       const signal = this.generateSignal(candle);
-      console.log(12, signal);
+
       // 处理平仓
       if (position) {
-        // console.log(
-        // 	moment(candle['15m'].timestamp).format(
-        // 		'YYYY-MM-DD HH:mm:ss'
-        // 	)
-        // );
-        // console.log(candle['15m'].emaSlope);
-        // console.log(
-        // 	'direction',
-        // 	position.direction,
-        // 	moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss')
-        // );
+        console.log(123, position);
 
         const isProfitTarget =
           position.direction === "long"
