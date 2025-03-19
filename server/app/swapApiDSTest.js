@@ -237,7 +237,7 @@ class Backtester {
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					d.atr = atr[0][i];
-					d.emaSlope = emaSlopes[i];
+					// d.emaSlope = emaSlopes[i];
 				});
 			});
 		} catch (e) {
@@ -284,7 +284,7 @@ class Backtester {
 				),
 				'5m': this.data['5m'][index],
 			};
-			if (!candle['15m'].upper || !candle['15m'].emaSlope) return;
+			if (!candle['5m'].upper || !candle['5m'].emaSlope) return;
 
 			// 生成信号
 			const signal = this.generateSignal(candle);
@@ -472,15 +472,11 @@ class Backtester {
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
 	console.log(
-		backtester.data['5m']
-			.slice(-3)
-			.map((d) =>
-				Object.assign(d, {
-					timestamp: moment(d.timestamp).format(
-						'YYYY-MM-DD HH:mm:ss'
-					),
-				})
-			)
+		backtester.data['5m'].slice(-3).map((d) =>
+			Object.assign(d, {
+				timestamp: moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+			})
+		)
 	);
 	// 步骤3: 运行回测
 	backtester.runBacktest();
