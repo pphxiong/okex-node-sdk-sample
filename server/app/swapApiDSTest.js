@@ -167,8 +167,6 @@ class MultiEMAStrategy {
 			'5m': this.data['5m'][index],
 		};
 
-		console.log(current);
-
 		// 多周期条件验证
 		const bullCondition =
 			current['1h'].slope &&
@@ -210,12 +208,13 @@ class MultiEMAStrategy {
 	}
 
 	async runBacktest() {
-		const atrValues = await this.calculateATR();
+		const atrValues = await this.calculateATR('5m');
 		this.data['5m'].forEach((d, i) => {
 			if (i < 100) return; // 跳过初始数据不足阶段
 
 			const signal = this.generateSignal(i);
 			const atr = atrValues[i];
+			console.log(45, atrValues.length);
 
 			if (this.currentPosition) {
 				this.checkExit(d, atr, i);
