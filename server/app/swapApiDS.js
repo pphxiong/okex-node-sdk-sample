@@ -69,6 +69,12 @@ const config = {
   macdSlow: 17,
   macdSignal: 5,
   coldStartBars: 1000, // 冷启动期间的K线数量
+  atrParam: {
+    // ATR参数
+    atrPeriod: 14,
+    stopLoss: 1.2,
+    takeProfit: 1.8,
+  },
 };
 
 // 全局状态
@@ -567,7 +573,9 @@ async function initialize() {
   marketData["15m"] = candles15m.map(parseKLine);
   marketData["5m"] = candles5m.map(parseKLine);
 
-  console.log(`已加载5分钟${marketData["5m"].length}根历史K线`);
+  console.log(`已加载1h${marketData["1h"].length}根历史K线`);
+  console.log(`已加载15m${marketData["15m"].length}根历史K线`);
+  console.log(`已加载5m${marketData["5m"].length}根历史K线`);
 }
 
 // 策略主逻辑
