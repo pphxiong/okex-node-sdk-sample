@@ -46,9 +46,14 @@ const config = {
     "15m": 0 * 0.01,
     "5m": 0 * 0.01,
   }, // 斜率阈值
+  // 布林线参数
+  bollinger: {
+    period: 20,
+    stdDev: 1.8,
+  },
   emaPeriods: [5, 20, 55], // 三EMA周期
   orderDepth: 0.001 / 2, // 限价单挂单深度 (0.1%)
-  tradeAmount: 500, // 每单交易金额(USDT)
+  tradeAmount: 1000, // 每单交易金额(USDT)
   maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -76,7 +81,6 @@ let state = {
   side: "buy", // 交易方向
   coolingUntil: 0, // 基础冷却结束时间
 };
-let ohlcv = [];
 let marketData = {
   "1h": [],
   "15m": [],
@@ -137,29 +141,69 @@ function findSwingPoints(candles) {
 
 // 计算技术指标
 async function calculateIndicators() {
-  const closes = ohlcv.map((t) => t[4]);
+  try {
+    const indicatorPromises = [];
 
-  // 并行计算指标
-  const [boll, macd] = await Promise.all([
-    tulind.indicators.bbands.indicator(
-      [closes],
-      [config.bollPeriod, config.bollStdDev]
-    ),
-    tulind.indicators.macd.indicator(
-      [closes],
-      [config.macdFast, config.macdSlow, config.macdSignal]
-    ),
-  ]);
+    config.timeframes.forEach(async (tf) => {
+      // 计算布林带
+      const closes = marketData[tf].map((d) => d.close);
+      const highs = marketData[tf].map((d) => d.high);
+      const lows = marketData[tf].map((d) => d.low);
 
-  return {
-    lower: boll[0],
-    middle: boll[1],
-    upper: boll[2],
-    macdLine: macd[0],
-    signalLine: macd[1],
-    histogram: macd[2],
-    swingPoints: findSwingPoints(ohlcv.map(parseKLine)),
-  };
+      indicatorPromises.push(
+        tulind.indicators.ema.indicator(
+          [closes],
+          [config.emaSettings[tf].period]
+        )
+      );
+
+      indicatorPromises.push(
+        tulind.indicators.bbands.indicator(
+          [closes],
+          [config.bollinger.period, config.bollinger.stdDev]
+        )
+      );
+
+      indicatorPromises.push(
+        tulind.indicators.atr.indicator(
+          [highs, lows, closes],
+          [config.atrParam.atrPeriod]
+        )
+      );
+    });
+
+    const result = await Promise.all(indicatorPromises);
+
+    // 合并指标到数据
+    config.timeframes.forEach((tf, index) => {
+      const [ema, bollinger, atr] = result.slice(index * 3, index * 3 + 3);
+      // 计算EMA斜率
+      const emaSlopes = [];
+      for (let i = config.emaSettings[tf].slopeWindow; i < ema[0].length; i++) {
+        const slope =
+          (ema[0][i] - ema[0][i - config.emaSettings[tf].slopeWindow]) /
+          config.emaSettings[tf].slopeWindow;
+        emaSlopes.push(slope);
+      }
+
+      // 合并指标到数据
+      marketData[tf].forEach((d, i) => {
+        if (i >= config.bollinger.period) {
+          const bbIndex = i - config.bollinger.period;
+          d.upper = bollinger[0][bbIndex];
+          d.middle = bollinger[1][bbIndex];
+          d.lower = bollinger[2][bbIndex];
+        }
+        if (i >= config.emaSettings[tf].slopeWindow) {
+          const slopeIndex = i - config.emaSettings[tf].slopeWindow;
+          d.emaSlope = emaSlopes[slopeIndex];
+        }
+        d.atr = atr[0][i];
+      });
+    });
+  } catch (e) {
+    console.error("指标计算错误:", e);
+  }
 }
 
 function parseKLine(data) {
@@ -371,76 +415,54 @@ function getHighsAndLows(indicators) {
   return { lastHighs, lastLows, highest, lowest, highLower, lowHigher };
 }
 
+function getTimeStampBefore(dataList, timestamp) {
+  let data;
+  let i = 0;
+  while (true) {
+    const time = moment(timestamp).subtract(5 * i, "minutes");
+    const target = dataList.find((c) => c.timestamp === time.valueOf());
+    if (target) {
+      data = target;
+      break;
+    }
+    i += 1;
+  }
+  return data;
+}
+
 // 交易信号生成
-async function generateSignal(candles, currentPrice) {
-  // const [ema9, ema21, ema55] = await Promise.all([
-  // 	calculateEMA(candles, config.emaPeriods[0]),
-  // 	calculateEMA(candles, config.emaPeriods[1]),
-  // 	calculateEMA(candles, config.emaPeriods[2]),
-  // ]);
+async function generateSignal(currentPrice) {
+  const lastKline5M = marketData["5m"].slice(-1)[0];
+  const candle = {
+    "1h": getTimeStampBefore(marketData["1h"], lastKline5M.timestamp),
+    "15m": getTimeStampBefore(marketData["15m"], lastKline5M.timestamp),
+    "5m": lastKline5M,
+  };
 
-  // const ema9Last = ema9[ema9.length - 2];
-  // const ema21Last = ema21[ema21.length - 2];
-  // const ema9Current = ema9[ema9.length - 1];
-  // const ema21Current = ema21[ema21.length - 1];
-  // const ema55Current = ema55[ema55.length - 1];
-
-  const indicators = await calculateIndicators();
-
-  // 当前指标值
-  const lastPrice = ohlcv[ohlcv.length - 1][4];
-  const upper = getLastIndicators(indicators, "upper");
-  const lower = getLastIndicators(indicators, "lower");
-  const middle = getLastIndicators(indicators, "middle");
-  const macdLine = getLastIndicators(indicators, "macdLine");
-  const signalLine = getLastIndicators(indicators, "signalLine");
-  const histogram = getLastIndicators(indicators, "histogram");
-  const prevHistogram = indicators.histogram[indicators.histogram.length - 2];
-
-  const { lastHighs, lastLows, highest, lowest } = getHighsAndLows(indicators);
+  if (
+    !candle["5m"].emaSlope ||
+    !candle["15m"].emaSlope ||
+    !candle["1h"].emaSlope
+  )
+    return {};
 
   // 多头信号条件
-  const longCondition = currentPrice > highest && lastPrice < highest;
-  // price <= lower && // 价格触及下轨
-  // price > middle && // 价格触及中轨
-  // macdLine > signalLine && // MACD金叉
-  // histogram > prevHistogram && // 动量增强
-  // ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2; // 成交量放大
+  const longCondition =
+    candle["1h"].emaSlope > config.slopeThreshold["1h"] &&
+    candle["5m"].emaSlope > config.slopeThreshold["5m"] &&
+    candle["15m"].emaSlope > config.slopeThreshold["15m"];
 
   // 空头信号条件
-  const shortCondition = currentPrice < lowest && lastPrice > lowest;
-  // price >= upper && // 价格触及上轨
-  // price < middle && // 价格触及中轨
-  // macdLine < signalLine && // MACD死叉
-  // histogram < prevHistogram && // 动量减弱
-  // ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2;
+  const shortCondition =
+    candle["1h"].emaSlope < -config.slopeThreshold["1h"] &&
+    candle["5m"].emaSlope < -config.slopeThreshold["5m"] &&
+    candle["15m"].emaSlope < -config.slopeThreshold["15m"];
 
   console.log("################################");
-  console.log(
-    "time",
-    moment(candles[candles.length - 1][0]).format("YYYY-MM-DD HH:mm:ss")
-  );
+  console.log("time", moment(lastKline5M).format("YYYY-MM-DD HH:mm:ss"));
   console.log("currentPrice", currentPrice);
-  // console.log('uper', upper);
-  // console.log('lower', lower);
-  // console.log('middle', middle);
-  // console.log('macdLine', macdLine);
-  // console.log('signalLine', signalLine);
-  // console.log('histogram', histogram);
-  // console.log('prevHistogram', prevHistogram);
-  // console.log(
-  // 	'volumn',
-  // 	ohlcv[ohlcv.length - 1][5],
-  // 	ohlcv[ohlcv.length - 2][5],
-  // 	ohlcv[ohlcv.length - 1][5] > ohlcv[ohlcv.length - 2][5] * 1.2
-  // );
-  // console.log('ema', ema9Current, ema21Current, ema55Current);
   console.log("position", state.position);
   console.log("side", state.side);
-  console.log("lastHighs", lastHighs);
-  console.log("lastLows", lastLows);
-  console.log("highest", highest);
-  console.log("lowest", lowest);
   console.log("longCondition", longCondition);
   console.log("shortCondition", shortCondition);
   console.log("################################");
@@ -449,7 +471,6 @@ async function generateSignal(candles, currentPrice) {
     buySignal: longCondition,
     sellSignal: shortCondition,
     price: currentPrice,
-    indicators,
   };
 }
 
@@ -458,58 +479,32 @@ class RiskManager {
   static checkStopConditions(signal) {
     if (state.position === 0) return false;
 
-    const { buySignal, sellSignal, price: currentPrice, indicators } = signal;
+    const lastKline5M = marketData["5m"].slice(-1)[0];
+    const candle = {
+      "1h": getTimeStampBefore(marketData["1h"], lastKline5M.timestamp),
+      "15m": getTimeStampBefore(marketData["15m"], lastKline5M.timestamp),
+      "5m": lastKline5M,
+    };
 
-    const { lastHighs, lastLows, highest, lowest, highLower, lowHigher } =
-      getHighsAndLows(indicators);
+    if (
+      !candle["5m"].emaSlope ||
+      !candle["15m"].emaSlope ||
+      !candle["1h"].emaSlope
+    )
+      return false;
 
+    const { price: currentPrice } = signal;
     const { side } = state;
     let isStop = false;
 
     isStop =
-      side === "buy" ? currentPrice < lowHigher : currentPrice > highLower;
+      side === "buy"
+        ? candle["15m"].emaSlope < -config.slopeThreshold["15m"]
+        : candle["15m"].emaSlope > config.slopeThreshold["15m"];
 
-    // 更新价格极值
-    state.highestPrice = Math.max(state.highestPrice, currentPrice);
-    state.lowestPrice = Math.min(state.lowestPrice, currentPrice);
-
-    let hardStopPrice;
-    let trailingStopPrice;
-    // let finalStopPrice;
-    let hardTakeProfitPrice;
-
-    // 计算止盈止损价
-    if (side === "buy") {
-      hardStopPrice = state.entryPrice * (1 - config.stopLoss);
-      hardTakeProfitPrice = state.entryPrice * (1 + config.takeProfit);
-      if (currentPrice < state.entryPrice) {
-        isStop = isStop || currentPrice <= hardStopPrice;
-      } else {
-        trailingStopPrice = state.highestPrice * (1 - config.trailingStop);
-        isStop = isStop || currentPrice >= hardTakeProfitPrice;
-      }
-    } else {
-      hardStopPrice = state.entryPrice * (1 + config.stopLoss);
-      hardTakeProfitPrice = state.entryPrice * (1 - config.takeProfit);
-      if (currentPrice > state.entryPrice) {
-        isStop = isStop || currentPrice >= hardStopPrice;
-      } else {
-        trailingStopPrice = state.lowestPrice * (1 + config.trailingStop);
-        isStop = isStop || currentPrice <= hardTakeProfitPrice;
-      }
-    }
     console.log("***********************************");
     console.log("entryPrice", state.entryPrice);
     console.log("currentPrice", currentPrice);
-    console.log("hardStopPrice", hardStopPrice);
-    console.log("hardTakeProfitPrice", hardTakeProfitPrice);
-    console.log("lastHighs", lastHighs);
-    console.log("lastLows", lastLows);
-    console.log("highest", highest);
-    console.log("lowest", lowest);
-    // console.log('trailingStopPrice', trailingStopPrice);
-    // console.log('highestPrice', state.highestPrice);
-    // console.log('lowestPrice', state.lowestPrice);
     console.log("isStop", isStop);
     console.log("***********************************");
     return isStop;
@@ -533,7 +528,7 @@ class RiskManager {
     state.highestPrice = 0;
     state.lowestPrice = 0;
 
-    this.activateCooldown();
+    // this.activateCooldown();
   }
 
   static activateCooldown() {
@@ -568,9 +563,9 @@ async function initialize() {
 
   const [candles1h, candles15m, candles5m] = await Promise.all(candlePromises);
 
-  marketData["1h"] = candles1h;
-  marketData["15m"] = candles15m;
-  marketData["5m"] = candles5m;
+  marketData["1h"] = candles1h.map(parseKLine);
+  marketData["15m"] = candles15m.map(parseKLine);
+  marketData["5m"] = candles5m.map(parseKLine);
 
   console.log(`已加载5分钟${marketData["5m"].length}根历史K线`);
 }
@@ -578,14 +573,6 @@ async function initialize() {
 // 策略主逻辑
 async function strategyLoop() {
   try {
-    // const candles = await exchange.fetchOHLCV(
-    // 	config.symbol,
-    // 	config.timeframe,
-    // 	undefined,
-    // 	100
-    // );
-    // ohlcv = candles;
-    const candles = ohlcv;
     // const currentPrice = candles[candles.length - 1][4];
     const ticker = await exchange.fetchTicker(config.symbol);
     const currentPrice = ticker.last;
@@ -593,12 +580,14 @@ async function strategyLoop() {
     // 步骤1: 清理过期订单
     await OrderManager.checkOrderStatus(currentPrice);
 
+    await calculateIndicators();
+
     // 步骤2: 获取信号
-    const signal = await generateSignal(candles, currentPrice);
+    const signal = await generateSignal();
     const orderBook = await getOrderBook();
 
     // 步骤3: 检查强制平仓
-    if (await RiskManager.checkStopConditions(signal)) {
+    if (RiskManager.checkStopConditions(signal)) {
       await RiskManager.closePosition(signal.price);
       return;
     }
@@ -609,7 +598,7 @@ async function strategyLoop() {
         const limitPrice = orderBook.bid * (1 - config.orderDepth);
         const amount = config.tradeAmount / limitPrice;
 
-        await OrderManager.createMarketOrder("buy", amount, limitPrice);
+        await OrderManager.createLimitOrder("buy", amount, limitPrice);
         console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
       }
 
@@ -617,7 +606,7 @@ async function strategyLoop() {
         const limitPrice = orderBook.ask * (1 + config.orderDepth);
         const amount = config.tradeAmount / limitPrice;
 
-        await OrderManager.createMarketOrder("sell", amount, limitPrice);
+        await OrderManager.createLimitOrder("sell", amount, limitPrice);
         console.log(`挂卖单 | 价格:${limitPrice} 数量:${amount}`);
       }
     }
@@ -709,107 +698,24 @@ async function handleKlineUpdate(msg, tf) {
   if (marketData[tf].length >= config.coldStartBars) {
     marketData[tf].shift();
   }
-  marketData[tf].push(newBar);
-  console.log(
-    12,
-    marketData["15m"].slice(-3).map((d) =>
-      Object.assign(d, {
-        timestamp: moment(d[0]).format("YYYY-MM-DD HH:mm:ss"),
-      })
-    )
-  );
+  marketData[tf].push(newBar.map(parseKLine));
 }
-
-// // 加载历史数据
-// async function loadHistoricalData(days = 30) {
-// 	const since = moment().subtract(days, 'days').valueOf();
-// 	const klines = await exchange.fetchOHLCV(
-// 		config.symbol,
-// 		config.timeframe,
-// 		since,
-// 		null,
-// 		{ limit: 1000 }
-// 	);
-//   return klines
-// }
-
-// // 回测运行
-// async function backtest(days) {
-// 	const klines = await this.loadHistoricalData(days);
-
-// 	for (let i = config.bollPeriod; i < klines.length; i++) {
-// 		this.ohlcv = this.ohlcv.slice(0, i + 1);
-// 		const signal = await this.generateSignal();
-// 		if (signal) await this.executeTrade(signal);
-// 		await this.checkExitConditions();
-// 	}
-
-// 	this.generateReport();
-// }
-
-// // 生成报告
-// function generateReport() {
-// 	const wins = this.tradeHistory.filter((t) => t.pnl > 0);
-// 	const losses = this.tradeHistory.filter((t) => t.pnl <= 0);
-
-// 	console.log(`
-//     === 策略回测报告 ===
-//     总交易次数: ${this.tradeHistory.length}
-//     胜率: ${((wins.length / this.tradeHistory.length) * 100).toFixed(1)}%
-//     平均盈利: ${(
-// 		(wins.reduce((s, t) => s + t.pnl, 0) / wins.length) *
-// 		100
-// 	).toFixed(2)}%
-//     平均亏损: ${(
-// 		(losses.reduce((s, t) => s + t.pnl, 0) / losses.length) *
-// 		100
-// 	).toFixed(2)}%
-//     最大回撤: ${this.calculateMaxDrawdown().toFixed(2)}%
-//     夏普比率: ${this.calculateSharpeRatio().toFixed(2)}
-//   `);
-// }
-
-// function calculateMaxDrawdown() {
-// 	let peak = 0;
-// 	let maxDrawdown = 0;
-// 	let equity = 0;
-
-// 	this.tradeHistory.forEach((trade) => {
-// 		equity += trade.pnl;
-// 		if (equity > peak) peak = equity;
-// 		const dd = (peak - equity) / peak;
-// 		if (dd > maxDrawdown) maxDrawdown = dd;
-// 	});
-
-// 	return maxDrawdown * 100;
-// }
-
-// function calculateSharpeRatio(riskFreeRate = 0.03) {
-// 	const returns = this.tradeHistory.map((t) => t.pnl);
-// 	const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
-// 	const stdDev = Math.sqrt(
-// 		returns
-// 			.map((x) => Math.pow(x - avgReturn, 2))
-// 			.reduce((a, b) => a + b, 0) / returns.length
-// 	);
-// 	return (avgReturn - riskFreeRate) / stdDev;
-// }
 
 // 启动策略
 (async () => {
   await exchange.loadMarkets();
   await initialize();
-  // await initPositionData();
+  await initPositionData();
   connectWebSocket();
-  // setInterval(() => {
-  // 	RESTART_TIME += 1;
-  // 	if (RESTART_TIME >= 3 * 5 * 2) {
-  // 		RESTART_TIME = 0;
-  // 		restart('normal');
-  // 		return;
-  // 	}
-  // 	strategyLoop();
-  // }, 1000 * 8); // 每15秒运行一次
+  setInterval(() => {
+    RESTART_TIME += 1;
+    if (RESTART_TIME >= 3 * 5) {
+      RESTART_TIME = 0;
+      restart("normal");
+      return;
+    }
+    strategyLoop();
+  }, 1000 * 15); // 每15秒运行一次
   console.log("策略已启动...");
 })();
 
