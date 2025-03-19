@@ -420,7 +420,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2024-10-01', '2025-03-18');
+	await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
