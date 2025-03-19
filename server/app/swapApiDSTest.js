@@ -370,7 +370,7 @@ class MultiEMAStrategy {
 (async () => {
 	const strategy = new MultiEMAStrategy();
 
-	await strategy.loadData(120); // 加载60天数据
+	await strategy.loadData(60); // 加载60天数据
 	await strategy.calculateEMASlopes();
 	await strategy.runBacktest();
 	strategy.showResults();
