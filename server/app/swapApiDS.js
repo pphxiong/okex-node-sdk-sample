@@ -438,7 +438,7 @@ function getTimeStampBefore(dataList, timestamp) {
 
 // 交易信号生成
 async function generateSignal(currentPrice) {
-  const lastKline5M = marketData["5m"].slice(-1)[0];
+  const lastKline5M = JSON.parse(JSON.stringify(marketData["5m"].slice(-1)[0]));
   const candle = {
     "1h": getTimeStampBefore(marketData["1h"], lastKline5M.timestamp),
     "15m": getTimeStampBefore(marketData["15m"], lastKline5M.timestamp),
