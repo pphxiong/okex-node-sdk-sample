@@ -668,8 +668,8 @@ function connectWebSocket() {
   const symbolForWS = config.symbol.replace("/", "").toLowerCase();
   const streams = [
     `${symbolForWS}@kline_1h`,
-    `${symbolForWS}@kline_5m`,
     `${symbolForWS}@kline_15m`,
+    `${symbolForWS}@kline_5m`,
   ];
   // ws = new WebSocket(
   // 	'wss://fstream.binance.com/ws/' + symbolForWS + '@kline_1m'
@@ -689,11 +689,11 @@ function connectWebSocket() {
       const [symbol, period] = streamInfo;
       const periodMap = {
         kline_1h: "1h",
-        kline_5m: "5m",
         kline_15m: "15m",
+        kline_5m: "5m",
       };
 
-      // console.log(`更新: ${klineData.symbol} ${klineData.interval} K线`);
+      console.log(`更新: ${symbol} ${period} K线`);
       // console.log('K线数据:', klineData);
       await handleKlineUpdate(msg.data, periodMap[period]);
       //   console.log("-----------------------------------");
