@@ -108,6 +108,7 @@ class MultiEMAStrategy {
 		}));
 
 		this.data = merged;
+		console.log(6, merged);
 	}
 
 	getTimeStampBefore(dataList, timestamp) {
@@ -156,7 +157,6 @@ class MultiEMAStrategy {
 						d.slope = slopes[i - period - slopeWindow];
 					}
 				});
-				console.log(56, this.data);
 			}
 		} catch (e) {
 			console.error('指标计算失败:', e);
