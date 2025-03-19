@@ -292,8 +292,6 @@ class Backtester {
 
       // 处理平仓
       if (position) {
-        console.log(123, position);
-
         const isProfitTarget =
           position.direction === "long"
             ? d.close >= position.entryPrice + position.takeProfit
@@ -462,7 +460,7 @@ class Backtester {
   const backtester = new Backtester();
 
   // 步骤1: 加载历史数据
-  await backtester.loadHistoricalData("2025-01-01", "2025-01-05");
+  await backtester.loadHistoricalData("2025-03-12", "2025-03-19");
   // await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
 
   // 步骤2: 计算指标
