@@ -50,12 +50,12 @@ const config = {
 	},
 	filters: {
 		volume: {
-			enabled: true,
+			enabled: false,
 			multiplier: 1.3, // 成交量过滤倍数
 			period: 5,
 		},
 		rsi: {
-			enabled: true,
+			enabled: false,
 			period: 14,
 			overbought: 70,
 			oversold: 30,
