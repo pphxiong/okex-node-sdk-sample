@@ -144,7 +144,7 @@ class EnhancedTripleEMAStrategy {
 		let i = 0;
 		while (true) {
 			const time = moment(timestamp).subtract(5 * i, 'minutes');
-			target = dataList.find((c) => c.timestamp === time.valueOf());
+			const target = dataList.find((c) => c.timestamp === time.valueOf());
 			if (target) {
 				data = target;
 				break;
