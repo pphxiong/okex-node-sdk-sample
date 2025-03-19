@@ -112,7 +112,17 @@ class Backtester {
 			);
 
 			this.mergeTimeframes();
-			console.log(this.data['15m'].slice(-1)[0]);
+			console.log(
+				this.data['15m']
+					.slice(-3)[0]
+					.map((c) =>
+						Object.assign(c, {
+							timestamp: moment(c.timestamp).format(
+								'YYYY-MM-DD HH:mm:ss'
+							),
+						})
+					)
+			);
 		} catch (e) {
 			console.error('Data loading failed:', e.message);
 			process.exit(1);
