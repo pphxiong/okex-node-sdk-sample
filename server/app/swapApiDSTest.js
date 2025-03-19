@@ -340,7 +340,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(index) {
+	generateSignal(candle) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
