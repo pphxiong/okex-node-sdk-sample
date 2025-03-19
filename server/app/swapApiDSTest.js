@@ -265,6 +265,8 @@ class MultiEMAStrategy {
 			closeReason = 'takeProfit';
 		}
 
+		console.log(23, this.data['15m']);
+
 		// 时间止损（持仓超过24根15分钟K线）
 		const duration =
 			index - this.data['15m'].findIndex((d) => d.time === pos.entryTime);
