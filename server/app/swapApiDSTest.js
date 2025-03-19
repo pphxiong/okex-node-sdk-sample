@@ -315,9 +315,10 @@ class Backtester {
 				// 		: signal.direction === 'long';
 
 				const isReverse =
-					position && position.direction === 'long'
+					position &&
+					(position.direction === 'long'
 						? candle['5m'].emaSlope < -config.slopeThreshold['5m']
-						: candle['5m'].emaSlope > config.slopeThreshold['5m'];
+						: candle['5m'].emaSlope > config.slopeThreshold['5m']);
 
 				if (isReverse) {
 					this.closePosition(position, d);
@@ -465,7 +466,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2024-01-01', '2024-03-30');
+	await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
