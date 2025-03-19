@@ -279,7 +279,7 @@ class Backtester {
 				),
 				'5m': this.data['5m'][index],
 			};
-			if (!candle['15m'].upper || !candle['15m'].emaSlope) return null;
+			if (!candle['15m'].upper || !candle['15m'].emaSlope) return;
 
 			// 生成信号
 			const signal = this.generateSignal(candle);
@@ -313,7 +313,7 @@ class Backtester {
 				const isReverse =
 					position && position.direction === 'long'
 						? candle['5m'].emaSlope < config.slopeThreshold['5m']
-						: candle['5m'].emaSlope > config.slopeThreshold['5m'];
+						: candle['5m'].emaSlope > -config.slopeThreshold['5m'];
 
 				if (isReverse) {
 					this.closePosition(position, d);
@@ -367,8 +367,8 @@ class Backtester {
 
 		// 空头信号
 		if (
-			candle['5m'].emaSlope < config.slopeThreshold['5m'] &&
-			candle['15m'].emaSlope < config.slopeThreshold['15m']
+			candle['5m'].emaSlope < -config.slopeThreshold['5m'] &&
+			candle['15m'].emaSlope < -config.slopeThreshold['15m']
 		) {
 			return { direction: 'short' };
 		}
