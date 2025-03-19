@@ -37,6 +37,11 @@ const config = {
 		'15m': { period: 21, slopeWindow: 3 },
 		'5m': { period: 13, slopeWindow: 2 },
 	},
+	slopeThreshold: {
+		'1h': 0.00025,
+		'15m': 0.0004,
+		'5m': 0.0006,
+	}, // 斜率阈值
 	riskParams: {
 		baseRisk: 0.02, // 基础风险比例
 		dynamicRisk: true, // 启用动态风险调整
@@ -256,10 +261,14 @@ class EnhancedTripleEMAStrategy {
 
 		// 基础斜率条件
 		const bullSlope =
-			h1.slope > 0.0025 && m15.slope > 0.004 && m5.slope > 0.006;
+			h1.slope > config.slopeThreshold['1h'] &&
+			m15.slope > config.slopeThreshold['15m'] &&
+			m5.slope > config.slopeThreshold['5m'];
 
 		const bearSlope =
-			h1.slope < -0.0025 && m15.slope < -0.004 && m5.slope < -0.006;
+			h1.slope < -config.slopeThreshold['1h'] &&
+			m15.slope < -config.slopeThreshold['15m'] &&
+			m5.slope < -config.slopeThreshold['5m'];
 
 		// 成交量过滤
 		const volumeFilter = config.filters.volume.enabled
