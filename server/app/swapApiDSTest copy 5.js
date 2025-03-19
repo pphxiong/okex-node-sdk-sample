@@ -136,9 +136,8 @@ class Backtester {
 					d.middle = bollinger[1][bbIndex];
 					d.lower = bollinger[2][bbIndex];
 				}
-				if (i >= config.emaSlope.period + config.emaSlope.lookback) {
-					const slopeIndex =
-						i - config.emaSlope.period - config.emaSlope.lookback;
+				if (i >= config.emaSlope.lookback) {
+					const slopeIndex = i - config.emaSlope.lookback;
 					d.emaSlope = emaSlopes[slopeIndex];
 				}
 				d.atr = atr[i];
