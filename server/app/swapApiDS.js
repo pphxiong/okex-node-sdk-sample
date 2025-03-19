@@ -677,8 +677,6 @@ function connectWebSocket() {
         kline_5m: "5m",
         kline_15m: "15m",
       };
-      console.log(streamInfo);
-      console.log(msg.data);
 
       // console.log(`更新: ${klineData.symbol} ${klineData.interval} K线`);
       // console.log('K线数据:', klineData);
@@ -695,7 +693,7 @@ function connectWebSocket() {
 // 处理K线更新
 async function handleKlineUpdate(msg, tf) {
   const kline = msg.k;
-  if (!kline.x) return; // 仅处理闭合K线
+  //   if (!kline.x) return; // 仅处理闭合K线
 
   // 更新OHLCV数据
   const newBar = [
@@ -712,7 +710,7 @@ async function handleKlineUpdate(msg, tf) {
     marketData[tf].shift();
   }
   marketData[tf].push(newBar);
-  console.log(marketData["15m"].slice(-3));
+  console.log(12, marketData["15m"].slice(-3));
 }
 
 // // 加载历史数据
