@@ -315,8 +315,8 @@ class Backtester {
         const isReverse =
           position &&
           (position.direction === "long"
-            ? candle["5m"].emaSlope < -config.slopeThreshold["5m"]
-            : candle["5m"].emaSlope > config.slopeThreshold["5m"]);
+            ? candle["15m"].emaSlope < -config.slopeThreshold["15m"]
+            : candle["15m"].emaSlope > config.slopeThreshold["15m"]);
 
         if (isReverse) {
           this.closePosition(position, d);
