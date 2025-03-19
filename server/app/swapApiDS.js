@@ -712,13 +712,11 @@ async function handleKlineUpdate(msg, tf) {
   marketData[tf].push(newBar);
   console.log(
     12,
-    marketData["15m"]
-      .slice(-3)
-      .map((d) =>
-        Object.assign(d, {
-          timestamp: moment(d.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-        })
-      )
+    marketData["15m"].slice(-3).map((d) =>
+      Object.assign(d, {
+        timestamp: moment(d[0]).format("YYYY-MM-DD HH:mm:ss"),
+      })
+    )
   );
 }
 
