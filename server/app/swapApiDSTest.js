@@ -100,7 +100,7 @@ class MultiEMAStrategy {
 				baseTimestamps.includes(d.time)
 			);
 		});
-
+		console.log(23, this.data);
 		const merged = baseTimestamps.map((ts, idx) => ({
 			time: ts,
 			'5m': this.data['5m'][idx],
