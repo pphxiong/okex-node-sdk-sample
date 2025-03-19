@@ -207,8 +207,8 @@ class MultiEMAStrategy {
 			if (i < 100) return; // 跳过初始数据不足阶段
 
 			const signal = this.generateSignal(i);
-			console.log(23, signal);
 			const atr = atrValues[i];
+			console.log(23, atr);
 
 			if (this.currentPosition) {
 				this.checkExit(d, atr, i);
