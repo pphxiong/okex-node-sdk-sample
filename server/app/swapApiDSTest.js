@@ -237,6 +237,7 @@ class Backtester {
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					d.atr = atr[0][i];
+					d.emaSlope = emaSlopes[i];
 				});
 			});
 		} catch (e) {
