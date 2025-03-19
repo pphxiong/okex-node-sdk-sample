@@ -26,7 +26,6 @@ const cAuthClientBN = new customAuthClientBN(
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
-const moment = require('moment');
 const fs = require('fs');
 
 // 增强策略配置
