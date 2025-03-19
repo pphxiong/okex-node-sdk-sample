@@ -68,7 +68,7 @@ const config = {
   macdFast: 8,
   macdSlow: 17,
   macdSignal: 5,
-  coldStartBars: 100, // 冷启动期间的K线数量
+  coldStartBars: 1000, // 冷启动期间的K线数量
 };
 
 // 全局状态
