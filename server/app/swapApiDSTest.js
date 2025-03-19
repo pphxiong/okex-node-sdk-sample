@@ -100,15 +100,6 @@ class MultiEMAStrategy {
 				baseTimestamps.includes(d.time)
 			);
 		});
-		// const merged = baseTimestamps.map((ts, idx) => ({
-		// 	time: ts,
-		// 	'5m': this.data['5m'][idx],
-		// 	'15m': this.getTimeStampBefore(this.data['15m'], ts),
-		// 	'1h': this.getTimeStampBefore(this.data['1h'], ts),
-		// }));
-
-		// this.data = merged;
-		console.log(6, this.data);
 	}
 
 	getTimeStampBefore(dataList, timestamp) {
@@ -165,8 +156,14 @@ class MultiEMAStrategy {
 
 	generateSignal(index) {
 		const current = {
-			'1h': this.data['1h'][index],
-			'15m': this.data['15m'][index],
+			'1h': this.getTimeStampBefore(
+				this.data['1h'],
+				this.data['5m'][index].time
+			),
+			'15m': this.getTimeStampBefore(
+				this.data['15m'],
+				this.data['5m'][index].time
+			),
 			'5m': this.data['5m'][index],
 		};
 
@@ -204,8 +201,7 @@ class MultiEMAStrategy {
 
 	runBacktest() {
 		const atrValues = this.calculateATR();
-		console.log(56, this.data['15m'].length);
-		this.data['15m'].forEach((d, i) => {
+		this.data['5m'].forEach((d, i) => {
 			if (i < 100) return; // 跳过初始数据不足阶段
 
 			const signal = this.generateSignal(i);
