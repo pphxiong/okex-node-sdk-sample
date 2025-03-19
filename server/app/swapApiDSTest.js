@@ -112,15 +112,6 @@ class Backtester {
 			);
 
 			this.mergeTimeframes();
-			console.log(
-				this.data['15m'].slice(-3).map((c) =>
-					Object.assign(c, {
-						timestamp: moment(c.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
 		} catch (e) {
 			console.error('Data loading failed:', e.message);
 			process.exit(1);
@@ -433,7 +424,13 @@ class Backtester {
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
-
+	console.log(
+		this.data['15m'].slice(-3).map((c) =>
+			Object.assign(c, {
+				timestamp: moment(c.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+			})
+		)
+	);
 	// 步骤3: 运行回测
 	backtester.runBacktest();
 
