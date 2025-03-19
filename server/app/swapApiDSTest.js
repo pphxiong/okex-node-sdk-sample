@@ -35,7 +35,7 @@ const config = {
 	emaSettings: {
 		// '1h': { period: 34, slopeWindow: 5 },
 		'15m': { period: 10, slopeWindow: 5 },
-		'5m': { period: 6, slopeWindow: 2 },
+		'5m': { period: 10, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		// '1h': 0.025 * 0.01,
