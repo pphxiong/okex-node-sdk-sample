@@ -263,13 +263,18 @@ class EnhancedTripleEMAStrategy {
 
 	async calculateATR(period) {
 		const candles = this.data[period];
-		const input = {
-			high: candles.map((c) => c.high),
-			low: candles.map((c) => c.low),
-			close: candles.map((c) => c.close),
-			period,
-		};
-		return ATR.calculate(input);
+		const highs = candles.map((c) => c.high);
+		const lows = candles.map((c) => c.low);
+		const closes = candles.map((c) => c.close);
+		return new Promise((resolve) => {
+			tulind.indicators.atr.indicator(
+				[highs, lows, closes],
+				[config.filters.rsi.period],
+				(err, res) => {
+					resolve(res[0]);
+				}
+			);
+		});
 	}
 
 	// 增强回测引擎
