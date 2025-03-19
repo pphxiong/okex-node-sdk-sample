@@ -136,7 +136,7 @@ class Backtester {
   }
 
   getTimeStampBefore(dataList, timestamp) {
-    dataList = JSON.parse(JSON.stringify(dataList));
+    // dataList = JSON.parse(JSON.stringify(dataList));
     let data;
     let i = 0;
     while (true) {
