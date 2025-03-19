@@ -738,12 +738,10 @@ async function handleKlineUpdate(msg, tf) {
 	];
 
 	// 维护固定长度的数据窗口
-	if (ohlcv.length >= config.coldStartBars) {
-		ohlcv.shift();
+	if (marketData[tf].length >= config.coldStartBars) {
+		marketData[tf].shift();
 	}
-	ohlcv.push(newBar);
-
-	// await strategyLoop();
+	marketData[tf].push(newBar);
 }
 
 // // 加载历史数据
