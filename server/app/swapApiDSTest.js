@@ -31,14 +31,14 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: [/*'1h',*/ '15m', '5m'], // 多周期参数
+	timeframes: ['1h', '15m', '5m'], // 多周期参数
 	emaSettings: {
-		// '1h': { period: 34, slopeWindow: 5 },
-		'15m': { period: 10, slopeWindow: 4 },
+		'1h': { period: 21, slopeWindow: 5 },
+		'15m': { period: 10, slopeWindow: 5 },
 		'5m': { period: 6, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		// '1h': 0.025 * 0.01,
+		'1h': 0.025 * 0.01,
 		'15m': 0.05 * 0.01,
 		'5m': 0.06 * 0.01,
 	}, // 斜率阈值
@@ -273,6 +273,10 @@ class Backtester {
 			// }
 
 			const candle = {
+				'1h': this.getTimeStampBefore(
+					this.data['1h'],
+					this.data['5m'][index].timestamp
+				),
 				'15m': this.getTimeStampBefore(
 					this.data['15m'],
 					this.data['5m'][index].timestamp
@@ -359,6 +363,7 @@ class Backtester {
 
 		// 多头信号
 		if (
+			candle['1h'].emaSlope > config.slopeThreshold['1h'] &&
 			candle['5m'].emaSlope > config.slopeThreshold['5m'] &&
 			candle['15m'].emaSlope > config.slopeThreshold['15m']
 		) {
@@ -367,6 +372,7 @@ class Backtester {
 
 		// 空头信号
 		if (
+			candle['1h'].emaSlope < -config.slopeThreshold['1h'] &&
 			candle['5m'].emaSlope < -config.slopeThreshold['5m'] &&
 			candle['15m'].emaSlope < -config.slopeThreshold['15m']
 		) {
