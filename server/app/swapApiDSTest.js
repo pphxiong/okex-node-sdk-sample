@@ -81,6 +81,7 @@ class EnhancedTripleEMAStrategy {
 		this.analytics = {
 			parameters: [],
 			performance: {},
+			avgATR: 0,
 		};
 	}
 
@@ -230,6 +231,7 @@ class EnhancedTripleEMAStrategy {
 	// 增强信号生成（多条件过滤）
 	generateSignal(mergedCandle) {
 		const { '1h': h1, '15m': m15, '5m': m5 } = mergedCandle;
+		console.log(123, mergedCandle);
 
 		// 基础斜率条件
 		const bullSlope =
