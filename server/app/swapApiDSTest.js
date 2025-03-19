@@ -212,8 +212,6 @@ class Backtester {
 					emaSlopes.push(slope);
 				}
 
-				console.log(atr[0], 1);
-
 				// 合并指标到数据
 				this.data[tf].forEach((d, i) => {
 					if (i >= config.bollinger.period) {
@@ -233,6 +231,7 @@ class Backtester {
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					d.atr = atr[0][i];
+					console.log(d.atr, 1);
 				});
 			});
 		} catch (e) {
@@ -249,7 +248,7 @@ class Backtester {
 
 	runBacktest() {
 		let position = null;
-		let atr = 0;
+		// let atr = 0;
 
 		this.data['15m'].forEach(async (d, i) => {
 			// 跳过前50根K线确保指标稳定
@@ -305,7 +304,7 @@ class Backtester {
 
 			// 处理开仓
 			if (!position && signal) {
-				position = this.openPosition(d, atr, signal.direction);
+				position = this.openPosition(d, d.atr, signal.direction);
 			}
 		});
 	}
