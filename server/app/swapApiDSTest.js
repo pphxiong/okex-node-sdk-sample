@@ -194,15 +194,23 @@ class MultiEMAStrategy {
 		return sum / period;
 	}
 
-	calculateATR() {
+	async calculateATR() {
 		const highs = this.data['15m'].map((d) => d.high);
 		const lows = this.data['15m'].map((d) => d.low);
 		const closes = this.data['15m'].map((d) => d.close);
-		return tulind.indicators.atr.indicator([highs, lows, closes], [14])[0];
+		return new Promise((resolve) => {
+			tulind.indicators.atr.indicator(
+				[highs, lows, closes],
+				[14],
+				(err, res) => {
+					resolve(res[0]);
+				}
+			);
+		});
 	}
 
-	runBacktest() {
-		const atrValues = this.calculateATR();
+	async runBacktest() {
+		const atrValues = await this.calculateATR();
 		this.data['5m'].forEach((d, i) => {
 			if (i < 100) return; // 跳过初始数据不足阶段
 
@@ -359,7 +367,7 @@ class MultiEMAStrategy {
 
 	await strategy.loadData(60); // 加载60天数据
 	await strategy.calculateEMASlopes();
-	strategy.runBacktest();
+	await strategy.runBacktest();
 	strategy.showResults();
 })();
 
