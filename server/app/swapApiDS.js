@@ -702,13 +702,14 @@ function connectWebSocket() {
 		if (msg.stream && msg.data) {
 			const streamInfo = msg.stream.split('@');
 			console.log(streamInfo);
+			console.log(msg.data);
 			// const klineData = parseKlineData(data.data.k);
 
 			// console.log(`更新: ${klineData.symbol} ${klineData.interval} K线`);
 			// console.log('K线数据:', klineData);
 			console.log('-----------------------------------');
 		}
-		await handleKlineUpdate(msg);
+		// await handleKlineUpdate(msg);
 	});
 
 	ws.on('error', (err) => {
