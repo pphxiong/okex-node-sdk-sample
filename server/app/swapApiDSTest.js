@@ -35,7 +35,7 @@ const config = {
 	emaSettings: {
 		// '1h': { period: 34, slopeWindow: 5 },
 		'15m': { period: 10, slopeWindow: 5 },
-		'5m': { period: 10, slopeWindow: 5 },
+		'5m': { period: 6, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		// '1h': 0.025 * 0.01,
@@ -176,7 +176,7 @@ class Backtester {
 				indicatorPromises.push(
 					tulind.indicators.ema.indicator(
 						[closes],
-						[config.emaSlope.period]
+						[config.emaSettings[tf].period]
 					)
 				);
 
@@ -205,10 +205,15 @@ class Backtester {
 				);
 				// 计算EMA斜率
 				const emaSlopes = [];
-				for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
+				for (
+					let i = config.emaSettings[tf].slopeWindow;
+					i < ema[0].length;
+					i++
+				) {
 					const slope =
-						(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
-						config.emaSlope.lookback;
+						(ema[0][i] -
+							ema[0][i - config.emaSettings[tf].slopeWindow]) /
+						config.emaSettings[tf].slopeWindow;
 					emaSlopes.push(slope);
 				}
 
@@ -222,12 +227,13 @@ class Backtester {
 					}
 					if (
 						i >=
-						config.emaSlope.period + config.emaSlope.lookback
+						config.emaSettings[tf].period +
+							config.emaSettings[tf].slopeWindow
 					) {
 						const slopeIndex =
 							i -
-							config.emaSlope.period -
-							config.emaSlope.lookback;
+							config.emaSettings[tf].period -
+							config.emaSettings[tf].slopeWindow;
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					d.atr = atr[0][i];
@@ -348,16 +354,16 @@ class Backtester {
 
 		// 多头信号
 		if (
-			candle['5m'].emaSlope > config.emaSlope.emaSlopeThreshold &&
-			candle['15m'].emaSlope > config.emaSlope.emaSlopeThreshold
+			candle['5m'].emaSlope > config.slopeThreshold['5m'] &&
+			candle['15m'].emaSlope > config.slopeThreshold['15m']
 		) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
 		if (
-			candle['5m'].emaSlope < config.emaSlope.emaSlopeThreshold &&
-			candle['15m'].emaSlope < config.emaSlope.emaSlopeThreshold
+			candle['5m'].emaSlope < config.slopeThreshold['5m'] &&
+			candle['15m'].emaSlope < config.slopeThreshold['15m']
 		) {
 			return { direction: 'short' };
 		}
