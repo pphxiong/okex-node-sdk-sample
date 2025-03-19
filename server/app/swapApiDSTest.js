@@ -172,48 +172,68 @@ class Backtester {
 				const closes = this.data[tf].map((d) => d.close);
 				const highs = this.data[tf].map((d) => d.high);
 				const lows = this.data[tf].map((d) => d.low);
-				const bollinger = await tulind.indicators.bbands.indicator(
-					[closes],
-					[config.bollinger.period, config.bollinger.stdDev]
+
+				indicatorPromises.push(
+					tulind.indicators.bbands
+						.indicator(
+							[closes],
+							[config.bollinger.period, config.bollinger.stdDev]
+						)
+						.then((bollinger) => {
+							// 计算EMA斜率
+							const emaSlopes = [];
+							for (
+								let i = config.emaSlope.lookback;
+								i < ema[0].length;
+								i++
+							) {
+								const slope =
+									(ema[0][i] -
+										ema[0][i - config.emaSlope.lookback]) /
+									config.emaSlope.lookback;
+								emaSlopes.push(slope);
+							}
+
+							// 合并指标到数据
+							this.data[tf].forEach((d, i) => {
+								if (i >= config.bollinger.period) {
+									const bbIndex = i - config.bollinger.period;
+									d.upper = bollinger[0][bbIndex];
+									d.middle = bollinger[1][bbIndex];
+									d.lower = bollinger[2][bbIndex];
+								}
+								if (
+									i >=
+									config.emaSlope.period +
+										config.emaSlope.lookback
+								) {
+									const slopeIndex =
+										i -
+										config.emaSlope.period -
+										config.emaSlope.lookback;
+									d.emaSlope = emaSlopes[slopeIndex];
+								}
+								// d.atr = atr[i];
+							});
+						})
 				);
 
-				// 计算EMA
-				const ema = await tulind.indicators.ema.indicator(
-					[closes],
-					[config.emaSlope.period]
+				indicatorPromises.push(
+					this.calculateATR(highs, lows, closes).then((atr) => {
+						this.data[tf].forEach((d, i) => {
+							d.atr = atr[i];
+						});
+					})
 				);
 
-				const atr = await this.calculateATR(highs, lows, closes);
+				// // 计算EMA
+				// const ema = await tulind.indicators.ema.indicator(
+				// 	[closes],
+				// 	[config.emaSlope.period]
+				// );
 
-				// 计算EMA斜率
-				const emaSlopes = [];
-				for (let i = config.emaSlope.lookback; i < ema[0].length; i++) {
-					const slope =
-						(ema[0][i] - ema[0][i - config.emaSlope.lookback]) /
-						config.emaSlope.lookback;
-					emaSlopes.push(slope);
-				}
+				// const atr = await this.calculateATR(highs, lows, closes);
 
-				// 合并指标到数据
-				this.data[tf].forEach((d, i) => {
-					if (i >= config.bollinger.period) {
-						const bbIndex = i - config.bollinger.period;
-						d.upper = bollinger[0][bbIndex];
-						d.middle = bollinger[1][bbIndex];
-						d.lower = bollinger[2][bbIndex];
-					}
-					if (
-						i >=
-						config.emaSlope.period + config.emaSlope.lookback
-					) {
-						const slopeIndex =
-							i -
-							config.emaSlope.period -
-							config.emaSlope.lookback;
-						d.emaSlope = emaSlopes[slopeIndex];
-					}
-					d.atr = atr[i];
-				});
 				// this.data.slice(-100).forEach((d) => {
 				// 	console.log(moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'));
 				// 	console.log(d.emaSlope);
@@ -311,7 +331,6 @@ class Backtester {
 	}
 
 	generateSignal(candle) {
-		console.log(234, candle);
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
