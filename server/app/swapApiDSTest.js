@@ -243,6 +243,8 @@ class Backtester {
 				// 	console.log(d.lower);
 				// });
 			});
+
+			await Promise.all(indicatorPromises);
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
