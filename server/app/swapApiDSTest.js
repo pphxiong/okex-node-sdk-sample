@@ -109,6 +109,7 @@ class MultiEMAStrategy {
 		}));
 
 		this.data = merged;
+		console.log(23, merged);
 	}
 
 	getTimeStampBefore(dataList, timestamp) {
