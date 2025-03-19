@@ -38,9 +38,9 @@ const config = {
 		'5m': { period: 10, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0.01 * 0.01,
-		'15m': 0.02 * 0.01,
-		'5m': 0.04 * 0.01,
+		'1h': 0 * 0.01,
+		'15m': 0 * 0.01,
+		'5m': 0 * 0.01,
 	}, // 斜率阈值
 	// 布林线参数
 	bollinger: {
