@@ -33,14 +33,14 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['1h', '15m', '5m'], // 多周期参数
 	emaSettings: {
-		'1h': { period: 34, slopeWindow: 5 },
-		'15m': { period: 21, slopeWindow: 3 },
-		'5m': { period: 13, slopeWindow: 2 },
+		'1h': { period: 50, slopeWindow: 5 },
+		'15m': { period: 20, slopeWindow: 3 },
+		'5m': { period: 10, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0.025 * 0.01,
-		'15m': 0.04 * 0.01,
-		'5m': 0.06 * 0.01,
+		'1h': 0.01 * 0.01,
+		'15m': 0.02 * 0.01,
+		'5m': 0.04 * 0.01,
 	}, // 斜率阈值
 	// 布林线参数
 	bollinger: {
@@ -473,8 +473,8 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	// await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
-	await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
+	await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
+	// await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
