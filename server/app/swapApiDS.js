@@ -693,6 +693,8 @@ function connectWebSocket() {
         kline_5m: "5m",
       };
 
+      if (!msg.data.k.x) return; // 仅处理闭合K线
+
       console.log(`更新: ${symbol} ${period} K线`);
       // console.log('K线数据:', klineData);
       await handleKlineUpdate(msg.data, periodMap[period]);
