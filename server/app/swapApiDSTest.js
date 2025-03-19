@@ -113,7 +113,6 @@ class MultiEMAStrategy {
 	getTimeStampBefore(dataList, timestamp) {
 		let data;
 		let i = 0;
-		console.log(24, dataList, timestamp);
 		while (true) {
 			const time = moment(timestamp).subtract(5 * i, 'minutes');
 			const target = dataList.find((c) => c.time === time.valueOf());
@@ -204,7 +203,7 @@ class MultiEMAStrategy {
 
 	runBacktest() {
 		const atrValues = this.calculateATR();
-
+		console.log(56, this.data['15m'].length);
 		this.data['15m'].forEach((d, i) => {
 			if (i < 100) return; // 跳过初始数据不足阶段
 
