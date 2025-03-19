@@ -165,7 +165,8 @@ class Backtester {
 
 	async calculateIndicators() {
 		try {
-			console.log(123, this.data);
+			const indicatorPromises = [];
+
 			config.timeframes.forEach(async (tf) => {
 				// 计算布林带
 				const closes = this.data[tf].map((d) => d.close);
@@ -310,6 +311,7 @@ class Backtester {
 	}
 
 	generateSignal(candle) {
+		console.log(234, candle);
 		if (!candle.upper || !candle.emaSlope) return null;
 
 		// 多头信号
