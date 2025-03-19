@@ -35,11 +35,11 @@ const config = {
 	emaSettings: {
 		'1h': { period: 10, slopeWindow: 5 },
 		'15m': { period: 8, slopeWindow: 4 },
-		'5m': { period: 4, slopeWindow: 2 },
+		'5m': { period: 6, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		'1h': 0.025 * 0.01,
-		'15m': 0.05 * 0.01,
+		'15m': 0.04 * 0.01,
 		'5m': 0.06 * 0.01,
 	}, // 斜率阈值
 	// 布林线参数
