@@ -279,6 +279,7 @@ class Backtester {
 				),
 				'5m': this.data['5m'][index],
 			};
+			console.log(23, candle);
 			if (!candle['15m'].upper || !candle['15m'].emaSlope) return;
 
 			// 生成信号
