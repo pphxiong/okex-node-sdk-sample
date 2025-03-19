@@ -593,11 +593,11 @@ async function initialize() {
   marketData["15m"] = candles15m.map(parseKLine);
   marketData["5m"] = candles5m.map(parseKLine);
 
+  mergeTimeframes();
+
   console.log(`已加载1h${marketData["1h"].length}根历史K线`);
   console.log(`已加载15m${marketData["15m"].length}根历史K线`);
   console.log(`已加载5m${marketData["5m"].length}根历史K线`);
-
-  mergeTimeframes();
 }
 
 // 策略主逻辑
