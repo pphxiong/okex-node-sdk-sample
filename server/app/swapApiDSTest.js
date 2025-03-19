@@ -194,10 +194,10 @@ class MultiEMAStrategy {
 		return sum / period;
 	}
 
-	async calculateATR() {
-		const highs = this.data['15m'].map((d) => d.high);
-		const lows = this.data['15m'].map((d) => d.low);
-		const closes = this.data['15m'].map((d) => d.close);
+	async calculateATR(timeframe = '5m') {
+		const highs = this.data[timeframe].map((d) => d.high);
+		const lows = this.data[timeframe].map((d) => d.low);
+		const closes = this.data[timeframe].map((d) => d.close);
 		return new Promise((resolve) => {
 			tulind.indicators.atr.indicator(
 				[highs, lows, closes],
@@ -216,7 +216,6 @@ class MultiEMAStrategy {
 
 			const signal = this.generateSignal(i);
 			const atr = atrValues[i];
-			console.log(23, atr);
 
 			if (this.currentPosition) {
 				this.checkExit(d, atr, i);
