@@ -33,14 +33,14 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['1h', '15m', '5m'], // 多周期参数
 	emaSettings: {
-		'1h': { period: 50, slopeWindow: 5 },
+		'1h': { period: 34, slopeWindow: 5 },
 		'15m': { period: 20, slopeWindow: 3 },
 		'5m': { period: 10, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0.0025 * 0.01,
-		'15m': 0.005 * 0.01,
-		'5m': 0.006 * 0.01,
+		'1h': 0 * 0.01,
+		'15m': 0 * 0.01,
+		'5m': 0 * 0.01,
 	}, // 斜率阈值
 	// 布林线参数
 	bollinger: {
