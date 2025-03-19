@@ -710,7 +710,16 @@ async function handleKlineUpdate(msg, tf) {
     marketData[tf].shift();
   }
   marketData[tf].push(newBar);
-  console.log(12, marketData["15m"].slice(-3));
+  console.log(
+    12,
+    marketData["15m"]
+      .slice(-3)
+      .map((d) =>
+        Object.assign(d, {
+          timestamp: moment(d.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        })
+      )
+  );
 }
 
 // // 加载历史数据
