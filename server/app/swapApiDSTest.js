@@ -113,7 +113,7 @@ class Backtester {
 
 			this.mergeTimeframes();
 			console.log(
-				`Loaded ${this.data['15m'].slice(-3)} ${'15m'} candles`
+				`Loaded ${this.data['15m'].slice(-1)[0]} ${'15m'} candles`
 			);
 		} catch (e) {
 			console.error('Data loading failed:', e.message);
@@ -132,12 +132,12 @@ class Backtester {
 			);
 		});
 
-		this.data.merged = baseTimestamps.map((ts, idx) => ({
-			timestamp: ts,
-			'5m': this.data['5m'][idx],
-			'15m': this.getTimeStampBefore(this.data['15m'], ts),
-			'1h': this.getTimeStampBefore(this.data['1h'], ts),
-		}));
+		// this.data.merged = baseTimestamps.map((ts, idx) => ({
+		// 	timestamp: ts,
+		// 	'5m': this.data['5m'][idx],
+		// 	'15m': this.getTimeStampBefore(this.data['15m'], ts),
+		// 	'1h': this.getTimeStampBefore(this.data['1h'], ts),
+		// }));
 	}
 
 	getTimeStampBefore(dataList, timestamp) {
