@@ -35,7 +35,7 @@ const config = {
 	emaSettings: {
 		// '1h': { period: 34, slopeWindow: 5 },
 		'15m': { period: 10, slopeWindow: 5 },
-		'5m': { period: 4, slopeWindow: 2 },
+		'5m': { period: 6, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		// '1h': 0.025 * 0.01,
@@ -305,15 +305,15 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				const isReverse =
-					signal && position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long';
-
 				// const isReverse =
-				// 	position && position.direction === 'long'
-				// 		? candle['5m'].emaSlope < config.slopeThreshold['5m']
-				// 		: candle['5m'].emaSlope > -config.slopeThreshold['5m'];
+				// 	signal && position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long';
+
+				const isReverse =
+					position && position.direction === 'long'
+						? candle['5m'].emaSlope < -config.slopeThreshold['5m']
+						: candle['5m'].emaSlope > config.slopeThreshold['5m'];
 
 				if (isReverse) {
 					this.closePosition(position, d);
