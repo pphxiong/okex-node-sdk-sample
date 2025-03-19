@@ -260,6 +260,17 @@ class EnhancedTripleEMAStrategy {
 		};
 	}
 
+	async calculateATR(period) {
+		const candles = this.data[period];
+		const input = {
+			high: candles.map((c) => c.high),
+			low: candles.map((c) => c.low),
+			close: candles.map((c) => c.close),
+			period,
+		};
+		return ATR.calculate(input);
+	}
+
 	// 增强回测引擎
 	async runEnhancedBacktest() {
 		const atrValues = await this.calculateATR('15m');
