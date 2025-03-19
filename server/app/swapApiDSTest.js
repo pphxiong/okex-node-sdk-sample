@@ -289,7 +289,7 @@ class Backtester {
 
       // 生成信号
       const signal = this.generateSignal(candle);
-
+      console.log(12, signal);
       // 处理平仓
       if (position) {
         // console.log(
