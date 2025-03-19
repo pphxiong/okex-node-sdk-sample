@@ -218,7 +218,7 @@ class MultiEMAStrategy {
 			const atr = atrValues[i];
 
 			if (this.currentPosition) {
-				this.checkExit(d, atr, i);
+				this.checkExit(d, atr, i, signal);
 			} else if (signal) {
 				this.openPosition(d, atr, signal, i);
 			}
@@ -253,7 +253,7 @@ class MultiEMAStrategy {
 		return riskAmount / (atr * config.riskParams.stopLoss);
 	}
 
-	checkExit(candle, atr, index) {
+	checkExit(candle, atr, index, signal) {
 		const pos = this.currentPosition;
 		let closeReason = null;
 
@@ -272,6 +272,12 @@ class MultiEMAStrategy {
 		) {
 			closeReason = 'takeProfit';
 		}
+
+		if (pos.direction === 'long' && signal === 'short')
+			closeReason = 'switch';
+
+		if (pos.direction === 'short' && signal === 'long')
+			closeReason = 'switch';
 
 		// 时间止损（持仓超过24根15分钟K线）
 		const duration =
@@ -364,7 +370,7 @@ class MultiEMAStrategy {
 (async () => {
 	const strategy = new MultiEMAStrategy();
 
-	await strategy.loadData(60); // 加载60天数据
+	await strategy.loadData(120); // 加载60天数据
 	await strategy.calculateEMASlopes();
 	await strategy.runBacktest();
 	strategy.showResults();
