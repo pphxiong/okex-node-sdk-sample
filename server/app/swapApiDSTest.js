@@ -230,6 +230,7 @@ class Backtester {
               // config.emaSettings[tf].period -
               config.emaSettings[tf].slopeWindow;
             d.emaSlope = emaSlopes[slopeIndex];
+            d.ema = ema[0][slopeIndex];
           }
           d.atr = atr[0][i];
           // d.emaSlope = emaSlopes[i];

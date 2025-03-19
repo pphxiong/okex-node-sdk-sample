@@ -203,6 +203,7 @@ async function calculateIndicators() {
         if (i >= config.emaSettings[tf].slopeWindow) {
           const slopeIndex = i - config.emaSettings[tf].slopeWindow;
           d.emaSlope = emaSlopes[slopeIndex];
+          d.ema = ema[0][slopeIndex];
         }
         d.atr = atr[0][i];
       });
