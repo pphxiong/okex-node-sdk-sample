@@ -38,9 +38,9 @@ const config = {
 		'5m': { period: 10, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0 * 0.01,
-		'15m': 0 * 0.01,
-		'5m': 0 * 0.01,
+		'1h': 0.0025 * 0.01,
+		'15m': 0.005 * 0.01,
+		'5m': 0.006 * 0.01,
 	}, // 斜率阈值
 	// 布林线参数
 	bollinger: {
@@ -481,8 +481,8 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	// await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
-	await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
+	await backtester.loadHistoricalData('2025-01-01', '2025-03-19');
+	// await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
 
 	// 步骤2: 计算指标
 	await backtester.calculateIndicators();
