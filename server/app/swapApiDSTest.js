@@ -298,11 +298,11 @@ class Backtester {
 				),
 				[config.fastframe]: lastKline5M,
 			};
-			// console.log(
-			//   candle["5m"].emaSlope,
-			//   candle["15m"].emaSlope,
-			//   candle["1h"].emaSlope
-			// );
+			console.log(
+				candle['5m'].emaSlope,
+				candle['15m'].emaSlope,
+				candle['1h'].emaSlope
+			);
 			if (
 				!candle[config.fastframe].emaSlope ||
 				!candle[config.mediumframe].emaSlope ||
@@ -384,8 +384,6 @@ class Backtester {
 		// ) {
 		// 	return { direction: 'short' };
 		// }
-
-		console.log(123, candle);
 
 		// 多头信号
 		if (
