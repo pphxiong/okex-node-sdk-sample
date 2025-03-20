@@ -91,9 +91,9 @@ let state = {
 	coolingUntil: 0, // 基础冷却结束时间
 };
 let marketData = {
-	'1h': [],
-	'15m': [],
-	'5m': [],
+	[config.slowframe]: [],
+	[config.mediumframe]: [],
+	[config.fastframe]: [],
 };
 let ws = null;
 let dailyPnL = 0;
