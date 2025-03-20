@@ -196,7 +196,7 @@ async function calculateIndicators() {
           config.emaSettings[tf].slopeWindow;
         emaSlopes.push(slope);
       }
-
+      console.log(tf, emaSlopes.slice(-5));
       // 合并指标到数据
       marketData[tf].forEach((d, i) => {
         if (i >= config.bollinger.period) {
@@ -212,7 +212,6 @@ async function calculateIndicators() {
         }
         d.atr = atr[0][i];
       });
-      console.log(tf, emaSlopes(-5));
     });
   } catch (e) {
     console.error("指标计算错误:", e);
