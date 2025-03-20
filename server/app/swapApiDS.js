@@ -507,6 +507,7 @@ async function generateSignal(currentPrice) {
 
 	console.log('################################');
 	console.log('time', moment(lastKline5M).format('YYYY-MM-DD HH:mm:ss'));
+	console.log(lastKline5M);
 	console.log('currentPrice', currentPrice);
 	console.log('position', state.position);
 	console.log('side', state.side);
