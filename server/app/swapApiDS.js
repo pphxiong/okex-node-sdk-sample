@@ -262,14 +262,21 @@ function getLastIndicators(indicators, key) {
 
 // 限价单管理模块
 class OrderManager {
-	static async createLimitOrder(side, amount, price) {
+	static async createLimitOrder(side, amount, price, isOpen = true) {
+		const positionSide = isOpen
+			? side === 'buy'
+				? 'LONG'
+				: 'SHORT'
+			: side === 'buy'
+			? 'SHORT'
+			: 'LONG';
 		const order = await exchange.createLimitOrder(
 			config.symbol,
 			side,
 			amount,
 			price,
 			{
-				positionSide: side === 'buy' ? 'LONG' : 'SHORT',
+				positionSide,
 			}
 		);
 		state.activeOrders.push({
@@ -592,12 +599,22 @@ class RiskManager {
 
 		if (side === 'buy') {
 			const limitPrice = orderBook.bid * (1 - config.orderDepth);
-			await OrderManager.createLimitOrder('buy', amount, limitPrice);
+			await OrderManager.createLimitOrder(
+				'buy',
+				amount,
+				limitPrice,
+				false
+			);
 		}
 
 		if (side === 'sell') {
 			const limitPrice = orderBook.ask * (1 + config.orderDepth);
-			await OrderManager.createLimitOrder('sell', amount, limitPrice);
+			await OrderManager.createLimitOrder(
+				'sell',
+				amount,
+				limitPrice,
+				false
+			);
 		}
 
 		// await exchange.createOrder(
