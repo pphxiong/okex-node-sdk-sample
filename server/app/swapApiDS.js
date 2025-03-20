@@ -565,6 +565,8 @@ class RiskManager {
 			[config.fastframe]: lastKline5M,
 		};
 
+		console.log('candle', candle);
+
 		if (
 			!candle[config.slowframe].emaSlope ||
 			!candle[config.mediumframe].emaSlope ||
@@ -867,14 +869,14 @@ function mergeTimeframes() {
 	availableBalance = await initPositionData();
 	connectWebSocket();
 	await strategyLoop();
-	setInterval(() => {
+	setInterval(async () => {
 		RESTART_TIME += 1;
 		if (RESTART_TIME >= 3 * 5) {
 			RESTART_TIME = 0;
 			restart('normal');
 			return;
 		}
-		strategyLoop();
+		await strategyLoop();
 	}, 1000 * 15); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
