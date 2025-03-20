@@ -506,8 +506,10 @@ async function generateSignal(currentPrice) {
 			-config.slopeThreshold[config.fastframe];
 
 	console.log('################################');
-	console.log('time', moment(lastKline5M).format('YYYY-MM-DD HH:mm:ss'));
-	console.log(lastKline5M);
+	console.log(
+		'time',
+		moment(lastKline5M.timestamp).format('YYYY-MM-DD HH:mm:ss')
+	);
 	console.log('currentPrice', currentPrice);
 	console.log('position', state.position);
 	console.log('side', state.side);
@@ -819,7 +821,7 @@ function connectWebSocket() {
 // 处理K线更新
 async function handleKlineUpdate(msg, tf) {
 	const kline = msg.k;
-	//   if (!kline.x) return; // 仅处理闭合K线
+	if (!kline.x) return; // 仅处理闭合K线
 
 	// 更新OHLCV数据
 	const newBar = [
