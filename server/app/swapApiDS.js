@@ -582,7 +582,7 @@ class RiskManager {
 		return isStop;
 	}
 
-	static async closePosition(currentPrice) {
+	static async closePosition(currentPrice, orderBook) {
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
 
@@ -590,16 +590,26 @@ class RiskManager {
 			`强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`
 		);
 
-		await exchange.createOrder(
-			config.symbol,
-			'market',
-			side,
-			amount,
-			null,
-			{
-				positionSide: side === 'sell' ? 'LONG' : 'SHORT',
-			}
-		);
+		if (side === 'buy') {
+			const limitPrice = orderBook.bid * (1 - config.orderDepth);
+			await OrderManager.createLimitOrder('buy', amount, limitPrice);
+		}
+
+		if (side === 'sell') {
+			const limitPrice = orderBook.ask * (1 + config.orderDepth);
+			await OrderManager.createLimitOrder('sell', amount, limitPrice);
+		}
+
+		// await exchange.createOrder(
+		// 	config.symbol,
+		// 	'market',
+		// 	side,
+		// 	amount,
+		// 	null,
+		// 	{
+		// 		positionSide: side === 'sell' ? 'LONG' : 'SHORT',
+		// 	}
+		// );
 
 		// 重置状态
 		state.position = 0;
@@ -685,7 +695,7 @@ async function strategyLoop() {
 
 		// 步骤3: 检查强制平仓
 		if (RiskManager.checkStopConditions(signal)) {
-			await RiskManager.closePosition(signal.price);
+			await RiskManager.closePosition(signal.price, orderBook);
 			return;
 		}
 
