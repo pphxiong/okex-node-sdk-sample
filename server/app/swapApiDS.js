@@ -57,7 +57,7 @@ const config = {
   },
   emaPeriods: [5, 20, 55], // 三EMA周期
   orderDepth: 0.00015, // 限价单挂单深度 (0.1%)
-  tradeAmount: 100, // 每单交易金额(USDT)
+  tradeAmount: 800, // 每单交易金额(USDT)
   maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -310,23 +310,26 @@ class OrderManager {
   }
 
   static async checkOrderStatus(currentPrice) {
-    if (Math.abs(state.position) >= config.tradeAmount / currentPrice) {
-      for (const order of [...state.activeOrders]) {
-        await this.cancelOrder(order.id);
-      }
-      state.activeOrders = [];
-      return;
-    }
+    // if (Math.abs(state.position) >= config.tradeAmount / currentPrice) {
+    //   for (const order of [...state.activeOrders]) {
+    //     await this.cancelOrder(order.id);
+    //   }
+    //   state.activeOrders = [];
+    //   return;
+    // }
 
     for (const order of [...state.activeOrders]) {
+      // 检查订单状态
+      const status = await exchange.fetchOrder(order.id, config.symbol);
+
       // 处理超时订单
-      if (Date.now() - order.timestamp > config.maxOrderAge) {
+      if (
+        Date.now() - order.timestamp > config.maxOrderAge &&
+        status.remaining > 0
+      ) {
         await this.cancelOrder(order.id);
         console.log(`订单超时取消: ${order.id}`);
       }
-
-      // 检查订单状态
-      const status = await exchange.fetchOrder(order.id, config.symbol);
 
       if (status.filled > 0) {
         console.log(
