@@ -738,7 +738,6 @@ function connectWebSocket() {
 			// if (periodMap[period] !== '5m') return;
 
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
-			console.log(msg.data);
 			await handleKlineUpdate(msg.data, periodMap[period]);
 			//   console.log("-----------------------------------");
 		}
