@@ -284,7 +284,7 @@ class Backtester {
 			// }
 
 			const lastKline5M = JSON.parse(
-				JSON.stringify(this.data[fastframe][index])
+				JSON.stringify(this.data[config.fastframe][index])
 			);
 
 			const candle = {
@@ -298,11 +298,7 @@ class Backtester {
 				),
 				[config.fastframe]: lastKline5M,
 			};
-			console.log(
-				candle['5m'].emaSlope,
-				candle['15m'].emaSlope,
-				candle['1h'].emaSlope
-			);
+
 			if (
 				!candle[config.fastframe].emaSlope ||
 				!candle[config.mediumframe].emaSlope ||
