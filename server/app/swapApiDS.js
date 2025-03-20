@@ -440,8 +440,10 @@ function getTimeStampBefore(dataList, timestamp) {
 	dataList = JSON.parse(JSON.stringify(dataList));
 	let data;
 	let i = 0;
+	const period = config.fastframe.split('m')[0];
+
 	while (true) {
-		const time = moment(timestamp).subtract(5 * i, 'minutes');
+		const time = moment(timestamp).subtract(Number(period) * i, 'minutes');
 		const target = dataList.find((c) => c.timestamp === time.valueOf());
 		if (target) {
 			data = target;
@@ -455,32 +457,44 @@ function getTimeStampBefore(dataList, timestamp) {
 // 交易信号生成
 async function generateSignal(currentPrice) {
 	const lastKline5M = JSON.parse(
-		JSON.stringify(marketData['5m'].slice(-1)[0])
+		JSON.stringify(marketData[config.fastframe].slice(-1)[0])
 	);
 	const candle = {
-		'1h': getTimeStampBefore(marketData['1h'], lastKline5M.timestamp),
-		'15m': getTimeStampBefore(marketData['15m'], lastKline5M.timestamp),
-		'5m': lastKline5M,
+		[config.slowframe]: getTimeStampBefore(
+			marketData[config.slowframe],
+			lastKline5M.timestamp
+		),
+		[config.mediumframe]: getTimeStampBefore(
+			marketData[config.mediumframe],
+			lastKline5M.timestamp
+		),
+		[config.fastframe]: lastKline5M,
 	};
 
 	if (
-		!candle['5m'].emaSlope ||
-		!candle['15m'].emaSlope ||
-		!candle['1h'].emaSlope
+		!candle[config.slowframe].emaSlope ||
+		!candle[config.mediumframe].emaSlope ||
+		!candle[config.fastframe].emaSlope
 	)
 		return {};
 
 	// 多头信号条件
 	const longCondition =
-		candle['1h'].emaSlope > config.slopeThreshold['1h'] &&
-		candle['5m'].emaSlope > config.slopeThreshold['5m'] &&
-		candle['15m'].emaSlope > config.slopeThreshold['15m'];
+		candle[config.slowframe].emaSlope >
+			config.slopeThreshold[config.slowframe] &&
+		candle[config.mediumframe].emaSlope >
+			config.slopeThreshold[config.mediumframe] &&
+		candle[config.fastframe].emaSlope >
+			config.slopeThreshold[config.fastframe];
 
 	// 空头信号条件
 	const shortCondition =
-		candle['1h'].emaSlope < -config.slopeThreshold['1h'] &&
-		candle['5m'].emaSlope < -config.slopeThreshold['5m'] &&
-		candle['15m'].emaSlope < -config.slopeThreshold['15m'];
+		candle[config.slowframe].emaSlope <
+			-config.slopeThreshold[config.slowframe] &&
+		candle[config.mediumframe].emaSlope <
+			-config.slopeThreshold[config.mediumframe] &&
+		candle[config.fastframe].emaSlope <
+			-config.slopeThreshold[config.fastframe];
 
 	console.log('################################');
 	console.log('time', moment(lastKline5M).format('YYYY-MM-DD HH:mm:ss'));
@@ -490,25 +504,25 @@ async function generateSignal(currentPrice) {
 	console.log('longCondition', longCondition);
 	console.log('shortCondition', shortCondition);
 	console.log(
-		'5m',
-		Object.assign(candle['5m'], {
-			timestamp: moment(candle['5m'].timestamp).format(
+		config.fastframe,
+		Object.assign(candle[config.fastframe], {
+			timestamp: moment(candle[config.fastframe].timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
 			),
 		})
 	);
 	console.log(
-		'15m',
-		Object.assign(candle['15m'], {
-			timestamp: moment(candle['15m'].timestamp).format(
+		config.mediumframe,
+		Object.assign(candle[config.mediumframe], {
+			timestamp: moment(candle[config.mediumframe].timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
 			),
 		})
 	);
 	console.log(
-		'1h',
-		Object.assign(candle['1h'], {
-			timestamp: moment(candle['1h'].timestamp).format(
+		config.slowframe,
+		Object.assign(candle[config.slowframe], {
+			timestamp: moment(candle[config.slowframe].timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
 			),
 		})
@@ -528,18 +542,24 @@ class RiskManager {
 		if (state.position === 0) return false;
 
 		const lastKline5M = JSON.parse(
-			JSON.stringify(marketData['5m'].slice(-1)[0])
+			JSON.stringify(marketData[config.fastframe].slice(-1)[0])
 		);
 		const candle = {
-			'1h': getTimeStampBefore(marketData['1h'], lastKline5M.timestamp),
-			'15m': getTimeStampBefore(marketData['15m'], lastKline5M.timestamp),
-			'5m': lastKline5M,
+			[config.slowframe]: getTimeStampBefore(
+				marketData[config.slowframe],
+				lastKline5M.timestamp
+			),
+			[config.mediumframe]: getTimeStampBefore(
+				marketData[config.mediumframe],
+				lastKline5M.timestamp
+			),
+			[config.fastframe]: lastKline5M,
 		};
 
 		if (
-			!candle['5m'].emaSlope ||
-			!candle['15m'].emaSlope ||
-			!candle['1h'].emaSlope
+			!candle[config.slowframe].emaSlope ||
+			!candle[config.mediumframe].emaSlope ||
+			!candle[config.fastframe].emaSlope
 		)
 			return false;
 
@@ -549,8 +569,10 @@ class RiskManager {
 
 		isStop =
 			side === 'buy'
-				? candle['15m'].emaSlope < -config.slopeThreshold['15m']
-				: candle['15m'].emaSlope > config.slopeThreshold['15m'];
+				? candle[config.mediumframe].emaSlope <
+				  -config.slopeThreshold[config.mediumframe]
+				: candle[config.mediumframe].emaSlope >
+				  config.slopeThreshold[config.mediumframe];
 
 		console.log('***********************************');
 		console.log('entryPrice', state.entryPrice);
@@ -618,19 +640,31 @@ async function initialize() {
 		);
 	});
 
-	const [candles1h, candles15m, candles5m] = await Promise.all(
+	const [candlesSlow, candlesMedium, candlesFast] = await Promise.all(
 		candlePromises
 	);
 
-	marketData['1h'] = candles1h.map(parseKLine);
-	marketData['15m'] = candles15m.map(parseKLine);
-	marketData['5m'] = candles5m.map(parseKLine);
+	marketData[config.slowframe] = candlesSlow.map(parseKLine);
+	marketData[config.mediumframe] = candlesMedium.map(parseKLine);
+	marketData[config.fastframe] = candlesFast.map(parseKLine);
 
 	mergeTimeframes();
 
-	console.log(`已加载1h${marketData['1h'].length}根历史K线`);
-	console.log(`已加载15m${marketData['15m'].length}根历史K线`);
-	console.log(`已加载5m${marketData['5m'].length}根历史K线`);
+	console.log(
+		`已加载${config.slowframe} ${
+			marketData[config.slowframe].length
+		}根历史K线`
+	);
+	console.log(
+		`已加载${config.mediumframe} ${
+			marketData[config.mediumframe].length
+		}根历史K线`
+	);
+	console.log(
+		`已加载${config.fastframe} ${
+			marketData[config.fastframe].length
+		}根历史K线`
+	);
 }
 
 // 策略主逻辑
@@ -708,9 +742,9 @@ async function initPositionData() {
 function connectWebSocket() {
 	const symbolForWS = config.symbol.replace('/', '').toLowerCase();
 	const streams = [
-		`${symbolForWS}@kline_1h`,
-		`${symbolForWS}@kline_15m`,
-		`${symbolForWS}@kline_5m`,
+		`${symbolForWS}@kline_${config.slowframe}`,
+		`${symbolForWS}@kline_${config.mediumframe}`,
+		`${symbolForWS}@kline_${config.fastframe}`,
 	];
 	// ws = new WebSocket(
 	// 	'wss://fstream.binance.com/ws/' + symbolForWS + '@kline_1m'
@@ -729,13 +763,12 @@ function connectWebSocket() {
 			const streamInfo = msg.stream.split('@');
 			const [symbol, period] = streamInfo;
 			const periodMap = {
-				kline_1h: '1h',
-				kline_15m: '15m',
-				kline_5m: '5m',
+				[`kline_${config.slowframe}`]: config.slowframe,
+				[`kline_${config.mediumframe}`]: config.mediumframe,
+				[`kline_${config.fastframe}`]: config.fastframe,
 			};
 
 			if (!msg.data.k.x) return; // 仅处理闭合K线
-			// if (periodMap[period] !== '5m') return;
 
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
 			await handleKlineUpdate(msg.data, periodMap[period]);
@@ -773,10 +806,10 @@ async function handleKlineUpdate(msg, tf) {
 
 // 多周期时间戳对齐
 function mergeTimeframes() {
-	const baseTimestamps = marketData['5m'].map((c) => c.timestamp);
+	const baseTimestamps = marketData[config.fastframe].map((c) => c.timestamp);
 
 	config.timeframes.forEach((tf) => {
-		if (tf === '5m') return;
+		if (tf === config.fastframe) return;
 		marketData[tf] = marketData[tf].filter((c) =>
 			baseTimestamps.includes(c.timestamp)
 		);
