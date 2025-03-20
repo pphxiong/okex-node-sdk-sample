@@ -489,8 +489,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-01-01';
-	const end = '2024-03-31';
+	const start = '2024-06-01';
+	const end = '2024-09-30';
 
 	let i = 0;
 	while (moment(end).isAfter(moment(start).add(i + 10, 'days'))) {
