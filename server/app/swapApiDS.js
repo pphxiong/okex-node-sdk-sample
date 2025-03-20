@@ -770,6 +770,7 @@ async function handleKlineUpdate(msg, tf) {
 	}
 	marketData[tf].push(newBar.map(parseKLine));
 	mergeTimeframes();
+	console.log(marketData['5m'].slice(-1)[0]);
 }
 
 // 多周期时间戳对齐
