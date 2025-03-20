@@ -524,6 +524,7 @@ async function generateSignal(currentPrice) {
       ),
     })
   );
+  console.log(marketData[config.slowframe].slice(-3));
   console.log("################################");
 
   return {
