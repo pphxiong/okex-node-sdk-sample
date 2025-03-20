@@ -492,7 +492,7 @@ class Backtester {
 	const start = '2024-01-01';
 	const end = '2024-03-31';
 
-	let i = 15;
+	let i = 10;
 	console.log(
 		1,
 		moment(end),
@@ -524,7 +524,7 @@ class Backtester {
 			// 步骤4: 显示结果
 			backtester.showResults();
 
-			i += 15;
+			i += 10;
 		} catch (e) {
 			console.log(e);
 		}
