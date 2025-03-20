@@ -492,13 +492,8 @@ class Backtester {
 	const start = '2024-01-01';
 	const end = '2024-03-31';
 
-	let i = 10;
-	console.log(
-		1,
-		moment(end),
-		moment(end).isAfter(moment(start).add(i, 'days'))
-	);
-	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
+	let i = 0;
+	while (moment(end).isAfter(moment(start).add(i + 10, 'days'))) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -512,8 +507,10 @@ class Backtester {
 
 			// 步骤1: 加载历史数据
 			await backtester.loadHistoricalData(
-				start,
-				moment(start).add(i, 'days').format('YYYY-MM-DD')
+				moment(start).add(i, 'days').format('YYYY-MM-DD'),
+				moment(start)
+					.add(i + 10, 'days')
+					.format('YYYY-MM-DD')
 			);
 
 			// 步骤2: 计算指标
