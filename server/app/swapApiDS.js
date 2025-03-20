@@ -813,10 +813,8 @@ function connectWebSocket() {
 				[`kline_${config.fastframe}`]: config.fastframe,
 			};
 
-			console.log('-----------------收到消息-----------------------');
-			console.log(msg);
-
 			if (!msg.data.k.x) return; // 仅处理闭合K线
+			console.log('-----------------收到消息-----------------------');
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
 			await handleKlineUpdate(msg.data, periodMap[period]);
 			//   console.log("-----------------------------------");
