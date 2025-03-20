@@ -595,8 +595,10 @@ class RiskManager {
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
 
+		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.log(
-			`强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`
+			`%c 强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`,
+			'color: red; font-weight: bold;'
 		);
 
 		if (side === 'buy') {
@@ -731,7 +733,11 @@ async function strategyLoop() {
 				const amount = config.tradeAmount / limitPrice;
 
 				await OrderManager.createLimitOrder('buy', amount, limitPrice);
-				console.log(`挂买单 | 价格:${limitPrice} 数量:${amount}`);
+				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+				console.log(
+					`%c 挂买单 | 价格:${limitPrice} 数量:${amount}`,
+					'color: red; font-weight: bold;'
+				);
 			}
 
 			if (
@@ -741,7 +747,11 @@ async function strategyLoop() {
 				const amount = config.tradeAmount / limitPrice;
 
 				await OrderManager.createLimitOrder('sell', amount, limitPrice);
-				console.log(`挂卖单 | 价格:${limitPrice} 数量:${amount}`);
+				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+				console.log(
+					`%c 挂卖单 | 价格:${limitPrice} 数量:${amount}`,
+					'color: red; font-weight: bold;'
+				);
 			}
 		}
 	} catch (err) {
