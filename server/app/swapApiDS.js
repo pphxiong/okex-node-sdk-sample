@@ -768,7 +768,7 @@ async function handleKlineUpdate(msg, tf) {
 	if (marketData[tf].length >= config.coldStartBars) {
 		marketData[tf].shift();
 	}
-	marketData[tf].push(newBar.map(parseKLine));
+	marketData[tf].push(newBar.map(parseKLine)[0]);
 	// mergeTimeframes();
 	console.log(marketData['5m'].slice(-1)[0]);
 }
