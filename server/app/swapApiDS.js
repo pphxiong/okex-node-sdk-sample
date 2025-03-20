@@ -212,6 +212,7 @@ async function calculateIndicators() {
         }
         d.atr = atr[0][i];
       });
+      console.log(tf, emaSlopes(-5));
     });
   } catch (e) {
     console.error("指标计算错误:", e);
