@@ -846,6 +846,7 @@ async function handleKlineUpdate(msg, tf) {
 		marketData[tf].shift();
 	}
 	marketData[tf].push(parseKLine(newBar));
+	console.log(11, marketData[tf].slice(-1)[0]);
 	mergeTimeframes();
 }
 
@@ -864,10 +865,10 @@ function mergeTimeframes() {
 // 启动策略
 (async () => {
 	await exchange.loadMarkets();
-	await initialize();
 	availableBalance = await initPositionData();
-	connectWebSocket();
+	await initialize();
 	await strategyLoop();
+	connectWebSocket();
 	setInterval(async () => {
 		RESTART_TIME += 1;
 		if (RESTART_TIME >= 3 * 5) {
@@ -875,6 +876,7 @@ function mergeTimeframes() {
 			restart('normal');
 			return;
 		}
+		// await initialize();
 		await strategyLoop();
 	}, 1000 * 15); // 每15秒运行一次
 	console.log('策略已启动...');
