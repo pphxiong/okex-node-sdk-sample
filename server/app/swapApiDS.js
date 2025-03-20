@@ -24,12 +24,13 @@ const cAuthClientBN = new customAuthClientBN(
 	configBN.urlHost
 );
 
-let RESTART_TIME = 0;
-
 const ccxt = require('ccxt');
 const tulind = require('tulind');
 const WebSocket = require('ws');
 require('dotenv').config();
+
+const MAX_TRADE_POSITION_RATIO = 7 / 10;
+const LEVERAGE = 20;
 
 // 配置参数
 const config = {
@@ -55,7 +56,7 @@ const config = {
 		stdDev: 1.8,
 	},
 	emaPeriods: [5, 20, 55], // 三EMA周期
-	orderDepth: 0.0001, // 限价单挂单深度 (0.1%)
+	orderDepth: 0.0002, // 限价单挂单深度 (0.1%)
 	tradeAmount: 1000, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
@@ -96,7 +97,8 @@ let marketData = {
 	[config.fastframe]: [],
 };
 let ws = null;
-let dailyPnL = 0;
+let availableBalance = 0;
+let RESTART_TIME = 0;
 
 // 初始化交易所
 const exchange = new ccxt.binance({
@@ -694,6 +696,10 @@ async function initialize() {
 	);
 }
 
+function getTradeAmount() {
+	return config.tradeAmount;
+}
+
 // 策略主逻辑
 async function strategyLoop() {
 	try {
@@ -763,6 +769,7 @@ async function initPositionData() {
 			};
 		}
 	}
+	return availableBalance;
 }
 
 // 实时数据订阅
@@ -847,7 +854,7 @@ function mergeTimeframes() {
 (async () => {
 	await exchange.loadMarkets();
 	await initialize();
-	await initPositionData();
+	availableBalance = await initPositionData();
 	connectWebSocket();
 	await strategyLoop();
 	setInterval(() => {
