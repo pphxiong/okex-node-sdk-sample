@@ -778,7 +778,7 @@ function connectWebSocket() {
 
   ws.on("message", async (data) => {
     const msg = JSON.parse(data);
-
+    console.log(msg);
     if (msg.stream && msg.data) {
       const streamInfo = msg.stream.split("@");
       const [symbol, period] = streamInfo;
