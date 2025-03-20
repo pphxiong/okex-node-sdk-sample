@@ -813,7 +813,7 @@ function connectWebSocket() {
 				[`kline_${config.fastframe}`]: config.fastframe,
 			};
 
-			if (!msg.data.k.x) return; // 仅处理闭合K线
+			// if (!msg.data.k.x) return; // 仅处理闭合K线
 			console.log('-----------------收到消息-----------------------');
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
 			await handleKlineUpdate(msg.data, periodMap[period]);
@@ -829,7 +829,7 @@ function connectWebSocket() {
 // 处理K线更新
 async function handleKlineUpdate(msg, tf) {
 	const kline = msg.k;
-	if (!kline.x) return; // 仅处理闭合K线
+	// if (!kline.x) return; // 仅处理闭合K线
 
 	// 更新OHLCV数据
 	const newBar = [
@@ -867,7 +867,7 @@ function mergeTimeframes() {
 	await exchange.loadMarkets();
 	availableBalance = await initPositionData();
 	await initialize();
-	await strategyLoop();
+	// await strategyLoop();
 	connectWebSocket();
 	setInterval(async () => {
 		RESTART_TIME += 1;
@@ -877,7 +877,7 @@ function mergeTimeframes() {
 			return;
 		}
 		// await initialize();
-		await strategyLoop();
+		// await strategyLoop();
 	}, 1000 * 15); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
