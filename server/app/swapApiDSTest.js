@@ -34,8 +34,8 @@ const config = {
 	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
 		'1h': { period: 4, slopeWindow: 2 },
-		'15m': { period: 4, slopeWindow: 2 },
-		'5m': { period: 4, slopeWindow: 2 },
+		'15m': { period: 3, slopeWindow: 2 },
+		'5m': { period: 3, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		'1h': 0 * 0.01,
@@ -491,9 +491,10 @@ class Backtester {
 	const backtester = new Backtester();
 	const start = '2025-01-01';
 	const end = '2025-03-20';
+	const interval = 3;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i + 10, 'days'))) {
+	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -509,7 +510,7 @@ class Backtester {
 			await backtester.loadHistoricalData(
 				moment(start).add(i, 'days').format('YYYY-MM-DD'),
 				moment(start)
-					.add(i + 10, 'days')
+					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
 			);
 
@@ -521,7 +522,7 @@ class Backtester {
 			// 步骤4: 显示结果
 			backtester.showResults();
 
-			i += 10;
+			i += interval;
 		} catch (e) {
 			console.log(e);
 		}
