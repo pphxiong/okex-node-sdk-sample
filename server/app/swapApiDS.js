@@ -196,7 +196,7 @@ async function calculateIndicators() {
           config.emaSettings[tf].slopeWindow;
         emaSlopes.push(slope);
       }
-      console.log(tf, emaSlopes.slice(-5), ema[0].slice(-5));
+      // console.log(tf, emaSlopes.slice(-5), ema[0].slice(-5));
       // 合并指标到数据
       marketData[tf].forEach((d, i) => {
         if (i >= config.bollinger.period) {
@@ -524,7 +524,7 @@ async function generateSignal(currentPrice) {
       ),
     })
   );
-  console.log(marketData[config.slowframe].slice(-3));
+  // console.log(marketData[config.slowframe].slice(-3));
   console.log("################################");
 
   return {
