@@ -489,30 +489,41 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
+	const start = '2024-01-01';
+	const end = '2024-03-31';
 
-	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2025-03-05', '2025-03-20');
-	// await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
+	let i = 15;
+	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
+		try {
+			backtester.data = {
+				[config.slowframe]: [],
+				[config.mediumframe]: [],
+				[config.fastframe]: [],
+				merged: [],
+			};
+			backtester.trades = [];
+			backtester.balance = config.initialBalance;
+			backtester.totalFee = 0;
 
-	// 步骤2: 计算指标
-	await backtester.calculateIndicators();
-	// console.log(
-	// 	backtester.data['15m']
-	// 		.filter((d) => !!d.emaSlope)
-	// 		.slice(-3)
-	// 		.map((d) =>
-	// 			Object.assign(d, {
-	// 				timestamp: moment(d.timestamp).format(
-	// 					'YYYY-MM-DD HH:mm:ss'
-	// 				),
-	// 			})
-	// 		)
-	// );
-	// 步骤3: 运行回测
-	backtester.runBacktest();
+			// 步骤1: 加载历史数据
+			await backtester.loadHistoricalData(
+				start,
+				moment(start).add(i, 'days').format('YYYY-MM-DD')
+			);
 
-	// 步骤4: 显示结果
-	backtester.showResults();
+			// 步骤2: 计算指标
+			await backtester.calculateIndicators();
+			// 步骤3: 运行回测
+			backtester.runBacktest();
+
+			// 步骤4: 显示结果
+			backtester.showResults();
+
+			i += 15;
+		} catch (e) {
+			console.log(e);
+		}
+	}
 })();
 
 app.listen(8092);
