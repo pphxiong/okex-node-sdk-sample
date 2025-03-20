@@ -493,6 +493,11 @@ class Backtester {
 	const end = '2024-03-31';
 
 	let i = 15;
+	console.log(
+		1,
+		moment(end),
+		moment(end).isAfter(moment(start).add(i, 'days'))
+	);
 	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
 		try {
 			backtester.data = {
