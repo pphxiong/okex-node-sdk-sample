@@ -31,20 +31,20 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: ['1h', '15m', '5m'], // 多周期参数
+	timeframes: [/*'1h',*/ '15m', '5m', '1m'], // 多周期参数
 	emaSettings: {
-		'1h': { period: 10, slopeWindow: 5 },
-		'15m': { period: 6, slopeWindow: 3 },
-		'5m': { period: 4, slopeWindow: 2 },
+		'15m': { period: 10, slopeWindow: 5 },
+		'5m': { period: 6, slopeWindow: 3 },
+		'1m': { period: 4, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0 * 0.01,
 		'15m': 0 * 0.01,
 		'5m': 0 * 0.01,
+		'1m': 0 * 0.01,
 	}, // 斜率阈值
-	slowframe: '1h',
-	mediumframe: '15m',
-	fastframe: '5m',
+	slowframe: '15m',
+	mediumframe: '5m',
+	fastframe: '1m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
