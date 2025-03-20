@@ -42,9 +42,7 @@ const config = {
 		'15m': 0 * 0.01,
 		'5m': 0 * 0.01,
 	}, // 斜率阈值
-	slowframe: '1h',
-	mediumframe: '15m',
-	fastframe: '5m',
+	mainframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -73,12 +71,7 @@ const config = {
 class Backtester {
 	constructor() {
 		this.exchange = new ccxt.binance();
-		this.data = {
-			[config.slowframe]: [],
-			[config.mediumframe]: [],
-			[config.fastframe]: [],
-			merged: [],
-		};
+		this.data = { '5m': [], '15m': [], '1h': [], merged: [] };
 		this.trades = [];
 		this.balance = config.initialBalance;
 		this.totalFee = 0;
@@ -128,16 +121,21 @@ class Backtester {
 
 	// 多周期时间戳对齐
 	mergeTimeframes() {
-		const baseTimestamps = this.data[config.fastframe].map(
-			(c) => c.timestamp
-		);
+		const baseTimestamps = this.data['5m'].map((c) => c.timestamp);
 
 		config.timeframes.forEach((tf) => {
-			if (tf === config.fastframe) return;
+			if (tf === '5m') return;
 			this.data[tf] = this.data[tf].filter((c) =>
 				baseTimestamps.includes(c.timestamp)
 			);
 		});
+
+		// this.data.merged = baseTimestamps.map((ts, idx) => ({
+		// 	timestamp: ts,
+		// 	'5m': this.data['5m'][idx],
+		// 	'15m': this.getTimeStampBefore(this.data['15m'], ts),
+		// 	'1h': this.getTimeStampBefore(this.data['1h'], ts),
+		// }));
 	}
 
 	getTimeStampBefore(dataList, timestamp) {
@@ -261,7 +259,7 @@ class Backtester {
 		let position = null;
 		// let atr = 0;
 
-		this.data[config.fastframe].forEach(async (d, index) => {
+		this.data['5m'].forEach(async (d, index) => {
 			// 跳过前50根K线确保指标稳定
 			if (index < 50) return;
 			// // 计算ATR
@@ -279,19 +277,19 @@ class Backtester {
 			// }
 
 			const lastKline5M = JSON.parse(
-				JSON.stringify(this.data[fastframe][index])
+				JSON.stringify(this.data['5m'][index])
 			);
 
 			const candle = {
-				[config.slowframe]: this.getTimeStampBefore(
-					this.data[config.slowframe],
+				'1h': this.getTimeStampBefore(
+					this.data['1h'],
 					lastKline5M.timestamp
 				),
-				[config.mediumframe]: this.getTimeStampBefore(
-					this.data[config.mediumframe],
+				'15m': this.getTimeStampBefore(
+					this.data['15m'],
 					lastKline5M.timestamp
 				),
-				[config.fastframe]: lastKline5M,
+				'5m': lastKline5M,
 			};
 			// console.log(
 			//   candle["5m"].emaSlope,
@@ -299,9 +297,9 @@ class Backtester {
 			//   candle["1h"].emaSlope
 			// );
 			if (
-				!candle[config.fastframe].emaSlope ||
-				!candle[config.mediumframe].emaSlope ||
-				!candle[config.slowframe].emaSlope
+				!candle['5m'].emaSlope ||
+				!candle['15m'].emaSlope ||
+				!candle['1h'].emaSlope
 			)
 				return;
 
@@ -333,10 +331,9 @@ class Backtester {
 				const isReverse =
 					position &&
 					(position.direction === 'long'
-						? candle[config.mediumframe].emaSlope <
-						  -config.slopeThreshold[config.mediumframe]
-						: candle[config.mediumframe].emaSlope >
-						  config.slopeThreshold[config.mediumframe]);
+						? candle['15m'].emaSlope < -config.slopeThreshold['15m']
+						: candle['15m'].emaSlope >
+						  config.slopeThreshold['15m']);
 
 				if (isReverse) {
 					this.closePosition(position, d);
@@ -382,24 +379,18 @@ class Backtester {
 
 		// 多头信号
 		if (
-			candle[config.slowframe].emaSlope >
-				config.slopeThreshold[config.slowframe] &&
-			candle[config.mediumframe].emaSlope >
-				config.slopeThreshold[config.mediumframe] &&
-			candle[config.fastframe].emaSlope >
-				config.slopeThreshold[config.fastframe]
+			candle['1h'].emaSlope > config.slopeThreshold['1h'] &&
+			candle['5m'].emaSlope > config.slopeThreshold['5m'] &&
+			candle['15m'].emaSlope > config.slopeThreshold['15m']
 		) {
 			return { direction: 'long' };
 		}
 
 		// 空头信号
 		if (
-			candle[config.slowframe].emaSlope <
-				-config.slopeThreshold[config.slowframe] &&
-			candle[config.mediumframe].emaSlope <
-				-config.slopeThreshold[config.mediumframe] &&
-			candle[config.fastframe].emaSlope <
-				-config.slopeThreshold[config.fastframe]
+			candle['1h'].emaSlope < -config.slopeThreshold['1h'] &&
+			candle['5m'].emaSlope < -config.slopeThreshold['5m'] &&
+			candle['15m'].emaSlope < -config.slopeThreshold['15m']
 		) {
 			return { direction: 'short' };
 		}
