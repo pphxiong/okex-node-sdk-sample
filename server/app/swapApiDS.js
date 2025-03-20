@@ -597,7 +597,7 @@ class RiskManager {
 
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.log(
-			`%c 强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`,
+			`%c强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`,
 			'color: red; font-weight: bold;'
 		);
 
@@ -735,7 +735,7 @@ async function strategyLoop() {
 				await OrderManager.createLimitOrder('buy', amount, limitPrice);
 				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 				console.log(
-					`%c 挂买单 | 价格:${limitPrice} 数量:${amount}`,
+					`%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
 					'color: red; font-weight: bold;'
 				);
 			}
@@ -749,7 +749,7 @@ async function strategyLoop() {
 				await OrderManager.createLimitOrder('sell', amount, limitPrice);
 				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 				console.log(
-					`%c 挂卖单 | 价格:${limitPrice} 数量:${amount}`,
+					`%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
 					'color: red; font-weight: bold;'
 				);
 			}
