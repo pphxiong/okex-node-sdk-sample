@@ -734,8 +734,8 @@ function connectWebSocket() {
 				kline_5m: '5m',
 			};
 
-			// if (!msg.data.k.x) return; // 仅处理闭合K线
-			if (periodMap[period] !== '5m') return;
+			if (!msg.data.k.x) return; // 仅处理闭合K线
+			// if (periodMap[period] !== '5m') return;
 
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
 			console.log(msg.data);
@@ -769,8 +769,7 @@ async function handleKlineUpdate(msg, tf) {
 		marketData[tf].shift();
 	}
 	marketData[tf].push(parseKLine(newBar));
-	// mergeTimeframes();
-	console.log(marketData['5m'].slice(-1)[0]);
+	mergeTimeframes();
 }
 
 // 多周期时间戳对齐
