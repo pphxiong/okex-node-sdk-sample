@@ -765,11 +765,12 @@ function connectWebSocket() {
     `${symbolForWS}@kline_${config.fastframe}`,
   ];
   // ws = new WebSocket(
-  // 	'wss://fstream.binance.com/ws/' + symbolForWS + '@kline_1m'
+  //   "wss://fstream.binance.com/ws/" + symbolForWS + "@kline_1m"
   // );
-  ws = new WebSocket(
-    `wss://stream.binance.com:9443/stream?streams=${streams.join("/")}`
-  );
+  // ws = new WebSocket(
+  //   `wss://stream.binance.com:9443/stream?streams=${streams.join("/")}`
+  // );
+  ws = new WebSocket(`wss://fstream.binance.com/ws/${streams.join("/")}`);
 
   ws.on("open", () => {
     console.log("WebSocket连接已建立");
