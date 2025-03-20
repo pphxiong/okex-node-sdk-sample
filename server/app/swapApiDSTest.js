@@ -31,20 +31,20 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: [/*'1h',*/ '15m', '5m', '1m'], // 多周期参数
+	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'15m': { period: 10, slopeWindow: 5 },
-		'5m': { period: 6, slopeWindow: 3 },
-		'1m': { period: 4, slopeWindow: 2 },
+		'1h': { period: 6, slopeWindow: 3 },
+		'15m': { period: 4, slopeWindow: 2 },
+		'5m': { period: 4, slopeWindow: 2 },
 	},
 	slopeThreshold: {
+		'1h': 0 * 0.01,
 		'15m': 0 * 0.01,
 		'5m': 0 * 0.01,
-		'1m': 0 * 0.01,
 	}, // 斜率阈值
-	slowframe: '15m',
-	mediumframe: '5m',
-	fastframe: '1m',
+	slowframe: '1h',
+	mediumframe: '15m',
+	fastframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -491,7 +491,7 @@ class Backtester {
 	const backtester = new Backtester();
 
 	// 步骤1: 加载历史数据
-	await backtester.loadHistoricalData('2025-03-01', '2025-03-03');
+	await backtester.loadHistoricalData('2025-03-01', '2025-03-08');
 	// await backtester.loadHistoricalData('2024-10-01', '2024-12-31');
 
 	// 步骤2: 计算指标
