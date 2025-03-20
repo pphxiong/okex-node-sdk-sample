@@ -385,6 +385,8 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 
+		console.log(123, candle);
+
 		// 多头信号
 		if (
 			candle[config.slowframe].emaSlope >
