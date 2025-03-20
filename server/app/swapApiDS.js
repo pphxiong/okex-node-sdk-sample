@@ -506,10 +506,7 @@ async function generateSignal(currentPrice) {
 			-config.slopeThreshold[config.fastframe];
 
 	console.log('################################');
-	console.log(
-		'time',
-		moment(lastKline5M.timestamp).format('YYYY-MM-DD HH:mm:ss')
-	);
+	console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 	console.log('currentPrice', currentPrice);
 	console.log('position', state.position);
 	console.log('side', state.side);
