@@ -491,7 +491,8 @@ class Backtester {
 	const backtester = new Backtester();
 	const start = '2025-01-01';
 	const end = '2025-03-20';
-	const interval = 3;
+	const interval = 7;
+	const profitTotal = 0;
 
 	let i = 0;
 	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
@@ -522,11 +523,14 @@ class Backtester {
 			// 步骤4: 显示结果
 			backtester.showResults();
 
+			profitTotal += backtester.balance - config.initialBalance;
+
 			i += interval;
 		} catch (e) {
 			console.log(e);
 		}
 	}
+	console.log('profitTotal', profitTotal);
 })();
 
 app.listen(8092);
