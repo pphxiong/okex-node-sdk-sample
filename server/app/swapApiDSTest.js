@@ -492,7 +492,7 @@ class Backtester {
 	const start = '2025-01-01';
 	const end = '2025-03-20';
 	const interval = 7;
-	const profitTotal = 0;
+	let profitTotal = 0;
 
 	let i = 0;
 	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
