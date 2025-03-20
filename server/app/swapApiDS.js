@@ -769,7 +769,7 @@ async function handleKlineUpdate(msg, tf) {
 		marketData[tf].shift();
 	}
 	marketData[tf].push(newBar.map(parseKLine));
-	mergeTimeframes();
+	// mergeTimeframes();
 	console.log(marketData['5m'].slice(-1)[0]);
 }
 
