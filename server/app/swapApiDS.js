@@ -565,8 +565,6 @@ class RiskManager {
 			[config.fastframe]: lastKline5M,
 		};
 
-		console.log('candle', candle);
-
 		if (
 			!candle[config.slowframe].emaSlope ||
 			!candle[config.mediumframe].emaSlope ||
