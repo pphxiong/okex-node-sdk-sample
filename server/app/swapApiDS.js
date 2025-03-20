@@ -767,10 +767,9 @@ function connectWebSocket() {
   // ws = new WebSocket(
   //   "wss://fstream.binance.com/ws/" + symbolForWS + "@kline_1m"
   // );
-  // ws = new WebSocket(
-  //   `wss://stream.binance.com:9443/stream?streams=${streams.join("/")}`
-  // );
-  ws = new WebSocket(`wss://fstream.binance.com/ws/${streams.join("/")}`);
+  ws = new WebSocket(
+    `wss://stream.binance.com:9443/stream?streams=${streams.join("/")}`
+  );
 
   ws.on("open", () => {
     console.log("WebSocket连接已建立");
@@ -809,11 +808,11 @@ async function handleKlineUpdate(msg, tf) {
   // 更新OHLCV数据
   const newBar = [
     kline.t, // 时间戳
-    parseFloat(kline.o), // 开盘价
-    parseFloat(kline.h), // 最高价
-    parseFloat(kline.l), // 最低价
-    parseFloat(kline.c), // 收盘价
-    parseFloat(kline.v), // 成交量
+    kline.o, // 开盘价
+    kline.h, // 最高价
+    kline.l, // 最低价
+    kline.c, // 收盘价
+    kline.v, // 成交量
   ];
 
   // 维护固定长度的数据窗口
