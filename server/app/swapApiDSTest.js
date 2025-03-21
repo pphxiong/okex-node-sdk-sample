@@ -152,19 +152,17 @@ class Backtester {
 	getTimeStampBefore(dataList, timestamp) {
 		dataList = JSON.parse(JSON.stringify(dataList));
 		let data;
-		let i = 0;
+		let i = 1;
 		const period = config.fastframe.split('m')[0];
 
-		while (true || i >= dataList.length) {
+		while (true) {
 			const time = moment(timestamp).subtract(
 				Number(period) * i,
 				'minutes'
 			);
-			const targetIndex = dataList.findIndex(
-				(c) => c.timestamp === time.valueOf()
-			);
-			if (targetIndex > 0) {
-				data = dataList[targetIndex - 1];
+			const target = dataList.find((c) => c.timestamp === time.valueOf());
+			if (target) {
+				data = target;
 				break;
 			}
 			i += 1;
