@@ -34,7 +34,7 @@ const config = {
 	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
 		'1h': { period: 10, slopeWindow: 4 },
-		'15m': { period: 2, slopeWindow: 1 },
+		'15m': { period: 5, slopeWindow: 1 },
 		'5m': { period: 1, slopeWindow: 1 },
 	},
 	slopeThreshold: {
@@ -358,10 +358,10 @@ class Backtester {
 				const isReverse =
 					position &&
 					(position.direction === 'long'
-						? candle[config.fastframe].emaSlope <
-						  -config.slopeThreshold[config.fastframe]
-						: candle[config.fastframe].emaSlope >
-						  config.slopeThreshold[config.fastframe]);
+						? candle[config.mediumframe].emaSlope <
+						  -config.slopeThreshold[config.mediumframe]
+						: candle[config.mediumframe].emaSlope >
+						  config.slopeThreshold[config.mediumframe]);
 
 				if (isReverse) {
 					// console.log(
