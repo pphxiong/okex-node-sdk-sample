@@ -33,8 +33,8 @@ const config = {
   timeframe: "15m",
   timeframes: ["1h", "15m", "5m" /* '1m'*/], // 多周期参数
   emaSettings: {
-    "1h": { period: 10, slopeWindow: 1 },
-    "15m": { period: 2, slopeWindow: 1 },
+    "1h": { period: 10, slopeWindow: 3 },
+    "15m": { period: 4, slopeWindow: 2 },
     "5m": { period: 1, slopeWindow: 1 },
   },
   slopeThreshold: {
