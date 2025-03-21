@@ -33,9 +33,9 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'1h': { period: 1, slopeWindow: 1 },
-		'15m': { period: 1, slopeWindow: 1 },
-		'5m': { period: 1, slopeWindow: 1 },
+		'1h': { period: 5, slopeWindow: 3 },
+		'15m': { period: 4, slopeWindow: 2 },
+		'5m': { period: 4, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		'1h': 0 * 0.01,
@@ -538,14 +538,14 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-21';
+	const start = '2025-03-01';
 	const end = '2025-03-21';
-	const interval = 1;
+	const interval = 3;
 	let profitTotal = 0;
 
 	let i = 0;
-	// while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
-	while (i === 0) {
+	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
+		// while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
