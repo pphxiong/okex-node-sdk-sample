@@ -72,7 +72,15 @@ const config = {
 
 class Backtester {
 	constructor() {
-		this.exchange = new ccxt.binance();
+		this.exchange = new ccxt.binance({
+			apiKey: configBN.httpkey,
+			secret: configBN.httpsecret,
+			options: {
+				adjustForTimeDifference: true,
+				defaultType: 'future',
+				hedgeMode: true,
+			},
+		});
 		this.data = {
 			[config.slowframe]: [],
 			[config.mediumframe]: [],
