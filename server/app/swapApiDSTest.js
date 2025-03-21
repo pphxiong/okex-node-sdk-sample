@@ -357,30 +357,30 @@ class Backtester {
               config.slopeThreshold[config.mediumframe]);
 
         if (isReverse) {
-          console.log(
-            config.fastframe,
-            Object.assign(candle[config.fastframe], {
-              timestamp: moment(candle[config.fastframe].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
-          console.log(
-            config.mediumframe,
-            Object.assign(candle[config.mediumframe], {
-              timestamp: moment(candle[config.mediumframe].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
-          console.log(
-            config.slowframe,
-            Object.assign(candle[config.slowframe], {
-              timestamp: moment(candle[config.slowframe].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
+          // console.log(
+          //   config.fastframe,
+          //   Object.assign(candle[config.fastframe], {
+          //     timestamp: moment(candle[config.fastframe].timestamp).format(
+          //       "YYYY-MM-DD HH:mm:ss"
+          //     ),
+          //   })
+          // );
+          // console.log(
+          //   config.mediumframe,
+          //   Object.assign(candle[config.mediumframe], {
+          //     timestamp: moment(candle[config.mediumframe].timestamp).format(
+          //       "YYYY-MM-DD HH:mm:ss"
+          //     ),
+          //   })
+          // );
+          // console.log(
+          //   config.slowframe,
+          //   Object.assign(candle[config.slowframe], {
+          //     timestamp: moment(candle[config.slowframe].timestamp).format(
+          //       "YYYY-MM-DD HH:mm:ss"
+          //     ),
+          //   })
+          // );
 
           this.closePosition(position, d);
           position = null;
