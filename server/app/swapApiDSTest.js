@@ -107,8 +107,7 @@ class Backtester {
 						const candles = await this.exchange.fetchOHLCV(
 							config.symbol,
 							tf,
-							undefined,
-							// currentSince,
+							currentSince,
 							1000
 						);
 
@@ -530,24 +529,6 @@ class Backtester {
 	const end = '2025-03-21';
 	const interval = 1;
 	let profitTotal = 0;
-
-	const candles = await backtester.exchange.fetchOHLCV(
-		config.symbol,
-		'5m',
-		undefined,
-		// currentSince,
-		1000
-	);
-
-	console.log(
-		candles.slice(-5).map((candle) =>
-			Object.assign(candle, {
-				timestamp: moment(candle[0]).format('YYYY-MM-DD HH:mm:ss'),
-			})
-		)
-	);
-
-	return;
 
 	let i = 0;
 	// while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
