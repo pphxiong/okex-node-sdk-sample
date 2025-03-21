@@ -120,6 +120,7 @@ class Backtester {
 			);
 
 			this.mergeTimeframes();
+			return this.data;
 		} catch (e) {
 			console.error('Data loading failed:', e.message);
 			process.exit(1);
@@ -305,34 +306,36 @@ class Backtester {
 			)
 				return;
 
-			console.log('time');
-			console.log(
-				config.fastframe,
-				Object.assign(candle[config.fastframe], {
-					timestamp: moment(
-						candle[config.fastframe].timestamp
-					).format('YYYY-MM-DD HH:mm:ss'),
-				})
-			);
-			console.log(
-				config.mediumframe,
-				Object.assign(candle[config.mediumframe], {
-					timestamp: moment(
-						candle[config.mediumframe].timestamp
-					).format('YYYY-MM-DD HH:mm:ss'),
-				})
-			);
-			console.log(
-				config.slowframe,
-				Object.assign(candle[config.slowframe], {
-					timestamp: moment(
-						candle[config.slowframe].timestamp
-					).format('YYYY-MM-DD HH:mm:ss'),
-				})
-			);
-
 			// 生成信号
 			const signal = this.generateSignal(candle);
+
+			if (signal.direction === 'long') {
+				console.log('time');
+				console.log(
+					config.fastframe,
+					Object.assign(candle[config.fastframe], {
+						timestamp: moment(
+							candle[config.fastframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+				console.log(
+					config.mediumframe,
+					Object.assign(candle[config.mediumframe], {
+						timestamp: moment(
+							candle[config.mediumframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+				console.log(
+					config.slowframe,
+					Object.assign(candle[config.slowframe], {
+						timestamp: moment(
+							candle[config.slowframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+			}
 
 			// 处理平仓
 			if (position) {
@@ -514,13 +517,14 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-18';
+	const start = '2025-03-21';
 	const end = '2025-03-21';
 	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
+	// while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -533,12 +537,13 @@ class Backtester {
 			backtester.totalFee = 0;
 
 			// 步骤1: 加载历史数据
-			await backtester.loadHistoricalData(
+			const data = await backtester.loadHistoricalData(
 				moment(start).add(i, 'days').format('YYYY-MM-DD'),
 				moment(start)
 					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
 			);
+			console.log(data['5m']);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
