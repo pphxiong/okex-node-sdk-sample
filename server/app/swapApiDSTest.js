@@ -317,33 +317,6 @@ class Backtester {
 			// 生成信号
 			const signal = this.generateSignal(candle);
 
-			if (signal.direction && !position) {
-				console.log(
-					config.fastframe,
-					Object.assign(candle[config.fastframe], {
-						timestamp: moment(
-							candle[config.fastframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.mediumframe,
-					Object.assign(candle[config.mediumframe], {
-						timestamp: moment(
-							candle[config.mediumframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.slowframe,
-					Object.assign(candle[config.slowframe], {
-						timestamp: moment(
-							candle[config.slowframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-			}
-
 			// 处理平仓
 			if (position) {
 				const isProfitTarget =
@@ -382,6 +355,31 @@ class Backtester {
 
 			// 处理开仓
 			if (!position && signal) {
+				console.log(
+					config.fastframe,
+					Object.assign(candle[config.fastframe], {
+						timestamp: moment(
+							candle[config.fastframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+				console.log(
+					config.mediumframe,
+					Object.assign(candle[config.mediumframe], {
+						timestamp: moment(
+							candle[config.mediumframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+				console.log(
+					config.slowframe,
+					Object.assign(candle[config.slowframe], {
+						timestamp: moment(
+							candle[config.slowframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+
 				position = this.openPosition(d, d.atr, signal.direction);
 			}
 		});
@@ -549,15 +547,6 @@ class Backtester {
 				moment(start)
 					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
-			);
-			console.log(
-				data['5m'].slice(-5).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
 			);
 
 			// 步骤2: 计算指标
