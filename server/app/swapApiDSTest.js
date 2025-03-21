@@ -548,6 +548,15 @@ class Backtester {
 					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
 			);
+			console.log(
+				data['5m'].slice(-15).map((candle) =>
+					Object.assign(candle, {
+						timestamp: moment(candle.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				)
+			);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
