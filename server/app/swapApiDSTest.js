@@ -427,24 +427,16 @@ class Backtester {
 
     // 多头信号
     if (
-      candle[config.slowframe].emaSlope >
-        config.slopeThreshold[config.slowframe] &&
-      candle[config.mediumframe].emaSlope >
-        config.slopeThreshold[config.mediumframe] &&
-      candle[config.fastframe].emaSlope >
-        config.slopeThreshold[config.fastframe]
+      candle[config.fastframe].ema > candle[config.mediumframe].ema &&
+      candle[config.mediumframe].ema > candle[config.slowframe].ema
     ) {
       return { direction: "long" };
     }
 
     // 空头信号
     if (
-      candle[config.slowframe].emaSlope <
-        -config.slopeThreshold[config.slowframe] &&
-      candle[config.mediumframe].emaSlope <
-        -config.slopeThreshold[config.mediumframe] &&
-      candle[config.fastframe].emaSlope <
-        -config.slopeThreshold[config.fastframe]
+      candle[config.fastframe].ema < candle[config.mediumframe].ema &&
+      candle[config.mediumframe].ema < candle[config.slowframe].ema
     ) {
       return { direction: "short" };
     }
@@ -531,7 +523,7 @@ class Backtester {
   const backtester = new Backtester();
   const start = "2024-03-10";
   const end = "2025-03-21";
-  const interval = 3;
+  const interval = 10;
   let profitTotal = 0;
 
   let i = 0;
