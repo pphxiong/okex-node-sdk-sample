@@ -155,14 +155,16 @@ class Backtester {
 		let i = 0;
 		const period = config.fastframe.split('m')[0];
 
-		while (true) {
+		while (true || i >= dataList.length) {
 			const time = moment(timestamp).subtract(
 				Number(period) * i,
 				'minutes'
 			);
-			const target = dataList.find((c) => c.timestamp === time.valueOf());
-			if (target) {
-				data = target;
+			const targetIndex = dataList.findIndex(
+				(c) => c.timestamp === time.valueOf()
+			);
+			if (targetIndex > 0) {
+				data = dataList[targetIndex - 1];
 				break;
 			}
 			i += 1;

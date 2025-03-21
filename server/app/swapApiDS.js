@@ -343,6 +343,7 @@ class OrderManager {
 				console.log(
 					`订单部分成交: ${status.id} ${status.filled}/${status.amount}`
 				);
+				console.log(status);
 
 				// 更新持仓
 				const filledValue = status.filled * status.price;
