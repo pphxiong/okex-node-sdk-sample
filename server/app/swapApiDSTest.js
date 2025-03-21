@@ -523,6 +523,26 @@ class Backtester {
 	const interval = 1;
 	let profitTotal = 0;
 
+	const candles = await this.exchange.fetchOHLCV(
+		config.symbol,
+		'5m',
+		undefined,
+		// currentSince,
+		1000
+	);
+
+	console.log(
+		candles.slice(-5).map((candle) =>
+			Object.assign(candle, {
+				timestamp: moment(candle.timestamp).format(
+					'YYYY-MM-DD HH:mm:ss'
+				),
+			})
+		)
+	);
+
+	return;
+
 	let i = 0;
 	// while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
 	while (i === 0) {
