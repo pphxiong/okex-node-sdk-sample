@@ -38,9 +38,9 @@ const config = {
 		'5m': { period: 4, slopeWindow: 2 },
 	},
 	slopeThreshold: {
-		'1h': 0.01 * 0.01,
-		'15m': 0.01 * 0.01,
-		'5m': 0.01 * 0.01,
+		'1h': 0,
+		'15m': 0,
+		'5m': 0,
 	}, // 斜率阈值
 	slowframe: '1h',
 	mediumframe: '15m',
