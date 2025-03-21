@@ -33,14 +33,14 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'1h': { period: 10, slopeWindow: 5 },
-		'15m': { period: 5, slopeWindow: 3 },
+		'1h': { period: 10, slopeWindow: 2 },
+		'15m': { period: 6, slopeWindow: 2 },
 		'5m': { period: 4, slopeWindow: 2 },
 	},
 	slopeThreshold: {
 		'1h': 0.01 * 0.01,
-		'15m': 0.02 * 0.01,
-		'5m': 0.03 * 0.01,
+		'15m': 0.01 * 0.01,
+		'5m': 0.01 * 0.01,
 	}, // 斜率阈值
 	slowframe: '1h',
 	mediumframe: '15m',
