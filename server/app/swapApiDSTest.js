@@ -33,9 +33,9 @@ const config = {
   timeframe: "15m",
   timeframes: ["1h", "15m", "5m" /* '1m'*/], // 多周期参数
   emaSettings: {
-    "1h": { period: 10, slopeWindow: 1 },
-    "15m": { period: 2, slopeWindow: 1 },
-    "5m": { period: 1, slopeWindow: 1 },
+    "1h": { period: 20, slopeWindow: 5 },
+    "15m": { period: 10, slopeWindow: 3 },
+    "5m": { period: 4, slopeWindow: 2 },
   },
   slopeThreshold: {
     "1h": 0,
@@ -348,15 +348,15 @@ class Backtester {
         // 		? signal.direction === 'short'
         // 		: signal.direction === 'long';
 
-        const isReverse = isProfitTarget || isStopLoss;
+        // const isReverse = isProfitTarget || isStopLoss;
 
-        // const isReverse =
-        //   position &&
-        //   (position.direction === "long"
-        //     ? candle[config.mediumframe].emaSlope <
-        //       -config.slopeThreshold[config.mediumframe]
-        //     : candle[config.mediumframe].emaSlope >
-        //       config.slopeThreshold[config.mediumframe]);
+        const isReverse =
+          position &&
+          (position.direction === "long"
+            ? candle[config.mediumframe].emaSlope <
+              -config.slopeThreshold[config.mediumframe]
+            : candle[config.mediumframe].emaSlope >
+              config.slopeThreshold[config.mediumframe]);
 
         if (isReverse) {
           // console.log(
