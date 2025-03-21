@@ -170,6 +170,22 @@ class Backtester {
 		return data;
 	}
 
+	getTimeStampSlowBefore(dataList, timestamp) {
+		dataList = JSON.parse(JSON.stringify(dataList));
+		let data;
+
+		const hour = moment(timestamp).format('YYYY-MM-DD HH:00:00');
+		const lastHourTimestamp = moment(hour).subtract(1, 'hours');
+
+		const target = dataList.find(
+			(c) => c.timestamp === lastHourTimestamp.valueOf()
+		);
+		if (target) {
+			data = target;
+		}
+		return data;
+	}
+
 	parseCandle(c) {
 		return {
 			timestamp: c[0],
@@ -296,7 +312,7 @@ class Backtester {
 			);
 
 			const candle = {
-				[config.slowframe]: this.getTimeStampBefore(
+				[config.slowframe]: this.getTimeStampSlowBefore(
 					this.data[config.slowframe],
 					lastKline5M.timestamp
 				),
