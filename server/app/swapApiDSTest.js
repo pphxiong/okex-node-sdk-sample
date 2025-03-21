@@ -359,13 +359,9 @@ class Backtester {
 					position &&
 					(position.direction === 'long'
 						? candle[config.mediumframe].emaSlope <
-								-config.slopeThreshold[config.mediumframe] &&
-						  candle[config.fastframe].emaSlope <
-								-config.slopeThreshold[config.fastframe]
+						  -config.slopeThreshold[config.mediumframe]
 						: candle[config.mediumframe].emaSlope >
-								config.slopeThreshold[config.mediumframe] &&
-						  candle[config.fastframe].emaSlope >
-								config.slopeThreshold[config.fastframe]);
+						  config.slopeThreshold[config.mediumframe]);
 
 				if (isReverse) {
 					// console.log(
@@ -542,7 +538,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-01';
+	const start = '2025-01-01';
 	const end = '2025-03-21';
 	const interval = 3;
 	let profitTotal = 0;
