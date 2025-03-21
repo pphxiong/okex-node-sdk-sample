@@ -523,7 +523,7 @@ class Backtester {
 	const interval = 1;
 	let profitTotal = 0;
 
-	const candles = await this.exchange.fetchOHLCV(
+	const candles = await backtester.exchange.fetchOHLCV(
 		config.symbol,
 		'5m',
 		undefined,
