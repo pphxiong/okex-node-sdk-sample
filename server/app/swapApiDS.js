@@ -696,7 +696,7 @@ async function initialize() {
 		candlePromises
 	);
 
-	// candlesSlow.pop();
+	candlesSlow.pop();
 	// candlesMedium.pop();
 	// candlesFast.pop();
 
@@ -894,13 +894,13 @@ function mergeTimeframes() {
 	await strategyLoop();
 	setInterval(async () => {
 		RESTART_TIME += 1;
-		if (RESTART_TIME >= 4 * 3 * 2) {
+		if (RESTART_TIME >= 4 * 3) {
 			RESTART_TIME = 0;
 			restart('normal');
 			return;
 		}
 		await strategyLoop();
-	}, 1000 * 5); // 每15秒运行一次
+	}, 1000 * 5 * 2); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
