@@ -310,31 +310,31 @@ class Backtester {
 			const signal = this.generateSignal(candle);
 
 			if (signal.direction === 'long') {
-				console.log('time');
-				console.log(
-					config.fastframe,
-					Object.assign(candle[config.fastframe], {
-						timestamp: moment(
-							candle[config.fastframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.mediumframe,
-					Object.assign(candle[config.mediumframe], {
-						timestamp: moment(
-							candle[config.mediumframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.slowframe,
-					Object.assign(candle[config.slowframe], {
-						timestamp: moment(
-							candle[config.slowframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
+				// console.log('time');
+				// console.log(
+				// 	config.fastframe,
+				// 	Object.assign(candle[config.fastframe], {
+				// 		timestamp: moment(
+				// 			candle[config.fastframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
+				// console.log(
+				// 	config.mediumframe,
+				// 	Object.assign(candle[config.mediumframe], {
+				// 		timestamp: moment(
+				// 			candle[config.mediumframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
+				// console.log(
+				// 	config.slowframe,
+				// 	Object.assign(candle[config.slowframe], {
+				// 		timestamp: moment(
+				// 			candle[config.slowframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
 			}
 
 			// 处理平仓
@@ -543,7 +543,15 @@ class Backtester {
 					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
 			);
-			console.log(data['5m'].slice(-5));
+			console.log(
+				data['5m'].slice(-5).map((candle) =>
+					Object.assign(candle, {
+						timestamp: moment(candle.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				)
+			);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
