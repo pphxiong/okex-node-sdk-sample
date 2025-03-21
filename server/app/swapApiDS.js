@@ -452,7 +452,7 @@ function getHighsAndLows(indicators) {
 function getTimeStampBefore(dataList, timestamp) {
 	dataList = JSON.parse(JSON.stringify(dataList));
 	let data;
-	let i = 0;
+	let i = 1;
 	const period = config.fastframe.split('m')[0];
 
 	while (true) {
@@ -467,13 +467,29 @@ function getTimeStampBefore(dataList, timestamp) {
 	return data;
 }
 
+function getTimeStampSlowBefore(dataList, timestamp) {
+	dataList = JSON.parse(JSON.stringify(dataList));
+	let data;
+
+	const hour = moment(timestamp).format('YYYY-MM-DD HH:00:00');
+	const lastHourTimestamp = moment(hour).subtract(1, 'hours');
+
+	const target = dataList.find(
+		(c) => c.timestamp === lastHourTimestamp.valueOf()
+	);
+	if (target) {
+		data = target;
+	}
+	return data;
+}
+
 // 交易信号生成
 async function generateSignal(currentPrice) {
 	const lastKline5M = JSON.parse(
 		JSON.stringify(marketData[config.fastframe].slice(-1)[0])
 	);
 	const candle = {
-		[config.slowframe]: getTimeStampBefore(
+		[config.slowframe]: getTimeStampSlowBefore(
 			marketData[config.slowframe],
 			lastKline5M.timestamp
 		),
@@ -559,7 +575,7 @@ class RiskManager {
 			JSON.stringify(marketData[config.fastframe].slice(-1)[0])
 		);
 		const candle = {
-			[config.slowframe]: getTimeStampBefore(
+			[config.slowframe]: getTimeStampSlowBefore(
 				marketData[config.slowframe],
 				lastKline5M.timestamp
 			),
@@ -680,9 +696,9 @@ async function initialize() {
 		candlePromises
 	);
 
-	candlesSlow.pop();
-	candlesMedium.pop();
-	candlesFast.pop();
+	// candlesSlow.pop();
+	// candlesMedium.pop();
+	// candlesFast.pop();
 
 	marketData[config.slowframe] = candlesSlow.map(parseKLine);
 	marketData[config.mediumframe] = candlesMedium.map(parseKLine);
