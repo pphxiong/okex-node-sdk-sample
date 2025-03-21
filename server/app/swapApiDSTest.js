@@ -348,6 +348,31 @@ class Backtester {
 						  config.slopeThreshold[config.mediumframe]);
 
 				if (isReverse) {
+					console.log(
+						config.fastframe,
+						Object.assign(candle[config.fastframe], {
+							timestamp: moment(
+								candle[config.fastframe].timestamp
+							).format('YYYY-MM-DD HH:mm:ss'),
+						})
+					);
+					console.log(
+						config.mediumframe,
+						Object.assign(candle[config.mediumframe], {
+							timestamp: moment(
+								candle[config.mediumframe].timestamp
+							).format('YYYY-MM-DD HH:mm:ss'),
+						})
+					);
+					console.log(
+						config.slowframe,
+						Object.assign(candle[config.slowframe], {
+							timestamp: moment(
+								candle[config.slowframe].timestamp
+							).format('YYYY-MM-DD HH:mm:ss'),
+						})
+					);
+
 					this.closePosition(position, d);
 					position = null;
 				}
@@ -355,31 +380,6 @@ class Backtester {
 
 			// 处理开仓
 			if (!position && signal) {
-				console.log(
-					config.fastframe,
-					Object.assign(candle[config.fastframe], {
-						timestamp: moment(
-							candle[config.fastframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.mediumframe,
-					Object.assign(candle[config.mediumframe], {
-						timestamp: moment(
-							candle[config.mediumframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.slowframe,
-					Object.assign(candle[config.slowframe], {
-						timestamp: moment(
-							candle[config.slowframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-
 				position = this.openPosition(d, d.atr, signal.direction);
 			}
 		});
@@ -548,29 +548,19 @@ class Backtester {
 					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
 			);
-			console.log(
-				data['5m'].slice(-3).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				123,
-				data['5m'].slice(-3).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data['5m'].slice(-3).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// 步骤3: 运行回测
 			backtester.runBacktest();
