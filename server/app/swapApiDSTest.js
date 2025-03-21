@@ -542,9 +542,7 @@ class Backtester {
 	console.log(
 		candles.slice(-5).map((candle) =>
 			Object.assign(candle, {
-				timestamp: moment(candle.timestamp).format(
-					'YYYY-MM-DD HH:mm:ss'
-				),
+				timestamp: moment(candle[0]).format('YYYY-MM-DD HH:mm:ss'),
 			})
 		)
 	);
