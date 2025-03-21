@@ -543,7 +543,7 @@ class Backtester {
 					.add(i + interval, 'days')
 					.format('YYYY-MM-DD')
 			);
-			console.log(data['5m']);
+			console.log(data['5m'].slice(-5));
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
