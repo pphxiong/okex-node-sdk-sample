@@ -99,7 +99,7 @@ class Backtester {
 						const candles = await this.exchange.fetchOHLCV(
 							config.symbol,
 							tf,
-							currentSince,
+							// currentSince,
 							1000
 						);
 
