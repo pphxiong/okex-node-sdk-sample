@@ -57,7 +57,7 @@ const config = {
 	},
 	emaPeriods: [5, 20, 55], // 三EMA周期
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 800, // 每单交易金额(USDT)
+	tradeAmount: 500, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
