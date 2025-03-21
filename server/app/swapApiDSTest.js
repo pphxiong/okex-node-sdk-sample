@@ -359,9 +359,13 @@ class Backtester {
 					position &&
 					(position.direction === 'long'
 						? candle[config.mediumframe].emaSlope <
-						  -config.slopeThreshold[config.mediumframe]
+								-config.slopeThreshold[config.mediumframe] &&
+						  candle[config.fastframe].emaSlope <
+								-config.slopeThreshold[config.fastframe]
 						: candle[config.mediumframe].emaSlope >
-						  config.slopeThreshold[config.mediumframe]);
+								config.slopeThreshold[config.mediumframe] &&
+						  candle[config.fastframe].emaSlope >
+								config.slopeThreshold[config.fastframe]);
 
 				if (isReverse) {
 					// console.log(
