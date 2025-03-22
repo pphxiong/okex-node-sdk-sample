@@ -55,7 +55,7 @@ class DQNAgent {
   }
 
   async buildModel() {
-    await tf.setBackend("cpu"); // 或 'cpu' "webgl"
+    await tf.setBackend("webgl"); // 或 'cpu' "webgl"
     const model = tf.sequential({
       layers: [
         tf.layers.lstm({
