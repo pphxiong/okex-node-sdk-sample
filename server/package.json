@@ -37,7 +37,6 @@
 		"crypto": "^1.0.1",
 		"dotenv": "^16.0.3",
 		"express": "^4.17.1",
-		"fs": "0.0.1-security",
 		"increase-memory-limit": "^1.0.7",
 		"moment": "^2.27.0",
 		"python-shell": "^5.0.0",
@@ -54,6 +53,7 @@
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.26.9",
+
 		"babel-cli": "^6.26.0",
 		"babel-preset-env": "^1.7.0",
 		"babel-register": "^6.26.0",
