@@ -32,7 +32,7 @@ const tulind = require("tulind");
 const config = {
   symbol: "DOGE/USDT:USDT",
   timeframe: "15m",
-  trainSize: 2000,
+  trainSize: 20,
   windowSize: 30,
   batchSize: 32,
   episodes: 50,
