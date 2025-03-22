@@ -55,7 +55,6 @@ class DQNAgent {
   }
 
   async buildModel() {
-    console.log(11, tf.getBackend());
     const model = tf.sequential({
       layers: [
         tf.layers.lstm({
