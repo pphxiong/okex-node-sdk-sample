@@ -55,7 +55,8 @@ class DQNAgent {
   }
 
   async buildModel() {
-    // await tf.setBackend("webgl"); // 或 'cpu' "webgl"
+    console.log(11, tf.getBackend());
+    await tf.setBackend("cpu"); // 或 'cpu' "webgl"
     const model = tf.sequential({
       layers: [
         tf.layers.lstm({
@@ -276,6 +277,7 @@ class Backtester {
 
 // 主流程
 async function main() {
+  await tf.ready();
   // 初始化组件
   const dh = new DataHandler();
   const rawData = await dh.loadData();
