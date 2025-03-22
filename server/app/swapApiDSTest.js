@@ -180,10 +180,9 @@ class DataHandler {
 
   normalizeData(data) {
     const means = {};
-    const stds = {}[
-      // 计算统计量
-      ("close", "rsi", "macd", "bbUpper", "volume")
-    ].forEach((col) => {
+    // 计算统计量
+    const stds = {};
+    ["close", "rsi", "macd", "bbUpper", "volume"].forEach((col) => {
       const values = data.map((d) => d[col]);
       means[col] = tf.mean(values).dataSync()[0];
       stds[col] = tf.moments(values).variance.sqrt().dataSync()[0];
