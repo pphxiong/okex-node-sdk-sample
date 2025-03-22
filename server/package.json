@@ -13,7 +13,7 @@
 	"scripts": {
 		"start": "pm2 start startBN.js --env=manul",
 		"start:product": "pm2 start startProduct.js --env=manul",
-		"start:test": "node startTest.js --env=manul",
+		"start:test": "node test.js --env=manul",
 		"start:local": "node startBN.js --env=manul",
 		"start:all": "pm2 start startBN.js && pm2 start startProduct.js",
 		"restart": "pm2 restart 0",
