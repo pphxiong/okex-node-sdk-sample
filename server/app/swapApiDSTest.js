@@ -25,7 +25,7 @@ const cAuthClientBN = new customAuthClientBN(
 );
 
 const ccxt = require("ccxt");
-const tf = require("@tensorflow/tfjs");
+const tf = require("@tensorflow/tfjs-node");
 const tulind = require("tulind");
 
 // 系统配置
