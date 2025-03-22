@@ -33,9 +33,9 @@ const config = {
   timeframe: "15m",
   timeframes: ["1h", "15m", "5m" /* '1m'*/], // 多周期参数
   emaSettings: {
-    "1h": { period: 20, slopeWindow: 5 },
-    "15m": { period: 10, slopeWindow: 3 },
-    "5m": { period: 4, slopeWindow: 2 },
+    "1h": { period: 50, slopeWindow: 5 },
+    "15m": { period: 20, slopeWindow: 3 },
+    "5m": { period: 5, slopeWindow: 2 },
   },
   slopeThreshold: {
     "1h": 0,
@@ -59,7 +59,7 @@ const config = {
   atrParam: {
     // ATR参数
     atrPeriod: 14,
-    stopLoss: 0.6,
+    stopLoss: 1.2,
     takeProfit: 1.8,
   },
 
@@ -348,15 +348,15 @@ class Backtester {
         // 		? signal.direction === 'short'
         // 		: signal.direction === 'long';
 
-        // const isReverse = isProfitTarget || isStopLoss;
+        const isReverse = isProfitTarget || isStopLoss;
 
-        const isReverse =
-          position &&
-          (position.direction === "long"
-            ? candle[config.mediumframe].emaSlope <
-              -config.slopeThreshold[config.mediumframe]
-            : candle[config.mediumframe].emaSlope >
-              config.slopeThreshold[config.mediumframe]);
+        // const isReverse =
+        //   position &&
+        //   (position.direction === "long"
+        //     ? candle[config.mediumframe].emaSlope <
+        //       -config.slopeThreshold[config.mediumframe]
+        //     : candle[config.mediumframe].emaSlope >
+        //       config.slopeThreshold[config.mediumframe]);
 
         if (isReverse) {
           // console.log(
@@ -523,7 +523,7 @@ class Backtester {
   const backtester = new Backtester();
   const start = "2024-03-10";
   const end = "2025-03-21";
-  const interval = 10;
+  const interval = 5;
   let profitTotal = 0;
 
   let i = 0;
