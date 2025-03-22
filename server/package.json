@@ -31,9 +31,11 @@
 	},
 	"dependencies": {
 		"@okfe/okex-node": "0.0.52",
+		"@tensorflow/tfjs-node": "^4.22.0",
 		"axios": "^0.24.0",
 		"babel-core": "^6.26.3",
 		"babel-polyfill": "^6.26.0",
+		"ccxt": "^4.4.69",
 		"crypto": "^1.0.1",
 		"dotenv": "^16.0.3",
 		"express": "^4.17.1",
@@ -42,6 +44,7 @@
 		"moment": "^2.27.0",
 		"python-shell": "^5.0.0",
 		"querystring": "^0.2.1",
+		"tulind": "^0.8.20",
 		"umi-request": "^1.3.5",
 		"ws": "^0.4.32"
 	},
