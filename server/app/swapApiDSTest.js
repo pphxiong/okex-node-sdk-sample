@@ -190,14 +190,15 @@ class DataHandler {
     });
 
     // 标准化处理
-    return data.map((d) => ({
-      ...d,
-      close: (d.close - means.close) / stds.close,
-      rsi: (d.rsi - means.rsi) / stds.rsi,
-      macd: (d.macd - means.macd) / stds.macd,
-      bbUpper: (d.bbUpper - means.bbUpper) / stds.bbUpper,
-      volume: (d.volume - means.volume) / stds.volume,
-    }));
+    return data.map((d) =>
+      Object.assign(d, {
+        close: (d.close - means.close) / stds.close,
+        rsi: (d.rsi - means.rsi) / stds.rsi,
+        macd: (d.macd - means.macd) / stds.macd,
+        bbUpper: (d.bbUpper - means.bbUpper) / stds.bbUpper,
+        volume: (d.volume - means.volume) / stds.volume,
+      })
+    );
   }
 
   createSequences(data) {
