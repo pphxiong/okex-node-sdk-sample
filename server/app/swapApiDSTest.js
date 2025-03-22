@@ -54,7 +54,8 @@ class DQNAgent {
     this.targetModel = this.buildModel();
   }
 
-  buildModel() {
+  async buildModel() {
+    await tf.setBackend("cpu"); // 或 'cpu' "webgl"
     const model = tf.sequential({
       layers: [
         tf.layers.lstm({
