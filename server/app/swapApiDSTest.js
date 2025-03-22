@@ -250,14 +250,14 @@ class Backtester {
   }
 
   closePosition(price, step) {
-    const pnl = (price - this.position.entryPrice) / this.position.entryPrice;
+    let pnl = (price - this.position.entryPrice) / this.position.entryPrice;
     if (this.position.type === "short") pnl *= -1;
 
     this.balance += this.position.size * pnl;
     this.trades.push({
       entry: this.position.entryPrice,
       exit: price,
-      pnl: pnl,
+      pnl,
       duration: step - this.position.step,
     });
     this.position = null;
