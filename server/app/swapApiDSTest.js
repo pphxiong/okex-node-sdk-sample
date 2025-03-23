@@ -293,7 +293,6 @@ async function main() {
     for (let step = config.windowSize; step < normalizedData.length; step++) {
       const state = backtester.getState(step);
       const action = await agent.act(state);
-      console.log(55, action);
 
       backtester.executeAction(action, step);
 
@@ -306,7 +305,7 @@ async function main() {
 
       state.dispose();
       nextState.dispose();
-
+      console.log(67, tf.getBackend());
       if (done) break;
     }
 
