@@ -389,8 +389,8 @@ class Backtester {
 
     // RSI超卖过滤
     const rsiConditionShort =
-      data15m.rsi > config.rsiThresholds.long[0] &&
-      data1h.rsi > config.rsiThresholds.long[1];
+      data15m.rsi > config.rsiThresholds.short[0] &&
+      data1h.rsi > config.rsiThresholds.short[1];
 
     const shortCondition = macdConditionShort && rsiConditionShort;
 
