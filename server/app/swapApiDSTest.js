@@ -359,17 +359,14 @@ class Backtester {
     // MACD动量同步
     const macdCondition =
       data15m.macdHistogram >
-        _.get(_.last(this.data["15m"]), "macdHistogram", 0) &&
-      data1h.macdHistogram > _.get(_.last(this.data["1h"]), "macdHistogram", 0);
+      _.get(_.last(this.data["15m"]), "macdHistogram", 0);
 
     // BOLL突破
     const bollCondition =
       data15m.close > data15m.bollMiddle && data1h.close > data1h.bollMiddle;
 
     // RSI超卖过滤
-    const rsiCondition =
-      data15m.rsi < config.rsiThresholds.long[0] &&
-      data1h.rsi < config.rsiThresholds.long[1];
+    const rsiCondition = data15m.rsi < config.rsiThresholds.long[0];
 
     const longCondition = macdCondition && rsiCondition;
 
@@ -380,17 +377,14 @@ class Backtester {
     // MACD动量同步
     const macdConditionShort =
       data15m.macdHistogram <
-        _.get(_.last(this.data["15m"]), "macdHistogram", 0) &&
-      data1h.macdHistogram < _.get(_.last(this.data["1h"]), "macdHistogram", 0);
+      _.get(_.last(this.data["15m"]), "macdHistogram", 0);
 
     // BOLL突破
     const bollConditionShort =
       data15m.close < data15m.bollMiddle && data1h.close < data1h.bollMiddle;
 
     // RSI超卖过滤
-    const rsiConditionShort =
-      data15m.rsi > config.rsiThresholds.short[0] &&
-      data1h.rsi > config.rsiThresholds.short[1];
+    const rsiConditionShort = data15m.rsi > config.rsiThresholds.short[0];
 
     const shortCondition = macdConditionShort && rsiConditionShort;
 
