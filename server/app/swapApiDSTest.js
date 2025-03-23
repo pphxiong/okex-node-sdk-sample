@@ -71,7 +71,6 @@ class DQNAgent {
       optimizer: tf.train.adam(0.001),
       loss: "meanSquaredError",
     });
-    console.log(123, tf.getBackend());
     return model;
   }
 
@@ -294,6 +293,7 @@ async function main() {
     for (let step = config.windowSize; step < normalizedData.length; step++) {
       const state = backtester.getState(step);
       const action = await agent.act(state);
+      console.log(55, action);
 
       backtester.executeAction(action, step);
 
