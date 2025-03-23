@@ -329,9 +329,6 @@ class Backtester {
         [config.fastframe]: lastKline5M,
       };
 
-      if (!candle[config.fastframe].macd || !candle[config.mediumframe].ema)
-        return;
-
       // 生成信号
       const signal = this.generateSignal(candle);
 
@@ -459,7 +456,7 @@ class Backtester {
 
     // 多头信号
     if (
-      candle.close > candle[config.mediumframe].ema &&
+      candle[config.mediumframe].close > candle[config.mediumframe].ema &&
       candle[config.fastframe].macdHistogram > 0
     ) {
       return { direction: "long" };
@@ -467,7 +464,7 @@ class Backtester {
 
     // 空头信号
     if (
-      candle.close < candle[config.mediumframe].ema &&
+      candle[config.mediumframe].close < candle[config.mediumframe].ema &&
       candle[config.fastframe].macdHistogram < 0
     ) {
       return { direction: "short" };
@@ -583,13 +580,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data["5m"].slice(-3).map((candle) =>
-          Object.assign(candle, {
-            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          })
-        )
-      );
+      // console.log(
+      //   data["5m"].slice(-3).map((candle) =>
+      //     Object.assign(candle, {
+      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //     })
+      //   )
+      // );
 
       // 步骤3: 运行回测
       backtester.runBacktest();
