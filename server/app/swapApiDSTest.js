@@ -303,19 +303,19 @@ async function main() {
       await agent.remember(state, action, reward, nextState, done);
       await agent.replay();
 
-      // state.dispose();
-      // nextState.dispose();
+      state.dispose();
+      nextState.dispose();
       if (done) break;
     }
 
-    // agent.updateTargetModel();
-    // console.log(
-    //   `Episode ${episode + 1} | Balance: ${backtester.balance.toFixed(2)}`
-    // );
+    agent.updateTargetModel();
+    console.log(
+      `Episode ${episode + 1} | Balance: ${backtester.balance.toFixed(2)}`
+    );
   }
 
   // 保存模型
-  await agent.model.save("file://./doge-model");
+  // await agent.model.save("file://./doge-model");
 }
 
 main().catch(console.error);
