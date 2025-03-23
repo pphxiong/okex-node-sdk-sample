@@ -248,9 +248,9 @@ class Backtester {
         this.data[tf].forEach((d, i) => {
           if (i >= config.bollinger.period) {
             const bbIndex = i - config.bollinger.period;
-            d.upper = bollinger[0][bbIndex];
+            d.lower = bollinger[0][bbIndex];
             d.middle = bollinger[1][bbIndex];
-            d.lower = bollinger[2][bbIndex];
+            d.upper = bollinger[2][bbIndex];
           }
           if (
             i >=
@@ -545,9 +545,9 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-03-20";
+  const start = "2025-01-01";
   const end = "2025-03-23";
-  const interval = 2;
+  const interval = 5;
   let profitTotal = 0;
 
   let i = 0;
