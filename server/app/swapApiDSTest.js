@@ -239,7 +239,6 @@ class Backtester {
           index * 4,
           (index + 1) * 4
         );
-        console.log(11, macd[0].length, this.data[tf].length);
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -272,9 +271,11 @@ class Backtester {
               config.emaSettings[tf].slopeWindow;
             d.emaSlope = emaSlopes[slopeIndex];
           }
+          if (i >= config.macdParams[tf][1]) {
+            d.macd = macd ? macd[0][i - config.macdParams[tf][1]] : null;
+          }
           d.atr = atr[0][i];
           d.ema = ema[0][i];
-          d.macd = macd ? macd[0][i] : null;
         });
       });
     } catch (e) {
