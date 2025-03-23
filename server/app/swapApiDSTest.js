@@ -343,12 +343,12 @@ class Backtester {
         // 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
         // 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-        // const isReverse =
-        //   signal && position.direction === "long"
-        //     ? signal.direction === "short"
-        //     : signal.direction === "long";
+        const isReverse =
+          signal && position.direction === "long"
+            ? signal.direction === "short"
+            : signal.direction === "long";
 
-        const isReverse = isProfitTarget || isStopLoss;
+        // const isReverse = isProfitTarget || isStopLoss;
 
         // const isReverse =
         //   position &&
@@ -451,16 +451,16 @@ class Backtester {
 
     // 多头信号
     if (
-      candle[config.fastframe].ema > candle[config.mediumframe].ema &&
-      candle[config.mediumframe].ema > candle[config.slowframe].ema
+      candle[config.fastframe].emaSlope >
+      config.slopeThreshold[config.fastframe]
     ) {
       return { direction: "short" };
     }
 
     // 空头信号
     if (
-      candle[config.fastframe].ema < candle[config.mediumframe].ema &&
-      candle[config.mediumframe].ema < candle[config.slowframe].ema
+      candle[config.fastframe].emaSlope <
+      -config.slopeThreshold[config.fastframe]
     ) {
       return { direction: "long" };
     }
