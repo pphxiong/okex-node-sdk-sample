@@ -188,8 +188,6 @@ class DataHandler {
       stds[col] = tf.moments(values).variance.sqrt().dataSync()[0];
     });
 
-    console.log(12, stds);
-
     // 标准化处理
     return data.map((d) =>
       Object.assign(d, {
@@ -286,7 +284,7 @@ async function main() {
 
   const stateSize = 5; // close, rsi, macd, bbUpper, volume
   const actionSize = 3; // 0: hold, 1: long, 2: short
-
+  console.log(23, sequences);
   const agent = new DQNAgent(stateSize, actionSize);
   const backtester = new Backtester(normalizedData);
 
