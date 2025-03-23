@@ -343,7 +343,7 @@ class Backtester {
 
     const data15m = getNearestData("15m");
     const data1h = getNearestData("1h");
-    console.log(11, data15m, data1h);
+
     if (!data15m || !data1h) return null;
 
     // 多周期EMA共振条件
@@ -365,8 +365,7 @@ class Backtester {
       data15m.rsi < config.rsiThresholds.long[0] &&
       data1h.rsi < config.rsiThresholds.long[1];
 
-    const longCondition =
-      emaCondition && macdCondition && bollCondition && rsiCondition;
+    const longCondition = emaCondition && macdCondition && bollCondition;
 
     // 多周期EMA共振条件
     const emaConditionShort =
@@ -388,10 +387,7 @@ class Backtester {
       data1h.rsi > config.rsiThresholds.long[1];
 
     const shortCondition =
-      emaConditionShort &&
-      macdConditionShort &&
-      bollConditionShort &&
-      rsiConditionShort;
+      emaConditionShort && macdConditionShort && bollConditionShort;
 
     // 多头信号
     if (longCondition) {
