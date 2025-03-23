@@ -55,7 +55,6 @@ class DQNAgent {
   }
 
   async buildModel() {
-    console.log(123, tf.getBackend());
     const model = tf.sequential({
       layers: [
         tf.layers.lstm({
@@ -67,7 +66,7 @@ class DQNAgent {
         tf.layers.dense({ units: this.actionSize, activation: "linear" }),
       ],
     });
-
+    console.log(123, tf.getBackend());
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: "meanSquaredError",
