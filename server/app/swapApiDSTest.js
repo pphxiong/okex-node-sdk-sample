@@ -430,7 +430,7 @@ class Backtester {
       candle[config.fastframe].ema > candle[config.mediumframe].ema &&
       candle[config.mediumframe].ema > candle[config.slowframe].ema
     ) {
-      return { direction: "long" };
+      return { direction: "short" };
     }
 
     // 空头信号
@@ -438,7 +438,7 @@ class Backtester {
       candle[config.fastframe].ema < candle[config.mediumframe].ema &&
       candle[config.mediumframe].ema < candle[config.slowframe].ema
     ) {
-      return { direction: "short" };
+      return { direction: "long" };
     }
 
     return null;
