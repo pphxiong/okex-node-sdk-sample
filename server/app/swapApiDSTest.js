@@ -454,7 +454,7 @@ class Backtester {
       candle[config.fastframe].emaSlope >
       config.slopeThreshold[config.fastframe]
     ) {
-      return { direction: "short" };
+      return { direction: "long" };
     }
 
     // 空头信号
@@ -462,7 +462,7 @@ class Backtester {
       candle[config.fastframe].emaSlope <
       -config.slopeThreshold[config.fastframe]
     ) {
-      return { direction: "long" };
+      return { direction: "short" };
     }
 
     return null;
