@@ -343,12 +343,12 @@ class Backtester {
         // 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
         // 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-        const isReverse =
-          signal && position.direction === "long"
-            ? signal.direction === "short"
-            : signal.direction === "long";
+        // const isReverse =
+        //   signal && position.direction === "long"
+        //     ? signal.direction === "short"
+        //     : signal.direction === "long";
 
-        // const isReverse = isProfitTarget || isStopLoss;
+        const isReverse = isProfitTarget || isStopLoss;
 
         // const isReverse =
         //   position &&
@@ -545,7 +545,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2024-03-20";
+  const start = "2025-03-20";
   const end = "2025-03-23";
   const interval = 1;
   let profitTotal = 0;
