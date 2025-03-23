@@ -303,8 +303,8 @@ async function main() {
       await agent.remember(state, action, reward, nextState, done);
       await agent.replay();
 
-      state.dispose();
-      nextState.dispose();
+      // state.dispose();
+      // nextState.dispose();
       if (done) break;
     }
 
