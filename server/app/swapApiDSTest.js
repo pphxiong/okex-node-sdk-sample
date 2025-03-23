@@ -239,7 +239,7 @@ class Backtester {
           index * 4,
           (index + 1) * 4
         );
-        console.log(11, macd[0].slice(-2));
+        console.log(11, macd[0].length, this.data[tf].length);
         // 计算EMA斜率
         const emaSlopes = [];
         for (
