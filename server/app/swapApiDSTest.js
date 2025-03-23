@@ -278,7 +278,7 @@ class Backtester {
       // }
 
       // 生成信号
-      const signal = this.generateSignal();
+      const signal = this.generateSignal(d.timestamp);
 
       // 处理平仓
       if (position) {
@@ -337,12 +337,13 @@ class Backtester {
     });
   }
 
-  generateSignal() {
+  generateSignal(timestamp) {
     const getNearestData = (tf) =>
       _.findLast(this.data[tf], (d) => d.timestamp <= timestamp);
 
     const data15m = getNearestData("15m");
     const data1h = getNearestData("1h");
+    console.log(11, data15m, data1h);
     if (!data15m || !data1h) return null;
 
     // 多周期EMA共振条件
@@ -364,7 +365,8 @@ class Backtester {
       data15m.rsi < config.rsiThresholds.long[0] &&
       data1h.rsi < config.rsiThresholds.long[1];
 
-    const longCondition = emaCondition && macdCondition && bollCondition;
+    const longCondition =
+      emaCondition && macdCondition && bollCondition && rsiCondition;
 
     // 多周期EMA共振条件
     const emaConditionShort =
@@ -386,7 +388,10 @@ class Backtester {
       data1h.rsi > config.rsiThresholds.long[1];
 
     const shortCondition =
-      emaConditionShort && macdConditionShort && bollConditionShort;
+      emaConditionShort &&
+      macdConditionShort &&
+      bollConditionShort &&
+      rsiConditionShort;
 
     // 多头信号
     if (longCondition) {
