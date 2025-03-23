@@ -305,14 +305,13 @@ async function main() {
 
       state.dispose();
       nextState.dispose();
-      console.log(67, tf.getBackend());
       if (done) break;
     }
 
-    agent.updateTargetModel();
-    console.log(
-      `Episode ${episode + 1} | Balance: ${backtester.balance.toFixed(2)}`
-    );
+    // agent.updateTargetModel();
+    // console.log(
+    //   `Episode ${episode + 1} | Balance: ${backtester.balance.toFixed(2)}`
+    // );
   }
 
   // 保存模型
