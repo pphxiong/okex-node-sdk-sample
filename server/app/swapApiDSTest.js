@@ -35,13 +35,14 @@ const config = {
   emaSettings: {
     "1h": { period: 50, slopeWindow: 5 },
     "15m": { period: 20, slopeWindow: 5 },
-    "5m": { period: 10, slopeWindow: 3 },
+    "5m": { period: 5, slopeWindow: 5 },
   },
   slopeThreshold: {
     "1h": 0,
     "15m": 0.003 * 0.01,
     "5m": 0.005 * 0.01,
   }, // 斜率阈值
+  macdParams: { "1h": [12, 26, 9], "15m": [12, 26, 9], "5m": [12, 26, 9] },
   slowframe: "1h",
   mediumframe: "15m",
   fastframe: "5m",
@@ -224,13 +225,20 @@ class Backtester {
             [config.atrParam.atrPeriod]
           )
         );
+
+        indicatorPromises.push(
+          tulind.indicators.macd.indicator([closes], config.macdParams[tf])
+        );
       });
 
       const result = await Promise.all(indicatorPromises);
 
       // 合并指标到数据
       config.timeframes.forEach((tf, index) => {
-        const [ema, bollinger, atr] = result.slice(index * 3, index * 3 + 3);
+        const [ema, bollinger, atr, macd] = result.slice(
+          index * 4,
+          (index + 1) * 4
+        );
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -265,6 +273,7 @@ class Backtester {
           }
           d.atr = atr[0][i];
           d.ema = ema[0][i];
+          d.macd = macd ? macd[0][i] : 0;
         });
       });
     } catch (e) {
@@ -316,11 +325,7 @@ class Backtester {
         [config.fastframe]: lastKline5M,
       };
 
-      if (
-        !candle[config.fastframe].emaSlope ||
-        !candle[config.mediumframe].emaSlope ||
-        !candle[config.slowframe].emaSlope
-      )
+      if (!candle[config.fastframe].macd || !candle[config.mediumframe].ema)
         return;
 
       // 生成信号
@@ -343,20 +348,19 @@ class Backtester {
         // 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
         // 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-        const isReverse =
-          signal && position.direction === "long"
-            ? signal.direction === "short"
-            : signal.direction === "long";
+        // const isReverse =
+        //   signal && position.direction === "long"
+        //     ? signal.direction === "short"
+        //     : signal.direction === "long";
 
         // const isReverse = isProfitTarget || isStopLoss;
 
-        // const isReverse =
-        //   position &&
-        //   (position.direction === "long"
-        //     ? candle[config.mediumframe].emaSlope <
-        //       -config.slopeThreshold[config.mediumframe]
-        //     : candle[config.mediumframe].emaSlope >
-        //       config.slopeThreshold[config.mediumframe]);
+        const isReverse =
+          position &&
+          (position.direction === "long"
+            ? candle[config.mediumframe].close < candle[config.mediumframe].ema
+            : candle[config.mediumframe].close >
+              candle[config.mediumframe].ema);
 
         if (isReverse) {
           // console.log(
@@ -451,20 +455,16 @@ class Backtester {
 
     // 多头信号
     if (
-      candle[config.fastframe].emaSlope >
-        config.slopeThreshold[config.fastframe] &&
-      candle[config.mediumframe].emaSlope >
-        config.slopeThreshold[config.mediumframe]
+      candle.close > candle[config.mediumframe].ema &&
+      candle[config.fastframe].macd > 0
     ) {
       return { direction: "long" };
     }
 
     // 空头信号
     if (
-      candle[config.fastframe].emaSlope <
-        -config.slopeThreshold[config.fastframe] &&
-      candle[config.mediumframe].emaSlope <
-        -config.slopeThreshold[config.mediumframe]
+      candle.close < candle[config.mediumframe].ema &&
+      candle[config.fastframe].macd < 0
     ) {
       return { direction: "short" };
     }
