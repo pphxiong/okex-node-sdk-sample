@@ -286,8 +286,8 @@ class Backtester {
 
       // 处理平仓
       if (position) {
-        const data15m = getNearestData("15m", d.timestamp);
-        const data1h = getNearestData("1h", d.timestamp);
+        const data15m = this.getNearestData("15m", d.timestamp);
+        const data1h = this.getNearestData("1h", d.timestamp);
 
         if (!data15m || !data1h) return null;
 
@@ -347,11 +347,8 @@ class Backtester {
   }
 
   generateSignal(timestamp) {
-    const getNearestData = (tf) =>
-      _.findLast(this.data[tf], (d) => d.timestamp <= timestamp);
-
-    const data15m = getNearestData("15m");
-    const data1h = getNearestData("1h");
+    const data15m = this.getNearestData("15m", timestamp);
+    const data1h = this.getNearestData("1h", timestamp);
 
     if (!data15m || !data1h) return null;
 
