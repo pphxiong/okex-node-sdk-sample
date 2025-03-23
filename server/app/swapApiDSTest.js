@@ -37,7 +37,7 @@ const config = {
   macdParams: { "15m": [12, 26, 9], "1h": [12, 26, 9] },
   bollParams: { "15m": [20, 2], "1h": [20, 2] },
   rsiPeriod: 14, // RSI统一周期
-  rsiThresholds: { long: [45, 50], short: [55, 50] }, // [15m阈值, 1h阈值]
+  rsiThresholds: { long: [35, 40], short: [65, 60] }, // [15m阈值, 1h阈值]
   slowframe: "1h",
   fastframe: "15m",
   // 布林线参数
