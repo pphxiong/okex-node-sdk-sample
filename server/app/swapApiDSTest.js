@@ -71,6 +71,7 @@ class DQNAgent {
       optimizer: tf.train.adam(0.001),
       loss: "meanSquaredError",
     });
+    console.lof(11, model);
     return model;
   }
 
@@ -284,7 +285,7 @@ async function main() {
 
   const stateSize = 5; // close, rsi, macd, bbUpper, volume
   const actionSize = 3; // 0: hold, 1: long, 2: short
-  console.log(23, sequences);
+
   const agent = new DQNAgent(stateSize, actionSize);
   const backtester = new Backtester(normalizedData);
 
