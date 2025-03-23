@@ -368,8 +368,6 @@ class Backtester {
     // RSI超卖过滤
     const rsiCondition = data15m.rsi < config.rsiThresholds.long[0];
 
-    const longCondition = macdCondition && rsiCondition;
-
     // 多周期EMA共振条件
     const emaConditionShort =
       data15m.emaShort < data15m.emaLong && data1h.emaShort < data1h.emaLong;
@@ -386,16 +384,17 @@ class Backtester {
     // RSI超卖过滤
     const rsiConditionShort = data15m.rsi > config.rsiThresholds.short[0];
 
+    const longCondition = macdCondition && rsiCondition;
     const shortCondition = macdConditionShort && rsiConditionShort;
 
     // 多头信号
     if (longCondition) {
-      return { direction: "long" };
+      return { direction: "short" };
     }
 
     // 空头信号
     if (shortCondition) {
-      return { direction: "short" };
+      return { direction: "long" };
     }
 
     return null;
