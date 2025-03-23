@@ -66,11 +66,12 @@ class DQNAgent {
         tf.layers.dense({ units: this.actionSize, activation: "linear" }),
       ],
     });
-    console.log(123, tf.getBackend());
+
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: "meanSquaredError",
     });
+    console.log(123, tf.getBackend());
     return model;
   }
 
