@@ -24,7 +24,6 @@ const cAuthClientBN = new customAuthClientBN(
   configBN.urlHost
 );
 
-const _ = require("lodash");
 const ccxt = require("ccxt");
 const tulind = require("tulind");
 
@@ -35,13 +34,13 @@ const config = {
   timeframes: ["1h", "15m", "5m" /* '1m'*/], // 多周期参数
   emaSettings: {
     "1h": { period: 50, slopeWindow: 5 },
-    "15m": { period: 20, slopeWindow: 3 },
-    "5m": { period: 5, slopeWindow: 2 },
+    "15m": { period: 20, slopeWindow: 5 },
+    "5m": { period: 20, slopeWindow: 5 },
   },
   slopeThreshold: {
     "1h": 0,
-    "15m": 0,
-    "5m": 0,
+    "15m": 0.05 * 0.01,
+    "5m": 0.05 * 0.01,
   }, // 斜率阈值
   slowframe: "1h",
   mediumframe: "15m",
@@ -62,11 +61,6 @@ const config = {
     atrPeriod: 14,
     stopLoss: 1.2,
     takeProfit: 1.8,
-  },
-  macdParam: {
-    "1h": [12, 26, 9],
-    "15m": [12, 26, 9],
-    "5m": [12, 26, 9],
   },
 
   // 风险参数
@@ -230,20 +224,13 @@ class Backtester {
             [config.atrParam.atrPeriod]
           )
         );
-
-        indicatorPromises.push(
-          tulind.indicators.macd.indicator([closes], config.macdParam[tf])
-        );
       });
 
       const result = await Promise.all(indicatorPromises);
 
       // 合并指标到数据
       config.timeframes.forEach((tf, index) => {
-        const [ema, bollinger, atr, macd] = result.slice(
-          index * 4,
-          (index + 1) * 4
-        );
+        const [ema, bollinger, atr] = result.slice(index * 3, index * 3 + 3);
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -278,10 +265,7 @@ class Backtester {
           }
           d.atr = atr[0][i];
           d.ema = ema[0][i];
-          d.macd = macd ? macd[0][i] : null;
-          d.macdHistogram = macd ? macd[0][i] - macd[1][i] : null;
         });
-        console.log(11, macd);
       });
     } catch (e) {
       console.error("指标计算错误:", e);
@@ -359,12 +343,12 @@ class Backtester {
         // 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
         // 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-        // const isReverse =
-        // 	signal && position.direction === 'long'
-        // 		? signal.direction === 'short'
-        // 		: signal.direction === 'long';
+        const isReverse =
+          signal && position.direction === "long"
+            ? signal.direction === "short"
+            : signal.direction === "long";
 
-        const isReverse = isProfitTarget || isStopLoss;
+        // const isReverse = isProfitTarget || isStopLoss;
 
         // const isReverse =
         //   position &&
@@ -375,30 +359,30 @@ class Backtester {
         //       config.slopeThreshold[config.mediumframe]);
 
         if (isReverse) {
-          console.log(
-            config.fastframe,
-            Object.assign(candle[config.fastframe], {
-              timestamp: moment(candle[config.fastframe].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
-          console.log(
-            config.mediumframe,
-            Object.assign(candle[config.mediumframe], {
-              timestamp: moment(candle[config.mediumframe].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
-          console.log(
-            config.slowframe,
-            Object.assign(candle[config.slowframe], {
-              timestamp: moment(candle[config.slowframe].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
+          // console.log(
+          //   config.fastframe,
+          //   Object.assign(candle[config.fastframe], {
+          //     timestamp: moment(candle[config.fastframe].timestamp).format(
+          //       "YYYY-MM-DD HH:mm:ss"
+          //     ),
+          //   })
+          // );
+          // console.log(
+          //   config.mediumframe,
+          //   Object.assign(candle[config.mediumframe], {
+          //     timestamp: moment(candle[config.mediumframe].timestamp).format(
+          //       "YYYY-MM-DD HH:mm:ss"
+          //     ),
+          //   })
+          // );
+          // console.log(
+          //   config.slowframe,
+          //   Object.assign(candle[config.slowframe], {
+          //     timestamp: moment(candle[config.slowframe].timestamp).format(
+          //       "YYYY-MM-DD HH:mm:ss"
+          //     ),
+          //   })
+          // );
 
           this.closePosition(position, d);
           position = null;
@@ -538,7 +522,7 @@ class Backtester {
 (async () => {
   const backtester = new Backtester();
   const start = "2025-03-10";
-  const end = "2025-03-23";
+  const end = "2025-03-21";
   const interval = 5;
   let profitTotal = 0;
 
