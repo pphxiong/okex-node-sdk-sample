@@ -282,6 +282,14 @@ class Backtester {
 
       // 处理平仓
       if (position) {
+        const getNearestData = (tf) =>
+          _.findLast(this.data[tf], (d) => d.timestamp <= timestamp);
+
+        const data15m = getNearestData("15m");
+        const data1h = getNearestData("1h");
+
+        if (!data15m || !data1h) return null;
+
         const isProfitTarget =
           position.direction === "long"
             ? d.close >= position.entryPrice + position.takeProfit
@@ -365,7 +373,7 @@ class Backtester {
       data15m.rsi < config.rsiThresholds.long[0] &&
       data1h.rsi < config.rsiThresholds.long[1];
 
-    const longCondition = emaCondition && macdCondition && bollCondition;
+    const longCondition = emaCondition;
 
     // 多周期EMA共振条件
     const emaConditionShort =
@@ -386,8 +394,7 @@ class Backtester {
       data15m.rsi > config.rsiThresholds.long[0] &&
       data1h.rsi > config.rsiThresholds.long[1];
 
-    const shortCondition =
-      emaConditionShort && macdConditionShort && bollConditionShort;
+    const shortCondition = emaConditionShort;
 
     // 多头信号
     if (longCondition) {
