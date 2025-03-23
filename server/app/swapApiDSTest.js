@@ -188,6 +188,8 @@ class DataHandler {
       stds[col] = tf.moments(values).variance.sqrt().dataSync()[0];
     });
 
+    console.log(12, stds);
+
     // 标准化处理
     return data.map((d) =>
       Object.assign(d, {
