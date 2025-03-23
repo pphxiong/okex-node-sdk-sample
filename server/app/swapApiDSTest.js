@@ -32,14 +32,20 @@ const tulind = require("tulind");
 const config = {
   symbol: "DOGE/USDT",
   timeframe: "15m",
-  timeframes: ["15m", "1h"], // 多周期参数
-  emaPeriods: { "15m": [7, 30], "1h": [7, 30] }, // 各周期EMA参数
-  macdParams: { "15m": [12, 26, 9], "1h": [12, 26, 9] },
-  bollParams: { "15m": [20, 2], "1h": [20, 2] },
-  rsiPeriod: 14, // RSI统一周期
-  rsiThresholds: { long: [35, 40], short: [65, 60] }, // [15m阈值, 1h阈值]
+  timeframes: ["1h", "15m", "5m" /* '1m'*/], // 多周期参数
+  emaSettings: {
+    "1h": { period: 50, slopeWindow: 5 },
+    "15m": { period: 20, slopeWindow: 3 },
+    "5m": { period: 5, slopeWindow: 2 },
+  },
+  slopeThreshold: {
+    "1h": 0,
+    "15m": 0,
+    "5m": 0,
+  }, // 斜率阈值
   slowframe: "1h",
-  fastframe: "15m",
+  mediumframe: "15m",
+  fastframe: "5m",
   // 布林线参数
   bollinger: {
     period: 20,
@@ -57,6 +63,12 @@ const config = {
     stopLoss: 1.2,
     takeProfit: 1.8,
   },
+  macdParam: {
+    "1h": [12, 26, 9],
+    "15m": [12, 26, 9],
+    "5m": [12, 26, 9],
+  },
+
   // 风险参数
   riskPerTrade: 0.02, // 每笔交易风险2%
   feeRate: 0.0004, // 交易手续费0.04%
@@ -79,7 +91,9 @@ class Backtester {
     });
     this.data = {
       [config.slowframe]: [],
+      [config.mediumframe]: [],
       [config.fastframe]: [],
+      merged: [],
     };
     this.trades = [];
     this.balance = config.initialBalance;
@@ -188,62 +202,86 @@ class Backtester {
 
   async calculateIndicators() {
     try {
-      for (const tf of config.timeframes) {
+      const indicatorPromises = [];
+
+      config.timeframes.forEach(async (tf) => {
+        // 计算布林带
         const closes = this.data[tf].map((d) => d.close);
         const highs = this.data[tf].map((d) => d.high);
         const lows = this.data[tf].map((d) => d.low);
 
-        // 计算EMA
-        const emaShort = await tulind.indicators.ema.indicator(
-          [closes],
-          [config.emaPeriods[tf][0]]
+        indicatorPromises.push(
+          tulind.indicators.ema.indicator(
+            [closes],
+            [config.emaSettings[tf].period]
+          )
         );
-        const emaLong = await tulind.indicators.ema.indicator(
-          [closes],
-          [config.emaPeriods[tf][1]]
-        );
-        this.data[tf].forEach((d, i) => {
-          d.emaShort = emaShort[0][i] || null;
-          d.emaLong = emaLong[0][i] || null;
-        });
 
-        // 计算MACD
-        const macd = await tulind.indicators.macd.indicator(
-          [closes],
-          config.macdParams[tf]
+        indicatorPromises.push(
+          tulind.indicators.bbands.indicator(
+            [closes],
+            [config.bollinger.period, config.bollinger.stdDev]
+          )
         );
+
+        indicatorPromises.push(
+          tulind.indicators.atr.indicator(
+            [highs, lows, closes],
+            [config.atrParam.atrPeriod]
+          )
+        );
+
+        indicatorPromises.push(
+          tulind.indicators.macd.indicator([closes], config.macdParam[tf])
+        );
+      });
+
+      const result = await Promise.all(indicatorPromises);
+
+      // 合并指标到数据
+      config.timeframes.forEach((tf, index) => {
+        const [ema, bollinger, atr, macd] = result.slice(
+          index * 3,
+          index * 3 + 3
+        );
+        // 计算EMA斜率
+        const emaSlopes = [];
+        for (
+          let i = config.emaSettings[tf].slopeWindow;
+          i < ema[0].length;
+          i++
+        ) {
+          const slope =
+            (ema[0][i] - ema[0][i - config.emaSettings[tf].slopeWindow]) /
+            config.emaSettings[tf].slopeWindow;
+          emaSlopes.push(slope);
+        }
+
+        // 合并指标到数据
         this.data[tf].forEach((d, i) => {
+          if (i >= config.bollinger.period) {
+            const bbIndex = i - config.bollinger.period;
+            d.upper = bollinger[0][bbIndex];
+            d.middle = bollinger[1][bbIndex];
+            d.lower = bollinger[2][bbIndex];
+          }
+          if (
+            i >=
+            // config.emaSettings[tf].period +
+            config.emaSettings[tf].slopeWindow
+          ) {
+            const slopeIndex =
+              i -
+              // config.emaSettings[tf].period -
+              config.emaSettings[tf].slopeWindow;
+            d.emaSlope = emaSlopes[slopeIndex];
+          }
+          d.atr = atr[0][i];
+          d.ema = ema[0][i];
+          d.macd = macd[0][i];
           d.macdHistogram = macd[0][i] - macd[1][i] || null;
         });
-
-        // 计算BOLL
-        const boll = await tulind.indicators.bbands.indicator(
-          [closes],
-          config.bollParams[tf]
-        );
-        this.data[tf].forEach((d, i) => {
-          d.bollUpper = boll[0][i];
-          d.bollMiddle = boll[1][i];
-          d.bollLower = boll[2][i];
-        });
-
-        // 计算RSI
-        const rsi = await tulind.indicators.rsi.indicator(
-          [closes],
-          [config.rsiPeriod]
-        );
-        this.data[tf].forEach((d, i) => {
-          d.rsi = rsi[0][i] || null;
-        });
-
-        const atr = await tulind.indicators.atr.indicator(
-          [highs, lows, closes],
-          [config.atrParam.atrPeriod]
-        );
-        this.data[tf].forEach((d, i) => {
-          d.atr = atr[0][i] || null;
-        });
-      }
+      });
     } catch (e) {
       console.error("指标计算错误:", e);
     }
@@ -254,10 +292,6 @@ class Backtester {
     // return riskAmount / (atr * 2); // 2倍ATR止损
     // return 5000;
     return this.balance / 2;
-  }
-
-  getNearestData(tf, timestamp) {
-    return _.findLast(this.data[tf], (d) => d.timestamp <= timestamp);
   }
 
   runBacktest() {
@@ -281,16 +315,34 @@ class Backtester {
       // 	atr = d.atr;
       // }
 
+      const lastKline5M = JSON.parse(
+        JSON.stringify(this.data[config.fastframe][index])
+      );
+
+      const candle = {
+        [config.slowframe]: this.getTimeStampSlowBefore(
+          this.data[config.slowframe],
+          lastKline5M.timestamp
+        ),
+        [config.mediumframe]: this.getTimeStampBefore(
+          this.data[config.mediumframe],
+          lastKline5M.timestamp
+        ),
+        [config.fastframe]: lastKline5M,
+      };
+
+      if (
+        !candle[config.fastframe].emaSlope ||
+        !candle[config.mediumframe].emaSlope ||
+        !candle[config.slowframe].emaSlope
+      )
+        return;
+
       // 生成信号
-      const signal = this.generateSignal(d.timestamp);
+      const signal = this.generateSignal(candle);
 
       // 处理平仓
       if (position) {
-        const data15m = this.getNearestData("15m", d.timestamp);
-        const data1h = this.getNearestData("1h", d.timestamp);
-
-        if (!data15m || !data1h) return null;
-
         const isProfitTarget =
           position.direction === "long"
             ? d.close >= position.entryPrice + position.takeProfit
@@ -306,12 +358,12 @@ class Backtester {
         // 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
         // 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-        const isReverse =
-          signal && position.direction === "long"
-            ? signal.direction === "short"
-            : signal.direction === "long";
+        // const isReverse =
+        // 	signal && position.direction === 'long'
+        // 		? signal.direction === 'short'
+        // 		: signal.direction === 'long';
 
-        // const isReverse = isProfitTarget || isStopLoss;
+        const isReverse = isProfitTarget || isStopLoss;
 
         // const isReverse =
         //   position &&
@@ -322,6 +374,31 @@ class Backtester {
         //       config.slopeThreshold[config.mediumframe]);
 
         if (isReverse) {
+          console.log(
+            config.fastframe,
+            Object.assign(candle[config.fastframe], {
+              timestamp: moment(candle[config.fastframe].timestamp).format(
+                "YYYY-MM-DD HH:mm:ss"
+              ),
+            })
+          );
+          console.log(
+            config.mediumframe,
+            Object.assign(candle[config.mediumframe], {
+              timestamp: moment(candle[config.mediumframe].timestamp).format(
+                "YYYY-MM-DD HH:mm:ss"
+              ),
+            })
+          );
+          console.log(
+            config.slowframe,
+            Object.assign(candle[config.slowframe], {
+              timestamp: moment(candle[config.slowframe].timestamp).format(
+                "YYYY-MM-DD HH:mm:ss"
+              ),
+            })
+          );
+
           this.closePosition(position, d);
           position = null;
         }
@@ -346,55 +423,36 @@ class Backtester {
     });
   }
 
-  generateSignal(timestamp) {
-    const data15m = this.getNearestData("15m", timestamp);
-    const data1h = this.getNearestData("1h", timestamp);
+  generateSignal(candle) {
+    // // 多头信号
+    // if (
+    // 	candle.close <= candle.middle &&
+    // 	candle.emaSlope > config.emaSlope.emaSlopeThreshold
+    // ) {
+    // 	return { direction: 'long' };
+    // }
 
-    if (!data15m || !data1h) return null;
-
-    // 多周期EMA共振条件
-    const emaCondition =
-      data15m.emaShort > data15m.emaLong && data1h.emaShort > data1h.emaLong;
-
-    // MACD动量同步
-    const macdCondition =
-      data15m.macdHistogram >
-      _.get(_.last(this.data["15m"]), "macdHistogram", 0);
-
-    // BOLL突破
-    const bollCondition =
-      data15m.close > data15m.bollMiddle && data1h.close > data1h.bollMiddle;
-
-    // RSI超卖过滤
-    const rsiCondition = data15m.rsi < config.rsiThresholds.long[0];
-
-    // 多周期EMA共振条件
-    const emaConditionShort =
-      data15m.emaShort < data15m.emaLong && data1h.emaShort < data1h.emaLong;
-
-    // MACD动量同步
-    const macdConditionShort =
-      data15m.macdHistogram <
-      _.get(_.last(this.data["15m"]), "macdHistogram", 0);
-
-    // BOLL突破
-    const bollConditionShort =
-      data15m.close < data15m.bollMiddle && data1h.close < data1h.bollMiddle;
-
-    // RSI超卖过滤
-    const rsiConditionShort = data15m.rsi > config.rsiThresholds.short[0];
-
-    const longCondition = macdCondition && rsiCondition;
-    const shortCondition = macdConditionShort && rsiConditionShort;
+    // // 空头信号
+    // if (
+    // 	candle.close >= candle.middle &&
+    // 	candle.emaSlope < -config.emaSlope.emaSlopeThreshold
+    // ) {
+    // 	return { direction: 'short' };
+    // }
 
     // 多头信号
-    if (shortCondition) {
-      console.log(data15m);
+    if (
+      candle[config.fastframe].ema > candle[config.mediumframe].ema &&
+      candle[config.mediumframe].ema > candle[config.slowframe].ema
+    ) {
       return { direction: "long" };
     }
 
     // 空头信号
-    if (longCondition) {
+    if (
+      candle[config.fastframe].ema < candle[config.mediumframe].ema &&
+      candle[config.mediumframe].ema < candle[config.slowframe].ema
+    ) {
       return { direction: "short" };
     }
 
@@ -478,8 +536,8 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-03-01";
-  const end = "2025-03-23";
+  const start = "2024-03-10";
+  const end = "2025-03-21";
   const interval = 5;
   let profitTotal = 0;
 
