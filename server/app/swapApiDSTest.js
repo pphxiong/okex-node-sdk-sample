@@ -282,6 +282,7 @@ class Backtester {
           d.macdHistogram = macd ? macd[0][i] - macd[1][i] : null;
         });
       });
+      console.log(11, macd);
     } catch (e) {
       console.error("指标计算错误:", e);
     }
@@ -536,8 +537,8 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2024-03-10";
-  const end = "2025-03-21";
+  const start = "2025-03-10";
+  const end = "2025-03-23";
   const interval = 5;
   let profitTotal = 0;
 
