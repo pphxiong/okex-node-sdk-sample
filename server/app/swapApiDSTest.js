@@ -391,6 +391,30 @@ class Backtester {
 
       // 处理开仓
       if (!position && signal) {
+        console.log(
+          config.fastframe,
+          Object.assign(candle[config.fastframe], {
+            timestamp: moment(candle[config.fastframe].timestamp).format(
+              "YYYY-MM-DD HH:mm:ss"
+            ),
+          })
+        );
+        console.log(
+          config.mediumframe,
+          Object.assign(candle[config.mediumframe], {
+            timestamp: moment(candle[config.mediumframe].timestamp).format(
+              "YYYY-MM-DD HH:mm:ss"
+            ),
+          })
+        );
+        console.log(
+          config.slowframe,
+          Object.assign(candle[config.slowframe], {
+            timestamp: moment(candle[config.slowframe].timestamp).format(
+              "YYYY-MM-DD HH:mm:ss"
+            ),
+          })
+        );
         position = this.openPosition(d, d.atr, signal.direction);
       }
     });
@@ -438,30 +462,6 @@ class Backtester {
       candle[config.fastframe].ema < candle[config.mediumframe].ema &&
       candle[config.mediumframe].ema < candle[config.slowframe].ema
     ) {
-      console.log(
-        config.fastframe,
-        Object.assign(candle[config.fastframe], {
-          timestamp: moment(candle[config.fastframe].timestamp).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ),
-        })
-      );
-      console.log(
-        config.mediumframe,
-        Object.assign(candle[config.mediumframe], {
-          timestamp: moment(candle[config.mediumframe].timestamp).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ),
-        })
-      );
-      console.log(
-        config.slowframe,
-        Object.assign(candle[config.slowframe], {
-          timestamp: moment(candle[config.slowframe].timestamp).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ),
-        })
-      );
       return { direction: "long" };
     }
 
@@ -545,7 +545,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-03-10";
+  const start = "2025-03-20";
   const end = "2025-03-23";
   const interval = 1;
   let profitTotal = 0;
