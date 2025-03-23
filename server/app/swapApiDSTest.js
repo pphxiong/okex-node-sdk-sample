@@ -373,7 +373,7 @@ class Backtester {
       data15m.rsi < config.rsiThresholds.long[0] &&
       data1h.rsi < config.rsiThresholds.long[1];
 
-    const longCondition = emaCondition;
+    const longCondition = macdCondition && rsiCondition;
 
     // 多周期EMA共振条件
     const emaConditionShort =
@@ -394,7 +394,7 @@ class Backtester {
       data15m.rsi > config.rsiThresholds.long[0] &&
       data1h.rsi > config.rsiThresholds.long[1];
 
-    const shortCondition = emaConditionShort;
+    const shortCondition = macdConditionShort && rsiConditionShort;
 
     // 多头信号
     if (longCondition) {
