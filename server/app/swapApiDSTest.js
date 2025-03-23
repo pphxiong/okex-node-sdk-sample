@@ -39,7 +39,7 @@ const config = {
   },
   slopeThreshold: {
     "1h": 0,
-    "15m": 0.005 * 0.01,
+    "15m": 0.003 * 0.01,
     "5m": 0.005 * 0.01,
   }, // 斜率阈值
   slowframe: "1h",
@@ -452,7 +452,9 @@ class Backtester {
     // 多头信号
     if (
       candle[config.fastframe].emaSlope >
-      config.slopeThreshold[config.fastframe]
+        config.slopeThreshold[config.fastframe] &&
+      candle[config.mediumframe].emaSlope >
+        config.slopeThreshold[config.mediumframe]
     ) {
       return { direction: "long" };
     }
@@ -460,7 +462,9 @@ class Backtester {
     // 空头信号
     if (
       candle[config.fastframe].emaSlope <
-      -config.slopeThreshold[config.fastframe]
+        -config.slopeThreshold[config.fastframe] &&
+      candle[config.mediumframe].emaSlope <
+        -config.slopeThreshold[config.mediumframe]
     ) {
       return { direction: "short" };
     }
@@ -545,7 +549,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-01-01";
+  const start = "2025-02-01";
   const end = "2025-03-23";
   const interval = 5;
   let profitTotal = 0;
