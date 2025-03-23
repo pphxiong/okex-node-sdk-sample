@@ -241,8 +241,8 @@ class Backtester {
       // 合并指标到数据
       config.timeframes.forEach((tf, index) => {
         const [ema, bollinger, atr, macd] = result.slice(
-          index * 3,
-          index * 3 + 3
+          index * 4,
+          (index + 1) * 4
         );
         // 计算EMA斜率
         const emaSlopes = [];
