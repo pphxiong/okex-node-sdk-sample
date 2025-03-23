@@ -279,7 +279,7 @@ class Backtester {
           d.atr = atr[0][i];
           d.ema = ema[0][i];
           d.macd = macd ? macd[0][i] : null;
-          d.macdHistogram = macd[0][i] - macd[1][i] || null;
+          d.macdHistogram = macd ? macd[0][i] - macd[1][i] : null;
         });
       });
     } catch (e) {
