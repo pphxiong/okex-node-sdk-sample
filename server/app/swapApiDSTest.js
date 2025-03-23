@@ -281,8 +281,8 @@ class Backtester {
           d.macd = macd ? macd[0][i] : null;
           d.macdHistogram = macd ? macd[0][i] - macd[1][i] : null;
         });
+        console.log(11, macd);
       });
-      console.log(11, macd);
     } catch (e) {
       console.error("指标计算错误:", e);
     }
