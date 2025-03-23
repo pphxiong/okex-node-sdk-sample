@@ -454,7 +454,7 @@ class Backtester {
       candle[config.fastframe].emaSlope >
       config.slopeThreshold[config.fastframe]
     ) {
-      return { direction: "long" };
+      return { direction: "short" };
     }
 
     // 空头信号
@@ -462,7 +462,7 @@ class Backtester {
       candle[config.fastframe].emaSlope <
       -config.slopeThreshold[config.fastframe]
     ) {
-      return { direction: "short" };
+      return { direction: "long" };
     }
 
     return null;
@@ -547,7 +547,7 @@ class Backtester {
   const backtester = new Backtester();
   const start = "2025-03-20";
   const end = "2025-03-23";
-  const interval = 1;
+  const interval = 2;
   let profitTotal = 0;
 
   let i = 0;
@@ -575,13 +575,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      // console.log(
-      //   data["5m"].slice(-3).map((candle) =>
-      //     Object.assign(candle, {
-      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      //     })
-      //   )
-      // );
+      console.log(
+        data["5m"].slice(-3).map((candle) =>
+          Object.assign(candle, {
+            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          })
+        )
+      );
 
       // 步骤3: 运行回测
       backtester.runBacktest();
