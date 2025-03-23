@@ -388,13 +388,14 @@ class Backtester {
     const shortCondition = macdConditionShort && rsiConditionShort;
 
     // 多头信号
-    if (longCondition) {
-      return { direction: "short" };
+    if (shortCondition) {
+      console.log(data15m);
+      return { direction: "long" };
     }
 
     // 空头信号
-    if (shortCondition) {
-      return { direction: "long" };
+    if (longCondition) {
+      return { direction: "short" };
     }
 
     return null;
