@@ -272,7 +272,9 @@ class Backtester {
             d.emaSlope = emaSlopes[slopeIndex];
           }
           if (i >= config.macdParams[tf][1]) {
-            d.macd = macd ? macd[0][i - config.macdParams[tf][1]] : null;
+            const macdIndex = i - config.macdParams[tf][1];
+            d.macd = macd ? macd[0][macdIndex] : null;
+            d.macdHistogram = macd[0][macdIndex] - macd[1][macdIndex] || null;
           }
           d.atr = atr[0][i];
           d.ema = ema[0][i];
@@ -458,7 +460,7 @@ class Backtester {
     // 多头信号
     if (
       candle.close > candle[config.mediumframe].ema &&
-      candle[config.fastframe].macd > 0
+      candle[config.fastframe].macdHistogram > 0
     ) {
       return { direction: "long" };
     }
@@ -466,7 +468,7 @@ class Backtester {
     // 空头信号
     if (
       candle.close < candle[config.mediumframe].ema &&
-      candle[config.fastframe].macd < 0
+      candle[config.fastframe].macdHistogram < 0
     ) {
       return { direction: "short" };
     }
