@@ -320,7 +320,7 @@ class Backtester {
 		let position = null;
 		// let atr = 0;
 
-		this.data[config.fastframe].forEach(async (d, index) => {
+		this.data[config.mediumframe].forEach(async (d, index) => {
 			// 跳过前50根K线确保指标稳定
 			if (index < 50) return;
 			// // 计算ATR
@@ -354,7 +354,7 @@ class Backtester {
 			// };
 
 			const { longs, shorts } = this.getLongShort(
-				this.data[config.fastframe],
+				this.data[config.mediumframe],
 				index
 			);
 
@@ -484,8 +484,8 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 
-		const longCondition = longs.length < shorts.length;
-		const shortCondition = shorts.length < longs.length;
+		const longCondition = longs.length > shorts.length;
+		const shortCondition = shorts.length > longs.length;
 
 		// 多头信号
 		if (longCondition) {
