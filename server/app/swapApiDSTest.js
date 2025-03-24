@@ -484,8 +484,8 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 
-		const longCondition = longs.length > shorts.length;
-		const shortCondition = shorts.length > longs.length;
+		const longCondition = longs.length < shorts.length;
+		const shortCondition = shorts.length < longs.length;
 
 		// 多头信号
 		if (longCondition) {
