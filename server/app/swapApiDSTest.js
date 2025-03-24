@@ -368,19 +368,6 @@ class Backtester {
 			const { longs: mediumLongs, shorts: mediumShorts } =
 				this.getLongShort(this.data[config.mediumframe], mediumIndex);
 
-			console.log(
-				11,
-				moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'),
-				mediumIndex
-			);
-			console.log(
-				22,
-				moment(
-					this.data[config.mediumframe][mediumIndex].timestamp
-				).format('YYYY-MM-DD HH:mm:ss'),
-				mediumIndex
-			);
-
 			// 生成信号
 			const signal = this.generateSignal(
 				longs,
