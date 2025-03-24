@@ -69,7 +69,7 @@ const config = {
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 0.0002, // 交易手续费0.04%
-	slippage: 0.00001, // 滑点率
+	slippage: 0.000001, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
 
 	coldStartBars: 1000,
@@ -320,7 +320,7 @@ class Backtester {
 		let position = null;
 		// let atr = 0;
 
-		this.data[config.fastframe].forEach(async (d, index) => {
+		this.data[config.mediumframe].forEach(async (d, index) => {
 			// 跳过前50根K线确保指标稳定
 			if (index < 50) return;
 			// // 计算ATR
@@ -354,7 +354,7 @@ class Backtester {
 			// };
 
 			const { longs, shorts } = this.getLongShort(
-				this.data[config.fastframe],
+				this.data[config.mediumframe],
 				index
 			);
 
