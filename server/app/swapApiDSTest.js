@@ -523,10 +523,10 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length < shorts.length && mediumLongs > mediumShorts;
+			longs.length > shorts.length && mediumLongs < mediumShorts;
 
 		const shortCondition =
-			longs.length > shorts.length && mediumLongs < mediumShorts;
+			longs.length < shorts.length && mediumLongs > mediumShorts;
 
 		// 多头信号
 		if (longCondition) {
