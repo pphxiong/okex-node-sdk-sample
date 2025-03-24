@@ -521,10 +521,10 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length < shorts.length && mediumLongs > mediumShorts;
+			longs.length > shorts.length && mediumLongs < mediumShorts;
 
 		const shortCondition =
-			shorts.length < longs.length && mediumShorts > mediumLongs;
+			longs.length < shorts.length && mediumLongs > mediumShorts;
 
 		// 多头信号
 		if (longCondition) {
@@ -623,7 +623,7 @@ class Backtester {
 	const backtester = new Backtester();
 	const start = '2025-03-01';
 	const end = '2025-03-24';
-	const interval = 5;
+	const interval = 4;
 	let profitTotal = 0;
 
 	let i = 0;
