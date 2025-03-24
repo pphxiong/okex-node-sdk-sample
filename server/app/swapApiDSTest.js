@@ -68,7 +68,7 @@ const config = {
 
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
-	feeRate: 0.0002, // 交易手续费0.04%
+	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0.000001, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
 
