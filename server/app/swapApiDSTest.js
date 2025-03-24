@@ -409,19 +409,19 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				// const isReverse =
-				// 	signal &&
-				// 	((position.direction === 'long'
-				// 		? signal.direction === 'short'
-				// 		: signal.direction === 'long') ||
-				// 		(isStopLoss && false));
-
 				const isReverse =
 					signal &&
 					((position.direction === 'long'
-						? mediumShorts.length > mediumLongs.length
-						: mediumLongs.length > mediumShorts.length) ||
-						isStopLoss);
+						? signal.direction === 'short'
+						: signal.direction === 'long') ||
+						(isStopLoss && false));
+
+				// const isReverse =
+				// 	signal &&
+				// 	((position.direction === 'long'
+				// 		? mediumShorts.length > mediumLongs.length
+				// 		: mediumLongs.length > mediumShorts.length) ||
+				// 		isStopLoss);
 
 				// const isReverse = isProfitTarget || isStopLoss;
 
@@ -525,10 +525,10 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length > shorts.length && mediumLongs < mediumShorts;
+			longs.length > shorts.length; /* && mediumLongs < mediumShorts */
 
 		const shortCondition =
-			longs.length < shorts.length && mediumLongs > mediumShorts;
+			longs.length < shorts.length; /* && mediumLongs > mediumShorts */
 
 		// 多头信号
 		if (longCondition) {
