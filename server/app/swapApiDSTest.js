@@ -410,9 +410,11 @@ class Backtester {
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
 				const isReverse =
-					signal && position.direction === 'long'
+					signal &&
+					((position.direction === 'long'
 						? signal.direction === 'short'
-						: signal.direction === 'long';
+						: signal.direction === 'long') ||
+						isStopLoss);
 
 				// const isReverse =
 				// 	signal && position.direction === 'long'
@@ -521,10 +523,10 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length > shorts.length && mediumLongs < mediumShorts;
+			longs.length < shorts.length && mediumLongs > mediumShorts;
 
 		const shortCondition =
-			longs.length < shorts.length && mediumLongs > mediumShorts;
+			longs.length > shorts.length && mediumLongs < mediumShorts;
 
 		// 多头信号
 		if (longCondition) {
