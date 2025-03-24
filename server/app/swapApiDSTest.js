@@ -333,21 +333,21 @@ class Backtester {
 			// 	atr = d.atr;
 			// }
 
-			const lastKline5M = JSON.parse(
-				JSON.stringify(this.data[config.fastframe][index])
-			);
+			// const lastKline5M = JSON.parse(
+			// 	JSON.stringify(this.data[config.fastframe][index])
+			// );
 
-			const candle = {
-				[config.slowframe]: this.getTimeStampSlowBefore(
-					this.data[config.slowframe],
-					lastKline5M.timestamp
-				),
-				[config.mediumframe]: this.getTimeStampBefore(
-					this.data[config.mediumframe],
-					lastKline5M.timestamp
-				),
-				[config.fastframe]: lastKline5M,
-			};
+			// const candle = {
+			// 	[config.slowframe]: this.getTimeStampSlowBefore(
+			// 		this.data[config.slowframe],
+			// 		lastKline5M.timestamp
+			// 	),
+			// 	[config.mediumframe]: this.getTimeStampBefore(
+			// 		this.data[config.mediumframe],
+			// 		lastKline5M.timestamp
+			// 	),
+			// 	[config.fastframe]: lastKline5M,
+			// };
 
 			const { longs, shorts } = this.getLongShort(
 				this.data[config.fastframe].slice(-config.kWindowTreshold)
@@ -358,15 +358,15 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				const isProfitTarget =
-					position.direction === 'long'
-						? d.close >= position.entryPrice + position.takeProfit
-						: d.close <= position.entryPrice - position.takeProfit;
+				// const isProfitTarget =
+				// 	position.direction === 'long'
+				// 		? d.close >= position.entryPrice + position.takeProfit
+				// 		: d.close <= position.entryPrice - position.takeProfit;
 
-				const isStopLoss =
-					position.direction === 'long'
-						? d.close <= position.entryPrice - position.stopLoss
-						: d.close >= position.entryPrice + position.stopLoss;
+				// const isStopLoss =
+				// 	position.direction === 'long'
+				// 		? d.close <= position.entryPrice - position.stopLoss
+				// 		: d.close >= position.entryPrice + position.stopLoss;
 
 				// const isReverse =
 				// 	position.direction === 'long'
@@ -606,15 +606,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			// await backtester.calculateIndicators();
 
-			console.log(
-				data['5m'].slice(-3).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data['5m'].slice(-3).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// 步骤3: 运行回测
 			backtester.runBacktest();
