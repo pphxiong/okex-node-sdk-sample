@@ -34,7 +34,7 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'1h': { period: 50, slopeWindow: 5 },
+		'1h': { period: 30, slopeWindow: 5 },
 		'15m': { period: 20, slopeWindow: 5 },
 		'5m': { period: 5, slopeWindow: 5 },
 	},
@@ -363,6 +363,19 @@ class Backtester {
 			);
 			const { longs: mediumLongs, shorts: mediumShorts } =
 				this.getLongShort(this.data[config.mediumframe], mediumIndex);
+
+			console.log(
+				11,
+				moment(d.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+				mediumIndex
+			);
+			console.log(
+				22,
+				moment(
+					this.data[config.mediumframe][mediumIndex].timestamp
+				).format('YYYY-MM-DD HH:mm:ss'),
+				mediumIndex
+			);
 
 			// 生成信号
 			const signal = this.generateSignal(
