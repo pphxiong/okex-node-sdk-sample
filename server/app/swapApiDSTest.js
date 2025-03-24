@@ -309,10 +309,10 @@ class Backtester {
 
 	getLongShort(dataList, index, WindowTreshold) {
 		const longs = dataList
-			.slice(index - WindowTreshold, index)
+			.slice(index - WindowTreshold + 1, index + 1)
 			.filter((item) => item.close > item.open);
 		const shorts = dataList
-			.slice(index - WindowTreshold, index)
+			.slice(index - WindowTreshold + 1, index + 1)
 			.filter((item) => item.close < item.open);
 		return { longs, shorts };
 	}
