@@ -379,7 +379,8 @@ class Backtester {
 				longs,
 				shorts,
 				mediumLongs,
-				mediumShorts
+				mediumShorts,
+				d
 			);
 
 			// 处理平仓
@@ -507,7 +508,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(longs, shorts, mediumLongs, mediumShorts) {
+	generateSignal(longs, shorts, mediumLongs, mediumShorts, d) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
@@ -525,10 +526,12 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length > shorts.length; /* && mediumLongs < mediumShorts */
+			longs.length > shorts.length &&
+			d.close > d.open; /* && mediumLongs < mediumShorts */
 
 		const shortCondition =
-			longs.length < shorts.length; /* && mediumLongs > mediumShorts */
+			longs.length < shorts.length &&
+			d.close < d.open; /* && mediumLongs > mediumShorts */
 
 		// 多头信号
 		if (longCondition) {
