@@ -415,7 +415,7 @@ class Backtester {
 					((position.direction === 'long'
 						? signal.direction === 'short'
 						: signal.direction === 'long') ||
-						(isStopLoss && false));
+						isStopLoss);
 
 				// const isReverse =
 				// 	signal &&
