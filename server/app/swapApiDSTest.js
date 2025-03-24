@@ -48,7 +48,7 @@ const config = {
 	mediumframe: '15m',
 	fastframe: '5m',
 	kWindowTresholdFast: 5,
-	kWindowTresholdMedium: 5,
+	kWindowTresholdMedium: 10,
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -615,7 +615,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-03-01';
+	const start = '2025-03-01';
 	const end = '2025-03-24';
 	const interval = 5;
 	let profitTotal = 0;
