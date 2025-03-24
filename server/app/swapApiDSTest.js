@@ -306,9 +306,13 @@ class Backtester {
 		return this.balance / 2;
 	}
 
-	getLongShort(dataList) {
-		const longs = dataList.filter((item) => item.close > item.open);
-		const shorts = dataList.filter((item) => item.close < item.open);
+	getLongShort(dataList, index) {
+		const longs = dataList
+			.slice(index - config.kWindowTreshold, index)
+			.filter((item) => item.close > item.open);
+		const shorts = dataList
+			.slice(index - config.kWindowTreshold, index)
+			.filter((item) => item.close < item.open);
 		return { longs, shorts };
 	}
 
@@ -350,7 +354,8 @@ class Backtester {
 			// };
 
 			const { longs, shorts } = this.getLongShort(
-				this.data[config.fastframe].slice(-config.kWindowTreshold)
+				this.data[config.fastframe],
+				index
 			);
 
 			// 生成信号
