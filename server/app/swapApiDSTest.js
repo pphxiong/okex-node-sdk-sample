@@ -68,7 +68,7 @@ const config = {
 
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
-	feeRate: 0.002 / 10000, // 交易手续费0.04%
+	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0.000001, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
 
@@ -363,27 +363,27 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				// const isProfitTarget =
-				// 	position.direction === 'long'
-				// 		? d.close >= position.entryPrice + position.takeProfit
-				// 		: d.close <= position.entryPrice - position.takeProfit;
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >= position.entryPrice * (1 + 0.005)
+						: d.close <= position.entryPrice * (1 - 0.005);
 
-				// const isStopLoss =
-				// 	position.direction === 'long'
-				// 		? d.close <= position.entryPrice - position.stopLoss
-				// 		: d.close >= position.entryPrice + position.stopLoss;
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice * (1 - 0.0025)
+						: d.close >= position.entryPrice * (1 + 0.0025);
 
 				// const isReverse =
 				// 	position.direction === 'long'
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				const isReverse =
-					signal && position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long';
+				// const isReverse =
+				// 	signal && position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long';
 
-				// const isReverse = isProfitTarget || isStopLoss;
+				const isReverse = isProfitTarget || isStopLoss;
 
 				// const isReverse =
 				// 	position &&
