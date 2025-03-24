@@ -48,7 +48,7 @@ const config = {
 	mediumframe: '15m',
 	fastframe: '5m',
 	kWindowTresholdFast: 5,
-	kWindowTresholdMedium: 5,
+	kWindowTresholdMedium: 10,
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -523,10 +523,10 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length < shorts.length && mediumLongs > mediumShorts;
+			longs.length > shorts.length && mediumLongs > mediumShorts;
 
 		const shortCondition =
-			longs.length > shorts.length && mediumLongs < mediumShorts;
+			longs.length < shorts.length && mediumLongs < mediumShorts;
 
 		// 多头信号
 		if (longCondition) {
