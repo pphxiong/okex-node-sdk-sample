@@ -358,8 +358,19 @@ class Backtester {
 				index
 			);
 
+			const mediumIndex = this.data[config.mediumframe].findIndex(
+				(item) => item.timestamp < d.timestamp
+			);
+			const { longs: mediumLongs, shorts: mediumShorts } =
+				this.getLongShort(this.data[config.mediumframe], mediumIndex);
+
 			// 生成信号
-			const signal = this.generateSignal(longs, shorts);
+			const signal = this.generateSignal(
+				longs,
+				shorts,
+				mediumLongs,
+				mediumShorts
+			);
 
 			// 处理平仓
 			if (position) {
@@ -477,7 +488,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(longs, shorts) {
+	generateSignal(longs, shorts, mediumLongs, mediumShorts) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
@@ -494,8 +505,10 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 
-		const longCondition = longs.length > shorts.length;
-		const shortCondition = shorts.length > longs.length;
+		const longCondition =
+			longs.length > shorts.length && mediumLongs > mediumShorts;
+		const shortCondition =
+			shorts.length > longs.length && mediumShorts > mediumLongs;
 
 		// 多头信号
 		if (longCondition) {
