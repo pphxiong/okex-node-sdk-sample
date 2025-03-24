@@ -418,8 +418,8 @@ class Backtester {
 
 				const isReverse =
 					signal && position.direction === 'long'
-						? longs.length < shorts.length
-						: longs.length > shorts.length;
+						? longs.length > shorts.length
+						: longs.length < shorts.length;
 
 				// const isReverse = isProfitTarget || isStopLoss;
 
@@ -523,10 +523,10 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length > shorts.length && mediumLongs < mediumShorts;
+			longs.length < shorts.length && mediumLongs > mediumShorts;
 
 		const shortCondition =
-			longs.length < shorts.length && mediumLongs > mediumShorts;
+			longs.length > shorts.length && mediumLongs < mediumShorts;
 
 		// 多头信号
 		if (longCondition) {
@@ -623,9 +623,9 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
+	const start = '2025-03-20';
 	const end = '2025-03-24';
-	const interval = 4;
+	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
