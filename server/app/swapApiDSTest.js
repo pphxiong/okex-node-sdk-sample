@@ -388,12 +388,12 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				// const isReverse =
-				// 	signal && position.direction === 'long'
-				// 		? signal.direction === 'short'
-				// 		: signal.direction === 'long';
+				const isReverse =
+					signal && position.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long';
 
-				const isReverse = isProfitTarget || isStopLoss;
+				// const isReverse = isProfitTarget || isStopLoss;
 
 				// const isReverse =
 				// 	position &&
