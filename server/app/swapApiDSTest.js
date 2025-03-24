@@ -385,25 +385,25 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				// const isProfitTarget =
-				// 	position.direction === 'long'
-				// 		? d.close >= position.entryPrice * (1 + 0.005)
-				// 		: d.close <= position.entryPrice * (1 - 0.005);
-
-				// const isStopLoss =
-				// 	position.direction === 'long'
-				// 		? d.close <= position.entryPrice * (1 - 0.0025)
-				// 		: d.close >= position.entryPrice * (1 + 0.0025);
-
 				const isProfitTarget =
 					position.direction === 'long'
-						? d.close >= position.entryPrice + position.takeProfit
-						: d.close <= position.entryPrice - position.takeProfit;
+						? d.close >= position.entryPrice * (1 + 0.005)
+						: d.close <= position.entryPrice * (1 - 0.005);
 
 				const isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice - position.stopLoss
-						: d.close >= position.entryPrice + position.stopLoss;
+						? d.close <= position.entryPrice * (1 - 0.0025)
+						: d.close >= position.entryPrice * (1 + 0.0025);
+
+				// const isProfitTarget =
+				// 	position.direction === 'long'
+				// 		? d.close >= position.entryPrice + position.takeProfit
+				// 		: d.close <= position.entryPrice - position.takeProfit;
+
+				// const isStopLoss =
+				// 	position.direction === 'long'
+				// 		? d.close <= position.entryPrice - position.stopLoss
+				// 		: d.close >= position.entryPrice + position.stopLoss;
 
 				// const isReverse =
 				// 	position.direction === 'long'
