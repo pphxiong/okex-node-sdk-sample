@@ -47,7 +47,8 @@ const config = {
 	slowframe: '1h',
 	mediumframe: '15m',
 	fastframe: '5m',
-	kWindowTreshold: 5,
+	kWindowTresholdFast: 5,
+	kWindowTresholdMedium: 5,
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -306,12 +307,12 @@ class Backtester {
 		return this.balance / 2;
 	}
 
-	getLongShort(dataList, index) {
+	getLongShort(dataList, index, WindowTreshold) {
 		const longs = dataList
-			.slice(index - config.kWindowTreshold, index)
+			.slice(index - WindowTreshold, index)
 			.filter((item) => item.close > item.open);
 		const shorts = dataList
-			.slice(index - config.kWindowTreshold, index)
+			.slice(index - WindowTreshold, index)
 			.filter((item) => item.close < item.open);
 		return { longs, shorts };
 	}
@@ -355,7 +356,8 @@ class Backtester {
 
 			const { longs, shorts } = this.getLongShort(
 				this.data[config.fastframe],
-				index
+				index,
+				config.kWindowTresholdFast
 			);
 
 			const mediumKline = this.getTimeStampBefore(
@@ -366,7 +368,11 @@ class Backtester {
 				(item) => item.timestamp === mediumKline.timestamp
 			);
 			const { longs: mediumLongs, shorts: mediumShorts } =
-				this.getLongShort(this.data[config.mediumframe], mediumIndex);
+				this.getLongShort(
+					this.data[config.mediumframe],
+					mediumIndex,
+					config.kWindowTresholdMedium
+				);
 
 			// 生成信号
 			const signal = this.generateSignal(
