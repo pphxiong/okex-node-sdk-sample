@@ -1,536 +1,562 @@
-import moment from "moment";
-import helper from "../utils/index";
-const customAuthClientBN = require("./customAuthClientBN");
+import moment from 'moment';
+import helper from '../utils/index';
+const customAuthClientBN = require('./customAuthClientBN');
 
-const express = require("express");
+const express = require('express');
 const app = express();
 
-app.all("*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "content-type");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By", " 3.2.1");
-  res.header("Content-Type", "application/json;charset=utf-8");
-  if (req.method.toLowerCase() == "options") res.send(200);
-  //让options尝试请求快速结束
-  else next();
+app.all('*', function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+	res.header('Access-Control-Allow-Headers', 'content-type');
+	res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+	res.header('X-Powered-By', ' 3.2.1');
+	res.header('Content-Type', 'application/json;charset=utf-8');
+	if (req.method.toLowerCase() == 'options') res.send(200);
+	//让options尝试请求快速结束
+	else next();
 });
 
-const configBN = require("./configBN2");
+const configBN = require('./configBN2');
 const cAuthClientBN = new customAuthClientBN(
-  configBN.httpkey,
-  configBN.httpsecret,
-  configBN.urlHost
+	configBN.httpkey,
+	configBN.httpsecret,
+	configBN.urlHost
 );
 
-const ccxt = require("ccxt");
-const tulind = require("tulind");
+const ccxt = require('ccxt');
+const tulind = require('tulind');
+// const _ = require('lodash');
 
 // 策略配置
 const config = {
-  symbol: "DOGE/USDT",
-  timeframe: "15m",
-  timeframes: ["1h", "15m", "5m" /* '1m'*/], // 多周期参数
-  emaSettings: {
-    "1h": { period: 50, slopeWindow: 5 },
-    "15m": { period: 20, slopeWindow: 5 },
-    "5m": { period: 5, slopeWindow: 5 },
-  },
-  slopeThreshold: {
-    "1h": 0,
-    "15m": 0.003 * 0.01,
-    "5m": 0.005 * 0.01,
-  }, // 斜率阈值
-  macdParams: { "1h": [12, 26, 9], "15m": [12, 26, 9], "5m": [12, 26, 9] },
-  slowframe: "1h",
-  mediumframe: "15m",
-  fastframe: "5m",
-  // 布林线参数
-  bollinger: {
-    period: 20,
-    stdDev: 1.8,
-  },
-  // EMA斜率参数
-  emaSlope: {
-    period: 10,
-    lookback: 5, // 计算5根K线斜率
-    emaSlopeThreshold: 0.05 * 0.01, // EMA斜率阈值
-  },
-  atrParam: {
-    // ATR参数
-    atrPeriod: 14,
-    stopLoss: 1.2,
-    takeProfit: 1.8,
-  },
+	symbol: 'DOGE/USDT',
+	timeframe: '15m',
+	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
+	emaSettings: {
+		'1h': { period: 50, slopeWindow: 5 },
+		'15m': { period: 20, slopeWindow: 5 },
+		'5m': { period: 5, slopeWindow: 5 },
+	},
+	slopeThreshold: {
+		'1h': 0,
+		'15m': 0.003 * 0.01,
+		'5m': 0.005 * 0.01,
+	}, // 斜率阈值
+	macdParams: { '1h': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
+	slowframe: '1h',
+	mediumframe: '15m',
+	fastframe: '5m',
+	kWindowTreshold: 5,
+	// 布林线参数
+	bollinger: {
+		period: 20,
+		stdDev: 1.8,
+	},
+	// EMA斜率参数
+	emaSlope: {
+		period: 10,
+		lookback: 5, // 计算5根K线斜率
+		emaSlopeThreshold: 0.05 * 0.01, // EMA斜率阈值
+	},
+	atrParam: {
+		// ATR参数
+		atrPeriod: 14,
+		stopLoss: 1.2,
+		takeProfit: 1.8,
+	},
 
-  // 风险参数
-  riskPerTrade: 0.02, // 每笔交易风险2%
-  feeRate: 0.0004, // 交易手续费0.04%
-  slippage: 0.00015, // 滑点率
-  initialBalance: 10000, // 初始本金10000 USDT
+	// 风险参数
+	riskPerTrade: 0.02, // 每笔交易风险2%
+	feeRate: 0.0004, // 交易手续费0.04%
+	slippage: 0.00015, // 滑点率
+	initialBalance: 10000, // 初始本金10000 USDT
 
-  coldStartBars: 1000,
+	coldStartBars: 1000,
 };
 
 class Backtester {
-  constructor() {
-    this.exchange = new ccxt.binance({
-      apiKey: configBN.httpkey,
-      secret: configBN.httpsecret,
-      options: {
-        adjustForTimeDifference: true,
-        defaultType: "future",
-        hedgeMode: true,
-      },
-    });
-    this.data = {
-      [config.slowframe]: [],
-      [config.mediumframe]: [],
-      [config.fastframe]: [],
-      merged: [],
-    };
-    this.trades = [];
-    this.balance = config.initialBalance;
-    this.totalFee = 0;
-  }
+	constructor() {
+		this.exchange = new ccxt.binance({
+			apiKey: configBN.httpkey,
+			secret: configBN.httpsecret,
+			options: {
+				adjustForTimeDifference: true,
+				defaultType: 'future',
+				hedgeMode: true,
+			},
+		});
+		this.data = {
+			[config.slowframe]: [],
+			[config.mediumframe]: [],
+			[config.fastframe]: [],
+			merged: [],
+		};
+		this.trades = [];
+		this.balance = config.initialBalance;
+		this.totalFee = 0;
+	}
 
-  async loadHistoricalData(start, end) {
-    try {
-      const since = moment(start).valueOf();
-      const until = moment(end).valueOf();
+	async loadHistoricalData(start, end) {
+		try {
+			const since = moment(start).valueOf();
+			const until = moment(end).valueOf();
 
-      // 多周期并行数据加载
-      await Promise.all(
-        config.timeframes.map(async (tf) => {
-          let allCandles = [];
-          let currentSince = since;
+			// 多周期并行数据加载
+			await Promise.all(
+				config.timeframes.map(async (tf) => {
+					let allCandles = [];
+					let currentSince = since;
 
-          while (currentSince < until) {
-            const candles = await this.exchange.fetchOHLCV(
-              config.symbol,
-              tf,
-              currentSince,
-              config.coldStartBars
-            );
+					while (currentSince < until) {
+						const candles = await this.exchange.fetchOHLCV(
+							config.symbol,
+							tf,
+							currentSince,
+							config.coldStartBars
+						);
 
-            if (candles.length === 0) break;
+						if (candles.length === 0) break;
 
-            allCandles = allCandles.concat(candles);
-            currentSince = candles[candles.length - 1][0] + 1;
+						allCandles = allCandles.concat(candles);
+						currentSince = candles[candles.length - 1][0] + 1;
 
-            // 限速处理
-            await new Promise((resolve) => setTimeout(resolve, 200));
-          }
+						// 限速处理
+						await new Promise((resolve) =>
+							setTimeout(resolve, 200)
+						);
+					}
 
-          this.data[tf] = allCandles.map((c) => this.parseCandle(c));
-          console.log(`Loaded ${this.data[tf].length} ${tf} candles`);
-        })
-      );
+					this.data[tf] = allCandles.map((c) => this.parseCandle(c));
+					console.log(`Loaded ${this.data[tf].length} ${tf} candles`);
+				})
+			);
 
-      this.mergeTimeframes();
-      return this.data;
-    } catch (e) {
-      console.error("Data loading failed:", e.message);
-      process.exit(1);
-    }
-  }
+			this.mergeTimeframes();
+			return this.data;
+		} catch (e) {
+			console.error('Data loading failed:', e.message);
+			process.exit(1);
+		}
+	}
 
-  // 多周期时间戳对齐
-  mergeTimeframes() {
-    const baseTimestamps = this.data[config.fastframe].map((c) => c.timestamp);
+	// 多周期时间戳对齐
+	mergeTimeframes() {
+		const baseTimestamps = this.data[config.fastframe].map(
+			(c) => c.timestamp
+		);
 
-    config.timeframes.forEach((tf) => {
-      if (tf === config.fastframe) return;
-      this.data[tf] = this.data[tf].filter((c) =>
-        baseTimestamps.includes(c.timestamp)
-      );
-    });
-  }
+		config.timeframes.forEach((tf) => {
+			if (tf === config.fastframe) return;
+			this.data[tf] = this.data[tf].filter((c) =>
+				baseTimestamps.includes(c.timestamp)
+			);
+		});
+	}
 
-  getTimeStampBefore(dataList, timestamp) {
-    dataList = JSON.parse(JSON.stringify(dataList));
-    let data;
-    let i = 1;
-    const period = config.fastframe.split("m")[0];
+	getTimeStampBefore(dataList, timestamp) {
+		dataList = JSON.parse(JSON.stringify(dataList));
+		let data;
+		let i = 1;
+		const period = config.fastframe.split('m')[0];
 
-    while (true) {
-      const time = moment(timestamp).subtract(Number(period) * i, "minutes");
-      const targetIndex = dataList.findIndex(
-        (c) => c.timestamp === time.valueOf()
-      );
-      if (targetIndex > 0) {
-        data = dataList[targetIndex - 1];
-        break;
-      }
-      i += 1;
-    }
-    return data;
-  }
+		while (true) {
+			const time = moment(timestamp).subtract(
+				Number(period) * i,
+				'minutes'
+			);
+			const targetIndex = dataList.findIndex(
+				(c) => c.timestamp === time.valueOf()
+			);
+			if (targetIndex > 0) {
+				data = dataList[targetIndex - 1];
+				break;
+			}
+			i += 1;
+		}
+		return data;
+	}
 
-  getTimeStampSlowBefore(dataList, timestamp) {
-    dataList = JSON.parse(JSON.stringify(dataList));
-    let data;
+	getTimeStampSlowBefore(dataList, timestamp) {
+		dataList = JSON.parse(JSON.stringify(dataList));
+		let data;
 
-    const hour = moment(timestamp).format("YYYY-MM-DD HH:00:00");
-    const lastHourTimestamp = moment(hour).subtract(1, "hours");
+		const hour = moment(timestamp).format('YYYY-MM-DD HH:00:00');
+		const lastHourTimestamp = moment(hour).subtract(1, 'hours');
 
-    const target = dataList.find(
-      (c) => c.timestamp === lastHourTimestamp.valueOf()
-    );
-    if (target) {
-      data = target;
-    }
-    return data;
-  }
+		const target = dataList.find(
+			(c) => c.timestamp === lastHourTimestamp.valueOf()
+		);
+		if (target) {
+			data = target;
+		}
+		return data;
+	}
 
-  parseCandle(c) {
-    return {
-      timestamp: c[0],
-      open: parseFloat(c[1]),
-      high: parseFloat(c[2]),
-      low: parseFloat(c[3]),
-      close: parseFloat(c[4]),
-      volume: parseFloat(c[5]),
-    };
-  }
+	parseCandle(c) {
+		return {
+			timestamp: c[0],
+			open: parseFloat(c[1]),
+			high: parseFloat(c[2]),
+			low: parseFloat(c[3]),
+			close: parseFloat(c[4]),
+			volume: parseFloat(c[5]),
+		};
+	}
 
-  async calculateIndicators() {
-    try {
-      const indicatorPromises = [];
+	async calculateIndicators() {
+		try {
+			const indicatorPromises = [];
 
-      config.timeframes.forEach(async (tf) => {
-        // 计算布林带
-        const closes = this.data[tf].map((d) => d.close);
-        const highs = this.data[tf].map((d) => d.high);
-        const lows = this.data[tf].map((d) => d.low);
+			config.timeframes.forEach(async (tf) => {
+				// 计算布林带
+				const closes = this.data[tf].map((d) => d.close);
+				const highs = this.data[tf].map((d) => d.high);
+				const lows = this.data[tf].map((d) => d.low);
 
-        indicatorPromises.push(
-          tulind.indicators.ema.indicator(
-            [closes],
-            [config.emaSettings[tf].period]
-          )
-        );
+				indicatorPromises.push(
+					tulind.indicators.ema.indicator(
+						[closes],
+						[config.emaSettings[tf].period]
+					)
+				);
 
-        indicatorPromises.push(
-          tulind.indicators.bbands.indicator(
-            [closes],
-            [config.bollinger.period, config.bollinger.stdDev]
-          )
-        );
+				indicatorPromises.push(
+					tulind.indicators.bbands.indicator(
+						[closes],
+						[config.bollinger.period, config.bollinger.stdDev]
+					)
+				);
 
-        indicatorPromises.push(
-          tulind.indicators.atr.indicator(
-            [highs, lows, closes],
-            [config.atrParam.atrPeriod]
-          )
-        );
+				indicatorPromises.push(
+					tulind.indicators.atr.indicator(
+						[highs, lows, closes],
+						[config.atrParam.atrPeriod]
+					)
+				);
 
-        indicatorPromises.push(
-          tulind.indicators.macd.indicator([closes], config.macdParams[tf])
-        );
-      });
+				indicatorPromises.push(
+					tulind.indicators.macd.indicator(
+						[closes],
+						config.macdParams[tf]
+					)
+				);
+			});
 
-      const result = await Promise.all(indicatorPromises);
+			const result = await Promise.all(indicatorPromises);
 
-      // 合并指标到数据
-      config.timeframes.forEach((tf, index) => {
-        const [ema, bollinger, atr, macd] = result.slice(
-          index * 4,
-          (index + 1) * 4
-        );
-        // 计算EMA斜率
-        const emaSlopes = [];
-        for (
-          let i = config.emaSettings[tf].slopeWindow;
-          i < ema[0].length;
-          i++
-        ) {
-          const slope =
-            (ema[0][i] - ema[0][i - config.emaSettings[tf].slopeWindow]) /
-            config.emaSettings[tf].slopeWindow;
-          emaSlopes.push(slope);
-        }
+			// 合并指标到数据
+			config.timeframes.forEach((tf, index) => {
+				const [ema, bollinger, atr, macd] = result.slice(
+					index * 4,
+					(index + 1) * 4
+				);
+				// 计算EMA斜率
+				const emaSlopes = [];
+				for (
+					let i = config.emaSettings[tf].slopeWindow;
+					i < ema[0].length;
+					i++
+				) {
+					const slope =
+						(ema[0][i] -
+							ema[0][i - config.emaSettings[tf].slopeWindow]) /
+						config.emaSettings[tf].slopeWindow;
+					emaSlopes.push(slope);
+				}
 
-        // 合并指标到数据
-        this.data[tf].forEach((d, i) => {
-          if (i >= config.bollinger.period) {
-            const bbIndex = i - config.bollinger.period;
-            d.lower = bollinger[0][bbIndex];
-            d.middle = bollinger[1][bbIndex];
-            d.upper = bollinger[2][bbIndex];
-          }
-          if (
-            i >=
-            // config.emaSettings[tf].period +
-            config.emaSettings[tf].slopeWindow
-          ) {
-            const slopeIndex =
-              i -
-              // config.emaSettings[tf].period -
-              config.emaSettings[tf].slopeWindow;
-            d.emaSlope = emaSlopes[slopeIndex];
-          }
-          if (i >= config.macdParams[tf][1]) {
-            const macdIndex = i - config.macdParams[tf][1];
-            d.macd = macd ? macd[0][macdIndex] : null;
-            d.macdHistogram = macd[0][macdIndex] - macd[1][macdIndex] || null;
-          }
-          d.atr = atr[0][i];
-          d.ema = ema[0][i];
-        });
-      });
-    } catch (e) {
-      console.error("指标计算错误:", e);
-    }
-  }
+				// 合并指标到数据
+				this.data[tf].forEach((d, i) => {
+					if (i >= config.bollinger.period) {
+						const bbIndex = i - config.bollinger.period;
+						d.lower = bollinger[0][bbIndex];
+						d.middle = bollinger[1][bbIndex];
+						d.upper = bollinger[2][bbIndex];
+					}
+					if (
+						i >=
+						// config.emaSettings[tf].period +
+						config.emaSettings[tf].slopeWindow
+					) {
+						const slopeIndex =
+							i -
+							// config.emaSettings[tf].period -
+							config.emaSettings[tf].slopeWindow;
+						d.emaSlope = emaSlopes[slopeIndex];
+					}
+					if (i >= config.macdParams[tf][1]) {
+						const macdIndex = i - config.macdParams[tf][1];
+						d.macd = macd ? macd[0][macdIndex] : null;
+						d.macdHistogram =
+							macd[0][macdIndex] - macd[1][macdIndex] || null;
+					}
+					d.atr = atr[0][i];
+					d.ema = ema[0][i];
+				});
+			});
+		} catch (e) {
+			console.error('指标计算错误:', e);
+		}
+	}
 
-  getPositionSize(price, atr) {
-    const riskAmount = this.balance * config.riskPerTrade;
-    // return riskAmount / (atr * 2); // 2倍ATR止损
-    // return 5000;
-    return this.balance / 2;
-  }
+	getPositionSize(price, atr) {
+		const riskAmount = this.balance * config.riskPerTrade;
+		// return riskAmount / (atr * 2); // 2倍ATR止损
+		// return 5000;
+		return this.balance / 2;
+	}
 
-  runBacktest() {
-    let position = null;
-    // let atr = 0;
+	getLongShort(dataList) {
+		const longs = dataList.filter((item) => item.close > item.open);
+		const shorts = dataList.filter((item) => item.close < item.open);
+		return { longs, shorts };
+	}
 
-    this.data[config.fastframe].forEach(async (d, index) => {
-      // 跳过前50根K线确保指标稳定
-      if (index < 50) return;
-      // // 计算ATR
-      // if (i >= config.atrParam.atrPeriod) {
-      // 	const high = this.data
-      // 		.slice(i - config.atrParam.atrPeriod, i)
-      // 		.map((x) => x.high);
-      // 	const low = this.data
-      // 		.slice(i - config.atrParam.atrPeriod, i)
-      // 		.map((x) => x.low);
-      // 	const closes = this.data
-      // 		.slice(i - config.atrParam.atrPeriod, i)
-      // 		.map((x) => x.close);
-      // 	atr = d.atr;
-      // }
+	runBacktest() {
+		let position = null;
+		// let atr = 0;
 
-      const lastKline5M = JSON.parse(
-        JSON.stringify(this.data[config.fastframe][index])
-      );
+		this.data[config.fastframe].forEach(async (d, index) => {
+			// 跳过前50根K线确保指标稳定
+			if (index < 50) return;
+			// // 计算ATR
+			// if (i >= config.atrParam.atrPeriod) {
+			// 	const high = this.data
+			// 		.slice(i - config.atrParam.atrPeriod, i)
+			// 		.map((x) => x.high);
+			// 	const low = this.data
+			// 		.slice(i - config.atrParam.atrPeriod, i)
+			// 		.map((x) => x.low);
+			// 	const closes = this.data
+			// 		.slice(i - config.atrParam.atrPeriod, i)
+			// 		.map((x) => x.close);
+			// 	atr = d.atr;
+			// }
 
-      const candle = {
-        [config.slowframe]: this.getTimeStampSlowBefore(
-          this.data[config.slowframe],
-          lastKline5M.timestamp
-        ),
-        [config.mediumframe]: this.getTimeStampBefore(
-          this.data[config.mediumframe],
-          lastKline5M.timestamp
-        ),
-        [config.fastframe]: lastKline5M,
-      };
+			const lastKline5M = JSON.parse(
+				JSON.stringify(this.data[config.fastframe][index])
+			);
 
-      // 生成信号
-      const signal = this.generateSignal(candle);
+			const candle = {
+				[config.slowframe]: this.getTimeStampSlowBefore(
+					this.data[config.slowframe],
+					lastKline5M.timestamp
+				),
+				[config.mediumframe]: this.getTimeStampBefore(
+					this.data[config.mediumframe],
+					lastKline5M.timestamp
+				),
+				[config.fastframe]: lastKline5M,
+			};
 
-      // 处理平仓
-      if (position) {
-        const isProfitTarget =
-          position.direction === "long"
-            ? d.close >= position.entryPrice + position.takeProfit
-            : d.close <= position.entryPrice - position.takeProfit;
+			const { longs, shorts } = this.getLongShort(
+				this.data[config.fastframe].slice(-config.kWindowTreshold)
+			);
 
-        const isStopLoss =
-          position.direction === "long"
-            ? d.close <= position.entryPrice - position.stopLoss
-            : d.close >= position.entryPrice + position.stopLoss;
+			// 生成信号
+			const signal = this.generateSignal(longs, shorts);
 
-        // const isReverse =
-        // 	position.direction === 'long'
-        // 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
-        // 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
+			// 处理平仓
+			if (position) {
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >= position.entryPrice + position.takeProfit
+						: d.close <= position.entryPrice - position.takeProfit;
 
-        // const isReverse =
-        //   signal && position.direction === "long"
-        //     ? signal.direction === "short"
-        //     : signal.direction === "long";
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice - position.stopLoss
+						: d.close >= position.entryPrice + position.stopLoss;
 
-        // const isReverse = isProfitTarget || isStopLoss;
+				// const isReverse =
+				// 	position.direction === 'long'
+				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
+				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-        const isReverse =
-          position &&
-          (position.direction === "long"
-            ? candle[config.mediumframe].close < candle[config.mediumframe].ema
-            : candle[config.mediumframe].close >
-              candle[config.mediumframe].ema);
+				const isReverse =
+					signal && position.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long';
 
-        if (isReverse) {
-          // console.log(
-          //   config.fastframe,
-          //   Object.assign(candle[config.fastframe], {
-          //     timestamp: moment(candle[config.fastframe].timestamp).format(
-          //       "YYYY-MM-DD HH:mm:ss"
-          //     ),
-          //   })
-          // );
-          // console.log(
-          //   config.mediumframe,
-          //   Object.assign(candle[config.mediumframe], {
-          //     timestamp: moment(candle[config.mediumframe].timestamp).format(
-          //       "YYYY-MM-DD HH:mm:ss"
-          //     ),
-          //   })
-          // );
-          // console.log(
-          //   config.slowframe,
-          //   Object.assign(candle[config.slowframe], {
-          //     timestamp: moment(candle[config.slowframe].timestamp).format(
-          //       "YYYY-MM-DD HH:mm:ss"
-          //     ),
-          //   })
-          // );
+				// const isReverse = isProfitTarget || isStopLoss;
 
-          this.closePosition(position, d);
-          position = null;
-        }
-      }
+				// const isReverse =
+				// 	position &&
+				// 	(position.direction === 'long'
+				// 		? candle[config.mediumframe].close <
+				// 		  candle[config.mediumframe].ema
+				// 		: candle[config.mediumframe].close >
+				// 		  candle[config.mediumframe].ema);
 
-      // 处理开仓
-      if (!position && signal) {
-        // console.log(
-        //   config.fastframe,
-        //   Object.assign(candle[config.fastframe], {
-        //     timestamp: moment(candle[config.fastframe].timestamp).format(
-        //       "YYYY-MM-DD HH:mm:ss"
-        //     ),
-        //   })
-        // );
-        // console.log(
-        //   config.mediumframe,
-        //   Object.assign(candle[config.mediumframe], {
-        //     timestamp: moment(candle[config.mediumframe].timestamp).format(
-        //       "YYYY-MM-DD HH:mm:ss"
-        //     ),
-        //   })
-        // );
-        // console.log(
-        //   config.slowframe,
-        //   Object.assign(candle[config.slowframe], {
-        //     timestamp: moment(candle[config.slowframe].timestamp).format(
-        //       "YYYY-MM-DD HH:mm:ss"
-        //     ),
-        //   })
-        // );
-        position = this.openPosition(d, d.atr, signal.direction);
-      }
-    });
-  }
+				if (isReverse) {
+					// console.log(
+					//   config.fastframe,
+					//   Object.assign(candle[config.fastframe], {
+					//     timestamp: moment(candle[config.fastframe].timestamp).format(
+					//       "YYYY-MM-DD HH:mm:ss"
+					//     ),
+					//   })
+					// );
+					// console.log(
+					//   config.mediumframe,
+					//   Object.assign(candle[config.mediumframe], {
+					//     timestamp: moment(candle[config.mediumframe].timestamp).format(
+					//       "YYYY-MM-DD HH:mm:ss"
+					//     ),
+					//   })
+					// );
+					// console.log(
+					//   config.slowframe,
+					//   Object.assign(candle[config.slowframe], {
+					//     timestamp: moment(candle[config.slowframe].timestamp).format(
+					//       "YYYY-MM-DD HH:mm:ss"
+					//     ),
+					//   })
+					// );
 
-  async calculateATR(highs, lows, closes) {
-    return new Promise((resolve) => {
-      tulind.indicators.atr.indicator(
-        [highs, lows, closes],
-        [config.atrParam.atrPeriod],
-        (err, res) => {
-          resolve(res[0]);
-        }
-      );
-    });
-  }
+					this.closePosition(position, d);
+					position = null;
+				}
+			}
 
-  generateSignal(candle) {
-    // // 多头信号
-    // if (
-    // 	candle.close <= candle.middle &&
-    // 	candle.emaSlope > config.emaSlope.emaSlopeThreshold
-    // ) {
-    // 	return { direction: 'long' };
-    // }
+			// 处理开仓
+			if (!position && signal) {
+				// console.log(
+				//   config.fastframe,
+				//   Object.assign(candle[config.fastframe], {
+				//     timestamp: moment(candle[config.fastframe].timestamp).format(
+				//       "YYYY-MM-DD HH:mm:ss"
+				//     ),
+				//   })
+				// );
+				// console.log(
+				//   config.mediumframe,
+				//   Object.assign(candle[config.mediumframe], {
+				//     timestamp: moment(candle[config.mediumframe].timestamp).format(
+				//       "YYYY-MM-DD HH:mm:ss"
+				//     ),
+				//   })
+				// );
+				// console.log(
+				//   config.slowframe,
+				//   Object.assign(candle[config.slowframe], {
+				//     timestamp: moment(candle[config.slowframe].timestamp).format(
+				//       "YYYY-MM-DD HH:mm:ss"
+				//     ),
+				//   })
+				// );
+				position = this.openPosition(d, d.atr, signal.direction);
+			}
+		});
+	}
 
-    // // 空头信号
-    // if (
-    // 	candle.close >= candle.middle &&
-    // 	candle.emaSlope < -config.emaSlope.emaSlopeThreshold
-    // ) {
-    // 	return { direction: 'short' };
-    // }
+	async calculateATR(highs, lows, closes) {
+		return new Promise((resolve) => {
+			tulind.indicators.atr.indicator(
+				[highs, lows, closes],
+				[config.atrParam.atrPeriod],
+				(err, res) => {
+					resolve(res[0]);
+				}
+			);
+		});
+	}
 
-    // 多头信号
-    if (
-      candle[config.mediumframe].close > candle[config.mediumframe].ema &&
-      candle[config.fastframe].macdHistogram > 0
-    ) {
-      return { direction: "long" };
-    }
+	generateSignal(longs, shorts) {
+		// // 多头信号
+		// if (
+		// 	candle.close <= candle.middle &&
+		// 	candle.emaSlope > config.emaSlope.emaSlopeThreshold
+		// ) {
+		// 	return { direction: 'long' };
+		// }
 
-    // 空头信号
-    if (
-      candle[config.mediumframe].close < candle[config.mediumframe].ema &&
-      candle[config.fastframe].macdHistogram < 0
-    ) {
-      return { direction: "short" };
-    }
+		// // 空头信号
+		// if (
+		// 	candle.close >= candle.middle &&
+		// 	candle.emaSlope < -config.emaSlope.emaSlopeThreshold
+		// ) {
+		// 	return { direction: 'short' };
+		// }
 
-    return null;
-  }
+		const longCondition = longs.length > shorts.length;
+		const shortCondition = shorts.length > longs.length;
 
-  openPosition(candle, atr, direction) {
-    const positionSize = this.getPositionSize(candle.close, atr);
-    const fee =
-      positionSize * candle.close * (config.feeRate + config.slippage);
+		// 多头信号
+		if (longCondition) {
+			return { direction: 'long' };
+		}
 
-    const position = {
-      entryPrice: candle.close,
-      entryTime: candle.timestamp,
-      direction: direction,
-      size: positionSize,
-      takeProfit: atr * config.atrParam.takeProfit,
-      stopLoss: atr * config.atrParam.stopLoss,
-    };
+		// 空头信号
+		if (shortCondition) {
+			return { direction: 'short' };
+		}
 
-    this.balance -= fee; // 扣除手续费
-    this.totalFee += fee;
-    // console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-    // console.log(candle.close, candle.middle, candle.emaSlope);
-    // console.log('direction', position.direction);
-    // console.log('middle', candle.middle);
-    // console.log('high', candle.high);
-    // console.log('low', candle.low);
-    return position;
-  }
+		return null;
+	}
 
-  closePosition(position, exitCandle) {
-    const fee =
-      position.size * exitCandle.close * (config.feeRate + config.slippage);
-    const profit =
-      position.direction === "long"
-        ? (exitCandle.close - position.entryPrice) * position.size
-        : (position.entryPrice - exitCandle.close) * position.size;
+	openPosition(candle, atr, direction) {
+		const positionSize = this.getPositionSize(candle.close, atr);
+		const fee =
+			positionSize * candle.close * (config.feeRate + config.slippage);
 
-    this.balance += profit - fee;
-    this.totalFee += fee;
-    this.trades.push({
-      size: position.size,
-      direction: position.direction,
-      entry: position.entryPrice,
-      exit: exitCandle.close,
-      profit: profit,
-      duration: exitCandle.timestamp - position.entryTime,
-      entryTime: moment(position.entryTime).format("YYYY-MM-DD HH:mm:ss"),
-      exitTime: moment(exitCandle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-    });
-  }
+		const position = {
+			entryPrice: candle.close,
+			entryTime: candle.timestamp,
+			direction: direction,
+			size: positionSize,
+			takeProfit: atr * config.atrParam.takeProfit,
+			stopLoss: atr * config.atrParam.stopLoss,
+		};
 
-  showResults() {
-    const wins = this.trades.filter((t) => t.profit > 0);
-    const losses = this.trades.filter((t) => t.profit <= 0);
+		this.balance -= fee; // 扣除手续费
+		this.totalFee += fee;
+		// console.log(moment(candle.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+		// console.log(candle.close, candle.middle, candle.emaSlope);
+		// console.log('direction', position.direction);
+		// console.log('middle', candle.middle);
+		// console.log('high', candle.high);
+		// console.log('low', candle.low);
+		return position;
+	}
 
-    const totalProfit = this.trades.reduce((sum, t) => sum + t.profit, 0);
-    const winRate = ((wins.length / this.trades.length) * 100).toFixed(2);
-    const profitFactor =
-      wins.reduce((s, t) => s + t.profit, 0) /
-      Math.abs(losses.reduce((s, t) => s + t.profit, 0));
+	closePosition(position, exitCandle) {
+		const fee =
+			position.size *
+			exitCandle.close *
+			(config.feeRate + config.slippage);
+		const profit =
+			position.direction === 'long'
+				? (exitCandle.close - position.entryPrice) * position.size
+				: (position.entryPrice - exitCandle.close) * position.size;
 
-    console.log(`
+		this.balance += profit - fee;
+		this.totalFee += fee;
+		this.trades.push({
+			size: position.size,
+			direction: position.direction,
+			entry: position.entryPrice,
+			exit: exitCandle.close,
+			profit: profit,
+			duration: exitCandle.timestamp - position.entryTime,
+			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
+			exitTime: moment(exitCandle.timestamp).format(
+				'YYYY-MM-DD HH:mm:ss'
+			),
+		});
+	}
+
+	showResults() {
+		const wins = this.trades.filter((t) => t.profit > 0);
+		const losses = this.trades.filter((t) => t.profit <= 0);
+
+		const totalProfit = this.trades.reduce((sum, t) => sum + t.profit, 0);
+		const winRate = ((wins.length / this.trades.length) * 100).toFixed(2);
+		const profitFactor =
+			wins.reduce((s, t) => s + t.profit, 0) /
+			Math.abs(losses.reduce((s, t) => s + t.profit, 0));
+
+		console.log(`
       ========== 回测结果 ==========
       总交易次数:     ${this.trades.length}
       胜率:          ${winRate}%
@@ -542,114 +568,114 @@ class Backtester {
       手续费:       ${this.totalFee}
       =============================
     `);
-    console.log("\n最近20笔交易:");
-    console.table(this.trades.slice(-20));
-  }
+		console.log('\n最近20笔交易:');
+		console.table(this.trades.slice(-20));
+	}
 }
 
 // 执行回测
 (async () => {
-  const backtester = new Backtester();
-  const start = "2025-02-23";
-  const end = "2025-03-23";
-  const interval = 1;
-  let profitTotal = 0;
+	const backtester = new Backtester();
+	const start = '2025-03-15';
+	const end = '2025-03-23';
+	const interval = 1;
+	let profitTotal = 0;
 
-  let i = 0;
-  while (moment(end).isAfter(moment(start).add(i + interval, "days"))) {
-    // while (i === 0) {
-    try {
-      backtester.data = {
-        [config.slowframe]: [],
-        [config.mediumframe]: [],
-        [config.fastframe]: [],
-        merged: [],
-      };
-      backtester.trades = [];
-      backtester.balance = config.initialBalance;
-      backtester.totalFee = 0;
+	let i = 0;
+	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
+		// while (i === 0) {
+		try {
+			backtester.data = {
+				[config.slowframe]: [],
+				[config.mediumframe]: [],
+				[config.fastframe]: [],
+				merged: [],
+			};
+			backtester.trades = [];
+			backtester.balance = config.initialBalance;
+			backtester.totalFee = 0;
 
-      // 步骤1: 加载历史数据
-      const data = await backtester.loadHistoricalData(
-        moment(start).add(i, "days").format("YYYY-MM-DD"),
-        moment(start)
-          .add(i + interval, "days")
-          .format("YYYY-MM-DD")
-      );
+			// 步骤1: 加载历史数据
+			const data = await backtester.loadHistoricalData(
+				moment(start).add(i, 'days').format('YYYY-MM-DD'),
+				moment(start)
+					.add(i + interval, 'days')
+					.format('YYYY-MM-DD')
+			);
 
-      // 步骤2: 计算指标
-      await backtester.calculateIndicators();
+			// 步骤2: 计算指标
+			// await backtester.calculateIndicators();
 
-      // console.log(
-      //   data["5m"].slice(-3).map((candle) =>
-      //     Object.assign(candle, {
-      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      //     })
-      //   )
-      // );
+			// console.log(
+			//   data["5m"].slice(-3).map((candle) =>
+			//     Object.assign(candle, {
+			//       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+			//     })
+			//   )
+			// );
 
-      // 步骤3: 运行回测
-      backtester.runBacktest();
+			// 步骤3: 运行回测
+			backtester.runBacktest();
 
-      // 步骤4: 显示结果
-      backtester.showResults();
+			// 步骤4: 显示结果
+			backtester.showResults();
 
-      profitTotal += backtester.balance - config.initialBalance;
+			profitTotal += backtester.balance - config.initialBalance;
 
-      i += interval;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  console.log("profitTotal", profitTotal);
+			i += interval;
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	console.log('profitTotal', profitTotal);
 })();
 
 app.listen(8092);
 
-console.log("8092 server start");
+console.log('8092 server start');
 
-process.on("uncaughtException", function (e) {
-  //打印出错误
-  //   restart(e);
+process.on('uncaughtException', function (e) {
+	//打印出错误
+	//   restart(e);
 });
 
-let exec = require("child_process").exec;
+let exec = require('child_process').exec;
 function restart(e) {
-  console.log("restarting......", e);
-  setTimeout(() => {
-    exec("npm run restart", function (err, stdout, stderr) {
-      if (err) {
-        console.log("restarting failed");
-      } else {
-        console.log("restarting success");
-      }
-    });
-  }, 1000 * 2);
+	console.log('restarting......', e);
+	setTimeout(() => {
+		exec('npm run restart', function (err, stdout, stderr) {
+			if (err) {
+				console.log('restarting failed');
+			} else {
+				console.log('restarting success');
+			}
+		});
+	}, 1000 * 2);
 }
 function start() {
-  console.log("starting......");
-  setTimeout(() => {
-    exec("npm run start", function (err, stdout, stderr) {
-      if (err) {
-        console.log("starting failed");
-      } else {
-        console.log("starting success");
-      }
-    });
-  }, 1000 * 2);
+	console.log('starting......');
+	setTimeout(() => {
+		exec('npm run start', function (err, stdout, stderr) {
+			if (err) {
+				console.log('starting failed');
+			} else {
+				console.log('starting success');
+			}
+		});
+	}, 1000 * 2);
 }
 function stop() {
-  console.log("stopping......");
-  setTimeout(() => {
-    exec("npm run stop", function (err, stdout, stderr) {
-      if (err) {
-        console.log("stopping failed");
-      } else {
-        console.log("stopping success");
-      }
-      setTimeout(() => {
-        start();
-      }, 1000 * 60 * 60 * 24 * 1);
-    });
-  }, 1000 * 2);
+	console.log('stopping......');
+	setTimeout(() => {
+		exec('npm run stop', function (err, stdout, stderr) {
+			if (err) {
+				console.log('stopping failed');
+			} else {
+				console.log('stopping success');
+			}
+			setTimeout(() => {
+				start();
+			}, 1000 * 60 * 60 * 24 * 1);
+		});
+	}, 1000 * 2);
 }
