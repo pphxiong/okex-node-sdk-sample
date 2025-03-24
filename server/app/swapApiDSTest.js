@@ -417,9 +417,11 @@ class Backtester {
 				// 		(isStopLoss && false));
 
 				const isReverse =
-					signal && position.direction === 'long'
+					signal &&
+					((position.direction === 'long'
 						? longs.length > shorts.length
-						: longs.length < shorts.length;
+						: longs.length < shorts.length) ||
+						isStopLoss);
 
 				// const isReverse = isProfitTarget || isStopLoss;
 
