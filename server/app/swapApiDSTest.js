@@ -358,8 +358,12 @@ class Backtester {
 				index
 			);
 
+			const mediumKline = this.getTimeStampBefore(
+				this.data[config.mediumframe],
+				d.timestamp
+			);
 			const mediumIndex = this.data[config.mediumframe].findIndex(
-				(item) => item.timestamp < d.timestamp
+				(item) => item.timestamp === mediumKline.timestamp
 			);
 			const { longs: mediumLongs, shorts: mediumShorts } =
 				this.getLongShort(this.data[config.mediumframe], mediumIndex);
