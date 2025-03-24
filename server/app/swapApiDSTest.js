@@ -47,7 +47,7 @@ const config = {
 	slowframe: '1h',
 	mediumframe: '15m',
 	fastframe: '5m',
-	kWindowTresholdFast: 3,
+	kWindowTresholdFast: 7,
 	kWindowTresholdMedium: 10,
 	// 布林线参数
 	bollinger: {
