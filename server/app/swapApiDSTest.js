@@ -69,7 +69,7 @@ const config = {
 	// 风险参数
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
-	slippage: 0.000001, // 滑点率
+	slippage: 0, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
 
 	coldStartBars: 1000,
@@ -553,6 +553,7 @@ class Backtester {
 			entry: position.entryPrice,
 			exit: exitCandle.close,
 			profit: profit,
+			fee,
 			duration: exitCandle.timestamp - position.entryTime,
 			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
 			exitTime: moment(exitCandle.timestamp).format(
