@@ -339,6 +339,9 @@ class Backtester {
 			// 	atr = d.atr;
 			// }
 
+			const isLastIndex =
+				index === this.data[config.fastframe].length - 1;
+
 			const lastKline5M = JSON.parse(
 				JSON.stringify(this.data[config.fastframe][index])
 			);
@@ -444,7 +447,7 @@ class Backtester {
 				// 		: candle[config.mediumframe].close >
 				// 		  candle[config.mediumframe].ema);
 
-				if (isReverse) {
+				if (isReverse || isLastIndex) {
 					// console.log(
 					//   config.fastframe,
 					//   Object.assign(candle[config.fastframe], {
@@ -646,7 +649,7 @@ class Backtester {
 	const backtester = new Backtester();
 	const start = '2025-01-20';
 	const end = '2025-03-25';
-	const interval = 5;
+	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
