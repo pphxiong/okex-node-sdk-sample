@@ -645,7 +645,7 @@ class Backtester {
       =============================
     `);
 		console.log('\n最近20笔交易:');
-		console.table(this.trades.slice(-20));
+		console.table(this.trades);
 	}
 }
 
