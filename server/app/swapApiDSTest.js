@@ -71,7 +71,7 @@ const config = {
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 1000, // 初始本金10000 USDT
-	coldStartBars: 1000,
+	coldStartBars: 480,
 };
 
 class Backtester {
