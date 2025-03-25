@@ -78,7 +78,7 @@ const config = {
 		'5m': 480,
 	},
 };
-let position = null;
+
 class Backtester {
 	constructor() {
 		this.exchange = new ccxt.binance({
@@ -324,6 +324,7 @@ class Backtester {
 	}
 
 	runBacktest() {
+		let position = null;
 		// let atr = 0;
 
 		this.data[config.fastframe].forEach(async (d, index) => {
