@@ -412,12 +412,11 @@ class Backtester {
 				// 		(false && (isStopLoss || isProfitTarget)));
 
 				const isReverse =
-					signal &&
-					(position.direction === 'long'
+					position.direction === 'long'
 						? candle[config.slowframe].close <
 						  candle[config.slowframe].middle
 						: candle[config.slowframe].close >
-						  candle[config.slowframe].middle);
+						  candle[config.slowframe].middle;
 
 				// const isReverse =
 				// 	signal &&
