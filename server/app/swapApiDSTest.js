@@ -543,13 +543,11 @@ class Backtester {
 		// }
 
 		const longCondition =
-			candle[config.fastframe].close > candle[config.fastframe].lower &&
-			candle[config.fastframe].close < candle[config.fastframe].middle &&
+			candle[config.fastframe].close > candle[config.fastframe].middle &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			candle[config.fastframe].close < candle[config.fastframe].upper &&
-			candle[config.fastframe].close > candle[config.fastframe].middle &&
+			candle[config.fastframe].close < candle[config.fastframe].middle &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
@@ -653,7 +651,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-01';
+	const start = '2025-01-20';
 	const end = '2025-03-25';
 	const interval = 5;
 	let profitTotal = 0;
