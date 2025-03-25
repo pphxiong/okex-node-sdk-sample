@@ -421,12 +421,12 @@ class Backtester {
             ? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
               isProfitTarget ||
-              isStopLoss ||
+              // isStopLoss ||
               candle[config.slowframe].close < candle[config.slowframe].middle
             : /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
               isProfitTarget ||
-              isStopLoss ||
+              // isStopLoss ||
               candle[config.slowframe].close > candle[config.slowframe].middle;
         // const isReverse =
         // 	signal &&
