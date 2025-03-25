@@ -549,15 +549,25 @@ class Backtester {
 		// }
 
 		const longCondition =
-			secondKline5M.close < secondKline5M.lower &&
-			candle[config.fastframe].close > candle[config.fastframe].lower &&
-			candle[config.fastframe].close < candle[config.fastframe].middle &&
+			((secondKline5M.close < secondKline5M.lower &&
+				candle[config.fastframe].close >
+					candle[config.fastframe].lower &&
+				candle[config.fastframe].close <
+					candle[config.fastframe].middle) ||
+				(secondKline5M.close < secondKline5M.middle &&
+					candle[config.fastframe].close >
+						candle[config.fastframe].middle)) &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			secondKline5M.close > secondKline5M.upper &&
-			candle[config.fastframe].close < candle[config.fastframe].upper &&
-			candle[config.fastframe].close > candle[config.fastframe].middle &&
+			((secondKline5M.close > secondKline5M.upper &&
+				candle[config.fastframe].close <
+					candle[config.fastframe].upper &&
+				candle[config.fastframe].close >
+					candle[config.fastframe].middle) ||
+				(secondKline5M.close > secondKline5M.middle &&
+					candle[config.fastframe].close <
+						candle[config.fastframe].middle)) &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
