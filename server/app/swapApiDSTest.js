@@ -425,14 +425,14 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? candle[config.fastframe].close <
-								candle[config.fastframe].middle ||
-						  candle[config.fastframe].close <
-								candle[config.fastframe].lower
-						: candle[config.fastframe].close >
-								candle[config.fastframe].middle ||
-						  candle[config.fastframe].close >
-								candle[config.fastframe].upper;
+						? (candle[config.fastframe].close <
+								candle[config.fastframe].middle &&
+								lnp > 0) ||
+						  signal.direction === 'short'
+						: (candle[config.fastframe].close >
+								candle[config.fastframe].middle &&
+								lnp > 0) ||
+						  signal.direction === 'long';
 
 				// const isReverse =
 				// 	signal &&
@@ -644,7 +644,7 @@ class Backtester {
       =============================
     `);
 		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		console.table(this.trades.slice(-20));
 	}
 }
 
