@@ -292,7 +292,7 @@ class Backtester {
 							macd[0][macdIndex] - macd[1][macdIndex] || null;
 					}
 					if (i >= config.atrParam.atrPeriod) {
-						const atrIndex = i - atrParam.atrPeriod;
+						const atrIndex = i - config.atrParam.atrPeriod;
 						d.atr = atr[0][atrIndex];
 					}
 					d.ema = ema[0][i];
