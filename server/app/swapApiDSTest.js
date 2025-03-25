@@ -404,19 +404,19 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				// const isReverse =
-				// 	signal &&
-				// 	((position.direction === 'long'
-				// 		? signal.direction === 'short'
-				// 		: signal.direction === 'long') ||
-				// 		(false && (isStopLoss || isProfitTarget)));
-
 				const isReverse =
-					position.direction === 'long'
-						? candle[config.slowframe].close <
-						  candle[config.slowframe].middle
-						: candle[config.slowframe].close >
-						  candle[config.slowframe].middle;
+					signal &&
+					((position.direction === 'long'
+						? signal.direction === 'short'
+						: signal.direction === 'long') ||
+						(false && (isStopLoss || isProfitTarget)));
+
+				// const isReverse =
+				// 	position.direction === 'long'
+				// 		? candle[config.slowframe].close <
+				// 		  candle[config.slowframe].middle
+				// 		: candle[config.slowframe].close >
+				// 		  candle[config.slowframe].middle;
 
 				// const isReverse =
 				// 	signal &&
@@ -527,11 +527,11 @@ class Backtester {
 		// }
 
 		const longCondition =
-			candle[config.fastframe].close > candle[config.fastframe].upper &&
+			candle[config.fastframe].close < candle[config.fastframe].middle &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			candle[config.fastframe].close < candle[config.fastframe].lower &&
+			candle[config.fastframe].close > candle[config.fastframe].middle &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
