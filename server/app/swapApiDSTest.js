@@ -645,16 +645,16 @@ class Backtester {
       =============================
     `);
 		console.log('\n最近20笔交易:');
-		console.table(this.trades.slice(-20));
+		console.table(this.trades);
 	}
 }
 
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-20';
+	const start = '2025-03-23';
 	const end = '2025-03-25';
-	const interval = 5;
+	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
