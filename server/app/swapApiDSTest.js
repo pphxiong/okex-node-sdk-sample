@@ -551,12 +551,12 @@ class Backtester {
 		const longCondition =
 			secondKline5M.close < secondKline5M.middle &&
 			candle[config.fastframe].close > candle[config.fastframe].middle &&
-			candle[config.slowframe].close > candle[config.slowframe].middle;
+			candle[config.slowframe].close > candle[config.slowframe].ema;
 
 		const shortCondition =
 			secondKline5M.close > secondKline5M.middle &&
 			candle[config.fastframe].close < candle[config.fastframe].middle &&
-			candle[config.slowframe].close < candle[config.slowframe].middle;
+			candle[config.slowframe].close < candle[config.slowframe].ema;
 
 		// 多头信号
 		if (longCondition) {
