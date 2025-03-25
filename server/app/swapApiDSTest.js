@@ -44,7 +44,7 @@ const config = {
 		'5m': 0.005 * 0.01,
 	}, // 斜率阈值
 	macdParams: { '1h': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
-	slowframe: '1h',
+	slowframe: '15m',
 	mediumframe: '15m',
 	fastframe: '5m',
 	kWindowTresholdFast: 3,
