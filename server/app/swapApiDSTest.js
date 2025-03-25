@@ -78,6 +78,7 @@ const config = {
 		'5m': 480,
 	},
 };
+let position = null;
 
 class Backtester {
 	constructor() {
@@ -324,7 +325,6 @@ class Backtester {
 	}
 
 	runBacktest() {
-		let position = null;
 		// let atr = 0;
 
 		this.data[config.fastframe].forEach(async (d, index) => {
@@ -452,7 +452,7 @@ class Backtester {
 				// 		: candle[config.mediumframe].close >
 				// 		  candle[config.mediumframe].ema);
 
-				if (isReverse || isLastIndex) {
+				if (isReverse) {
 					// console.log(
 					//   config.fastframe,
 					//   Object.assign(candle[config.fastframe], {
@@ -652,8 +652,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-03-20';
-	const end = '2024-03-25';
+	const start = '2024-03-20';
+	const end = '2025-03-25';
 	const interval = 5;
 	let profitTotal = 0;
 
