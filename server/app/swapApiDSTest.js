@@ -101,7 +101,7 @@ class Backtester {
 		this.totalFee = 0;
 	}
 
-	async loadHistoricalData(start, end) {
+	async loadHistoricalData(start, end, interval) {
 		try {
 			const since = moment(start).valueOf();
 			const until = moment(end).valueOf();
@@ -117,7 +117,7 @@ class Backtester {
 							config.symbol,
 							tf,
 							currentSince,
-							config.coldStartBars[tf]
+							config.coldStartBars[tf] * interval
 						);
 
 						if (candles.length === 0) break;
@@ -676,7 +676,8 @@ class Backtester {
 				moment(start).add(i, 'days').format('YYYY-MM-DD'),
 				moment(start)
 					.add(i + interval, 'days')
-					.format('YYYY-MM-DD')
+					.format('YYYY-MM-DD'),
+				interval
 			);
 
 			// 步骤2: 计算指标
