@@ -412,7 +412,7 @@ class Backtester {
 				// 		: signal.direction === 'long') ||
 				// 		(false && (isStopLoss || isProfitTarget)));
 
-				const lnp = this.getLnp(position, candle);
+				const lnp = this.getLnp(position, d);
 
 				const isReverse =
 					position.direction === 'long'
