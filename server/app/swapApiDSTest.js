@@ -71,7 +71,12 @@ const config = {
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 1000, // 初始本金10000 USDT
-	coldStartBars: 480,
+	// coldStartBars: 480,
+	coldStartBars: {
+		'1h': 24,
+		'15m': 160,
+		'5m': 480,
+	},
 };
 
 class Backtester {
@@ -112,7 +117,7 @@ class Backtester {
 							config.symbol,
 							tf,
 							currentSince,
-							config.coldStartBars
+							config.coldStartBars[tf]
 						);
 
 						if (candles.length === 0) break;
