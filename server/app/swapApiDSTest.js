@@ -429,13 +429,13 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? (candle[config.fastframe].close <
-								candle[config.fastframe].upper &&
+						? (candle[config.mediumframe].close <
+								candle[config.mediumframe].upper &&
 								secondKline5M.close > secondKline5M.upper) ||
 						  candle[config.slowframe].close <
 								candle[config.slowframe].middle
-						: (candle[config.fastframe].close >
-								candle[config.fastframe].lower &&
+						: (candle[config.mediumframe].close >
+								candle[config.mediumframe].lower &&
 								secondKline5M.close < secondKline5M.lower) ||
 						  candle[config.slowframe].close >
 								candle[config.slowframe].middle;
