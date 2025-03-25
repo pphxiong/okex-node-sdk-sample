@@ -338,62 +338,56 @@ class Backtester {
 			// 	atr = d.atr;
 			// }
 
-			// const lastKline5M = JSON.parse(
-			// 	JSON.stringify(this.data[config.fastframe][index])
+			const lastKline5M = JSON.parse(
+				JSON.stringify(this.data[config.fastframe][index])
+			);
+
+			const candle = {
+				[config.slowframe]: this.getTimeStampSlowBefore(
+					this.data[config.slowframe],
+					lastKline5M.timestamp
+				),
+				[config.mediumframe]: this.getTimeStampBefore(
+					this.data[config.mediumframe],
+					lastKline5M.timestamp
+				),
+				[config.fastframe]: lastKline5M,
+			};
+
+			// const { longs, shorts } = this.getLongShort(
+			// 	this.data[config.fastframe],
+			// 	index,
+			// 	config.kWindowTresholdFast
 			// );
 
-			// const candle = {
-			// 	[config.slowframe]: this.getTimeStampSlowBefore(
-			// 		this.data[config.slowframe],
-			// 		lastKline5M.timestamp
-			// 	),
-			// 	[config.mediumframe]: this.getTimeStampBefore(
+			// const mediumKline = this.getTimeStampBefore(
+			// 	this.data[config.mediumframe],
+			// 	d.timestamp
+			// );
+			// const mediumIndex = this.data[config.mediumframe].findIndex(
+			// 	(item) => item.timestamp === mediumKline.timestamp
+			// );
+			// const { longs: mediumLongs, shorts: mediumShorts } =
+			// 	this.getLongShort(
 			// 		this.data[config.mediumframe],
-			// 		lastKline5M.timestamp
-			// 	),
-			// 	[config.fastframe]: lastKline5M,
-			// };
-
-			const { longs, shorts } = this.getLongShort(
-				this.data[config.fastframe],
-				index,
-				config.kWindowTresholdFast
-			);
-
-			const mediumKline = this.getTimeStampBefore(
-				this.data[config.mediumframe],
-				d.timestamp
-			);
-			const mediumIndex = this.data[config.mediumframe].findIndex(
-				(item) => item.timestamp === mediumKline.timestamp
-			);
-			const { longs: mediumLongs, shorts: mediumShorts } =
-				this.getLongShort(
-					this.data[config.mediumframe],
-					mediumIndex,
-					config.kWindowTresholdMedium
-				);
+			// 		mediumIndex,
+			// 		config.kWindowTresholdMedium
+			// 	);
 
 			// 生成信号
-			const signal = this.generateSignal(
-				longs,
-				shorts,
-				mediumLongs,
-				mediumShorts,
-				d
-			);
+			const signal = this.generateSignal(candle);
 
 			// 处理平仓
 			if (position) {
-				const isProfitTarget =
-					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.005)
-						: d.close <= position.entryPrice * (1 - 0.005);
+				// const isProfitTarget =
+				// 	position.direction === 'long'
+				// 		? d.close >= position.entryPrice * (1 + 0.005)
+				// 		: d.close <= position.entryPrice * (1 - 0.005);
 
-				const isStopLoss =
-					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.0025)
-						: d.close >= position.entryPrice * (1 + 0.0025);
+				// const isStopLoss =
+				// 	position.direction === 'long'
+				// 		? d.close <= position.entryPrice * (1 - 0.0025)
+				// 		: d.close >= position.entryPrice * (1 + 0.0025);
 
 				// const isProfitTarget =
 				// 	position.direction === 'long'
@@ -410,13 +404,18 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
+				// const isReverse =
+				// 	signal &&
+				// 	((position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long') ||
+				// 		(false && (isStopLoss || isProfitTarget)));
+
 				const isReverse =
 					signal &&
-					((position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long') ||
-						isStopLoss ||
-						isProfitTarget);
+					(position.direction === 'long'
+						? candle.close < candle[config.slowframe].middle
+						: candle.close > candle[config.slowframe].middle);
 
 				// const isReverse =
 				// 	signal &&
@@ -509,7 +508,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(longs, shorts, mediumLongs, mediumShorts, d) {
+	generateSignal(candle) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
@@ -527,14 +526,12 @@ class Backtester {
 		// }
 
 		const longCondition =
-			longs.length > shorts.length &&
-			d.close > d.open &&
-			mediumLongs < mediumShorts;
+			candle[config.fastframe].close < candle[config.fastframe].lower &&
+			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			longs.length < shorts.length &&
-			d.close < d.open &&
-			mediumLongs > mediumShorts;
+			candle[config.fastframe].close > candle[config.fastframe].lower &&
+			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
 		if (longCondition) {
