@@ -68,7 +68,7 @@ const config = {
 	},
 
 	// 风险参数
-	riskPerTrade: 0.02, // 每笔交易风险2%
+	riskPerTrade: 0.02 / 10, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
@@ -646,7 +646,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-20';
+	const start = '2024-11-20';
 	const end = '2025-03-25';
 	const interval = 1;
 	let profitTotal = 0;
