@@ -417,14 +417,12 @@ class Backtester {
 
         const isReverse =
           position.direction === "long"
-            ? (candle[config.fastframe].close <
-                candle[config.fastframe].lower &&
-                isProfitTarget) ||
-              signal.direction === "short"
-            : (candle[config.fastframe].close >
-                candle[config.fastframe].upper &&
-                isProfitTarget) ||
-              signal.direction === "long";
+            ? /* candle[config.fastframe].close <
+                candle[config.fastframe].lower && */
+              isProfitTarget || signal.direction === "short"
+            : /* candle[config.fastframe].close >
+                candle[config.fastframe].upper && */
+              isProfitTarget || signal.direction === "long";
         // const isReverse =
         // 	signal &&
         // 	((position.direction === 'long'
@@ -442,7 +440,7 @@ class Backtester {
         // 		: candle[config.mediumframe].close >
         // 		  candle[config.mediumframe].ema);
 
-        if (isReverse) {
+        if (isReverse || isLastIndex) {
           // console.log(
           //   config.fastframe,
           //   Object.assign(candle[config.fastframe], {
