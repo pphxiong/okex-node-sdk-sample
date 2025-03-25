@@ -63,12 +63,11 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1.2,
-		takeProfit: 1.8,
+		stopLoss: 1,
+		takeProfit: 3,
 	},
-
-	// 风险参数
-	riskPerTrade: 0.02 / 10, // 每笔交易风险2%
+	leverage: 20,
+	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
@@ -305,7 +304,7 @@ class Backtester {
 
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
-		return riskAmount / (atr * 2);
+		return riskAmount / (atr * config.leverage);
 		// return 5000;
 		// return this.balance / 2;
 	}
@@ -392,15 +391,15 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.0025)
 				// 		: d.close >= position.entryPrice * (1 + 0.0025);
 
-				// const isProfitTarget =
-				// 	position.direction === 'long'
-				// 		? d.close >= position.entryPrice + position.takeProfit
-				// 		: d.close <= position.entryPrice - position.takeProfit;
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >= position.entryPrice + position.takeProfit
+						: d.close <= position.entryPrice - position.takeProfit;
 
-				// const isStopLoss =
-				// 	position.direction === 'long'
-				// 		? d.close <= position.entryPrice - position.stopLoss
-				// 		: d.close >= position.entryPrice + position.stopLoss;
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice - position.stopLoss
+						: d.close >= position.entryPrice + position.stopLoss;
 
 				// const isReverse =
 				// 	position.direction === 'long'
@@ -422,12 +421,16 @@ class Backtester {
 								candle[config.fastframe].middle &&
 								lnp > 0) ||
 						  candle[config.fastframe].close <
-								candle[config.fastframe].lower
+								candle[config.fastframe].lower ||
+						  isProfitTarget ||
+						  isStopLoss
 						: (candle[config.fastframe].close >
 								candle[config.fastframe].middle &&
 								lnp > 0) ||
 						  candle[config.fastframe].close >
-								candle[config.fastframe].upper;
+								candle[config.fastframe].upper ||
+						  isProfitTarget ||
+						  isStopLoss;
 
 				// const isReverse =
 				// 	signal &&
