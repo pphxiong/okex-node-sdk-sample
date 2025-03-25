@@ -117,7 +117,7 @@ class Backtester {
 							config.symbol,
 							tf,
 							currentSince,
-							config.coldStartBars[tf] * interval
+							config.coldStartBars[tf]
 						);
 
 						if (candles.length === 0) break;
