@@ -411,12 +411,20 @@ class Backtester {
 				// 		: signal.direction === 'long') ||
 				// 		(false && (isStopLoss || isProfitTarget)));
 
+				const lnp = this.getLnp(position, candle);
+
 				const isReverse =
 					position.direction === 'long'
-						? candle[config.fastframe].close <
-						  candle[config.fastframe].middle
-						: candle[config.fastframe].close >
-						  candle[config.fastframe].middle;
+						? (candle[config.fastframe].close <
+								candle[config.fastframe].middle &&
+								lnp > 0) ||
+						  candle[config.slowframe].close <
+								candle[config.slowframe].middle
+						: (candle[config.fastframe].close >
+								candle[config.fastframe].middle &&
+								lnp > 0) ||
+						  candle[config.slowframe].close >
+								candle[config.slowframe].middle;
 
 				// const isReverse =
 				// 	signal &&
@@ -570,6 +578,12 @@ class Backtester {
 		// console.log('high', candle.high);
 		// console.log('low', candle.low);
 		return position;
+	}
+
+	getLnp(position, exitCandle) {
+		const lnp =
+			(exitCandle.close - position.entryPrice) / position.entryPrice;
+		return position.direction === 'long' ? lnp : -lnp;
 	}
 
 	closePosition(position, exitCandle) {
