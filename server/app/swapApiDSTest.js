@@ -417,8 +417,14 @@ class Backtester {
 
         const isReverse =
           position.direction === "long"
-            ? isProfitTarget || signal.direction === "short"
-            : isProfitTarget || signal.direction === "long";
+            ? (candle[config.fastframe].close <
+                candle[config.fastframe].lower &&
+                isProfitTarget) ||
+              signal.direction === "short"
+            : (candle[config.fastframe].close >
+                candle[config.fastframe].upper &&
+                isProfitTarget) ||
+              signal.direction === "long";
         // const isReverse =
         // 	signal &&
         // 	((position.direction === 'long'
