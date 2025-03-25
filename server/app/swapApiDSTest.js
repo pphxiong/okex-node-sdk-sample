@@ -78,7 +78,7 @@ const config = {
 		'5m': 480,
 	},
 };
-
+let position = null;
 class Backtester {
 	constructor() {
 		this.exchange = new ccxt.binance({
@@ -324,8 +324,6 @@ class Backtester {
 	}
 
 	runBacktest() {
-		let position = null;
-
 		// let atr = 0;
 
 		this.data[config.fastframe].forEach(async (d, index) => {
@@ -659,7 +657,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-10-20';
+	const start = '2025-01-20';
 	const end = '2025-03-25';
 	const interval = 5;
 	let profitTotal = 0;
