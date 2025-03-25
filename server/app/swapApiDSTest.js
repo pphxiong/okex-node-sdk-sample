@@ -70,7 +70,7 @@ const config = {
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
-	initialBalance: 100, // 初始本金10000 USDT
+	initialBalance: 1000, // 初始本金10000 USDT
 	coldStartBars: 1000,
 };
 
@@ -376,7 +376,7 @@ class Backtester {
 			// 	);
 
 			// 生成信号
-			const signal = this.generateSignal(d);
+			const signal = this.generateSignal(candle);
 
 			// 处理平仓
 			if (position) {
