@@ -44,7 +44,7 @@ const config = {
 		'5m': 0.005 * 0.01,
 	}, // 斜率阈值
 	macdParams: { '1h': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
-	slowframe: '15m',
+	slowframe: '1h',
 	mediumframe: '15m',
 	fastframe: '5m',
 	kWindowTresholdFast: 3,
@@ -425,12 +425,12 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? (candle[config.fastframe].close <
-								candle[config.fastframe].middle &&
+						? (candle[config.mediumframe].close <
+								candle[config.mediumframe].middle &&
 								lnp > 0) ||
 						  signal.direction === 'short'
-						: (candle[config.fastframe].close >
-								candle[config.fastframe].middle &&
+						: (candle[config.mediumframe].close >
+								candle[config.mediumframe].middle &&
 								lnp > 0) ||
 						  signal.direction === 'long';
 
@@ -543,11 +543,13 @@ class Backtester {
 		// }
 
 		const longCondition =
-			candle[config.fastframe].close > candle[config.fastframe].middle &&
+			candle[config.mediumframe].close >
+				candle[config.mediumframe].middle &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			candle[config.fastframe].close < candle[config.fastframe].middle &&
+			candle[config.mediumframe].close <
+				candle[config.mediumframe].middle &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
