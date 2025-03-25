@@ -64,7 +64,7 @@ const config = {
 		// ATR参数
 		atrPeriod: 14,
 		stopLoss: 1,
-		takeProfit: 2,
+		takeProfit: 4,
 	},
 	leverage: 20,
 	riskPerTrade: 0.02, // 每笔交易风险2%
