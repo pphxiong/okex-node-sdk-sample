@@ -404,19 +404,19 @@ class Backtester {
 				// 		? d.emaSlope < -config.emaSlope.emaSlopeThreshold
 				// 		: d.emaSlope > config.emaSlope.emaSlopeThreshold;
 
-				const isReverse =
-					signal &&
-					((position.direction === 'long'
-						? signal.direction === 'short'
-						: signal.direction === 'long') ||
-						(false && (isStopLoss || isProfitTarget)));
-
 				// const isReverse =
-				// 	position.direction === 'long'
-				// 		? candle[config.slowframe].close <
-				// 		  candle[config.slowframe].middle
-				// 		: candle[config.slowframe].close >
-				// 		  candle[config.slowframe].middle;
+				// 	signal &&
+				// 	((position.direction === 'long'
+				// 		? signal.direction === 'short'
+				// 		: signal.direction === 'long') ||
+				// 		(false && (isStopLoss || isProfitTarget)));
+
+				const isReverse =
+					position.direction === 'long'
+						? candle[config.fastframe].close >
+						  candle[config.fastframe].upper
+						: candle[config.fastframe].close <
+						  candle[config.fastframe].lower;
 
 				// const isReverse =
 				// 	signal &&
