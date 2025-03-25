@@ -425,14 +425,12 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? (candle[config.fastframe].close <
-								candle[config.fastframe].middle &&
-								lnp > 0) ||
+						? candle[config.fastframe].close <
+								candle[config.fastframe].middle ||
 						  candle[config.fastframe].close <
 								candle[config.fastframe].lower
-						: (candle[config.fastframe].close >
-								candle[config.fastframe].middle &&
-								lnp > 0) ||
+						: candle[config.fastframe].close >
+								candle[config.fastframe].middle ||
 						  candle[config.fastframe].close >
 								candle[config.fastframe].upper;
 
