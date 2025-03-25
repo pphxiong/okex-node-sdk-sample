@@ -352,6 +352,10 @@ class Backtester {
 				JSON.stringify(this.data[config.fastframe][index])
 			);
 
+			const secondKline5M = JSON.parse(
+				JSON.stringify(this.data[config.fastframe][index - 1])
+			);
+
 			const candle = {
 				[config.slowframe]: this.getTimeStampSlowBefore(
 					this.data[config.slowframe],
@@ -385,7 +389,7 @@ class Backtester {
 			// 	);
 
 			// 生成信号
-			const signal = this.generateSignal(candle);
+			const signal = this.generateSignal(candle, secondKline5M);
 
 			// 处理平仓
 			if (position) {
@@ -426,12 +430,12 @@ class Backtester {
 				const isReverse =
 					position.direction === 'long'
 						? (candle[config.fastframe].close <
-								candle[config.fastframe].middle &&
-								lnp > 0) ||
+								candle[config.fastframe].upper &&
+								secondKline5M.close < secondKline5M.upper) ||
 						  signal.direction === 'short'
 						: (candle[config.fastframe].close >
-								candle[config.fastframe].middle &&
-								lnp > 0) ||
+								candle[config.fastframe].lower &&
+								secondKline5M.close < secondKline5M.lower) ||
 						  signal.direction === 'long';
 
 				// const isReverse =
@@ -525,7 +529,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(candle) {
+	generateSignal(candle, secondKline5M) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
@@ -543,10 +547,12 @@ class Backtester {
 		// }
 
 		const longCondition =
+			secondKline5M.close < secondKline5M.middle &&
 			candle[config.fastframe].close > candle[config.fastframe].middle &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
+			secondKline5M.close > secondKline5M.middle &&
 			candle[config.fastframe].close < candle[config.fastframe].middle &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
@@ -651,8 +657,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-10-20';
-	const end = '2024-12-25';
+	const start = '2025-01-20';
+	const end = '2025-03-25';
 	const interval = 5;
 	let profitTotal = 0;
 
