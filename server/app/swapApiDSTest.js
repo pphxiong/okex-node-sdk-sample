@@ -420,12 +420,12 @@ class Backtester {
           position.direction === "long"
             ? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-              isProfitTarget ||
+              // isProfitTarget ||
               // isStopLoss ||
               candle[config.slowframe].close < candle[config.slowframe].middle
             : /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-              isProfitTarget ||
+              // isProfitTarget ||
               // isStopLoss ||
               candle[config.slowframe].close > candle[config.slowframe].middle;
         // const isReverse =
