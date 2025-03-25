@@ -527,11 +527,11 @@ class Backtester {
 		// }
 
 		const longCondition =
-			candle[config.fastframe].close < candle[config.fastframe].lower &&
+			candle[config.fastframe].close < candle[config.fastframe].middle &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			candle[config.fastframe].close > candle[config.fastframe].upper &&
+			candle[config.fastframe].close > candle[config.fastframe].middle &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
