@@ -291,7 +291,10 @@ class Backtester {
 						d.macdHistogram =
 							macd[0][macdIndex] - macd[1][macdIndex] || null;
 					}
-					d.atr = atr[0][i];
+					if (i >= config.atrParam.atrPeriod) {
+						const atrIndex = i - atrParam.atrPeriod;
+						d.atr = atr[0][atrIndex];
+					}
 					d.ema = ema[0][i];
 				});
 			});
@@ -302,9 +305,9 @@ class Backtester {
 
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
-		// return riskAmount / (atr * 2); // 2倍ATR止损
+		return riskAmount / (atr * 2);
 		// return 5000;
-		return this.balance / 2;
+		// return this.balance / 2;
 	}
 
 	getLongShort(dataList, index, WindowTreshold) {
@@ -643,7 +646,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-03-20';
+	const start = '2025-03-20';
 	const end = '2025-03-25';
 	const interval = 5;
 	let profitTotal = 0;
