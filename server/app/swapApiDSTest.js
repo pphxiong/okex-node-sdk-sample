@@ -431,7 +431,7 @@ class Backtester {
 					position.direction === 'long'
 						? (candle[config.fastframe].close <
 								candle[config.fastframe].upper &&
-								secondKline5M.close < secondKline5M.upper) ||
+								secondKline5M.close > secondKline5M.upper) ||
 						  candle[config.fastframe].close <
 								candle[config.fastframe].lower
 						: (candle[config.fastframe].close >
