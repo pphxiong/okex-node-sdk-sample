@@ -791,9 +791,9 @@ class Backtester {
   // const simPaths = this.generateCorrelatedPaths(histData);
 
   const backtester = new Backtester();
-  const start = "2024-10-10";
-  const end = "2025-01-26";
-  const interval = 5;
+  const start = "2024-03-20";
+  const end = "2025-03-26";
+  const interval = 2;
   let profitTotal = 0;
 
   let i = 0;
@@ -822,15 +822,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      // console.log(
-      // 	data['5m'].slice(-3).map((candle) =>
-      // 		Object.assign(candle, {
-      // 			timestamp: moment(candle.timestamp).format(
-      // 				'YYYY-MM-DD HH:mm:ss'
-      // 			),
-      // 		})
-      // 	)
-      // );
+      console.log(
+        data["5m"].slice(-3).map((candle) =>
+          Object.assign(candle, {
+            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          })
+        )
+      );
 
       // 步骤3: 运行回测
       backtester.runBacktest();
