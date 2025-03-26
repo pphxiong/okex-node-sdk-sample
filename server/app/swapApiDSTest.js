@@ -35,9 +35,9 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'30m': { period: 30, slopeWindow: 5 },
-		'15m': { period: 20, slopeWindow: 5 },
-		'5m': { period: 5, slopeWindow: 5 },
+		'30m': { periods: [30, 10], slopeWindow: 5 },
+		'15m': { periods: [20, 10], slopeWindow: 5 },
+		'5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		'30m': 0,
@@ -330,7 +330,7 @@ class Backtester {
 				indicatorPromises.push(
 					tulind.indicators.ema.indicator(
 						[closes],
-						[config.emaSettings[tf].period]
+						config.emaSettings[tf].periods
 					)
 				);
 
@@ -360,7 +360,7 @@ class Backtester {
 
 			// 合并指标到数据
 			config.timeframes.forEach((tf, index) => {
-				const [ema, bollinger, atr, macd] = result.slice(
+				const [emas, bollinger, atr, macd] = result.slice(
 					index * 4,
 					(index + 1) * 4
 				);
@@ -368,12 +368,12 @@ class Backtester {
 				const emaSlopes = [];
 				for (
 					let i = config.emaSettings[tf].slopeWindow;
-					i < ema[0].length;
+					i < emas[0].length;
 					i++
 				) {
 					const slope =
-						(ema[0][i] -
-							ema[0][i - config.emaSettings[tf].slopeWindow]) /
+						(emas[0][i] -
+							emas[0][i - config.emaSettings[tf].slopeWindow]) /
 						config.emaSettings[tf].slopeWindow;
 					emaSlopes.push(slope);
 				}
@@ -386,15 +386,9 @@ class Backtester {
 						d.middle = bollinger[1][bbIndex];
 						d.upper = bollinger[2][bbIndex];
 					}
-					if (
-						i >=
-						// config.emaSettings[tf].period +
-						config.emaSettings[tf].slopeWindow
-					) {
+					if (i >= config.emaSettings[tf].slopeWindow) {
 						const slopeIndex =
-							i -
-							// config.emaSettings[tf].period -
-							config.emaSettings[tf].slopeWindow;
+							i - config.emaSettings[tf].slopeWindow;
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					if (i >= config.macdParams[tf][1]) {
@@ -407,7 +401,8 @@ class Backtester {
 						const atrIndex = i - config.atrParam.atrPeriod;
 						d.atr = atr[0][atrIndex];
 					}
-					d.ema = ema[0][i];
+					d.emaSlow = emas[0][i];
+					d.emaFast = emas[1][i];
 				});
 			});
 		} catch (e) {
@@ -547,16 +542,16 @@ class Backtester {
 						  isProfitTarget ||
 						  // candle[config.fastframe].close <
 						  // 	candle[config.fastframe].lower ||
-						  candle[config.slowframe].close <
-								candle[config.slowframe].middle
+						  candle[config.fastframe].emaFast <
+								candle[config.fastframe].emaSlow
 						: // signal.direction === 'short'
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
 						  // candle[config.fastframe].close >
 						  // 	candle[config.fastframe].upper ||
-						  candle[config.slowframe].close >
-								candle[config.slowframe].middle;
+						  candle[config.fastframe].emaFast >
+								candle[config.fastframe].emaSlow;
 				// signal.direction === 'long';
 				// const isReverse =
 				// 	signal &&
@@ -668,15 +663,17 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			candle[config.fastframe].close > candle[config.fastframe].ema &&
+			candle[config.fastframe].emaFast >
+				candle[config.fastframe].emaSlow &&
 			candle[config.slowframe].close > candle[config.slowframe].middle &&
-			candle[config.slowframe].close > candle[config.slowframe].ema;
+			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			candle[config.fastframe].close < candle[config.fastframe].ema &&
+			candle[config.fastframe].emaFast <
+				candle[config.fastframe].emaSlow &&
 			candle[config.slowframe].close < candle[config.slowframe].middle &&
-			candle[config.slowframe].close < candle[config.slowframe].ema;
+			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
 		if (longCondition) {
