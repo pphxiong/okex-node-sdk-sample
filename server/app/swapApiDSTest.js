@@ -369,7 +369,16 @@ class Backtester {
           index * 6,
           (index + 1) * 6
         );
-        console.log(23, this.data[tf].length, adx[0].length, atr[0].length);
+        console.log(
+          23,
+          this.data[tf].length,
+          adx[0].length,
+          atr[0].length,
+          emaSlow[0].length,
+          emaFast[0].length,
+          macd[0].length,
+          bollinger[0].length
+        );
         // 计算EMA斜率
         const emaSlopes = [];
         for (
