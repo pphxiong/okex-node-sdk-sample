@@ -64,7 +64,7 @@ const config = {
 		// ATR参数
 		atrPeriod: 14,
 		stopLoss: 1.6,
-		takeProfit: 8,
+		takeProfit: 6,
 	},
 	leverage: 20,
 	riskPerTrade: 0.02, // 每笔交易风险2%
@@ -438,15 +438,17 @@ class Backtester {
 						  isProfitTarget ||
 						  // candle[config.fastframe].close <
 						  // 	candle[config.fastframe].lower ||
-						  candle[config.slowframe].close <
-								candle[config.slowframe].middle
+						  // candle[config.slowframe].close <
+						  // 	candle[config.slowframe].middle
+						  signal.direction === 'short'
 						: /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
 						  // candle[config.fastframe].close >
 						  // 	candle[config.fastframe].upper ||
-						  candle[config.slowframe].close >
-								candle[config.slowframe].middle;
+						  // candle[config.slowframe].close >
+						  // 	candle[config.slowframe].middle;
+						  signal.direction === 'long';
 				// const isReverse =
 				// 	signal &&
 				// 	((position.direction === 'long'
