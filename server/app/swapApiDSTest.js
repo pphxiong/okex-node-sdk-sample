@@ -680,10 +680,11 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      (candle[config.slowframe].adx < 25
-        ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
-        : candle[config.fastframe].emaFast >
-          candle[config.fastframe].emaSlow) &&
+      // (candle[config.slowframe].adx < 25
+      //   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
+      //   : candle[config.fastframe].emaFast >
+      //     candle[config.fastframe].emaSlow) &&
+      candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
       candle[config.slowframe].close > candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
@@ -693,26 +694,27 @@ class Backtester {
       //   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
       //   : candle[config.fastframe].emaFast >
       //     candle[config.fastframe].emaSlow) &&
-      (candle[config.slowframe].adx < 25
-        ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
-        : candle[config.fastframe].emaFast <
-          candle[config.fastframe].emaSlow) &&
+      // (candle[config.slowframe].adx < 25
+      //   ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
+      //   : candle[config.fastframe].emaFast <
+      //     candle[config.fastframe].emaSlow) &&
+      candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
       candle[config.slowframe].close < candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
     // 多头信号
     if (longCondition) {
       return {
-        direction: "long",
-        // direction: candle[config.slowframe].adx > 25 ? "long" : "short",
+        // direction: "long",
+        direction: candle[config.slowframe].adx > 25 ? "long" : "short",
       };
     }
 
     // 空头信号
     if (shortCondition) {
       return {
-        direction: "short",
-        // direction: candle[config.slowframe].adx > 25 ? "short" : "long",
+        // direction: "short",
+        direction: candle[config.slowframe].adx > 25 ? "short" : "long",
       };
     }
 
