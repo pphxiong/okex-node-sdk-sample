@@ -369,16 +369,16 @@ class Backtester {
           index * 6,
           (index + 1) * 6
         );
-        console.log(
-          23,
-          this.data[tf].length,
-          adx[0].length,
-          atr[0].length,
-          emaSlow[0].length,
-          emaFast[0].length,
-          macd[0].length,
-          bollinger[0].length
-        );
+        // console.log(
+        //   23,
+        //   this.data[tf].length,
+        //   adx[0].length,
+        //   atr[0].length,
+        //   emaSlow[0].length,
+        //   emaFast[0].length,
+        //   macd[0].length,
+        //   bollinger[0].length
+        // );
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -396,26 +396,26 @@ class Backtester {
         // 合并指标到数据
         this.data[tf].forEach((d, i) => {
           if (i >= config.bollinger.period) {
-            const bbIndex = i - config.bollinger.period;
+            const bbIndex = i - config.bollinger.period + 1;
             d.lower = bollinger[0][bbIndex];
             d.middle = bollinger[1][bbIndex];
             d.upper = bollinger[2][bbIndex];
           }
           if (i >= config.emaSettings[tf].slopeWindow) {
-            const slopeIndex = i - config.emaSettings[tf].slopeWindow;
+            const slopeIndex = i - config.emaSettings[tf].slopeWindow + 1;
             d.emaSlope = emaSlopes[slopeIndex];
           }
           if (i >= config.macdParams[tf][1]) {
-            const macdIndex = i - config.macdParams[tf][1];
+            const macdIndex = i - config.macdParams[tf][1] + 1;
             d.macd = macd ? macd[0][macdIndex] : null;
             d.macdHistogram = macd[0][macdIndex] - macd[1][macdIndex] || null;
           }
           if (i >= config.atrParam.atrPeriod) {
-            const atrIndex = i - config.atrParam.atrPeriod;
+            const atrIndex = i - config.atrParam.atrPeriod + 1;
             d.atr = atr[0][atrIndex];
           }
           if (i >= config.adxPeriod) {
-            const adxIndex = i - config.adxPeriod * 2 + 1;
+            const adxIndex = i - config.adxPeriod * 2 + 2;
             d.adx = adx[0][adxIndex];
           }
           d.emaSlow = emaSlow[0][i];
