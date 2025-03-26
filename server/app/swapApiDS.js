@@ -224,21 +224,21 @@ async function calculateIndicators() {
       // 合并指标到数据
       marketData[tf].forEach((d, i) => {
         if (i >= config.bollinger.period) {
-          const bbIndex = i - config.bollinger.period;
+          const bbIndex = i - config.bollinger.period + 1;
           d.upper = bollinger[0][bbIndex];
           d.middle = bollinger[1][bbIndex];
           d.lower = bollinger[2][bbIndex];
         }
         if (i >= config.emaSettings[tf].slopeWindow) {
-          const slopeIndex = i - config.emaSettings[tf].slopeWindow;
+          const slopeIndex = i - config.emaSettings[tf].slopeWindow + 1;
           d.emaSlope = emaSlopes[slopeIndex];
         }
         if (i >= config.atrParam.atrPeriod) {
-          const atrIndex = i - config.atrParam.atrPeriod;
+          const atrIndex = i - config.atrParam.atrPeriod + 1;
           d.atr = atr[0][atrIndex];
         }
         if (i >= config.adxPeriod) {
-          const adxIndex = i - config.adxPeriod;
+          const adxIndex = i - config.adxPeriod * 2 + 2;
           d.adx = adx[0][adxIndex];
         }
         d.emaSlow = emaSlow[0][i];

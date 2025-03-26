@@ -430,8 +430,8 @@ class Backtester {
 
   getPositionSize(price, atr) {
     const riskAmount = this.balance * config.riskPerTrade;
-    // return riskAmount / (atr * config.leverage);
-    return 700;
+    return riskAmount / (atr * config.leverage);
+    // return 700;
     // return this.balance / 2;
   }
 
@@ -585,7 +585,7 @@ class Backtester {
         // 		: candle[config.mediumframe].close >
         // 		  candle[config.mediumframe].ema);
 
-        if (isReverse || isLastIndex) {
+        if (isReverse) {
           // console.log(
           //   config.fastframe,
           //   Object.assign(candle[config.fastframe], {
@@ -678,7 +678,10 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
+      (candle[config.slowframe].adx > 25
+        ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
+        : candle[config.fastframe].emaFast >
+          candle[config.fastframe].emaSlow) &&
       candle[config.slowframe].close > candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
@@ -688,23 +691,26 @@ class Backtester {
       //   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
       //   : candle[config.fastframe].emaFast >
       //     candle[config.fastframe].emaSlow) &&
-      candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
+      (candle[config.slowframe].adx > 25
+        ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
+        : candle[config.fastframe].emaFast <
+          candle[config.fastframe].emaSlow) &&
       candle[config.slowframe].close < candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
     // 多头信号
     if (longCondition) {
       return {
-        // direction: "short",
-        direction: candle[config.slowframe].adx > 25 ? "long" : "short",
+        direction: "short",
+        // direction: candle[config.slowframe].adx > 25 ? "long" : "short",
       };
     }
 
     // 空头信号
     if (shortCondition) {
       return {
-        // direction: "long",
-        direction: candle[config.slowframe].adx > 25 ? "short" : "long",
+        direction: "long",
+        // direction: candle[config.slowframe].adx > 25 ? "short" : "long",
       };
     }
 
