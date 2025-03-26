@@ -405,9 +405,9 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.0025);
 
 				const takeProfit =
-					candle[config.fastframe].atr * config.atrParam.takeProfit;
+					candle[config.slowframe].atr * config.atrParam.takeProfit;
 				const stopLoss =
-					candle[config.fastframe].atr * config.atrParam.stopLoss;
+					candle[config.slowframe].atr * config.atrParam.stopLoss;
 
 				const isProfitTarget =
 					position.direction === 'long'
@@ -468,7 +468,7 @@ class Backtester {
 				// 		: candle[config.mediumframe].close >
 				// 		  candle[config.mediumframe].ema);
 
-				if (isReverse || isLastIndex) {
+				if (isReverse) {
 					// console.log(
 					//   config.fastframe,
 					//   Object.assign(candle[config.fastframe], {
@@ -670,8 +670,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-03-01';
-	const end = '2024-08-26';
+	const start = '2025-03-01';
+	const end = '2025-03-26';
 	const interval = 5;
 	let profitTotal = 0;
 
