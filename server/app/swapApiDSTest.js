@@ -83,6 +83,7 @@ const config = {
   simulations: 5000, // 模拟次数
   volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
   drift: 0.0002, // 每日趋势偏移量
+  adxPeriod: 14,
 };
 
 class Backtester {
@@ -360,6 +361,13 @@ class Backtester {
         indicatorPromises.push(
           tulind.indicators.macd.indicator([closes], config.macdParams[tf])
         );
+
+        indicatorPromises.push(
+          tulind.indicators.adx.indicator(
+            [highs, lows, closes],
+            [config.adxPeriod]
+          )
+        );
       });
 
       const result = await Promise.all(indicatorPromises);
@@ -367,8 +375,8 @@ class Backtester {
       // 合并指标到数据
       config.timeframes.forEach((tf, index) => {
         const [emaSlow, emaFast, bollinger, atr, macd] = result.slice(
-          index * 5,
-          (index + 1) * 5
+          index * 6,
+          (index + 1) * 6
         );
         // 计算EMA斜率
         const emaSlopes = [];
@@ -404,6 +412,10 @@ class Backtester {
           if (i >= config.atrParam.atrPeriod) {
             const atrIndex = i - config.atrParam.atrPeriod;
             d.atr = atr[0][atrIndex];
+          }
+          if (i >= config.adxPeriod) {
+            const adxIndex = i - config.adxPeriod;
+            d.adx = adx[0][adxIndex];
           }
           d.emaSlow = emaSlow[0][i];
           d.emaFast = emaFast[0][i];
@@ -667,13 +679,19 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
+      (candle[config.slowframe].adx > 25
+        ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
+        : candle[config.fastframe].emaFast >
+          candle[config.fastframe].emaSlow) &&
       candle[config.slowframe].close > candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
     const shortCondition =
       // secondKline5M.close > secondKline5M.upper &&
-      candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
+      (candle[config.slowframe].adx > 25
+        ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
+        : candle[config.fastframe].emaFast <
+          candle[config.fastframe].emaSlow) &&
       candle[config.slowframe].close < candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
