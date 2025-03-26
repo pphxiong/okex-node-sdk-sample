@@ -678,7 +678,7 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      (candle[config.slowframe].adx > 25
+      (candle[config.slowframe].adx < 25
         ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
         : candle[config.fastframe].emaFast >
           candle[config.fastframe].emaSlow) &&
@@ -691,7 +691,7 @@ class Backtester {
       //   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
       //   : candle[config.fastframe].emaFast >
       //     candle[config.fastframe].emaSlow) &&
-      (candle[config.slowframe].adx > 25
+      (candle[config.slowframe].adx < 25
         ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
         : candle[config.fastframe].emaFast <
           candle[config.fastframe].emaSlow) &&
