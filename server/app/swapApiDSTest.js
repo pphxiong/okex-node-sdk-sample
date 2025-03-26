@@ -680,11 +680,10 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      // (candle[config.slowframe].adx < 25
-      //   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
-      //   : candle[config.fastframe].emaFast >
-      //     candle[config.fastframe].emaSlow) &&
-      candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
+      (candle[config.slowframe].adx < 25
+        ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
+        : candle[config.fastframe].emaFast >
+          candle[config.fastframe].emaSlow) &&
       candle[config.slowframe].close > candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
@@ -694,27 +693,26 @@ class Backtester {
       //   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
       //   : candle[config.fastframe].emaFast >
       //     candle[config.fastframe].emaSlow) &&
-      // (candle[config.slowframe].adx < 25
-      //   ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
-      //   : candle[config.fastframe].emaFast <
-      //     candle[config.fastframe].emaSlow) &&
-      candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
+      (candle[config.slowframe].adx < 25
+        ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
+        : candle[config.fastframe].emaFast <
+          candle[config.fastframe].emaSlow) &&
       candle[config.slowframe].close < candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
     // 多头信号
     if (longCondition) {
       return {
-        // direction: "long",
-        direction: candle[config.slowframe].adx > 25 ? "long" : "short",
+        direction: "long",
+        // direction: candle[config.slowframe].adx > 25 ? "long" : "short",
       };
     }
 
     // 空头信号
     if (shortCondition) {
       return {
-        // direction: "short",
-        direction: candle[config.slowframe].adx > 25 ? "short" : "long",
+        direction: "short",
+        // direction: candle[config.slowframe].adx > 25 ? "short" : "long",
       };
     }
 
@@ -814,8 +812,8 @@ class Backtester {
   // const simPaths = this.generateCorrelatedPaths(histData);
 
   const backtester = new Backtester();
-  const start = "2024-03-01";
-  const end = "2024-10-26";
+  const start = "2023-03-01";
+  const end = "2023-10-26";
   const interval = 5;
   let profitTotal = 0;
 
