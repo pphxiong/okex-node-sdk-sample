@@ -558,13 +558,13 @@ class Backtester {
 		// }
 
 		const longCondition =
-			secondKline5M.close < secondKline5M.lower &&
-			candle[config.fastframe].close > candle[config.fastframe].lower &&
+			// secondKline5M.close < secondKline5M.lower &&
+			candle[config.fastframe].close < candle[config.fastframe].lower &&
 			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
-			secondKline5M.close > secondKline5M.upper &&
-			candle[config.fastframe].close < candle[config.fastframe].upper &&
+			// secondKline5M.close > secondKline5M.upper &&
+			candle[config.fastframe].close > candle[config.fastframe].upper &&
 			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
