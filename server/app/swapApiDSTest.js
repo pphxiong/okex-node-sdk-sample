@@ -404,15 +404,20 @@ class Backtester {
             const atrIndex = i - config.atrParam.atrPeriod;
             d.atr = atr[0][atrIndex];
           }
-          // if (i >= config.adxPeriod) {
-          //   const adxIndex = i - config.adxPeriod;
-          //   d.adx = adx[0][adxIndex];
-          // }
+          if (i >= config.adxPeriod) {
+            const adxIndex = i - config.adxPeriod;
+            d.adx = adx[0][adxIndex];
+            console.log(
+              123,
+              adx[0].length,
+              adx[0].slice(-1)[0],
+              adxIndex,
+              adx[0][adxIndex]
+            );
+          }
           d.emaSlow = emaSlow[0][i];
           d.emaFast = emaFast[0][i];
-          d.adx = adx[0][i];
-          console.log(adx[0].length, i);
-          console.log(adx[0].slice(-2));
+          // d.adx = adx[0][i];
         });
       });
     } catch (e) {
