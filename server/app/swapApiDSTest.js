@@ -420,7 +420,7 @@ class Backtester {
 						d.atr = atr[0][atrIndex];
 					}
 					d.emaSlow = emaSlow[0][i];
-					d.emaFast = emaFast[1][i];
+					d.emaFast = emaFast[0][i];
 				});
 			});
 		} catch (e) {
