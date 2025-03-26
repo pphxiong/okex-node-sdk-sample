@@ -686,6 +686,7 @@ class Backtester {
         ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
         : candle[config.fastframe].emaFast >
           candle[config.fastframe].emaSlow) &&
+      // candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
       candle[config.slowframe].close < candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
@@ -799,9 +800,9 @@ class Backtester {
   // const simPaths = this.generateCorrelatedPaths(histData);
 
   const backtester = new Backtester();
-  const start = "2024-01-10";
-  const end = "2024-03-26";
-  const interval = 5;
+  const start = "2025-03-10";
+  const end = "2025-03-26";
+  const interval = 3;
   let profitTotal = 0;
 
   let i = 0;
