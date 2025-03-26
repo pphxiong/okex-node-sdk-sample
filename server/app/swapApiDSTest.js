@@ -374,7 +374,7 @@ class Backtester {
 
       // 合并指标到数据
       config.timeframes.forEach((tf, index) => {
-        const [emaSlow, emaFast, bollinger, atr, macd] = result.slice(
+        const [emaSlow, emaFast, bollinger, atr, macd, adx] = result.slice(
           index * 6,
           (index + 1) * 6
         );
