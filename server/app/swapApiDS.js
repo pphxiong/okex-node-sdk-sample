@@ -274,7 +274,8 @@ function getPositionSize(atr) {
 
 // 限价单管理模块
 class OrderManager {
-	static async createLimitOrder(side, amount, price, isOpen = true) {
+	static async createLimitOrder(side, amount, price, isOpen = true, atr) {
+		const positionSize = isOpen ? getPositionSize(atr) : amount;
 		const positionSide = isOpen
 			? side === 'buy'
 				? 'LONG'
@@ -285,7 +286,7 @@ class OrderManager {
 		const order = await exchange.createLimitOrder(
 			config.symbol,
 			side,
-			amount,
+			positionSize,
 			price,
 			{
 				positionSide,
@@ -294,7 +295,7 @@ class OrderManager {
 		state.activeOrders.push({
 			id: order.id,
 			side,
-			amount,
+			positionSize,
 			price,
 			timestamp: Date.now(),
 		});
@@ -764,13 +765,20 @@ async function strategyLoop() {
 
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
+			const { kline } = signal;
 			if (
 				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
 			) {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				await OrderManager.createLimitOrder('buy', amount, limitPrice);
+				await OrderManager.createLimitOrder(
+					'buy',
+					amount,
+					limitPrice,
+					true,
+					kline.atr
+				);
 				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 				console.log(
 					`%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
@@ -784,7 +792,13 @@ async function strategyLoop() {
 				const limitPrice = orderBook.ask * (1 + config.orderDepth);
 				const amount = config.tradeAmount / limitPrice;
 
-				await OrderManager.createLimitOrder('sell', amount, limitPrice);
+				await OrderManager.createLimitOrder(
+					'sell',
+					amount,
+					limitPrice,
+					true,
+					kline.atr
+				);
 				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 				console.log(
 					`%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
