@@ -801,8 +801,8 @@ class Backtester {
   // const simPaths = this.generateCorrelatedPaths(histData);
 
   const backtester = new Backtester();
-  const start = "2025-01-10";
-  const end = "2025-03-26";
+  const start = "2023-01-10";
+  const end = "2023-03-26";
   const interval = 3;
   let profitTotal = 0;
 
