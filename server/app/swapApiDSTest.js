@@ -676,10 +676,7 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      (candle[config.slowframe].adx > 25
-        ? candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow
-        : candle[config.fastframe].emaFast <
-          candle[config.fastframe].emaSlow) &&
+      candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
       candle[config.slowframe].close > candle[config.slowframe].middle &&
       candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
@@ -694,12 +691,16 @@ class Backtester {
 
     // 多头信号
     if (longCondition) {
-      return { direction: "long" };
+      return {
+        direction: candle[config.slowframe].adx > 25 ? "long" : "short",
+      };
     }
 
     // 空头信号
     if (shortCondition) {
-      return { direction: "short" };
+      return {
+        direction: candle[config.slowframe].adx > 25 ? "short" : "long",
+      };
     }
 
     return null;
