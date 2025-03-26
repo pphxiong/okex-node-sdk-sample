@@ -583,7 +583,7 @@ class Backtester {
         // 		: candle[config.mediumframe].close >
         // 		  candle[config.mediumframe].ema);
 
-        if (isReverse) {
+        if (isReverse || isLastIndex) {
           // console.log(
           //   config.fastframe,
           //   Object.assign(candle[config.fastframe], {
@@ -801,7 +801,7 @@ class Backtester {
   const backtester = new Backtester();
   const start = "2024-01-10";
   const end = "2024-03-26";
-  const interval = 3;
+  const interval = 5;
   let profitTotal = 0;
 
   let i = 0;
