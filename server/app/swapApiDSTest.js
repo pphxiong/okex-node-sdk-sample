@@ -369,7 +369,7 @@ class Backtester {
           index * 6,
           (index + 1) * 6
         );
-        console.log(22, adx[0].slice(-32));
+        console.log(22, adx[0].slice(0, 32));
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -406,7 +406,7 @@ class Backtester {
             d.atr = atr[0][atrIndex];
           }
           if (i >= config.adxPeriod) {
-            const adxIndex = i - config.adxPeriod;
+            const adxIndex = i - config.adxPeriod * 2;
             d.adx = adx[0][adxIndex];
           }
           d.emaSlow = emaSlow[0][i];
