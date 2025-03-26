@@ -369,6 +369,7 @@ class Backtester {
           index * 6,
           (index + 1) * 6
         );
+        console.log(23, this.data[tf].length, adx[0].length, atr[0].length);
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -825,13 +826,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data["5m"].slice(-3).map((candle) =>
-          Object.assign(candle, {
-            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          })
-        )
-      );
+      // console.log(
+      //   data["5m"].slice(-3).map((candle) =>
+      //     Object.assign(candle, {
+      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //     })
+      //   )
+      // );
 
       // 步骤3: 运行回测
       backtester.runBacktest();
