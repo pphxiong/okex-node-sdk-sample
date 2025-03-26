@@ -317,6 +317,15 @@ class Backtester {
 		};
 	}
 
+	async getMultiEmas(tf) {
+		return new Promise((resolve, reject) => {
+			tulind.indicators.ema.indicator(
+				[this.data[tf].map((d) => d.close)],
+				config.emaSettings[tf].periods
+			);
+		});
+	}
+
 	async calculateIndicators() {
 		try {
 			const indicatorPromises = [];
@@ -330,7 +339,14 @@ class Backtester {
 				indicatorPromises.push(
 					tulind.indicators.ema.indicator(
 						[closes],
-						config.emaSettings[tf].periods
+						[config.emaSettings[tf].periods[0]]
+					)
+				);
+
+				indicatorPromises.push(
+					tulind.indicators.ema.indicator(
+						[closes],
+						[config.emaSettings[tf].periods[1]]
 					)
 				);
 
@@ -360,20 +376,22 @@ class Backtester {
 
 			// 合并指标到数据
 			config.timeframes.forEach((tf, index) => {
-				const [emas, bollinger, atr, macd] = result.slice(
-					index * 4,
-					(index + 1) * 4
+				const [emaSlow, emaFast, bollinger, atr, macd] = result.slice(
+					index * 5,
+					(index + 1) * 5
 				);
 				// 计算EMA斜率
 				const emaSlopes = [];
 				for (
 					let i = config.emaSettings[tf].slopeWindow;
-					i < emas[0].length;
+					i < emaSlow[0].length;
 					i++
 				) {
 					const slope =
-						(emas[0][i] -
-							emas[0][i - config.emaSettings[tf].slopeWindow]) /
+						(emaSlow[0][i] -
+							emaSlow[0][
+								i - config.emaSettings[tf].slopeWindow
+							]) /
 						config.emaSettings[tf].slopeWindow;
 					emaSlopes.push(slope);
 				}
@@ -401,8 +419,8 @@ class Backtester {
 						const atrIndex = i - config.atrParam.atrPeriod;
 						d.atr = atr[0][atrIndex];
 					}
-					d.emaSlow = emas[0][i];
-					d.emaFast = emas[1][i];
+					d.emaSlow = emaSlow[0][i];
+					d.emaFast = emaFast[1][i];
 				});
 			});
 		} catch (e) {
