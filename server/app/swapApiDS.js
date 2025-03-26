@@ -277,7 +277,8 @@ function getLastIndicators(indicators, key) {
 
 function getPositionSize(atr) {
   const riskAmount = config.tradeAmount * config.riskPerTrade;
-  return riskAmount / (atr * config.leverage);
+  // return riskAmount / (atr * config.leverage);
+  return 220;
 }
 
 // 限价单管理模块
@@ -531,14 +532,16 @@ async function generateSignal(currentPrice) {
   // 多头信号条件
   const longCondition =
     // secondKline5M.close < secondKline5M.middle &&
-    candle[config.fastframe].close < candle[config.fastframe].lower &&
-    candle[config.slowframe].close > candle[config.slowframe].middle;
+    candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
+    candle[config.slowframe].close > candle[config.slowframe].middle &&
+    candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
   // 空头信号条件
   const shortCondition =
     // secondKline5M.close > secondKline5M.middle &&
-    candle[config.fastframe].close > candle[config.fastframe].upper &&
-    candle[config.slowframe].close < candle[config.slowframe].middle;
+    candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
+    candle[config.slowframe].close < candle[config.slowframe].middle &&
+    candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
   console.log("################################");
   console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
@@ -575,8 +578,10 @@ async function generateSignal(currentPrice) {
   console.log("################################");
 
   return {
-    buySignal: longCondition,
-    sellSignal: shortCondition,
+    buySignal:
+      candle[config.slowframe].adx > 25 ? longCondition : shortCondition,
+    sellSignal:
+      candle[config.slowframe].adx > 25 ? shortCondition : longCondition,
     price: currentPrice,
     kline: lastKline5M,
   };
@@ -612,7 +617,7 @@ class RiskManager {
       lastKline5M[config.fastframe].atr * config.atrParam.stopLoss;
 
     const isProfitTarget =
-      position.direction === "long"
+      side === "buy"
         ? lastKline5M[config.fastframe].close >=
           position.entryPrice + takeProfit
         : lastKline5M[config.fastframe].close <=
@@ -620,10 +625,8 @@ class RiskManager {
 
     isStop =
       side === "buy"
-        ? isProfitTarget ||
-          candle[config.slowframe].close < candle[config.slowframe].middle
-        : isProfitTarget ||
-          candle[config.slowframe].close > candle[config.slowframe].middle;
+        ? isProfitTarget || signal.sellSignal
+        : isProfitTarget || signal.buySignal;
 
     console.log("***********************************");
     console.log("entryPrice", state.entryPrice);
