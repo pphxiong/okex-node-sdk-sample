@@ -671,7 +671,7 @@ class Backtester {
 (async () => {
 	const backtester = new Backtester();
 	const start = '2024-03-01';
-	const end = '2025-03-26';
+	const end = '2023-08-26';
 	const interval = 5;
 	let profitTotal = 0;
 
