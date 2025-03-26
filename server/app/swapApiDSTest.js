@@ -671,12 +671,12 @@ class Backtester {
 (async () => {
 	const backtester = new Backtester();
 	const start = '2025-03-23';
-	const end = '2023-03-26';
+	const end = '2025-03-26';
 	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
+	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
 		// while (i === 0) {
 		try {
 			backtester.data = {
