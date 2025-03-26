@@ -32,28 +32,21 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: [/*'1h',*/ '15m', '5m', '1m'], // 多周期参数
+	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		// '1h': { period: 30, slopeWindow: 5 },
+		'30m': { period: 30, slopeWindow: 5 },
 		'15m': { period: 20, slopeWindow: 5 },
 		'5m': { period: 5, slopeWindow: 5 },
-		'1m': { period: 5, slopeWindow: 5 },
 	},
 	slopeThreshold: {
-		// '1h': 0,
+		'30m': 0,
 		'15m': 0.003 * 0.01,
 		'5m': 0.005 * 0.01,
-		'1m': 0.005 * 0.01,
 	}, // 斜率阈值
-	macdParams: {
-		'1h': [12, 26, 9],
-		'15m': [12, 26, 9],
-		'5m': [12, 26, 9],
-		'1m': [12, 26, 9],
-	},
-	slowframe: '15m',
-	mediumframe: '5m',
-	fastframe: '1m',
+	macdParams: { '1h': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
+	slowframe: '30m',
+	mediumframe: '15m',
+	fastframe: '5m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -81,6 +74,7 @@ const config = {
 	// coldStartBars: 480,
 	coldStartBars: {
 		'1h': 24,
+		'30m': 48,
 		'15m': 160,
 		'5m': 480,
 		'1m': 480 * 5,
@@ -442,21 +436,15 @@ class Backtester {
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
 						  isProfitTarget ||
-						  candle[config.fastframe].close <
-								candle[config.fastframe].lower ||
-						  (secondKline5M.close > secondKline5M.upper &&
-								candle[config.fastframe].close <
-									candle[config.fastframe].upper) ||
+						  // candle[config.fastframe].close <
+						  // 	candle[config.fastframe].lower ||
 						  candle[config.slowframe].close <
 								candle[config.slowframe].middle
 						: /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
-						  candle[config.fastframe].close >
-								candle[config.fastframe].upper ||
-						  (secondKline5M.close < secondKline5M.lower &&
-								candle[config.fastframe].close >
-									candle[config.fastframe].lower) ||
+						  // candle[config.fastframe].close >
+						  // 	candle[config.fastframe].upper ||
 						  candle[config.slowframe].close >
 								candle[config.slowframe].middle;
 				// const isReverse =
@@ -678,7 +666,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-24';
+	const start = '2025-03-01';
 	const end = '2025-03-26';
 	const interval = 1;
 	let profitTotal = 0;
