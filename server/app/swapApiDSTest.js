@@ -441,7 +441,7 @@ class Backtester {
 						  // candle[config.fastframe].close <
 						  // 	candle[config.fastframe].lower ||
 						  candle[config.slowframe].close <
-								candle[config.slowframe].middle
+								candle[config.slowframe].ema
 						: // signal.direction === 'short'
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
@@ -449,7 +449,7 @@ class Backtester {
 						  // candle[config.fastframe].close >
 						  // 	candle[config.fastframe].upper ||
 						  candle[config.slowframe].close >
-								candle[config.slowframe].middle;
+								candle[config.slowframe].ema;
 				// signal.direction === 'long';
 				// const isReverse =
 				// 	signal &&
@@ -562,12 +562,12 @@ class Backtester {
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
 			candle[config.fastframe].close < candle[config.fastframe].lower &&
-			candle[config.slowframe].close > candle[config.slowframe].middle;
+			candle[config.slowframe].close > candle[config.slowframe].ema;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
 			candle[config.fastframe].close > candle[config.fastframe].upper &&
-			candle[config.slowframe].close < candle[config.slowframe].middle;
+			candle[config.slowframe].close < candle[config.slowframe].ema;
 
 		// 多头信号
 		if (longCondition) {
