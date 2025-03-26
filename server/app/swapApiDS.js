@@ -36,18 +36,19 @@ const LEVERAGE = 20;
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
+	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'1h': { period: 10, slopeWindow: 1 },
-		'15m': { period: 2, slopeWindow: 1 },
-		'5m': { period: 1, slopeWindow: 1 },
+		'30m': { period: 30, slopeWindow: 5 },
+		'15m': { period: 20, slopeWindow: 5 },
+		'5m': { period: 5, slopeWindow: 5 },
 	},
 	slopeThreshold: {
-		'1h': 0 * 0.01,
-		'15m': 0 * 0.01,
-		'5m': 0 * 0.01,
+		'30m': 0,
+		'15m': 0.003 * 0.01,
+		'5m': 0.005 * 0.01,
 	}, // 斜率阈值
-	slowframe: '1h',
+	macdParams: { '30m': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
+	slowframe: '30m',
 	mediumframe: '15m',
 	fastframe: '5m',
 	// 布林线参数
@@ -76,8 +77,8 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1,
-		takeProfit: 3,
+		stopLoss: 1.6,
+		takeProfit: 6.4,
 	},
 };
 
@@ -517,14 +518,14 @@ async function generateSignal(currentPrice) {
 
 	// 多头信号条件
 	const longCondition =
-		secondKline5M.close < secondKline5M.middle &&
-		candle[config.fastframe].close > candle[config.fastframe].middle &&
+		// secondKline5M.close < secondKline5M.middle &&
+		candle[config.fastframe].close < candle[config.fastframe].lower &&
 		candle[config.slowframe].close > candle[config.slowframe].middle;
 
 	// 空头信号条件
 	const shortCondition =
-		secondKline5M.close > secondKline5M.middle &&
-		candle[config.fastframe].close < candle[config.fastframe].middle &&
+		// secondKline5M.close > secondKline5M.middle &&
+		candle[config.fastframe].close > candle[config.fastframe].upper &&
 		candle[config.slowframe].close < candle[config.slowframe].middle;
 
 	console.log('################################');
@@ -542,14 +543,14 @@ async function generateSignal(currentPrice) {
 			),
 		})
 	);
-	console.log(
-		config.mediumframe,
-		Object.assign(candle[config.mediumframe], {
-			timestamp: moment(candle[config.mediumframe].timestamp).format(
-				'YYYY-MM-DD HH:mm:ss'
-			),
-		})
-	);
+	// console.log(
+	// 	config.mediumframe,
+	// 	Object.assign(candle[config.mediumframe], {
+	// 		timestamp: moment(candle[config.mediumframe].timestamp).format(
+	// 			'YYYY-MM-DD HH:mm:ss'
+	// 		),
+	// 	})
+	// );
 	console.log(
 		config.slowframe,
 		Object.assign(candle[config.slowframe], {
@@ -592,25 +593,26 @@ class RiskManager {
 		const { side, position } = state;
 		let isStop = false;
 
+		const takeProfit =
+			lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
+		const stopLoss =
+			lastKline5M[config.fastframe].atr * config.atrParam.stopLoss;
+
 		const isProfitTarget =
 			position.direction === 'long'
 				? lastKline5M[config.fastframe].close >=
-				  position.entryPrice + position.takeProfit
+				  position.entryPrice + takeProfit
 				: lastKline5M[config.fastframe].close <=
-				  position.entryPrice - position.takeProfit;
+				  position.entryPrice - takeProfit;
 
 		isStop =
 			side === 'buy'
-				? (candle[config.fastframe].close <
-						candle[config.fastframe].middle &&
-						isProfitTarget) ||
-				  candle[config.fastframe].close <
-						candle[config.fastframe].lower
-				: (candle[config.fastframe].close >
-						candle[config.fastframe].middle &&
-						isProfitTarget) ||
-				  candle[config.fastframe].close >
-						candle[config.fastframe].upper;
+				? isProfitTarget ||
+				  candle[config.slowframe].close <
+						candle[config.slowframe].middle
+				: isProfitTarget ||
+				  candle[config.slowframe].close >
+						candle[config.slowframe].middle;
 
 		console.log('***********************************');
 		console.log('entryPrice', state.entryPrice);
