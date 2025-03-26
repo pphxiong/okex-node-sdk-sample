@@ -64,7 +64,7 @@ const config = {
 		// ATR参数
 		atrPeriod: 14,
 		stopLoss: 1.6,
-		takeProfit: 6.4,
+		takeProfit: 3.2,
 	},
 	leverage: 20,
 	riskPerTrade: 0.02, // 每笔交易风险2%
@@ -441,7 +441,7 @@ class Backtester {
 						  // candle[config.fastframe].close <
 						  // 	candle[config.fastframe].lower ||
 						  candle[config.slowframe].close <
-								candle[config.slowframe].ema
+								candle[config.slowframe].middle
 						: // signal.direction === 'short'
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
@@ -449,7 +449,7 @@ class Backtester {
 						  // candle[config.fastframe].close >
 						  // 	candle[config.fastframe].upper ||
 						  candle[config.slowframe].close >
-								candle[config.slowframe].ema;
+								candle[config.slowframe].middle;
 				// signal.direction === 'long';
 				// const isReverse =
 				// 	signal &&
@@ -562,12 +562,12 @@ class Backtester {
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
 			candle[config.fastframe].close < candle[config.fastframe].lower &&
-			candle[config.slowframe].close > candle[config.slowframe].ema;
+			candle[config.slowframe].close > candle[config.slowframe].middle;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
 			candle[config.fastframe].close > candle[config.fastframe].upper &&
-			candle[config.slowframe].close < candle[config.slowframe].ema;
+			candle[config.slowframe].close < candle[config.slowframe].middle;
 
 		// 多头信号
 		if (longCondition) {
@@ -670,8 +670,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
-	const end = '2025-03-26';
+	const start = '2024-01-01';
+	const end = '2024-03-26';
 	const interval = 5;
 	let profitTotal = 0;
 
