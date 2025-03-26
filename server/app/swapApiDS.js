@@ -29,8 +29,8 @@ const tulind = require('tulind');
 const WebSocket = require('ws');
 require('dotenv').config();
 
-const MAX_TRADE_POSITION_RATIO = 7 / 10;
-const LEVERAGE = 20;
+// const MAX_TRADE_POSITION_RATIO = 7 / 10;
+// const LEVERAGE = 20;
 
 // 配置参数
 const config = {
@@ -62,7 +62,6 @@ const config = {
 	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
-	takeProfit: 0.005, // 硬止盈(1%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
@@ -80,6 +79,8 @@ const config = {
 		stopLoss: 1.6,
 		takeProfit: 6.4,
 	},
+	riskPerTrade: 0.02, // 每笔交易风险2%
+	leverage: 20, // 杠杆倍数
 };
 
 // 全局状态
@@ -264,6 +265,11 @@ async function getOrderBook() {
 
 function getLastIndicators(indicators, key) {
 	return indicators[key][indicators[key].length - 1];
+}
+
+function getPositionSize(atr) {
+	const riskAmount = config.tradeAmount * config.riskPerTrade;
+	return riskAmount / (atr * config.leverage);
 }
 
 // 限价单管理模块
@@ -566,6 +572,7 @@ async function generateSignal(currentPrice) {
 		buySignal: longCondition,
 		sellSignal: shortCondition,
 		price: currentPrice,
+		kline: lastKline5M,
 	};
 }
 
@@ -731,10 +738,6 @@ async function initialize() {
 			marketData[config.fastframe].length
 		}根历史K线`
 	);
-}
-
-function getTradeAmount() {
-	return config.tradeAmount;
 }
 
 // 策略主逻辑
