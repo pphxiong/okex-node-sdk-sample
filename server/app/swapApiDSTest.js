@@ -76,6 +76,7 @@ const config = {
 		'1h': 24,
 		'15m': 160,
 		'5m': 480,
+		'1m': 480 * 5,
 	},
 };
 
@@ -434,15 +435,15 @@ class Backtester {
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
 						  isProfitTarget ||
-						  candle[config.fastframe].close <
-								candle[config.fastframe].lower ||
+						  // candle[config.fastframe].close <
+						  // 	candle[config.fastframe].lower ||
 						  candle[config.slowframe].close <
 								candle[config.slowframe].middle
 						: /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
-						  candle[config.fastframe].close >
-								candle[config.fastframe].upper ||
+						  // candle[config.fastframe].close >
+						  // 	candle[config.fastframe].upper ||
 						  candle[config.slowframe].close >
 								candle[config.slowframe].middle;
 				// const isReverse =
