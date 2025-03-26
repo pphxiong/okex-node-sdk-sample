@@ -32,21 +32,28 @@ const tulind = require('tulind');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: ['1h', '15m', '5m' /* '1m'*/], // 多周期参数
+	timeframes: [/*'1h',*/ '15m', '5m', '1m'], // 多周期参数
 	emaSettings: {
-		'1h': { period: 30, slopeWindow: 5 },
+		// '1h': { period: 30, slopeWindow: 5 },
 		'15m': { period: 20, slopeWindow: 5 },
 		'5m': { period: 5, slopeWindow: 5 },
+		'1m': { period: 5, slopeWindow: 5 },
 	},
 	slopeThreshold: {
-		'1h': 0,
+		// '1h': 0,
 		'15m': 0.003 * 0.01,
 		'5m': 0.005 * 0.01,
+		'1m': 0.005 * 0.01,
 	}, // 斜率阈值
-	macdParams: { '1h': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
-	slowframe: '1h',
-	mediumframe: '15m',
-	fastframe: '5m',
+	macdParams: {
+		'1h': [12, 26, 9],
+		'15m': [12, 26, 9],
+		'5m': [12, 26, 9],
+		'1m': [12, 26, 9],
+	},
+	slowframe: '15m',
+	mediumframe: '5m',
+	fastframe: '1m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -665,7 +672,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-01';
+	const start = '2025-03-24';
 	const end = '2025-03-26';
 	const interval = 1;
 	let profitTotal = 0;
