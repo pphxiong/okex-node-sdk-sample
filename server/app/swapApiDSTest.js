@@ -560,17 +560,18 @@ class Backtester {
 						  isProfitTarget ||
 						  // candle[config.fastframe].close <
 						  // 	candle[config.fastframe].lower ||
-						  candle[config.fastframe].emaFast <
-								candle[config.fastframe].emaSlow
-						: // signal.direction === 'short'
+						  signal.direction === 'short'
+						: // candle[config.slowframe].emaFast <
+						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
 						  // candle[config.fastframe].close >
 						  // 	candle[config.fastframe].upper ||
-						  candle[config.fastframe].emaFast >
-								candle[config.fastframe].emaSlow;
-				// signal.direction === 'long';
+						  signal.direction === 'long';
+				// candle[config.slowframe].emaFast >
+				// 	candle[config.slowframe].emaSlow;
+
 				// const isReverse =
 				// 	signal &&
 				// 	((position.direction === 'long'
