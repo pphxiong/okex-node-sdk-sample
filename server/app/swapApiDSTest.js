@@ -442,15 +442,21 @@ class Backtester {
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
 						  isProfitTarget ||
-						  // candle[config.fastframe].close <
-						  // 	candle[config.fastframe].lower ||
+						  candle[config.fastframe].close <
+								candle[config.fastframe].lower ||
+						  (secondKline5M.close > secondKline5M.upper &&
+								candle[config.fastframe].close <
+									candle[config.fastframe].upper) ||
 						  candle[config.slowframe].close <
 								candle[config.slowframe].middle
 						: /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
-						  // candle[config.fastframe].close >
-						  // 	candle[config.fastframe].upper ||
+						  candle[config.fastframe].close >
+								candle[config.fastframe].upper ||
+						  (secondKline5M.close < secondKline5M.lower &&
+								candle[config.fastframe].close >
+									candle[config.fastframe].lower) ||
 						  candle[config.slowframe].close >
 								candle[config.slowframe].middle;
 				// const isReverse =
