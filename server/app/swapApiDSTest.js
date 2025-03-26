@@ -670,13 +670,17 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-03-01';
-	const end = '2023-10-26';
-	const interval = 5;
+	const start = '2025-03-23';
+	const end = '2023-03-26';
+	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i + interval, 'days'))) {
+	while (
+		moment(end)
+			.add(interval, 'days')
+			.isAfter(moment(start).add(i + interval, 'days'))
+	) {
 		// while (i === 0) {
 		try {
 			backtester.data = {
