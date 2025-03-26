@@ -26,6 +26,7 @@ const cAuthClientBN = new customAuthClientBN(
 
 const ccxt = require('ccxt');
 const tulind = require('tulind');
+const math = require('mathjs');
 // const _ = require('lodash');
 
 // 策略配置
@@ -79,6 +80,9 @@ const config = {
 		'5m': 480,
 		'1m': 480 * 5,
 	},
+	simulations: 5000, // 模拟次数
+	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
+	drift: 0.0002, // 每日趋势偏移量
 };
 
 class Backtester {
@@ -101,6 +105,109 @@ class Backtester {
 		this.trades = [];
 		this.balance = config.initialBalance;
 		this.totalFee = 0;
+	}
+
+	// 多周期价格路径生成（带相关性）
+	generateCorrelatedPaths(historicalData) {
+		const paths = {};
+		const tfs = Object.keys(historicalData);
+
+		// 计算各周期收益率矩阵
+		const returnsMatrix = tfs.map((tf) => {
+			const closes = historicalData[tf].map((c) => c[4]);
+			return _.range(1, closes.length).map((i) =>
+				Math.log(closes[i] / closes[i - 1])
+			);
+		});
+
+		// 构建协方差矩阵
+		const covMatrix = math.cov(...returnsMatrix);
+
+		// Cholesky分解生成相关路径
+		const chol = math.chol(covMatrix);
+
+		for (let s = 0; s < config.simulations; s++) {
+			paths[s] = {};
+			for (let tfi = 0; tfi < tfs.length; tfi++) {
+				const tf = tfs[tfi];
+				const basePrice = historicalData[tf][0][4];
+				const path = [basePrice];
+
+				for (let t = 1; t < historicalData[tf].length; t++) {
+					const z = math.multiply(chol, math.random([tfs.length, 1]));
+					const drift = 0.0002 * (t / 1440); // 时间加权利率
+					const shock =
+						z[tfi] *
+						math.sqrt(
+							config.emaSettings[config.slowframe].period / 20
+						);
+					path[t] = path[t - 1] * Math.exp(drift + shock);
+				}
+				paths[s][tf] = path;
+			}
+		}
+		return paths;
+	}
+
+	// 时间轴对齐算法
+	alignTimeframes(paths) {
+		const masterTF = '5m'; // 以最短周期为基准
+		const aligned = [];
+
+		paths[masterTF].forEach((point, idx) => {
+			const alignedTick = { [masterTF]: point };
+
+			// 对齐更高周期
+			config.timeframes
+				.filter((tf) => tf !== masterTF)
+				.forEach((tf) => {
+					const ratio = this.getTimeframeRatio(masterTF, tf);
+					alignedTick[tf] = paths[tf][Math.floor(idx / ratio)];
+				});
+
+			aligned.push(alignedTick);
+		});
+
+		return aligned;
+	}
+
+	// 时间周期转换比率
+	getTimeframeRatio(baseTF, targetTF) {
+		const tfMinutes = {
+			'1m': 1,
+			'5m': 5,
+			'30m': 30,
+			'1h': 60,
+			'4h': 240,
+			'1d': 1440,
+		};
+		return tfMinutes[targetTF] / tfMinutes[baseTF];
+	}
+
+	// 生成随机价格路径（几何布朗运动模型）
+	generatePricePaths(historicalPrices) {
+		const returns = [];
+		for (let i = 1; i < historicalPrices.length; i++) {
+			returns.push(
+				Math.log(
+					historicalPrices[i].close / historicalPrices[i - 1].close
+				)
+			);
+		}
+
+		const meanReturn = math.mean(returns);
+		const stdReturn = math.std(returns);
+
+		const paths = [];
+		for (let s = 0; s < config.simulations; s++) {
+			const path = [historicalPrices[0].close];
+			for (let t = 1; t < historicalPrices.length; t++) {
+				const shock = math.random(0, 1) * stdReturn + meanReturn;
+				path[t] = path[t - 1] * Math.exp(shock);
+			}
+			paths.push(path);
+		}
+		return paths;
 	}
 
 	async loadHistoricalData(start, end, interval) {
@@ -561,13 +668,15 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			candle[config.fastframe].close < candle[config.fastframe].middle &&
-			candle[config.slowframe].close > candle[config.slowframe].middle;
+			candle[config.fastframe].close > candle[config.fastframe].ema &&
+			candle[config.slowframe].close > candle[config.slowframe].middle &&
+			candle[config.slowframe].close > candle[config.slowframe].ema;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			candle[config.fastframe].close > candle[config.fastframe].middle &&
-			candle[config.slowframe].close < candle[config.slowframe].middle;
+			candle[config.fastframe].close < candle[config.fastframe].ema &&
+			candle[config.slowframe].close < candle[config.slowframe].middle &&
+			candle[config.slowframe].close < candle[config.slowframe].ema;
 
 		// 多头信号
 		if (longCondition) {
@@ -669,6 +778,16 @@ class Backtester {
 
 // 执行回测
 (async () => {
+	// 获取历史数据
+	// const histData = await this.fetchMultiTimeframeData(
+	//   symbol,
+	//   CONFIG.timeframes,
+	//   1000
+	// );
+
+	// // 生成相关价格路径
+	// const simPaths = this.generateCorrelatedPaths(histData);
+
 	const backtester = new Backtester();
 	const start = '2024-02-22';
 	const end = '2024-03-26';
