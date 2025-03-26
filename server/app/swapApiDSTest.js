@@ -522,9 +522,9 @@ class Backtester {
         // 		: d.close >= position.entryPrice * (1 + 0.0025);
 
         const takeProfit =
-          candle[config.slowframe].atr * config.atrParam.takeProfit;
+          candle[config.fastframe].atr * config.atrParam.takeProfit;
         const stopLoss =
-          candle[config.slowframe].atr * config.atrParam.stopLoss;
+          candle[config.fastframe].atr * config.atrParam.stopLoss;
 
         const isProfitTarget =
           position.direction === "long"
@@ -801,7 +801,7 @@ class Backtester {
   // const simPaths = this.generateCorrelatedPaths(histData);
 
   const backtester = new Backtester();
-  const start = "2025-03-10";
+  const start = "2025-01-10";
   const end = "2025-03-26";
   const interval = 3;
   let profitTotal = 0;
