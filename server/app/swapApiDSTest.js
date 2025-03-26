@@ -407,13 +407,6 @@ class Backtester {
           if (i >= config.adxPeriod) {
             const adxIndex = i - config.adxPeriod;
             d.adx = adx[0][adxIndex];
-            console.log(
-              123,
-              adx[0].length,
-              adx[0].slice(-1)[0],
-              adxIndex,
-              adx[0][adxIndex]
-            );
           }
           d.emaSlow = emaSlow[0][i];
           d.emaFast = emaFast[0][i];
@@ -692,14 +685,14 @@ class Backtester {
     // 多头信号
     if (longCondition) {
       return {
-        direction: candle[config.slowframe].adx > 25 ? "long" : "short",
+        direction: "short",
       };
     }
 
     // 空头信号
     if (shortCondition) {
       return {
-        direction: candle[config.slowframe].adx > 25 ? "short" : "long",
+        direction: "long",
       };
     }
 
@@ -830,13 +823,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data["5m"].slice(-3).map((candle) =>
-          Object.assign(candle, {
-            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          })
-        )
-      );
+      // console.log(
+      //   data["5m"].slice(-3).map((candle) =>
+      //     Object.assign(candle, {
+      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //     })
+      //   )
+      // );
 
       // 步骤3: 运行回测
       backtester.runBacktest();
