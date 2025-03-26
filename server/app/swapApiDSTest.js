@@ -311,15 +311,6 @@ class Backtester {
     };
   }
 
-  async getMultiEmas(tf) {
-    return new Promise((resolve, reject) => {
-      tulind.indicators.ema.indicator(
-        [this.data[tf].map((d) => d.close)],
-        config.emaSettings[tf].periods
-      );
-    });
-  }
-
   async calculateIndicators() {
     try {
       const indicatorPromises = [];
@@ -428,8 +419,8 @@ class Backtester {
 
   getPositionSize(price, atr) {
     const riskAmount = this.balance * config.riskPerTrade;
-    return riskAmount / (atr * config.leverage);
-    // return 1000;
+    // return riskAmount / (atr * config.leverage);
+    return 700;
     // return this.balance / 2;
   }
 
