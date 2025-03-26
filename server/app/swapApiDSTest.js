@@ -556,14 +556,16 @@ class Backtester {
           position.direction === "long"
             ? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-              isProfitTarget || signal.direction === "short"
-            : // candle[config.slowframe].close < candle[config.slowframe].emaSlow
+              isProfitTarget ||
+              candle[config.slowframe].close < candle[config.slowframe].emaSlow
+            : //
               // candle[config.slowframe].emaFast <
               // 	candle[config.slowframe].emaSlow
               /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-              isProfitTarget || signal.direction === "long";
-        // candle[config.slowframe].close > candle[config.slowframe].emaSlow;
+              isProfitTarget ||
+              candle[config.slowframe].close > candle[config.slowframe].emaSlow;
+        //;
         // signal.direction === 'long';
         // candle[config.slowframe].emaFast >
         // 	candle[config.slowframe].emaSlow;
