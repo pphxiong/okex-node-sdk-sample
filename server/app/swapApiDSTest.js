@@ -369,7 +369,6 @@ class Backtester {
           index * 6,
           (index + 1) * 6
         );
-        if (tf === config.slowframe) console.log(22, adx[0].length);
         // 计算EMA斜率
         const emaSlopes = [];
         for (
