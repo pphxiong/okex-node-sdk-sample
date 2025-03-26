@@ -411,6 +411,8 @@ class Backtester {
           d.emaSlow = emaSlow[0][i];
           d.emaFast = emaFast[0][i];
           d.adx = adx[0][i];
+          console.log(adx[0].length, i);
+          console.log(adx[0].slice(-2));
         });
       });
     } catch (e) {
