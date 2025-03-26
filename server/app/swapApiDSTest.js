@@ -369,6 +369,7 @@ class Backtester {
           index * 6,
           (index + 1) * 6
         );
+        console.log(22, adx[0].slice(-32));
         // 计算EMA斜率
         const emaSlopes = [];
         for (
@@ -685,14 +686,16 @@ class Backtester {
     // 多头信号
     if (longCondition) {
       return {
-        direction: "short",
+        // direction: "short",
+        direction: candle[config.slowframe].adx > 25 ? "long" : "short",
       };
     }
 
     // 空头信号
     if (shortCondition) {
       return {
-        direction: "long",
+        // direction: "long",
+        direction: candle[config.slowframe].adx > 25 ? "short" : "long",
       };
     }
 
