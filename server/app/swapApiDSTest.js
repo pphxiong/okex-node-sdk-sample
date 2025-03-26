@@ -405,9 +405,9 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.0025);
 
 				const takeProfit =
-					candle[config.slowframe].atr * config.atrParam.takeProfit;
+					candle[config.fastframe].atr * config.atrParam.takeProfit;
 				const stopLoss =
-					candle[config.slowframe].atr * config.atrParam.stopLoss;
+					candle[config.fastframe].atr * config.atrParam.stopLoss;
 
 				const isProfitTarget =
 					position.direction === 'long'
