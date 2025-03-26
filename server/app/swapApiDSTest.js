@@ -35,7 +35,7 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'30m': { periods: [30, 10], slopeWindow: 5 },
+		'30m': { periods: [24, 12], slopeWindow: 5 },
 		'15m': { periods: [20, 10], slopeWindow: 5 },
 		'5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -558,17 +558,17 @@ class Backtester {
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
 						  isProfitTarget ||
-						  // candle[config.fastframe].close <
-						  // 	candle[config.fastframe].lower ||
-						  signal.direction === 'short'
-						: // candle[config.slowframe].emaFast <
+						  candle[config.slowframe].emaFast <
+								candle[config.slowframe].emaSlow
+						: // signal.direction === 'short'
+						  // candle[config.slowframe].emaFast <
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
-						  // candle[config.fastframe].close >
-						  // 	candle[config.fastframe].upper ||
-						  signal.direction === 'long';
+						  candle[config.slowframe].emaFast >
+								candle[config.slowframe].emaSlow;
+				// signal.direction === 'long';
 				// candle[config.slowframe].emaFast >
 				// 	candle[config.slowframe].emaSlow;
 
@@ -682,14 +682,14 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			candle[config.fastframe].emaFast >
+			candle[config.fastframe].emaFast <
 				candle[config.fastframe].emaSlow &&
 			candle[config.slowframe].close > candle[config.slowframe].middle &&
 			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			candle[config.fastframe].emaFast <
+			candle[config.fastframe].emaFast >
 				candle[config.fastframe].emaSlow &&
 			candle[config.slowframe].close < candle[config.slowframe].middle &&
 			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
@@ -805,8 +805,8 @@ class Backtester {
 	// const simPaths = this.generateCorrelatedPaths(histData);
 
 	const backtester = new Backtester();
-	const start = '2024-08-22';
-	const end = '2024-11-26';
+	const start = '2025-01-01';
+	const end = '2025-03-26';
 	const interval = 5;
 	let profitTotal = 0;
 
