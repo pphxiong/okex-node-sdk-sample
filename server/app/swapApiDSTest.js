@@ -318,7 +318,7 @@ class Backtester {
 		let data;
 
 		const hour = moment(timestamp).format('YYYY-MM-DD HH:00:00');
-		const lastHourTimestamp = moment(hour).subtract(1, 'hours');
+		const lastHourTimestamp = moment(hour).subtract(30, 'minutes');
 
 		const target = dataList.find(
 			(c) => c.timestamp === lastHourTimestamp.valueOf()
@@ -884,8 +884,8 @@ class Backtester {
 			);
 
 			// 生成相关价格路径
-			const simPaths = backtester.generateCorrelatedPaths(data);
-			console.log(simPaths);
+			// const simPaths = backtester.generateCorrelatedPaths(data);
+			// console.log(simPaths);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
