@@ -377,16 +377,16 @@ class Backtester {
 			config.timeframes.forEach((tf, index) => {
 				const [emaSlow, emaFast, bollinger, atr, macd, adx] =
 					result.slice(index * 6, (index + 1) * 6);
-				// console.log(
-				//   23,
-				//   this.data[tf].length,
-				//   adx[0].length,
-				//   atr[0].length,
-				//   emaSlow[0].length,
-				//   emaFast[0].length,
-				//   macd[0].length,
-				//   bollinger[0].length
-				// );
+				if (tf === '5m') {
+					console.log(
+						23,
+						adx[0].slice(-3),
+						atr[0].slice(-3),
+						emaFast[0].slice(-3),
+						emaSlow[0].slice(-3)
+					);
+				}
+
 				// 计算EMA斜率
 				const emaSlopes = [];
 				for (
@@ -839,9 +839,9 @@ class Backtester {
 	// const simPaths = this.generateCorrelatedPaths(histData);
 
 	const backtester = new Backtester();
-	const start = '2023-03-01';
-	const end = '2023-10-26';
-	const interval = 5;
+	const start = '2025-03-23';
+	const end = '2025-03-27';
+	const interval = 1;
 	let profitTotal = 0;
 
 	let i = 0;
@@ -870,13 +870,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			//   data["5m"].slice(-3).map((candle) =>
-			//     Object.assign(candle, {
-			//       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-			//     })
-			//   )
-			// );
+			console.log(
+				data['5m'].slice(-3).map((candle) =>
+					Object.assign(candle, {
+						timestamp: moment(candle.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				)
+			);
 
 			// 步骤3: 运行回测
 			backtester.runBacktest();
