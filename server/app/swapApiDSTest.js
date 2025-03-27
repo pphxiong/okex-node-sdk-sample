@@ -285,11 +285,11 @@ class Backtester {
     });
   }
 
-  getTimeStampBefore(dataList, timestamp, period = 5) {
+  getTimeStampBefore(dataList, timestamp) {
     dataList = JSON.parse(JSON.stringify(dataList));
     let data;
     let i = 1;
-    // const period = config.fastframe.split("m")[0];
+    const period = config.fastframe.split("m")[0];
 
     while (true) {
       const time = moment(timestamp).subtract(Number(period) * i, "minutes");
@@ -628,8 +628,7 @@ class Backtester {
                 candle[config.fastframe].lower && */
               isProfitTarget ||
               signal.direction === "short" ||
-              marketType === "震荡市" ||
-              marketType === "不确定"
+              marketType !== position.marketType
             : // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
               // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -640,8 +639,7 @@ class Backtester {
                 candle[config.fastframe].upper && */
               isProfitTarget ||
               signal.direction === "long" ||
-              marketType === "震荡市" ||
-              marketType === "不确定";
+              marketType !== position.marketType;
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
         // candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -775,14 +773,14 @@ class Backtester {
     const fee =
       positionSize * candle.close * (config.feeRate + config.slippage);
 
-    const position = {
+    const position = Object.assign(candle, {
       entryPrice: candle.close,
       entryTime: candle.timestamp,
       direction: direction,
       size: positionSize,
       takeProfit: atr * config.atrParam.takeProfit,
       stopLoss: atr * config.atrParam.stopLoss,
-    };
+    });
 
     this.balance -= fee; // 扣除手续费
     this.totalFee += fee;
