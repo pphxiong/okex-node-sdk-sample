@@ -697,7 +697,7 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			(candle[config.slowframe].adx > 25
+			(candle[config.slowframe].adx > 20
 				? candle[config.fastframe].emaFast <
 				  candle[config.fastframe].emaSlow
 				: candle[config.fastframe].emaFast >
@@ -709,7 +709,7 @@ class Backtester {
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			(candle[config.slowframe].adx > 25
+			(candle[config.slowframe].adx > 20
 				? candle[config.fastframe].emaFast <
 				  candle[config.fastframe].emaSlow
 				: candle[config.fastframe].emaFast >
@@ -728,7 +728,7 @@ class Backtester {
 		if (longCondition) {
 			return {
 				// direction: 'long',
-				direction: candle[config.slowframe].adx > 25 ? 'long' : 'short',
+				direction: candle[config.slowframe].adx > 20 ? 'long' : 'short',
 			};
 		}
 
@@ -736,7 +736,7 @@ class Backtester {
 		if (shortCondition) {
 			return {
 				// direction: 'short',
-				direction: candle[config.slowframe].adx > 25 ? 'short' : 'long',
+				direction: candle[config.slowframe].adx > 20 ? 'short' : 'long',
 			};
 		}
 
