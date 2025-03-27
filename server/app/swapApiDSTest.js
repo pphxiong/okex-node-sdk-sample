@@ -629,8 +629,10 @@ class Backtester {
                 candle[config.fastframe].lower && */
               // isProfitTarget ||
               // signal.direction === "short" ||
-              position.marketType === "潜在转折多" &&
-              ["超买市", "趋势空"].includes(marketType)
+              (position.marketType === "潜在转折多" &&
+                ["超买市", "趋势空"].includes(marketType)) ||
+              (position.marketType === "趋势多" &&
+                ["超买市", "不确定"].includes(marketType))
             : // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
               // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -641,8 +643,10 @@ class Backtester {
                 candle[config.fastframe].upper && */
               // isProfitTarget ||
               // signal.direction === "long" ||
-              position.marketType === "潜在转折空" &&
-              ["超卖市", "趋势多"].includes(marketType);
+              (position.marketType === "潜在转折空" &&
+                ["超卖市", "趋势多"].includes(marketType)) ||
+              (position.marketType === "趋势空" &&
+                ["超卖市", "不确定"].includes(marketType));
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
         // candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -740,7 +744,8 @@ class Backtester {
       //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
       // (marketType === "超卖市" &&
       //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
-      marketType === "潜在转折多";
+      // marketType === "潜在转折多";
+      marketType === "趋势多";
     //  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
     const shortCondition =
@@ -749,7 +754,7 @@ class Backtester {
       //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
       // (marketType === "超买市" &&
       //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-      marketType === "潜在转折空";
+      marketType === "趋势空";
     //  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
     // 多头信号
@@ -859,7 +864,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-01-18";
+  const start = "2025-03-18";
   const end = "2025-03-27";
   const interval = 4;
   let profitTotal = 0;
