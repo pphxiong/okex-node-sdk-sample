@@ -756,16 +756,16 @@ class Backtester {
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
 			marketType === '趋势市' &&
-			candle[config.fastframe].emaFast <
+			candle[config.fastframe].emaFast >
 				candle[config.fastframe].emaSlow &&
-			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
+			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
 			marketType === '趋势市' &&
-			candle[config.fastframe].emaFast >
+			candle[config.fastframe].emaFast <
 				candle[config.fastframe].emaSlow &&
-			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
+			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
 		if (longCondition || marketType === '超卖市') {
