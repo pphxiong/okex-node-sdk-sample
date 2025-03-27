@@ -463,11 +463,11 @@ class Backtester {
     let marketType = "不确定";
     if (adx >= 25) {
       // marketType = '趋势市';
-      if (rsi >= 35 && rsi <= 65) {
+      if (rsi >= 30 && rsi <= 70) {
         marketType = "趋势市";
-      } else if (rsi >= 75) {
+      } else if (rsi >= 80) {
         marketType = "超买市";
-      } else if (rsi <= 25) {
+      } else if (rsi <= 20) {
         marketType = "超卖市";
       }
     } else if (rsi >= 40 && rsi <= 60) {
@@ -576,7 +576,7 @@ class Backtester {
       // 		config.kWindowTresholdMedium
       // 	);
 
-      const { marketType } = candle[config.slowframe];
+      const { marketType } = candle[config.fastframe];
 
       // 生成信号
       const signal = this.generateSignal(candle, secondKline5M, marketType);
@@ -628,7 +628,7 @@ class Backtester {
                 candle[config.fastframe].lower && */
               isProfitTarget ||
               signal.direction === "short" ||
-              marketType !== position.marketType
+              ["超买市", "不确定"].includes(marketType)
             : // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
               // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -639,7 +639,7 @@ class Backtester {
                 candle[config.fastframe].upper && */
               isProfitTarget ||
               signal.direction === "long" ||
-              marketType !== position.marketType;
+              ["超卖市", "不确定"].includes(marketType);
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
         // candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -737,7 +737,7 @@ class Backtester {
       //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
       // (marketType === "超卖市" &&
       //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
-      marketType === "超卖市";
+      marketType === "潜在转折多";
     //  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
     const shortCondition =
@@ -746,7 +746,7 @@ class Backtester {
       //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
       // (marketType === "超买市" &&
       //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-      marketType === "超买市";
+      marketType === "潜在转折空";
     //  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
     // 多头信号
