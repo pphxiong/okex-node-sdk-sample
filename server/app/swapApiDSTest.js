@@ -126,7 +126,7 @@ class Backtester {
 		console.log(jstat.covarianceMatrix);
 
 		// 构建协方差矩阵
-		const covMatrix = jstat.covarianceMatrix.apply(null, returnsMatrix);
+		const covMatrix = jstat.covarianceMatrix(returnsMatrix);
 
 		// Cholesky分解生成相关路径
 		const chol = math.chol(covMatrix);
