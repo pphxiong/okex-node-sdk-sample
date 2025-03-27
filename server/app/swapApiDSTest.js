@@ -578,7 +578,6 @@ class Backtester {
 			// 	);
 
 			const marketType = this.getMarketType(candle[config.slowframe]);
-			console.log(22, candle[config.slowframe], marketType);
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
@@ -892,9 +891,9 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-22';
+	const start = '2025-03-10';
 	const end = '2025-03-27';
-	const interval = 2;
+	const interval = 5;
 	let profitTotal = 0;
 
 	let i = 0;
