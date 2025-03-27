@@ -480,7 +480,7 @@ class Backtester {
 		let marketType = '不确定';
 		if (adx >= 25) {
 			// marketType = '趋势市';
-			if (rsi >= 40 && rsi <= 60) {
+			if (rsi >= 30 && rsi <= 70) {
 				marketType = '趋势市';
 			} else if (rsi >= 80) {
 				marketType = '超买市';
@@ -522,7 +522,7 @@ class Backtester {
 
 		this.data[config.fastframe].forEach(async (d, index) => {
 			// 跳过前50根K线确保指标稳定
-			if (index < 50) return;
+			if (index < 30) return;
 			// // 计算ATR
 			// if (i >= config.atrParam.atrPeriod) {
 			// 	const high = this.data
