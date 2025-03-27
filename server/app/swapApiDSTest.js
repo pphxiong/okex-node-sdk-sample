@@ -765,7 +765,7 @@ class Backtester {
       };
     }
 
-    return null;
+    return { direction: null };
   }
 
   openPosition(candle, atr, direction, marketType) {
