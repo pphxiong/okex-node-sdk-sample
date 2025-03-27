@@ -467,28 +467,12 @@ class Backtester {
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
+					d.marketType = this.getMarketType(d);
 				});
 			});
 		} catch (e) {
 			console.error('指标计算错误:', e);
 		}
-	}
-
-	getPositionSize(price, atr) {
-		const riskAmount = this.balance * config.riskPerTrade;
-		return riskAmount / (atr * config.leverage);
-		// return 700;
-		// return this.balance / 2;
-	}
-
-	getLongShort(dataList, index, WindowTreshold) {
-		const longs = dataList
-			.slice(index - WindowTreshold + 1, index + 1)
-			.filter((item) => item.close > item.open);
-		const shorts = dataList
-			.slice(index - WindowTreshold + 1, index + 1)
-			.filter((item) => item.close < item.open);
-		return { longs, shorts };
 	}
 
 	getMarketType(candle) {
@@ -511,6 +495,23 @@ class Backtester {
 			}
 		}
 		return marketType;
+	}
+
+	getPositionSize(price, atr) {
+		const riskAmount = this.balance * config.riskPerTrade;
+		return riskAmount / (atr * config.leverage);
+		// return 700;
+		// return this.balance / 2;
+	}
+
+	getLongShort(dataList, index, WindowTreshold) {
+		const longs = dataList
+			.slice(index - WindowTreshold + 1, index + 1)
+			.filter((item) => item.close > item.open);
+		const shorts = dataList
+			.slice(index - WindowTreshold + 1, index + 1)
+			.filter((item) => item.close < item.open);
+		return { longs, shorts };
 	}
 
 	runBacktest() {
@@ -577,7 +578,7 @@ class Backtester {
 			// 		config.kWindowTresholdMedium
 			// 	);
 
-			const marketType = this.getMarketType(candle[config.slowframe]);
+			const { marketType } = candle[config.slowframe];
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
@@ -927,7 +928,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.slowframe].slice(-20).map((candle) =>
+				data[config.fastframe].slice(-5).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
