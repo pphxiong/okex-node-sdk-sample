@@ -35,9 +35,9 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'30m': { periods: [20, 10], slopeWindow: 5 },
-		'15m': { periods: [20, 10], slopeWindow: 5 },
-		'5m': { periods: [10, 5], slopeWindow: 5 },
+		'30m': { periods: [20, 5], slopeWindow: 5 },
+		'15m': { periods: [20, 5], slopeWindow: 5 },
+		'5m': { periods: [20, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		'30m': 0,
