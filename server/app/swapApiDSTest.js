@@ -943,6 +943,7 @@ class Backtester {
 					})
 				)
 			);
+			console.log(data[config.slowframe].length);
 
 			// 步骤3: 运行回测
 			backtester.runBacktest();
