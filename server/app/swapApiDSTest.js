@@ -576,7 +576,7 @@ class Backtester {
       // 		config.kWindowTresholdMedium
       // 	);
 
-      const { marketType } = candle[config.slowframe];
+      const { marketType } = candle[config.fastframe];
 
       // 生成信号
       const signal = this.generateSignal(candle, secondKline5M, marketType);
@@ -861,9 +861,7 @@ class Backtester {
   let profitTotal = 0;
 
   let i = 0;
-  while (
-    moment(end).add(interval, "days").isAfter(moment(start).add(i, "days"))
-  ) {
+  while (moment(end).isAfter(moment(start).add(i, "days"))) {
     // while (i === 0) {
     try {
       backtester.data = {
