@@ -578,7 +578,7 @@ class Backtester {
 			// 	);
 
 			const marketType = this.getMarketType(candle[config.slowframe]);
-
+			console.log(22, candle[config.slowframe], marketType);
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
