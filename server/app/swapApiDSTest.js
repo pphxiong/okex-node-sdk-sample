@@ -855,8 +855,8 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-03-18";
-  const end = "2025-03-27";
+  const start = "2023-03-18";
+  const end = "2023-03-27";
   const interval = 4;
   let profitTotal = 0;
 
@@ -875,13 +875,13 @@ class Backtester {
       backtester.totalFee = 0;
 
       // 步骤1: 加载历史数据
-      const data = await backtester.loadHistoricalData(
-        moment(start).add(i, "days").format("YYYY-MM-DD"),
-        moment(start)
-          .add(i + interval, "days")
-          .format("YYYY-MM-DD"),
-        interval
-      );
+      // const data = await backtester.loadHistoricalData(
+      //   moment(start).add(i, "days").format("YYYY-MM-DD"),
+      //   moment(start)
+      //     .add(i + interval, "days")
+      //     .format("YYYY-MM-DD"),
+      //   interval
+      // );
 
       // 生成相关价格路径
       // const simPaths = backtester.generateCorrelatedPaths(data);
