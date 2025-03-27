@@ -631,9 +631,9 @@ class Backtester {
               // signal.direction === "short" ||
               (position.marketType === "潜在转折多" &&
                 ["超买市", "趋势空"].includes(marketType)) ||
-              (position.marketType === "趋势多" &&
-                ["超买市", "不确定"].includes(marketType))
-            : // candle[config.fastframe].emaFast <
+              (position.marketType === "趋势多" && d.adx < 20)
+            : // ["超买市", "不确定"].includes(marketType)
+              // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
               // candle[config.slowframe].close < candle[config.slowframe].emaSlow
               //
@@ -645,8 +645,8 @@ class Backtester {
               // signal.direction === "long" ||
               (position.marketType === "潜在转折空" &&
                 ["超卖市", "趋势多"].includes(marketType)) ||
-              (position.marketType === "趋势空" &&
-                ["超卖市", "不确定"].includes(marketType));
+              (position.marketType === "趋势空" && d.adx < 20);
+              // ["超卖市", "不确定"].includes(marketType)
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
         // candle[config.slowframe].close > candle[config.slowframe].emaSlow;
