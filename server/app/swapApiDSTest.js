@@ -581,7 +581,7 @@ class Backtester {
 			// 	);
 
 			const { marketType } = candle[config.slowframe];
-			console.log(23, candle);
+
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
@@ -935,7 +935,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.slowframe].slice(-3).map((candle) =>
+				data[config.slowframe].slice(-100).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
