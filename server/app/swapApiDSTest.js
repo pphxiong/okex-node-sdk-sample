@@ -495,7 +495,12 @@ class Backtester {
 		const { adx, rsi } = candle;
 		let marketType = '不确定';
 		if (adx >= 25) {
-			marketType = '趋势市';
+			// marketType = '趋势市';
+			if (rsi >= 70) {
+				marketType = '超买市';
+			} else if (rsi <= 30) {
+				marketType = '超卖市';
+			}
 		} else if (rsi >= 30 && rsi <= 70) {
 			marketType = '震荡市';
 		} else {
@@ -622,7 +627,7 @@ class Backtester {
 					position.direction === 'long'
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-						  isProfitTarget || signal.direction === 'short'
+						  isProfitTarget || marketType === '震荡市'
 						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -631,7 +636,7 @@ class Backtester {
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-						  isProfitTarget || signal.direction === 'long';
+						  isProfitTarget || marketType === '震荡市';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -750,28 +755,17 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			marketType === '趋势市' &&
-			candle[config.fastframe].emaFast >
+			marketType === '超卖市' &&
+			candle[config.fastframe].emaFast <
 				candle[config.fastframe].emaSlow &&
-			// candle[config.fastframe].emaFast >
-			// 	candle[config.fastframe].emaSlow &&
-			// candle[config.slowframe].close > candle[config.slowframe].middle &&
-			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
+			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			marketType === '趋势市' &&
-			candle[config.fastframe].emaFast <
+			marketType === '超买市' &&
+			candle[config.fastframe].emaFast >
 				candle[config.fastframe].emaSlow &&
-			// (candle[config.slowframe].adx < 25
-			// 	? candle[config.fastframe].emaFast >
-			// 	  candle[config.fastframe].emaSlow
-			// 	: candle[config.fastframe].emaFast <
-			// 	  candle[config.fastframe].emaSlow) &&
-			// candle[config.fastframe].emaFast <
-			// 	candle[config.fastframe].emaSlow &&
-			// candle[config.slowframe].close < candle[config.slowframe].middle &&
-			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
+			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		// 多头信号
 		if (longCondition) {
