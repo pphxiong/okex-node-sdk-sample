@@ -576,7 +576,7 @@ class Backtester {
       // 		config.kWindowTresholdMedium
       // 	);
 
-      const { marketType } = candle[config.fastframe];
+      const { marketType } = candle[config.slowframe];
 
       // 生成信号
       const signal = this.generateSignal(candle, secondKline5M, marketType);
