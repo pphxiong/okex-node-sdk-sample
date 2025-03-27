@@ -473,7 +473,7 @@ class Backtester {
       }
     } else if (rsi >= 40 && rsi <= 60) {
       marketType = "震荡市";
-    } else {
+    } else if (adx < 20) {
       if (rsi > 60) {
         marketType = "潜在转折空";
       } else if (rsi < 40) {
