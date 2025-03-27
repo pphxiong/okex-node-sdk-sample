@@ -122,10 +122,10 @@ class Backtester {
 		});
 
 		console.log(returnsMatrix.slice(-3));
-		console.log(math.cov);
+		console.log(math.covarianceMatrix);
 
 		// 构建协方差矩阵
-		const covMatrix = math.cov.apply(null, returnsMatrix);
+		const covMatrix = math.covarianceMatrix.apply(null, returnsMatrix);
 
 		// Cholesky分解生成相关路径
 		const chol = math.chol(covMatrix);
