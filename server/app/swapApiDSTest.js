@@ -898,7 +898,7 @@ class Backtester {
 	const backtester = new Backtester();
 	const start = '2025-03-20';
 	const end = '2025-03-27';
-	const interval = 4;
+	const interval = 3;
 	let profitTotal = 0;
 
 	let i = 0;
