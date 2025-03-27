@@ -697,28 +697,30 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			// (candle[config.slowframe].adx < 25
-			//   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
-			//   : candle[config.fastframe].emaFast >
-			//     candle[config.fastframe].emaSlow) &&
-			candle[config.fastframe].emaFast >
-				candle[config.fastframe].emaSlow &&
+			(candle[config.slowframe].adx > 25
+				? candle[config.fastframe].emaFast <
+				  candle[config.fastframe].emaSlow
+				: candle[config.fastframe].emaFast >
+				  candle[config.fastframe].emaSlow) &&
+			// candle[config.fastframe].emaFast >
+			// 	candle[config.fastframe].emaSlow &&
 			// candle[config.slowframe].close > candle[config.slowframe].middle &&
 			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			// (candle[config.slowframe].adx > 25
-			//   ? candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow
-			//   : candle[config.fastframe].emaFast >
-			//     candle[config.fastframe].emaSlow) &&
+			(candle[config.slowframe].adx > 25
+				? candle[config.fastframe].emaFast <
+				  candle[config.fastframe].emaSlow
+				: candle[config.fastframe].emaFast >
+				  candle[config.fastframe].emaSlow) &&
 			// (candle[config.slowframe].adx < 25
 			// 	? candle[config.fastframe].emaFast >
 			// 	  candle[config.fastframe].emaSlow
 			// 	: candle[config.fastframe].emaFast <
 			// 	  candle[config.fastframe].emaSlow) &&
-			candle[config.fastframe].emaFast <
-				candle[config.fastframe].emaSlow &&
+			// candle[config.fastframe].emaFast <
+			// 	candle[config.fastframe].emaSlow &&
 			// candle[config.slowframe].close < candle[config.slowframe].middle &&
 			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
