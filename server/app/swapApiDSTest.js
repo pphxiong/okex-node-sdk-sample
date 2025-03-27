@@ -27,7 +27,7 @@ const cAuthClientBN = new customAuthClientBN(
 const ccxt = require('ccxt');
 const tulind = require('tulind');
 const math = require('mathjs');
-const jstat = require('jstat');
+// const jstat = require('jstat');
 const _ = require('lodash');
 
 // 策略配置
@@ -123,10 +123,10 @@ class Backtester {
 		});
 
 		console.log(returnsMatrix.slice(-3));
-		console.log(jstat.covarianceMatrix);
+		console.log(math.cov);
 
 		// 构建协方差矩阵
-		const covMatrix = jstat.covarianceMatrix(returnsMatrix);
+		const covMatrix = math.cov(returnsMatrix);
 
 		// Cholesky分解生成相关路径
 		const chol = math.chol(covMatrix);
