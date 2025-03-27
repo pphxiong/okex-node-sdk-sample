@@ -672,7 +672,7 @@ class Backtester {
       }
 
       // 处理开仓
-      if (!position && signal) {
+      if (!position && signal.direction) {
         // console.log(
         //   config.fastframe,
         //   Object.assign(candle[config.fastframe], {
@@ -891,13 +891,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data[config.fastframe].slice(-100).map((candle) =>
-          Object.assign(candle, {
-            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          })
-        )
-      );
+      // console.log(
+      //   data[config.fastframe].slice(-100).map((candle) =>
+      //     Object.assign(candle, {
+      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //     })
+      //   )
+      // );
 
       // console.log(data[config.slowframe].length);
 
