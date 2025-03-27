@@ -726,7 +726,7 @@ class Backtester {
 		if (longCondition) {
 			return {
 				// direction: 'long',
-				direction: candle[config.slowframe].adx < 25 ? 'long' : 'short',
+				direction: candle[config.slowframe].adx > 25 ? 'long' : 'short',
 			};
 		}
 
@@ -734,7 +734,7 @@ class Backtester {
 		if (shortCondition) {
 			return {
 				// direction: 'short',
-				direction: candle[config.slowframe].adx < 25 ? 'short' : 'long',
+				direction: candle[config.slowframe].adx > 25 ? 'short' : 'long',
 			};
 		}
 
