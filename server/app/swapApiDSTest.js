@@ -893,7 +893,6 @@ class Backtester {
       await backtester.calculateIndicators();
 
       console.log(
-        tf,
         data[config.slowframe].slice(-30).map((candle) =>
           Object.assign(candle, {
             timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
