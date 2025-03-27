@@ -85,6 +85,7 @@ const config = {
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
+	rsiPeriod: 14,
 };
 
 class Backtester {
@@ -391,14 +392,21 @@ class Backtester {
 						[config.adxPeriod]
 					)
 				);
+
+				indicatorPromises.push(
+					tulind.indicators.rsi.indicator(
+						[closes],
+						[config.rsiPeriod]
+					)
+				);
 			});
 
 			const result = await Promise.all(indicatorPromises);
 
 			// 合并指标到数据
 			config.timeframes.forEach((tf, index) => {
-				const [emaSlow, emaFast, bollinger, atr, macd, adx] =
-					result.slice(index * 6, (index + 1) * 6);
+				const [emaSlow, emaFast, bollinger, atr, macd, adx, rsi] =
+					result.slice(index * 7, (index + 1) * 7);
 				// if (tf === config.slowframe) {
 				// 	console.log(
 				// 		23,
@@ -452,6 +460,10 @@ class Backtester {
 						const adxIndex = i - config.adxPeriod * 2 + 2;
 						d.adx = adx[0][adxIndex];
 					}
+					if (i >= config.rsiPeriod) {
+						const rsiIndex = i - config.rsiPeriod + 1;
+						d.rsi = rsi[0][rsiIndex];
+					}
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
@@ -477,6 +489,19 @@ class Backtester {
 			.slice(index - WindowTreshold + 1, index + 1)
 			.filter((item) => item.close < item.open);
 		return { longs, shorts };
+	}
+
+	getMarketType(candle) {
+		const { adx, rsi } = candle;
+		let marketType = '不确定';
+		if (adx >= 25) {
+			marketType = '趋势市';
+		} else if (rsi >= 30 && rsi <= 70) {
+			marketType = '震荡市';
+		} else {
+			marketType = '潜在转折';
+		}
+		return marketType;
 	}
 
 	runBacktest() {
@@ -543,8 +568,14 @@ class Backtester {
 			// 		config.kWindowTresholdMedium
 			// 	);
 
+			const marketType = this.getMarketType(candle[config.slowframe]);
+
 			// 生成信号
-			const signal = this.generateSignal(candle, secondKline5M);
+			const signal = this.generateSignal(
+				candle,
+				secondKline5M,
+				marketType
+			);
 
 			// 处理平仓
 			if (position) {
@@ -700,7 +731,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(candle, secondKline5M) {
+	generateSignal(candle, secondKline5M, marketType) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
@@ -719,11 +750,9 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			(candle[config.slowframe].adx > 20
-				? candle[config.fastframe].emaFast <
-				  candle[config.fastframe].emaSlow
-				: candle[config.fastframe].emaFast >
-				  candle[config.fastframe].emaSlow) &&
+			marketType === '趋势市' &&
+			candle[config.fastframe].emaFast >
+				candle[config.fastframe].emaSlow &&
 			// candle[config.fastframe].emaFast >
 			// 	candle[config.fastframe].emaSlow &&
 			// candle[config.slowframe].close > candle[config.slowframe].middle &&
@@ -731,11 +760,9 @@ class Backtester {
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			(candle[config.slowframe].adx > 20
-				? candle[config.fastframe].emaFast <
-				  candle[config.fastframe].emaSlow
-				: candle[config.fastframe].emaFast >
-				  candle[config.fastframe].emaSlow) &&
+			marketType === '趋势市' &&
+			candle[config.fastframe].emaFast <
+				candle[config.fastframe].emaSlow &&
 			// (candle[config.slowframe].adx < 25
 			// 	? candle[config.fastframe].emaFast >
 			// 	  candle[config.fastframe].emaSlow
@@ -749,16 +776,16 @@ class Backtester {
 		// 多头信号
 		if (longCondition) {
 			return {
-				// direction: 'long',
-				direction: candle[config.slowframe].adx > 20 ? 'long' : 'short',
+				direction: 'long',
+				// direction: candle[config.slowframe].adx > 20 ? 'long' : 'short',
 			};
 		}
 
 		// 空头信号
 		if (shortCondition) {
 			return {
-				// direction: 'short',
-				direction: candle[config.slowframe].adx > 20 ? 'short' : 'long',
+				direction: 'short',
+				// direction: candle[config.slowframe].adx > 20 ? 'short' : 'long',
 			};
 		}
 
