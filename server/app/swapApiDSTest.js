@@ -494,7 +494,7 @@ class Backtester {
 	getMarketType(candle) {
 		const { adx, rsi } = candle;
 		let marketType = '不确定';
-		if (adx >= 20) {
+		if (adx >= 25) {
 			marketType = '趋势市';
 			if (rsi >= 80) {
 				marketType = '超买市';
@@ -577,7 +577,7 @@ class Backtester {
 			// 		config.kWindowTresholdMedium
 			// 	);
 
-			const marketType = this.getMarketType(candle[config.fastframe]);
+			const marketType = this.getMarketType(candle[config.slowframe]);
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
@@ -630,9 +630,7 @@ class Backtester {
 					position.direction === 'long'
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-						  isProfitTarget ||
-						  signal.direction === 'short' ||
-						  marketType === '震荡市'
+						  isProfitTarget || signal.direction === 'short'
 						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -641,9 +639,7 @@ class Backtester {
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-						  isProfitTarget ||
-						  signal.direction === 'long' ||
-						  marketType === '震荡市';
+						  isProfitTarget || signal.direction === 'long';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -766,11 +762,11 @@ class Backtester {
 				candle[config.fastframe].emaFast >
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '超卖市' &&
-				candle[config.fastframe].emaFast >
+				candle[config.fastframe].emaFast <
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '潜在转折多' &&
-				candle[config.fastframe].emaFast <
-					candle[config.fastframe].emaSlow);
+				candle[config.slowframe].emaFast >
+					candle[config.slowframe].emaSlow);
 		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
@@ -779,11 +775,11 @@ class Backtester {
 				candle[config.fastframe].emaFast <
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '超买市' &&
-				candle[config.fastframe].emaFast <
+				candle[config.fastframe].emaFast >
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '潜在转折空' &&
-				candle[config.fastframe].emaFast >
-					candle[config.fastframe].emaSlow);
+				candle[config.slowframe].emaFast <
+					candle[config.slowframe].emaSlow);
 		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
@@ -895,7 +891,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
+	const start = '2025-03-10';
 	const end = '2025-03-27';
 	const interval = 4;
 	let profitTotal = 0;
@@ -930,15 +926,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			// 	data[config.slowframe].slice(-60).map((candle) =>
-			// 		Object.assign(candle, {
-			// 			timestamp: moment(candle.timestamp).format(
-			// 				'YYYY-MM-DD HH:mm:ss'
-			// 			),
-			// 		})
-			// 	)
-			// );
+			console.log(
+				data[config.slowframe].slice(-20).map((candle) =>
+					Object.assign(candle, {
+						timestamp: moment(candle.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				)
+			);
 
 			// 步骤3: 运行回测
 			backtester.runBacktest();
