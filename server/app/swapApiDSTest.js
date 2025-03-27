@@ -875,13 +875,13 @@ class Backtester {
       backtester.totalFee = 0;
 
       // 步骤1: 加载历史数据
-      // const data = await backtester.loadHistoricalData(
-      //   moment(start).add(i, "days").format("YYYY-MM-DD"),
-      //   moment(start)
-      //     .add(i + interval, "days")
-      //     .format("YYYY-MM-DD"),
-      //   interval
-      // );
+      const data = await backtester.loadHistoricalData(
+        moment(start).add(i, "days").format("YYYY-MM-DD"),
+        moment(start)
+          .add(i + interval, "days")
+          .format("YYYY-MM-DD"),
+        interval
+      );
 
       // 生成相关价格路径
       // const simPaths = backtester.generateCorrelatedPaths(data);
@@ -890,13 +890,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data[config.slowframe].slice(-30).map((candle) =>
-          Object.assign(candle, {
-            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          })
-        )
-      );
+      // console.log(
+      //   data[config.slowframe].slice(-30).map((candle) =>
+      //     Object.assign(candle, {
+      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //     })
+      //   )
+      // );
 
       // console.log(data[config.slowframe].length);
 
