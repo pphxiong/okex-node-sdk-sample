@@ -542,19 +542,19 @@ class Backtester {
         [config.fastframe]: lastKline5M,
       };
 
-      if (isLastIndex) {
-        console.log("last:");
-        Object.keys(candle).forEach((tf) => {
-          console.log(
-            tf,
-            Object.assign(candle[tf], {
-              timestamp: moment(candle[tf].timestamp).format(
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-            })
-          );
-        });
-      }
+      // if (isLastIndex) {
+      //   console.log("last:");
+      //   Object.keys(candle).forEach((tf) => {
+      //     console.log(
+      //       tf,
+      //       Object.assign(candle[tf], {
+      //         timestamp: moment(candle[tf].timestamp).format(
+      //           "YYYY-MM-DD HH:mm:ss"
+      //         ),
+      //       })
+      //     );
+      //   });
+      // }
 
       // const { longs, shorts } = this.getLongShort(
       // 	this.data[config.fastframe],
@@ -880,7 +880,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-03-22";
+  const start = "2025-01-22";
   const end = "2025-03-27";
   const interval = 4;
   let profitTotal = 0;
