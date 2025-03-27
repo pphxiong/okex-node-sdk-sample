@@ -668,31 +668,6 @@ class Backtester {
         // 		  candle[config.mediumframe].ema);
 
         if (isReverse) {
-          // console.log(
-          //   config.fastframe,
-          //   Object.assign(candle[config.fastframe], {
-          //     timestamp: moment(candle[config.fastframe].timestamp).format(
-          //       "YYYY-MM-DD HH:mm:ss"
-          //     ),
-          //   })
-          // );
-          // console.log(
-          //   config.mediumframe,
-          //   Object.assign(candle[config.mediumframe], {
-          //     timestamp: moment(candle[config.mediumframe].timestamp).format(
-          //       "YYYY-MM-DD HH:mm:ss"
-          //     ),
-          //   })
-          // );
-          // console.log(
-          //   config.slowframe,
-          //   Object.assign(candle[config.slowframe], {
-          //     timestamp: moment(candle[config.slowframe].timestamp).format(
-          //       "YYYY-MM-DD HH:mm:ss"
-          //     ),
-          //   })
-          // );
-
           this.closePosition(position, d);
           position = null;
         }
@@ -760,19 +735,19 @@ class Backtester {
 
     const longCondition =
       // secondKline5M.close < secondKline5M.lower &&
-      (marketType === "趋势市" &&
-        candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-      (marketType === "超卖市" &&
-        candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
+      // (marketType === "趋势市" &&
+      //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
+      // (marketType === "超卖市" &&
+      //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
       marketType === "潜在转折多";
     //  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
     const shortCondition =
       // secondKline5M.close > secondKline5M.upper &&
-      (marketType === "趋势市" &&
-        candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
-      (marketType === "超买市" &&
-        candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
+      // (marketType === "趋势市" &&
+      //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
+      // (marketType === "超买市" &&
+      //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
       marketType === "潜在转折空";
     //  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
@@ -880,7 +855,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-01-22";
+  const start = "2025-03-22";
   const end = "2025-03-27";
   const interval = 4;
   let profitTotal = 0;
@@ -917,16 +892,14 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      // Object.keys(data).forEach((tf) => {
-      //   console.log(
-      //     tf,
-      //     data[tf].slice(-10).map((candle) =>
-      //       Object.assign(candle, {
-      //         timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      //       })
-      //     )
-      //   );
-      // });
+      console.log(
+        tf,
+        data[config.slowframe].slice(-30).map((candle) =>
+          Object.assign(candle, {
+            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          })
+        )
+      );
 
       // console.log(data[config.slowframe].length);
 
