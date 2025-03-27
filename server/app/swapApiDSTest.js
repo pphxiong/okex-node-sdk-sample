@@ -892,7 +892,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-10';
+	const start = '2025-03-20';
 	const end = '2025-03-27';
 	const interval = 4;
 	let profitTotal = 0;
@@ -928,7 +928,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.slowframe].slice(-5).map((candle) =>
+				data[config.slowframe].slice(-40).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
