@@ -627,10 +627,10 @@ class Backtester {
           position.direction === "long"
             ? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-              isProfitTarget ||
-              signal.direction === "short" ||
-              (position.marketType === "潜在转折多" &&
-                ["超买市", "趋势空"].includes(marketType))
+              // isProfitTarget ||
+              // signal.direction === "short" ||
+              position.marketType === "潜在转折多" &&
+              ["超买市", "趋势空"].includes(marketType)
             : // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
               // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -639,10 +639,10 @@ class Backtester {
               // 	candle[config.slowframe].emaSlow
               /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-              isProfitTarget ||
-              signal.direction === "long" ||
-              (position.marketType === "潜在转折空" &&
-                ["超卖市", "趋势多"].includes(marketType));
+              // isProfitTarget ||
+              // signal.direction === "long" ||
+              position.marketType === "潜在转折空" &&
+              ["超卖市", "趋势多"].includes(marketType);
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
         // candle[config.slowframe].close > candle[config.slowframe].emaSlow;
