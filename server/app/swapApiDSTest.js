@@ -463,11 +463,11 @@ class Backtester {
     let marketType = "不确定";
     if (adx >= 25) {
       // marketType = '趋势市';
-      if (rsi >= 30 && rsi <= 70) {
+      if (rsi >= 35 && rsi <= 65) {
         marketType = "趋势市";
-      } else if (rsi >= 80) {
+      } else if (rsi >= 75) {
         marketType = "超买市";
-      } else if (rsi <= 20) {
+      } else if (rsi <= 25) {
         marketType = "超卖市";
       }
     } else if (rsi >= 40 && rsi <= 60) {
