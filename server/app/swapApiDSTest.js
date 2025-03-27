@@ -123,7 +123,7 @@ class Backtester {
 		});
 
 		console.log(returnsMatrix.slice(-3));
-		console.log(math.cov);
+		console.log(math);
 
 		// 构建协方差矩阵
 		const covMatrix = math.cov(returnsMatrix);
