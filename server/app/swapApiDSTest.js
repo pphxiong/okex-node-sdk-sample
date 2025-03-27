@@ -631,7 +631,8 @@ class Backtester {
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
 						  isProfitTarget || signal.direction === 'short'
-						: // candle[config.fastframe].emaFast <
+						: // marketType === '震荡市'
+						  // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
 						  //
@@ -762,10 +763,10 @@ class Backtester {
 				candle[config.fastframe].emaFast >
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '超卖市' &&
-				candle[config.fastframe].emaFast <
+				candle[config.fastframe].emaFast >
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '潜在转折多' &&
-				candle[config.fastframe].emaFast >
+				candle[config.fastframe].emaFast <
 					candle[config.fastframe].emaSlow);
 		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
@@ -775,10 +776,10 @@ class Backtester {
 				candle[config.fastframe].emaFast <
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '超买市' &&
-				candle[config.fastframe].emaFast >
+				candle[config.fastframe].emaFast <
 					candle[config.fastframe].emaSlow) ||
 			(marketType === '潜在转折空' &&
-				candle[config.fastframe].emaFast <
+				candle[config.fastframe].emaFast >
 					candle[config.fastframe].emaSlow);
 		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
