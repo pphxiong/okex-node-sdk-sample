@@ -818,8 +818,8 @@ class Backtester {
       profit: profit,
       fee,
       duration: `${Math.round(
-        (exitCandle.timestamp - position.entryTime) / (1000 * 60)
-      )}m`,
+        (exitCandle.timestamp - position.entryTime) / (1000 * 60 * 60)
+      )}h`,
       entryTime: moment(position.entryTime).format("YYYY-MM-DD HH:mm:ss"),
       exitTime: moment(exitCandle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
     });
@@ -855,9 +855,9 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-03-22";
+  const start = "2025-03-24";
   const end = "2025-03-27";
-  const interval = 4;
+  const interval = 3;
   let profitTotal = 0;
 
   let i = 0;
