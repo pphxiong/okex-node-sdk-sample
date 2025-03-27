@@ -576,7 +576,7 @@ class Backtester {
       // 		config.kWindowTresholdMedium
       // 	);
 
-      const { marketType } = candle[config.fastframe];
+      const { marketType } = candle[config.slowframe];
 
       // 生成信号
       const signal = this.generateSignal(candle, secondKline5M, marketType);
@@ -697,7 +697,7 @@ class Backtester {
         //     ),
         //   })
         // );
-        position = this.openPosition(d, d.atr, signal.direction);
+        position = this.openPosition(d, d.atr, signal.direction, marketType);
       }
     });
   }
@@ -768,7 +768,7 @@ class Backtester {
     return null;
   }
 
-  openPosition(candle, atr, direction) {
+  openPosition(candle, atr, direction, marketType) {
     const positionSize = this.getPositionSize(candle.close, atr);
     const fee =
       positionSize * candle.close * (config.feeRate + config.slippage);
@@ -780,6 +780,7 @@ class Backtester {
       size: positionSize,
       takeProfit: atr * config.atrParam.takeProfit,
       stopLoss: atr * config.atrParam.stopLoss,
+      marketType,
     });
 
     this.balance -= fee; // 扣除手续费
