@@ -121,6 +121,9 @@ class Backtester {
 			);
 		});
 
+		console.log(returnsMatrix.slice(-3));
+		console.log(math.cov);
+
 		// 构建协方差矩阵
 		const covMatrix = math.cov.apply(null, returnsMatrix);
 
