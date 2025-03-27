@@ -479,8 +479,10 @@ class Backtester {
 		const { adx, rsi } = candle;
 		let marketType = '不确定';
 		if (adx >= 25) {
-			marketType = '趋势市';
-			if (rsi >= 80) {
+			// marketType = '趋势市';
+			if (rsi >= 30 && rsi <= 70) {
+				marketType = '趋势市';
+			} else if (rsi >= 80) {
 				marketType = '超买市';
 			} else if (rsi <= 20) {
 				marketType = '超卖市';
@@ -631,7 +633,9 @@ class Backtester {
 					position.direction === 'long'
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-						  isProfitTarget || signal.direction === 'short'
+						  isProfitTarget ||
+						  signal.direction === 'short' ||
+						  marketType === '震荡市'
 						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -640,7 +644,9 @@ class Backtester {
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-						  isProfitTarget || signal.direction === 'long';
+						  isProfitTarget ||
+						  signal.direction === 'long' ||
+						  marketType === '震荡市';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -765,9 +771,7 @@ class Backtester {
 			(marketType === '超卖市' &&
 				candle[config.fastframe].emaFast <
 					candle[config.fastframe].emaSlow) ||
-			(marketType === '潜在转折多' &&
-				candle[config.slowframe].emaFast >
-					candle[config.slowframe].emaSlow);
+			marketType === '潜在转折多';
 		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
@@ -778,9 +782,7 @@ class Backtester {
 			(marketType === '超买市' &&
 				candle[config.fastframe].emaFast >
 					candle[config.fastframe].emaSlow) ||
-			(marketType === '潜在转折空' &&
-				candle[config.slowframe].emaFast <
-					candle[config.slowframe].emaSlow);
+			marketType === '潜在转折空';
 		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
@@ -928,7 +930,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.slowframe].slice(-40).map((candle) =>
+				data[config.slowframe].slice(-300).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
