@@ -30,8 +30,6 @@
 		"fix-memory-limit": "cross-env LIMIT=32768 increase-memory-limit"
 	},
 	"dependencies": {
-		"@okfe/okex-node": "0.0.52",
-		"@tensorflow/tfjs-node": "^3.21.1",
 		"axios": "^0.24.0",
 		"babel-core": "^6.26.3",
 		"babel-polyfill": "^6.26.0",
