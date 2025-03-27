@@ -474,9 +474,9 @@ class Backtester {
       marketType = "震荡市";
     } else if (adx <= 20) {
       if (rsi > 60) {
-        marketType = "潜在转折空";
-      } else if (rsi < 40) {
         marketType = "潜在转折多";
+      } else if (rsi < 40) {
+        marketType = "潜在转折空";
       }
     }
     return marketType;
