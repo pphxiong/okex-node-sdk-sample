@@ -494,11 +494,11 @@ class Backtester {
 	getMarketType(candle) {
 		const { adx, rsi } = candle;
 		let marketType = '不确定';
-		if (adx >= 25) {
+		if (adx >= 20) {
 			marketType = '趋势市';
-			if (rsi >= 70) {
+			if (rsi >= 80) {
 				marketType = '超买市';
-			} else if (rsi <= 30) {
+			} else if (rsi <= 20) {
 				marketType = '超卖市';
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
@@ -630,7 +630,9 @@ class Backtester {
 					position.direction === 'long'
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-						  isProfitTarget || signal.direction === 'short'
+						  isProfitTarget ||
+						  signal.direction === 'short' ||
+						  marketType === '震荡市'
 						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -639,7 +641,9 @@ class Backtester {
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-						  isProfitTarget || signal.direction === 'long';
+						  isProfitTarget ||
+						  signal.direction === 'long' ||
+						  marketType === '震荡市';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
