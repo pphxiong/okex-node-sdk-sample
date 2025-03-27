@@ -109,6 +109,24 @@ class Backtester {
 		this.totalFee = 0;
 	}
 
+	covariance(x, y) {
+		if (!Array.isArray(x) || !Array.isArray(y)) {
+			throw new Error('需要两个数组作为参数');
+		}
+		if (x.length !== y.length) {
+			throw new Error('数组长度必须相同');
+		}
+
+		const n = x.length;
+		const meanX = x.reduce((a, b) => a + b, 0) / n;
+		const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+		return (
+			x.reduce((acc, val, i) => acc + (val - meanX) * (y[i] - meanY), 0) /
+			(n - 1)
+		);
+	}
+
 	// // 多周期价格路径生成（带相关性）
 	generateCorrelatedPaths(historicalData) {
 		const paths = {};
@@ -123,10 +141,10 @@ class Backtester {
 		});
 
 		// 数据集
-		const data = math.matrix(returnsMatrix);
+		// const data = math.matrix(returnsMatrix);
 
 		// 构建协方差矩阵
-		const covMatrix = math.cov(data);
+		const covMatrix = math.cov(returnsMatrix);
 
 		// Cholesky分解生成相关路径
 		const chol = math.chol(covMatrix);
