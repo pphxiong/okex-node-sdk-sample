@@ -816,6 +816,8 @@ class Backtester {
       exit: exitCandle.close,
       profit: profit,
       fee,
+      entryMarketType: position.marketType,
+      exitMarketType: exitCandle.marketType,
       duration: `${Math.round(
         (exitCandle.timestamp - position.entryTime) / (1000 * 60 * 60)
       )}h`,
@@ -854,8 +856,8 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2024-04-18";
-  const end = "2024-07-27";
+  const start = "2025-03-18";
+  const end = "2025-03-27";
   const interval = 4;
   let profitTotal = 0;
 
@@ -889,13 +891,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      // console.log(
-      //   data[config.slowframe].slice(-30).map((candle) =>
-      //     Object.assign(candle, {
-      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      //     })
-      //   )
-      // );
+      console.log(
+        data[config.slowframe].slice(-30).map((candle) =>
+          Object.assign(candle, {
+            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          })
+        )
+      );
 
       // console.log(data[config.slowframe].length);
 
