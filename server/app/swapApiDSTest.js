@@ -285,11 +285,11 @@ class Backtester {
     });
   }
 
-  getTimeStampBefore(dataList, timestamp) {
+  getTimeStampBefore(dataList, timestamp, period = 5) {
     dataList = JSON.parse(JSON.stringify(dataList));
     let data;
     let i = 1;
-    const period = config.fastframe.split("m")[0];
+    // const period = config.fastframe.split("m")[0];
 
     while (true) {
       const time = moment(timestamp).subtract(Number(period) * i, "minutes");
@@ -310,7 +310,7 @@ class Backtester {
     let data;
 
     const hour = moment(timestamp).format("YYYY-MM-DD HH:00:00");
-    const lastHourTimestamp = moment(hour).subtract(30, "minutes");
+    const lastHourTimestamp = moment(hour).subtract(1, "hours");
 
     const target = dataList.find(
       (c) => c.timestamp === lastHourTimestamp.valueOf()
@@ -531,7 +531,7 @@ class Backtester {
       );
 
       const candle = {
-        [config.slowframe]: this.getTimeStampSlowBefore(
+        [config.slowframe]: this.getTimeStampBefore(
           this.data[config.slowframe],
           lastKline5M.timestamp
         ),
