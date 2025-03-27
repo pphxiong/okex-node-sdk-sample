@@ -443,7 +443,7 @@ class Backtester {
 					}
 					if (i >= config.emaSettings[tf].slopeWindow) {
 						const slopeIndex =
-							i - config.emaSettings[tf].slopeWindow + 1;
+							i - config.emaSettings[tf].slopeWindow;
 						d.emaSlope = emaSlopes[slopeIndex];
 					}
 					if (i >= config.macdParams[tf][1]) {
@@ -461,7 +461,7 @@ class Backtester {
 						d.adx = adx[0][adxIndex];
 					}
 					if (i >= config.rsiPeriod) {
-						const rsiIndex = i - config.rsiPeriod + 1;
+						const rsiIndex = i - config.rsiPeriod;
 						d.rsi = rsi[0][rsiIndex];
 					}
 					d.emaSlow = emaSlow[0][i];
