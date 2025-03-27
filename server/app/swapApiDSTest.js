@@ -843,8 +843,8 @@ class Backtester {
 	// const simPaths = this.generateCorrelatedPaths(histData);
 
 	const backtester = new Backtester();
-	const start = '2024-03-23';
-	const end = '2024-05-27';
+	const start = '2023-01-23';
+	const end = '2023-03-27';
 	const interval = 4;
 	let profitTotal = 0;
 
