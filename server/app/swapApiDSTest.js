@@ -710,9 +710,9 @@ class Backtester {
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
 			(candle[config.slowframe].adx > 20
-				? candle[config.fastframe].emaFast >
+				? candle[config.fastframe].emaFast <
 				  candle[config.fastframe].emaSlow
-				: candle[config.fastframe].emaFast <
+				: candle[config.fastframe].emaFast >
 				  candle[config.fastframe].emaSlow) &&
 			// (candle[config.slowframe].adx < 25
 			// 	? candle[config.fastframe].emaFast >
@@ -793,7 +793,9 @@ class Backtester {
 			exit: exitCandle.close,
 			profit: profit,
 			fee,
-			duration: exitCandle.timestamp - position.entryTime,
+			duration: `${Math.round(
+				(exitCandle.timestamp - position.entryTime) / (1000 * 60)
+			)}m`,
 			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
 			exitTime: moment(exitCandle.timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
@@ -841,8 +843,8 @@ class Backtester {
 	// const simPaths = this.generateCorrelatedPaths(histData);
 
 	const backtester = new Backtester();
-	const start = '2024-01-23';
-	const end = '2024-03-27';
+	const start = '2024-03-23';
+	const end = '2024-05-27';
 	const interval = 4;
 	let profitTotal = 0;
 
