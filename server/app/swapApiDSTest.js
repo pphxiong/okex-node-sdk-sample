@@ -583,7 +583,6 @@ class Backtester {
 
       // 处理平仓
       if (position) {
-        console.log(112, marketType, position.marketType);
         // const isProfitTarget =
         // 	position.direction === 'long'
         // 		? d.close >= position.entryPrice * (1 + 0.005)
@@ -622,6 +621,13 @@ class Backtester {
         // 		(false && (isStopLoss || isProfitTarget)));
 
         const lnp = this.getLnp(position, d);
+
+        console.log(
+          112,
+          marketType,
+          position.marketType,
+          marketType !== position.marketType
+        );
 
         const isReverse =
           position.direction === "long"
