@@ -474,9 +474,9 @@ class Backtester {
       marketType = "震荡市";
     } else if (adx <= 20) {
       if (rsi > 60) {
-        marketType = "潜在转折多";
-      } else if (rsi < 40) {
         marketType = "潜在转折空";
+      } else if (rsi < 40) {
+        marketType = "潜在转折多";
       }
     }
     return marketType;
@@ -737,7 +737,7 @@ class Backtester {
       //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
       // (marketType === "超卖市" &&
       //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
-      marketType === "潜在转折多";
+      marketType === "超卖市";
     //  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
     const shortCondition =
@@ -746,7 +746,7 @@ class Backtester {
       //   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
       // (marketType === "超买市" &&
       //   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-      marketType === "潜在转折空";
+      marketType === "超买市";
     //  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
     // 多头信号
