@@ -725,16 +725,16 @@ class Backtester {
 		// 多头信号
 		if (longCondition) {
 			return {
-				direction: 'long',
-				// direction: candle[config.slowframe].adx > 25 ? "long" : "short",
+				// direction: 'long',
+				direction: candle[config.slowframe].adx < 25 ? 'long' : 'short',
 			};
 		}
 
 		// 空头信号
 		if (shortCondition) {
 			return {
-				direction: 'short',
-				// direction: candle[config.slowframe].adx > 25 ? "short" : "long",
+				// direction: 'short',
+				direction: candle[config.slowframe].adx < 25 ? 'short' : 'long',
 			};
 		}
 
