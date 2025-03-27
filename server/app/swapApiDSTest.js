@@ -893,7 +893,7 @@ class Backtester {
 	const backtester = new Backtester();
 	const start = '2025-03-10';
 	const end = '2025-03-27';
-	const interval = 5;
+	const interval = 4;
 	let profitTotal = 0;
 
 	let i = 0;
@@ -926,15 +926,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe].slice(-60).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data[config.slowframe].slice(-60).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// 步骤3: 运行回测
 			backtester.runBacktest();
