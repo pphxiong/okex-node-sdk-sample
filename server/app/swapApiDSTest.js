@@ -495,7 +495,7 @@ class Backtester {
 		const { adx, rsi } = candle;
 		let marketType = '不确定';
 		if (adx >= 25) {
-			// marketType = '趋势市';
+			marketType = '趋势市';
 			if (rsi >= 70) {
 				marketType = '超买市';
 			} else if (rsi <= 30) {
@@ -627,7 +627,7 @@ class Backtester {
 					position.direction === 'long'
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-						  isProfitTarget || marketType === '震荡市'
+						  isProfitTarget || signal.direction === 'short'
 						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -636,7 +636,7 @@ class Backtester {
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-						  isProfitTarget || marketType === '震荡市';
+						  isProfitTarget || signal.direction === 'long';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -755,20 +755,20 @@ class Backtester {
 
 		const longCondition =
 			// secondKline5M.close < secondKline5M.lower &&
-			marketType === '超卖市' &&
+			marketType === '趋势市' &&
 			candle[config.fastframe].emaFast <
 				candle[config.fastframe].emaSlow &&
 			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
-			marketType === '超买市' &&
+			marketType === '趋势市' &&
 			candle[config.fastframe].emaFast >
 				candle[config.fastframe].emaSlow &&
 			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		// 多头信号
-		if (longCondition) {
+		if (longCondition || marketType === '超卖市') {
 			return {
 				direction: 'long',
 				// direction: candle[config.slowframe].adx > 20 ? 'long' : 'short',
@@ -776,7 +776,7 @@ class Backtester {
 		}
 
 		// 空头信号
-		if (shortCondition) {
+		if (shortCondition || marketType === '超买市') {
 			return {
 				direction: 'short',
 				// direction: candle[config.slowframe].adx > 20 ? 'short' : 'long',
