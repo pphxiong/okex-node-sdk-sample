@@ -622,13 +622,6 @@ class Backtester {
 
         const lnp = this.getLnp(position, d);
 
-        console.log(
-          112,
-          marketType,
-          position.marketType,
-          marketType !== position.marketType
-        );
-
         const isReverse =
           position.direction === "long"
             ? /* candle[config.fastframe].close <
@@ -898,13 +891,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      // console.log(
-      //   data[config.slowframe].slice(-30).map((candle) =>
-      //     Object.assign(candle, {
-      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      //     })
-      //   )
-      // );
+      console.log(
+        data[config.fastframe].slice(-100).map((candle) =>
+          Object.assign(candle, {
+            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          })
+        )
+      );
 
       // console.log(data[config.slowframe].length);
 
