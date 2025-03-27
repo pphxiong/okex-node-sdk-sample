@@ -27,7 +27,7 @@ const cAuthClientBN = new customAuthClientBN(
 const ccxt = require('ccxt');
 const tulind = require('tulind');
 const math = require('mathjs');
-// const _ = require('lodash');
+const _ = require('lodash');
 
 // 策略配置
 const config = {
