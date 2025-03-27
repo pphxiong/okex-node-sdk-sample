@@ -577,7 +577,7 @@ class Backtester {
 			// 		config.kWindowTresholdMedium
 			// 	);
 
-			const marketType = this.getMarketType(candle[config.slowframe]);
+			const marketType = this.getMarketType(candle[config.fastframe]);
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
@@ -630,9 +630,10 @@ class Backtester {
 					position.direction === 'long'
 						? /* candle[config.fastframe].close <
                 candle[config.fastframe].lower && */
-						  isProfitTarget || signal.direction === 'short'
-						: // marketType === '震荡市'
-						  // candle[config.fastframe].emaFast <
+						  isProfitTarget ||
+						  signal.direction === 'short' ||
+						  marketType === '震荡市'
+						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
 						  //
@@ -640,7 +641,9 @@ class Backtester {
 						  // 	candle[config.slowframe].emaSlow
 						  /* candle[config.fastframe].close >
                 candle[config.fastframe].upper && */
-						  isProfitTarget || signal.direction === 'long';
+						  isProfitTarget ||
+						  signal.direction === 'long' ||
+						  marketType === '震荡市';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
