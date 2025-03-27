@@ -377,7 +377,7 @@ class Backtester {
 			config.timeframes.forEach((tf, index) => {
 				const [emaSlow, emaFast, bollinger, atr, macd, adx] =
 					result.slice(index * 6, (index + 1) * 6);
-				if (tf === '5m') {
+				if (tf === config.slowframe) {
 					console.log(
 						23,
 						adx[0].slice(-3),
@@ -871,7 +871,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data['5m'].slice(-3).map((candle) =>
+				data[config.slowframe].slice(-3).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
