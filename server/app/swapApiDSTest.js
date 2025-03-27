@@ -474,9 +474,9 @@ class Backtester {
     } else if (rsi >= 40 && rsi <= 60) {
       marketType = "震荡市";
     } else if (adx < 20) {
-      if (rsi > 60) {
+      if (rsi > 50 && rsi < 60) {
         marketType = "潜在转折空";
-      } else if (rsi < 40) {
+      } else if (rsi < 40 && rsi > 30) {
         marketType = "潜在转折多";
       }
     }
@@ -894,13 +894,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      // console.log(
-      //   data[config.fastframe].slice(-100).map((candle) =>
-      //     Object.assign(candle, {
-      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-      //     })
-      //   )
-      // );
+      console.log(
+        data[config.fastframe].slice(-100).map((candle) =>
+          Object.assign(candle, {
+            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+          })
+        )
+      );
 
       // console.log(data[config.slowframe].length);
 
