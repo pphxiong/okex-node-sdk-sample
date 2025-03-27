@@ -576,7 +576,7 @@ class Backtester {
       // 		config.kWindowTresholdMedium
       // 	);
 
-      const { marketType } = candle[config.slowframe];
+      const { marketType } = candle[config.fastframe];
 
       // 生成信号
       const signal = this.generateSignal(candle, secondKline5M, marketType);
@@ -815,7 +815,7 @@ class Backtester {
       entry: position.entryPrice,
       exit: exitCandle.close,
       profit: profit,
-      fee,
+      // fee,
       entryMarketType: position.marketType,
       exitMarketType: exitCandle.marketType,
       duration: `${Math.round(
@@ -891,13 +891,13 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data[config.slowframe].slice(-30).map((candle) =>
-          Object.assign(candle, {
-            timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-          })
-        )
-      );
+      // console.log(
+      //   data[config.slowframe].slice(-30).map((candle) =>
+      //     Object.assign(candle, {
+      //       timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //     })
+      //   )
+      // );
 
       // console.log(data[config.slowframe].length);
 
