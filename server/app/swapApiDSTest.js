@@ -480,7 +480,7 @@ class Backtester {
 		let marketType = '不确定';
 		if (adx >= 25) {
 			// marketType = '趋势市';
-			if (rsi >= 30 && rsi <= 70) {
+			if (rsi >= 40 && rsi <= 60) {
 				marketType = '趋势市';
 			} else if (rsi >= 80) {
 				marketType = '超买市';
@@ -489,7 +489,7 @@ class Backtester {
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
 			marketType = '震荡市';
-		} else {
+		} else if (adx <= 20) {
 			if (rsi > 60) {
 				marketType = '潜在转折空';
 			} else if (rsi < 40) {
@@ -635,7 +635,8 @@ class Backtester {
                 candle[config.fastframe].lower && */
 						  isProfitTarget ||
 						  signal.direction === 'short' ||
-						  marketType === '震荡市'
+						  marketType === '震荡市' ||
+						  marketType === '不确定'
 						: // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
 						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
@@ -646,7 +647,8 @@ class Backtester {
                 candle[config.fastframe].upper && */
 						  isProfitTarget ||
 						  signal.direction === 'long' ||
-						  marketType === '震荡市';
+						  marketType === '震荡市' ||
+						  marketType === '不确定';
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
 				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
@@ -930,7 +932,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.slowframe].slice(-300).map((candle) =>
+				data[config.slowframe].slice(-100).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
