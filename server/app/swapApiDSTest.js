@@ -122,7 +122,7 @@ class Backtester {
 		});
 
 		// 构建协方差矩阵
-		const covMatrix = math.cov(...returnsMatrix);
+		const covMatrix = math.cov.apply(null, returnsMatrix);
 
 		// Cholesky分解生成相关路径
 		const chol = math.chol(covMatrix);
