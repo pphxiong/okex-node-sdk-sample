@@ -341,6 +341,14 @@ class Backtester {
 		};
 	}
 
+	async calculateAdx(highs, lows, closes) {
+		const result = await tulind.indicators.adx.indicator(
+			[highs, lows, closes],
+			[config.adxPeriod]
+		);
+		console.log(23, result);
+	}
+
 	async calculateIndicators() {
 		try {
 			const indicatorPromises = [];
@@ -387,10 +395,11 @@ class Backtester {
 				);
 
 				indicatorPromises.push(
-					tulind.indicators.adx.indicator(
-						[highs, lows, closes],
-						[config.adxPeriod]
-					)
+					this.calculateAdx(highs, lows, closes)
+					// tulind.indicators.adx.indicator(
+					// 	[highs, lows, closes],
+					// 	[config.adxPeriod]
+					// )
 				);
 
 				indicatorPromises.push(
