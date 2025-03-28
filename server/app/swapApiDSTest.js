@@ -484,7 +484,7 @@ class Backtester {
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
-					d.marketType = this.getMarketType(d, d[i - 1]);
+					d.marketType = this.getMarketType(d, this.data[tf][i - 1]);
 				});
 			});
 		} catch (e) {
