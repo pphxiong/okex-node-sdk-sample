@@ -354,7 +354,7 @@ class Backtester {
 					[highs, lows, closes],
 					[config.adxPeriod]
 				);
-				console.log(23, results[0].length);
+				console.log(23, results.length);
 				return;
 
 				indicatorPromises.push(
