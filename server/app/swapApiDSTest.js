@@ -405,8 +405,15 @@ class Backtester {
 
 			// 合并指标到数据
 			config.timeframes.forEach((tf, index) => {
-				const [emaSlow, emaFast, bollinger, atr, macd, adx, rsi] =
-					result.slice(index * 7, (index + 1) * 7);
+				const [
+					emaSlow,
+					emaFast,
+					bollinger,
+					[atr, adxPlusDI, adxMinusDI],
+					macd,
+					adx,
+					rsi,
+				] = result.slice(index * 7, (index + 1) * 7);
 				// if (tf === config.slowframe) {
 				// 	console.log(
 				// 		23,
@@ -461,9 +468,9 @@ class Backtester {
 					if (i >= config.adxPeriod) {
 						// const offset = this.data[tf].length - adx[0].length;
 						const adxIndex = i - config.adxPeriod * 2 + 2;
-						d.adx = adx[0][adxIndex];
-						d.adxPlusDI = adx[1] ? adx[1][adxIndex] : null;
-						d.adxMinusDI = adx[2] ? adx[2][adxIndex] : null;
+						d.adx = adx[adxIndex];
+						d.adxPlusDI = adxPlusDI ? adxPlusDI[adxIndex] : null;
+						d.adxMinusDI = adxMinusDI ? adxMinusDI[adxIndex] : null;
 					}
 					if (i >= config.rsiPeriod) {
 						const rsiIndex = i - config.rsiPeriod;
