@@ -742,30 +742,30 @@ class Backtester {
 
 			// 处理开仓
 			if (!position && signal.direction) {
-				// console.log(
-				//   config.fastframe,
-				//   Object.assign(candle[config.fastframe], {
-				//     timestamp: moment(candle[config.fastframe].timestamp).format(
-				//       "YYYY-MM-DD HH:mm:ss"
-				//     ),
-				//   })
-				// );
-				// console.log(
-				//   config.mediumframe,
-				//   Object.assign(candle[config.mediumframe], {
-				//     timestamp: moment(candle[config.mediumframe].timestamp).format(
-				//       "YYYY-MM-DD HH:mm:ss"
-				//     ),
-				//   })
-				// );
-				// console.log(
-				//   config.slowframe,
-				//   Object.assign(candle[config.slowframe], {
-				//     timestamp: moment(candle[config.slowframe].timestamp).format(
-				//       "YYYY-MM-DD HH:mm:ss"
-				//     ),
-				//   })
-				// );
+				console.log(
+					config.fastframe,
+					Object.assign(candle[config.fastframe], {
+						timestamp: moment(
+							candle[config.fastframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+				console.log(
+					config.mediumframe,
+					Object.assign(candle[config.mediumframe], {
+						timestamp: moment(
+							candle[config.mediumframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
+				console.log(
+					config.slowframe,
+					Object.assign(candle[config.slowframe], {
+						timestamp: moment(
+							candle[config.slowframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
 				position = this.openPosition(
 					d,
 					d.atr,
@@ -971,15 +971,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe].slice(-10).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data[config.slowframe].slice(-10).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
