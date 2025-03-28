@@ -741,22 +741,22 @@ class Backtester {
 
 			// 处理开仓
 			if (!position && signal.direction) {
-				console.log(
-					config.fastframe,
-					Object.assign(candle[config.fastframe], {
-						timestamp: moment(
-							candle[config.fastframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
-				console.log(
-					config.mediumframe,
-					Object.assign(candle[config.mediumframe], {
-						timestamp: moment(
-							candle[config.mediumframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
+				// console.log(
+				// 	config.fastframe,
+				// 	Object.assign(candle[config.fastframe], {
+				// 		timestamp: moment(
+				// 			candle[config.fastframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
+				// console.log(
+				// 	config.mediumframe,
+				// 	Object.assign(candle[config.mediumframe], {
+				// 		timestamp: moment(
+				// 			candle[config.mediumframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
 				console.log(
 					config.slowframe,
 					Object.assign(candle[config.slowframe], {
@@ -935,7 +935,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-18';
+	const start = '2025-03-01';
 	const end = '2025-03-27';
 	const interval = 4;
 	let profitTotal = 0;
