@@ -459,8 +459,8 @@ class Backtester {
 					if (i >= config.adxPeriod) {
 						const adxIndex = i - config.adxPeriod * 2 + 2;
 						d.adx = adx[0][adxIndex];
-						d.adxPlusDI = adx[1][adxIndex];
-						d.adxMinusDI = adx[2][adxIndex];
+						d.adxPlusDI = adx[1] ? adx[1][adxIndex] : null;
+						d.adxMinusDI = adx[2] ? adx[2][adxIndex] : null;
 					}
 					if (i >= config.rsiPeriod) {
 						const rsiIndex = i - config.rsiPeriod;
