@@ -426,8 +426,8 @@ class Backtester {
 				console.log(
 					33,
 					adx.length,
-					adxPlusDI.length,
-					adxMinusDI.length
+					adxPlusDI && adxPlusDI.length,
+					adxMinusDI && adxMinusDI.length
 				);
 
 				// 计算EMA斜率
