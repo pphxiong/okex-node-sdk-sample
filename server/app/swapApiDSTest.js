@@ -501,21 +501,21 @@ class Backtester {
 
 		if (adx >= 25) {
 			marketType = '趋势市';
-			if (rsi >= 45 && rsi <= 55) {
+			if (rsi >= 55 && rsi <= 65) {
 				if (adxPlusDI > adxMinusDI) {
 					marketType = '趋势多且增强';
 				} else {
 					marketType = '趋势多且减弱';
 				}
-			} else if (rsi < 55 && rsi > 45) {
+			} else if (rsi < 35 && rsi > 25) {
 				if (adxPlusDI < adxMinusDI) {
 					marketType = '趋势空且增强';
 				} else {
 					marketType = '趋势空且减弱';
 				}
-			} else if (rsi > 65 && adxPlusDI > adxMinusDI) {
+			} else if (rsi >= 75 && adxPlusDI > adxMinusDI) {
 				marketType = '超买市';
-			} else if (rsi <= 35 && adxPlusDI < adxMinusDI) {
+			} else if (rsi <= 15 && adxPlusDI < adxMinusDI) {
 				marketType = '超卖市';
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
