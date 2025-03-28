@@ -495,19 +495,19 @@ class Backtester {
 		let marketType = '不确定';
 		// if (!lastCandle) return marketType;
 
-		const { adx, adxPlusDI, adxMinusDI, rsi } = candle;
+		const { adx, adxPlusDI, adxMinusDI, rsi, close, open } = candle;
 		// const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
 		// if (!lastAdx) return marketType;
 
 		if (adx >= 25) {
 			marketType = '趋势市';
 			if (rsi >= 55 && rsi <= 65) {
-				if (adxPlusDI > adxMinusDI) {
+				if (adxPlusDI > adxMinusDI && close > open) {
 					marketType = '趋势多且增强';
 				} else {
 					marketType = '趋势多且减弱';
 				}
-			} else if (rsi < 35 && rsi > 25) {
+			} else if (rsi < 35 && rsi > 25 && close < open) {
 				if (adxPlusDI < adxMinusDI) {
 					marketType = '趋势空且增强';
 				} else {
