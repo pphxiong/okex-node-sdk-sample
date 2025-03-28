@@ -735,7 +735,7 @@ class Backtester {
 				// 		  candle[config.mediumframe].ema);
 
 				if (isReverse) {
-					this.closePosition(position, d);
+					this.closePosition(position, d, marketType);
 					position = null;
 				}
 			}
@@ -875,7 +875,7 @@ class Backtester {
 		return position.direction === 'long' ? lnp : -lnp;
 	}
 
-	closePosition(position, exitCandle) {
+	closePosition(position, exitCandle, marketType) {
 		const fee =
 			position.size *
 			exitCandle.close *
@@ -895,7 +895,7 @@ class Backtester {
 			profit: profit,
 			// fee,
 			entryMarketType: position.marketType,
-			exitMarketType: exitCandle.marketType,
+			exitMarketType: marketType,
 			duration: `${Math.round(
 				(exitCandle.timestamp - position.entryTime) / (1000 * 60 * 60)
 			)}h`,
