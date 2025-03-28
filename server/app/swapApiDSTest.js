@@ -513,9 +513,9 @@ class Backtester {
 				} else {
 					marketType = '趋势空且减弱';
 				}
-			} else if (rsi > 65 && adxPlusDI > adxMinusDI) {
+			} else if (rsi > 70 && adxPlusDI > adxMinusDI) {
 				marketType = '超买市';
-			} else if (rsi <= 35 && adxPlusDI < adxMinusDI) {
+			} else if (rsi <= 30 && adxPlusDI < adxMinusDI) {
 				marketType = '超卖市';
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
