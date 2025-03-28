@@ -36,9 +36,9 @@ const config = {
 	timeframe: '15m',
 	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		'30m': { periods: [20, 5], slopeWindow: 5 },
-		'15m': { periods: [20, 5], slopeWindow: 5 },
-		'5m': { periods: [20, 5], slopeWindow: 5 },
+		'30m': { periods: [10, 5], slopeWindow: 5 },
+		'15m': { periods: [10, 5], slopeWindow: 5 },
+		'5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		'30m': 0,
@@ -819,7 +819,7 @@ class Backtester {
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// marketType === "潜在转折多";
 			slowMarketType === '趋势多且增强' &&
-			candle[config.slowframe].close < candle[config.slowframe].emaSlow;
+			candle[config.slowframe].close > candle[config.slowframe].emaSlow;
 		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
