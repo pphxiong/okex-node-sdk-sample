@@ -34,19 +34,20 @@ const _ = require('lodash');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: ['15m', '5m' /* '1m'*/], // 多周期参数
+	timeframes: ['30m', '15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
-		// '30m': { periods: [10, 5], slopeWindow: 5 },
+		'30m': { periods: [10, 5], slopeWindow: 5 },
 		'15m': { periods: [10, 5], slopeWindow: 5 },
 		'5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
-		// '30m': 0,
+		'30m': 0,
 		'15m': 0.003 * 0.01,
 		'5m': 0,
 	}, // 斜率阈值
-	macdParams: { '15m': [12, 26, 9], '5m': [12, 26, 9] },
-	slowframe: '15m',
+	macdParams: { '30m': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
+	slowframe: '30m',
+	mediumframe: '15m',
 	fastframe: '5m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
@@ -100,6 +101,7 @@ class Backtester {
 		});
 		this.data = {
 			[config.slowframe]: [],
+			[config.mediumframe]: [],
 			[config.fastframe]: [],
 			merged: [],
 		};
@@ -143,7 +145,7 @@ class Backtester {
 		// const data = math.matrix(returnsMatrix);
 
 		// 构建协方差矩阵
-		const covMatrix = math.statistics.covariance(returnsMatrix);
+		const covMatrix = math.cov(returnsMatrix);
 
 		// Cholesky分解生成相关路径
 		const chol = math.chol(covMatrix);
@@ -582,8 +584,46 @@ class Backtester {
 					this.data[config.slowframe],
 					lastKline5M.timestamp
 				),
+				[config.mediumframe]: this.getTimeStampBefore(
+					this.data[config.mediumframe],
+					lastKline5M.timestamp
+				),
 				[config.fastframe]: lastKline5M,
 			};
+
+			// if (isLastIndex) {
+			//   console.log("last:");
+			//   Object.keys(candle).forEach((tf) => {
+			//     console.log(
+			//       tf,
+			//       Object.assign(candle[tf], {
+			//         timestamp: moment(candle[tf].timestamp).format(
+			//           "YYYY-MM-DD HH:mm:ss"
+			//         ),
+			//       })
+			//     );
+			//   });
+			// }
+
+			// const { longs, shorts } = this.getLongShort(
+			// 	this.data[config.fastframe],
+			// 	index,
+			// 	config.kWindowTresholdFast
+			// );
+
+			// const mediumKline = this.getTimeStampBefore(
+			// 	this.data[config.mediumframe],
+			// 	d.timestamp
+			// );
+			// const mediumIndex = this.data[config.mediumframe].findIndex(
+			// 	(item) => item.timestamp === mediumKline.timestamp
+			// );
+			// const { longs: mediumLongs, shorts: mediumShorts } =
+			// 	this.getLongShort(
+			// 		this.data[config.mediumframe],
+			// 		mediumIndex,
+			// 		config.kWindowTresholdMedium
+			// 	);
 
 			const { marketType: fastMarketType } = candle[config.fastframe];
 			const { marketType: slowMarketType } = candle[config.slowframe];
@@ -677,6 +717,23 @@ class Backtester {
 				// candle[config.slowframe].emaFast >
 				// 	candle[config.slowframe].emaSlow;
 
+				// const isReverse =
+				// 	signal &&
+				// 	((position.direction === 'long'
+				// 		? mediumShorts.length > mediumLongs.length
+				// 		: mediumLongs.length > mediumShorts.length) ||
+				// 		isStopLoss);
+
+				// const isReverse = isProfitTarget || isStopLoss;
+
+				// const isReverse =
+				// 	position &&
+				// 	(position.direction === 'long'
+				// 		? candle[config.mediumframe].close <
+				// 		  candle[config.mediumframe].ema
+				// 		: candle[config.mediumframe].close >
+				// 		  candle[config.mediumframe].ema);
+
 				if (isReverse) {
 					this.closePosition(
 						position,
@@ -695,6 +752,14 @@ class Backtester {
 				// 	Object.assign(candle[config.fastframe], {
 				// 		timestamp: moment(
 				// 			candle[config.fastframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
+				// console.log(
+				// 	config.mediumframe,
+				// 	Object.assign(candle[config.mediumframe], {
+				// 		timestamp: moment(
+				// 			candle[config.mediumframe].timestamp
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
@@ -873,8 +938,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-19';
-	const end = '2025-03-28';
+	const start = '2023-04-15';
+	const end = '2023-10-28';
 	const interval = 4;
 	let profitTotal = 0;
 
@@ -884,6 +949,7 @@ class Backtester {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
+				[config.mediumframe]: [],
 				[config.fastframe]: [],
 				merged: [],
 			};
@@ -901,8 +967,8 @@ class Backtester {
 			);
 
 			// 生成相关价格路径
-			const simPaths = backtester.generateCorrelatedPaths(data);
-			console.log(simPaths);
+			// const simPaths = backtester.generateCorrelatedPaths(data);
+			// console.log(simPaths);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
