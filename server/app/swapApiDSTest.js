@@ -626,13 +626,15 @@ class Backtester {
 			// 		config.kWindowTresholdMedium
 			// 	);
 
-			const { marketType } = candle[config.slowframe];
+			const { marketType: fastMarketType } = candle[config.fastframe];
+			const { marketType: slowMarketType } = candle[config.slowframe];
 
 			// 生成信号
 			const signal = this.generateSignal(
 				candle,
 				secondKline5M,
-				marketType
+				fastMarketType,
+				slowMarketType
 			);
 
 			// 处理平仓
@@ -682,15 +684,13 @@ class Backtester {
                 candle[config.fastframe].lower && */
 						  // isProfitTarget ||
 						  // signal.direction === "short" ||
-						  position.marketType === '趋势多且增强' &&
-						  ([
+						  position.slowMarketType === '趋势多且增强' &&
+						  [
 								'超买市',
 								'趋势空且增强',
 								'潜在转折空',
 								'震荡市',
-						  ].includes(marketType) ||
-								candle[config.slowframe].emaFast <
-									candle[config.slowframe].emaSlow)
+						  ].includes(slowMarketType)
 						: // ["超买市", "不确定"].includes(marketType)
 						  // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
@@ -702,15 +702,13 @@ class Backtester {
                 candle[config.fastframe].upper && */
 						  // isProfitTarget ||
 						  // signal.direction === "long" ||
-						  position.marketType === '趋势空且增强' &&
-						  ([
+						  position.slowMarketType === '趋势空且增强' &&
+						  [
 								'超卖市',
 								'趋势多且增强',
 								'潜在转折多',
 								'震荡市',
-						  ].includes(marketType) ||
-								candle[config.slowframe].emaFast >
-									candle[config.slowframe].emaSlow);
+						  ].includes(slowMarketType);
 				// ["超卖市", "不确定"].includes(marketType)
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
@@ -738,7 +736,12 @@ class Backtester {
 				// 		  candle[config.mediumframe].ema);
 
 				if (isReverse) {
-					this.closePosition(position, d, marketType);
+					this.closePosition(
+						position,
+						d,
+						fastMarketType,
+						slowMarketType
+					);
 					position = null;
 				}
 			}
@@ -761,19 +764,20 @@ class Backtester {
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
-				// console.log(
-				// 	config.slowframe,
-				// 	Object.assign(candle[config.slowframe], {
-				// 		timestamp: moment(
-				// 			candle[config.slowframe].timestamp
-				// 		).format('YYYY-MM-DD HH:mm:ss'),
-				// 	})
-				// );
+				console.log(
+					config.slowframe,
+					Object.assign(candle[config.slowframe], {
+						timestamp: moment(
+							candle[config.slowframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
 				position = this.openPosition(
 					d,
 					d.atr,
 					signal.direction,
-					marketType
+					fastMarketType,
+					slowMarketType
 				);
 			}
 		});
@@ -791,7 +795,7 @@ class Backtester {
 		});
 	}
 
-	generateSignal(candle, secondKline5M, marketType) {
+	generateSignal(candle, secondKline5M, fastMarketType, slowMarketType) {
 		// // 多头信号
 		// if (
 		// 	candle.close <= candle.middle &&
@@ -815,8 +819,8 @@ class Backtester {
 			// (marketType === "超卖市" &&
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// marketType === "潜在转折多";
-			marketType === '趋势多且增强' &&
-			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
+			slowMarketType === '趋势多且增强';
+		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
@@ -824,8 +828,8 @@ class Backtester {
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// (marketType === "超买市" &&
 			//   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-			marketType === '趋势空且增强' &&
-			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
+			slowMarketType === '趋势空且增强';
+		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
 		if (longCondition) {
@@ -846,7 +850,7 @@ class Backtester {
 		return { direction: null };
 	}
 
-	openPosition(candle, atr, direction, marketType) {
+	openPosition(candle, atr, direction, fastMarketType, slowMarketType) {
 		const positionSize = this.getPositionSize(candle.close, atr);
 		const fee =
 			positionSize * candle.close * (config.feeRate + config.slippage);
@@ -858,7 +862,8 @@ class Backtester {
 			size: positionSize,
 			takeProfit: atr * config.atrParam.takeProfit,
 			stopLoss: atr * config.atrParam.stopLoss,
-			marketType,
+			fastMarketType,
+			slowMarketType,
 		});
 
 		this.balance -= fee; // 扣除手续费
@@ -878,7 +883,7 @@ class Backtester {
 		return position.direction === 'long' ? lnp : -lnp;
 	}
 
-	closePosition(position, exitCandle, marketType) {
+	closePosition(position, exitCandle, fastMarketType, slowMarketType) {
 		const fee =
 			position.size *
 			exitCandle.close *
@@ -897,8 +902,8 @@ class Backtester {
 			exit: exitCandle.close,
 			profit: profit,
 			// fee,
-			entryMarketType: position.marketType,
-			exitMarketType: marketType,
+			entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
+			exitMarketType: `${fastMarketType},${slowMarketType}`,
 			duration: `${Math.round(
 				(exitCandle.timestamp - position.entryTime) / (1000 * 60 * 60)
 			)}h`,
