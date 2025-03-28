@@ -983,15 +983,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			// 	data[config.slowframe].slice(-10).map((candle) =>
-			// 		Object.assign(candle, {
-			// 			timestamp: moment(candle.timestamp).format(
-			// 				'YYYY-MM-DD HH:mm:ss'
-			// 			),
-			// 		})
-			// 	)
-			// );
+			console.log(
+				data[config.slowframe].slice(-2).map((candle) =>
+					Object.assign(candle, {
+						timestamp: moment(candle.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				)
+			);
 
 			// console.log(data[config.slowframe].length);
 
