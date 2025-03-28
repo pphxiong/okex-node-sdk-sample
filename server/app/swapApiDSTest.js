@@ -764,14 +764,14 @@ class Backtester {
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
-				console.log(
-					config.slowframe,
-					Object.assign(candle[config.slowframe], {
-						timestamp: moment(
-							candle[config.slowframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
+				// console.log(
+				// 	config.slowframe,
+				// 	Object.assign(candle[config.slowframe], {
+				// 		timestamp: moment(
+				// 			candle[config.slowframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
 				position = this.openPosition(
 					d,
 					d.atr,
