@@ -757,14 +757,14 @@ class Backtester {
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
-				console.log(
-					config.slowframe,
-					Object.assign(candle[config.slowframe], {
-						timestamp: moment(
-							candle[config.slowframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
+				// console.log(
+				// 	config.slowframe,
+				// 	Object.assign(candle[config.slowframe], {
+				// 		timestamp: moment(
+				// 			candle[config.slowframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
 				position = this.openPosition(
 					d,
 					d.atr,
@@ -811,8 +811,8 @@ class Backtester {
 			// (marketType === "超卖市" &&
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// marketType === "潜在转折多";
-			marketType === '趋势多且增强';
-		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
+			marketType === '趋势多且增强' &&
+			candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
 			// secondKline5M.close > secondKline5M.upper &&
@@ -820,8 +820,8 @@ class Backtester {
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// (marketType === "超买市" &&
 			//   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-			marketType === '趋势空且增强';
-		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
+			marketType === '趋势空且增强' &&
+			candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
 		if (longCondition) {
