@@ -821,7 +821,7 @@ class Backtester {
 			// marketType === "潜在转折多";
 			slowMarketType === '趋势多且增强' &&
 			candle[config.slowframe].emaSlope >
-				config.slopeThreshold[config.slowframe].emaSlopeThreshold;
+				config.slopeThreshold[config.slowframe];
 		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
@@ -832,7 +832,7 @@ class Backtester {
 			//   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
 			slowMarketType === '趋势空且增强' &&
 			candle[config.slowframe].emaSlope <
-				-config.slopeThreshold[config.slowframe].emaSlopeThreshold;
+				-config.slopeThreshold[config.slowframe];
 		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
@@ -983,15 +983,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe].slice(-2).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data[config.slowframe].slice(-2).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
