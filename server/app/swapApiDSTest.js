@@ -350,6 +350,13 @@ class Backtester {
 				const highs = this.data[tf].map((d) => d.high);
 				const lows = this.data[tf].map((d) => d.low);
 
+				const results = await tulind.indicators.adx.indicator(
+					[highs, lows, closes],
+					[config.adxPeriod]
+				);
+				console.log(23, results[0].length);
+				return;
+
 				indicatorPromises.push(
 					tulind.indicators.ema.indicator(
 						[closes],
@@ -422,13 +429,6 @@ class Backtester {
 				// 		emaSlow[0].slice(-3)
 				// 	);
 				// }
-
-				console.log(
-					33,
-					adx.length,
-					adxPlusDI && adxPlusDI.length,
-					adxMinusDI && adxMinusDI.length
-				);
 
 				// 计算EMA斜率
 				const emaSlopes = [];
