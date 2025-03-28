@@ -43,7 +43,7 @@ const config = {
 	slopeThreshold: {
 		'30m': 0,
 		'15m': 0.003 * 0.01,
-		'5m': 0.005 * 0.01,
+		'5m': 0,
 	}, // 斜率阈值
 	macdParams: { '30m': [12, 26, 9], '15m': [12, 26, 9], '5m': [12, 26, 9] },
 	slowframe: '30m',
@@ -434,12 +434,12 @@ class Backtester {
 				const emaSlopes = [];
 				for (
 					let i = config.emaSettings[tf].slopeWindow;
-					i < emaFast[0].length;
+					i < emaSlow[0].length;
 					i++
 				) {
 					const slope =
-						(emaFast[0][i] -
-							emaFast[0][
+						(emaSlow[0][i] -
+							emaSlow[0][
 								i - config.emaSettings[tf].slopeWindow
 							]) /
 						config.emaSettings[tf].slopeWindow;
@@ -818,9 +818,7 @@ class Backtester {
 			// (marketType === "超卖市" &&
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// marketType === "潜在转折多";
-			slowMarketType === '趋势多且增强' &&
-			candle[config.slowframe].emaSlope >
-				config.slopeThreshold[config.slowframe];
+			slowMarketType === '趋势多且增强';
 		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
 
 		const shortCondition =
@@ -829,9 +827,7 @@ class Backtester {
 			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
 			// (marketType === "超买市" &&
 			//   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-			slowMarketType === '趋势空且增强' &&
-			candle[config.slowframe].emaSlope <
-				-config.slopeThreshold[config.slowframe];
+			slowMarketType === '趋势空且增强';
 		//  && candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
 
 		// 多头信号
@@ -947,8 +943,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-01';
-	const end = '2025-03-27';
+	const start = '2025-03-18';
+	const end = '2025-03-28';
 	const interval = 4;
 	let profitTotal = 0;
 
@@ -982,15 +978,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe].slice(-20).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data[config.slowframe].slice(-20).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
