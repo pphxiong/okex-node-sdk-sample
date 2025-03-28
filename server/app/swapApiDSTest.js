@@ -810,26 +810,20 @@ class Backtester {
 		// ) {
 		// 	return { direction: 'short' };
 		// }
-
-		const longCondition =
-			// secondKline5M.close < secondKline5M.lower &&
-			// (marketType === "趋势市" &&
-			//   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
-			// (marketType === "超卖市" &&
-			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
-			// marketType === "潜在转折多";
+		const longConditions = [
 			slowMarketType === '趋势多且增强' &&
-			candle[config.slowframe].close > candle[config.slowframe].emaSlow;
-		//  && candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
+				candle[config.slowframe].close >
+					candle[config.slowframe].emaSlow,
+		];
 
-		const shortCondition =
-			// secondKline5M.close > secondKline5M.upper &&
-			// (marketType === "趋势市" &&
-			//   candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow) ||
-			// (marketType === "超买市" &&
-			//   candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow) ||
+		const shortConditions = [
 			slowMarketType === '趋势空且增强' &&
-			candle[config.slowframe].close > candle[config.slowframe].emaSlow;
+				candle[config.slowframe].close >
+					candle[config.slowframe].emaSlow,
+		];
+
+		const longCondition = longConditions.some((condition) => !!condition);
+		const shortCondition = shortConditions.some((condition) => !!condition);
 
 		// 多头信号
 		if (longCondition) {
@@ -944,8 +938,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-03-15';
-	const end = '2023-03-28';
+	const start = '2024-03-15';
+	const end = '2024-03-28';
 	const interval = 4;
 	let profitTotal = 0;
 
