@@ -494,7 +494,7 @@ class Backtester {
 
 	getMarketType(candle, lastCandle) {
 		const { adx, adxPlusDI, rsi } = candle;
-		const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = candle;
+		const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
 		let marketType = '不确定';
 		if (!lastAdx) return marketType;
 
@@ -625,7 +625,7 @@ class Backtester {
 			// 		config.kWindowTresholdMedium
 			// 	);
 
-			const { marketType } = candle[config.fastframe];
+			const { marketType } = candle[config.slowframe];
 
 			// 生成信号
 			const signal = this.generateSignal(
@@ -970,7 +970,7 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.fastframe].slice(-10).map((candle) =>
+				data[config.slowframe].slice(-10).map((candle) =>
 					Object.assign(candle, {
 						timestamp: moment(candle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
