@@ -764,14 +764,14 @@ class Backtester {
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
-				// console.log(
-				// 	config.slowframe,
-				// 	Object.assign(candle[config.slowframe], {
-				// 		timestamp: moment(
-				// 			candle[config.slowframe].timestamp
-				// 		).format('YYYY-MM-DD HH:mm:ss'),
-				// 	})
-				// );
+				console.log(
+					config.slowframe,
+					Object.assign(candle[config.slowframe], {
+						timestamp: moment(
+							candle[config.slowframe].timestamp
+						).format('YYYY-MM-DD HH:mm:ss'),
+					})
+				);
 				position = this.openPosition(
 					d,
 					d.atr,
@@ -983,15 +983,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe].slice(-2).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data[config.slowframe].slice(-2).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
