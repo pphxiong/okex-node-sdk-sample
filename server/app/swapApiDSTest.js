@@ -901,8 +901,8 @@ class Backtester {
 			);
 
 			// 生成相关价格路径
-			const simPaths = backtester.generateCorrelatedPaths(data);
-			console.log(simPaths);
+			// const simPaths = backtester.generateCorrelatedPaths(data);
+			// console.log(simPaths);
 
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
