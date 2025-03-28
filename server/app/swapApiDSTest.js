@@ -417,6 +417,8 @@ class Backtester {
 				// 	);
 				// }
 
+				console.log(11, adx.length);
+
 				// 计算EMA斜率
 				const emaSlopes = [];
 				for (
@@ -457,6 +459,7 @@ class Backtester {
 						d.atr = atr[0][atrIndex];
 					}
 					if (i >= config.adxPeriod) {
+						// const offset = this.data[tf].length - adx[0].length;
 						const adxIndex = i - config.adxPeriod * 2 + 2;
 						d.adx = adx[0][adxIndex];
 						d.adxPlusDI = adx[1] ? adx[1][adxIndex] : null;
