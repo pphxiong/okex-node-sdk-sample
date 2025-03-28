@@ -513,9 +513,9 @@ class Backtester {
 				} else {
 					marketType = '趋势空且减弱';
 				}
-			} else if (rsi > 70 && adxPlusDI > adxMinusDI) {
+			} else if (rsi > 65 && adxPlusDI > adxMinusDI) {
 				marketType = '超买市';
-			} else if (rsi <= 30 && adxPlusDI < adxMinusDI) {
+			} else if (rsi <= 35 && adxPlusDI < adxMinusDI) {
 				marketType = '超卖市';
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
@@ -689,7 +689,7 @@ class Backtester {
 								'趋势空且增强',
 								'潜在转折空',
 								'震荡市',
-						  ].includes(slowMarketType)
+						  ].includes(fastMarketType)
 						: // ["超买市", "不确定"].includes(marketType)
 						  // candle[config.fastframe].emaFast <
 						  // 	candle[config.fastframe].emaSlow
@@ -707,7 +707,7 @@ class Backtester {
 								'趋势多且增强',
 								'潜在转折多',
 								'震荡市',
-						  ].includes(slowMarketType);
+						  ].includes(fastMarketType);
 				// ["超卖市", "不确定"].includes(marketType)
 				// candle[config.fastframe].emaFast >
 				// 	candle[config.fastframe].emaSlow;
