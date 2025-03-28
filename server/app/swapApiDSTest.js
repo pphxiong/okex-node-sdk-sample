@@ -340,6 +340,19 @@ class Backtester {
 			volume: parseFloat(c[5]),
 		};
 	}
+
+	async calculateAdx(highs, lows, closes) {
+		const result = await tulind.indicators.adx.indicator(
+			[highs, lows, closes],
+			[config.adxPeriod]
+		);
+		const di_result = await tulind.indicators.di.indicator(
+			[highs, lows, closes],
+			[config.adxPeriod]
+		);
+		return [result[0], di_result[0], di_result[1]];
+	}
+
 	async calculateIndicators() {
 		try {
 			const indicatorPromises = [];
@@ -349,13 +362,6 @@ class Backtester {
 				const closes = this.data[tf].map((d) => d.close);
 				const highs = this.data[tf].map((d) => d.high);
 				const lows = this.data[tf].map((d) => d.low);
-
-				const results = await tulind.indicators.adx.indicator(
-					[highs, lows, closes],
-					[config.adxPeriod]
-				);
-				console.log(23, results.length);
-				return;
 
 				indicatorPromises.push(
 					tulind.indicators.ema.indicator(
@@ -392,12 +398,7 @@ class Backtester {
 					)
 				);
 
-				indicatorPromises.push(
-					tulind.indicators.adx.indicator(
-						[highs, lows, closes],
-						[config.adxPeriod]
-					)
-				);
+				indicatorPromises.push(this.calculateAdx(highs, lows, closes));
 
 				indicatorPromises.push(
 					tulind.indicators.rsi.indicator(
