@@ -143,9 +143,9 @@ class Backtester {
 		// const data = math.matrix(returnsMatrix);
 
 		// 构建协方差矩阵
-		const covMatrix = math.statistics.covariance(returnsMatrix);
+		const covMatrix = math.variance(returnsMatrix);
 
-		// Cholesky分解生成相关路径
+		// Cholesky分解生成相关路径  cholesky
 		const chol = math.chol(covMatrix);
 
 		for (let s = 0; s < config.simulations; s++) {
