@@ -409,9 +409,9 @@ class Backtester {
 					emaSlow,
 					emaFast,
 					bollinger,
-					[atr, adxPlusDI, adxMinusDI],
+					atr,
 					macd,
-					adx,
+					[adx, adxPlusDI, adxMinusDI],
 					rsi,
 				] = result.slice(index * 7, (index + 1) * 7);
 				// if (tf === config.slowframe) {
@@ -423,8 +423,6 @@ class Backtester {
 				// 		emaSlow[0].slice(-3)
 				// 	);
 				// }
-
-				console.log(11, adx.length);
 
 				// 计算EMA斜率
 				const emaSlopes = [];
