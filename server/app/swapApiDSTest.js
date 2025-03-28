@@ -493,9 +493,11 @@ class Backtester {
 	}
 
 	getMarketType(candle, lastCandle) {
+		let marketType = '不确定';
+		if (!lastCandle) return marketType;
+
 		const { adx, adxPlusDI, rsi } = candle;
 		const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
-		let marketType = '不确定';
 		if (!lastAdx) return marketType;
 
 		if (adx >= 25) {
