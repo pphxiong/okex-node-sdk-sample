@@ -686,7 +686,7 @@ class Backtester {
 						  [
 								'超买市',
 								'趋势空且增强',
-								// '不确定',
+								'潜在转折空',
 								'震荡市',
 						  ].includes(marketType)
 						: // ["超买市", "不确定"].includes(marketType)
@@ -704,7 +704,7 @@ class Backtester {
 						  [
 								'超卖市',
 								'趋势多且增强',
-								// '不确定',
+								'潜在转折多',
 								'震荡市',
 						  ].includes(marketType);
 				// ["超卖市", "不确定"].includes(marketType)
