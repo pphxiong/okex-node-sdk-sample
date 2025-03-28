@@ -340,16 +340,6 @@ class Backtester {
 			volume: parseFloat(c[5]),
 		};
 	}
-
-	async calculateAdx(highs, lows, closes) {
-		const result = await tulind.indicators.adx.indicator(
-			[highs, lows, closes],
-			[config.adxPeriod]
-		);
-		console.log(23, result);
-		return result;
-	}
-
 	async calculateIndicators() {
 		try {
 			const indicatorPromises = [];
@@ -396,11 +386,10 @@ class Backtester {
 				);
 
 				indicatorPromises.push(
-					this.calculateAdx(highs, lows, closes)
-					// tulind.indicators.adx.indicator(
-					// 	[highs, lows, closes],
-					// 	[config.adxPeriod]
-					// )
+					tulind.indicators.adx.indicator(
+						[highs, lows, closes],
+						[config.adxPeriod]
+					)
 				);
 
 				indicatorPromises.push(
@@ -433,6 +422,13 @@ class Backtester {
 				// 		emaSlow[0].slice(-3)
 				// 	);
 				// }
+
+				console.log(
+					33,
+					adx.length,
+					adxPlusDI.length,
+					adxMinusDI.length
+				);
 
 				// 计算EMA斜率
 				const emaSlopes = [];
