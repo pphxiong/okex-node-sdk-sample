@@ -347,6 +347,7 @@ class Backtester {
 			[config.adxPeriod]
 		);
 		console.log(23, result);
+		return result;
 	}
 
 	async calculateIndicators() {
