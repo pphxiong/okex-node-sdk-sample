@@ -421,15 +421,9 @@ class Backtester {
 					[adx, adxPlusDI, adxMinusDI],
 					rsi,
 				] = result.slice(index * 7, (index + 1) * 7);
-				// if (tf === config.slowframe) {
-				// 	console.log(
-				// 		23,
-				// 		adx[0].slice(-3),
-				// 		atr[0].slice(-3),
-				// 		emaFast[0].slice(-3),
-				// 		emaSlow[0].slice(-3)
-				// 	);
-				// }
+				if (tf === config.slowframe) {
+					console.log(23, emaFast[0].slice(-3), emaSlow[0].slice(-3));
+				}
 
 				// 计算EMA斜率
 				const emaSlopes = [];
@@ -764,14 +758,14 @@ class Backtester {
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
-				console.log(
-					config.slowframe,
-					Object.assign(candle[config.slowframe], {
-						timestamp: moment(
-							candle[config.slowframe].timestamp
-						).format('YYYY-MM-DD HH:mm:ss'),
-					})
-				);
+				// console.log(
+				// 	config.slowframe,
+				// 	Object.assign(candle[config.slowframe], {
+				// 		timestamp: moment(
+				// 			candle[config.slowframe].timestamp
+				// 		).format('YYYY-MM-DD HH:mm:ss'),
+				// 	})
+				// );
 				position = this.openPosition(
 					d,
 					d.atr,
@@ -983,15 +977,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			// 	data[config.slowframe].slice(-2).map((candle) =>
-			// 		Object.assign(candle, {
-			// 			timestamp: moment(candle.timestamp).format(
-			// 				'YYYY-MM-DD HH:mm:ss'
-			// 			),
-			// 		})
-			// 	)
-			// );
+			console.log(
+				data[config.slowframe].slice(-2).map((candle) =>
+					Object.assign(candle, {
+						timestamp: moment(candle.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				)
+			);
 
 			// console.log(data[config.slowframe].length);
 
