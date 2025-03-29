@@ -643,7 +643,7 @@ class Backtester {
                 "趋势空且增强",
                 "潜在转折空",
                 "震荡市",
-                "趋势市",
+                "趋势潜在逆转",
               ].includes(slowMarketType)
             : // ["超买市", "不确定"].includes(marketType)
               // candle[config.fastframe].emaFast <
@@ -662,7 +662,7 @@ class Backtester {
                 "趋势多且增强",
                 "潜在转折多",
                 "震荡市",
-                "趋势市",
+                "趋势潜在逆转",
               ].includes(slowMarketType);
         // ["超卖市", "不确定"].includes(marketType)
         // candle[config.fastframe].emaFast >
@@ -850,7 +850,7 @@ class Backtester {
       =============================
     `);
     console.log("\n最近20笔交易:");
-    console.table(this.trades.slice(-20));
+    console.table(this.trades);
   }
 }
 
