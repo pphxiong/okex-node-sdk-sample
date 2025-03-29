@@ -203,14 +203,24 @@ async function calculateIndicators() {
       );
 
       indicatorPromises.push(calculateAdx(highs, lows, closes));
+
+      indicatorPromises.push(
+        tulind.indicators.rsi.indicator([closes], [config.rsiPeriod])
+      );
     });
 
     const result = await Promise.all(indicatorPromises);
 
     // 合并指标到数据
     config.timeframes.forEach((tf, index) => {
-      const [emaSlow, emaFast, bollinger, atr, [adx, adxPlusDI, adxMinusDI]] =
-        result.slice(index * 5, (index + 1) * 5);
+      const [
+        emaSlow,
+        emaFast,
+        bollinger,
+        atr,
+        [adx, adxPlusDI, adxMinusDI],
+        rsi,
+      ] = result.slice(index * 6, (index + 1) * 6);
       // 计算EMA斜率
       const emaSlopes = [];
       for (
