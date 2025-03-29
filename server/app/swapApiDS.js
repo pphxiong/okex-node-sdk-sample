@@ -629,8 +629,14 @@ class RiskManager {
 
     isStop =
       side === "buy"
-        ? isProfitTarget || signal.sellSignal
-        : isProfitTarget || signal.buySignal;
+        ? position.slowMarketType === "趋势多且增强" &&
+          ["超买市", "趋势空且增强", "潜在转折空", "震荡市", "趋势市"].includes(
+            slowMarketType
+          )
+        : position.slowMarketType === "趋势空且增强" &&
+          ["超卖市", "趋势多且增强", "潜在转折多", "震荡市", "趋势市"].includes(
+            slowMarketType
+          );
 
     console.log("***********************************");
     console.log("entryPrice", state.entryPrice);
@@ -735,20 +741,20 @@ function getMarketType(candle, lastCandle) {
   let marketType = "不确定";
   // if (!lastCandle) return marketType;
 
-  const { adx, adxPlusDI, adxMinusDI, rsi, close, open } = candle;
+  const { adx, adxPlusDI, adxMinusDI, rsi, close, open, emaSlope } = candle;
   // const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
   // if (!lastAdx) return marketType;
 
   if (adx >= 25) {
     marketType = "趋势市";
-    if (rsi >= 45 && rsi <= 55) {
-      if (adxPlusDI > adxMinusDI) {
+    if (rsi >= 45 && rsi <= 55 && adxPlusDI > adxMinusDI) {
+      if (emaSlope > 0) {
         marketType = "趋势多且增强";
       } else {
         marketType = "趋势多且减弱";
       }
-    } else if (rsi < 45 && rsi > 35) {
-      if (adxPlusDI < adxMinusDI) {
+    } else if (rsi < 45 && rsi > 35 && adxPlusDI < adxMinusDI) {
+      if (emaSlope < 0) {
         marketType = "趋势空且增强";
       } else {
         marketType = "趋势空且减弱";
