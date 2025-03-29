@@ -480,13 +480,13 @@ class Backtester {
 
     if (adx >= 25) {
       marketType = "趋势市";
-      if (rsi >= 55 && rsi <= 65) {
+      if (rsi >= 45 && rsi <= 55) {
         if (adxPlusDI > adxMinusDI) {
           marketType = "趋势多且增强";
         } else {
           marketType = "趋势多且减弱";
         }
-      } else if (rsi <= 35 && rsi >= 25) {
+      } else if (rsi < 45 && rsi > 35) {
         if (adxPlusDI < adxMinusDI) {
           marketType = "趋势空且增强";
         } else {
@@ -630,8 +630,7 @@ class Backtester {
                 "潜在转折空",
                 "震荡市",
                 "趋势市",
-              ].includes(slowMarketType) &&
-              lnp > 0
+              ].includes(slowMarketType)
             : // ["超买市", "不确定"].includes(marketType)
               // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
@@ -650,8 +649,7 @@ class Backtester {
                 "潜在转折多",
                 "震荡市",
                 "趋势市",
-              ].includes(slowMarketType) &&
-              lnp > 0;
+              ].includes(slowMarketType);
         // ["超卖市", "不确定"].includes(marketType)
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
@@ -661,7 +659,7 @@ class Backtester {
         // candle[config.slowframe].emaFast >
         // 	candle[config.slowframe].emaSlow;
 
-        if (isReverse || isLastIndex) {
+        if (isReverse) {
           this.closePosition(position, d, fastMarketType, slowMarketType);
           position = null;
         }
