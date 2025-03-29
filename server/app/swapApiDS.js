@@ -256,6 +256,10 @@ async function calculateIndicators() {
           d.adxPlusDI = adxPlusDI ? adxPlusDI[adxIndex] : null;
           d.adxMinusDI = adxMinusDI ? adxMinusDI[adxIndex] : null;
         }
+        if (i >= config.rsiPeriod) {
+          const rsiIndex = i - config.rsiPeriod;
+          d.rsi = rsi[0][rsiIndex];
+        }
         d.emaSlow = emaSlow[0][i];
         d.emaFast = emaFast[0][i];
         d.marketType = getMarketType(d, marketData[tf][i - 1]);
@@ -544,19 +548,18 @@ async function generateSignal(currentPrice) {
   const { marketType: fastMarketType } = candle[config.fastframe];
   const { marketType: slowMarketType } = candle[config.slowframe];
 
-  // 多头信号条件
-  const longCondition =
-    // secondKline5M.close < secondKline5M.middle &&
-    candle[config.fastframe].emaFast > candle[config.fastframe].emaSlow &&
-    candle[config.slowframe].close > candle[config.slowframe].middle &&
-    candle[config.slowframe].emaFast > candle[config.slowframe].emaSlow;
+  const longConditions = [
+    slowMarketType === "趋势多且增强" &&
+      candle[config.slowframe].close > candle[config.slowframe].emaSlow,
+  ];
 
-  // 空头信号条件
-  const shortCondition =
-    // secondKline5M.close > secondKline5M.middle &&
-    candle[config.fastframe].emaFast < candle[config.fastframe].emaSlow &&
-    candle[config.slowframe].close < candle[config.slowframe].middle &&
-    candle[config.slowframe].emaFast < candle[config.slowframe].emaSlow;
+  const shortConditions = [
+    slowMarketType === "趋势空且增强" &&
+      candle[config.slowframe].close > candle[config.slowframe].emaSlow,
+  ];
+
+  const longCondition = longConditions.some((condition) => !!condition);
+  const shortCondition = shortConditions.some((condition) => !!condition);
 
   console.log("################################");
   console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
@@ -585,10 +588,8 @@ async function generateSignal(currentPrice) {
   console.log("################################");
 
   return {
-    buySignal:
-      candle[config.slowframe].adx > 25 ? longCondition : shortCondition,
-    sellSignal:
-      candle[config.slowframe].adx > 25 ? shortCondition : longCondition,
+    buySignal: longCondition,
+    sellSignal: shortCondition,
     price: currentPrice,
     kline: lastKline5M,
   };
@@ -740,21 +741,21 @@ function getMarketType(candle, lastCandle) {
 
   if (adx >= 25) {
     marketType = "趋势市";
-    if (rsi >= 55 && rsi <= 65) {
+    if (rsi >= 45 && rsi <= 55) {
       if (adxPlusDI > adxMinusDI) {
         marketType = "趋势多且增强";
       } else {
         marketType = "趋势多且减弱";
       }
-    } else if (rsi < 35 && rsi > 25) {
+    } else if (rsi < 45 && rsi > 35) {
       if (adxPlusDI < adxMinusDI) {
         marketType = "趋势空且增强";
       } else {
         marketType = "趋势空且减弱";
       }
-    } else if (rsi >= 75 && adxPlusDI > adxMinusDI) {
+    } else if (rsi > 65 && adxPlusDI > adxMinusDI) {
       marketType = "超买市";
-    } else if (rsi <= 15 && adxPlusDI < adxMinusDI) {
+    } else if (rsi < 25 && adxPlusDI < adxMinusDI) {
       marketType = "超卖市";
     }
   } else if (rsi >= 40 && rsi <= 60) {
