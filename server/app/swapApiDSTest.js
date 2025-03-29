@@ -486,15 +486,15 @@ class Backtester {
         } else {
           marketType = "趋势多且减弱";
         }
-      } else if (rsi < 35 && rsi > 25) {
+      } else if (rsi <= 35 && rsi >= 25) {
         if (adxPlusDI < adxMinusDI) {
           marketType = "趋势空且增强";
         } else {
           marketType = "趋势空且减弱";
         }
-      } else if (rsi >= 75 && adxPlusDI > adxMinusDI) {
+      } else if (rsi > 65 && adxPlusDI > adxMinusDI) {
         marketType = "超买市";
-      } else if (rsi <= 15 && adxPlusDI < adxMinusDI) {
+      } else if (rsi < 25 && adxPlusDI < adxMinusDI) {
         marketType = "超卖市";
       }
     } else if (rsi >= 40 && rsi <= 60) {
@@ -624,9 +624,13 @@ class Backtester {
               // isProfitTarget ||
               // signal.direction === "short" ||
               position.slowMarketType === "趋势多且增强" &&
-              ["超买市", "趋势空且增强", "潜在转折空", "震荡市"].includes(
-                slowMarketType
-              )
+              [
+                "超买市",
+                "趋势空且增强",
+                "潜在转折空",
+                "震荡市",
+                "趋势市",
+              ].includes(slowMarketType)
             : // ["超买市", "不确定"].includes(marketType)
               // candle[config.fastframe].emaFast <
               // 	candle[config.fastframe].emaSlow
@@ -639,9 +643,13 @@ class Backtester {
               // isProfitTarget ||
               // signal.direction === "long" ||
               position.slowMarketType === "趋势空且增强" &&
-              ["超卖市", "趋势多且增强", "潜在转折多", "震荡市"].includes(
-                slowMarketType
-              );
+              [
+                "超卖市",
+                "趋势多且增强",
+                "潜在转折多",
+                "震荡市",
+                "趋势市",
+              ].includes(slowMarketType);
         // ["超卖市", "不确定"].includes(marketType)
         // candle[config.fastframe].emaFast >
         // 	candle[config.fastframe].emaSlow;
