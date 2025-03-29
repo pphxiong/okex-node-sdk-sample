@@ -33,20 +33,20 @@ const _ = require("lodash");
 // 策略配置
 const config = {
   symbol: "DOGE/USDT",
-  timeframe: "15m",
-  timeframes: ["15m", "5m" /* '1m'*/], // 多周期参数
+  timeframe: "30m",
+  timeframes: ["30m", "5m" /* '1m'*/], // 多周期参数
   emaSettings: {
     // '30m': { periods: [10, 5], slopeWindow: 5 },
-    "15m": { periods: [10, 5], slopeWindow: 5 },
+    "30m": { periods: [10, 5], slopeWindow: 5 },
     "5m": { periods: [10, 5], slopeWindow: 5 },
   },
   slopeThreshold: {
     // '30m': 0,
-    "15m": 0.003 * 0.01,
+    "30m": 0.003 * 0.01,
     "5m": 0,
   }, // 斜率阈值
-  macdParams: { "15m": [12, 26, 9], "5m": [12, 26, 9] },
-  slowframe: "15m",
+  macdParams: { "30m": [12, 26, 9], "5m": [12, 26, 9] },
+  slowframe: "30m",
   fastframe: "5m",
   kWindowTresholdFast: 3,
   kWindowTresholdMedium: 5,
