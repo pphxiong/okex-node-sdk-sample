@@ -644,6 +644,7 @@ class Backtester {
                 "潜在转折空",
                 "震荡市",
                 "趋势潜在逆转",
+                "不确定",
               ].includes(slowMarketType)
             : // ["超买市", "不确定"].includes(marketType)
               // candle[config.fastframe].emaFast <
@@ -663,6 +664,7 @@ class Backtester {
                 "潜在转折多",
                 "震荡市",
                 "趋势潜在逆转",
+                "不确定",
               ].includes(slowMarketType);
         // ["超卖市", "不确定"].includes(marketType)
         // candle[config.fastframe].emaFast >
