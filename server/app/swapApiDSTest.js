@@ -487,13 +487,13 @@ class Backtester {
 
     if (adx >= 25) {
       marketType = "趋势市";
-      if (rsi >= 45 && rsi <= 60 && adxPlusDI > adxMinusDI) {
+      if (rsi >= 55 && rsi <= 70 && adxPlusDI > adxMinusDI) {
         if (emaSlope < 0) {
           marketType = "趋势空且增强";
         } else {
           marketType = "趋势多且减弱";
         }
-      } else if (rsi < 55 && rsi > 40 && adxPlusDI < adxMinusDI) {
+      } else if (rsi < 45 && rsi > 30 && adxPlusDI < adxMinusDI) {
         if (emaSlope > 0) {
           marketType = "趋势多且增强";
         } else {
@@ -857,14 +857,14 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2024-10-01";
+  const start = "2024-11-01";
   const end = "2025-03-29";
   const interval = 30;
   let profitTotal = 0;
 
   let i = 0;
-  while (moment(end).isAfter(moment(start).add(i, "days"))) {
-    // while (i === 0) {
+  // while (moment(end).isAfter(moment(start).add(i, "days"))) {
+  while (i === 0) {
     try {
       backtester.data = {
         [config.slowframe]: [],
