@@ -73,12 +73,19 @@ const config = {
   slippage: 0, // 滑点率
   initialBalance: 1000, // 初始本金10000 USDT
   // coldStartBars: 480,
+  // coldStartBars: {
+  //   "1h": 24,
+  //   "30m": 48,
+  //   "15m": 160,
+  //   "5m": 480,
+  //   "1m": 480 * 5,
+  // },
   coldStartBars: {
-    "1h": 24,
-    "30m": 48,
-    "15m": 160,
-    "5m": 480,
-    "1m": 480 * 5,
+    "1h": 500,
+    "30m": 500,
+    "15m": 500,
+    "5m": 500,
+    "1m": 500,
   },
   simulations: 5000, // 模拟次数
   volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
@@ -511,8 +518,8 @@ class Backtester {
 
   getPositionSize(price, atr) {
     const riskAmount = this.balance * config.riskPerTrade;
-    return riskAmount / (atr * config.leverage);
-    // return 700;
+    // return riskAmount / (atr * config.leverage);
+    return 1000;
     // return this.balance / 2;
   }
 
