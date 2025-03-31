@@ -514,17 +514,17 @@ class Backtester {
 					} else {
 						marketType = '趋势潜在减弱';
 					}
-				} else if (rsi > 55 && rsi <= 65) {
+				} else if (rsi > 55 && rsi <= 60) {
 					if (emaSlope < 0) {
 						marketType = '趋势多只平不开';
 					} else {
 						marketType = '趋势潜在增强';
 					}
-				} else if (rsi > 65 && rsi <= 75) {
+				} else if (rsi > 60 && rsi <= 75) {
 					if (emaSlope < 0) {
 						marketType = '趋势多只平不开';
 					} else {
-						marketType = '趋势潜在增强';
+						marketType = '趋势多';
 					}
 				} else if (rsi > 75) {
 					marketType = '超买市';
@@ -536,17 +536,17 @@ class Backtester {
 					} else {
 						marketType = '趋势潜在增强';
 					}
-				} else if (rsi >= 35 && rsi <= 45) {
+				} else if (rsi >= 40 && rsi <= 45) {
 					if (emaSlope > 0) {
 						marketType = '趋势空只平不开';
 					} else {
 						marketType = '趋势潜在减弱';
 					}
-				} else if (rsi >= 25 && rsi < 35) {
+				} else if (rsi >= 25 && rsi < 40) {
 					if (emaSlope > 0) {
 						marketType = '趋势空只平不开';
 					} else {
-						marketType = '趋势潜在减弱';
+						marketType = '趋势空';
 					}
 				} else if (rsi < 25) {
 					marketType = '超卖市';
@@ -921,14 +921,14 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-02-15';
-	const end = '2023-08-31';
+	const start = '2024-02-15';
+	const end = '2024-08-31';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(moment(start).add(i, 'days'))) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
