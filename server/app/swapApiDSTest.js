@@ -792,7 +792,8 @@ class Backtester {
 		// 多头信号
 		if (longCondition) {
 			return {
-				direction: 'long',
+				// direction: 'long',
+				direction: 'short',
 				// direction: candle[config.slowframe].adx > 20 ? 'long' : 'short',
 			};
 		}
@@ -800,7 +801,7 @@ class Backtester {
 		// 空头信号
 		if (shortCondition) {
 			return {
-				direction: 'short',
+				direction: 'long',
 				// direction: candle[config.slowframe].adx > 20 ? 'short' : 'long',
 			};
 		}
