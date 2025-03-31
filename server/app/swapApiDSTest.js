@@ -518,7 +518,9 @@ class Backtester {
 					marketType = '超买市';
 				} else {
 					if (emaSlope < 0) {
-						marketType = '趋势潜在逆转';
+						marketType = '趋势潜在减弱';
+					} else {
+						marketType = '趋势潜在增强';
 					}
 				}
 			} else if (adxPlusDI < adxMinusDI) {
@@ -532,7 +534,9 @@ class Backtester {
 					marketType = '超卖市';
 				} else {
 					if (emaSlope > 0) {
-						marketType = '趋势潜在逆转';
+						marketType = '趋势潜在增强';
+					} else {
+						marketType = '趋势潜在减弱';
 					}
 				}
 			}
@@ -669,7 +673,7 @@ class Backtester {
 								'趋势空且增强',
 								'潜在转折空',
 								'震荡市',
-								'趋势潜在逆转',
+								'趋势潜在减弱',
 								'不确定',
 						  ].includes(slowMarketType)
 						: // ["超买市", "不确定"].includes(marketType)
@@ -689,7 +693,7 @@ class Backtester {
 								'趋势多且增强',
 								'潜在转折多',
 								'震荡市',
-								'趋势潜在逆转',
+								'趋势潜在增强',
 								'不确定',
 						  ].includes(slowMarketType);
 				// ["超卖市", "不确定"].includes(marketType)
@@ -769,8 +773,14 @@ class Backtester {
 		// ) {
 		// 	return { direction: 'short' };
 		// }
-		const longConditions = [slowMarketType === '趋势多且增强'];
-		const shortConditions = [slowMarketType === '趋势空且增强'];
+		const longConditions = [
+			slowMarketType === '趋势多且增强',
+			slowMarketType === '趋势潜在增强',
+		];
+		const shortConditions = [
+			slowMarketType === '趋势空且增强',
+			slowMarketType === '趋势潜在减弱',
+		];
 
 		const longCondition = longConditions.some((condition) => !!condition);
 		const shortCondition = shortConditions.some((condition) => !!condition);
