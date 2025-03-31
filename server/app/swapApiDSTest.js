@@ -530,13 +530,13 @@ class Backtester {
 					marketType = '超买市';
 				}
 			} else if (adxPlusDI < adxMinusDI) {
-				if (rsi > 45 && rsi < 55) {
+				if (rsi >= 45 && rsi <= 55) {
 					if (emaSlope < 0) {
 						marketType = '趋势空且增强';
 					} else {
 						marketType = '趋势潜在增强';
 					}
-				} else if (rsi >= 40 && rsi <= 45) {
+				} else if (rsi >= 40 && rsi < 45) {
 					if (emaSlope < 0) {
 						marketType = '趋势空且增强';
 					} else {
@@ -565,6 +565,8 @@ class Backtester {
 				marketType = '震荡市开空';
 			}
 		}
+		if (marketType === '不确定')
+			console.log(marketType, adx, rsi, emaSlope);
 		return marketType;
 	}
 
@@ -931,7 +933,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-02-15';
+	const start = '2024-02-15';
 	const end = '2024-08-31';
 	const interval = 30;
 	let profitTotal = 0;
