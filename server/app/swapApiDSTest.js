@@ -516,7 +516,7 @@ class Backtester {
 					}
 				} else if (rsi > 75) {
 					marketType = '超买市';
-				} else if (rsi <= 75 && rsi > 55) {
+				} else if (rsi <= 65 && rsi > 55) {
 					if (emaSlope < 0) {
 						marketType = '不确定';
 					} else {
@@ -532,7 +532,7 @@ class Backtester {
 					}
 				} else if (rsi < 25) {
 					marketType = '超卖市';
-				} else if (rsi >= 25 && rsi <= 45) {
+				} else if (rsi >= 35 && rsi <= 45) {
 					if (emaSlope > 0) {
 						marketType = '不确定';
 					} else {
