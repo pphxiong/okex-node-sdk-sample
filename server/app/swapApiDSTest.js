@@ -921,14 +921,14 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-02-15';
-	const end = '2025-03-31';
+	const start = '2023-02-15';
+	const end = '2023-08-31';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
-	// while (moment(end).isAfter(moment(start).add(i, "days"))) {
-	while (i === 0) {
+	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
+		// while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
