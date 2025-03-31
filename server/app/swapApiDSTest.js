@@ -512,7 +512,7 @@ class Backtester {
 					if (emaSlope > 0) {
 						marketType = '趋势多且增强';
 					} else {
-						// marketType = '趋势多且减弱';
+						marketType = '趋势多且减弱';
 					}
 				} else if (rsi > 70) {
 					marketType = '超买市';
@@ -526,7 +526,7 @@ class Backtester {
 					if (emaSlope < 0) {
 						marketType = '趋势空且增强';
 					} else {
-						// marketType = '趋势空且减弱';
+						marketType = '趋势空且减弱';
 					}
 				} else if (rsi < 30) {
 					marketType = '超卖市';
@@ -888,7 +888,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-02-15';
+	const start = '2024-02-15';
 	const end = '2025-03-31';
 	const interval = 30;
 	let profitTotal = 0;
