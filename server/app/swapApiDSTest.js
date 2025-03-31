@@ -676,6 +676,7 @@ class Backtester {
 								'潜在转折空',
 								'震荡市',
 								'趋势潜在减弱',
+								'趋势多且减弱',
 								'不确定',
 						  ].includes(slowMarketType)
 						: // ["超买市", "不确定"].includes(marketType)
@@ -698,6 +699,7 @@ class Backtester {
 								'潜在转折多',
 								'震荡市',
 								'趋势潜在增强',
+								'趋势空且减弱',
 								'不确定',
 						  ].includes(slowMarketType);
 				// ["超卖市", "不确定"].includes(marketType)
