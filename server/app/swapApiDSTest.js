@@ -524,7 +524,7 @@ class Backtester {
 					if (emaSlope > 0) {
 						marketType = '趋势多';
 					} else {
-						marketType = '趋势多';
+						marketType = '趋势多只平不开';
 					}
 				} else if (rsi > 75) {
 					marketType = '超买市';
@@ -543,10 +543,10 @@ class Backtester {
 						marketType = '趋势空';
 					}
 				} else if (rsi >= 25 && rsi < 40) {
-					if (emaSlope > 0) {
+					if (emaSlope < 0) {
 						marketType = '趋势空';
 					} else {
-						marketType = '趋势空';
+						marketType = '趋势空只平不开';
 					}
 				} else if (rsi < 25) {
 					marketType = '超卖市';
