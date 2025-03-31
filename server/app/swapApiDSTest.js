@@ -566,7 +566,7 @@ class Backtester {
 			}
 		}
 		if (marketType === '不确定')
-			console.log(marketType, adx, rsi, emaSlope);
+			console.log(marketType, adx, rsi, adxPlusDI, adxMinusDI, emaSlope);
 		return marketType;
 	}
 
