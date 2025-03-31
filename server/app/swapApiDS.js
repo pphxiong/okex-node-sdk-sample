@@ -758,9 +758,7 @@ async function initialize() {
 		);
 	});
 
-	const [candlesSlow, candlesMedium, candlesFast] = await Promise.all(
-		candlePromises
-	);
+	const [candlesSlow, candlesFast] = await Promise.all(candlePromises);
 
 	// candlesSlow.pop();
 	// candlesMedium.pop();
