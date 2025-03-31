@@ -524,7 +524,7 @@ class Backtester {
 					if (emaSlope < 0) {
 						marketType = '不确定';
 					} else {
-						// marketType = '趋势潜在增强';
+						marketType = '趋势潜在增强';
 					}
 				} else if (rsi > 75) {
 					marketType = '超买市';
@@ -546,7 +546,7 @@ class Backtester {
 					if (emaSlope > 0) {
 						marketType = '不确定';
 					} else {
-						// marketType = '趋势潜在减弱';
+						marketType = '趋势潜在减弱';
 					}
 				} else if (rsi < 25) {
 					marketType = '超卖市';
@@ -896,6 +896,8 @@ class Backtester {
 			wins.reduce((s, t) => s + t.profit, 0) /
 			Math.abs(losses.reduce((s, t) => s + t.profit, 0));
 
+		const profitTotal = this.balance - config.initialBalance;
+
 		console.log(`
       ========== 回测结果 ==========
       总交易次数:     ${this.trades.length}
@@ -910,6 +912,7 @@ class Backtester {
     `);
 		console.log('\n最近20笔交易:');
 		console.table(this.trades);
+		console.log('本次盈亏:', profitTotal);
 	}
 }
 
