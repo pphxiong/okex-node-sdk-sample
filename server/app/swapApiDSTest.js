@@ -518,13 +518,13 @@ class Backtester {
 					if (emaSlope < 0) {
 						marketType = '不确定';
 					} else {
-						marketType = '趋势潜在增强';
+						// marketType = '趋势潜在减弱';
 					}
 				} else if (rsi > 65 && rsi <= 75) {
 					if (emaSlope < 0) {
 						marketType = '不确定';
 					} else {
-						marketType = '趋势潜在增强';
+						// marketType = '趋势潜在减弱';
 					}
 				} else if (rsi > 75) {
 					marketType = '超买市';
