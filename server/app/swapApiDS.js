@@ -27,6 +27,7 @@ const cAuthClientBN = new customAuthClientBN(
 const ccxt = require("ccxt");
 const tulind = require("tulind");
 const WebSocket = require("ws");
+const fs = require("fs");
 require("dotenv").config();
 
 // const MAX_TRADE_POSITION_RATIO = 7 / 10;
@@ -303,8 +304,8 @@ function getPositionSize(atr) {
 
 // 限价单管理模块
 class OrderManager {
-  static async createLimitOrder(side, amount, price, isOpen = true, atr) {
-    const positionSize = isOpen ? getPositionSize(atr) : amount;
+  static async createLimitOrder(side, amount, price, isOpen = true, singal) {
+    const positionSize = isOpen ? getPositionSize() : amount;
     const positionSide = isOpen
       ? side === "buy"
         ? "LONG"
@@ -321,11 +322,14 @@ class OrderManager {
         positionSide,
       }
     );
+    const { fastMarketType, slowMarketType } = singal;
     state.activeOrders.push({
       id: order.id,
       side,
       positionSize,
       price,
+      fastMarketType,
+      slowMarketType,
       timestamp: Date.now(),
     });
     return order;
@@ -394,6 +398,8 @@ class OrderManager {
             (state.entryPrice * state.position + filledValue) /
             (state.position + status.filled);
           state.side = status.side;
+          state.fastMarketType = order.fastMarketType;
+          state.slowMarketType = order.slowMarketType;
         } else {
           state.position = 0;
           state.entryPrice = 0;
@@ -407,8 +413,28 @@ class OrderManager {
             (o) => o.id !== status.id
           );
         }
+
+        this.writeData();
       }
     }
+  }
+
+  static async writeData() {
+    let jsonStr = JSON.stringify(state);
+
+    const result = await new Promise((resolve) => {
+      //将修改后的内容写入文件
+      fs.writeFile("./app/config.json", jsonStr, function (err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("----------修改成功-------------");
+          resolve(true);
+        }
+      });
+    });
+
+    return result;
   }
 
   // 执行分段冰山订单
@@ -595,6 +621,8 @@ async function generateSignal(currentPrice) {
     sellSignal: shortCondition,
     price: currentPrice,
     kline: lastKline5M,
+    fastMarketType,
+    slowMarketType,
   };
 }
 
@@ -667,7 +695,8 @@ class RiskManager {
     return isStop;
   }
 
-  static async closePosition(currentPrice, orderBook) {
+  static async closePosition(singal, orderBook) {
+    const { price: currentPrice } = singal;
     const side = state.position > 0 ? "sell" : "buy";
     const amount = Math.abs(state.position);
 
@@ -679,12 +708,24 @@ class RiskManager {
 
     if (side === "buy") {
       const limitPrice = orderBook.bid * (1 - config.orderDepth);
-      await OrderManager.createLimitOrder("buy", amount, limitPrice, false);
+      await OrderManager.createLimitOrder(
+        "buy",
+        amount,
+        limitPrice,
+        false,
+        singal
+      );
     }
 
     if (side === "sell") {
       const limitPrice = orderBook.ask * (1 + config.orderDepth);
-      await OrderManager.createLimitOrder("sell", amount, limitPrice, false);
+      await OrderManager.createLimitOrder(
+        "sell",
+        amount,
+        limitPrice,
+        false,
+        singal
+      );
     }
 
     // await exchange.createOrder(
@@ -851,7 +892,7 @@ async function strategyLoop() {
 
     // 步骤3: 检查强制平仓
     if (RiskManager.checkStopConditions(signal)) {
-      await RiskManager.closePosition(signal.price, orderBook);
+      await RiskManager.closePosition(signal, orderBook);
       return;
     }
 
@@ -866,7 +907,8 @@ async function strategyLoop() {
           "buy",
           amount,
           limitPrice,
-          true
+          true,
+          signal
           // kline.atr
         );
         console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
@@ -884,7 +926,8 @@ async function strategyLoop() {
           "sell",
           amount,
           limitPrice,
-          true
+          true,
+          signal
           // kline.atr
         );
         console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
@@ -901,6 +944,13 @@ async function strategyLoop() {
   }
 }
 
+const readData = async () => {
+  const dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
+
+  console.log("read::MODE", MODE, moment().format("YYYY-MM-DD HH:mm:ss"));
+  return dataConfig;
+};
+
 async function initPositionData() {
   const positionResult = await cAuthClientBN.swap.getPosition();
   const { positions, availableBalance } = positionResult;
@@ -909,6 +959,7 @@ async function initPositionData() {
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
     );
     if (holding) {
+      const dataConfig = await readData();
       state = {
         activeOrders: [], // 活跃限价单
         position: Number(holding.positionAmt), // 当前持仓数量
@@ -917,6 +968,7 @@ async function initPositionData() {
         lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
         side: holding.positionSide === "LONG" ? "buy" : "sell",
       };
+      state = Object.assign(state, dataConfig);
     }
   }
   return availableBalance;
@@ -1013,7 +1065,7 @@ function mergeTimeframes() {
       return;
     }
     await strategyLoop();
-  }, 1000 * 5 * 4); // 每15秒运行一次
+  }, 1000 * 5 * 8); // 每15秒运行一次
   console.log("策略已启动...");
 })();
 
