@@ -507,21 +507,21 @@ class Backtester {
 
 		if (adx >= 25) {
 			marketType = '趋势市';
-			if (rsi >= 45 && rsi <= 60 && adxPlusDI > adxMinusDI) {
+			if (rsi >= 45 && rsi <= 55 && adxPlusDI > adxMinusDI) {
 				if (emaSlope < 0) {
 					marketType = '趋势多且增强';
 				} else {
 					marketType = '趋势多且减弱';
 				}
-			} else if (rsi < 55 && rsi > 40 && adxPlusDI < adxMinusDI) {
+			} else if (rsi < 55 && rsi > 45 && adxPlusDI < adxMinusDI) {
 				if (emaSlope > 0) {
 					marketType = '趋势空且增强';
 				} else {
 					marketType = '趋势空且减弱';
 				}
-			} else if (rsi > 75 && adxPlusDI > adxMinusDI) {
+			} else if (rsi > 70 && adxPlusDI > adxMinusDI) {
 				marketType = '超买市';
-			} else if (rsi < 25 && adxPlusDI < adxMinusDI) {
+			} else if (rsi < 30 && adxPlusDI < adxMinusDI) {
 				marketType = '超卖市';
 			} else {
 				if (
@@ -917,15 +917,15 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe].slice(-100).map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
-			);
+			// console.log(
+			// 	data[config.slowframe].slice(-100).map((candle) =>
+			// 		Object.assign(candle, {
+			// 			timestamp: moment(candle.timestamp).format(
+			// 				'YYYY-MM-DD HH:mm:ss'
+			// 			),
+			// 		})
+			// 	)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
