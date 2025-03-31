@@ -667,7 +667,9 @@ class Backtester {
                 candle[config.fastframe].lower && */
 						  // isProfitTarget ||
 						  // signal.direction === "short" ||
-						  position.slowMarketType === '趋势多且增强' &&
+						  ['趋势多且增强', '趋势潜在增强'].includes(
+								position.slowMarketType
+						  ) &&
 						  [
 								'超买市',
 								'趋势空且增强',
@@ -687,7 +689,9 @@ class Backtester {
                 candle[config.fastframe].upper && */
 						  // isProfitTarget ||
 						  // signal.direction === "long" ||
-						  position.slowMarketType === '趋势空且增强' &&
+						  ['趋势空且增强', '趋势潜在减弱'].includes(
+								position.slowMarketType
+						  ) &&
 						  [
 								'超卖市',
 								'趋势多且增强',
