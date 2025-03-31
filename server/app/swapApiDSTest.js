@@ -518,9 +518,9 @@ class Backtester {
 					marketType = '超买市';
 				} else if (rsi <= 65 && rsi > 55) {
 					if (emaSlope > 0) {
-						marketType = '趋势潜在增强';
+						// marketType = '趋势潜在增强';
 					} else {
-						// marketType = '趋势潜在减弱';
+						marketType = '趋势潜在减弱';
 					}
 				}
 			} else if (adxPlusDI < adxMinusDI) {
@@ -534,9 +534,9 @@ class Backtester {
 					marketType = '超卖市';
 				} else if (rsi >= 35 && rsi <= 45) {
 					if (emaSlope < 0) {
-						marketType = '趋势潜在减弱';
+						// marketType = '趋势潜在减弱';
 					} else {
-						// marketType = '趋势潜在增强';
+						marketType = '趋势潜在增强';
 					}
 				}
 			}
@@ -781,11 +781,11 @@ class Backtester {
 		// }
 		const longConditions = [
 			slowMarketType === '趋势多且增强',
-			slowMarketType === '趋势潜在增强',
+			// slowMarketType === '趋势潜在增强',
 		];
 		const shortConditions = [
 			slowMarketType === '趋势空且增强',
-			slowMarketType === '趋势潜在减弱',
+			// slowMarketType === '趋势潜在减弱',
 		];
 
 		const longCondition = longConditions.some((condition) => !!condition);
