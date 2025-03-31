@@ -496,7 +496,7 @@ function getHighsAndLows(indicators) {
 function getTimeStampBefore(dataList, timestamp) {
   dataList = JSON.parse(JSON.stringify(dataList));
   let data;
-  let i = 1;
+  let i = 0;
   const period = config.fastframe.split("m")[0];
 
   while (true) {
@@ -1007,13 +1007,13 @@ function mergeTimeframes() {
   await strategyLoop();
   setInterval(async () => {
     RESTART_TIME += 1;
-    if (RESTART_TIME >= 4 * 3) {
+    if (RESTART_TIME >= 5 * 3) {
       RESTART_TIME = 0;
       restart("normal");
       return;
     }
     await strategyLoop();
-  }, 1000 * 5 * 2); // 每15秒运行一次
+  }, 1000 * 5 * 4); // 每15秒运行一次
   console.log("策略已启动...");
 })();
 
