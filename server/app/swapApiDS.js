@@ -618,17 +618,17 @@ class RiskManager {
     const { side, position } = state;
     let isStop = false;
 
-    const takeProfit =
-      lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
-    const stopLoss =
-      lastKline5M[config.fastframe].atr * config.atrParam.stopLoss;
+    // const takeProfit =
+    //   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
+    // const stopLoss =
+    //   lastKline5M[config.fastframe].atr * config.atrParam.stopLoss;
 
-    const isProfitTarget =
-      side === "buy"
-        ? lastKline5M[config.fastframe].close >=
-          position.entryPrice + takeProfit
-        : lastKline5M[config.fastframe].close <=
-          position.entryPrice - takeProfit;
+    // const isProfitTarget =
+    //   side === "buy"
+    //     ? lastKline5M[config.fastframe].close >=
+    //       position.entryPrice + takeProfit
+    //     : lastKline5M[config.fastframe].close <=
+    //       position.entryPrice - takeProfit;
 
     isStop =
       side === "buy"
@@ -866,8 +866,8 @@ async function strategyLoop() {
           "buy",
           amount,
           limitPrice,
-          true,
-          kline.atr
+          true
+          // kline.atr
         );
         console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
         console.log(
@@ -884,8 +884,8 @@ async function strategyLoop() {
           "sell",
           amount,
           limitPrice,
-          true,
-          kline.atr
+          true
+          // kline.atr
         );
         console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
         console.log(
