@@ -764,17 +764,8 @@ class Backtester {
 		// ) {
 		// 	return { direction: 'short' };
 		// }
-		const longConditions = [
-			slowMarketType === '趋势多且增强' &&
-				candle[config.slowframe].close >
-					candle[config.slowframe].emaSlow,
-		];
-
-		const shortConditions = [
-			slowMarketType === '趋势空且增强' &&
-				candle[config.slowframe].close >
-					candle[config.slowframe].emaSlow,
-		];
+		const longConditions = [slowMarketType === '趋势多且增强'];
+		const shortConditions = [slowMarketType === '趋势空且增强'];
 
 		const longCondition = longConditions.some((condition) => !!condition);
 		const shortCondition = shortConditions.some((condition) => !!condition);
