@@ -516,11 +516,11 @@ class Backtester {
 					}
 				} else if (rsi > 65) {
 					marketType = '超买市';
-				} else {
+				} else if (rsi <= 65 && rsi > 55) {
 					if (emaSlope < 0) {
-						marketType = '趋势潜在增强';
+						marketType = '趋势潜在减弱';
 					} else {
-						// marketType = '趋势潜在减弱';
+						marketType = '趋势潜在增强';
 					}
 				}
 			} else if (adxPlusDI < adxMinusDI) {
@@ -532,11 +532,11 @@ class Backtester {
 					}
 				} else if (rsi < 35) {
 					marketType = '超卖市';
-				} else {
+				} else if (rsi >= 35 && rsi <= 45) {
 					if (emaSlope > 0) {
 						marketType = '趋势潜在减弱';
 					} else {
-						// marketType = '';
+						marketType = '趋势潜在增强';
 					}
 				}
 			}
