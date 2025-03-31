@@ -299,7 +299,7 @@ class Backtester {
 	getTimeStampBefore(dataList, timestamp) {
 		dataList = JSON.parse(JSON.stringify(dataList));
 		let data;
-		let i = 1;
+		let i = 0;
 		const period = config.fastframe.split('m')[0];
 
 		while (true) {
