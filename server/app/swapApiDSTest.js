@@ -514,7 +514,7 @@ class Backtester {
 					} else {
 						marketType = '趋势多且减弱';
 					}
-				} else if (rsi > 70) {
+				} else if (rsi > 65) {
 					marketType = '超买市';
 				} else {
 					if (emaSlope < 0) {
@@ -530,7 +530,7 @@ class Backtester {
 					} else {
 						marketType = '趋势空且减弱';
 					}
-				} else if (rsi < 30) {
+				} else if (rsi < 35) {
 					marketType = '超卖市';
 				} else {
 					if (emaSlope > 0) {
