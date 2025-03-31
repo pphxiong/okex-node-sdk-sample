@@ -559,7 +559,11 @@ class Backtester {
 				marketType = '潜在转折多';
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
-			marketType = '震荡市';
+			if (rsi >= 40 && rsi <= 50) {
+				marketType = '震荡市开多';
+			} else if (rsi > 50 && rsi <= 60) {
+				marketType = '震荡市开空';
+			}
 		}
 		return marketType;
 	}
@@ -679,14 +683,16 @@ class Backtester {
                 candle[config.fastframe].lower && */
 						  // isProfitTarget ||
 						  // signal.direction === "short" ||
-						  ['趋势多且增强', '趋势潜在增强'].includes(
-								position.slowMarketType
-						  ) &&
+						  [
+								'趋势多且增强',
+								'趋势潜在增强',
+								'震荡市开多',
+						  ].includes(position.slowMarketType) &&
 						  [
 								'超买市',
 								'趋势空且增强',
 								'潜在转折空',
-								'震荡市',
+								'震荡市开空',
 								'趋势潜在减弱',
 								'趋势多且减弱',
 								'不确定',
@@ -703,14 +709,16 @@ class Backtester {
                 candle[config.fastframe].upper && */
 						  // isProfitTarget ||
 						  // signal.direction === "long" ||
-						  ['趋势空且增强', '趋势潜在减弱'].includes(
-								position.slowMarketType
-						  ) &&
+						  [
+								'趋势空且增强',
+								'趋势潜在减弱',
+								'震荡市开空',
+						  ].includes(position.slowMarketType) &&
 						  [
 								'超卖市',
 								'趋势多且增强',
 								'潜在转折多',
-								'震荡市',
+								'震荡市开多',
 								'趋势潜在增强',
 								'趋势空且减弱',
 								'不确定',
@@ -796,10 +804,12 @@ class Backtester {
 		const longConditions = [
 			slowMarketType === '趋势多且增强',
 			slowMarketType === '趋势潜在增强',
+			slowMarketType === '震荡市开多',
 		];
 		const shortConditions = [
 			slowMarketType === '趋势空且增强',
 			slowMarketType === '趋势潜在减弱',
+			slowMarketType === '震荡市开空',
 		];
 
 		const longCondition = longConditions.some((condition) => !!condition);
