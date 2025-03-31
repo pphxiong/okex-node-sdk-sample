@@ -518,9 +518,9 @@ class Backtester {
 					marketType = '超买市';
 				} else {
 					if (emaSlope < 0) {
-						marketType = '趋势潜在减弱';
-					} else {
 						marketType = '趋势潜在增强';
+					} else {
+						// marketType = '趋势潜在减弱';
 					}
 				}
 			} else if (adxPlusDI < adxMinusDI) {
@@ -534,9 +534,9 @@ class Backtester {
 					marketType = '超卖市';
 				} else {
 					if (emaSlope > 0) {
-						marketType = '趋势潜在增强';
-					} else {
 						marketType = '趋势潜在减弱';
+					} else {
+						// marketType = '';
 					}
 				}
 			}
@@ -792,8 +792,7 @@ class Backtester {
 		// 多头信号
 		if (longCondition) {
 			return {
-				// direction: 'long',
-				direction: 'short',
+				direction: 'long',
 				// direction: candle[config.slowframe].adx > 20 ? 'long' : 'short',
 			};
 		}
@@ -801,7 +800,7 @@ class Backtester {
 		// 空头信号
 		if (shortCondition) {
 			return {
-				direction: 'long',
+				direction: 'short',
 				// direction: candle[config.slowframe].adx > 20 ? 'short' : 'long',
 			};
 		}
