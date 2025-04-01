@@ -518,20 +518,20 @@ class Backtester {
           }
         }
       } else if (adxPlusDI < adxMinusDI) {
-        if (rsi >= 40 && rsi <= 50) {
-          if (emaSlope < 0) {
+        if (rsi >= 45 && rsi <= 55) {
+          if (emaSlope > 0) {
             marketType = "趋势空且增强";
           } else {
             // marketType = '趋势潜在增强';
             marketType = "趋势市";
           }
-        } else if (rsi >= 35 && rsi < 40) {
-          if (emaSlope < 0) {
+        } else if (rsi >= 40 && rsi < 45) {
+          if (emaSlope > 0) {
             marketType = "趋势空且增强";
           } else {
             marketType = "趋势空";
           }
-        } else if (rsi >= 25 && rsi < 35) {
+        } else if (rsi >= 25 && rsi < 40) {
           if (emaSlope < 0) {
             marketType = "趋势空";
           } else {
