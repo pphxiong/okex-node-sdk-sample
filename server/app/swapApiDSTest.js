@@ -806,16 +806,16 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 		const longConditions = [
-			slowMarketType === '趋势多且增强',
+			// slowMarketType === '趋势多且增强',
 			slowMarketType === '趋势潜在增强',
-			slowMarketType === '震荡市开多',
-			slowMarketType === '潜在转折多',
+			// slowMarketType === '震荡市开多',
+			// slowMarketType === '潜在转折多',
 		];
 		const shortConditions = [
-			slowMarketType === '趋势空且增强',
+			// slowMarketType === '趋势空且增强',
 			slowMarketType === '趋势潜在减弱',
-			slowMarketType === '震荡市开空',
-			slowMarketType === '潜在转折空',
+			// slowMarketType === '震荡市开空',
+			// slowMarketType === '潜在转折空',
 		];
 
 		const longCondition = longConditions.some((condition) => !!condition);
@@ -918,6 +918,9 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
+		console.log('\n最近20笔交易:');
+		console.table(this.trades);
+
 		console.log(`
       ========== 回测结果 ==========
       总交易次数:     ${this.trades.length}
@@ -930,8 +933,6 @@ class Backtester {
       手续费:       ${this.totalFee}
       =============================
     `);
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
 		console.log('profit:', profitTotal);
 
 		const profitMap = this.genEveryTypeProfit();
