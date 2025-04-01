@@ -1008,7 +1008,7 @@ class Backtester {
     this.trades.forEach((trade) => {
       const key = `${trade.entryMarketType}`;
       profitMap[key] = profitMap[key] || [];
-      profitMap[key].push(trade.profit);
+      profitMap[key].push(trade.profit - trade.fee);
     });
     return profitMap;
   }
