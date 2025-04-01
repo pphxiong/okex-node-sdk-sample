@@ -34,7 +34,7 @@ const _ = require('lodash');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: ['30m', '5m' /* '1m'*/], // 多周期参数
+	timeframes: ['30m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		'30m': { periods: [10, 5], slopeWindow: 5 },
@@ -47,7 +47,7 @@ const config = {
 	}, // 斜率阈值
 	macdParams: { '30m': [12, 26, 9], '5m': [12, 26, 9] },
 	slowframe: '30m',
-	fastframe: '5m',
+	fastframe: '30m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -963,7 +963,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-02-15';
+	const start = '2023-03-15';
 	const end = '2024-08-31';
 	const interval = 30;
 	let profitTotal = 0;
