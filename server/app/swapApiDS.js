@@ -1057,7 +1057,7 @@ async function handleKlineUpdate(msg, tf) {
 	}
 	marketData[tf].push(parseKLine(newBar));
 	mergeTimeframes();
-	console.log(marketData[config.tf].slice(-2));
+	console.log('update::', marketData[tf].slice(-2));
 }
 
 // 多周期时间戳对齐
