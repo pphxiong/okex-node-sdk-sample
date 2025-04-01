@@ -34,20 +34,20 @@ const _ = require('lodash');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '15m',
-	timeframes: ['30m' /* '5m'  '1m'*/], // 多周期参数
+	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'30m': { periods: [10, 5], slopeWindow: 5 },
+		'15m': { periods: [10, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		// '30m': 0,
-		'30m': 0.003 * 0.01,
+		'15m': 0.003 * 0.01,
 		// '5m': 0,
 	}, // 斜率阈值
-	macdParams: { '30m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
-	slowframe: '30m',
-	fastframe: '30m',
+	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
+	slowframe: '15m',
+	fastframe: '15m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -998,25 +998,25 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2023-04-03 20:30:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2023-04-04 02:30:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2023-04-03 19:30:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2023-04-04 02:30:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
