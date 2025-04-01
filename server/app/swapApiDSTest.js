@@ -927,11 +927,17 @@ class Backtester {
 
 		const profitMap = this.genEveryTypeProfit();
 		Object.entries(profitMap).forEach(([key, value]) => {
-			console.log(`
-      ========== 交易类型: ${key} ==========
-      总交易次数:     ${value.length}`);
+			// console.log(`
+			// ========== 交易类型: ${key} ==========
+			// 总交易次数:     ${value.length}`);
 			const typeProfit = value.reduce((sum, t) => sum + t, 0);
-			console.log('总收益:        ', typeProfit.toFixed(2));
+			console.log(
+				key,
+				'总交易次数:',
+				value.length,
+				'总收益:',
+				typeProfit.toFixed(2)
+			);
 		});
 	}
 
