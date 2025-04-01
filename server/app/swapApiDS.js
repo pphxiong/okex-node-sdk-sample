@@ -1026,8 +1026,9 @@ function connectWebSocket() {
 			if (!msg.data.k.x) return; // 仅处理闭合K线
 			console.log('-----------------收到消息-----------------------');
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
-			await handleKlineUpdate(msg.data, periodMap[period]);
-			await strategyLoop();
+			restart('kline update');
+			// await handleKlineUpdate(msg.data, periodMap[period]);
+			// await strategyLoop();
 			//   console.log("-----------------------------------");
 		}
 	});
@@ -1079,15 +1080,15 @@ function mergeTimeframes() {
 	availableBalance = await initPositionData();
 	connectWebSocket();
 	await strategyLoop();
-	setInterval(async () => {
-		RESTART_TIME += 1;
-		if (RESTART_TIME >= 5) {
-			RESTART_TIME = 0;
-			restart('normal');
-			return;
-		}
-		await strategyLoop();
-	}, 1000 * 60 * 2); // 每15秒运行一次
+	// setInterval(async () => {
+	// 	RESTART_TIME += 1;
+	// 	if (RESTART_TIME >= 5) {
+	// 		RESTART_TIME = 0;
+	// 		restart('normal');
+	// 		return;
+	// 	}
+	// 	await strategyLoop();
+	// }, 1000 * 60 * 2); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
