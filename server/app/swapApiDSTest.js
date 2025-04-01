@@ -785,15 +785,15 @@ class Backtester {
     // }
     const longConditions = [
       slowMarketType === "趋势多且增强",
-      // slowMarketType === '趋势潜在增强',
-      // slowMarketType === '震荡市开多',
-      // slowMarketType === '潜在转折多',
+      slowMarketType === "趋势潜在增强",
+      slowMarketType === "震荡市开多",
+      slowMarketType === "潜在转折多",
     ];
     const shortConditions = [
       slowMarketType === "趋势空且增强",
-      // slowMarketType === '趋势潜在减弱',
-      // slowMarketType === '震荡市开空',
-      // slowMarketType === '潜在转折空',
+      slowMarketType === "趋势潜在减弱",
+      slowMarketType === "震荡市开空",
+      slowMarketType === "潜在转折空",
     ];
 
     const longCondition = longConditions.some((condition) => !!condition);
@@ -939,7 +939,7 @@ class Backtester {
 (async () => {
   const backtester = new Backtester();
   const start = "2025-01-01";
-  const end = "2024-01-01";
+  const end = "2025-04-01";
   const interval = 30;
   let profitTotal = 0;
 
