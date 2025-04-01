@@ -557,18 +557,18 @@ class Backtester {
 				}
 			}
 		} else if (adx < 20) {
+			if (rsi >= 40 && rsi <= 50) {
+				marketType = '震荡市开多';
+			} else if (rsi > 50 && rsi <= 60) {
+				marketType = '震荡市开空';
+			} else {
+				// marketType = '震荡市';
+			}
+		} else if (rsi >= 40 && rsi <= 60) {
 			if (rsi > 40 && rsi < 50) {
 				marketType = '潜在转折空';
 			} else if (rsi < 40 && rsi > 30) {
 				marketType = '潜在转折多';
-			}
-		} else if (rsi >= 35 && rsi <= 65) {
-			if (rsi >= 35 && rsi <= 45) {
-				marketType = '震荡市开多';
-			} else if (rsi > 55 && rsi <= 65) {
-				marketType = '震荡市开空';
-			} else {
-				marketType = '震荡市';
 			}
 		}
 		// if (marketType === '不确定')
@@ -687,11 +687,7 @@ class Backtester {
 
 				const isReverse =
 					position.direction === 'long'
-						? /* candle[config.fastframe].close <
-                candle[config.fastframe].lower && */
-						  // isProfitTarget ||
-						  // signal.direction === "short" ||
-						  [
+						? [
 								'趋势多且增强',
 								'趋势潜在增强',
 								'震荡市开多',
@@ -707,18 +703,7 @@ class Backtester {
 								'不确定',
 								'趋势多只平不开',
 						  ].includes(slowMarketType)
-						: // ["超买市", "不确定"].includes(marketType)
-						  // candle[config.fastframe].emaFast <
-						  // 	candle[config.fastframe].emaSlow
-						  // candle[config.slowframe].close < candle[config.slowframe].emaSlow
-						  //
-						  // candle[config.slowframe].emaFast <
-						  // 	candle[config.slowframe].emaSlow
-						  /* candle[config.fastframe].close >
-                candle[config.fastframe].upper && */
-						  // isProfitTarget ||
-						  // signal.direction === "long" ||
-						  [
+						: [
 								'趋势空且增强',
 								'趋势潜在减弱',
 								'震荡市开空',
