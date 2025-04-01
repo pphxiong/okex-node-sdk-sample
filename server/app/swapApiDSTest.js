@@ -492,11 +492,11 @@ class Backtester {
           if (emaSlope > 0) {
             marketType = "趋势多且增强";
           } else {
-            marketType = "趋势潜在减弱";
+            marketType = "趋势潜在增强";
           }
         } else if (rsi > 55 && rsi <= 60) {
           if (emaSlope > 0) {
-            marketType = "趋势多且增强";
+            marketType = "趋势多";
           } else {
             marketType = "趋势多";
           }
@@ -510,17 +510,17 @@ class Backtester {
           marketType = "超买市";
         } else {
           if (emaSlope > 0) {
-            marketType = "趋势潜在增强";
-          } else {
             marketType = "趋势潜在减弱";
+          } else {
+            marketType = "趋势潜在增强";
           }
         }
       } else if (adxPlusDI < adxMinusDI) {
         if (rsi >= 45 && rsi <= 55) {
           if (emaSlope < 0) {
-            marketType = "趋势空";
+            marketType = "趋势空且增强";
           } else {
-            marketType = "趋势潜在增强";
+            marketType = "趋势空";
           }
         } else if (rsi >= 40 && rsi < 45) {
           if (emaSlope < 0) {
@@ -538,24 +538,24 @@ class Backtester {
           marketType = "超卖市";
         } else {
           if (emaSlope > 0) {
-            marketType = "趋势潜在增强";
-          } else {
             marketType = "趋势潜在减弱";
+          } else {
+            marketType = "趋势潜在增强";
           }
         }
       }
     } else if (adx < 20) {
       if (rsi >= 35 && rsi <= 45) {
-        if (emaSlope < 0) marketType = "震荡市开空";
+        if (emaSlope < 0) marketType = "震荡市开多";
       } else if (rsi >= 55 && rsi <= 65) {
-        if (emaSlope > 0) marketType = "震荡市开多";
+        if (emaSlope > 0) marketType = "震荡市开空";
       } else {
       }
     } else if (rsi >= 40 && rsi <= 60) {
       if (rsi >= 40 && rsi < 50) {
-        if (emaSlope > 0) marketType = "潜在转折空";
+        if (emaSlope > 0) marketType = "潜在转折多";
       } else if (rsi >= 50 && rsi <= 60) {
-        if (emaSlope < 0) marketType = "潜在转折多";
+        if (emaSlope < 0) marketType = "潜在转折空";
       }
     }
     return marketType;
