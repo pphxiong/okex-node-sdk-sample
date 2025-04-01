@@ -565,11 +565,11 @@ class Backtester {
 				marketType = '震荡市';
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
-			if (rsi >= 40 && rsi < 50) {
-				marketType = '潜在转折空';
-			} else if (rsi >= 50 && rsi <= 60) {
-				marketType = '潜在转折多';
-			}
+			// if (rsi >= 40 && rsi < 50) {
+			// 	marketType = '潜在转折空';
+			// } else if (rsi >= 50 && rsi <= 60) {
+			// 	marketType = '潜在转折多';
+			// }
 		}
 		// if (marketType === '不确定')
 		// 	console.log(marketType, adx, rsi, adxPlusDI, adxMinusDI, emaSlope);
