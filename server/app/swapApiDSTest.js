@@ -34,20 +34,20 @@ const _ = require('lodash');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '5m',
-	timeframes: ['5m' /* '5m'  '1m'*/], // 多周期参数
+	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'5m': { periods: [10, 5], slopeWindow: 5 },
+		'15m': { periods: [10, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		// '30m': 0,
-		'5m': 0.003 * 0.01,
+		'15m': 0.003 * 0.01,
 		// '5m': 0,
 	}, // 斜率阈值
-	macdParams: { '5m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
-	slowframe: '5m',
-	fastframe: '5m',
+	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
+	slowframe: '15m',
+	fastframe: '15m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -505,7 +505,7 @@ class Backtester {
 		// const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
 		// if (!lastAdx) return marketType;
 
-		if (adx >= 25) {
+		if (adx >= 30) {
 			// marketType = '趋势市';
 			if (adxPlusDI > adxMinusDI) {
 				if (rsi >= 45 && rsi <= 55) {
