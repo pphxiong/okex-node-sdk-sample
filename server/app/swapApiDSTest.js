@@ -999,13 +999,23 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			console.log(
-				data[config.slowframe].map((candle) =>
-					Object.assign(candle, {
-						timestamp: moment(candle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					})
-				)
+				data[config.slowframe]
+					.filter(
+						(item) =>
+							moment(item.timestamp).isAfter(
+								moment('2023-04-03 20:30:00')
+							) &&
+							moment(item.timestamp).isBefore(
+								moment('2023-04-04 02:30:00')
+							)
+					)
+					.map((candle) =>
+						Object.assign(candle, {
+							timestamp: moment(candle.timestamp).format(
+								'YYYY-MM-DD HH:mm:ss'
+							),
+						})
+					)
 			);
 
 			// console.log(data[config.slowframe].length);
