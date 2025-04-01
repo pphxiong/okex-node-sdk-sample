@@ -519,7 +519,7 @@ class Backtester {
         }
       } else if (adxPlusDI < adxMinusDI) {
         if (rsi >= 45 && rsi <= 55) {
-          if (emaSlope > 0) {
+          if (emaSlope < 0) {
             marketType = "趋势空且增强";
           } else {
             // marketType = '趋势潜在增强';
