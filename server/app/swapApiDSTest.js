@@ -533,8 +533,8 @@ class Backtester {
 					if (emaSlope > 0) {
 						marketType = '趋势潜在增强';
 					} else {
-						marketType = '趋势潜在减弱';
-						// marketType = '趋势市';
+						// marketType = '趋势潜在减弱';
+						marketType = '趋势市';
 					}
 				}
 			} else if (adxPlusDI < adxMinusDI) {
@@ -542,8 +542,7 @@ class Backtester {
 					if (emaSlope < 0) {
 						marketType = '趋势空且增强';
 					} else {
-						// marketType = '趋势潜在增强';
-						marketType = '趋势市';
+						marketType = '趋势潜在增强';
 					}
 				} else if (rsi >= 40 && rsi < 45) {
 					if (emaSlope < 0) {
