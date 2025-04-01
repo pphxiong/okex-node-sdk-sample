@@ -883,8 +883,10 @@ class Backtester {
 			exit: exitCandle.close,
 			profit: profit,
 			// fee,
-			entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
-			exitMarketType: `${fastMarketType},${slowMarketType}`,
+			// entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
+			// exitMarketType: `${fastMarketType},${slowMarketType}`,
+			entryMarketType: `${position.slowMarketType}`,
+			exitMarketType: `${slowMarketType}`,
 			duration: `${Math.round(
 				(exitCandle.timestamp - position.entryTime) / (1000 * 60 * 60)
 			)}h`,
@@ -922,6 +924,25 @@ class Backtester {
 		console.log('\n最近20笔交易:');
 		console.table(this.trades);
 		console.log('profit:', profitTotal);
+
+		const profitMap = this.genEveryTypeProfit();
+		Object.entries(profitMap).forEach(([key, value]) => {
+			console.log(`
+      ========== 交易类型: ${key} ==========
+      总交易次数:     ${value.length}`);
+			const typeProfit = value.reduce((sum, t) => sum + t, 0);
+			console.log('总收益:        ', typeProfit.toFixed(2));
+		});
+	}
+
+	genEveryTypeProfit() {
+		const profitMap = new Map();
+		this.trades.forEach((trade) => {
+			const key = `${trade.entryMarketType}`;
+			profitMap[key] = profitMap[key] || [];
+			profitMap[key].push(trade.profit);
+		});
+		return profitMap;
 	}
 }
 
