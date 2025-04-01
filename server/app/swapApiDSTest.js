@@ -505,14 +505,15 @@ class Backtester {
 		// const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
 		// if (!lastAdx) return marketType;
 
-		if (adx >= 30) {
+		if (adx >= 25) {
 			// marketType = '趋势市';
 			if (adxPlusDI > adxMinusDI) {
 				if (rsi >= 45 && rsi <= 55) {
 					if (emaSlope > 0) {
 						marketType = '趋势多且增强';
 					} else {
-						marketType = '趋势潜在减弱';
+						// marketType = '趋势潜在减弱';
+						marketType = '趋势市';
 					}
 				} else if (rsi > 55 && rsi <= 60) {
 					if (emaSlope > 0) {
