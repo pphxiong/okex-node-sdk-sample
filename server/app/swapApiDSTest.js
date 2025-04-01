@@ -566,9 +566,9 @@ class Backtester {
 			}
 		} else if (adx < 20) {
 			if (rsi >= 35 && rsi <= 45) {
-				if (emaSlope < 0) marketType = '震荡市开多';
+				if (emaSlope < 0) marketType = '震荡市开空';
 			} else if (rsi >= 55 && rsi <= 65) {
-				if (emaSlope > 0) marketType = '震荡市开空';
+				if (emaSlope > 0) marketType = '震荡市开多';
 			} else {
 				// marketType = '震荡市';
 			}
@@ -964,7 +964,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-15';
+	const start = '2023-03-15';
 	const end = '2024-08-31';
 	const interval = 30;
 	let profitTotal = 0;
