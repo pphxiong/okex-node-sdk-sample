@@ -964,14 +964,14 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
+	const start = '2024-06-01';
 	const end = '2025-03-30';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(moment(start).add(i, 'days'))) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
