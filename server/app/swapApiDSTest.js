@@ -793,8 +793,8 @@ class Backtester {
     const shortConditions = [
       // slowMarketType === "趋势空且增强",
       slowMarketType === "趋势潜在减弱",
-      slowMarketType === "震荡市开空",
-      slowMarketType === "潜在转折空",
+      // slowMarketType === "震荡市开空",
+      // slowMarketType === "潜在转折空",
     ];
 
     const longCondition = longConditions.some((condition) => !!condition);
