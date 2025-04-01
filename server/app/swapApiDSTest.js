@@ -944,8 +944,8 @@ class Backtester {
       direction: position.direction,
       entry: position.entryPrice,
       exit: exitCandle.close,
-      profit: profit,
-      fee,
+      profit: profit - fee,
+      // fee,
       // entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
       // exitMarketType: `${fastMarketType},${slowMarketType}`,
       entryMarketType: `${position.slowMarketType}`,
@@ -1008,7 +1008,7 @@ class Backtester {
     this.trades.forEach((trade) => {
       const key = `${trade.entryMarketType}`;
       profitMap[key] = profitMap[key] || [];
-      profitMap[key].push(trade.profit - trade.fee);
+      profitMap[key].push(trade.profit);
     });
     return profitMap;
   }
