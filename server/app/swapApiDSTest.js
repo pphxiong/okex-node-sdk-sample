@@ -797,14 +797,14 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 		const longConditions = [
-			// slowMarketType === "趋势多且增强",
-			// slowMarketType === "趋势潜在增强",
+			slowMarketType === '趋势多且增强',
+			slowMarketType === '趋势潜在增强',
 			slowMarketType === '震荡市开多',
 			// slowMarketType === "潜在转折多",
 		];
 		const shortConditions = [
-			// slowMarketType === "趋势空且增强",
-			// slowMarketType === "趋势潜在减弱",
+			slowMarketType === '趋势空且增强',
+			slowMarketType === '趋势潜在减弱',
 			slowMarketType === '震荡市开空',
 			// slowMarketType === "潜在转折空",
 		];
