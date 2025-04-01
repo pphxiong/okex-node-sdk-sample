@@ -945,7 +945,7 @@ class Backtester {
       entry: position.entryPrice,
       exit: exitCandle.close,
       profit: profit,
-      // fee,
+      fee,
       // entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
       // exitMarketType: `${fastMarketType},${slowMarketType}`,
       entryMarketType: `${position.slowMarketType}`,
