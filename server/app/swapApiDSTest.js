@@ -493,7 +493,6 @@ class Backtester {
             marketType = "趋势多且增强";
           } else {
             marketType = "趋势潜在减弱";
-            // marketType = "趋势市";
           }
         } else if (rsi > 55 && rsi <= 60) {
           if (emaSlope > 0) {
@@ -514,14 +513,13 @@ class Backtester {
             marketType = "趋势潜在增强";
           } else {
             marketType = "趋势潜在减弱";
-            // marketType = "趋势市";
           }
         }
       } else if (adxPlusDI < adxMinusDI) {
         if (rsi >= 45 && rsi <= 55) {
           if (emaSlope < 0) {
             // marketType = "趋势空且增强";
-            marketType = "趋势市";
+            marketType = "趋势空";
           } else {
             marketType = "趋势潜在增强";
             // marketType = "趋势市";
@@ -695,6 +693,7 @@ class Backtester {
                 "趋势多且减弱",
                 "不确定",
                 "趋势多只平不开",
+                "趋势空",
               ].includes(slowMarketType)
             : [
                 "趋势空且增强",
@@ -711,6 +710,7 @@ class Backtester {
                 "趋势空且减弱",
                 "不确定",
                 "趋势空只平不开",
+                "趋势多",
               ].includes(slowMarketType);
         // ["超卖市", "不确定"].includes(marketType)
         // candle[config.fastframe].emaFast >
