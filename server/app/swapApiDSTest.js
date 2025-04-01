@@ -38,14 +38,14 @@ const config = {
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		'30m': { periods: [10, 5], slopeWindow: 5 },
-		'5m': { periods: [10, 5], slopeWindow: 5 },
+		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		// '30m': 0,
 		'30m': 0.003 * 0.01,
-		'5m': 0,
+		// '5m': 0,
 	}, // 斜率阈值
-	macdParams: { '30m': [12, 26, 9], '5m': [12, 26, 9] },
+	macdParams: { '30m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
 	slowframe: '30m',
 	fastframe: '30m',
 	kWindowTresholdFast: 3,
@@ -634,10 +634,11 @@ class Backtester {
 			);
 
 			const candle = {
-				[config.slowframe]: this.getTimeStampBefore(
-					this.data[config.slowframe],
-					lastKline5M.timestamp
-				),
+				// [config.slowframe]: this.getTimeStampBefore(
+				// 	this.data[config.slowframe],
+				// 	lastKline5M.timestamp
+				// ),
+				// [config.slowframe]: lastKline5M,
 				[config.fastframe]: lastKline5M,
 			};
 
