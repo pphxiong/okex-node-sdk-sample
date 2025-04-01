@@ -602,14 +602,14 @@ async function generateSignal(currentPrice) {
 	console.log('side', state.side);
 	console.log('longCondition', longCondition);
 	console.log('shortCondition', shortCondition);
-	// console.log(
-	// 	config.fastframe,
-	// 	Object.assign(candle[config.fastframe], {
-	// 		timestamp: moment(candle[config.fastframe].timestamp).format(
-	// 			'YYYY-MM-DD HH:mm:ss'
-	// 		),
-	// 	})
-	// );
+	console.log(
+		config.fastframe,
+		Object.assign(candle[config.fastframe], {
+			timestamp: moment(candle[config.fastframe].timestamp).format(
+				'YYYY-MM-DD HH:mm:ss'
+			),
+		})
+	);
 	console.log(
 		config.slowframe,
 		Object.assign(candle[config.slowframe], {
@@ -1027,6 +1027,7 @@ function connectWebSocket() {
 			console.log('-----------------收到消息-----------------------');
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
 			await handleKlineUpdate(msg.data, periodMap[period]);
+			await strategyLoop();
 			//   console.log("-----------------------------------");
 		}
 	});
@@ -1057,7 +1058,6 @@ async function handleKlineUpdate(msg, tf) {
 	}
 	marketData[tf].push(parseKLine(newBar));
 	mergeTimeframes();
-	console.log('update::', marketData[tf].slice(-2));
 }
 
 // 多周期时间戳对齐
