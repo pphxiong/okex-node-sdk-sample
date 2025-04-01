@@ -563,10 +563,10 @@ class Backtester {
 				marketType = '潜在转折多';
 			}
 		} else if (rsi >= 35 && rsi <= 65) {
-			if (rsi >= 35 && rsi <= 50) {
-				marketType = '震荡市开多';
-			} else if (rsi > 50 && rsi <= 65) {
+			if (rsi >= 35 && rsi <= 45) {
 				marketType = '震荡市开空';
+			} else if (rsi > 55 && rsi <= 65) {
+				marketType = '震荡市开多';
 			}
 		}
 		// if (marketType === '不确定')
