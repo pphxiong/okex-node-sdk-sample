@@ -1147,8 +1147,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-03-05';
-	const end = '2025-04-03';
+	const start = '2021-01-01';
+	const end = '2021-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 
