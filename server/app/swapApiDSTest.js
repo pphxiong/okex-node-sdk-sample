@@ -553,18 +553,18 @@ class Backtester {
 				}
 			} else if (weeker) {
 				if (rsi >= 35 && rsi <= 45) {
-					if (emaSlope < 0 && adxPlusDI < adxMinusDI) {
+					if (emaSlope > 0 && adxPlusDI < adxMinusDI) {
 						marketType = '趋势空且增强';
 					} else {
 						marketType = '趋势空';
 					}
-				} else if (rsi >= 40 && rsi < 45) {
-					if (emaSlope < 0 && adxPlusDI < adxMinusDI) {
+				} else if (rsi > 45 && rsi < 55) {
+					if (emaSlope > 0 && adxPlusDI < adxMinusDI) {
 						marketType = '趋势空且增强';
 					} else {
 						marketType = '趋势空';
 					}
-				} else if (rsi >= 25 && rsi < 40) {
+				} else if (rsi >= 25 && rsi < 35) {
 					if (emaSlope < 0) {
 						marketType = '趋势空';
 					} else {
@@ -572,7 +572,7 @@ class Backtester {
 					}
 				} else if (rsi < 25) {
 					marketType = '超卖市';
-				} else if (rsi > 55 && rsi <= 65 && adxPlusDI < adxMinusDI) {
+				} else if (rsi >= 55 && rsi <= 65 && adxPlusDI < adxMinusDI) {
 					marketType = '趋势潜在减弱';
 				} else {
 					marketType = '趋势潜在增强';
@@ -1047,8 +1047,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2021-01-01';
-	const end = '2021-12-31';
+	const start = '2024-01-01';
+	const end = '2024-12-31';
 	const interval = 30;
 	let profitTotal = 0;
 
