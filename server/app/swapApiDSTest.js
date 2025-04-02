@@ -498,7 +498,7 @@ class Backtester {
 
 	getMarketType(candle, lastCandle) {
 		let marketType = '不确定';
-		// if (!lastCandle) return marketType;
+		if (!lastCandle) return marketType;
 
 		const {
 			adx,
@@ -511,13 +511,23 @@ class Backtester {
 			emaFast,
 			emaSlow,
 		} = candle;
-		// const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
+		const {
+			adx: lastAdx,
+			adxPlusDI: lastAdxPlusDI,
+			rsi: lastRSI,
+			emaSlope: lastEmaslope,
+			emaFast: lastEmaFast,
+			emaSlow: lastEmaSlow,
+		} = lastCandle;
 		// if (!lastAdx) return marketType;
 
 		const stronger = emaFast > emaSlow;
 		const weeker = emaFast < emaSlow;
 
-		if (stronger) {
+		const lastStronger = lastEmaFast > lastEmaSlow;
+		const lastWeeker = lastEmaFast < lastEmaSlow;
+
+		if (stronger && lastWeeker) {
 			if (
 				rsi >= 45 &&
 				rsi <= 65
@@ -526,10 +536,12 @@ class Backtester {
 				marketType = '趋势多且增强';
 			} else if (rsi > 75) {
 				marketType = '超买市';
+			} else {
+				marketType = '趋势多';
 			}
 		}
 
-		if (weeker) {
+		if (weeker && lastStronger) {
 			if (
 				rsi >= 35 &&
 				rsi <= 55
@@ -538,6 +550,8 @@ class Backtester {
 				marketType = '趋势空且增强';
 			} else if (rsi < 25) {
 				marketType = '超卖市';
+			} else {
+				marketType = '趋势空';
 			}
 		}
 
