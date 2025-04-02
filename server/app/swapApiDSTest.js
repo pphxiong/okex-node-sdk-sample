@@ -523,7 +523,7 @@ class Backtester {
 				rsi <= 55 &&
 				!(adx >= 25 && adxPlusDI < adxMinusDI)
 			) {
-				marketType = '趋势多且增强';
+				marketType = '趋势空且增强';
 			}
 		}
 
@@ -533,7 +533,7 @@ class Backtester {
 				rsi <= 55 &&
 				!(adx >= 25 && adxPlusDI > adxMinusDI)
 			) {
-				marketType = '趋势空且增强';
+				marketType = '趋势多且增强';
 			}
 		}
 
