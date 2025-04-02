@@ -968,7 +968,7 @@ const readData = async () => {
 		fs.readFileSync('./app/config.json', 'utf-8')
 	);
 
-	console.log('read::MODE', MODE, moment().format('YYYY-MM-DD HH:mm:ss'));
+	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
 	return dataConfig;
 };
 
