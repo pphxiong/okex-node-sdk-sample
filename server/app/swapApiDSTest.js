@@ -545,32 +545,32 @@ class Backtester {
 				} else {
 					marketType = '趋势潜在减弱';
 				}
-			} else if (adxPlusDI < adxMinusDI) {
-				// if (rsi >= 45 && rsi <= 55) {
-				// 	if (emaSlope < 0) {
-				// 		marketType = '趋势空';
-				// 	} else {
-				// 		marketType = '趋势潜在增强';
-				// 	}
-				// } else if (rsi >= 40 && rsi < 45) {
-				// 	if (emaSlope < 0) {
-				// 		marketType = '趋势空且增强';
-				// 	} else {
-				// 		marketType = '趋势空';
-				// 	}
-				// } else if (rsi >= 25 && rsi < 40) {
-				// 	if (emaSlope < 0) {
-				// 		marketType = '趋势空';
-				// 	} else {
-				// 		marketType = '趋势空只平不开';
-				// 	}
-				// } else if (rsi < 25) {
-				// 	marketType = '超卖市';
-				// } else if (rsi > 55 && rsi <= 65) {
-				// 	marketType = '趋势潜在减弱';
-				// } else {
-				// 	marketType = '趋势潜在增强';
-				// }
+			} else if (adxPlusDI < adxMinusDI && weeker) {
+				if (rsi >= 45 && rsi <= 55) {
+					if (emaSlope < 0) {
+						marketType = '趋势空';
+					} else {
+						marketType = '趋势潜在减弱';
+					}
+				} else if (rsi >= 40 && rsi < 45) {
+					if (emaSlope < 0) {
+						marketType = '趋势空且增强';
+					} else {
+						marketType = '趋势空';
+					}
+				} else if (rsi >= 25 && rsi < 40) {
+					if (emaSlope < 0) {
+						marketType = '趋势空';
+					} else {
+						marketType = '趋势空只平不开';
+					}
+				} else if (rsi < 25) {
+					marketType = '超卖市';
+				} else if (rsi > 55 && rsi <= 65) {
+					marketType = '趋势潜在减弱';
+				} else {
+					marketType = '趋势潜在增强';
+				}
 			}
 		} else if (adx < 20) {
 			if (rsi >= 35 && rsi <= 45) {
