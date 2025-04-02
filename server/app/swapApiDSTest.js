@@ -518,6 +518,7 @@ class Backtester {
 			emaSlope: lastEmaslope,
 			emaFast: lastEmaFast,
 			emaSlow: lastEmaSlow,
+			close: lastClose,
 		} = lastCandle;
 		// if (!lastAdx) return marketType;
 
@@ -527,12 +528,14 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (stronger && lastWeeker) {
-			marketType = '趋势空且增强';
+		if (stronger) {
+			marketType = '趋势多';
+			if (close < emaSlow) marketType = '趋势多且增强';
 		}
 
-		if (weeker && lastStronger) {
-			marketType = '趋势多且增强';
+		if (weeker) {
+			marketType = '趋势空';
+			if (close > emaSlow) marketType = '趋势空且增强';
 		}
 
 		// if (adx >= 25) {
