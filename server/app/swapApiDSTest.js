@@ -517,7 +517,7 @@ class Backtester {
 		const stronger = emaFast > emaSlow;
 		const weeker = emaFast < emaSlow;
 
-		if (adx < 25 && adx > 20) {
+		if (adx < 20) {
 			// marketType = '趋势市';
 			// 大趋势多
 			if (adxPlusDI > adxMinusDI) {
