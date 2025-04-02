@@ -530,12 +530,12 @@ class Backtester {
 
 		if (stronger) {
 			marketType = '趋势多';
-			if (close < emaSlow) marketType = '趋势多且增强';
+			if (close > emaFast) marketType = '趋势多且增强';
 		}
 
 		if (weeker) {
 			marketType = '趋势空';
-			if (close > emaSlow) marketType = '趋势空且增强';
+			if (close < emaFast) marketType = '趋势空且增强';
 		}
 
 		// if (adx >= 25) {
