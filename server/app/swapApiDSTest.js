@@ -568,6 +568,14 @@ class Backtester {
 						} else {
 							marketType = '趋势空';
 						}
+					} else if (rsi >= 25 && rsi < 35) {
+						if (emaSlope < 0) {
+							marketType = '趋势空';
+						} else {
+							marketType = '趋势潜在增强';
+						}
+					} else if (rsi < 25) {
+						marketType = '超卖市';
 					}
 				}
 			}
