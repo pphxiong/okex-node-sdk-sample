@@ -541,9 +541,9 @@ class Backtester {
 				} else if (rsi > 75) {
 					marketType = '超买市';
 				} else if (rsi >= 35 && rsi < 45) {
-					marketType = '趋势潜在增强';
-				} else {
 					marketType = '趋势潜在减弱';
+				} else {
+					marketType = '趋势潜在增强';
 				}
 			} else if (adxPlusDI < adxMinusDI && weeker) {
 				if (rsi >= 35 && rsi <= 45) {
@@ -567,9 +567,9 @@ class Backtester {
 				} else if (rsi < 25) {
 					marketType = '超卖市';
 				} else if (rsi > 55 && rsi <= 65) {
-					marketType = '趋势潜在减弱';
-				} else {
 					marketType = '趋势潜在增强';
+				} else {
+					marketType = '趋势潜在减弱';
 				}
 			}
 		} else if (adx < 20) {
