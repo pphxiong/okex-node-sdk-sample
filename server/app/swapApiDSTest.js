@@ -500,14 +500,26 @@ class Backtester {
 		let marketType = '不确定';
 		// if (!lastCandle) return marketType;
 
-		const { adx, adxPlusDI, adxMinusDI, rsi, close, open, emaSlope } =
-			candle;
+		const {
+			adx,
+			adxPlusDI,
+			adxMinusDI,
+			rsi,
+			close,
+			open,
+			emaSlope,
+			emaFast,
+			emaSlow,
+		} = candle;
 		// const { adx: lastAdx, adxPlusDI: lastAdxPlusDI } = lastCandle;
 		// if (!lastAdx) return marketType;
 
+		const stronger = emaFast > emaSlow;
+		const weeker = emaFast < emaSlow;
+
 		if (adx >= 25) {
 			// marketType = '趋势市';
-			if (adxPlusDI > adxMinusDI) {
+			if (adxPlusDI > adxMinusDI && stronger) {
 				if (rsi >= 45 && rsi <= 55) {
 					if (emaSlope > 0) {
 						marketType = '趋势多且增强';
