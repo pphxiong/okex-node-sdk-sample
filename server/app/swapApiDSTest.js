@@ -1049,7 +1049,7 @@ class Backtester {
 (async () => {
 	const backtester = new Backtester();
 	const start = '2025-01-01';
-	const end = '2025-04-31';
+	const end = '2025-04-30';
 	const interval = 30;
 	let profitTotal = 0;
 
