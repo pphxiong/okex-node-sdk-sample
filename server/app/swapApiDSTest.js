@@ -528,11 +528,11 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (stronger && lastWeeker) {
-			marketType = '趋势多且增强';
+			marketType = '趋势空且增强';
 		}
 
 		if (weeker && lastStronger) {
-			marketType = '趋势空且增强';
+			marketType = '趋势多且增强';
 		}
 
 		// if (adx >= 25) {
