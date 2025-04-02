@@ -532,7 +532,7 @@ class Backtester {
 			marketType = '趋势空';
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI) {
-					marketType = adx >= 25 ? '趋势多且增强' : '趋势空且增强';
+					marketType = adx >= 25 ? '趋势空且增强' : '趋势多且增强';
 					// marketType = '趋势多且增强';
 				}
 			} else if (close < emaSlow) {
@@ -546,7 +546,7 @@ class Backtester {
 			marketType = '趋势多';
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI) {
-					marketType = adx >= 25 ? '趋势空且增强' : '趋势多且增强';
+					marketType = adx >= 25 ? '趋势多且增强' : '趋势空且增强';
 					// marketType = '趋势空且增强';
 				}
 			} else if (close > emaSlow) {
@@ -1157,8 +1157,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-01-01';
-	const end = '2024-12-30';
+	const start = '2021-01-01';
+	const end = '2021-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 
