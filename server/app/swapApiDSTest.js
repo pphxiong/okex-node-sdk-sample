@@ -783,50 +783,32 @@ class Backtester {
 
 				const lnp = this.getLnp(position, d);
 
+				const longCloseConditions = [
+					position.slowMarketType === '趋势多且增强' &&
+						['超买市', '趋势空且增强', '不确定', '趋势空'].includes(
+							slowMarketType
+						),
+				];
+
+				const shortCloseConditions = [
+					position.slowMarketType === '趋势空且增强' &&
+						[
+							'超卖市',
+							'趋势多且增强',
+							'潜在转折多',
+							'震荡市开多',
+							'趋势潜在增强',
+							'趋势空且减弱',
+							'不确定',
+							'趋势空只平不开',
+							'趋势多',
+						].includes(slowMarketType),
+				];
+
 				const isReverse =
 					position.direction === 'long'
-						? [
-								'趋势多且增强',
-								'趋势潜在增强',
-								'震荡市开多',
-								'潜在转折多',
-						  ].includes(position.slowMarketType) &&
-						  [
-								'超买市',
-								'趋势空且增强',
-								'潜在转折空',
-								'震荡市开空',
-								'趋势潜在减弱',
-								'趋势多且减弱',
-								'不确定',
-								'趋势多只平不开',
-								'趋势空',
-						  ].includes(slowMarketType)
-						: [
-								'趋势空且增强',
-								'趋势潜在减弱',
-								'震荡市开空',
-								'潜在转折空',
-						  ].includes(position.slowMarketType) &&
-						  [
-								'超卖市',
-								'趋势多且增强',
-								'潜在转折多',
-								'震荡市开多',
-								'趋势潜在增强',
-								'趋势空且减弱',
-								'不确定',
-								'趋势空只平不开',
-								'趋势多',
-						  ].includes(slowMarketType);
-				// ["超卖市", "不确定"].includes(marketType)
-				// candle[config.fastframe].emaFast >
-				// 	candle[config.fastframe].emaSlow;
-				// candle[config.slowframe].close > candle[config.slowframe].emaSlow;
-				//;
-				// signal.direction === 'long';
-				// candle[config.slowframe].emaFast >
-				// 	candle[config.slowframe].emaSlow;
+						? longCloseConditions.some((c) => !!c)
+						: shortCloseConditions.some((c) => !!c);
 
 				if (isReverse) {
 					this.closePosition(
