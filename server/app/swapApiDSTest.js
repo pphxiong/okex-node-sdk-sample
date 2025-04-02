@@ -517,7 +517,7 @@ class Backtester {
 		const stronger = emaFast > emaSlow;
 		const weeker = emaFast < emaSlow;
 
-		if (adx < 20 || true) {
+		if (adx >= 25) {
 			// marketType = '趋势市';
 			// 大趋势多
 			if (adxPlusDI > adxMinusDI) {
@@ -1048,8 +1048,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-12-31';
+	const start = '2025-01-01';
+	const end = '2025-04-31';
 	const interval = 30;
 	let profitTotal = 0;
 
