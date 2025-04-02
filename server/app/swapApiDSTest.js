@@ -574,9 +574,9 @@ class Backtester {
 			}
 		} else if (adx < 20) {
 			if (rsi >= 35 && rsi <= 45) {
-				if (emaSlope < 0) marketType = '震荡市开空';
-			} else if (rsi >= 55 && rsi <= 65) {
 				if (emaSlope > 0) marketType = '震荡市开多';
+			} else if (rsi >= 55 && rsi <= 65) {
+				if (emaSlope < 0) marketType = '震荡市开空';
 			} else {
 			}
 		} else if (rsi >= 40 && rsi <= 60) {
