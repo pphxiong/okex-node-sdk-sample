@@ -546,9 +546,9 @@ class Backtester {
 					marketType = '趋势潜在减弱';
 				}
 			} else if (adxPlusDI < adxMinusDI && weeker) {
-				if (rsi >= 45 && rsi <= 55) {
+				if (rsi >= 35 && rsi <= 45) {
 					if (emaSlope < 0) {
-						marketType = '趋势空';
+						marketType = '趋势多且增强';
 					} else {
 						marketType = '趋势空';
 					}
