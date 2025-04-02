@@ -520,23 +520,23 @@ class Backtester {
 		if (stronger) {
 			if (
 				rsi >= 45 &&
-				rsi <= 55
+				rsi <= 65
 				// !(adx >= 25 && adxPlusDI < adxMinusDI)
 			) {
 				marketType = '趋势多且增强';
-			} else if (rsi > 65) {
+			} else if (rsi > 75) {
 				marketType = '超买市';
 			}
 		}
 
 		if (weeker) {
 			if (
-				rsi >= 45 &&
+				rsi >= 35 &&
 				rsi <= 55
 				// !(adx >= 25 && adxPlusDI > adxMinusDI)
 			) {
 				marketType = '趋势空且增强';
-			} else if (rsi < 65) {
+			} else if (rsi < 25) {
 				marketType = '超卖市';
 			}
 		}
