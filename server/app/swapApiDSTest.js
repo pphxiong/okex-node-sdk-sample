@@ -528,15 +528,15 @@ class Backtester {
 					}
 				} else if (rsi > 55 && rsi <= 60) {
 					if (emaSlope > 0) {
-						marketType = '趋势多';
+						marketType = '趋势多且增强';
 					} else {
-						marketType = '趋势多';
+						marketType = '趋势潜在减弱';
 					}
 				} else if (rsi > 60 && rsi <= 75) {
 					if (emaSlope > 0) {
 						marketType = '趋势多';
 					} else {
-						marketType = '趋势多只平不开';
+						marketType = '趋势潜在减弱';
 					}
 				} else if (rsi > 75) {
 					marketType = '超买市';
@@ -573,18 +573,18 @@ class Backtester {
 				}
 			}
 		} else if (adx < 20) {
-			if (rsi >= 35 && rsi <= 45) {
-				if (emaSlope < 0) marketType = '震荡市开多';
-			} else if (rsi >= 55 && rsi <= 65) {
-				if (emaSlope > 0) marketType = '震荡市开空';
-			} else {
-			}
+			// if (rsi >= 35 && rsi <= 45) {
+			// 	if (emaSlope < 0) marketType = '震荡市开多';
+			// } else if (rsi >= 55 && rsi <= 65) {
+			// 	if (emaSlope > 0) marketType = '震荡市开空';
+			// } else {
+			// }
 		} else if (rsi >= 40 && rsi <= 60) {
-			if (rsi >= 40 && rsi < 50) {
-				if (emaSlope > 0) marketType = '潜在转折多';
-			} else if (rsi >= 50 && rsi <= 60) {
-				if (emaSlope < 0) marketType = '潜在转折空';
-			}
+			// if (rsi >= 40 && rsi < 50) {
+			// 	if (emaSlope > 0) marketType = '潜在转折多';
+			// } else if (rsi >= 50 && rsi <= 60) {
+			// 	if (emaSlope < 0) marketType = '潜在转折空';
+			// }
 		}
 		return marketType;
 	}
@@ -785,9 +785,13 @@ class Backtester {
 
 				const longCloseConditions = [
 					position.slowMarketType === '趋势多且增强' &&
-						['超买市', '趋势空且增强', '不确定', '趋势空'].includes(
-							slowMarketType
-						),
+						[
+							'超买市',
+							'趋势空且增强',
+							'趋势潜在减弱',
+							'不确定',
+							'趋势空',
+						].includes(slowMarketType),
 				];
 
 				const shortCloseConditions = [
