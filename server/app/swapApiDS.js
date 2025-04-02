@@ -964,9 +964,13 @@ async function strategyLoop() {
 }
 
 const readData = async () => {
-	const dataConfig = JSON.parse(
-		fs.readFileSync('./app/config.json', 'utf-8')
-	);
+	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
+
+	const { position, entryPrice } = dataConfig;
+	dataConfig = Object.assign(dataConfig, {
+		position: Number(position),
+		entryPrice: Number(entryPrice),
+	});
 
 	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
 	return dataConfig;
@@ -1026,6 +1030,7 @@ function connectWebSocket() {
 			if (!msg.data.k.x) return; // 仅处理闭合K线
 			console.log('-----------------收到消息-----------------------');
 			console.log(`更新: ${symbol} ${periodMap[period]} K线`);
+			await OrderManager.checkOrderStatus();
 			restart('kline update');
 			// await handleKlineUpdate(msg.data, periodMap[period]);
 			// await strategyLoop();
