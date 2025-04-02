@@ -520,11 +520,11 @@ class Backtester {
 		if (stronger) {
 			if (
 				rsi >= 45 &&
-				rsi <= 55 &&
-				!(adx >= 25 && adxPlusDI < adxMinusDI)
+				rsi <= 55
+				// !(adx >= 25 && adxPlusDI < adxMinusDI)
 			) {
 				marketType = '趋势多且增强';
-			} else if (rsi > 75) {
+			} else if (rsi > 65) {
 				marketType = '超买市';
 			}
 		}
@@ -532,11 +532,11 @@ class Backtester {
 		if (weeker) {
 			if (
 				rsi >= 45 &&
-				rsi <= 55 &&
-				!(adx >= 25 && adxPlusDI > adxMinusDI)
+				rsi <= 55
+				// !(adx >= 25 && adxPlusDI > adxMinusDI)
 			) {
 				marketType = '趋势空且增强';
-			} else if (rsi < 75) {
+			} else if (rsi < 65) {
 				marketType = '超卖市';
 			}
 		}
@@ -820,7 +820,7 @@ class Backtester {
 							'超买市',
 							'趋势空且增强',
 							'趋势潜在减弱',
-							'不确定',
+							// '不确定',
 							'趋势空',
 						].includes(slowMarketType),
 				];
@@ -834,7 +834,7 @@ class Backtester {
 							// '震荡市开多',
 							'趋势潜在增强',
 							// '趋势空且减弱',
-							'不确定',
+							// '不确定',
 							'趋势多',
 						].includes(slowMarketType),
 				];
