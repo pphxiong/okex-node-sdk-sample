@@ -818,7 +818,7 @@ class Backtester {
 							'震荡市开空',
 							'趋势潜在减弱',
 							'趋势多且减弱',
-							'不确定',
+							// '不确定',
 							'趋势多只平不开',
 						].includes(slowMarketType),
 					position.slowMarketType === '趋势潜在增强' &&
@@ -829,7 +829,7 @@ class Backtester {
 							'震荡市开空',
 							'趋势潜在减弱',
 							'趋势多且减弱',
-							'不确定',
+							// '不确定',
 							'趋势多只平不开',
 						].includes(slowMarketType),
 					position.slowMarketType === '震荡市开多' &&
