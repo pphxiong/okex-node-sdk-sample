@@ -1,0 +1,224 @@
+以下是一个基于Node.js、CCXT和Tulind的狗狗币短线交易策略回测完整代码示例，包含布林带中线策略的核心逻辑：
+
+```javascript
+const ccxt = require('ccxt');
+const tulind = require('tulind');
+const { SMA, STDDEV } = require('tulind/indicators');
+
+// 0. 环境配置
+const exchange = new ccxt.binance({
+  enableRateLimit: true
+});
+const symbol = 'DOGE/USDT';
+const timeframe = '1h';
+const since = exchange.parse8601('2023-01-01T00:00:00Z');
+
+// 1. 获取历史数据
+async function fetchOHLCV() {
+  try {
+    const allCandles = [];
+    let sinceParam = since;
+    
+    while (true) {
+      const candles = await exchange.fetchOHLCV(symbol, timeframe, sinceParam);
+      if (!candles.length) break;
+      sinceParam = candles[candles.length - 1][0] + 1;
+      allCandles.push(...candles);
+      if (allCandles.length > 1000) break; // 控制数据量
+    }
+    
+    return allCandles.map(c => ({
+      timestamp: c[0],
+      open: c[1],
+      high: c[2],
+      low: c[3],
+      close: c[4],
+      volume: c[5]
+    }));
+  } catch (e) {
+    console.error('获取数据失败:', e);
+    return [];
+  }
+}
+
+// 2. 计算技术指标
+async function calculateIndicators(data) {
+  // 计算布林带
+  const closes = data.map(d => d.close);
+  const [middle, upper, lower] = await new Promise(resolve => {
+    tulind.indicators.bbands.indicator([closes], [20, 2], (err, res) => {
+      resolve(res);
+    });
+  });
+
+  // 合并指标到数据
+  return data.map((d, i) => ({
+    ...d,
+    bb_middle: middle[i],
+    bb_upper: upper[i],
+    bb_lower: lower[i]
+  }));
+}
+
+// 3. 策略逻辑
+function generateSignals(data) {
+  let position = null;
+  const signals = [];
+  
+  for (let i = 1; i < data.length; i++) {
+    const current = data[i];
+    const prev = data[i-1];
+    
+    // 买入信号
+    if (
+      (!position && 
+        (current.close > current.bb_middle && prev.close <= prev.bb_middle) || // 上穿中线
+        (prev.close < prev.bb_lower && current.close > current.bb_middle))    // 下轨反弹至中线
+    ) {
+      position = {
+        entryPrice: current.close,
+        entryTime: current.timestamp,
+        stopLoss: current.bb_lower,
+        takeProfit: current.bb_upper
+      };
+      signals.push({ type: 'buy', ...position, index: i });
+    }
+    
+    // 卖出信号
+    if (position && (
+      current.close < current.bb_middle ||  // 下穿中线
+      current.close >= position.takeProfit || // 触及止盈
+      current.close <= position.stopLoss     // 触及止损
+    )) {
+      signals.push({
+        type: 'sell',
+        exitPrice: current.close,
+        exitTime: current.timestamp,
+        return: (current.close - position.entryPrice) / position.entryPrice,
+        index: i
+      });
+      position = null;
+    }
+  }
+  
+  return signals;
+}
+
+// 4. 回测引擎
+function backtest(data, signals) {
+  let balance = 1000; // 初始资金
+  let maxBalance = balance;
+  let maxDrawdown = 0;
+  const trades = [];
+  
+  for (const signal of signals) {
+    if (signal.type === 'buy') {
+      const trade = {
+        entry: signal.entryPrice,
+        entryTime: signal.entryTime,
+        exit: null,
+        exitTime: null,
+        quantity: balance / signal.entryPrice
+      };
+      balance = 0;
+      trades.push(trade);
+    } else if (trades.length > 0) {
+      const trade = trades[trades.length - 1];
+      trade.exit = signal.exitPrice;
+      trade.exitTime = signal.exitTime;
+      balance = trade.quantity * signal.exitPrice;
+      
+      // 计算最大回撤
+      maxBalance = Math.max(maxBalance, balance);
+      const drawdown = (maxBalance - balance) / maxBalance;
+      maxDrawdown = Math.max(maxDrawdown, drawdown);
+    }
+  }
+  
+  return { balance, maxDrawdown, trades };
+}
+
+// 5. 统计指标
+function calculateMetrics(trades) {
+  const profitable = trades.filter(t => t.exit > t.entry).length;
+  const loss = trades.filter(t => t.exit <= t.entry).length;
+  const winRate = profitable / (profitable + loss);
+  
+  const returns = trades.map(t => (t.exit - t.entry) / t.entry);
+  const avgWin = returns.filter(r => r > 0).reduce((a,b)=>a+b,0) / profitable;
+  const avgLoss = returns.filter(r => r <= 0).reduce((a,b)=>a+b,0) / loss;
+  
+  return {
+    totalTrades: trades.length,
+    winRate: winRate.toFixed(2),
+    profitFactor: (avgWin / Math.abs(avgLoss)).toFixed(2),
+    maxDrawdown: (maxDrawdown * 100).toFixed(1) + '%'
+  };
+}
+
+// 6. 执行主程序
+async function main() {
+  // 获取数据
+  const rawData = await fetchOHLCV();
+  if (rawData.length === 0) return;
+
+  // 计算指标
+  const dataWithIndicators = await calculateIndicators(rawData);
+  
+  // 生成信号
+  const signals = generateSignals(dataWithIndicators);
+  
+  // 执行回测
+  const { balance, maxDrawdown, trades } = backtest(dataWithIndicators, signals);
+  
+  // 输出结果
+  console.log('===== 回测结果 =====');
+  console.log('最终余额:', balance.toFixed(2));
+  console.log('总交易次数:', trades.length);
+  console.log(calculateMetrics(trades));
+  console.log('最大回撤:', (maxDrawdown * 100).toFixed(1) + '%');
+}
+
+main();
+```
+
+### 使用说明
+
+1. **环境准备**：
+```bash
+npm install ccxt tulind
+```
+
+2. **策略核心参数**：
+```javascript
+// 布林带参数
+const bbPeriod = 20;      // 中线周期
+const bbStdDev = 2;       // 标准差倍数
+const initialBalance = 1000; // 初始资金
+```
+
+3. **代码特性**：
+- 完整回测流程：数据获取 → 指标计算 → 信号生成 → 回测执行 → 绩效统计
+- 真实市场数据（使用Binance交易所API）
+- 包含止损止盈逻辑
+- 专业统计指标（胜率、盈亏比、最大回撤）
+
+4. **优化建议**：
+- 增加交易手续费计算（在backtest函数中扣除）
+- 添加更多过滤条件（例如结合RSI指标）
+- 实现参数优化循环
+- 添加可视化输出（建议配合Plotly或Echarts）
+
+### 注意事项
+1. 实际使用需处理以下问题：
+   - 交易所API请求频率限制
+   - 数据清洗（处理缺失值）
+   - 滑点影响（建议增加0.1%-0.3%的滑点模拟）
+   - 市场流动性风险
+
+2. 此代码示例需要：
+   - Node.js 16+ 环境
+   - 稳定的网络连接（用于获取实时数据）
+   - 约500MB内存空间（处理1000根K线时）
+
+建议先在模拟账户测试，再考虑实盘应用。加密货币市场波动剧烈，需做好风险管理。

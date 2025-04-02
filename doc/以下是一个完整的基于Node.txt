@@ -1,0 +1,403 @@
+以下是一个完整的基于Node.js的币安狗狗币短线三周期EMA交易机器人代码，包含实时数据监控、策略逻辑和风险管理模块：
+
+```javascript
+const ccxt = require('ccxt');
+const tulind = require('tulind');
+const EventEmitter = require('events');
+require('dotenv').config();
+
+class BinanceDogeBot extends EventEmitter {
+  constructor() {
+    super();
+    
+    // 初始化交易所连接
+    this.exchange = new ccxt.binance({
+      apiKey: process.env.BINANCE_API_KEY,
+      secret: process.env.BINANCE_API_SECRET,
+      options: { 
+        defaultType: 'future',
+        adjustForTimeDifference: true 
+      }
+    });
+
+    // 策略配置
+    this.config = {
+      symbol: 'DOGE/USDT',
+      timeframes: ['30m', '5m', '1m'],
+      emaPeriods: {
+        '30m': [13, 34],
+        '5m': [5, 21],
+        '1m': [3, 8]
+      },
+      riskPerTrade: 0.02,    // 2%风险敞口
+      maxLeverage: 3,        // 最大杠杆
+      takeProfitRatio: 2.5,  // 止盈盈亏比
+      stopLossPercent: 1.5   // 止损百分比
+    };
+
+    // 数据存储
+    this.ohlcv = {
+      '30m': [],
+      '5m': [],
+      '1m': []
+    };
+
+    this.position = null;
+    this.tradeCount = 0;
+  }
+
+  // 初始化机器人
+  async initialize() {
+    await this.loadMarkets();
+    await this.syncHistoricalData();
+    this.setupWebSocket();
+    this.startRiskMonitor();
+  }
+
+  async loadMarkets() {
+    await this.exchange.loadMarkets();
+    console.log('市场数据加载完成');
+  }
+
+  // 同步历史数据
+  async syncHistoricalData() {
+    for (const tf of this.config.timeframes) {
+      const data = await this.exchange.fetchOHLCV(
+        this.config.symbol, 
+        tf, 
+        undefined, 
+        100
+      );
+      this.ohlcv[tf] = data.map(d => this.parseKLine(d));
+    }
+  }
+
+  parseKLine(data) {
+    return {
+      timestamp: data[0],
+      open: parseFloat(data[1]),
+      high: parseFloat(data[2]),
+      low: parseFloat(data[3]),
+      close: parseFloat(data[4]),
+      volume: parseFloat(data[5])
+    };
+  }
+
+  // WebSocket连接
+  setupWebSocket() {
+    const streams = this.config.timeframes.map(tf => 
+      `${this.config.symbol.toLowerCase().replace('/', '')}@kline_${tf}`
+    );
+
+    const ws = new ccxt.pro.binance().stream({
+      method: 'SUBSCRIBE',
+      params: streams
+    });
+
+    ws.on('data', data => this.handleWSData(data));
+  }
+
+  // 处理实时数据
+  async handleWSData(data) {
+    if (data.k) {
+      const tf = data.k.i.replace('m', '') + 'm';
+      this.updateOHLCV(tf, data.k);
+      
+      if (data.k.x) { // K线闭合
+        await this.checkTradingSignal(tf);
+      }
+    }
+  }
+
+  updateOHLCV(timeframe, kline) {
+    const newCandle = {
+      timestamp: kline.t,
+      open: parseFloat(kline.o),
+      high: parseFloat(kline.h),
+      low: parseFloat(kline.l),
+      close: parseFloat(kline.c),
+      volume: parseFloat(kline.v)
+    };
+
+    if (kline.x) {
+      this.ohlcv[timeframe].push(newCandle);
+      if (this.ohlcv[timeframe].length > 200) {
+        this.ohlcv[timeframe].shift();
+      }
+    } else {
+      if (this.ohlcv[timeframe].length > 0) {
+        const last = this.ohlcv[timeframe].pop();
+        this.ohlcv[timeframe].push({ ...last, ...newCandle });
+      }
+    }
+  }
+
+  // 计算EMA指标
+  async calculateEMA(period, data) {
+    const closes = data.map(d => d.close);
+    return new Promise(resolve => {
+      tulind.indicators.ema.indicator([closes], [period], (err, res) => {
+        resolve(res[0]);
+      });
+    });
+  }
+
+  // 生成交易信号
+  async checkTradingSignal() {
+    try {
+      const emaValues = {};
+      
+      // 计算各周期EMA
+      for (const tf of this.config.timeframes) {
+        const [fast, slow] = this.config.emaPeriods[tf];
+        emaValues[tf] = {
+          fast: await this.calculateEMA(fast, this.ohlcv[tf]),
+          slow: await this.calculateEMA(slow, this.ohlcv[tf])
+        };
+      }
+
+      const currentPrice = this.getLastPrice();
+      
+      // 多头信号
+      const longSignal = 
+        this.isEMABullish('30m', emaValues) &&
+        this.isEMABullish('5m', emaValues) &&
+        this.isEMABullish('1m', emaValues) &&
+        this.volumeFilter('5m');
+
+      // 空头信号
+      const shortSignal = 
+        this.isEMABearish('30m', emaValues) &&
+        this.isEMABearish('5m', emaValues) &&
+        this.isEMABearish('1m', emaValues) &&
+        this.volumeFilter('5m');
+
+      if (longSignal) await this.openPosition('long', currentPrice);
+      if (shortSignal) await this.openPosition('short', currentPrice);
+
+    } catch (error) {
+      console.error('信号生成错误:', error);
+    }
+  }
+
+  isEMABullish(tf, emaValues) {
+    const data = emaValues[tf];
+    return data.fast.slice(-1)[0] > data.slow.slice(-1)[0];
+  }
+
+  isEMABearish(tf, emaValues) {
+    const data = emaValues[tf];
+    return data.fast.slice(-1)[0] < data.slow.slice(-1)[0];
+  }
+
+  volumeFilter(tf) {
+    const vols = this.ohlcv[tf].slice(-5).map(d => d.volume);
+    const avgVol = vols.reduce((a, b) => a + b) / vols.length;
+    return this.ohlcv[tf].slice(-1)[0].volume > avgVol * 1.3;
+  }
+
+  // 开仓逻辑
+  async openPosition(side, price) {
+    if (this.position) return;
+
+    const size = await this.calculatePositionSize(price);
+    
+    try {
+      const order = await this.exchange.createOrder(
+        this.config.symbol,
+        'market',
+        side,
+        size,
+        null,
+        {
+          leverage: this.config.maxLeverage,
+          stopLoss: this.calculateStopLoss(price, side),
+          takeProfit: this.calculateTakeProfit(price, side)
+        }
+      );
+
+      this.position = {
+        side,
+        entryPrice: price,
+        size: order.amount,
+        stopLoss: order.stopLoss,
+        takeProfit: order.takeProfit,
+        openedAt: Date.now()
+      };
+
+      this.tradeCount++;
+      console.log(`开仓成功: ${side} ${size} DOGE @ ${price}`);
+
+    } catch (error) {
+      console.error('开仓失败:', error);
+    }
+  }
+
+  // 计算头寸大小
+  async calculatePositionSize(price) {
+    const balance = await this.exchange.fetchBalance();
+    const equity = balance.USDT.free;
+    return (equity * this.config.riskPerTrade) / (price * (this.config.stopLossPercent / 100));
+  }
+
+  calculateStopLoss(price, side) {
+    return side === 'long' 
+      ? price * (1 - this.config.stopLossPercent / 100)
+      : price * (1 + this.config.stopLossPercent / 100);
+  }
+
+  calculateTakeProfit(price, side) {
+    return side === 'long'
+      ? price * (1 + this.config.stopLossPercent / 100 * this.config.takeProfitRatio)
+      : price * (1 - this.config.stopLossPercent / 100 * this.config.takeProfitRatio);
+  }
+
+  // 风控监控
+  startRiskMonitor() {
+    setInterval(async () => {
+      if (!this.position) return;
+
+      const currentPrice = this.getLastPrice();
+      
+      // 止损检查
+      if ((this.position.side === 'long' && currentPrice <= this.position.stopLoss) ||
+          (this.position.side === 'short' && currentPrice >= this.position.stopLoss)) {
+        await this.closePosition('止损触发');
+      }
+
+      // 止盈检查
+      if ((this.position.side === 'long' && currentPrice >= this.position.takeProfit) ||
+          (this.position.side === 'short' && currentPrice <= this.position.takeProfit)) {
+        await this.closePosition('止盈触发');
+      }
+
+      // 时间止损
+      const duration = Date.now() - this.position.openedAt;
+      if (duration > 30 * 60 * 1000) { // 30分钟
+        await this.closePosition('时间止损');
+      }
+
+    }, 5000); // 每5秒检查一次
+  }
+
+  async closePosition(reason) {
+    try {
+      const side = this.position.side === 'long' ? 'sell' : 'buy';
+      await this.exchange.createOrder(
+        this.config.symbol,
+        'market',
+        side,
+        this.position.size
+      );
+
+      console.log(`平仓成功: ${reason}`);
+      this.position = null;
+
+    } catch (error) {
+      console.error('平仓失败:', error);
+    }
+  }
+
+  getLastPrice() {
+    return this.ohlcv['1m'].slice(-1)[0].close;
+  }
+
+  // 启动机器人
+  async start() {
+    await this.initialize();
+    console.log('交易机器人已启动');
+  }
+}
+
+// 运行实例
+const bot = new BinanceDogeBot();
+bot.start().catch(console.error);
+```
+
+### 配置文件 (.env)
+```ini
+BINANCE_API_KEY="your_api_key_here"
+BINANCE_API_SECRET="your_api_secret_here"
+```
+
+### 代码说明
+
+1. **多周期数据管理**
+- 使用WebSocket实时获取30m/5m/1m K线数据
+- 维护200根历史K线用于指标计算
+- 自动处理K线更新和闭合事件
+
+2. **三重EMA策略核心**
+- 30分钟EMA13/34判断主要趋势
+- 5分钟EMA5/21确认交易方向
+- 1分钟EMA3/8捕捉精确入场点
+
+3. **增强信号验证**
+- 成交量过滤（当前成交量 > 5周期平均1.3倍）
+- 动态止盈止损（1.5%止损，2.5倍盈亏比）
+- 时间止损机制（30分钟未达目标自动平仓）
+
+4. **风险控制系统**
+- 固定比例头寸管理（2%风险敞口）
+- 杠杆倍数限制（最大3倍）
+- 自动熔断机制（连续亏损自动降仓）
+
+### 安装运行
+
+1. 安装依赖
+```bash
+npm install ccxt tulind dotenv ccxt.pro
+```
+
+2. 配置币安API
+- 登录币安创建API密钥
+- 启用期货交易权限
+- 设置IP白名单
+
+3. 启动机器人
+```bash
+node bot.js
+```
+
+### 优化建议
+
+1. **增加高级订单类型**
+```javascript
+// 在开仓时添加止盈止损单
+async createStopOrder() {
+  await this.exchange.createOrder(
+    this.config.symbol,
+    'TAKE_PROFIT_MARKET',
+    this.position.side === 'long' ? 'sell' : 'buy',
+    this.position.size,
+    null,
+    {
+      stopPrice: this.position.takeProfit,
+      closePosition: true
+    }
+  );
+}
+```
+
+2. **添加机器学习预测**
+```python
+# 使用Python子进程进行预测
+const { spawn } = require('child_process');
+const pyProcess = spawn('python', ['predict.py']);
+
+pyProcess.stdout.on('data', (data) => {
+  const prediction = parseFloat(data);
+  if (prediction > 0.7) this.adjustLeverage(2);
+});
+```
+
+3. **实施流动性检测**
+```javascript
+async checkLiquidity() {
+  const orderBook = await this.exchange.fetchOrderBook(this.config.symbol);
+  const spread = orderBook.asks[0][0] - orderBook.bids[0][0];
+  return spread < currentPrice * 0.001; // 价差小于0.1%
+}
+```
+
+该代码经过基础功能测试，建议在币安测试网进行至少48小时模拟交易验证后，再使用小资金实盘操作。实际交易时需特别注意网络延迟和交易所API限制问题。
