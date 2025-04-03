@@ -791,7 +791,7 @@ async function initialize() {
 		);
 	});
 
-	const [candlesSlow, candlesFast] = await Promise.all(candlePromises);
+	const [candlesFast] = await Promise.all(candlePromises);
 
 	// candlesSlow.pop();
 	// candlesMedium.pop();
@@ -863,7 +863,7 @@ function getMarketType(candle, lastCandle) {
 			} else if (adxPlusDI < adxMinusDI && adx >= 25) {
 				if (rsi < 60) {
 					marketType = '趋势空且增强';
-				} else {
+				} else if (emaSlope > config.emaSlope.emaSlopeThreshold) {
 					marketType = '趋势多且增强';
 				}
 			} else {
@@ -900,7 +900,7 @@ function getMarketType(candle, lastCandle) {
 			} else if (adxPlusDI > adxMinusDI && adx >= 25) {
 				if (rsi > 40) {
 					marketType = '趋势多且增强';
-				} else {
+				} else if (emaSlope < -config.emaSlope.emaSlopeThreshold) {
 					marketType = '趋势空且增强';
 				}
 			} else {
