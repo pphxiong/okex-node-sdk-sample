@@ -1100,8 +1100,8 @@ class Backtester {
 
   let i = 0;
   let startTime = moment(start).add(i, "days");
-  // while (moment(end).isAfter(startTime)) {
-  while (i === 0) {
+  while (moment(end).isAfter(startTime)) {
+    // while (i === 0) {
     try {
       backtester.data = {
         [config.slowframe]: [],
