@@ -1113,15 +1113,15 @@ function mergeTimeframes() {
 	availableBalance = await initPositionData();
 	connectWebSocket();
 	await strategyLoop();
-	// setInterval(async () => {
-	// 	RESTART_TIME += 1;
-	// 	if (RESTART_TIME >= 5) {
-	// 		RESTART_TIME = 0;
-	// 		restart('normal');
-	// 		return;
-	// 	}
-	// 	await strategyLoop();
-	// }, 1000 * 60 * 2); // 每15秒运行一次
+	setInterval(async () => {
+		RESTART_TIME += 1;
+		if (RESTART_TIME >= 5) {
+			RESTART_TIME = 0;
+			restart('normal');
+			return;
+		}
+		await strategyLoop();
+	}, 1000 * 60 * 3); // 每15秒运行一次
 	console.log('策略已启动...');
 })();
 
