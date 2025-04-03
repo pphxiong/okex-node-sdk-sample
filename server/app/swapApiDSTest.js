@@ -546,7 +546,7 @@ class Backtester {
 				} else {
 					marketType = '趋势多';
 					if (adx < 20) {
-						if (adxPlusDI > adxMinusDI) {
+						if (adxPlusDI > adxMinusDI && rsi < 50) {
 							marketType = '趋势空';
 						}
 					}
@@ -583,7 +583,7 @@ class Backtester {
 				} else {
 					marketType = '趋势空';
 					if (adx < 20) {
-						if (adxPlusDI < adxMinusDI) {
+						if (adxPlusDI < adxMinusDI && rsi > 50) {
 							marketType = '趋势多';
 						}
 					}
@@ -1128,8 +1128,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-12-30';
+	const start = '2021-01-01';
+	const end = '2025-03-30';
 	const interval = 30;
 	let profitTotal = 0;
 
