@@ -604,14 +604,14 @@ async function generateSignal(currentPrice) {
 	console.log('side', state.side);
 	console.log('longCondition', longCondition);
 	console.log('shortCondition', shortCondition);
-	console.log(
-		config.fastframe,
-		Object.assign(candle[config.fastframe], {
-			timestamp: moment(candle[config.fastframe].timestamp).format(
-				'YYYY-MM-DD HH:mm:ss'
-			),
-		})
-	);
+	// console.log(
+	// 	config.fastframe,
+	// 	Object.assign(candle[config.fastframe], {
+	// 		timestamp: moment(candle[config.fastframe].timestamp).format(
+	// 			'YYYY-MM-DD HH:mm:ss'
+	// 		),
+	// 	})
+	// );
 	console.log(
 		config.slowframe,
 		Object.assign(candle[config.slowframe], {
