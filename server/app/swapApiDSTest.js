@@ -59,7 +59,8 @@ const config = {
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.001 * 0.01, // EMA斜率阈值
+		// emaSlopeThreshold: 0.001 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
@@ -1146,8 +1147,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1193,8 +1194,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
-	const end = '2025-04-30';
+	const start = '2022-01-01';
+	const end = '2022-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 
