@@ -52,7 +52,7 @@ const config = {
     stdDev: 1.8,
   },
   orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-  tradeAmount: 150, // 每单交易金额(USDT)
+  tradeAmount: 220, // 每单交易金额(USDT)
   maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -86,8 +86,7 @@ const config = {
   },
 };
 
-// 全局状态
-let state = {
+const initState = {
   activeOrders: [], // 活跃限价单
   position: 0, // 当前持仓数量
   entryPrice: 0, // 持仓均价
@@ -96,6 +95,9 @@ let state = {
   side: "buy", // 交易方向
   coolingUntil: 0, // 基础冷却结束时间
 };
+
+// 全局状态
+let state = JSON.parse(JSON.stringify(initState));
 let marketData = {
   [config.slowframe]: [],
   [config.fastframe]: [],
@@ -941,6 +943,8 @@ async function strategyLoop() {
         const limitPrice = orderBook.bid * (1 - config.orderDepth);
         const amount = config.tradeAmount / limitPrice;
 
+        state = JSON.parse(JSON.stringify(initState));
+
         await OrderManager.createLimitOrder(
           "buy",
           amount,
@@ -959,6 +963,8 @@ async function strategyLoop() {
       if (signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */) {
         const limitPrice = orderBook.ask * (1 + config.orderDepth);
         const amount = config.tradeAmount / limitPrice;
+
+        state = JSON.parse(JSON.stringify(initState));
 
         await OrderManager.createLimitOrder(
           "sell",
