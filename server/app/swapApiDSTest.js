@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [30, 5], slopeWindow: 5 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
@@ -1194,8 +1194,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2022-01-01';
-	const end = '2022-12-30';
+	const start = '2024-01-01';
+	const end = '2024-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 
