@@ -40,8 +40,8 @@ const config = {
 	timeframes: ['15m', '5m' /* '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [10, 5], slopeWindow: 5 },
-		'5m': { periods: [10, 5], slopeWindow: 5 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
+		'5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		// '30m': 0,
@@ -82,6 +82,13 @@ const config = {
 	leverage: 20, // 杠杆倍数
 	adxPeriod: 14,
 	rsiPeriod: 14,
+	// EMA斜率参数
+	emaSlope: {
+		period: 10,
+		lookback: 5, // 计算5根K线斜率
+		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
+		// emaSlopeThreshold: 0, // EMA斜率阈值
+	},
 };
 
 // 全局状态
