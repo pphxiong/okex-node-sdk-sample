@@ -533,9 +533,9 @@ class Backtester {
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI && adx >= 25) {
 					if (emaSlope > config.emaSlope.emaSlopeThreshold) {
-						marketType = '趋势空且增强';
-					} else {
 						marketType = '趋势多且增强';
+					} else {
+						marketType = '趋势空且增强';
 					}
 				} else if (adxPlusDI < adxMinusDI && adx >= 25) {
 					marketType = '趋势空且增强';
@@ -555,9 +555,9 @@ class Backtester {
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI && adx >= 25) {
 					if (emaSlope < -config.emaSlope.emaSlopeThreshold) {
-						marketType = '趋势多且增强';
-					} else {
 						marketType = '趋势空且增强';
+					} else {
+						marketType = '趋势多且增强';
 					}
 				} else if (adxPlusDI > adxMinusDI && adx >= 25) {
 					marketType = '趋势多且增强';
@@ -1128,8 +1128,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		// console.log('\n最近20笔交易:');
-		// console.table(this.trades);
+		console.log('\n最近20笔交易:');
+		console.table(this.trades);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1175,8 +1175,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-01-01';
-	const end = '2024-12-30';
+	const start = '2025-03-10';
+	const end = '2025-04-05';
 	const interval = 30;
 	let profitTotal = 0;
 
