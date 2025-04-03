@@ -685,7 +685,6 @@ class RiskManager {
 						'震荡市开空',
 						'趋势潜在减弱',
 						'趋势多且减弱',
-						'不确定',
 						'趋势多只平不开',
 						'趋势空',
 				  ].includes(slowMarketType)
@@ -702,7 +701,6 @@ class RiskManager {
 						'震荡市开多',
 						'趋势潜在增强',
 						'趋势空且减弱',
-						'不确定',
 						'趋势空只平不开',
 						'趋势多',
 				  ].includes(slowMarketType);
@@ -822,7 +820,7 @@ async function initialize() {
 }
 
 function getMarketType(candle, lastCandle) {
-	let marketType = '';
+	let marketType = '不确定';
 	if (!lastCandle) return marketType;
 
 	const {
