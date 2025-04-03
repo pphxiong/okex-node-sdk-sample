@@ -34,20 +34,20 @@ const _ = require('lodash');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '5m',
-	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
+	timeframes: ['5m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [25, 5], slopeWindow: 5 },
+		'5m': { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		// '30m': 0,
-		'15m': 0.003 * 0.01,
+		'5m': 0.003 * 0.01,
 		// '5m': 0,
 	}, // 斜率阈值
-	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
-	slowframe: '15m',
-	fastframe: '15m',
+	macdParams: { '5m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
+	slowframe: '5m',
+	fastframe: '5m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -559,10 +559,10 @@ class Backtester {
 			} else if (close < emaSlow) {
 				if (adx < 25)
 					marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
-				if (adx < 15 && rsi > 55 && adxPlusDI > adxMinusDI) {
+				if (adx < 20 && rsi > 55 && adxPlusDI > adxMinusDI) {
 					marketType = '趋势多且增强';
 				}
-				if (adx < 15 && rsi < 45 && adxPlusDI < adxMinusDI) {
+				if (adx < 20 && rsi < 45 && adxPlusDI < adxMinusDI) {
 					marketType = '趋势空且增强';
 				}
 			}
@@ -596,10 +596,10 @@ class Backtester {
 			} else if (close > emaSlow) {
 				if (adx < 25)
 					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
-				if (adx < 15 && rsi > 55 && adxPlusDI > adxMinusDI) {
+				if (adx < 20 && rsi > 55 && adxPlusDI > adxMinusDI) {
 					marketType = '趋势多且增强';
 				}
-				if (adx < 15 && rsi < 45 && adxPlusDI < adxMinusDI) {
+				if (adx < 20 && rsi < 45 && adxPlusDI < adxMinusDI) {
 					marketType = '趋势空且增强';
 				}
 			}
