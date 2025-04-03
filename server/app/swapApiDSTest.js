@@ -1204,7 +1204,7 @@ class Backtester {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-04-01 19:30:00')
+								moment('2025-04-02 19:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
 								moment('2025-04-04 02:30:00')
