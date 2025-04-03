@@ -543,7 +543,7 @@ class Backtester {
 				} else if (adxPlusDI < adxMinusDI && adx >= 25) {
 					if (rsi < 60) {
 						marketType = '趋势空且增强';
-					} else {
+					} else if (emaSlope > config.emaSlope.emaSlopeThreshold) {
 						marketType = '趋势多且增强';
 					}
 				} else {
@@ -581,7 +581,7 @@ class Backtester {
 				} else if (adxPlusDI > adxMinusDI && adx >= 25) {
 					if (rsi > 40) {
 						marketType = '趋势多且增强';
-					} else {
+					} else if (emaSlope < -config.emaSlope.emaSlopeThreshold) {
 						marketType = '趋势空且增强';
 					}
 				} else {
@@ -1130,8 +1130,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2019-01-01';
-	const end = '2020-12-30';
+	const start = '2021-01-01';
+	const end = '2025-03-30';
 	const interval = 30;
 	let profitTotal = 0;
 
