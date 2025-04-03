@@ -214,31 +214,31 @@ class Backtester {
 		return tfMinutes[targetTF] / tfMinutes[baseTF];
 	}
 
-	// // 生成随机价格路径（几何布朗运动模型）
-	// generatePricePaths(historicalPrices) {
-	// 	const returns = [];
-	// 	for (let i = 1; i < historicalPrices.length; i++) {
-	// 		returns.push(
-	// 			Math.log(
-	// 				historicalPrices[i].close / historicalPrices[i - 1].close
-	// 			)
-	// 		);
-	// 	}
+	// 生成随机价格路径（几何布朗运动模型）
+	generatePricePaths(historicalPrices) {
+		const returns = [];
+		for (let i = 1; i < historicalPrices.length; i++) {
+			returns.push(
+				Math.log(
+					historicalPrices[i].close / historicalPrices[i - 1].close
+				)
+			);
+		}
 
-	// 	const meanReturn = math.mean(returns);
-	// 	const stdReturn = math.std(returns);
+		const meanReturn = math.mean(returns);
+		const stdReturn = math.std(returns);
 
-	// 	const paths = [];
-	// 	for (let s = 0; s < config.simulations; s++) {
-	// 		const path = [historicalPrices[0].close];
-	// 		for (let t = 1; t < historicalPrices.length; t++) {
-	// 			const shock = math.random(0, 1) * stdReturn + meanReturn;
-	// 			path[t] = path[t - 1] * Math.exp(shock);
-	// 		}
-	// 		paths.push(path);
-	// 	}
-	// 	return paths;
-	// }
+		const paths = [];
+		for (let s = 0; s < config.simulations; s++) {
+			const path = [historicalPrices[0].close];
+			for (let t = 1; t < historicalPrices.length; t++) {
+				const shock = math.random(0, 1) * stdReturn + meanReturn;
+				path[t] = path[t - 1] * Math.exp(shock);
+			}
+			paths.push(path);
+		}
+		return paths;
+	}
 
 	async loadHistoricalData(start, end, interval) {
 		try {
@@ -270,7 +270,11 @@ class Backtester {
 						);
 					}
 
-					this.data[tf] = allCandles.map((c) => this.parseCandle(c));
+					const historicalData = allCandles.map((c) =>
+						this.parseCandle(c)
+					);
+					const paths = this.generatePricePaths(historicalData);
+					this.data[tf] = paths;
 					console.log(`Loaded ${this.data[tf].length} ${tf} candles`);
 				})
 			);
@@ -902,7 +906,7 @@ class Backtester {
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
 
-				if (isReverse || isLastIndex) {
+				if (isReverse) {
 					this.closePosition(
 						position,
 						d,
@@ -1131,8 +1135,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2021-01-01';
-	const end = '2025-03-30';
+	const start = '2023-01-01';
+	const end = '2023-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 
@@ -1166,25 +1170,25 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2025-04-02 19:30:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2025-04-04 02:30:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2025-04-02 19:30:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2025-04-04 02:30:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
