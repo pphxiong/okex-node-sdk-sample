@@ -902,7 +902,7 @@ class Backtester {
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
 
-				if (isReverse) {
+				if (isReverse || isLastIndex) {
 					this.closePosition(
 						position,
 						d,
