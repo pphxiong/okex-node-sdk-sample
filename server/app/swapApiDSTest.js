@@ -54,7 +54,7 @@ const config = {
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.003 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	atrParam: {
@@ -552,7 +552,7 @@ class Backtester {
 							adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
 				}
 			} else if (close < emaSlow) {
-				if (adx < 25)
+				if (adx < 20)
 					marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
 				if (adx < 20 && rsi > 55 && adxPlusDI > adxMinusDI) {
 					marketType = '趋势多且增强';
@@ -589,7 +589,7 @@ class Backtester {
 							adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
 				}
 			} else if (close > emaSlow) {
-				if (adx < 25)
+				if (adx < 20)
 					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
 				if (adx < 20 && rsi > 55 && adxPlusDI > adxMinusDI) {
 					marketType = '趋势多且增强';
