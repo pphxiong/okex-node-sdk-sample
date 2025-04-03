@@ -40,11 +40,6 @@ const config = {
 		'15m': { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
-	slopeThreshold: {
-		// '30m': 0,
-		'15m': 0.003 * 0.01,
-		// '5m': 0,
-	}, // 斜率阈值
 	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
 	slowframe: '15m',
 	fastframe: '15m',
@@ -1133,8 +1128,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-01-01';
-	const end = '2024-12-30';
+	const start = '2023-01-01';
+	const end = '2023-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 

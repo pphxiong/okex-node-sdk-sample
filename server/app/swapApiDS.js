@@ -43,11 +43,6 @@ const config = {
 		'15m': { periods: [25, 5], slopeWindow: 5 },
 		'5m': { periods: [25, 5], slopeWindow: 5 },
 	},
-	slopeThreshold: {
-		// '30m': 0,
-		'15m': 0.003 * 0.01,
-		'5m': 0,
-	}, // 斜率阈值
 	macdParams: { '15m': [12, 26, 9], '5m': [12, 26, 9] },
 	slowframe: '15m',
 	fastframe: '5m',
