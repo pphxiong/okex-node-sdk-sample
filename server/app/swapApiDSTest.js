@@ -270,10 +270,8 @@ class Backtester {
 						);
 					}
 
-					const historicalData = allCandles.map((c) =>
-						this.parseCandle(c)
-					);
-					const paths = this.generatePricePaths(historicalData);
+					const paths = allCandles.map((c) => this.parseCandle(c));
+					// paths = this.generatePricePaths(paths);
 					this.data[tf] = paths;
 					console.log(`Loaded ${this.data[tf].length} ${tf} candles`);
 				})
