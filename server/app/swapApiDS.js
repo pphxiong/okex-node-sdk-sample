@@ -37,15 +37,15 @@ require('dotenv').config();
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['15m', '5m' /* '1m'*/], // 多周期参数
+	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		'15m': { periods: [25, 5], slopeWindow: 5 },
-		'5m': { periods: [25, 5], slopeWindow: 5 },
+		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
-	macdParams: { '15m': [12, 26, 9], '5m': [12, 26, 9] },
+	macdParams: { '15m': [12, 26, 9] },
 	slowframe: '15m',
-	fastframe: '5m',
+	fastframe: '15m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -571,10 +571,10 @@ async function generateSignal(currentPrice) {
 		JSON.stringify(marketData[config.fastframe].slice(-2)[0])
 	);
 	const candle = {
-		[config.slowframe]: getTimeStampBefore(
-			marketData[config.slowframe],
-			lastKline5M.timestamp
-		),
+		// [config.slowframe]: getTimeStampBefore(
+		// 	marketData[config.slowframe],
+		// 	lastKline5M.timestamp
+		// ),
 		[config.fastframe]: lastKline5M,
 	};
 
@@ -797,16 +797,16 @@ async function initialize() {
 	// candlesMedium.pop();
 	candlesFast.pop();
 
-	marketData[config.slowframe] = candlesSlow.map(parseKLine);
+	// marketData[config.slowframe] = candlesSlow.map(parseKLine);
 	marketData[config.fastframe] = candlesFast.map(parseKLine);
 
 	mergeTimeframes();
 
-	console.log(
-		`已加载${config.slowframe} ${
-			marketData[config.slowframe].length
-		}根历史K线`
-	);
+	// console.log(
+	// 	`已加载${config.slowframe} ${
+	// 		marketData[config.slowframe].length
+	// 	}根历史K线`
+	// );
 	console.log(
 		`已加载${config.fastframe} ${
 			marketData[config.fastframe].length
