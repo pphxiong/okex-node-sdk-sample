@@ -1,7 +1,1 @@
-{
-	"position": "1000",
-	"entryPrice": "0.15676",
-	"side": "buy",
-	"fastMarketType": "趋势多且增强",
-	"slowMarketType": "趋势多且增强"
-}
+{"activeOrders":[],"position":1000,"entryPrice":0.078475,"highestPrice":0,"lowestPrice":null,"side":"buy","coolingUntil":0,"fastMarketType":"趋势多且增强","slowMarketType":"趋势多且增强"}
