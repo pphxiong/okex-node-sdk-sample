@@ -1065,7 +1065,7 @@ class Backtester {
 		});
 	}
 
-	showResults() {
+	showResults(startTime) {
 		const wins = this.trades.filter((t) => t.profit > 0);
 		const losses = this.trades.filter((t) => t.profit <= 0);
 
@@ -1093,6 +1093,7 @@ class Backtester {
       =============================
     `);
 		console.log('profit:', profitTotal);
+		console.log('startTime:', startTime.format('YYYY-MM-DD HH:mm:ss'));
 
 		const profitMap = this.genEveryTypeProfit();
 		Object.entries(profitMap).forEach(([key, value]) => {
@@ -1124,13 +1125,14 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2021-01-01';
-	const end = '2025-03-30';
+	const start = '2023-01-01';
+	const end = '2023-12-30';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
-	while (moment(end).isAfter(moment(start).add(i, 'days'))) {
+	let startTime = moment(start).add(i, 'days');
+	while (moment(end).isAfter(startTime)) {
 		// while (i === 0) {
 		try {
 			backtester.data = {
@@ -1184,11 +1186,13 @@ class Backtester {
 			backtester.runBacktest();
 
 			// 步骤4: 显示结果
-			backtester.showResults();
+			backtester.showResults(startTime);
 
 			profitTotal += backtester.balance - config.initialBalance;
 
 			i += interval;
+
+			startTime = moment(start).add(i, 'days');
 		} catch (e) {
 			console.log(e);
 		}
