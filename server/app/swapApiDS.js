@@ -847,7 +847,6 @@ function getMarketType(candle, lastCandle) {
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
 	if (emaFast > emaSlow) {
-		// marketType = '趋势多';
 		if (close > emaFast) {
 			if (adxPlusDI > adxMinusDI && adx >= 25) {
 				if (rsi > 75) {
@@ -857,8 +856,6 @@ function getMarketType(candle, lastCandle) {
 					emaSlope > config.emaSlope.emaSlopeThreshold
 				) {
 					marketType = '趋势多且增强';
-				} else {
-					// marketType = '趋势多';
 				}
 			} else if (adxPlusDI < adxMinusDI && adx >= 25) {
 				if (rsi < 60) {
@@ -868,8 +865,11 @@ function getMarketType(candle, lastCandle) {
 				}
 			} else {
 				marketType = '趋势多';
-				if (adx < 20)
-					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
+				if (adx < 20) {
+					if (adxPlusDI > adxMinusDI && rsi < 50) {
+						marketType = '趋势空';
+					}
+				}
 			}
 		} else if (close < emaSlow) {
 			if (adx < 20)
@@ -884,7 +884,6 @@ function getMarketType(candle, lastCandle) {
 	}
 
 	if (emaFast < emaSlow) {
-		// marketType = '趋势空';
 		if (close < emaFast) {
 			if (adxPlusDI < adxMinusDI && adx >= 25) {
 				if (rsi < 25) {
@@ -894,8 +893,6 @@ function getMarketType(candle, lastCandle) {
 					emaSlope < -config.emaSlope.emaSlopeThreshold
 				) {
 					marketType = '趋势空且增强';
-				} else {
-					// marketType = '趋势空';
 				}
 			} else if (adxPlusDI > adxMinusDI && adx >= 25) {
 				if (rsi > 40) {
@@ -905,8 +902,11 @@ function getMarketType(candle, lastCandle) {
 				}
 			} else {
 				marketType = '趋势空';
-				if (adx < 20)
-					marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
+				if (adx < 20) {
+					if (adxPlusDI < adxMinusDI && rsi > 50) {
+						marketType = '趋势多';
+					}
+				}
 			}
 		} else if (close > emaSlow) {
 			if (adx < 20)
