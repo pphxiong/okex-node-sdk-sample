@@ -59,7 +59,7 @@ const config = {
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.002 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0.001 * 0.01, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
@@ -529,7 +529,7 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaSlow) {
-			marketType = '趋势多';
+			// marketType = '趋势多';
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI && adx >= 25) {
 					if (emaSlope > config.emaSlope.emaSlopeThreshold) {
@@ -540,9 +540,15 @@ class Backtester {
 						}
 					}
 				} else if (adxPlusDI < adxMinusDI && adx >= 25) {
-					marketType = '趋势空且增强';
+					if (rsi < 60) {
+						marketType = '趋势空且增强';
+					} else {
+						marketType = '趋势多且增强';
+					}
 				} else {
-					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
+					if (adx < 20)
+						marketType =
+							adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
 				}
 			} else if (close < emaSlow) {
 				marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
@@ -553,7 +559,7 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			marketType = '趋势空';
+			// marketType = '趋势空';
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI && adx >= 25) {
 					if (emaSlope < -config.emaSlope.emaSlopeThreshold) {
@@ -564,9 +570,15 @@ class Backtester {
 						}
 					}
 				} else if (adxPlusDI > adxMinusDI && adx >= 25) {
-					marketType = '趋势多且增强';
+					if (rsi > 40) {
+						marketType = '趋势多且增强';
+					} else {
+						marketType = '趋势空且增强';
+					}
 				} else {
-					marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
+					if (adx < 20)
+						marketType =
+							adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
 				}
 			} else if (close > emaSlow) {
 				marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
