@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [20, 5], slopeWindow: 5 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
@@ -54,8 +54,8 @@ const config = {
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.002 * 0.01, // EMA斜率阈值
-		// emaSlopeThreshold: 0, // EMA斜率阈值
+		// emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	atrParam: {
 		// ATR参数
