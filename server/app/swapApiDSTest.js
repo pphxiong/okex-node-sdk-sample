@@ -33,21 +33,21 @@ const _ = require('lodash');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '5m',
-	timeframes: ['5m' /* '5m'  '1m'*/], // 多周期参数
+	timeframe: '15m',
+	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'5m': { periods: [25, 5], slopeWindow: 5 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	slopeThreshold: {
 		// '30m': 0,
-		'5m': 0.003 * 0.01,
+		'15m': 0.003 * 0.01,
 		// '5m': 0,
 	}, // 斜率阈值
-	macdParams: { '5m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
-	slowframe: '5m',
-	fastframe: '5m',
+	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
+	slowframe: '15m',
+	fastframe: '15m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -59,7 +59,7 @@ const config = {
 	emaSlope: {
 		period: 10,
 		lookback: 5, // 计算5根K线斜率
-		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
+		emaSlopeThreshold: 0.005 * 0.1, // EMA斜率阈值
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	atrParam: {
