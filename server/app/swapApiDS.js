@@ -425,7 +425,11 @@ class OrderManager {
   }
 
   static async writeData() {
-    let jsonStr = JSON.stringify(state);
+    let jsonStr = JSON.stringify(
+      Object.assign(state, {
+        writeMoment: moment().format("YYYY-MM-DD HH:mm:ss"),
+      })
+    );
 
     const result = await new Promise((resolve) => {
       //将修改后的内容写入文件
@@ -849,8 +853,10 @@ function getMarketType(candle, lastCandle) {
   if (emaFast > emaSlow) {
     if (close > emaFast) {
       if (adxPlusDI > adxMinusDI && adx >= 25) {
-        if (rsi > 75) {
-          marketType = "趋势空且增强";
+        if (rsi > 70) {
+          marketType = "趋势空";
+          if (emaSlope > config.emaSlope.emaSlopeThreshold * 2)
+            marketType = "趋势空且增强";
         } else if (rsi < 60 && emaSlope > config.emaSlope.emaSlopeThreshold) {
           marketType = "趋势多且增强";
         }
@@ -883,8 +889,10 @@ function getMarketType(candle, lastCandle) {
   if (emaFast < emaSlow) {
     if (close < emaFast) {
       if (adxPlusDI < adxMinusDI && adx >= 25) {
-        if (rsi < 25) {
-          marketType = "趋势多且增强";
+        if (rsi < 30) {
+          marketType = "趋势多";
+          if (emaSlope < -config.emaSlope.emaSlopeThreshold * 2)
+            marketType = "趋势多且增强";
         } else if (rsi > 40 && emaSlope < -config.emaSlope.emaSlopeThreshold) {
           marketType = "趋势空且增强";
         }
@@ -1021,6 +1029,7 @@ async function initPositionData() {
         lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
         side: holding.positionSide === "LONG" ? "buy" : "sell",
       };
+      delete dataConfig.position;
       state = Object.assign(state, dataConfig);
     }
   }
