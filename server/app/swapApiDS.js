@@ -1019,6 +1019,7 @@ async function initPositionData() {
         side: holding.positionSide === "LONG" ? "buy" : "sell",
       };
       state = Object.assign(state, dataConfig);
+      console.log(11, state);
     }
   }
   return availableBalance;
