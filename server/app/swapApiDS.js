@@ -868,10 +868,8 @@ function getMarketType(candle, lastCandle) {
         }
       } else {
         marketType = "趋势多";
-        if (adx < 20) {
-          if (adxPlusDI > adxMinusDI && rsi < 50) {
-            marketType = "趋势空";
-          }
+        if (adxPlusDI < adxMinusDI) {
+          marketType = "趋势空";
         }
       }
     } else if (close < emaSlow) {
@@ -904,10 +902,8 @@ function getMarketType(candle, lastCandle) {
         }
       } else {
         marketType = "趋势空";
-        if (adx < 20) {
-          if (adxPlusDI < adxMinusDI && rsi > 50) {
-            marketType = "趋势多";
-          }
+        if (adxPlusDI > adxMinusDI) {
+          marketType = "趋势多";
         }
       }
     } else if (close > emaSlow) {
