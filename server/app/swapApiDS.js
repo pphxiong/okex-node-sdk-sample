@@ -641,12 +641,15 @@ class RiskManager {
       JSON.stringify(marketData[config.fastframe].slice(-1)[0])
     );
     const candle = {
-      [config.slowframe]: getTimeStampBefore(
-        marketData[config.slowframe],
-        lastKline5M.timestamp
-      ),
+      // [config.slowframe]: getTimeStampBefore(
+      //   marketData[config.slowframe],
+      //   lastKline5M.timestamp
+      // ),
       [config.fastframe]: lastKline5M,
     };
+
+    const { marketType: fastMarketType } = candle[config.fastframe];
+    const { marketType: slowMarketType } = candle[config.slowframe];
 
     const { price: currentPrice } = signal;
     const { side, position } = state;
@@ -671,7 +674,7 @@ class RiskManager {
             // '趋势潜在增强',
             // '震荡市开多',
             // '潜在转折多',
-          ].includes(position.slowMarketType) &&
+          ].includes(state.slowMarketType) &&
           [
             "超买市",
             "趋势空且增强",
@@ -687,7 +690,7 @@ class RiskManager {
             // '趋势潜在减弱',
             // '震荡市开空',
             // '潜在转折空',
-          ].includes(position.slowMarketType) &&
+          ].includes(state.slowMarketType) &&
           [
             "超卖市",
             "趋势多且增强",
@@ -1019,7 +1022,6 @@ async function initPositionData() {
         side: holding.positionSide === "LONG" ? "buy" : "sell",
       };
       state = Object.assign(state, dataConfig);
-      console.log(11, state);
     }
   }
   return availableBalance;
