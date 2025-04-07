@@ -195,7 +195,10 @@ function getMarketType(candle, lastCandle) {
 			if (adxPlusDI < adxMinusDI && adx >= 25) {
 				if (rsi < 30) {
 					marketType = '趋势多';
-					if (emaSlope < -config.emaSlope.emaSlopeThreshold * 2)
+					if (
+						rsi < 25 &&
+						emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+					)
 						marketType = '趋势多且增强';
 				} else if (
 					rsi > 40 &&
