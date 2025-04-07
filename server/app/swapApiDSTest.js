@@ -529,8 +529,10 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI && adx >= 25) {
-					if (rsi > 75) {
-						marketType = '趋势空且增强';
+					if (rsi > 70) {
+						marketType = '趋势空';
+						if (emaSlope > -config.emaSlope.emaSlopeThreshold)
+							marketType = '趋势空且增强';
 					} else if (
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold
@@ -545,10 +547,8 @@ class Backtester {
 					}
 				} else {
 					marketType = '趋势多';
-					if (adx < 20) {
-						if (adxPlusDI > adxMinusDI && rsi < 50) {
-							marketType = '趋势空';
-						}
+					if (adxPlusDI < adxMinusDI) {
+						marketType = '趋势空';
 					}
 				}
 			} else if (close < emaSlow) {
@@ -567,13 +567,10 @@ class Backtester {
 		if (emaFast < emaSlow) {
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI && adx >= 25) {
-					if (
-						rsi < 25 &&
-						emaSlope > config.emaSlope.emaSlopeThreshold
-					) {
-						marketType = '趋势多且增强';
-						// if (emaSlope < -config.emaSlope.emaSlopeThreshold)
-						// 	marketType = '趋势多且增强';
+					if (rsi < 30) {
+						marketType = '趋势多';
+						if (emaSlope > config.emaSlope.emaSlopeThreshold)
+							marketType = '趋势多且增强';
 					} else if (
 						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold
@@ -588,10 +585,8 @@ class Backtester {
 					}
 				} else {
 					marketType = '趋势空';
-					if (adx < 20) {
-						if (adxPlusDI < adxMinusDI && rsi > 50) {
-							marketType = '趋势多';
-						}
+					if (adxPlusDI > adxMinusDI) {
+						marketType = '趋势多';
 					}
 				}
 			} else if (close > emaSlow) {
@@ -1136,7 +1131,7 @@ class Backtester {
 (async () => {
 	const backtester = new Backtester();
 	const start = '2021-01-01';
-	const end = '2025-03-30';
+	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
 
@@ -1171,23 +1166,22 @@ class Backtester {
 			await backtester.calculateIndicators();
 
 			// console.log(
-			// 	data[config.slowframe]
-			// 		.filter(
-			// 			(item) =>
-			// 				moment(item.timestamp).isAfter(
-			// 					moment('2025-04-02 19:30:00')
-			// 				) &&
-			// 				moment(item.timestamp).isBefore(
-			// 					moment('2025-04-04 02:30:00')
-			// 				)
-			// 		)
-			// 		.map((candle) =>
-			// 			Object.assign(candle, {
-			// 				timestamp: moment(candle.timestamp).format(
-			// 					'YYYY-MM-DD HH:mm:ss'
-			// 				),
-			// 			})
-			// 		)
+			//   data[config.slowframe]
+			//     .slice(-5)
+			//     // .filter(
+			//     // 	(item) =>
+			//     // 		moment(item.timestamp).isAfter(
+			//     // 			moment('2025-04-02 19:30:00')
+			//     // 		) &&
+			//     // 		moment(item.timestamp).isBefore(
+			//     // 			moment('2025-04-04 02:30:00')
+			//     // 		)
+			//     // )
+			//     .map((candle) =>
+			//       Object.assign(candle, {
+			//         timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+			//       })
+			//     )
 			// );
 
 			// console.log(data[config.slowframe].length);
