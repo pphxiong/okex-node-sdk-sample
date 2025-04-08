@@ -1039,7 +1039,6 @@ async function initPositionData() {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 		);
-		console.log(23, holding);
 		if (holding) {
 			const dataConfig = await readData();
 			state = {
@@ -1144,13 +1143,13 @@ function mergeTimeframes() {
 	connectWebSocket();
 	await strategyLoop();
 	setInterval(async () => {
+		await strategyLoop();
 		RESTART_TIME += 1;
 		if (RESTART_TIME >= 5) {
 			RESTART_TIME = 0;
 			restart('normal');
 			return;
 		}
-		await strategyLoop();
 	}, 1000 * 60 * 3);
 	console.log('策略已启动...');
 })();
