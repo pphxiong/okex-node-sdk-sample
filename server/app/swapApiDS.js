@@ -1039,6 +1039,7 @@ async function initPositionData() {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 		);
+		console.log(23, holding);
 		if (holding) {
 			const dataConfig = await readData();
 			state = {
@@ -1150,7 +1151,7 @@ function mergeTimeframes() {
 			return;
 		}
 		await strategyLoop();
-	}, 1000 * 60 * 3); // 每15秒运行一次
+	}, 1000 * 60 * 3);
 	console.log('策略已启动...');
 })();
 
