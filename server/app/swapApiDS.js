@@ -66,7 +66,7 @@ const config = {
 	macdFast: 8,
 	macdSlow: 17,
 	macdSignal: 5,
-	coldStartBars: 1000, // 冷启动期间的K线数量
+	coldStartBars: 300, // 冷启动期间的K线数量
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
@@ -1147,7 +1147,7 @@ function mergeTimeframes() {
 	setInterval(async () => {
 		await strategyLoop();
 		RESTART_TIME += 1;
-		if (RESTART_TIME >= 5) {
+		if (RESTART_TIME >= 3) {
 			RESTART_TIME = 0;
 			restart('normal');
 			return;
