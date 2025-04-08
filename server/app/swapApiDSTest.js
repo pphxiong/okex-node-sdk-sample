@@ -905,9 +905,10 @@ class Backtester {
 				];
 
 				const isReverse =
-					isStopLoss || position.direction === 'long'
+					isStopLoss ||
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
