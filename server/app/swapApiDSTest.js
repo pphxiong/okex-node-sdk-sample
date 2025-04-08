@@ -534,7 +534,7 @@ class Backtester {
 						if (
 							rsi > 75 &&
 							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 35
+							adx >= 25
 						)
 							marketType = '趋势空且增强';
 					} else if (
@@ -576,7 +576,7 @@ class Backtester {
 						if (
 							rsi < 25 &&
 							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 35
+							adx >= 25
 						)
 							marketType = '趋势多且增强';
 					} else if (
@@ -905,11 +905,11 @@ class Backtester {
 				];
 
 				const isReverse =
-					isProfitTarget ||
-					isStopLoss ||
-					(position.direction === 'long'
+					// isProfitTarget ||
+					// isStopLoss ||
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c));
+						: shortCloseConditions.some((c) => !!c);
 
 				if (isReverse) {
 					this.closePosition(
