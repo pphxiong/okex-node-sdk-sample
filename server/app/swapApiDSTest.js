@@ -534,7 +534,7 @@ class Backtester {
 						if (
 							rsi > 75 &&
 							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 30
+							adx >= 35
 						)
 							marketType = '趋势空且增强';
 					} else if (
@@ -576,7 +576,7 @@ class Backtester {
 						if (
 							rsi < 25 &&
 							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 30
+							adx >= 35
 						)
 							marketType = '趋势多且增强';
 					} else if (
@@ -769,30 +769,30 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
-				// const isProfitTarget =
-				// 	position.direction === 'long'
-				// 		? d.close >= position.entryPrice * (1 + 0.005)
-				// 		: d.close <= position.entryPrice * (1 - 0.005);
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >= position.entryPrice * (1 + 0.15 / 2)
+						: d.close <= position.entryPrice * (1 - 0.15 / 2);
 
-				// const isStopLoss =
-				// 	position.direction === 'long'
-				// 		? d.close <= position.entryPrice * (1 - 0.0025)
-				// 		: d.close >= position.entryPrice * (1 + 0.0025);
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice * (1 - 0.1 / 2)
+						: d.close >= position.entryPrice * (1 + 0.1 / 2);
 
 				const takeProfit =
 					candle[config.fastframe].atr * config.atrParam.takeProfit;
 				const stopLoss =
 					candle[config.fastframe].atr * config.atrParam.stopLoss;
 
-				const isProfitTarget =
-					position.direction === 'long'
-						? d.close >= position.entryPrice + takeProfit
-						: d.close <= position.entryPrice - takeProfit;
+				// const isProfitTarget =
+				// 	position.direction === 'long'
+				// 		? d.close >= position.entryPrice + takeProfit
+				// 		: d.close <= position.entryPrice - takeProfit;
 
-				const isStopLoss =
-					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.1 / 2)
-						: d.close >= position.entryPrice * (1 + 0.1 / 2);
+				// const isStopLoss =
+				// 	position.direction === 'long'
+				// 		? d.close <= position.entryPrice * (1 - 0.1 / 2)
+				// 		: d.close >= position.entryPrice * (1 + 0.1 / 2);
 
 				// const isReverse =
 				// 	position.direction === 'long'
@@ -905,9 +905,11 @@ class Backtester {
 				];
 
 				const isReverse =
-					position.direction === 'long'
+					isProfitTarget ||
+					isStopLoss ||
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
