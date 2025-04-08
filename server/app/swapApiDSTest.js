@@ -792,7 +792,7 @@ class Backtester {
 				const isStopLoss =
 					position.direction === 'long'
 						? d.close <= position.entryPrice * (1 - 0.01)
-						: d.close >= position.entryPrice + (1 + 0.01);
+						: d.close >= position.entryPrice * (1 + 0.01);
 
 				// const isReverse =
 				// 	position.direction === 'long'
