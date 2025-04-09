@@ -53,7 +53,7 @@ const config = {
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
 	tradeAmount: 180, // 每单交易金额(USDT)
-	maxOrderAge: 1000 * 5, // 限价单最长存活时间(30秒)
+	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
@@ -504,8 +504,8 @@ class OrderManager {
 				Date.now() - order.timestamp > config.maxOrderAge &&
 				status.remaining > 0
 			) {
-				await this.cancelOrder(order.id);
 				console.log(`订单超时取消: ${order.id}`);
+				await this.cancelOrder(order.id);
 			}
 
 			if (status.filled > 0) {
