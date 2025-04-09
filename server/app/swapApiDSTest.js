@@ -535,12 +535,9 @@ class Backtester {
 							rsi > 75 &&
 							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
 							adx >= 30 &&
-							adx < 50
+							adx < 60
 						)
-							marketType =
-								emaSlope < config.emaSlope.emaSlopeThreshold * 6
-									? '趋势空且增强'
-									: '趋势空且增强';
+							marketType = '趋势空且增强';
 					} else if (
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold
@@ -585,13 +582,9 @@ class Backtester {
 							rsi < 25 &&
 							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
 							adx >= 30 &&
-							adx < 50
+							adx < 60
 						)
-							marketType =
-								emaSlope >
-								-config.emaSlope.emaSlopeThreshold * 6
-									? '趋势多且增强'
-									: '趋势多且增强';
+							marketType = '趋势多且增强';
 					} else if (
 						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold
