@@ -618,14 +618,14 @@ class Backtester {
 
 		if (adxPlusDI > adxMinusDI && emaFast < emaSlow && close < emaFast) {
 			if (
-				(adx < 15 || rsi < 30) &&
+				(adxMinusDI < 10 || rsi < 30) &&
 				emaSlope < -config.emaSlope.emaSlopeThreshold
 			)
 				marketType = '趋势空';
 		}
 		if (adxPlusDI < adxMinusDI && emaFast > emaSlow && close > emaFast) {
 			if (
-				(adx < 15 || rsi > 70) &&
+				(adxPlusDI < 10 || rsi > 70) &&
 				emaSlope > config.emaSlope.emaSlopeThreshold
 			)
 				marketType = '趋势多';
