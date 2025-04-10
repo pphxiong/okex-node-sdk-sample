@@ -530,7 +530,8 @@ class Backtester {
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi > 70) {
-						marketType = adxMinusDI > 15 ? '趋势空' : '趋势多';
+						marketType =
+							adxMinusDI > 15 ? '趋势空' : '趋势多且增强';
 						if (
 							adxMinusDI > 15 &&
 							rsi > 75 &&
@@ -1161,7 +1162,7 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2024-12-11';
+	// const start = '2021-09-28';
 	const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
