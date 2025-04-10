@@ -549,7 +549,7 @@ class Backtester {
 						rsi > 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold
 					) {
-						// marketType = '趋势多';
+						marketType = '趋势多';
 					}
 				} else {
 					marketType = '趋势空';
@@ -565,7 +565,7 @@ class Backtester {
 				if (adx < 20 && rsi < 45 && adxPlusDI < adxMinusDI) {
 					marketType = '趋势空且增强';
 				}
-				// if (adx >= 25 && rsi > 40) marketType = '趋势多且增强';
+				if (adx >= 25 && rsi > 40) marketType = '趋势多且增强';
 			} else {
 				if (adx < 25 && adx > 20) {
 					if (rsi > 50) marketType = '趋势多且增强';
@@ -596,7 +596,7 @@ class Backtester {
 						rsi < 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold
 					) {
-						// marketType = '趋势空';
+						marketType = '趋势空';
 					}
 				} else {
 					marketType = '趋势多';
@@ -1020,8 +1020,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1068,16 +1068,16 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2021-05-01';
-	const start = '2021-04-01';
+	const start = '2021-05-01';
+	// const start = '2021-04-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -1104,26 +1104,26 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					// .slice(-5)
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2021-04-17 00:00:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2021-04-17 03:00:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		// .slice(-5)
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2021-04-17 00:00:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2021-04-17 03:00:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
