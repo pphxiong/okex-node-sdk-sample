@@ -153,8 +153,9 @@ function getMarketType(candle, lastCandle) {
 		if (close > emaFast) {
 			if (adxPlusDI > adxMinusDI) {
 				if (rsi > 70) {
-					marketType = '趋势空';
+					marketType = adxMinusDI > 15 ? '趋势空' : '趋势多';
 					if (
+						adxMinusDI > 15 &&
 						rsi > 75 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
 						adx >= 30
@@ -230,13 +231,11 @@ function getMarketType(candle, lastCandle) {
 		}
 	}
 
-	if (adx >= 25) {
-		if (adxPlusDI > adxMinusDI && emaFast < emaSlow && close < emaFast) {
-			if (rsi < 30) marketType = '趋势空';
-		}
-		if (adxPlusDI < adxMinusDI && emaFast > emaSlow && close > emaFast) {
-			if (rsi > 70) marketType = '趋势多';
-		}
+	if (adxPlusDI > adxMinusDI && emaFast < emaSlow && close < emaFast) {
+		if (rsi < 30) marketType = '趋势空';
+	}
+	if (adxPlusDI < adxMinusDI && emaFast > emaSlow && close > emaFast) {
+		if (rsi > 70) marketType = '趋势多';
 	}
 
 	return marketType;
