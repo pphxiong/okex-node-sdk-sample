@@ -549,7 +549,7 @@ class Backtester {
 						rsi > 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold
 					) {
-						// marketType = '趋势空且增强';
+						// marketType = '趋势多';
 					}
 				} else {
 					marketType = '趋势空';
@@ -595,7 +595,7 @@ class Backtester {
 						rsi < 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold
 					) {
-						// marketType = '趋势多且增强';
+						// marketType = '趋势空';
 					}
 				} else {
 					marketType = '趋势多';
@@ -1067,15 +1067,15 @@ class Backtester {
 (async () => {
 	const backtester = new Backtester();
 	// const start = '2021-05-01';
-	const start = '2021-01-01';
+	const start = '2021-04-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
