@@ -600,7 +600,7 @@ class Backtester {
 					}
 				} else {
 					marketType = '趋势多';
-					if (rsi < 45) marketType = '趋势多';
+					if (rsi < 45) marketType = '趋势空';
 				}
 			} else if (close > emaSlow) {
 				marketType = '趋势空';
