@@ -617,11 +617,11 @@ class Backtester {
 		}
 
 		if (adxPlusDI > adxMinusDI && emaFast < emaSlow && close < emaFast) {
-			if (rsi < 40 && emaSlope < config.emaSlope.emaSlopeThreshold)
+			if (rsi < 40 && emaSlope < -config.emaSlope.emaSlopeThreshold)
 				marketType = '趋势空';
 		}
 		if (adxPlusDI < adxMinusDI && emaFast > emaSlow && close > emaFast) {
-			if (rsi > 60 && emaSlope > -config.emaSlope.emaSlopeThreshold)
+			if (rsi > 60 && emaSlope > config.emaSlope.emaSlopeThreshold)
 				marketType = '趋势多';
 		}
 
