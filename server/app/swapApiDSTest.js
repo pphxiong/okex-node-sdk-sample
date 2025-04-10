@@ -64,7 +64,7 @@ const config = {
 		takeProfit: 6.4,
 	},
 	leverage: 20,
-	riskPerTrade: 0.02, // 每笔交易风险2%
+	riskPerTrade: 0.3, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 1000, // 初始本金10000 USDT
@@ -544,13 +544,12 @@ class Backtester {
 						marketType = '趋势多且增强';
 					}
 				} else if (adx >= 25) {
-					marketType = '趋势空且增强';
-					// if (
-					// 	rsi > 60 &&
-					// 	emaSlope > config.emaSlope.emaSlopeThreshold
-					// ) {
-					// 	marketType = '趋势空且增强';
-					// }
+					if (
+						rsi > 60 &&
+						emaSlope > config.emaSlope.emaSlopeThreshold
+					) {
+						marketType = '趋势空且增强';
+					}
 				} else {
 					marketType = '趋势空';
 				}
@@ -591,13 +590,12 @@ class Backtester {
 						marketType = '趋势空且增强';
 					}
 				} else if (adx >= 25) {
-					marketType = '趋势多且增强';
-					// if (
-					// 	rsi < 40 &&
-					// 	emaSlope < -config.emaSlope.emaSlopeThreshold
-					// ) {
-					// 	marketType = '趋势多且增强';
-					// }
+					if (
+						rsi < 40 &&
+						emaSlope < -config.emaSlope.emaSlopeThreshold
+					) {
+						marketType = '趋势多且增强';
+					}
 				} else {
 					marketType = '趋势多';
 				}
@@ -707,7 +705,7 @@ class Backtester {
 		const riskAmount = this.balance * config.riskPerTrade;
 		// return riskAmount / (atr * config.leverage);
 		return 1000;
-		// return this.balance / 2;
+		// return riskAmount;
 	}
 
 	getLongShort(dataList, index, WindowTreshold) {
@@ -781,8 +779,8 @@ class Backtester {
 
 				const isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.1 / 4)
-						: d.close >= position.entryPrice * (1 + 0.1 / 4);
+						? d.close <= position.entryPrice * (1 - 0.1 / 2)
+						: d.close >= position.entryPrice * (1 + 0.1 / 2);
 
 				const takeProfit =
 					candle[config.fastframe].atr * config.atrParam.takeProfit;
@@ -911,10 +909,10 @@ class Backtester {
 
 				const isReverse =
 					// isProfitTarget ||
-					// isStopLoss ||
-					position.direction === 'long'
+					isStopLoss ||
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
