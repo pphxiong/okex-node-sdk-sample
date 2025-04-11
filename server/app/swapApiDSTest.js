@@ -587,10 +587,10 @@ class Backtester {
 						marketType = '趋势空且增强';
 					}
 				} else {
-					// if (adx < 20 && adx > 15) {
-					// 	if (rsi > 55) marketType = '趋势空且增强';
-					// 	if (rsi < 45) marketType = '趋势多且增强';
-					// }
+					if (adx < 20 && adx > 15) {
+						if (rsi > 55) marketType = '趋势空且增强';
+						if (rsi < 45) marketType = '趋势多且增强';
+					}
 				}
 			} else if (close > emaSlow) {
 				marketType = '趋势空';
@@ -621,8 +621,8 @@ class Backtester {
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
 		// return riskAmount / (atr * config.leverage);
-		return 1000;
-		// return riskAmount;
+		// return 1000;
+		return riskAmount;
 	}
 
 	getLongShort(dataList, index, WindowTreshold) {
