@@ -575,7 +575,7 @@ class Backtester {
 					if (rsi < 30) {
 						marketType = '趋势空';
 						if (
-							rsi < 20 &&
+							rsi < 25 &&
 							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
 							adx >= 30
 						)
