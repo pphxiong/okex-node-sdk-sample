@@ -520,13 +520,19 @@ class OrderManager {
 				console.log(status);
 
 				// 更新持仓
-				if (!state.position) {
+				if (
+					!state.position ||
+					Math.abs(state.position) < Math.abs(status.amount)
+				) {
+					state.position = 0;
+					state.entryPrice = 0;
+					state.highestPrice = 0;
 					const filledValue = status.filled * status.price;
 					state.position +=
 						status.side === 'buy' ? status.filled : -status.filled;
 					state.entryPrice =
 						(state.entryPrice * state.position + filledValue) /
-						(state.position + status.filled);
+						state.position;
 					state.side = status.side;
 					state.fastMarketType = order.fastMarketType;
 					state.slowMarketType = order.slowMarketType;
@@ -731,6 +737,7 @@ async function generateSignal(currentPrice) {
 	console.log('################################');
 	console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 	console.log('currentPrice', currentPrice);
+	console.log('entryPrice', state.entryPrice);
 	console.log('position', state.position);
 	console.log('side', state.side);
 	console.log('longCondition', longCondition);
@@ -834,11 +841,11 @@ class RiskManager {
 						'趋势多',
 				  ].includes(slowMarketType);
 
-		console.log('***********************************');
-		console.log('entryPrice', state.entryPrice);
-		console.log('currentPrice', currentPrice);
-		console.log('isStop', isStop);
-		console.log('***********************************');
+		// console.log('***********************************');
+		// console.log('entryPrice', state.entryPrice);
+		// console.log('currentPrice', currentPrice);
+		// console.log('isStop', isStop);
+		// console.log('***********************************');
 		return isStop;
 	}
 
