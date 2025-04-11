@@ -621,8 +621,8 @@ class Backtester {
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
 		// return riskAmount / (atr * config.leverage);
-		// return 1000;
-		return riskAmount;
+		return 1000;
+		// return riskAmount;
 	}
 
 	getLongShort(dataList, index, WindowTreshold) {
@@ -1077,7 +1077,7 @@ class Backtester {
 				merged: [],
 			};
 			backtester.trades = [];
-			// backtester.balance = config.initialBalance;
+			backtester.balance = config.initialBalance;
 			backtester.totalFee = 0;
 
 			// 步骤1: 加载历史数据
