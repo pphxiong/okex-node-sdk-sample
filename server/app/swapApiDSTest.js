@@ -64,7 +64,7 @@ const config = {
 		takeProfit: 6.4,
 	},
 	leverage: 20,
-	riskPerTrade: 0.8, // 每笔交易风险2%
+	riskPerTrade: 0.4, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 1000, // 初始本金10000 USDT
