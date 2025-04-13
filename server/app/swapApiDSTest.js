@@ -506,29 +506,29 @@ class Backtester {
     const lastWeeker = lastEmaFast < lastEmaSlow;
 
     if (emaFast > emaSlow) {
-      if (close > emaFast) {
-        if (adxPlusDI > adxMinusDI) {
-          if (rsi > 70) {
-            marketType = adxMinusDI > 15 ? "趋势空" : "趋势多";
-            if (
-              adxMinusDI > 15 &&
-              rsi > 75 &&
-              emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
-              adx >= 30
-            )
-              marketType = "趋势空且增强";
-          } else if (
-            rsi < 60 &&
-            emaSlope > config.emaSlope.emaSlopeThreshold / 2
-          ) {
-            marketType = "趋势多且增强";
-          }
-        } else {
-          if (adx < 20 && adx > 15) {
-            if (rsi > 55) marketType = "趋势空且增强";
-            if (rsi < 45) marketType = "趋势多且增强";
-          }
+      if (adxPlusDI > adxMinusDI) {
+        if (rsi > 70) {
+          marketType = adxMinusDI > 15 ? "趋势空" : "趋势多";
+          if (
+            adxMinusDI > 15 &&
+            rsi > 75 &&
+            emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
+            adx >= 30
+          )
+            marketType = "趋势空且增强";
+        } else if (
+          rsi < 60 &&
+          emaSlope > config.emaSlope.emaSlopeThreshold / 2
+        ) {
+          marketType = "趋势多且增强";
         }
+      } else {
+        if (adx < 20 && adx > 15) {
+          if (rsi > 55) marketType = "趋势空且增强";
+          if (rsi < 45) marketType = "趋势多且增强";
+        }
+      }
+      if (close > emaFast) {
       } else if (close < emaSlow) {
         if (adxPlusDI < adxMinusDI) {
           if (rsi < 50) marketType = "趋势空且增强";
@@ -581,12 +581,12 @@ class Backtester {
         }
       } else if (close > emaSlow) {
         marketType = "趋势空";
-        if (adxPlusDI < adxMinusDI) {
-          if (rsi < 50) marketType = "趋势空";
-        }
-        if (adxPlusDI > adxMinusDI) {
-          if (rsi > 50) marketType = "趋势多";
-        }
+        // if (adxPlusDI < adxMinusDI) {
+        //   if (rsi < 50) marketType = "趋势空";
+        // }
+        // if (adxPlusDI > adxMinusDI) {
+        //   if (rsi > 50) marketType = "趋势多";
+        // }
         // if (adx < 25) {
         //   marketType = rsi < 40 ? "趋势空" : "趋势多";
         // }
