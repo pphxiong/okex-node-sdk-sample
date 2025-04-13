@@ -506,7 +506,7 @@ class Backtester {
     const lastWeeker = lastEmaFast < lastEmaSlow;
 
     if (emaFast > emaSlow) {
-      if (close > emaSlow) {
+      if (close > emaFast) {
         if (adxPlusDI > adxMinusDI) {
           if (rsi > 70) {
             marketType = adxMinusDI > 15 ? "趋势空" : "趋势多";
