@@ -569,7 +569,7 @@ class Backtester {
             )
               marketType = "趋势多且增强";
           } else if (
-            adxPlusDI > 15 &&
+            // adxPlusDI > 15 &&
             rsi > 40 &&
             emaSlope < -config.emaSlope.emaSlopeThreshold / 2
           ) {
