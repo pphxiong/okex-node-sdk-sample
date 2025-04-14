@@ -1023,8 +1023,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1071,8 +1071,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2021-01-01';
-	const start = '2025-01-10';
+	const start = '2021-01-01';
+	// const start = '2025-01-10';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
