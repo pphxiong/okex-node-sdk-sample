@@ -1106,26 +1106,26 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			// 	data[config.slowframe]
-			// 		// .slice(-5)
-			// 		.filter(
-			// 			(item) =>
-			// 				moment(item.timestamp).isAfter(
-			// 					moment('2021-04-17 00:00:00')
-			// 				) &&
-			// 				moment(item.timestamp).isBefore(
-			// 					moment('2021-04-17 03:00:00')
-			// 				)
-			// 		)
-			// 		.map((candle) =>
-			// 			Object.assign(candle, {
-			// 				timestamp: moment(candle.timestamp).format(
-			// 					'YYYY-MM-DD HH:mm:ss'
-			// 				),
-			// 			})
-			// 		)
-			// );
+			console.log(
+				data[config.slowframe]
+					// .slice(-5)
+					.filter(
+						(item) =>
+							moment(item.timestamp).isAfter(
+								moment('2025-01-18 10:15:00')
+							) &&
+							moment(item.timestamp).isBefore(
+								moment('2025-01-18 13:15:00')
+							)
+					)
+					.map((candle) =>
+						Object.assign(candle, {
+							timestamp: moment(candle.timestamp).format(
+								'YYYY-MM-DD HH:mm:ss'
+							),
+						})
+					)
+			);
 
 			// console.log(data[config.slowframe].length);
 
