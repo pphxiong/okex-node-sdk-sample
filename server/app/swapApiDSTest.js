@@ -32,7 +32,7 @@ const _ = require('lodash');
 
 // 策略配置
 const config = {
-	symbol: 'BTC/USDT',
+	symbol: 'DOGE/USDT',
 	timeframe: '15m',
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
