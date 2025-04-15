@@ -554,12 +554,11 @@ class Backtester {
 							marketType = '趋势空且增强';
 					}
 					if (adx < 15) {
-						marketType = '趋势多且增强';
 						if (
 							rsi > 55 &&
 							emaSlope > config.emaSlope.emaSlopeThreshold
 						)
-							marketType = '趋势空且增强';
+							marketType = '趋势空';
 					}
 				}
 			} else if (close < emaSlow) {
