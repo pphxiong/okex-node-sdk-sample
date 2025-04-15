@@ -1040,8 +1040,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		// console.log('\n最近20笔交易:');
-		// console.table(this.trades);
+		console.log('\n最近20笔交易:');
+		console.table(this.trades);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1096,8 +1096,8 @@ class Backtester {
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
