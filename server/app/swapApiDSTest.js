@@ -558,6 +558,11 @@ class Backtester {
 							emaSlope > config.emaSlope.emaSlopeThreshold
 						)
 							marketType = '趋势空';
+						if (
+							rsi < 45 &&
+							emaSlope < -config.emaSlope.emaSlopeThreshold
+						)
+							marketType = '趋势多';
 					}
 				}
 			} else if (close < emaSlow) {
