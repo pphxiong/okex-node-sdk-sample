@@ -529,7 +529,7 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI) {
-					const num = Math.abs(adxPlusDI - adxMinusDI) > 10 ? 70 : 55;
+					const num = Math.abs(adxPlusDI - adxMinusDI) > 8 ? 70 : 55;
 					if (rsi > num) {
 						marketType = adxMinusDI > 15 ? '趋势空' : '趋势多';
 						if (
