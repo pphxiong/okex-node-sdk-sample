@@ -32,7 +32,7 @@ const _ = require('lodash');
 
 // 策略配置
 const config = {
-	symbol: 'DOGE/USDT',
+	symbol: 'BTC/USDT',
 	timeframe: '15m',
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
@@ -539,7 +539,6 @@ class Backtester {
 						)
 							marketType = '趋势空且增强';
 					} else if (
-						adx > 15 &&
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
 					) {
@@ -606,7 +605,6 @@ class Backtester {
 						)
 							marketType = '趋势多且增强';
 					} else if (
-						adx > 15 &&
 						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
 					) {
