@@ -1097,7 +1097,7 @@ class Backtester {
 	let profitTotal = 0;
 
 	let i = 0;
-	// let startTime = moment(start).add(i, 'days');
+	let startTime = moment(start).add(i, 'days');
 	while (moment(end).isAfter(startTime)) {
 		// while (i === 0) {
 		try {
