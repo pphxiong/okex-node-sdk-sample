@@ -546,10 +546,11 @@ class Backtester {
 							marketType = '趋势多且增强';
 						}
 					} else {
-						if (adx >= 50) {
+						if (adx >= 30) {
 							if (rsi < 75) {
 								marketType = '趋势多且增强';
 							}
+							if (rsi > 80) marketType = '趋势空';
 							if (rsi > 85) marketType = '趋势空且增强';
 						}
 					}
@@ -608,10 +609,11 @@ class Backtester {
 							marketType = '趋势空且增强';
 						}
 					} else {
-						if (adx >= 50) {
+						if (adx >= 30) {
 							if (rsi > 25) {
 								marketType = '趋势空且增强';
 							}
+							if (rsi < 20) marketType = '趋势多';
 							if (rsi < 15) marketType = '趋势多且增强';
 						}
 					}
