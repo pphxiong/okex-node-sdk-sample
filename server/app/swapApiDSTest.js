@@ -583,7 +583,7 @@ class Backtester {
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 20 || adxPlusDI < 10) {
-						marketType = '趋势空';
+						marketType = '趋势空且增强';
 					} else if (rsi < 30) {
 						marketType = '趋势多';
 						if (
