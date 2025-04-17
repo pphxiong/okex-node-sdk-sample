@@ -530,7 +530,7 @@ class Backtester {
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI) {
 					if (adxMinusDI > 15 || true) {
-						const closeNum = adx >= 25 ? 70 : 60;
+						const closeNum = adx >= 25 ? 70 : 65;
 						const openNum = closeNum + 10;
 						if (rsi > closeNum) {
 							marketType = adx < 70 ? '趋势空' : '趋势多';
@@ -599,7 +599,7 @@ class Backtester {
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI) {
 					if (adxPlusDI > 15 || true) {
-						const closeNum = adx >= 25 ? 30 : 40;
+						const closeNum = adx >= 25 ? 30 : 35;
 						const openNum = closeNum + 10;
 						if (rsi < closeNum) {
 							marketType = adx < 70 ? '趋势多' : '趋势空';
