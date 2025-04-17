@@ -638,7 +638,7 @@ class Backtester {
 		}
 
 		if (
-			adx > 50 &&
+			adx > 60 &&
 			adxPlusDI < adxMinusDI &&
 			emaFast < emaSlow &&
 			close < emaFast
@@ -647,7 +647,7 @@ class Backtester {
 		}
 
 		if (
-			adx > 50 &&
+			adx > 60 &&
 			adxPlusDI > adxMinusDI &&
 			emaFast > emaSlow &&
 			close > emaFast
