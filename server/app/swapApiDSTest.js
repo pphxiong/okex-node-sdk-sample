@@ -659,6 +659,26 @@ class Backtester {
 				marketType = '趋势多';
 		}
 
+		if (
+			adx > 60 &&
+			adxMinusDI < 10 &&
+			adxPlusDI > adxMinusDI &&
+			emaFast > emaSlow &&
+			close > emaFast
+		) {
+			marketType = '趋势多';
+		}
+
+		if (
+			adx > 60 &&
+			adxPlusDI < 10 &&
+			adxPlusDI < adxMinusDI &&
+			emaFast < emaSlow &&
+			close < emaFast
+		) {
+			marketType = '趋势空';
+		}
+
 		return marketType;
 	}
 
