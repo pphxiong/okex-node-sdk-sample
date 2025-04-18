@@ -553,7 +553,7 @@ class Backtester {
 							marketType = '趋势空且增强';
 					}
 					if (adx < 15) {
-						if (rsi > 55) marketType = '趋势多且增强';
+						if (rsi > 55) marketType = '趋势多';
 					}
 				}
 			} else if (close < emaSlow) {
