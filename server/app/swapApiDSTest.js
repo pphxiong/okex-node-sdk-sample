@@ -572,9 +572,9 @@ class Backtester {
 					if (adxPlusDI > adxMinusDI) {
 						marketType = '趋势多';
 					}
-					if (rsi > 55 && adxPlusDI > adxMinusDI)
+					if (rsi > 50 && adxPlusDI > adxMinusDI)
 						marketType = '趋势多且增强';
-					if (rsi < 45 && adxPlusDI < adxMinusDI)
+					if (rsi < 50 && adxPlusDI < adxMinusDI)
 						marketType = '趋势空且增强';
 				}
 				// if (adx < 25 && adx > 20) {
@@ -631,12 +631,6 @@ class Backtester {
 					marketType = rsi > 60 ? '趋势多' : '趋势空';
 				}
 				if (adx < 20) {
-					if (adxPlusDI < adxMinusDI) {
-						marketType = '趋势多';
-					}
-					if (adxPlusDI > adxMinusDI) {
-						marketType = '趋势空';
-					}
 					if (rsi > 55 && adxPlusDI > adxMinusDI)
 						marketType = '趋势多且增强';
 					if (rsi < 45 && adxPlusDI < adxMinusDI)
