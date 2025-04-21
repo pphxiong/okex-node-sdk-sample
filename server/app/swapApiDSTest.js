@@ -86,7 +86,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 14,
+	adxPeriod: 7,
 	rsiPeriod: 14,
 };
 
@@ -1079,8 +1079,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1127,16 +1127,16 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-04-01';
-	// const start = "2021-01-01";
+	// const start = '2025-04-01';
+	const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
