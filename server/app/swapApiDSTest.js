@@ -1169,10 +1169,10 @@ class Backtester {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-04-20 10:00:00')
+								moment('2025-04-07 18:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-04-22 17:00:00')
+								moment('2025-04-08 16:00:00')
 							)
 					)
 					.map((candle) =>
