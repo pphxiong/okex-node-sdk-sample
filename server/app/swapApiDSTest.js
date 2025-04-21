@@ -1127,16 +1127,16 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-04-01';
-	const start = '2021-01-01';
+	const start = '2025-04-01';
+	// const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -1169,10 +1169,10 @@ class Backtester {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-04-09 10:00:00')
+								moment('2025-04-20 10:00:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-04-09 17:00:00')
+								moment('2025-04-22 17:00:00')
 							)
 					)
 					.map((candle) =>
