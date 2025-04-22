@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [30, 6], slopeWindow: 6 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
@@ -671,22 +671,24 @@ class Backtester {
 				marketType = '趋势多且增强';
 		}
 
-		// if (
-		// 	adx < 25 &&
-		// 	adxPlusDI > adxMinusDI &&
-		// 	emaFast < emaSlow &&
-		// 	close < emaFast
-		// ) {
-		// 	if (rsi < 35) marketType = '趋势空';
-		// }
-		// if (
-		// 	adx < 25 &&
-		// 	adxPlusDI < adxMinusDI &&
-		// 	emaFast > emaSlow &&
-		// 	close > emaFast
-		// ) {
-		// 	if (rsi > 65) marketType = '趋势多';
-		// }
+		if (
+			// adx < 25 &&
+			// adxPlusDI > adxMinusDI &&
+			emaFast < emaSlow &&
+			close < emaFast &&
+			emaSlope < -config.emaSlope.emaSlopeThreshold
+		) {
+			if (rsi < 35) marketType = '趋势空';
+		}
+		if (
+			// adx < 25 &&
+			// adxPlusDI < adxMinusDI &&
+			emaFast > emaSlow &&
+			close > emaFast &&
+			emaSlope > -config.emaSlope.emaSlopeThreshold
+		) {
+			if (rsi > 65) marketType = '趋势多';
+		}
 
 		// if (
 		// 	adx < 25 &&
