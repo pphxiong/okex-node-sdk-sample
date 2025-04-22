@@ -929,8 +929,10 @@ class Backtester {
 				];
 
 				const isReverse =
+					isLastIndex ||
 					// isProfitTarget ||
-					isStopLoss || position.direction === 'long'
+					isStopLoss ||
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
 
@@ -1207,6 +1209,8 @@ class Backtester {
 			backtester.trades = [];
 			backtester.balance = config.initialBalance;
 			backtester.totalFee = 0;
+			backtester.maxBalance = config.initialBalance;
+			backtester.maxDrawdown = 0;
 
 			// 步骤1: 加载历史数据
 			const data = await backtester.loadHistoricalData(
