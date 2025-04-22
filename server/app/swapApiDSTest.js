@@ -1079,8 +1079,12 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
+
+		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
+			2
+		);
 
 		console.log(`
       ========== 回测结果 ==========
@@ -1090,7 +1094,7 @@ class Backtester {
       期末余额:      ${this.balance.toFixed(2)} USDT
       盈亏比:        ${profitFactor.toFixed(2)}
       最大单笔盈利:  ${Math.max(...this.trades.map((t) => t.profit)).toFixed(2)}
-      最大单笔亏损:  ${Math.min(...this.trades.map((t) => t.profit)).toFixed(2)}
+      最大单笔亏损:  ${maxLoss}
       手续费:       ${this.totalFee}
       =============================
     `);
@@ -1111,6 +1115,8 @@ class Backtester {
 				typeProfit.toFixed(2)
 			);
 		});
+
+		return maxLoss;
 	}
 
 	genEveryTypeProfit() {
@@ -1127,11 +1133,12 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-04-01';
-	// const start = '2021-01-01';
+	// const start = '2025-04-01';
+	const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
+	let maxLossTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
@@ -1190,7 +1197,8 @@ class Backtester {
 			backtester.runBacktest();
 
 			// 步骤4: 显示结果
-			backtester.showResults(startTime);
+			const maxLoss = backtester.showResults(startTime);
+			maxLossTotal = Math.min(maxLossTotal, Number(maxLoss));
 
 			profitTotal += backtester.balance - config.initialBalance;
 
@@ -1202,6 +1210,7 @@ class Backtester {
 		}
 	}
 	console.log('profitTotal', profitTotal);
+	console.log('maxLossTotal', maxLossTotal);
 })();
 
 app.listen(8092);
