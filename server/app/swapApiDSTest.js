@@ -775,8 +775,8 @@ class Backtester {
 
 				const isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.1 / 1)
-						: d.close >= position.entryPrice * (1 + 0.1 / 1);
+						? d.close <= position.entryPrice * (1 - 0.1 / 10)
+						: d.close >= position.entryPrice * (1 + 0.1 / 10);
 
 				const takeProfit =
 					candle[config.fastframe].atr * config.atrParam.takeProfit;
