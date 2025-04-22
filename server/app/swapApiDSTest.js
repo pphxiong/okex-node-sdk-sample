@@ -544,6 +544,12 @@ class Backtester {
 					) {
 						marketType = '趋势多且增强';
 					}
+
+					if (
+						rsi > 60 &&
+						emaSlope > config.emaSlope.emaSlopeThreshold * 3
+					)
+						marketType = '趋势多且增强';
 				} else {
 					if (adx >= 30) marketType = '趋势多且增强';
 					if (adx < 20 && adx > 15) {
@@ -606,6 +612,12 @@ class Backtester {
 					) {
 						marketType = '趋势空且增强';
 					}
+
+					if (
+						rsi < 40 &&
+						emaSlope < -config.emaSlope.emaSlopeThreshold * 3
+					)
+						marketType = '趋势空且增强';
 				} else {
 					if (adx < 20 && adx > 15) {
 						if (
@@ -1117,7 +1129,7 @@ class Backtester {
 			);
 		});
 
-		return maxLoss;
+		return { winRate, maxLoss };
 	}
 
 	genEveryTypeProfit() {
@@ -1140,6 +1152,7 @@ class Backtester {
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
+	let winRateTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
@@ -1198,8 +1211,9 @@ class Backtester {
 			backtester.runBacktest();
 
 			// 步骤4: 显示结果
-			const maxLoss = backtester.showResults(startTime);
+			const { winRate, maxLoss } = backtester.showResults(startTime);
 			maxLossTotal = Math.min(maxLossTotal, Number(maxLoss));
+			winRateTotal += Number(winRate);
 
 			profitTotal += backtester.balance - config.initialBalance;
 
@@ -1212,6 +1226,9 @@ class Backtester {
 	}
 	console.log('profitTotal', profitTotal);
 	console.log('maxLossTotal', maxLossTotal);
+	console.log('winRateTotal', winRateTotal);
+	console.log('period month', i / interval);
+	console.log('avgRate', (winRateTotal / i).toFixed(2));
 })();
 
 app.listen(8092);
