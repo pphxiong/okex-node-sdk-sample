@@ -109,6 +109,8 @@ class Backtester {
 		this.trades = [];
 		this.balance = config.initialBalance;
 		this.totalFee = 0;
+		this.maxBalance = this.balance;
+		this.maxDrawdown = 0;
 	}
 
 	covariance(x, y) {
@@ -770,13 +772,13 @@ class Backtester {
 			if (position) {
 				const isProfitTarget =
 					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.2)
-						: d.close <= position.entryPrice * (1 - 0.2);
+						? d.close >= position.entryPrice * (1 + 0.1)
+						: d.close <= position.entryPrice * (1 - 0.1);
 
 				const isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.1 / 10)
-						: d.close >= position.entryPrice * (1 + 0.1 / 10);
+						? d.close <= position.entryPrice * (1 - 0.1 / 2)
+						: d.close >= position.entryPrice * (1 + 0.1 / 2);
 
 				const takeProfit =
 					candle[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1076,6 +1078,11 @@ class Backtester {
 				'YYYY-MM-DD HH:mm:ss'
 			),
 		});
+
+		// 计算最大回撤
+		this.maxBalance = Math.max(this.maxBalance, this.balance);
+		const drawdown = (this.maxBalance - this.balance) / this.maxBalance;
+		this.maxDrawdown = Math.max(this.maxDrawdown, drawdown);
 	}
 
 	showResults(startTime) {
@@ -1110,6 +1117,7 @@ class Backtester {
       =============================
     `);
 		console.log('profit:', profitTotal);
+		console.log('maxDrawdown', this.maxDrawdown);
 		console.log('startTime:', startTime.format('YYYY-MM-DD HH:mm:ss'));
 
 		const profitMap = this.genEveryTypeProfit();
@@ -1127,7 +1135,7 @@ class Backtester {
 			);
 		});
 
-		return { winRate, maxLoss };
+		return { winRate, maxLoss, maxDrawdown: this.maxDrawdown };
 	}
 
 	genEveryTypeProfit() {
@@ -1151,6 +1159,7 @@ class Backtester {
 	let profitTotal = 0;
 	let maxLossTotal = 0;
 	let winRateTotal = 0;
+	let maxDrawdown = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
