@@ -551,7 +551,6 @@ class Backtester {
 					// )
 					// 	marketType = '趋势多且增强';
 				} else {
-					if (adx >= 30) marketType = '趋势多且增强';
 					if (adx < 20 && adx > 15) {
 						if (
 							rsi > 60 &&
@@ -1227,8 +1226,11 @@ class Backtester {
 	console.log('profitTotal', profitTotal);
 	console.log('maxLossTotal', maxLossTotal);
 	console.log('winRateTotal', winRateTotal);
-	console.log('period month', i / interval);
-	console.log('avgRate', ((winRateTotal * 100) / i).toFixed(2));
+	console.log('period month', i / interval + 1);
+	console.log(
+		'avgRate',
+		((winRateTotal * 100) / (i / interval + 1)).toFixed(2)
+	);
 })();
 
 app.listen(8092);
