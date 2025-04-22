@@ -1207,10 +1207,10 @@ class Backtester {
 				merged: [],
 			};
 			backtester.trades = [];
-			backtester.balance = config.initialBalance;
+			// backtester.balance = config.initialBalance;
 			backtester.totalFee = 0;
-			backtester.maxBalance = config.initialBalance;
-			backtester.maxDrawdown = 0;
+			// backtester.maxBalance = config.initialBalance;
+			// backtester.maxDrawdown = 0;
 
 			// 步骤1: 加载历史数据
 			const data = await backtester.loadHistoricalData(
