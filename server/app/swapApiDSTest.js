@@ -906,8 +906,9 @@ class Backtester {
 				];
 
 				const isReverse =
-					// isProfitTarget ||
-					isStopLoss || position.direction === 'long'
+					isProfitTarget ||
+					isStopLoss ||
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
 
@@ -1117,7 +1118,7 @@ class Backtester {
       =============================
     `);
 		console.log('profit:', profitTotal);
-		console.log('maxDrawdown', this.maxDrawdown);
+		console.log('maxDrawdown', `${(this.maxDrawdown * 100).toFixed(1)}%`);
 		console.log('startTime:', startTime.format('YYYY-MM-DD HH:mm:ss'));
 
 		const profitMap = this.genEveryTypeProfit();
