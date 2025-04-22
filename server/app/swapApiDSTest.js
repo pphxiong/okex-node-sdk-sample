@@ -673,36 +673,36 @@ class Backtester {
 
 		if (
 			adx < 25 &&
-			adxPlusDI < adxMinusDI &&
+			// adxPlusDI < adxMinusDI &&
 			emaFast < emaSlow &&
 			close < emaFast
 		) {
-			if (rsi < 35) marketType = '趋势空且增强';
+			if (rsi < 35) marketType = '趋势空';
 		}
 		if (
 			adx < 25 &&
-			adxPlusDI > adxMinusDI &&
+			// adxPlusDI > adxMinusDI &&
 			emaFast > emaSlow &&
 			close > emaFast
 		) {
-			if (rsi > 65) marketType = '趋势多且增强';
+			if (rsi > 65) marketType = '趋势多';
 		}
 
 		if (
 			adx < 25 &&
-			adxPlusDI < adxMinusDI &&
+			// adxPlusDI < adxMinusDI &&
 			emaFast > emaSlow &&
 			close > emaFast
 		) {
-			if (rsi > 65) marketType = '趋势多且增强';
+			if (rsi > 65) marketType = '趋势多';
 		}
 		if (
 			adx < 25 &&
-			adxPlusDI > adxMinusDI &&
+			// adxPlusDI > adxMinusDI &&
 			emaFast < emaSlow &&
 			close < emaFast
 		) {
-			if (rsi < 35) marketType = '趋势空且增强';
+			if (rsi < 35) marketType = '趋势空';
 		}
 
 		// if (adx > 60 && adxMinusDI < 10 && adxPlusDI > adxMinusDI) {
