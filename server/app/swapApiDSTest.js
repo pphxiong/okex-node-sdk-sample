@@ -1194,7 +1194,7 @@ class Backtester {
 	let profitTotal = 0;
 	let maxLossTotal = 0;
 	let winRateTotal = 0;
-	let maxDrawdown = 0;
+	let maxDrawdownTotal = 0;
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
@@ -1228,26 +1228,26 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					// .slice(-5)
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2025-04-07 18:30:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2025-04-08 16:00:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		// .slice(-5)
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2025-04-20 18:30:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2025-04-25 16:00:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
@@ -1255,9 +1255,11 @@ class Backtester {
 			backtester.runBacktest();
 
 			// 步骤4: 显示结果
-			const { winRate, maxLoss } = backtester.showResults(startTime);
+			const { winRate, maxLoss, maxDrawdown } =
+				backtester.showResults(startTime);
 			maxLossTotal = Math.min(maxLossTotal, Number(maxLoss));
 			winRateTotal += Number(winRate);
+			maxDrawdownTotal = Math.max(maxDrawdownTotal, maxDrawdown);
 
 			profitTotal += backtester.balance - config.initialBalance;
 
@@ -1273,6 +1275,7 @@ class Backtester {
 	console.log('winRateTotal', winRateTotal);
 	console.log('period month', i / interval + 1);
 	console.log('avgRate', (winRateTotal / (i / interval + 1)).toFixed(2));
+	console.log('maxDrawdownTotal', maxDrawdownTotal);
 })();
 
 app.listen(8092);
