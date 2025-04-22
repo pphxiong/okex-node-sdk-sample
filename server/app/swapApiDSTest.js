@@ -770,8 +770,8 @@ class Backtester {
 			if (position) {
 				const isProfitTarget =
 					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.1)
-						: d.close <= position.entryPrice * (1 - 0.1);
+						? d.close >= position.entryPrice * (1 + 0.2)
+						: d.close <= position.entryPrice * (1 - 0.2);
 
 				const isStopLoss =
 					position.direction === 'long'
@@ -905,8 +905,7 @@ class Backtester {
 
 				const isReverse =
 					// isProfitTarget ||
-					// isStopLoss ||
-					position.direction === 'long'
+					isStopLoss || position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
 
@@ -1227,10 +1226,7 @@ class Backtester {
 	console.log('maxLossTotal', maxLossTotal);
 	console.log('winRateTotal', winRateTotal);
 	console.log('period month', i / interval + 1);
-	console.log(
-		'avgRate',
-		((winRateTotal * 100) / (i / interval + 1)).toFixed(2)
-	);
+	console.log('avgRate', (winRateTotal / (i / interval + 1)).toFixed(2));
 })();
 
 app.listen(8092);
