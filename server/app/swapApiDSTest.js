@@ -671,24 +671,24 @@ class Backtester {
 				marketType = '趋势多且增强';
 		}
 
-		if (
-			adx < 15 &&
-			// adxPlusDI > adxMinusDI &&
-			emaFast < emaSlow &&
-			close < emaFast &&
-			emaSlope < -config.emaSlope.emaSlopeThreshold
-		) {
-			if (rsi < 35) marketType = '趋势空';
-		}
-		if (
-			adx < 15 &&
-			// adxPlusDI < adxMinusDI &&
-			emaFast > emaSlow &&
-			close > emaFast &&
-			emaSlope > -config.emaSlope.emaSlopeThreshold
-		) {
-			if (rsi > 65) marketType = '趋势多';
-		}
+		// if (
+		// 	adx < 15 &&
+		// 	// adxPlusDI > adxMinusDI &&
+		// 	emaFast < emaSlow &&
+		// 	close < emaFast &&
+		// 	emaSlope < -config.emaSlope.emaSlopeThreshold
+		// ) {
+		// 	if (rsi < 35) marketType = '趋势空';
+		// }
+		// if (
+		// 	adx < 15 &&
+		// 	// adxPlusDI < adxMinusDI &&
+		// 	emaFast > emaSlow &&
+		// 	close > emaFast &&
+		// 	emaSlope > -config.emaSlope.emaSlopeThreshold
+		// ) {
+		// 	if (rsi > 65) marketType = '趋势多';
+		// }
 
 		// if (
 		// 	adx < 25 &&
@@ -787,6 +787,9 @@ class Backtester {
 				slowMarketType
 			);
 
+			let isStopLoss = false;
+			let stopLossDirection = null;
+
 			// 处理平仓
 			if (position) {
 				const isProfitTarget =
@@ -794,10 +797,11 @@ class Backtester {
 						? d.close >= position.entryPrice * (1 + 0.1)
 						: d.close <= position.entryPrice * (1 - 0.1);
 
-				const isStopLoss =
+				isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.1 / 2)
-						: d.close >= position.entryPrice * (1 + 0.1 / 2);
+						? d.close <= position.entryPrice * (1 - 0.1)
+						: d.close >= position.entryPrice * (1 + 0.1);
+				if (isStopLoss) stopLossDirection = position.direction;
 
 				const takeProfit =
 					candle[config.fastframe].atr * config.atrParam.takeProfit;
@@ -926,8 +930,7 @@ class Backtester {
 
 				const isReverse =
 					// isProfitTarget ||
-					// isStopLoss ||
-					position.direction === 'long'
+					isStopLoss || position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
 
@@ -943,7 +946,7 @@ class Backtester {
 			}
 
 			// 处理开仓
-			if (!position && signal.direction) {
+			if (!position) {
 				// console.log(
 				// 	config.fastframe,
 				// 	Object.assign(candle[config.fastframe], {
@@ -960,13 +963,23 @@ class Backtester {
 				// 		).format('YYYY-MM-DD HH:mm:ss'),
 				// 	})
 				// );
-				position = this.openPosition(
-					d,
-					d.atr,
-					signal.direction,
-					fastMarketType,
-					slowMarketType
-				);
+				if (signal.direction) {
+					position = this.openPosition(
+						d,
+						d.atr,
+						signal.direction,
+						fastMarketType,
+						slowMarketType
+					);
+				} else if (isStopLoss) {
+					position = this.openPosition(
+						d,
+						d.atr,
+						stopLossDirection === 'long' ? 'short' : 'long',
+						fastMarketType,
+						slowMarketType
+					);
+				}
 			}
 		});
 	}
