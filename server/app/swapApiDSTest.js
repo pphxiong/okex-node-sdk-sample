@@ -545,11 +545,11 @@ class Backtester {
 						marketType = '趋势多且增强';
 					}
 
-					if (
-						rsi > 60 &&
-						emaSlope > config.emaSlope.emaSlopeThreshold * 3
-					)
-						marketType = '趋势多且增强';
+					// if (
+					// 	rsi > 60 &&
+					// 	emaSlope > config.emaSlope.emaSlopeThreshold * 3
+					// )
+					// 	marketType = '趋势多且增强';
 				} else {
 					if (adx >= 30) marketType = '趋势多且增强';
 					if (adx < 20 && adx > 15) {
@@ -613,11 +613,11 @@ class Backtester {
 						marketType = '趋势空且增强';
 					}
 
-					if (
-						rsi < 40 &&
-						emaSlope < -config.emaSlope.emaSlopeThreshold * 3
-					)
-						marketType = '趋势空且增强';
+					// if (
+					// 	rsi < 40 &&
+					// 	emaSlope < -config.emaSlope.emaSlopeThreshold * 3
+					// )
+					// 	marketType = '趋势空且增强';
 				} else {
 					if (adx < 20 && adx > 15) {
 						if (
@@ -1228,7 +1228,7 @@ class Backtester {
 	console.log('maxLossTotal', maxLossTotal);
 	console.log('winRateTotal', winRateTotal);
 	console.log('period month', i / interval);
-	console.log('avgRate', (winRateTotal / i).toFixed(2));
+	console.log('avgRate', ((winRateTotal * 100) / i).toFixed(2));
 })();
 
 app.listen(8092);
