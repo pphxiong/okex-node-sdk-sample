@@ -799,8 +799,8 @@ class Backtester {
 
 				isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.1)
-						: d.close >= position.entryPrice * (1 + 0.1);
+						? d.close <= position.entryPrice * (1 - 0.1 / 3)
+						: d.close >= position.entryPrice * (1 + 0.1 / 3);
 				if (isStopLoss) stopLossDirection = position.direction;
 
 				const takeProfit =
@@ -972,13 +972,13 @@ class Backtester {
 						slowMarketType
 					);
 				} else if (isStopLoss) {
-					position = this.openPosition(
-						d,
-						d.atr,
-						stopLossDirection === 'long' ? 'short' : 'long',
-						fastMarketType,
-						slowMarketType
-					);
+					// position = this.openPosition(
+					// 	d,
+					// 	d.atr,
+					// 	stopLossDirection === 'long' ? 'short' : 'long',
+					// 	fastMarketType,
+					// 	slowMarketType
+					// );
 				}
 			}
 		});
