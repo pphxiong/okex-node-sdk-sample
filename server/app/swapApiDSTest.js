@@ -592,7 +592,7 @@ class Backtester {
 					adx >= 35 &&
 					rsi > 55 &&
 					adxPlusDI < 30 &&
-					adxMinusDI > 10
+					adxMinusDI < 15
 				) {
 					marketType = '趋势空且增强';
 				}
