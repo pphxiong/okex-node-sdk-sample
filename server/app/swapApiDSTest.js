@@ -933,7 +933,7 @@ class Backtester {
 				];
 
 				const isReverse =
-					isLastIndex ||
+					// isLastIndex ||
 					// isProfitTarget ||
 					// isStopLoss ||
 					position.direction === 'long'
