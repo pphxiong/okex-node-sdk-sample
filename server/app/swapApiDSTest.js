@@ -563,7 +563,6 @@ class Backtester {
 							marketType = '趋势空且增强';
 					}
 				}
-				if (adxMinusDI < 10 && rsi > 60) marketType = '趋势多且增强';
 			} else if (close < emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 50) marketType = '趋势空且增强';
@@ -633,7 +632,6 @@ class Backtester {
 							marketType = '趋势多且增强';
 					}
 				}
-				if (adxPlusDI < 10 && rsi < 40) marketType = '趋势空且增强';
 			} else if (close > emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 50) marketType = '趋势空且增强';
@@ -935,7 +933,7 @@ class Backtester {
 				];
 
 				const isReverse =
-					// isLastIndex ||
+					isLastIndex ||
 					// isProfitTarget ||
 					// isStopLoss ||
 					position.direction === 'long'
