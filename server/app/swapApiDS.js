@@ -52,7 +52,7 @@ const config = {
     stdDev: 1.8,
   },
   orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-  tradeAmount: 500, // 每单交易金额(USDT)
+  tradeAmount: 8500, // 每单交易金额(USDT)
   maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -74,7 +74,7 @@ const config = {
     takeProfit: 6.4,
   },
   riskPerTrade: 0.02, // 每笔交易风险2%
-  leverage: 20, // 杠杆倍数
+  leverage: 10, // 杠杆倍数
   adxPeriod: 14,
   rsiPeriod: 14,
   // EMA斜率参数
