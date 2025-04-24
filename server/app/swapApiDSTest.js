@@ -544,7 +544,8 @@ class Backtester {
 									: '趋势多且增强';
 					} else if (
 						rsi < 60 &&
-						emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						emaSlope > config.emaSlope.emaSlopeThreshold / 2 &&
+						close > open
 					) {
 						marketType = '趋势多且增强';
 					}
@@ -564,7 +565,7 @@ class Backtester {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi > 50) marketType = '趋势多且增强';
 				}
-				if (adx >= 25 && adx < 35) {
+				if (adx >= 25) {
 					if (rsi > 40) {
 						marketType = '趋势多且增强';
 					}
@@ -606,7 +607,8 @@ class Backtester {
 									: '趋势空且增强';
 					} else if (
 						rsi > 40 &&
-						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+						emaSlope < -config.emaSlope.emaSlopeThreshold / 2 &&
+						close < open
 					) {
 						marketType = '趋势空且增强';
 					}
@@ -1123,8 +1125,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1182,8 +1184,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-04-01';
-	// const start = '2021-01-01';
+	//   const start = "2025-04-01";
+	const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1193,8 +1195,8 @@ class Backtester {
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		//   while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
