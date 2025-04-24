@@ -539,7 +539,7 @@ class Backtester {
 							adx >= 30
 						)
 							marketType =
-								adxMinusDI > 10 && adx < 50
+								adxMinusDI > 10
 									? '趋势空且增强'
 									: '趋势多且增强';
 					} else if (
@@ -601,7 +601,7 @@ class Backtester {
 							emaSlope < -config.emaSlope.emaSlopeThreshold * 2
 						)
 							marketType =
-								adxPlusDI > 10 && adx < 50
+								adxPlusDI > 10
 									? '趋势多且增强'
 									: '趋势空且增强';
 					} else if (
