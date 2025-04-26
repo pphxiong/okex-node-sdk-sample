@@ -712,7 +712,7 @@ class Backtester {
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
 		// return riskAmount / (atr * config.leverage);
-		return 1000;
+		return 10000 / price;
 		// return riskAmount;
 	}
 
