@@ -1160,20 +1160,18 @@ class Backtester {
 				typeLoss,
 			};
 		});
-		list.sort(
-			(a, b) => a.typeProfit / a.typeNum - b.typeProfit / b.typeNum
-		);
+		list.sort((a, b) => Number(b.typeProfit) - Number(a.typeProfit));
 		list.forEach((item) => {
 			console.log(
 				item.key,
 				'总交易次数:',
 				item.typeNum,
-				'胜率:',
-				item.typeWinRate + '%',
 				'盈利:',
 				item.typeWin,
 				'亏损:',
 				item.typeLoss,
+				'胜率:',
+				item.typeWinRate + '%',
 				'总收益:',
 				item.typeProfit.toFixed(2)
 			);
@@ -1314,18 +1312,18 @@ class Backtester {
 			typeLoss,
 		};
 	});
-	list.sort((a, b) => a.typeProfit / a.typeNum - b.typeProfit / b.typeNum);
+	list.sort((a, b) => Number(b.typeProfit) - Number(a.typeProfit));
 	list.forEach((item) => {
 		console.log(
 			item.key,
 			'总交易次数:',
 			item.typeNum,
-			'胜率:',
-			item.typeWinRate + '%',
 			'盈利:',
 			item.typeWin,
 			'亏损:',
 			item.typeLoss,
+			'胜率:',
+			item.typeWinRate + '%',
 			'总收益:',
 			item.typeProfit.toFixed(2)
 		);
