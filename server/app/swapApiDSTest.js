@@ -1143,7 +1143,7 @@ class Backtester {
 
 		const profitMap = this.genEveryTypeProfit();
 
-		const list = Object.entries(profitMap).forEach(([key, value]) => {
+		const list = Object.entries(profitMap).map(([key, value]) => {
 			// console.log(`
 			// ========== 交易类型: ${key} ==========
 			// 总交易次数:     ${value.length}`);
@@ -1281,7 +1281,7 @@ class Backtester {
 	console.log('avgRate', (winRateTotal / (i / interval + 1)).toFixed(2));
 	console.log('maxDrawdownTotal', maxDrawdownTotal);
 
-	const list = Object.entries(profitMapTotal).forEach(([key, value]) => {
+	const list = Object.entries(profitMapTotal).map(([key, value]) => {
 		// console.log(`
 		// ========== 交易类型: ${key} ==========
 		// 总交易次数:     ${value.length}`);
