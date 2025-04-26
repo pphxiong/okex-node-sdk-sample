@@ -1143,19 +1143,24 @@ class Backtester {
 
 		const profitMap = this.genEveryTypeProfit();
 
-		Object.entries(profitMap).forEach(([key, value]) => {
-			// console.log(`
-			// ========== 交易类型: ${key} ==========
-			// 总交易次数:     ${value.length}`);
-			const typeProfit = value.reduce((sum, t) => sum + t, 0);
-			console.log(
-				key,
-				'总交易次数:',
-				value.length,
-				'总收益:',
-				typeProfit.toFixed(2)
-			);
-		});
+		Object.entries(profitMap)
+			.forEach(([key, value]) => {
+				// console.log(`
+				// ========== 交易类型: ${key} ==========
+				// 总交易次数:     ${value.length}`);
+				const typeProfit = value.reduce((sum, t) => sum + t, 0);
+				return { key, typeProfit, typeNum: value.length };
+			})
+			.sort((a, b) => a.typeProfit / a.typeNum - b.typeProfit / b.typeNum)
+			.forEach((item) => {
+				console.log(
+					item.key,
+					'总交易次数:',
+					item.typeNum,
+					'总收益:',
+					item.typeProfit.toFixed(2)
+				);
+			});
 
 		return {
 			winRate,
@@ -1275,19 +1280,24 @@ class Backtester {
 	console.log('avgRate', (winRateTotal / (i / interval + 1)).toFixed(2));
 	console.log('maxDrawdownTotal', maxDrawdownTotal);
 
-	Object.entries(profitMapTotal).forEach(([key, value]) => {
-		// console.log(`
-		// ========== 交易类型: ${key} ==========
-		// 总交易次数:     ${value.length}`);
-		const typeProfit = value.reduce((sum, t) => sum + t, 0);
-		console.log(
-			key,
-			'总交易次数:',
-			value.length,
-			'总收益:',
-			typeProfit.toFixed(2)
-		);
-	});
+	Object.entries(profitMapTotal)
+		.forEach(([key, value]) => {
+			// console.log(`
+			// ========== 交易类型: ${key} ==========
+			// 总交易次数:     ${value.length}`);
+			const typeProfit = value.reduce((sum, t) => sum + t, 0);
+			return { key, typeProfit, typeNum: value.length };
+		})
+		.sort((a, b) => a.typeProfit / a.typeNum - b.typeProfit / b.typeNum)
+		.forEach((item) => {
+			console.log(
+				item.key,
+				'总交易次数:',
+				item.typeNum,
+				'总收益:',
+				item.typeProfit.toFixed(2)
+			);
+		});
 })();
 
 app.listen(8092);
