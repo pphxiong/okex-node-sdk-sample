@@ -556,6 +556,7 @@ class Backtester {
 						)
 							marketType = '趋势空且增强';
 					}
+					if (adx > 25) marketType = '趋势多且增强';
 				}
 				// if (adx < 20 && Math.abs(adxPlusDI - adxMinusDI) < 5) {
 				// 	if (marketType === '趋势空且增强') {
@@ -625,6 +626,7 @@ class Backtester {
 						)
 							marketType = '趋势多且增强';
 					}
+					if (adx > 25) marketType = '趋势空且增强';
 				}
 			} else if (close > emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
