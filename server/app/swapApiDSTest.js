@@ -544,8 +544,7 @@ class Backtester {
 									: '趋势多且增强-1';
 					} else if (
 						rsi < 60 &&
-						emaSlope > config.emaSlope.emaSlopeThreshold / 2 &&
-						adx > 25
+						emaSlope > config.emaSlope.emaSlopeThreshold / 2
 					) {
 						marketType = '趋势多且增强-2';
 					}
@@ -553,8 +552,7 @@ class Backtester {
 					if (adx < 20 && adx > 15) {
 						if (
 							rsi > 60 &&
-							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
-							adx > 25
+							emaSlope > config.emaSlope.emaSlopeThreshold * 2
 						)
 							marketType = '趋势空且增强-2';
 					}
@@ -567,14 +565,14 @@ class Backtester {
 				// 	}
 				// }
 			} else if (close < emaSlow) {
-				if (adxPlusDI < adxMinusDI && adx > 25) {
+				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 50) marketType = '趋势空且增强-3';
 				}
-				if (adxPlusDI > adxMinusDI && adx > 25) {
+				if (adxPlusDI > adxMinusDI) {
 					if (rsi > 50) marketType = '趋势多且增强-3';
 				}
 				if (adx >= 25) {
-					if (rsi > 40 && adx > 25) {
+					if (rsi > 40) {
 						marketType = '趋势多且增强-4';
 					}
 				}
@@ -593,13 +591,13 @@ class Backtester {
 					// if (adxPlusDI > adxMinusDI) {
 					// 	marketType = adx < 12 ? '趋势空且增强' : '趋势多且增强';
 					// }
-					if (rsi > 55 && adxPlusDI > adxMinusDI && adx > 25)
+					if (rsi > 55 && adxPlusDI > adxMinusDI)
 						marketType = '趋势多且增强-5';
-					if (rsi < 45 && adxPlusDI < adxMinusDI && adx > 25)
+					if (rsi < 45 && adxPlusDI < adxMinusDI)
 						marketType = '趋势空且增强-4';
 				}
 			} else {
-				if (adx < 25 && adx > 20 && adx > 25) {
+				if (adx < 25 && adx > 20) {
 					if (rsi > 50) marketType = '趋势多且增强-6';
 					if (rsi < 50) marketType = '趋势空且增强-5';
 				}
@@ -621,8 +619,7 @@ class Backtester {
 									: '趋势空且增强-6';
 					} else if (
 						rsi > 40 &&
-						emaSlope < -config.emaSlope.emaSlopeThreshold / 2 &&
-						adx > 25
+						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
 					) {
 						marketType = '趋势空且增强-7';
 					}
@@ -630,27 +627,26 @@ class Backtester {
 					if (adx < 20 && adx > 15) {
 						if (
 							rsi < 45 &&
-							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
-							adx > 25
+							emaSlope < -config.emaSlope.emaSlopeThreshold * 2
 						)
 							marketType = '趋势多且增强-8';
 					}
 				}
 			} else if (close > emaSlow) {
-				if (adxPlusDI < adxMinusDI && adx > 25) {
+				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 50) marketType = '趋势空且增强-8';
 				}
-				if (adxPlusDI > adxMinusDI && adx > 25) {
+				if (adxPlusDI > adxMinusDI) {
 					if (rsi > 50) marketType = '趋势多且增强-9';
 				}
 
 				if (adx >= 25) {
-					if (rsi < 60 && adx > 25) marketType = '趋势空且增强-9';
+					if (rsi < 60) marketType = '趋势空且增强-9';
 				}
 				if (adx < 25) {
 					marketType = rsi > 60 ? '趋势多' : '趋势空';
 				}
-				if (adx < 20 && adx > 25) {
+				if (adx < 20) {
 					if (rsi > 55 && adxPlusDI > adxMinusDI)
 						marketType = '趋势多且增强-10';
 					if (rsi < 45 && adxPlusDI < adxMinusDI)
@@ -1148,6 +1144,7 @@ class Backtester {
 		console.log('startTime:', startTime.format('YYYY-MM-DD HH:mm:ss'));
 
 		const profitMap = this.genEveryTypeProfit();
+
 		Object.entries(profitMap).forEach(([key, value]) => {
 			// console.log(`
 			// ========== 交易类型: ${key} ==========
@@ -1166,6 +1163,7 @@ class Backtester {
 			winRate,
 			maxLoss,
 			maxDrawdown: (this.maxDrawdown * 100).toFixed(1),
+			profitMap,
 		};
 	}
 
@@ -1191,6 +1189,7 @@ class Backtester {
 	let maxLossTotal = 0;
 	let winRateTotal = 0;
 	let maxDrawdownTotal = 0;
+	let profitMapTotal = {};
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
@@ -1251,13 +1250,18 @@ class Backtester {
 			backtester.runBacktest();
 
 			// 步骤4: 显示结果
-			const { winRate, maxLoss, maxDrawdown } =
+			const { winRate, maxLoss, maxDrawdown, profitMap } =
 				backtester.showResults(startTime);
 			maxLossTotal = Math.min(maxLossTotal, Number(maxLoss));
 			winRateTotal += Number(winRate);
 			maxDrawdownTotal = Math.max(maxDrawdownTotal, Number(maxDrawdown));
 
 			profitTotal += backtester.balance - config.initialBalance;
+
+			Object.entries(profitMap).forEach(([key, value]) => {
+				profitMapTotal[key] = profitMapTotal[key] || [];
+				profitMapTotal[key].push(...value);
+			});
 
 			i += interval;
 
@@ -1272,6 +1276,20 @@ class Backtester {
 	console.log('period month', i / interval + 1);
 	console.log('avgRate', (winRateTotal / (i / interval + 1)).toFixed(2));
 	console.log('maxDrawdownTotal', maxDrawdownTotal);
+
+	Object.entries(profitMapTotal).forEach(([key, value]) => {
+		// console.log(`
+		// ========== 交易类型: ${key} ==========
+		// 总交易次数:     ${value.length}`);
+		const typeProfit = value.reduce((sum, t) => sum + t, 0);
+		console.log(
+			key,
+			'总交易次数:',
+			value.length,
+			'总收益:',
+			typeProfit.toFixed(2)
+		);
+	});
 })();
 
 app.listen(8092);
