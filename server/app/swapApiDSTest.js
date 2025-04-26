@@ -1195,8 +1195,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-04-01';
-	const start = '2021-01-01';
+	const start = '2025-04-01';
+	// const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1206,8 +1206,8 @@ class Backtester {
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
