@@ -67,7 +67,7 @@ const config = {
 	riskPerTrade: 0.4, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
-	initialBalance: 1000, // 初始本金10000 USDT
+	initialBalance: 10000, // 初始本金10000 USDT
 	// coldStartBars: 480,
 	// coldStartBars: {
 	//   "1h": 24,
@@ -712,7 +712,7 @@ class Backtester {
 	getPositionSize(price, atr) {
 		const riskAmount = this.balance * config.riskPerTrade;
 		// return riskAmount / (atr * config.leverage);
-		return 10000 / price;
+		return config.initialBalance / price;
 		// return riskAmount;
 	}
 
