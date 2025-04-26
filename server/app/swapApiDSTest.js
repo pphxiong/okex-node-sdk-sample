@@ -1160,7 +1160,11 @@ class Backtester {
 				typeLoss,
 			};
 		});
-		list.sort((a, b) => Number(b.typeWinRate) - Number(a.typeWinRate));
+		list.sort(
+			(a, b) =>
+				Number(b.typeWinRate) * b.typeProfit -
+				Number(a.typeWinRate) * a.typeProfit
+		);
 		list.forEach((item) => {
 			console.log(
 				item.key,
@@ -1312,7 +1316,11 @@ class Backtester {
 			typeLoss,
 		};
 	});
-	list.sort((a, b) => Number(b.typeWinRate) - Number(a.typeWinRate));
+	list.sort(
+		(a, b) =>
+			Number(b.typeWinRate) * b.typeProfit -
+			Number(a.typeWinRate) * a.typeProfit
+	);
 	list.forEach((item) => {
 		console.log(
 			item.key,
