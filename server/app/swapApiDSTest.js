@@ -639,7 +639,7 @@ class Backtester {
 				}
 
 				if (adx >= 25) {
-					if (rsi < 60) marketType = '趋势多且增强-9';
+					if (rsi < 60) marketType = '趋势空且增强-9';
 				}
 				if (adx < 25) {
 					marketType = rsi > 60 ? '趋势多' : '趋势空';
