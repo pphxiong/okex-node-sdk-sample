@@ -540,14 +540,14 @@ class Backtester {
 						)
 							marketType =
 								adxMinusDI > 10
-									? '趋势空且增强'
-									: '趋势多且增强';
+									? '趋势空且增强-1'
+									: '趋势多且增强-1';
 					} else if (
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2 &&
 						adx > 25
 					) {
-						marketType = '趋势多且增强';
+						marketType = '趋势多且增强-2';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -556,7 +556,7 @@ class Backtester {
 							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
 							adx > 25
 						)
-							marketType = '趋势空且增强';
+							marketType = '趋势空且增强-2';
 					}
 				}
 				// if (adx < 20 && Math.abs(adxPlusDI - adxMinusDI) < 5) {
@@ -568,14 +568,14 @@ class Backtester {
 				// }
 			} else if (close < emaSlow) {
 				if (adxPlusDI < adxMinusDI && adx > 25) {
-					if (rsi < 50) marketType = '趋势空且增强';
+					if (rsi < 50) marketType = '趋势空且增强-3';
 				}
 				if (adxPlusDI > adxMinusDI && adx > 25) {
-					if (rsi > 50) marketType = '趋势多且增强';
+					if (rsi > 50) marketType = '趋势多且增强-3';
 				}
 				if (adx >= 25) {
 					if (rsi > 40 && adx > 25) {
-						marketType = '趋势多且增强';
+						marketType = '趋势多且增强-4';
 					}
 				}
 				if (adx < 25) {
@@ -594,14 +594,14 @@ class Backtester {
 					// 	marketType = adx < 12 ? '趋势空且增强' : '趋势多且增强';
 					// }
 					if (rsi > 55 && adxPlusDI > adxMinusDI && adx > 25)
-						marketType = '趋势多且增强';
+						marketType = '趋势多且增强-5';
 					if (rsi < 45 && adxPlusDI < adxMinusDI && adx > 25)
-						marketType = '趋势空且增强';
+						marketType = '趋势空且增强-4';
 				}
 			} else {
 				if (adx < 25 && adx > 20 && adx > 25) {
-					if (rsi > 50) marketType = '趋势多且增强';
-					if (rsi < 50) marketType = '趋势空且增强';
+					if (rsi > 50) marketType = '趋势多且增强-6';
+					if (rsi < 50) marketType = '趋势空且增强-5';
 				}
 			}
 		}
@@ -617,14 +617,14 @@ class Backtester {
 						)
 							marketType =
 								adxPlusDI > 10
-									? '趋势多且增强'
-									: '趋势空且增强';
+									? '趋势多且增强-7'
+									: '趋势空且增强-6';
 					} else if (
 						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold / 2 &&
 						adx > 25
 					) {
-						marketType = '趋势空且增强';
+						marketType = '趋势空且增强-7';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -633,28 +633,28 @@ class Backtester {
 							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
 							adx > 25
 						)
-							marketType = '趋势多且增强';
+							marketType = '趋势多且增强-8';
 					}
 				}
 			} else if (close > emaSlow) {
 				if (adxPlusDI < adxMinusDI && adx > 25) {
-					if (rsi < 50) marketType = '趋势空且增强';
+					if (rsi < 50) marketType = '趋势空且增强-8';
 				}
 				if (adxPlusDI > adxMinusDI && adx > 25) {
-					if (rsi > 50) marketType = '趋势多且增强';
+					if (rsi > 50) marketType = '趋势多且增强-9';
 				}
 
 				if (adx >= 25) {
-					if (rsi < 60 && adx > 25) marketType = '趋势空且增强';
+					if (rsi < 60 && adx > 25) marketType = '趋势空且增强-9';
 				}
 				if (adx < 25) {
 					marketType = rsi > 60 ? '趋势多' : '趋势空';
 				}
 				if (adx < 20 && adx > 25) {
 					if (rsi > 55 && adxPlusDI > adxMinusDI)
-						marketType = '趋势多且增强';
+						marketType = '趋势多且增强-10';
 					if (rsi < 45 && adxPlusDI < adxMinusDI)
-						marketType = '趋势空且增强';
+						marketType = '趋势空且增强-10';
 				}
 			} else {
 			}
@@ -667,7 +667,7 @@ class Backtester {
 			close < emaFast
 		) {
 			if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
-				marketType = '趋势空且增强';
+				marketType = '趋势空且增强-11';
 		}
 		if (
 			adx < 25 &&
@@ -676,7 +676,7 @@ class Backtester {
 			close > emaFast
 		) {
 			if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
-				marketType = '趋势多且增强';
+				marketType = '趋势多且增强-11';
 		}
 
 		// if (
@@ -841,18 +841,10 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 
 				const longCloseConditions = [
-					position.slowMarketType === '趋势多且增强' &&
-						[
-							'超买市',
-							'趋势空且增强',
-							'潜在转折空',
-							'震荡市开空',
-							'趋势潜在减弱',
-							'趋势多且减弱',
-							// '不确定',
-							'趋势多只平不开',
-							'趋势空',
-						].includes(slowMarketType),
+					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+						['趋势空'].includes(slowMarketType),
+					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+						slowMarketType.indexOf('趋势空且增强') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
 						[
 							'超买市',
@@ -889,18 +881,10 @@ class Backtester {
 				];
 
 				const shortCloseConditions = [
-					position.slowMarketType === '趋势空且增强' &&
-						[
-							'超卖市',
-							'趋势多且增强',
-							'潜在转折多',
-							'震荡市开多',
-							'趋势潜在增强',
-							'趋势空且减弱',
-							// '不确定',
-							'趋势空只平不开',
-							'趋势多',
-						].includes(slowMarketType),
+					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
+						['趋势多'].includes(slowMarketType),
+					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
+						slowMarketType.indexOf('趋势多且增强') !== -1,
 					position.slowMarketType === '趋势潜在减弱' &&
 						[
 							'超卖市',
@@ -1023,13 +1007,13 @@ class Backtester {
 		// 	return { direction: 'short' };
 		// }
 		const longConditions = [
-			slowMarketType === '趋势多且增强',
+			slowMarketType.indexOf('趋势多且增强') !== -1,
 			slowMarketType === '趋势潜在增强',
 			slowMarketType === '震荡市开多',
 			slowMarketType === '潜在转折多',
 		];
 		const shortConditions = [
-			slowMarketType === '趋势空且增强',
+			slowMarketType.indexOf('趋势空且增强') !== -1,
 			slowMarketType === '趋势潜在减弱',
 			slowMarketType === '震荡市开空',
 			slowMarketType === '潜在转折空',
@@ -1140,8 +1124,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		// console.log('\n最近20笔交易:');
-		// console.table(this.trades);
+		console.log('\n最近20笔交易:');
+		console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1199,8 +1183,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-04-01';
-	const start = '2021-01-01';
+	const start = '2025-04-01';
+	// const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1210,8 +1194,8 @@ class Backtester {
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
