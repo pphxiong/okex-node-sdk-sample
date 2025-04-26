@@ -557,6 +557,13 @@ class Backtester {
 							marketType = '趋势空且增强';
 					}
 				}
+				if (adx < 20 && Math.abs(adxPlusDI - adxMinusDI) < 5) {
+					if (marketType === '趋势空且增强') {
+						marketType = '趋势多且增强';
+					} else if (marketType === ' 趋势多且增强') {
+						marketType = '趋势空且增强';
+					}
+				}
 			} else if (close < emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 50) marketType = '趋势空且增强';
@@ -640,14 +647,6 @@ class Backtester {
 						marketType = '趋势空且增强';
 				}
 			} else {
-			}
-		}
-
-		if (adx < 20 && adxPlusDI < 20 && adxMinusDI < 20) {
-			if (marketType === '趋势空且增强') {
-				marketType = '趋势多且增强';
-			} else if (marketType === ' 趋势多且增强') {
-				marketType = '趋势空且增强';
 			}
 		}
 
