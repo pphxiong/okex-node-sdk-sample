@@ -63,11 +63,11 @@ const config = {
 		stopLoss: 1.6,
 		takeProfit: 6.4,
 	},
-	leverage: 20,
-	riskPerTrade: 0.4, // 每笔交易风险2%
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 10000, // 初始本金10000 USDT
+	leverage: 10,
+	riskPerTrade: 0.5, // 每笔交易风险2%
 	// coldStartBars: 480,
 	// coldStartBars: {
 	//   "1h": 24,
@@ -544,7 +544,8 @@ class Backtester {
 									: '趋势多且增强';
 					} else if (
 						rsi < 60 &&
-						emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						emaSlope > config.emaSlope.emaSlopeThreshold / 2 &&
+						Math.abs(adxPlusDI - adxMinusDI) > 5
 					) {
 						marketType = '趋势多且增强';
 					}
@@ -606,7 +607,8 @@ class Backtester {
 									: '趋势空且增强';
 					} else if (
 						rsi > 40 &&
-						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+						emaSlope < -config.emaSlope.emaSlopeThreshold / 2 &&
+						Math.abs(adxPlusDI - adxMinusDI) > 5
 					) {
 						marketType = '趋势空且增强';
 					}
