@@ -556,7 +556,6 @@ class Backtester {
 						)
 							marketType = '趋势空且增强';
 					}
-					if (adx > 25) marketType = '趋势多且增强';
 				}
 				// if (adx < 20 && Math.abs(adxPlusDI - adxMinusDI) < 5) {
 				// 	if (marketType === '趋势空且增强') {
@@ -626,7 +625,6 @@ class Backtester {
 						)
 							marketType = '趋势多且增强';
 					}
-					if (adx > 25) marketType = '趋势空且增强';
 				}
 			} else if (close > emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
@@ -841,7 +839,7 @@ class Backtester {
 							'震荡市开空',
 							'趋势潜在减弱',
 							'趋势多且减弱',
-							// '不确定',
+							'不确定',
 							'趋势多只平不开',
 							'趋势空',
 						].includes(slowMarketType),
@@ -889,7 +887,7 @@ class Backtester {
 							'震荡市开多',
 							'趋势潜在增强',
 							'趋势空且减弱',
-							// '不确定',
+							'不确定',
 							'趋势空只平不开',
 							'趋势多',
 						].includes(slowMarketType),
