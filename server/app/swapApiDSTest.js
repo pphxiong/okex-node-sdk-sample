@@ -579,18 +579,18 @@ class Backtester {
 				if (adx < 25) {
 				}
 				if (adx < 20) {
-					// if (adxPlusDI < adxMinusDI) {
-					// 	marketType = '趋势空';
-					// }
-					// if (adxPlusDI > adxMinusDI) {
-					// 	marketType = '趋势多';
-					// }
 					if (adxPlusDI < adxMinusDI) {
-						marketType = adx < 12 ? '趋势多且增强' : '趋势空且增强';
+						marketType = '趋势空';
 					}
 					if (adxPlusDI > adxMinusDI) {
-						marketType = adx < 12 ? '趋势空且增强' : '趋势多且增强';
+						marketType = '趋势多';
 					}
+					// if (adxPlusDI < adxMinusDI) {
+					// 	marketType = adx < 12 ? '趋势多且增强' : '趋势空且增强';
+					// }
+					// if (adxPlusDI > adxMinusDI) {
+					// 	marketType = adx < 12 ? '趋势空且增强' : '趋势多且增强';
+					// }
 					if (rsi > 55 && adxPlusDI > adxMinusDI)
 						marketType = '趋势多且增强';
 					if (rsi < 45 && adxPlusDI < adxMinusDI)
@@ -647,12 +647,6 @@ class Backtester {
 					marketType = rsi > 60 ? '趋势多' : '趋势空';
 				}
 				if (adx < 20) {
-					if (adxPlusDI < adxMinusDI) {
-						marketType = adx < 12 ? '趋势空且增强' : '趋势多且增强';
-					}
-					if (adxPlusDI > adxMinusDI) {
-						marketType = adx < 12 ? '趋势多且增强' : '趋势空且增强';
-					}
 					if (rsi > 55 && adxPlusDI > adxMinusDI)
 						marketType = '趋势多且增强';
 					if (rsi < 45 && adxPlusDI < adxMinusDI)
@@ -1248,10 +1242,10 @@ class Backtester {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-04-09 10:00:00')
+								moment('2025-04-25 10:00:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-04-09 17:30:00')
+								moment('2025-04-26 23:30:00')
 							)
 					)
 					.map((candle) =>
