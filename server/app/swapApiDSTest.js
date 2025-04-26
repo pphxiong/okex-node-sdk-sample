@@ -1170,6 +1170,10 @@ class Backtester {
 				item.typeNum,
 				'胜率:',
 				item.typeWinRate + '%',
+				'盈利:',
+				item.typeWin,
+				'亏损:',
+				item.typeLoss,
 				'总收益:',
 				item.typeProfit.toFixed(2)
 			);
@@ -1318,6 +1322,10 @@ class Backtester {
 			item.typeNum,
 			'胜率:',
 			item.typeWinRate + '%',
+			'盈利:',
+			item.typeWin,
+			'亏损:',
+			item.typeLoss,
 			'总收益:',
 			item.typeProfit.toFixed(2)
 		);
