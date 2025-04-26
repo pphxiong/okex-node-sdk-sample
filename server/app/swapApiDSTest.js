@@ -536,7 +536,7 @@ class Backtester {
 						if (
 							rsi > 75 &&
 							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 28
+							adx >= 30
 						)
 							marketType =
 								adxMinusDI > 10
