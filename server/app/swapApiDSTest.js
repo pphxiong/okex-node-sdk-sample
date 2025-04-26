@@ -1148,7 +1148,17 @@ class Backtester {
 			// ========== 交易类型: ${key} ==========
 			// 总交易次数:     ${value.length}`);
 			const typeProfit = value.reduce((sum, t) => sum + t, 0);
-			return { key, typeProfit, typeNum: value.length };
+			const typeWin = value.filter((t) => t > 0).length;
+			const typeLoss = value.filter((t) => t <= 0).length;
+			const typeWinRate = ((typeWin / value.length) * 100).toFixed(2);
+			return {
+				key,
+				typeProfit,
+				typeNum: value.length,
+				typeWinRate,
+				typeWin,
+				typeLoss,
+			};
 		});
 		list.sort(
 			(a, b) => a.typeProfit / a.typeNum - b.typeProfit / b.typeNum
@@ -1158,6 +1168,8 @@ class Backtester {
 				item.key,
 				'总交易次数:',
 				item.typeNum,
+				'胜率:',
+				item.typeWinRate + '%',
 				'总收益:',
 				item.typeProfit.toFixed(2)
 			);
@@ -1286,7 +1298,17 @@ class Backtester {
 		// ========== 交易类型: ${key} ==========
 		// 总交易次数:     ${value.length}`);
 		const typeProfit = value.reduce((sum, t) => sum + t, 0);
-		return { key, typeProfit, typeNum: value.length };
+		const typeWin = value.filter((t) => t > 0).length;
+		const typeLoss = value.filter((t) => t <= 0).length;
+		const typeWinRate = ((typeWin / value.length) * 100).toFixed(2);
+		return {
+			key,
+			typeProfit,
+			typeNum: value.length,
+			typeWinRate,
+			typeWin,
+			typeLoss,
+		};
 	});
 	list.sort((a, b) => a.typeProfit / a.typeNum - b.typeProfit / b.typeNum);
 	list.forEach((item) => {
@@ -1294,6 +1316,8 @@ class Backtester {
 			item.key,
 			'总交易次数:',
 			item.typeNum,
+			'胜率:',
+			item.typeWinRate + '%',
 			'总收益:',
 			item.typeProfit.toFixed(2)
 		);
