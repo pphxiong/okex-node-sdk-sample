@@ -548,7 +548,7 @@ class Backtester {
 					) {
 						marketType =
 							Math.abs(adxPlusDI - adxMinusDI) < 10 && rsi > 58
-								? '趋势空且增强-2'
+								? '趋势多'
 								: '趋势多且增强-2';
 					}
 				} else {
