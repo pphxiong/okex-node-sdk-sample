@@ -1152,6 +1152,8 @@ class Backtester {
 			const typeWin = value.filter((t) => t > 0).length;
 			const typeLoss = value.filter((t) => t <= 0).length;
 			const typeWinRate = ((typeWin / value.length) * 100).toFixed(2);
+			const typeMax = Math.max(...value);
+			const typeMin = Math.min(...value);
 			return {
 				key,
 				typeProfit,
@@ -1159,6 +1161,8 @@ class Backtester {
 				typeWinRate,
 				typeWin,
 				typeLoss,
+				typeMax,
+				typeMin,
 			};
 		});
 		list.sort(
@@ -1175,6 +1179,10 @@ class Backtester {
 				item.typeWin,
 				'亏损:',
 				item.typeLoss,
+				'最大盈利:',
+				item.typeMax.toFixed(2),
+				'最大亏损:',
+				item.typeMin.toFixed(2),
 				'胜率:',
 				item.typeWinRate + '%',
 				'总收益:',
@@ -1307,6 +1315,8 @@ class Backtester {
 		const typeProfit = value.reduce((sum, t) => sum + t, 0);
 		const typeWin = value.filter((t) => t > 0).length;
 		const typeLoss = value.filter((t) => t <= 0).length;
+		const typeMax = Math.max(...value);
+		const typeMin = Math.min(...value);
 		const typeWinRate = ((typeWin / value.length) * 100).toFixed(2);
 		return {
 			key,
@@ -1315,6 +1325,8 @@ class Backtester {
 			typeWinRate,
 			typeWin,
 			typeLoss,
+			typeMax,
+			typeMin,
 		};
 	});
 	list.sort(
@@ -1331,6 +1343,10 @@ class Backtester {
 			item.typeWin,
 			'亏损:',
 			item.typeLoss,
+			'最大盈利:',
+			item.typeMax.toFixed(2),
+			'最大亏损:',
+			item.typeMin.toFixed(2),
 			'胜率:',
 			item.typeWinRate + '%',
 			'总收益:',
