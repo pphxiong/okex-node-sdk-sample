@@ -546,10 +546,7 @@ class Backtester {
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
 					) {
-						marketType =
-							Math.abs(adxPlusDI - adxMinusDI) < 10 && rsi > 58
-								? '趋势多'
-								: '趋势多且增强-2';
+						marketType = '趋势多且增强-2';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -840,9 +837,7 @@ class Backtester {
 
 				const longCloseConditions = [
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
-						['趋势空'].includes(slowMarketType),
-					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
-						slowMarketType.indexOf('趋势空且增强') !== -1,
+						slowMarketType.indexOf('趋势空') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
 						[
 							'超买市',
@@ -880,9 +875,7 @@ class Backtester {
 
 				const shortCloseConditions = [
 					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
-						['趋势多'].includes(slowMarketType),
-					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
-						slowMarketType.indexOf('趋势多且增强') !== -1,
+						slowMarketType.indexOf('趋势多') !== -1,
 					position.slowMarketType === '趋势潜在减弱' &&
 						[
 							'超卖市',
