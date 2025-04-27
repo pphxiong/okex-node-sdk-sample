@@ -546,7 +546,10 @@ class Backtester {
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
 					) {
-						marketType = '趋势多且增强-2';
+						marketType =
+							Math.abs(adxPlusDI - adxMinusDI) > 10
+								? '趋势多且增强-2'
+								: '趋势多';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -1165,11 +1168,7 @@ class Backtester {
 				typeMin,
 			};
 		});
-		list.sort(
-			(a, b) =>
-				Number(b.typeWinRate) * b.typeProfit -
-				Number(a.typeWinRate) * a.typeProfit
-		);
+		list.sort((a, b) => Number(b.typeWinRate) - Number(a.typeWinRate));
 		list.forEach((item) => {
 			console.log(
 				item.key,
@@ -1329,11 +1328,7 @@ class Backtester {
 			typeMin,
 		};
 	});
-	list.sort(
-		(a, b) =>
-			Number(b.typeWinRate) * b.typeProfit -
-			Number(a.typeWinRate) * a.typeProfit
-	);
+	list.sort((a, b) => Number(b.typeWinRate) - Number(a.typeWinRate));
 	list.forEach((item) => {
 		console.log(
 			item.key,
