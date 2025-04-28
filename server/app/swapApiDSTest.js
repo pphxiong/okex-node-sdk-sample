@@ -65,7 +65,7 @@ const config = {
 	},
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
-	initialBalance: 20000, // 初始本金10000 USDT
+	initialBalance: 10000, // 初始本金10000 USDT
 	leverage: 10,
 	riskPerTrade: 0.5, // 每笔交易风险2%
 	// coldStartBars: 480,
@@ -1161,47 +1161,7 @@ class Backtester {
 
 		const profitMap = this.genEveryTypeProfit();
 
-		const list = Object.entries(profitMap).map(([key, value]) => {
-			// console.log(`
-			// ========== 交易类型: ${key} ==========
-			// 总交易次数:     ${value.length}`);
-			const typeProfit = value.reduce((sum, t) => sum + t, 0);
-			const typeWin = value.filter((t) => t > 0).length;
-			const typeLoss = value.filter((t) => t <= 0).length;
-			const typeWinRate = ((typeWin / value.length) * 100).toFixed(2);
-			const typeMax = Math.max(...value);
-			const typeMin = Math.min(...value);
-			return {
-				key,
-				typeProfit,
-				typeNum: value.length,
-				typeWinRate,
-				typeWin,
-				typeLoss,
-				typeMax,
-				typeMin,
-			};
-		});
-		list.sort((a, b) => Number(b.typeWinRate) - Number(a.typeWinRate));
-		list.forEach((item) => {
-			console.log(
-				item.key,
-				'总交易次数:',
-				item.typeNum,
-				'盈利:',
-				item.typeWin,
-				'亏损:',
-				item.typeLoss,
-				'最大盈利:',
-				item.typeMax.toFixed(2),
-				'最大亏损:',
-				item.typeMin.toFixed(2),
-				'胜率:',
-				item.typeWinRate + '%',
-				'总收益:',
-				item.typeProfit.toFixed(2)
-			);
-		});
+		formatProfitMap(profitMap);
 
 		return {
 			winRate,
@@ -1321,28 +1281,44 @@ class Backtester {
 	console.log('avgRate', (winRateTotal / (i / interval + 1)).toFixed(2));
 	console.log('maxDrawdownTotal', maxDrawdownTotal);
 
-	const list = Object.entries(profitMapTotal).map(([key, value]) => {
+	formatProfitMap(profitMapTotal);
+})();
+
+function formatProfitMap(profitMap) {
+	const list = Object.entries(profitMap).map(([key, value]) => {
 		// console.log(`
 		// ========== 交易类型: ${key} ==========
 		// 总交易次数:     ${value.length}`);
 		const typeProfit = value.reduce((sum, t) => sum + t, 0);
-		const typeWin = value.filter((t) => t > 0).length;
-		const typeLoss = value.filter((t) => t <= 0).length;
+		const typeWin = value
+			.filter((t) => t > 0)
+			.reduce((sum, t) => sum + t, 0);
+		const typeLoss = value
+			.filter((t) => t <= 0)
+			.reduce((sum, t) => sum + t, 0);
+		const typeWinNum = value.filter((t) => t > 0).length;
+		const typeLossNum = value.filter((t) => t <= 0).length;
+		const typeWinRate = ((typeWinNum / value.length) * 100).toFixed(2);
 		const typeMax = Math.max(...value);
 		const typeMin = Math.min(...value);
-		const typeWinRate = ((typeWin / value.length) * 100).toFixed(2);
+		const typeAvgWin = typeProfit / value.length;
+
 		return {
 			key,
 			typeProfit,
 			typeNum: value.length,
-			typeWinRate,
 			typeWin,
 			typeLoss,
+			typeWinRate,
+			typeWinNum,
+			typeLossNum,
 			typeMax,
 			typeMin,
+			typeAvgWin,
 		};
 	});
-	list.sort((a, b) => Number(b.typeWinRate) - Number(a.typeWinRate));
+
+	list.sort((a, b) => Number(b.typeAvgWin) - Number(a.typeAvgWin));
 	list.forEach((item) => {
 		console.log(
 			item.key,
@@ -1359,10 +1335,12 @@ class Backtester {
 			'胜率:',
 			item.typeWinRate + '%',
 			'总收益:',
-			item.typeProfit.toFixed(2)
+			item.typeProfit.toFixed(2),
+			'平均盈利:',
+			item.typeAvgWin.toFixed(2)
 		);
 	});
-})();
+}
 
 app.listen(8092);
 
