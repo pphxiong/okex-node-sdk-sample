@@ -721,10 +721,31 @@ class Backtester {
 		return marketType;
 	}
 
-	getPositionSize(price, atr) {
+	getPositionSize(price, marketType) {
 		const riskAmount = this.balance * config.riskPerTrade;
 		// return riskAmount / (atr * config.leverage);
-		return config.initialBalance / price;
+		const profitRateMap = {
+			'趋势空且增强-1': 67.86,
+			'趋势多且增强-7': 67.04,
+			'趋势空且增强-11': 60.96,
+			'趋势空且增强-2': 59.04,
+			'趋势多且增强-3': 58.33,
+			'趋势多且增强-8': 56.36,
+			'趋势多且增强-4': 55.67,
+			'趋势多且增强-11': 54.95,
+			'趋势多且增强-1': 46.08,
+			'趋势空且增强-4': 46.05,
+			'趋势空且增强-7': 43.89,
+			'趋势多且增强-2': 39.12,
+			'趋势多且增强-10': 38.89,
+			'趋势空且增强-3': 36.84,
+			'趋势多且增强-6': 34.06,
+			'趋势多且增强-5': 23.68,
+		};
+		const newBalance =
+			(config.initialBalance * profitRateMap[marketType]) / 100;
+		return newBalance / price;
+		// return config.initialBalance / price;
 		// return riskAmount;
 	}
 
@@ -1033,7 +1054,7 @@ class Backtester {
 	}
 
 	openPosition(candle, atr, direction, fastMarketType, slowMarketType) {
-		const positionSize = this.getPositionSize(candle.close, atr);
+		const positionSize = this.getPositionSize(candle.close, slowMarketType);
 		const fee =
 			positionSize * candle.close * (config.feeRate + config.slippage);
 
