@@ -809,18 +809,11 @@ async function generateSignal(currentPrice, isShowLog = false) {
 		slowMarketType === '潜在转折多',
 	];
 	const shortConditions = [
-		slowMarketType.indexOf('趋势空且增强') !== 1,
+		slowMarketType.indexOf('趋势空且增强') !== -1,
 		slowMarketType === '趋势潜在减弱',
 		slowMarketType === '震荡市开空',
 		slowMarketType === '潜在转折空',
 	];
-
-	console.log(
-		123,
-		slowMarketType,
-		slowMarketType.indexOf('趋势多且增强') !== -1,
-		slowMarketType.indexOf('趋势空且增强') !== 1
-	);
 
 	const longCondition = longConditions.some((condition) => !!condition);
 	const shortCondition = shortConditions.some((condition) => !!condition);
