@@ -1302,6 +1302,7 @@ function formatProfitMap(profitMap) {
 		const typeMax = Math.max(...value);
 		const typeMin = Math.min(...value);
 		const typeAvgWin = typeProfit / value.length;
+		const typeA = (Number(typeAvgWin) * Number(typeWinRate)) / 100;
 
 		return {
 			key,
@@ -1315,10 +1316,11 @@ function formatProfitMap(profitMap) {
 			typeMax,
 			typeMin,
 			typeAvgWin,
+			typeA,
 		};
 	});
 
-	list.sort((a, b) => Number(b.typeAvgWin) - Number(a.typeAvgWin));
+	list.sort((a, b) => b.typeA - a.typeA);
 	list.forEach((item) => {
 		console.log(
 			item.key,
@@ -1337,7 +1339,9 @@ function formatProfitMap(profitMap) {
 			'总收益:',
 			item.typeProfit.toFixed(2),
 			'平均盈利:',
-			item.typeAvgWin.toFixed(2)
+			item.typeAvgWin.toFixed(2),
+			'typeA:',
+			item.typeA.toFixed(2)
 		);
 	});
 }
