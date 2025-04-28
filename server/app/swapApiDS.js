@@ -815,6 +815,13 @@ async function generateSignal(currentPrice, isShowLog = false) {
 		slowMarketType === '潜在转折空',
 	];
 
+	console.log(
+		123,
+		slowMarketType,
+		slowMarketType.indexOf('趋势多且增强') !== -1,
+		slowMarketType.indexOf('趋势空且增强') !== 1
+	);
+
 	const longCondition = longConditions.some((condition) => !!condition);
 	const shortCondition = shortConditions.some((condition) => !!condition);
 
@@ -1040,7 +1047,6 @@ async function strategyLoop(isShowLog = false) {
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
-			console.log(222, signal);
 			const { klin, slowMarketType } = signal;
 			if (
 				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
