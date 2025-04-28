@@ -994,7 +994,6 @@ async function initialize() {
 	// candlesSlow.pop();
 	// candlesMedium.pop();
 	candlesFast.pop();
-	candlesFast.pop();
 
 	// marketData[config.slowframe] = candlesSlow.map(parseKLine);
 	marketData[config.fastframe] = candlesFast.map(parseKLine);
