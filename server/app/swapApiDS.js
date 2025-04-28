@@ -1031,7 +1031,6 @@ async function strategyLoop(isShowLog = false) {
 
 		// 步骤3: 检查强制平仓
 		if (RiskManager.checkStopConditions(signal)) {
-			console.log(111);
 			await RiskManager.closePosition(signal, orderBook);
 			return;
 		}
@@ -1041,7 +1040,7 @@ async function strategyLoop(isShowLog = false) {
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
-			console.log(222);
+			console.log(222, signal);
 			const { klin, slowMarketType } = signal;
 			if (
 				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
