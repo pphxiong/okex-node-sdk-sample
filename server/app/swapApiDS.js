@@ -894,11 +894,15 @@ class RiskManager {
 				: state.slowMarketType.indexOf('趋势空且增强') !== -1 &&
 				  slowMarketType.indexOf('趋势多') !== -1;
 
-		// console.log('***********************************');
-		// console.log('entryPrice', state.entryPrice);
-		// console.log('currentPrice', currentPrice);
-		// console.log('isStop', isStop);
-		// console.log('***********************************');
+		console.log('***********************************');
+		console.log('entryPrice', state.entryPrice);
+		console.log('currentPrice', currentPrice);
+		console.log('state.slowMarketType', state.slowMarketType);
+		console.log('slowMarketType', slowMarketType);
+		console.log('side', state.side);
+		console.log('fastMarketType', fastMarketType);
+		console.log('isStop', isStop);
+		console.log('***********************************');
 		return isStop;
 	}
 
@@ -1041,8 +1045,6 @@ async function strategyLoop(isShowLog = false) {
 			) {
 				const limitPrice = orderBook.bid * (1 - config.orderDepth);
 				const amount = getPositionSize(slowMarketType) / limitPrice;
-
-				console.log(11, getPositionSize(slowMarketType));
 
 				state = JSON.parse(JSON.stringify(initState));
 
