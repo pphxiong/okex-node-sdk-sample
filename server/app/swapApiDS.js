@@ -1037,6 +1037,9 @@ async function strategyLoop(isShowLog = false) {
 
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
+			if (!signal.buySignal && !signal.sellSignal) {
+				return;
+			}
 			const { klin, slowMarketType } = signal;
 			if (
 				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
