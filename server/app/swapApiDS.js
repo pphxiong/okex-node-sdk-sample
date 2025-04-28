@@ -52,7 +52,7 @@ const config = {
 		stdDev: 1.8,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 18000, // 每单交易金额(USDT)
+	tradeAmount: 19000, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -894,15 +894,15 @@ class RiskManager {
 				: state.slowMarketType.indexOf('趋势空且增强') !== -1 &&
 				  slowMarketType.indexOf('趋势多') !== -1;
 
-		console.log('***********************************');
-		console.log('entryPrice', state.entryPrice);
-		console.log('currentPrice', currentPrice);
-		console.log('state.slowMarketType', state.slowMarketType);
-		console.log('slowMarketType', slowMarketType);
-		console.log('side', state.side);
-		console.log('fastMarketType', fastMarketType);
-		console.log('isStop', isStop);
-		console.log('***********************************');
+		// console.log('***********************************');
+		// console.log('entryPrice', state.entryPrice);
+		// console.log('currentPrice', currentPrice);
+		// console.log('state.slowMarketType', state.slowMarketType);
+		// console.log('slowMarketType', slowMarketType);
+		// console.log('side', state.side);
+		// console.log('fastMarketType', fastMarketType);
+		// console.log('isStop', isStop);
+		// console.log('***********************************');
 		return isStop;
 	}
 
@@ -994,7 +994,7 @@ async function initialize() {
 	// candlesSlow.pop();
 	// candlesMedium.pop();
 	candlesFast.pop();
-  candlesFast.pop();
+	candlesFast.pop();
 
 	// marketData[config.slowframe] = candlesSlow.map(parseKLine);
 	marketData[config.fastframe] = candlesFast.map(parseKLine);
@@ -1068,7 +1068,7 @@ async function strategyLoop(isShowLog = false) {
 				signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
 			) {
 				const limitPrice = orderBook.ask * (1 + config.orderDepth);
-				const amount = config.tradeAmount / limitPrice;
+				const amount = getPositionSize(slowMarketType) / limitPrice;
 
 				state = JSON.parse(JSON.stringify(initState));
 
