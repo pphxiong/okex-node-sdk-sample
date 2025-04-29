@@ -585,8 +585,7 @@ class Backtester {
 				}
 			} else {
 				if (adx < 25 && adx > 20) {
-					marketType = '不确定平仓';
-					// if (rsi > 50) marketType = '趋势多且增强-6';
+					if (rsi > 50) marketType = '趋势多且增强-6';
 					// if (rsi < 50) marketType = '趋势多且增强-test';
 				}
 			}
@@ -607,7 +606,10 @@ class Backtester {
 						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
 					) {
-						marketType = '趋势空且增强-7';
+						marketType =
+							close < open
+								? '趋势空且增强-7'
+								: '趋势多且增强-test';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -640,9 +642,6 @@ class Backtester {
 						marketType = '趋势空且增强-10';
 				}
 			} else {
-				if (adx < 25 && adx > 20) {
-					marketType = '不确定平仓';
-				}
 			}
 		}
 
@@ -868,8 +867,6 @@ class Backtester {
 				const longCloseConditions = [
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 						slowMarketType.indexOf('趋势空') !== -1,
-					position.slowMarketType.indexOf('趋势多且增强') !== 1 &&
-						slowMarketType.indexOf('不确定平仓') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
 						[
 							'超买市',
@@ -908,8 +905,6 @@ class Backtester {
 				const shortCloseConditions = [
 					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
 						slowMarketType.indexOf('趋势多') !== -1,
-					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
-						slowMarketType.indexOf('不确定平仓') !== -1,
 					position.slowMarketType === '趋势潜在减弱' &&
 						[
 							'超卖市',
