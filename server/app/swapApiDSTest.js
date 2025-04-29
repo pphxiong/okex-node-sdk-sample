@@ -868,6 +868,8 @@ class Backtester {
 				const longCloseConditions = [
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 						slowMarketType.indexOf('趋势空') !== -1,
+					position.slowMarketType.indexOf('趋势多且增强') !== 1 &&
+						slowMarketType.indexOf('不确定平仓') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
 						[
 							'超买市',
@@ -906,6 +908,8 @@ class Backtester {
 				const shortCloseConditions = [
 					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
 						slowMarketType.indexOf('趋势多') !== -1,
+					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
+						slowMarketType.indexOf('不确定平仓') !== -1,
 					position.slowMarketType === '趋势潜在减弱' &&
 						[
 							'超卖市',
