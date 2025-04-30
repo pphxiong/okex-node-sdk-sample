@@ -586,10 +586,11 @@ class Backtester {
 			} else {
 				if (adx > 25) {
 					marketType = '趋势多且增强-6';
+				} else 	if (adx < 25 && adx > 20) {
+					if (rsi > 50) marketType = '趋势多且增强-test6';
+					if (rsi < 50) marketType = '趋势多且增强-test7';
 				} else if (adx < 15) {
-					marketType = '趋势多且增强-test';
-				} else {
-					marketType = '趋势空且增强-test';
+					// marketType = '趋势多且增强-test';
 				}
 			}
 		}
