@@ -559,10 +559,10 @@ class Backtester {
 				}
 			} else if (close < emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
-					if (rsi > 40) marketType = '趋势空且增强-test';
+					if (rsi < 50) marketType = '趋势空且增强-3';
 				}
 				if (adxPlusDI > adxMinusDI) {
-					if (rsi < 60) marketType = '趋势多且增强-3';
+					if (rsi > 50) marketType = '趋势多且增强-3';
 				}
 				if (adx >= 25) {
 					if (rsi > 40) {
@@ -1144,8 +1144,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		// console.log('\n最近20笔交易:');
-		// console.table(this.trades);
+		console.log('\n最近20笔交易:');
+		console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1193,8 +1193,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-04-01';
-	const start = '2021-01-01';
+	const start = '2025-05-01';
+	// const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1205,8 +1205,8 @@ class Backtester {
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -1235,26 +1235,26 @@ class Backtester {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			// 	data[config.slowframe]
-			// 		// .slice(-5)
-			// 		.filter(
-			// 			(item) =>
-			// 				moment(item.timestamp).isAfter(
-			// 					moment('2025-04-25 10:00:00')
-			// 				) &&
-			// 				moment(item.timestamp).isBefore(
-			// 					moment('2025-04-26 23:30:00')
-			// 				)
-			// 		)
-			// 		.map((candle) =>
-			// 			Object.assign(candle, {
-			// 				timestamp: moment(candle.timestamp).format(
-			// 					'YYYY-MM-DD HH:mm:ss'
-			// 				),
-			// 			})
-			// 		)
-			// );
+			console.log(
+				data[config.slowframe]
+					// .slice(-5)
+					.filter(
+						(item) =>
+							moment(item.timestamp).isAfter(
+								moment('2025-05-07 00:00:00')
+							) &&
+							moment(item.timestamp).isBefore(
+								moment('2025-05-07 23:30:00')
+							)
+					)
+					.map((candle) =>
+						Object.assign(candle, {
+							timestamp: moment(candle.timestamp).format(
+								'YYYY-MM-DD HH:mm:ss'
+							),
+						})
+					)
+			);
 
 			// console.log(data[config.slowframe].length);
 
