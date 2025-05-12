@@ -510,10 +510,10 @@ class Backtester {
     if (emaFast > emaSlow) {
       if (close > emaFast) {
         if (adxPlusDI > adxMinusDI) {
-          if (rsi > 70) {
+          if (rsi > 75) {
             marketType = "趋势空";
             if (
-              rsi > 75 &&
+              rsi > 80 &&
               emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
               adx >= 30
             )
@@ -1145,8 +1145,8 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-05-01";
-  // const start = '2021-01-01';
+  // const start = "2025-05-01";
+  const start = "2021-01-01";
   const end = "2025-04-10";
   const interval = 30;
   let profitTotal = 0;
@@ -1157,8 +1157,8 @@ class Backtester {
 
   let i = 0;
   let startTime = moment(start).add(i, "days");
-  // while (moment(end).isAfter(startTime)) {
-  while (i === 0) {
+  while (moment(end).isAfter(startTime)) {
+    // while (i === 0) {
     try {
       backtester.data = {
         [config.slowframe]: [],
