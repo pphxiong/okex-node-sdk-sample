@@ -103,7 +103,7 @@ let marketData = {
   [config.fastframe]: [],
 };
 let ws = null;
-let availableBalance = 0;
+let globalAvailableBalance = 0;
 let RESTART_TIME = 0;
 
 // 初始化交易所
@@ -490,7 +490,10 @@ function getPositionSize(marketType) {
     "趋势多且增强-6": 1.48,
     "趋势多且增强-5": 0.1,
   };
-  return (config.tradeAmount * profitRateMap[marketType]) / 100;
+  return Math.min(
+    globalAvailableBalance * config.leverage,
+    (config.tradeAmount * profitRateMap[marketType]) / 100
+  );
 }
 
 // 限价单管理模块
@@ -1100,7 +1103,7 @@ async function initPositionData() {
       state = Object.assign(state, dataConfig);
     }
   }
-  return availableBalance;
+  return Number(availableBalance);
 }
 
 // 实时数据订阅
@@ -1186,7 +1189,7 @@ function mergeTimeframes() {
 (async () => {
   await exchange.loadMarkets();
   await initialize();
-  availableBalance = await initPositionData();
+  globalAvailableBalance = await initPositionData();
   connectWebSocket();
   await strategyLoop(true);
   setInterval(async () => {
