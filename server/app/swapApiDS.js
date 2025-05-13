@@ -491,8 +491,8 @@ function getPositionSize(marketType) {
     "趋势多且增强-5": -1.9,
   };
   return Math.min(
-    globalAvailableBalance * config.leverage * 0.95,
-    (config.tradeAmount * profitRateMap[marketType]) / 100
+		globalAvailableBalance * config.leverage * 0.8,
+		(config.tradeAmount * profitRateMap[marketType]) / 100
   );
 }
 
