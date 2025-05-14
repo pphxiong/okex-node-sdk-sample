@@ -35,55 +35,55 @@ require("dotenv").config();
 
 // 配置参数
 const config = {
-  symbol: "DOGE/USDT",
-  // timeframe: '1m',
-  timeframes: ["15m" /*  '5m''1m'*/], // 多周期参数
-  emaSettings: {
-    // '30m': { periods: [10, 5], slopeWindow: 5 },
-    "15m": { periods: [25, 5], slopeWindow: 5 },
-    // '5m': { periods: [25, 5], slopeWindow: 5 },
-  },
-  macdParams: { "15m": [12, 26, 9] },
-  slowframe: "15m",
-  fastframe: "15m",
-  // 布林线参数
-  bollinger: {
-    period: 20,
-    stdDev: 1.8,
-  },
-  orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-  tradeAmount: 22000, // 每单交易金额(USDT)
-  maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
-  trailingStop: 0.0025, // 浮动止盈止损(0.25%)
-  stopLoss: 0.01, // 硬止损(0.5%)
-  coolingPeriod: 120, // 基础冷却时间(秒)
-  numSegments: 5, // 分段数量
-  icebergRatio: 0.2, // 冰山可见部分比例
-  // BOLL参数
-  bollPeriod: 14,
-  bollStdDev: 3.0,
-  // MACD参数
-  macdFast: 8,
-  macdSlow: 17,
-  macdSignal: 5,
-  coldStartBars: 300, // 冷启动期间的K线数量
-  atrParam: {
-    // ATR参数
-    atrPeriod: 14,
-    stopLoss: 1.6,
-    takeProfit: 6.4,
-  },
-  riskPerTrade: 0.02, // 每笔交易风险2%
-  leverage: 10, // 杠杆倍数
-  adxPeriod: 14,
-  rsiPeriod: 14,
-  // EMA斜率参数
-  emaSlope: {
-    period: 10,
-    lookback: 5, // 计算5根K线斜率
-    emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
-    // emaSlopeThreshold: 0, // EMA斜率阈值
-  },
+	symbol: 'DOGE/USDT',
+	// timeframe: '1m',
+	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
+	emaSettings: {
+		// '30m': { periods: [10, 5], slopeWindow: 5 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
+		// '5m': { periods: [25, 5], slopeWindow: 5 },
+	},
+	macdParams: { '15m': [12, 26, 9] },
+	slowframe: '15m',
+	fastframe: '15m',
+	// 布林线参数
+	bollinger: {
+		period: 20,
+		stdDev: 1.8,
+	},
+	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
+	tradeAmount: 24000, // 每单交易金额(USDT)
+	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
+	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
+	stopLoss: 0.01, // 硬止损(0.5%)
+	coolingPeriod: 120, // 基础冷却时间(秒)
+	numSegments: 5, // 分段数量
+	icebergRatio: 0.2, // 冰山可见部分比例
+	// BOLL参数
+	bollPeriod: 14,
+	bollStdDev: 3.0,
+	// MACD参数
+	macdFast: 8,
+	macdSlow: 17,
+	macdSignal: 5,
+	coldStartBars: 300, // 冷启动期间的K线数量
+	atrParam: {
+		// ATR参数
+		atrPeriod: 14,
+		stopLoss: 1.6,
+		takeProfit: 6.4,
+	},
+	riskPerTrade: 0.02, // 每笔交易风险2%
+	leverage: 10, // 杠杆倍数
+	adxPeriod: 14,
+	rsiPeriod: 14,
+	// EMA斜率参数
+	emaSlope: {
+		period: 10,
+		lookback: 5, // 计算5根K线斜率
+		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
+		// emaSlopeThreshold: 0, // EMA斜率阈值
+	},
 };
 
 const initState = {
