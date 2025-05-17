@@ -614,10 +614,10 @@ class Backtester {
 								adx >= 30
 							)
 								marketType =
-									adxPlusDI > 10 && rsi < 20
-										? '趋势多且增强-test'
+									adxPlusDI > 10 && rsi < 25
+										? '趋势多且增强-7test'
 										: adxPlusDI < 10
-										? '趋势空且增强-7'
+										? '趋势空且增强-7test'
 										: '';
 						}
 						// if (
