@@ -1,3 +1,143 @@
+/*  #################################
+
+
+
+if (emaFast > emaSlow) {
+  if (close > emaFast) {
+    if (adxPlusDI > adxMinusDI) {
+      if (rsi > 70) {
+        marketType = adx >= 30 ? '趋势多' : '趋势空';
+      } else if (rsi > 75) {
+        marketType = '趋势空';
+        if (
+          emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
+          adx >= 30
+        )
+          marketType =
+            adxMinusDI > 10 && rsi > 80
+              ? '趋势空且增强-1'
+              : adxMinusDI < 10
+              ? '趋势多且增强-1'
+              : '';
+      } else if (
+        rsi < 60 &&
+        emaSlope > config.emaSlope.emaSlopeThreshold / 2
+      ) {
+        marketType = '趋势多且增强-2';
+      }
+    } else {
+      if (adx < 20 && adx > 15) {
+        if (
+          rsi > 60 &&
+          emaSlope > config.emaSlope.emaSlopeThreshold * 2
+        )
+          marketType = '趋势空且增强-2';
+      }
+    }
+  } else if (close < emaSlow) {
+    if (adxPlusDI < adxMinusDI) {
+      if (rsi < 50) marketType = '趋势空且增强-3';
+    }
+    if (adxPlusDI > adxMinusDI) {
+      if (rsi > 50) marketType = '趋势多且增强-3';
+    }
+    if (adx >= 25) {
+      if (rsi > 40) {
+        marketType = '趋势多且增强-4';
+      }
+    }
+    if (adx < 25) {
+    }
+    if (adx < 20) {
+      if (adxPlusDI < adxMinusDI) {
+        marketType = '趋势空';
+      }
+      if (rsi > 55 && adxPlusDI > adxMinusDI)
+        marketType = '趋势多且增强-5';
+      if (rsi < 45 && adxPlusDI < adxMinusDI)
+        marketType = '趋势空且增强-4';
+    }
+  } else {
+    if (adx < 25 && adx > 20) {
+      if (rsi > 50) marketType = '趋势多且增强-6';
+      if (rsi < 50) marketType = '趋势多且增强-5';
+    }
+  }
+}
+
+if (emaFast < emaSlow) {
+  if (close < emaFast) {
+    if (adxPlusDI < adxMinusDI) {
+      if (rsi < 30) {
+        marketType = '趋势多';
+        if (
+          rsi < 25 &&
+          emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+        )
+          marketType =
+            adxPlusDI > 10 ? '趋势多且增强-7' : '趋势多';
+      } else if (
+        rsi > 40 &&
+        emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+      ) {
+        marketType = '趋势空且增强-7';
+      }
+    } else {
+      if (adx < 20 && adx > 15) {
+        if (
+          rsi < 45 &&
+          emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+        )
+          marketType = '趋势多且增强-8';
+      }
+    }
+  } else if (close > emaSlow) {
+    if (adxPlusDI < adxMinusDI) {
+      if (rsi < 50) marketType = '趋势空且增强-8';
+    }
+    if (adxPlusDI > adxMinusDI) {
+      if (rsi > 50) marketType = '趋势空';
+    }
+
+    if (adx >= 25) {
+      if (rsi < 60) marketType = '趋势空';
+    }
+    if (adx < 25) {
+      marketType = rsi > 60 ? '趋势多' : '趋势空';
+    }
+    if (adx < 20) {
+      if (rsi > 55 && adxPlusDI > adxMinusDI)
+        marketType = '趋势多且增强-10';
+      if (rsi < 45 && adxPlusDI < adxMinusDI)
+        marketType = '趋势空且增强-10';
+    }
+  } else {
+  }
+}
+
+if (
+  adx < 25 &&
+  adxPlusDI > adxMinusDI &&
+  emaFast < emaSlow &&
+  close < emaFast
+) {
+  if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
+    marketType = '趋势空且增强-11';
+}
+if (
+  adx < 25 &&
+  adxPlusDI < adxMinusDI &&
+  emaFast > emaSlow &&
+  close > emaFast
+) {
+  if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
+    marketType = '趋势多且增强-11';
+}
+
+
+/*
+
+
 // profitTotal 128229.40293307074
 // maxLossTotal -8015.37
 // winRateTotal 2363.840000000001
