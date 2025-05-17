@@ -615,9 +615,9 @@ class Backtester {
 							)
 								marketType =
 									adxPlusDI > 10 && rsi < 25
-										? '趋势多且增强-7test'
+										? '趋势多且增强-7test1'
 										: adxPlusDI < 10
-										? '趋势空且增强-7test'
+										? '趋势多且增强-7test2'
 										: '';
 						}
 						// if (
