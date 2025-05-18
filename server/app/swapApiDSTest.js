@@ -545,7 +545,7 @@ class Backtester {
 										? '趋势空且增强-1'
 										: adxMinusDI < 10
 										? '趋势多且增强-1'
-										: '';
+										: '趋势空且增强-1test';
 						}
 					} else if (
 						rsi < 60 &&
