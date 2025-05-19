@@ -150,146 +150,147 @@ function getMarketType(candle, lastCandle) {
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
 	if (emaFast > emaSlow) {
-		if (close > emaFast) {
-			if (adxPlusDI > adxMinusDI) {
-				if (rsi > 70) {
-					marketType = adx >= 30 ? '趋势多' : '趋势空';
-					if (rsi > 75) {
-						marketType = '趋势空';
-						if (
-							emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 30
-						)
-							marketType =
-								adxMinusDI > 10 && rsi > 80
-									? '趋势空且增强-1'
-									: adxMinusDI < 10
-									? '趋势多且增强-1'
-									: '';
-					}
-				} else if (
-					rsi < 60 &&
-					emaSlope > config.emaSlope.emaSlopeThreshold / 2
-				) {
-					marketType = '趋势多且增强-2';
-				}
-			} else {
-				if (adx < 20 && adx > 15) {
-					if (
-						rsi > 60 &&
-						emaSlope > config.emaSlope.emaSlopeThreshold * 2
-					)
-						marketType = '趋势空且增强-2';
-				}
-			}
-		} else if (close < emaSlow) {
-			if (adxPlusDI < adxMinusDI) {
-				if (rsi < 50) marketType = '趋势空';
-			}
-			if (adxPlusDI > adxMinusDI) {
-				if (rsi > 50) marketType = '趋势多';
-			}
-			if (adx >= 25) {
-				if (rsi > 40) {
-					marketType = '趋势多且增强-4';
-				}
-			}
-			if (adx < 25) {
-			}
-			if (adx < 20) {
-				if (adxPlusDI < adxMinusDI) {
-					marketType = '趋势空';
-				}
-				if (adxPlusDI > adxMinusDI) {
-				}
-				if (rsi > 55 && adxPlusDI > adxMinusDI) marketType = '趋势多';
-				if (rsi < 45 && adxPlusDI < adxMinusDI)
-					marketType = '趋势空且增强-4';
-			}
-		} else {
-			if (adx > 25) {
-			} else if (adx < 25 && adx > 20) {
-				if (rsi > 50) marketType = '趋势多';
-				if (rsi < 50) marketType = '趋势多';
-			} else if (adx < 15) {
-			}
-		}
-	}
+    if (close > emaFast) {
+      if (adxPlusDI > adxMinusDI) {
+        if (rsi > 70) {
+          marketType = adx >= 30 ? '趋势多' : '趋势空';
+          if (rsi > 75) {
+            marketType = '趋势空';
+            if (
+              emaSlope > config.emaSlope.emaSlopeThreshold * 2 &&
+              adx >= 30
+            )
+              marketType =
+                adxMinusDI > 10 && rsi > 80
+                  ? '趋势空且增强-1'
+                  : adxMinusDI < 10
+                  ? '趋势多且增强-1'
+                  : '';
+          }
+        } else if (
+          rsi < 60 &&
+          emaSlope > config.emaSlope.emaSlopeThreshold / 2
+        ) {
+          marketType = '趋势多且增强-2';
+        }
+      } else {
+        if (adx < 20 && adx > 15) {
+          if (
+            rsi > 60 &&
+            emaSlope > config.emaSlope.emaSlopeThreshold * 2
+          )
+            marketType = '趋势空且增强-2';
+        }
+      }
+    } else if (close < emaSlow) {
+      if (adxPlusDI < adxMinusDI) {
+        if (rsi < 50) marketType = '趋势空';
+      }
+      if (adxPlusDI > adxMinusDI) {
+        if (rsi > 50) marketType = '趋势多';
+      }
+      if (adx >= 25) {
+        if (rsi > 40) {
+          marketType = '趋势多且增强-4';
+        }
+      }
+      if (adx < 25) {
+      }
+      if (adx < 20) {
+        if (adxPlusDI < adxMinusDI) {
+          marketType = '趋势空';
+        }
+        if (adxPlusDI > adxMinusDI) {
+        }
+        if (rsi > 55 && adxPlusDI > adxMinusDI) marketType = '趋势多';
+        if (rsi < 45 && adxPlusDI < adxMinusDI)
+          marketType = '趋势空且增强-4';
+      }
+    } else {
+      if (adx > 25) {
+      } else if (adx < 25 && adx > 20) {
+        if (rsi > 50) marketType = '趋势多';
+        if (rsi < 50) marketType = '趋势多';
+      } else if (adx < 15) {
+      }
+    }
+  }
 
-	if (emaFast < emaSlow) {
-		if (close < emaFast) {
-			if (adxPlusDI < adxMinusDI) {
-				if (rsi < 30) {
-					marketType = adx >= 30 ? '趋势空' : '趋势多';
-					if (rsi < 25) {
-						marketType = '趋势多';
-						if (
-							emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
-							adx >= 30
-						)
-							marketType =
-								adxPlusDI > 10 && rsi < 25
-									? '趋势多且增强-7test1'
-									: adxPlusDI < 10
-									? '趋势多且增强-7test2'
-									: '';
-					}
-				} else if (
-					rsi > 40 &&
-					emaSlope < -config.emaSlope.emaSlopeThreshold / 2
-				) {
-					marketType = '趋势空';
-				}
-			} else {
-				if (adx < 20 && adx > 15) {
-					if (
-						rsi < 45 &&
-						emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-					)
-						marketType = '趋势多且增强-8';
-				}
-			}
-		} else if (close > emaSlow) {
-			if (adxPlusDI < adxMinusDI) {
-				if (rsi < 50) marketType = '趋势空且增强-8';
-			}
-			if (adxPlusDI > adxMinusDI) {
-				if (rsi > 50) marketType = '趋势空';
-			}
+  if (emaFast < emaSlow) {
+    if (close < emaFast) {
+      if (adxPlusDI < adxMinusDI) {
+        if (rsi < 30) {
+          marketType = adx >= 30 ? '趋势空' : '趋势多';
+          if (rsi < 25) {
+            marketType = '趋势多';
+            if (
+              emaSlope < -config.emaSlope.emaSlopeThreshold * 2 &&
+              adx >= 30
+            )
+              marketType =
+                adxPlusDI > 10 && rsi < 25
+                  ? '趋势多且增强-7test1'
+                  : adxPlusDI < 10
+                  ? '趋势多且增强-7test2'
+                  : '';
+          }
+        } else if (
+          rsi > 40 &&
+          emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+        ) {
+          marketType = '';
+        }
+      } else {
+        if (adx < 20 && adx > 15) {
+          if (
+            rsi < 45 &&
+            emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+          )
+            // marketType = '趋势多且增强-8';
+            marketType = '';
+        }
+      }
+    } else if (close > emaSlow) {
+      if (adxPlusDI < adxMinusDI) {
+        if (rsi < 50) marketType = '趋势空且增强-8';
+      }
+      if (adxPlusDI > adxMinusDI) {
+        if (rsi > 50) marketType = '趋势空';
+      }
 
-			if (adx >= 25) {
-				if (rsi < 60) marketType = '趋势空';
-			}
-			if (adx < 25) {
-				marketType = rsi > 60 ? '趋势多' : '趋势空';
-			}
-			if (adx < 20) {
-				if (rsi > 55 && adxPlusDI > adxMinusDI) marketType = '趋势多';
-				if (rsi < 45 && adxPlusDI < adxMinusDI)
-					marketType = '趋势空且增强-10';
-			}
-		} else {
-		}
-	}
+      if (adx >= 25) {
+        if (rsi < 60) marketType = '趋势空';
+      }
+      if (adx < 25) {
+        marketType = rsi > 60 ? '趋势多' : '趋势空';
+      }
+      if (adx < 20) {
+        if (rsi > 55 && adxPlusDI > adxMinusDI) marketType = '趋势多';
+        if (rsi < 45 && adxPlusDI < adxMinusDI)
+          marketType = '趋势空且增强-10';
+      }
+    } else {
+    }
+  }
 
-	if (
-		adx < 25 &&
-		adxPlusDI > adxMinusDI &&
-		emaFast < emaSlow &&
-		close < emaFast
-	) {
-		if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
-			marketType = '趋势空且增强-11';
-	}
-	if (
-		adx < 25 &&
-		adxPlusDI < adxMinusDI &&
-		emaFast > emaSlow &&
-		close > emaFast
-	) {
-		if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
-			marketType = '趋势多且增强-11';
-	}
+  if (
+    adx < 25 &&
+    adxPlusDI > adxMinusDI &&
+    emaFast < emaSlow &&
+    close < emaFast
+  ) {
+    if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
+      marketType = '趋势空且增强-11';
+  }
+  if (
+    adx < 25 &&
+    adxPlusDI < adxMinusDI &&
+    emaFast > emaSlow &&
+    close > emaFast
+  ) {
+    if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
+      marketType = '趋势多且增强-11';
+  }
 
 	return marketType;
 }
@@ -501,16 +502,16 @@ function getPositionSize(marketType) {
 	// };
 	const profitRateMap = {
 		'趋势空且增强-1': 66.31,
-		'趋势多且增强-1': 55.63,
-		'趋势多且增强-7test2': 39.32,
-		'趋势空且增强-2': 26.82,
-		'趋势多且增强-4': 24.42,
-		'趋势多且增强-7test1': 21.88,
-		'趋势多且增强-2': 12.44,
-		'趋势多且增强-11': 11.53,
-		'趋势空且增强-4': 8.61,
-		'趋势空且增强-11': 7.6,
-		'趋势多且增强-8': 3.85,
+		'趋势多且增强-1': 62.20,
+    '趋势空且增强-2': 38.39,
+		'趋势多且增强-7test2': 34.76,
+		'趋势多且增强-4': 26.05,
+		'趋势多且增强-7test1': 21.25,
+    '趋势空且增强-11': 14.12,
+    '趋势多且增强-11': 12.73,
+		'趋势多且增强-2': 12.32,
+		'趋势空且增强-4': 1.60,
+		// '趋势多且增强-8': 3.85,
 		// '趋势多且增强-5': -1.9,
 	};
 	return Math.min(
