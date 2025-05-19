@@ -627,7 +627,7 @@ class Backtester {
               emaSlope < -config.emaSlope.emaSlopeThreshold * 2
             )
               // marketType = '趋势多且增强-8';
-              marketType = '趋势多';
+              marketType = '';
           }
         }
       } else if (close > emaSlow) {
