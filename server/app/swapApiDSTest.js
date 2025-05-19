@@ -556,7 +556,7 @@ class Backtester {
 						rsi < 60 
 					) {
             marketType =
-				emaSlope < config.emaSlope.emaSlopeThreshold / 2
+				emaSlope < config.emaSlope.emaSlopeThreshold
 					? '趋势多且增强-2test'
 					: '趋势空且增强-2test';
 					}
