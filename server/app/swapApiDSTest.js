@@ -610,7 +610,7 @@ class Backtester {
                   adxPlusDI > 10 && rsi < 20
                     ? '趋势多且增强-7test1'
                     : adxPlusDI < 10
-                    ? '趋势多且增强-7test2'
+                    ? '趋势空且增强-7test2'
                     : '';
             }
           } else if (
