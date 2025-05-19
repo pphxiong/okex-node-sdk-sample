@@ -595,13 +595,10 @@ class Backtester {
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 30) {
-						marketType = adx >= 30 ? '趋势空' : '趋势多';
-						// if (
-						// 	rsi < 25 &&
-						// 	emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-						// )
-						// 	marketType =
-						// 		adxPlusDI > 10 ? '趋势多且增强-7' : '趋势多';
+            // marketType = adx >= 30 ? '趋势多' : '趋势空';
+            marketType = '趋势多';
+			if (rsi < 25 && emaSlope < -config.emaSlope.emaSlopeThreshold * 2)
+				marketType = adxPlusDI > 10 ? '趋势多且增强-7' : '趋势多';
 					} else if (
 						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
