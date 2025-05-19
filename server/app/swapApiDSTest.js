@@ -555,7 +555,7 @@ class Backtester {
 						if (rsi > 52 && rsi < 58) {
 							marketType = '趋势多且增强-2';
 						} else {
-							rsi = '趋势多';
+							marketType = '趋势多';
 						}
 					}
 				} else {
