@@ -552,7 +552,7 @@ class Backtester {
 								? '趋势多且增强-2'
 								: adx > 20
 								? '趋势多且增强-2test'
-								: '';
+								: '趋势多';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
