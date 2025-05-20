@@ -563,6 +563,8 @@ class Backtester {
 								: adx > 10
 								? '趋势多且增强-6test'
 								: '趋势多且增强-7test';
+                  if (emaSlope < config.emaSlope.emaSlopeThreshold)
+					marketType = '趋势空且增强-7test';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -1122,8 +1124,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log("\n最近20笔交易:");
+		// console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1172,8 +1174,8 @@ class Backtester {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-05-01';
-	// const start = '2021-01-01';
+	// const start = '2025-05-01';
+	const start = '2021-01-01';
 	const end = '2025-04-10';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1185,8 +1187,8 @@ class Backtester {
 
 	let i = 0;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		try {
 			backtester.data = {
 				[config.slowframe]: [],
@@ -1224,7 +1226,7 @@ class Backtester {
 								moment('2025-05-20 11:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-05-20 18:15:00')
+								moment('2025-05-20 05:15:00')
 							)
 					)
 					.map((candle) =>
