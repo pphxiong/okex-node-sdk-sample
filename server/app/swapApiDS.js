@@ -204,7 +204,7 @@ function getMarketType(candle, lastCandle) {
         if (rsi > 55 && adxPlusDI > adxMinusDI) marketType = "趋势空";
         if (rsi < 45 && adxPlusDI < adxMinusDI) marketType = "趋势空且增强-4";
       }
-      // if (rsi < 40) marketType = "趋势空且增强-4test";
+      if (rsi < 40) marketType = "趋势空且增强-4test";
     } else {
       if (adx > 25) {
       } else if (adx < 25 && adx > 20) {
@@ -506,6 +506,7 @@ function getPositionSize(marketType) {
     "趋势多且增强-5test": 3.54,
     "趋势空且增强-4": 1.6,
     "趋势多且增强-3test": 0.01,
+    "趋势空且增强-4test": 0.01,
     // '趋势多且增强-8': 3.85,
     // '趋势多且增强-5': -1.9,
   };
