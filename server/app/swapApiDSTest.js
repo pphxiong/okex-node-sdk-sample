@@ -553,7 +553,7 @@ class Backtester {
 								: adx >= 30
 								? '趋势多且增强-2test'
 								: adx >= 25
-								? '趋势空且增强-3test'
+								? '趋势多且增强-3test'
 								: adx > 20
 								? '趋势多且增强-4test'
 								: adx > 15
