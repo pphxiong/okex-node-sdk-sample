@@ -628,10 +628,10 @@ class Backtester {
 										: '';
 						}
 					} else if (
-						rsi > 50 &&
+						rsi > 40 &&
 						emaSlope < -config.emaSlope.emaSlopeThreshold / 2
 					) {
-						marketType = adx >= 30 ? '趋势空且增强-1test' : '';
+						// marketType = adx >= 30 ? '趋势空且增强-1test' : '';
 					}
 				} else {
 					if (adx < 20 && adx > 15) {
@@ -1175,7 +1175,7 @@ class Backtester {
 	// const start = "2025-05-01";
 	const start = '2021-01-01';
 	const end = '2025-04-10';
-	const interval = 30;
+	const interval = 60;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
 	let winRateTotal = 0;
