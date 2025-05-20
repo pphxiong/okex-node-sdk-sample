@@ -159,17 +159,21 @@ function getMarketType(candle, lastCandle) {
 					emaSlope > config.emaSlope.emaSlopeThreshold / 2
 				) {
 					marketType =
-						adx >= 35
+						adx > 40
+							? '趋势多且增强-2testtest'
+							: adx >= 35
 							? '趋势多且增强-2'
 							: adx >= 30
 							? '趋势多且增强-2test'
 							: adx >= 25
-							? '趋势多且增强-3test'
+							? '趋势多'
 							: adx > 20
 							? '趋势多且增强-4test'
 							: adx > 15
 							? '趋势多且增强-5test'
-							: '趋势多且增强-6test';
+							: adx > 10
+							? '趋势多且增强-6test'
+							: '趋势多且增强-7test';
 				}
 			} else {
 				if (adx < 20 && adx > 15) {
