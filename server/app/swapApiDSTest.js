@@ -613,7 +613,7 @@ class Backtester {
             rsi < 40 &&
             emaSlope < -config.emaSlope.emaSlopeThreshold
           ) {
-            marketType = adx >= 30 ? "趋势空且增强-1test" : "";
+            marketType = adx >= 30 ? "趋势空" : "";
           }
         } else {
           if (adx < 20 && adx > 15) {
