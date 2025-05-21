@@ -567,19 +567,19 @@ class Backtester {
 				if (adxPlusDI < adxMinusDI) {
 					marketType =
 						adx > 40
-							? '趋势空且增强-l2-1'
+							? '趋势多且增强-l2-1'
 							: adx >= 35
 							? ''
 							: adx >= 30
 							? ''
 							: adx >= 25
-							? '趋势多且增强-l2-4'
+							? ''
 							: adx > 20
 							? ''
 							: adx > 15
 							? ''
 							: adx > 10
-							? '趋势空且增强-l2-7'
+							? ''
 							: '';
 				}
 				if (adxPlusDI > adxMinusDI) {
@@ -587,7 +587,7 @@ class Backtester {
 						adx > 40
 							? '趋势多且增强-l3-1'
 							: adx >= 35
-							? '趋势空且增强-l3-2'
+							? '趋势多且增强-l3-2'
 							: adx >= 30
 							? '趋势多且增强-l3-3'
 							: adx >= 25
@@ -597,7 +597,7 @@ class Backtester {
 							: adx > 15
 							? ''
 							: adx > 10
-							? '趋势多且增强-l3-7'
+							? '趋势空且增强-l3-7'
 							: '趋势多且增强-l3-8';
 				}
 			} else {
@@ -653,11 +653,11 @@ class Backtester {
 							: adx >= 35
 							? ''
 							: adx >= 30
-							? '趋势空且增强-s2-3'
+							? ''
 							: adx >= 25
 							? ''
 							: adx > 20
-							? '趋势多且增强-s2-5'
+							? '趋势空且增强-s2-5'
 							: adx > 15
 							? ''
 							: adx > 10
