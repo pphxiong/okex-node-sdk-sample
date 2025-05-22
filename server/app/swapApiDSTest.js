@@ -719,9 +719,13 @@ class Backtester {
 								) {
 									marketType =
 										adxPlusDI > 10
-											? '趋势多且增强-R-1-1'
+											? rsi < 20
+												? '趋势多且增强-R-1-1-1'
+												: '趋势多且增强-R-1-1-2'
 											: adxPlusDI < 10
-											? '趋势多'
+											? rsi < 20
+												? '趋势多且增强-R-1-2-1'
+												: '趋势多且增强-R-1-2-2'
 											: '';
 								} else if (
 									emaSlope <
