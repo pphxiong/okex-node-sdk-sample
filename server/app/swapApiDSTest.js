@@ -537,45 +537,64 @@ class Backtester {
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
 					) {
-						if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
-							marketType =
-								adx > 40
-									? '趋势多且增强-1-1'
-									: adx >= 35
-									? '趋势多且增强-1-2'
-									: adx >= 30
-									? ''
-									: adx >= 25
-									? ''
-									: adx > 20
-									? '趋势多且增强-1-5'
-									: adx > 17.5
-									? '趋势多且增强-1-6'
-									: adx > 15
-									? ''
-									: adx > 10
-									? ''
-									: '';
-						} else {
-							marketType =
-								adx > 40
-									? '趋势多且增强-1-1-1'
-									: adx >= 35
-									? '趋势多且增强-1-1-2'
-									: adx >= 30
-									? ''
-									: adx >= 25
-									? '趋势多且增强-1-1-4'
-									: adx > 20
-									? ''
-									: adx > 17.5
-									? ''
-									: adx > 15
-									? ''
-									: adx > 10
-									? '趋势多且增强-1-1-8'
-									: '趋势多且增强-1-1-9';
-						}
+            if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
+				marketType =
+					adx > 40
+						? '趋势多且增强-L-1-1'
+						: adx >= 35
+						? '趋势多且增强-L-1-2'
+						: adx >= 30
+						? ''
+						: adx >= 25
+						? ''
+						: adx > 20
+						? '趋势多且增强-L-1-5'
+						: adx > 17.5
+						? '趋势多且增强-L-1-6'
+						: adx > 15
+						? ''
+						: adx > 10
+						? ''
+						: '';
+			} else if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
+				marketType =
+					adx > 40
+						? '趋势多且增强-L-2-1'
+						: adx >= 35
+						? '趋势多且增强-L-2-2'
+						: adx >= 30
+						? ''
+						: adx >= 25
+						? ''
+						: adx > 20
+						? '趋势多且增强-L-2-5'
+						: adx > 17.5
+						? '趋势多且增强-L-2-6'
+						: adx > 15
+						? ''
+						: adx > 10
+						? ''
+						: '';
+			} else {
+				marketType =
+					adx > 40
+						? '趋势多且增强-L-3-1'
+						: adx >= 35
+						? '趋势多且增强-L-3-2'
+						: adx >= 30
+						? ''
+						: adx >= 25
+						? '趋势多且增强-L-3-4'
+						: adx > 20
+						? ''
+						: adx > 17.5
+						? ''
+						: adx > 15
+						? ''
+						: adx > 10
+						? '趋势多且增强-L-3-8'
+						: '趋势多且增强-L-3-9';
+			}
 					}
 				} else {
 					if (adx >= 25) {
