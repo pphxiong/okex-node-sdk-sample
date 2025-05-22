@@ -540,15 +540,15 @@ class Backtester {
             if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
 				marketType =
 					adx > 40
-						? '趋势多且增强-L-1-1'
+						? '趋势空且增强-L-1-1'
 						: adx >= 35
-						? '趋势多且增强-L-1-2'
+						? '趋势空且增强-L-1-2'
 						: adx >= 30
 						? ''
 						: adx >= 25
 						? ''
 						: adx > 20
-						? '趋势多且增强-L-1-5'
+						? ''
 						: adx > 17.5
 						? '趋势多且增强-L-1-6'
 						: adx > 15
@@ -569,7 +569,7 @@ class Backtester {
 						: adx > 20
 						? '趋势多且增强-L-2-5'
 						: adx > 17.5
-						? '趋势多且增强-L-2-6'
+						? '趋势空且增强-L-2-6'
 						: adx > 15
 						? ''
 						: adx > 10
