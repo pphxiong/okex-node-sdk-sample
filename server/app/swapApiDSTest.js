@@ -537,24 +537,45 @@ class Backtester {
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
 					) {
-						marketType =
-							adx > 40
-								? '趋势多且增强-1-1'
-								: adx >= 35
-								? '趋势多且增强-1-2'
-								: adx >= 30
-								? '趋势多且增强-1-3'
-								: adx >= 25
-								? '趋势多且增强-1-4'
-								: adx > 20
-								? '趋势多且增强-1-5'
-								: adx > 17.5
-								? '趋势多且增强-1-6'
-								: adx > 15
-								? '趋势多且增强-1-7'
-								: adx > 10
-								? '趋势多且增强-1-8'
-								: '趋势多且增强-1-9';
+						if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
+							marketType =
+								adx > 40
+									? '趋势多且增强-1-1'
+									: adx >= 35
+									? '趋势多且增强-1-2'
+									: adx >= 30
+									? '趋势多且增强-1-3'
+									: adx >= 25
+									? '趋势多且增强-1-4'
+									: adx > 20
+									? '趋势多且增强-1-5'
+									: adx > 17.5
+									? '趋势多且增强-1-6'
+									: adx > 15
+									? '趋势多且增强-1-7'
+									: adx > 10
+									? '趋势多且增强-1-8'
+									: '趋势多且增强-1-9';
+						} else {
+							marketType =
+								adx > 40
+									? '趋势多且增强-1-1-1'
+									: adx >= 35
+									? '趋势多且增强-1-1-2'
+									: adx >= 30
+									? '趋势多且增强-1-1-3'
+									: adx >= 25
+									? '趋势多且增强-1-1-4'
+									: adx > 20
+									? '趋势多且增强-1-1-5'
+									: adx > 17.5
+									? '趋势多且增强-1-1-6'
+									: adx > 15
+									? '趋势多且增强-1-1-7'
+									: adx > 10
+									? '趋势多且增强-1-1-8'
+									: '趋势多且增强-1-1-9';
+						}
 					}
 				} else {
 					if (adx >= 25) {
@@ -562,7 +583,7 @@ class Backtester {
 							rsi > 55 &&
 							emaSlope > config.emaSlope.emaSlopeThreshold
 						)
-							marketType = '趋势多且增强-2-1';
+							marketType = '趋势空且增强-2-1';
 					}
 					if (adx < 20 && adx > 15) {
 						if (
