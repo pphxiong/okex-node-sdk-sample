@@ -533,47 +533,6 @@ class Backtester {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi > 70) {
 						marketType = adx >= 30 ? '趋势多' : '趋势空';
-						if (emaSlope > config.emaSlope.emaSlopeThreshold)
-							if (
-								emaSlope >
-								config.emaSlope.emaSlopeThreshold * 3
-							) {
-								marketType =
-									adxMinusDI > 10
-										? rsi > 75
-											? '趋势空且增强-L0-1-1-1'
-											: ''
-										: adxMinusDI < 10
-										? rsi > 80
-											? '趋势空且增强-L0-1-2-1'
-											: '趋势空且增强-L0-1-2-2'
-										: '';
-							} else if (
-								emaSlope >
-								config.emaSlope.emaSlopeThreshold * 2
-							) {
-								marketType =
-									adxMinusDI > 10
-										? rsi > 75
-											? '趋势空且增强-L0-2-1-1'
-											: ''
-										: adxMinusDI < 10
-										? rsi > 80
-											? '趋势空且增强-L0-2-2-1'
-											: '趋势空且增强-L0-2-2-2'
-										: '';
-							} else {
-								marketType =
-									adxMinusDI > 10
-										? rsi > 75
-											? ''
-											: '趋势空且增强-L0-3-1-2'
-										: adxMinusDI < 10
-										? rsi > 80
-											? '趋势空且增强-L0-3-2-1'
-											: '趋势空且增强-L0-3-2-2'
-										: '';
-							}
 					} else if (
 						rsi < 60 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
@@ -636,7 +595,7 @@ class Backtester {
 									: adx > 15
 									? ''
 									: adx > 10
-									? '趋势多且增强-L1-3-8'
+									? ''
 									: '趋势多且增强-L1-3-9';
 						}
 					}
@@ -770,7 +729,7 @@ class Backtester {
 												: '趋势多且增强-R-1-1-2'
 											: adxPlusDI < 10
 											? rsi < 22.5
-												? '趋势多且增强-R-1-2-1'
+												? '趋势多'
 												: '趋势多且增强-R-1-2-2'
 											: '';
 								} else if (
