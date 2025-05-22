@@ -542,7 +542,7 @@ class Backtester {
 									adxMinusDI > 10
 										? rsi > 75
 											? '趋势空且增强-L0-1-1-1'
-											: '趋势空且增强-L0-1-1-2'
+											: ''
 										: adxMinusDI < 10
 										? rsi > 80
 											? '趋势空且增强-L0-1-2-1'
@@ -556,7 +556,7 @@ class Backtester {
 									adxMinusDI > 10
 										? rsi > 75
 											? '趋势空且增强-L0-2-1-1'
-											: '趋势空且增强-L0-2-1-2'
+											: ''
 										: adxMinusDI < 10
 										? rsi > 80
 											? '趋势空且增强-L0-2-2-1'
@@ -566,7 +566,7 @@ class Backtester {
 								marketType =
 									adxMinusDI > 10
 										? rsi > 75
-											? '趋势空且增强-L0-3-1-1'
+											? ''
 											: '趋势空且增强-L0-3-1-2'
 										: adxMinusDI < 10
 										? rsi > 80
