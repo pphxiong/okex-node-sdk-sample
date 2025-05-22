@@ -666,7 +666,12 @@ class Backtester {
 							: rsi > 50
 							? '趋势多且增强-4-3'
 							: rsi > 47.5
-							? '趋势多且增强-4-4'
+							? emaSlope > config.emaSlope.emaSlopeThreshold
+								? '趋势多且增强-4-4-1'
+								: emaSlope >
+								  config.emaSlope.emaSlopeThreshold * 2
+								? '趋势多且增强-4-4-2'
+								: '趋势多且增强-4-4-3'
 							: rsi > 45
 							? '趋势多且增强-4-5'
 							: '趋势空且增强-4-6';
@@ -723,9 +728,9 @@ class Backtester {
 												? '趋势多且增强-R-1-1-1'
 												: '趋势多且增强-R-1-1-2'
 											: adxPlusDI < 10
-											? rsi < 20
+											? rsi < 22.5
 												? '趋势多且增强-R-1-2-1'
-												: '趋势多且增强-R-1-2-2'
+												: '趋势多'
 											: '';
 								} else if (
 									emaSlope <
