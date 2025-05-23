@@ -644,7 +644,7 @@ class Backtester {
 								rsi > 65
 									? '趋势空且增强-L-4-1-1'
 									: rsi > 60
-									? ''
+									? '趋势空'
 									: rsi > 55
 									? ''
 									: rsi > 50
@@ -657,7 +657,7 @@ class Backtester {
 								rsi > 65
 									? '趋势空且增强-L-4-2-1'
 									: rsi > 60
-									? ''
+									? '趋势空'
 									: rsi > 55
 									? ''
 									: rsi > 50
