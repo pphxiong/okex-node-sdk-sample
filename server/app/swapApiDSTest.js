@@ -644,11 +644,11 @@ class Backtester {
 								rsi > 65
 									? '趋势空且增强-L-4-1-1'
 									: rsi > 60
-									? '趋势多且增强-L-4-1-2'
+									? ''
 									: rsi > 55
-									? '趋势空且增强-L-4-1-3'
+									? ''
 									: rsi > 50
-									? '趋势空且增强-L-4-1-4'
+									? ''
 									: '';
 						} else if (
 							emaSlope > config.emaSlope.emaSlopeThreshold
@@ -657,11 +657,11 @@ class Backtester {
 								rsi > 65
 									? '趋势空且增强-L-4-2-1'
 									: rsi > 60
-									? '趋势多且增强-L-4-2-2'
+									? ''
 									: rsi > 55
-									? '趋势空且增强-L-4-2-3'
+									? ''
 									: rsi > 50
-									? '趋势空且增强-L-4-2-4'
+									? ''
 									: '';
 						}
 					}
