@@ -686,7 +686,7 @@ class Backtester {
         if (adxPlusDI < adxMinusDI) {
           if (rsi < 30) {
             marketType = adx >= 30 ? "趋势空" : "趋势多";
-            if (rsi < 25) {
+            if (rsi < 26) {
               marketType = "趋势多";
               if (emaSlope < -config.emaSlope.emaSlopeThreshold)
                 if (emaSlope < -config.emaSlope.emaSlopeThreshold * 3) {
@@ -733,20 +733,18 @@ class Backtester {
           if (rsi > 50) marketType = "趋势空";
         }
 
-        if (adx >= 30) {
-          if (rsi < 60) {
-            marketType = "趋势空且增强-ttt";
-          }
-        } else if (adx >= 25) {
+        if (adx >= 25) {
           if (rsi < 60) {
             marketType = "趋势空";
           }
-        } else if (adx < 20) {
+        }
+        if (adx < 25) {
+          marketType = rsi > 60 ? "趋势多" : "趋势空";
+        }
+        if (adx < 20) {
           if (rsi > 55 && adxPlusDI > adxMinusDI) {
             marketType = "趋势多";
           }
-        } else if (adx < 25) {
-          marketType = rsi > 60 ? "趋势多" : "趋势空";
         }
       } else {
       }
@@ -1387,14 +1385,14 @@ function formatProfitMap(profitMap) {
       item.typeMax.toFixed(2),
       "最大亏损:",
       item.typeMin.toFixed(2),
-      "胜率:",
-      item.typeWinRate + "%",
       "总收益:",
       item.typeProfit.toFixed(2),
       "平均盈利:",
       item.typeAvgWin.toFixed(2),
       "typeA:",
-      item.typeA.toFixed(2)
+      item.typeA.toFixed(2),
+      "胜率:",
+      item.typeWinRate + "%"
     );
   });
 }
