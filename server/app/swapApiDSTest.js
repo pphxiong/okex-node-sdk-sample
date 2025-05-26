@@ -646,7 +646,6 @@ class Backtester {
 						)
 							marketType = '趋势空且增强-2';
 					}
-					if (rsi > 65) marketType = '趋势多且增强-ttt';
 				}
 			} else if (close < emaSlow) {
 				if (adxPlusDI < adxMinusDI) {
@@ -698,12 +697,12 @@ class Backtester {
 				}
 			} else {
 				if (adx >= 25) {
-					// if (emaSlope > -config.emaSlope.emaSlopeThreshold) {
-					// 	marketType =
-					// 		rsi < 50
-					// 			? '趋势多且增强-R3-4'
-					// 			: '趋势多且增强-R3-5';
-					// }
+					if (emaSlope > config.emaSlope.emaSlopeThreshold) {
+						marketType =
+							rsi > 55
+								? '趋势多且增强-L3-4'
+								: '趋势空且增强-L3-5';
+					}
 				} else if (adx < 25 && adx > 20) {
 					if (rsi > 50) marketType = '趋势多';
 					if (rsi < 50) marketType = '趋势多';
