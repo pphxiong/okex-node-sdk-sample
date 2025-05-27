@@ -65,7 +65,7 @@ const config = {
   },
   feeRate: 2 / 10000, // 交易手续费0.04%
   slippage: 0, // 滑点率
-  initialBalance: 10000, // 初始本金10000 USDT
+  initialBalance: 1000, // 初始本金10000 USDT
   leverage: 10,
   riskPerTrade: 0.5, // 每笔交易风险2%
   // coldStartBars: 480,

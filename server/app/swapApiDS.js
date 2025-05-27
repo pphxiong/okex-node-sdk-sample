@@ -74,7 +74,7 @@ const config = {
     takeProfit: 6.4,
   },
   riskPerTrade: 0.02, // 每笔交易风险2%
-  leverage: 10, // 杠杆倍数
+  leverage: 5, // 杠杆倍数
   adxPeriod: 14,
   rsiPeriod: 14,
   // EMA斜率参数
@@ -705,10 +705,7 @@ maxDrawdownTotal 32.8
   // 	globalAvailableBalance * config.leverage * 0.85,
   // 	(config.tradeAmount * profitRateMap[marketType]) / 100
   // );
-  return Math.min(
-    globalAvailableBalance * config.leverage * 0.5,
-    (config.tradeAmount * profitRateMap[marketType]) / 100
-  );
+  return globalAvailableBalance * config.leverage * 0.95;
 }
 
 // 限价单管理模块
