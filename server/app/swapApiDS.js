@@ -1297,6 +1297,7 @@ const readData = async () => {
 async function initPositionData() {
   const positionResult = await cAuthClientBN.swap.getPosition();
   const { positions, availableBalance } = positionResult;
+  console.log(111, positionResult);
   if (positions) {
     const holding = positions.find(
       (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
