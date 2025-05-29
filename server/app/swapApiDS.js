@@ -1296,27 +1296,26 @@ const readData = async () => {
 
 async function initPositionData() {
   const positionResult = await cAuthClientBN.swap.getPosition();
-  const { positions, availableBalance } = positionResult;
-  console.log(111, positionResult);
+  const { positions, availableBalance, totalMarginBalance } = positionResult;
   if (positions) {
-    const holding = positions.find(
-      (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-    );
-    if (holding) {
-      const dataConfig = await readData();
-      state = {
-        activeOrders: [], // 活跃限价单
-        position: Number(holding.positionAmt), // 当前持仓数量
-        entryPrice: Number(holding.entryPrice), // 持仓均价
-        highestPrice: Number(holding.entryPrice), // 持仓期间最高价
-        lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
-        side: holding.positionSide === "LONG" ? "buy" : "sell",
-      };
-      delete dataConfig.position;
-      state = Object.assign(state, dataConfig);
-    }
+		const holding = positions.find(
+			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+		);
+		if (holding) {
+			const dataConfig = await readData();
+			state = {
+				activeOrders: [], // 活跃限价单
+				position: Number(holding.positionAmt), // 当前持仓数量
+				entryPrice: Number(holding.entryPrice), // 持仓均价
+				highestPrice: Number(holding.entryPrice), // 持仓期间最高价
+				lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
+				side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
+			};
+			delete dataConfig.position;
+			state = Object.assign(state, dataConfig);
+		}
   }
-  return Number(availableBalance);
+  return Number(totalMarginBalance);
 }
 
 // 实时数据订阅
