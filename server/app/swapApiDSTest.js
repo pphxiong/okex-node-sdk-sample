@@ -844,65 +844,6 @@ class Backtester {
 					}
 				}
 			} else {
-        if (adx >= 25) {
-			if (emaSlope < -config.emaSlope.emaSlopeThreshold / 2) {
-				marketType =
-					rsi > 65
-						? '趋势空且增强-R3-1'
-						: rsi > 60
-						? '趋势空且增强-R3-2'
-						: rsi > 55
-						? '趋势空且增强-R3-3'
-						: rsi > 50
-						? '趋势空且增强-R3-4'
-						: rsi > 45
-						? '趋势空且增强-R3-5'
-						: '趋势空且增强-R3-6';
-			}
-		} else if (adx < 25 && adx > 20) {
-			if (rsi > 50) {
-				marketType = '趋势空';
-				if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
-					marketType =
-						rsi > 65
-							? '趋势空'
-							: rsi > 60
-							? '趋势空'
-							: rsi > 55
-							? '趋势空'
-							: '趋势空';
-				} else if (emaSlope > config.emaSlope.emaSlopeThreshold) {
-					marketType =
-						rsi > 65
-							? '趋势空'
-							: rsi > 60
-							? '趋势空'
-							: rsi > 55
-							? '趋势空且增强-R-4-2-3'
-							: '趋势空';
-				} else if (emaSlope > 0) {
-					marketType =
-						rsi > 65
-							? '趋势空'
-							: rsi > 60
-							? '趋势空'
-							: rsi > 55
-							? '趋势空'
-							: '趋势空';
-				} else {
-					marketType =
-						rsi > 65
-							? '趋势空'
-							: rsi > 60
-							? '趋势空'
-							: rsi > 55
-							? '趋势空'
-							: '趋势空';
-				}
-			}
-			// if (rsi < 50) marketType = '趋势空';
-		} else if (adx < 15) {
-		}
 			}
 		}
 
