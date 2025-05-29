@@ -532,7 +532,7 @@ class Backtester {
 			if (close > emaFast) {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi > 70) {
-						marketType = adx >= 28 ? '趋势多' : '趋势空';
+						marketType = adx >= 32 ? '趋势多' : '趋势空';
 					} else if (
 						rsi < 58 &&
 						emaSlope > config.emaSlope.emaSlopeThreshold / 2
@@ -755,6 +755,7 @@ class Backtester {
 					if (rsi < 50) marketType = '趋势多';
 				} else if (adx < 15) {
 				}
+        
 			}
 		}
 
@@ -762,7 +763,7 @@ class Backtester {
 			if (close < emaFast) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi < 32) {
-						marketType = adx >= 28 ? '趋势空' : '趋势多';
+						marketType = adx >= 32 ? '趋势空' : '趋势多';
 						if (rsi < 26) {
 							marketType = '趋势多';
 							if (emaSlope < -config.emaSlope.emaSlopeThreshold)
