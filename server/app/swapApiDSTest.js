@@ -808,7 +808,7 @@ class Backtester {
 
     if (adx > 25) {
       if (
-        rsi > 65 &&
+        rsi > 62 &&
         adxPlusDI < adxMinusDI &&
         emaFast > emaSlow &&
         close > emaFast
