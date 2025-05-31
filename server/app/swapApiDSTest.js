@@ -822,7 +822,7 @@ class Backtester {
         emaFast < emaSlow &&
         close < emaFast
       ) {
-        marketType = "趋势多且增强PLUS-1";
+        marketType = "趋势多且增强PLUS-2";
       }
     }
 
