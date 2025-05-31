@@ -712,6 +712,9 @@ class Backtester {
         } else if (adx < 15) {
         }
       }
+      if (rsi < 40) {
+        marketType = "趋势空";
+      }
     }
 
     if (emaFast < emaSlow) {
