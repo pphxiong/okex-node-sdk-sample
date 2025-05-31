@@ -1287,7 +1287,7 @@ class Backtester {
   const backtester = new Backtester();
   const start = "2025-05-20";
   // const start = "2021-01-01";
-  const end = "2025-04-10";
+  const end = "2025-06-01";
   const interval = 1;
   let profitTotal = 0;
   let maxLossTotal = 0;
