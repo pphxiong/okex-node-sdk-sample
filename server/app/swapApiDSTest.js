@@ -1374,8 +1374,8 @@ class Backtester {
   console.log("profitTotal", profitTotal);
   console.log("maxLossTotal", maxLossTotal);
   console.log("winRateTotal", winRateTotal);
-  console.log("period month", i / interval + 1);
-  console.log("avgRate", (winRateTotal / (i / interval + 1)).toFixed(2));
+  console.log("period month", i / interval);
+  console.log("avgRate", (winRateTotal / (i / interval)).toFixed(2));
   console.log("maxDrawdownTotal", maxDrawdownTotal);
 
   formatProfitMap(profitMapTotal);
