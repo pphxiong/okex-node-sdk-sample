@@ -565,7 +565,7 @@ class Backtester {
                   : adx >= 25
                   ? emaSlope > config.emaSlope.emaSlopeThreshold
                     ? "趋势多"
-                    : "趋势空"
+                    : "趋势空且增强-L1-3-4-2"
                   : adx > 20
                   ? ""
                   : adx > 17.5
@@ -644,7 +644,9 @@ class Backtester {
                 ? "趋势多且增强-L3-1-4-1"
                 : emaSlope > config.emaSlope.emaSlopeThreshold
                 ? "趋势多且增强-L3-1-4-2"
-                : "趋势多且增强-L3-1-4-3"
+                : emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                ? "趋势多且增强-L3-1-4-3"
+                : "趋势多且增强-L3-1-4-4"
               : rsi > 45
               ? "趋势多且增强-L3-1-5"
               : "趋势空";
