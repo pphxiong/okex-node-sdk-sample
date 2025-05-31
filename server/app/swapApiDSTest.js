@@ -546,7 +546,7 @@ class Backtester {
                   : adx >= 25
                   ? ""
                   : adx > 20
-                  ? "趋势多且增强-L1-2-5"
+                  ? ""
                   : adx > 17.5
                   ? ""
                   : adx > 15
@@ -645,7 +645,7 @@ class Backtester {
                 : "趋势多且增强-L3-1-4-3"
               : rsi > 45
               ? "趋势多且增强-L3-1-5"
-              : "趋势空且增强-L3-1-6";
+              : "趋势空";
         }
         if (adx < 25) {
         }
@@ -1297,8 +1297,8 @@ class Backtester {
   let tradeNumTotal = 0;
 
   let i = 0;
+  let loop = 1;
   let startTime = moment(start).add(i, "days");
-  let loop = 0;
   while (moment(end).isAfter(startTime)) {
     // while (i === 0) {
     loop += 1;
@@ -1376,8 +1376,8 @@ class Backtester {
   console.log("profitTotal", profitTotal);
   console.log("maxLossTotal", maxLossTotal);
   console.log("winRateTotal", winRateTotal);
-  console.log("period month", loop);
-  console.log("avgRate", (winRateTotal / loop).toFixed(2));
+  console.log("period month", loop - 1);
+  console.log("avgRate", (winRateTotal / (loop - 1)).toFixed(2));
   console.log("maxDrawdownTotal", maxDrawdownTotal);
 
   formatProfitMap(profitMapTotal);
