@@ -1288,7 +1288,7 @@ class Backtester {
   const start = "2025-05-20";
   // const start = "2021-01-01";
   const end = "2025-04-10";
-  const interval = 30;
+  const interval = 1;
   let profitTotal = 0;
   let maxLossTotal = 0;
   let winRateTotal = 0;
@@ -1315,13 +1315,13 @@ class Backtester {
       backtester.maxDrawdown = 0;
 
       // 步骤1: 加载历史数据
-      const data = await backtester.loadHistoricalData(
-        moment(start).add(i, "days").format("YYYY-MM-DD"),
-        moment(start)
-          .add(i + interval, "days")
-          .format("YYYY-MM-DD"),
-        interval
-      );
+      // const data = await backtester.loadHistoricalData(
+      //   moment(start).add(i, "days").format("YYYY-MM-DD"),
+      //   moment(start)
+      //     .add(i + interval, "days")
+      //     .format("YYYY-MM-DD"),
+      //   interval
+      // );
 
       // 生成相关价格路径
       // const simPaths = backtester.generateCorrelatedPaths(data);
