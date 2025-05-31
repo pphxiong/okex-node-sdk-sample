@@ -1298,7 +1298,7 @@ class Backtester {
 
   let i = 0;
   let startTime = moment(start).add(i, "days");
-  // let loop = 0;
+  let loop = 0;
   while (moment(end).isAfter(startTime)) {
     // while (i === 0) {
     loop += 1;
