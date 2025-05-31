@@ -616,9 +616,6 @@ class Backtester {
           } else if (adx < 20 && adx > 15) {
             if (rsi > 60 && emaSlope > config.emaSlope.emaSlopeThreshold * 2)
               marketType = "趋势空且增强-2";
-          } else if (adx < 15 && adx > 10) {
-            if (rsi > 60 && emaSlope < config.emaSlope.emaSlopeThreshold)
-              marketType = "趋势空且增强PLUS-2";
           }
         }
       } else if (close < emaSlow) {
@@ -666,20 +663,6 @@ class Backtester {
         }
       } else {
         if (adx >= 25) {
-          // if (emaSlope > config.emaSlope.emaSlopeThreshold) {
-          // 	marketType =
-          // 		rsi > 65
-          // 			? '趋势多且增强-L3-1'
-          // 			: rsi > 60
-          // 			? '趋势多且增强-L3-2'
-          // 			: rsi > 55
-          // 			? ''
-          // 			: rsi > 50
-          // 			? '趋势空且增强-L3-4'
-          // 			: rsi > 45
-          // 			? '趋势多且增强-L3-5'
-          // 			: '';
-          // }
         } else if (adx < 25 && adx > 20) {
           if (rsi > 50) {
             marketType = "趋势多";
@@ -731,7 +714,7 @@ class Backtester {
       if (close < emaFast) {
         if (adxPlusDI < adxMinusDI) {
           if (rsi < 32) {
-            marketType = adx >= 30 ? "趋势空且增强PLUS-1" : "趋势多";
+            marketType = adx >= 30 ? "趋势空" : "趋势多";
             if (rsi < 26) {
               marketType = "趋势多";
               if (emaSlope < -config.emaSlope.emaSlopeThreshold)
@@ -766,16 +749,6 @@ class Backtester {
             rsi > 40 &&
             emaSlope < -config.emaSlope.emaSlopeThreshold / 2
           ) {
-            // marketType =
-            //   rsi > 50
-            //     ? "趋势多且增强-R-4-1"
-            //     : rsi > 45
-            //     ? emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-            //       ? "趋势空且增强-R-4-1"
-            //       : emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-            //       ? ""
-            //       : ""
-            //     : "";
           } else {
           }
         } else {
@@ -1312,8 +1285,8 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  // const start = '2025-05-01';
-  const start = "2021-01-01";
+  const start = "2025-05-15";
+  // const start = "2021-01-01";
   const end = "2025-04-10";
   const interval = 30;
   let profitTotal = 0;
@@ -1325,8 +1298,8 @@ class Backtester {
 
   let i = 0;
   let startTime = moment(start).add(i, "days");
-  while (moment(end).isAfter(startTime)) {
-    // while (i === 0) {
+  // while (moment(end).isAfter(startTime)) {
+  while (i === 0) {
     try {
       backtester.data = {
         [config.slowframe]: [],
@@ -1360,8 +1333,8 @@ class Backtester {
           // .slice(-5)
           .filter(
             (item) =>
-              moment(item.timestamp).isAfter(moment("2025-05-20 11:30:00")) &&
-              moment(item.timestamp).isBefore(moment("2025-05-20 05:15:00"))
+              moment(item.timestamp).isAfter(moment("2025-05-29 21:00:00")) &&
+              moment(item.timestamp).isBefore(moment("2025-05-31 08:00:00"))
           )
           .map((candle) =>
             Object.assign(candle, {
