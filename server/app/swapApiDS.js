@@ -52,7 +52,7 @@ const config = {
     stdDev: 1.8,
   },
   orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-  tradeAmount: 34000, // 每单交易金额(USDT)
+  tradeAmount: 4200, // 每单交易金额(USDT)
   maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -188,7 +188,7 @@ function getMarketType(candle, lastCandle) {
                 : adx >= 25
                 ? ""
                 : adx > 20
-                ? "趋势多且增强-L1-2-5"
+                ? ""
                 : adx > 17.5
                 ? ""
                 : adx > 15
@@ -205,7 +205,9 @@ function getMarketType(candle, lastCandle) {
                 : adx >= 30
                 ? ""
                 : adx >= 25
-                ? "趋势多且增强-L1-3-4"
+                ? emaSlope > config.emaSlope.emaSlopeThreshold
+                  ? "趋势多"
+                  : "趋势空且增强-L1-3-4-2"
                 : adx > 20
                 ? ""
                 : adx > 17.5
@@ -276,18 +278,20 @@ function getMarketType(candle, lastCandle) {
           rsi > 60
             ? "趋势多且增强-L3-1-1"
             : rsi > 55
-            ? "趋势多且增强-L3-1-2"
+            ? "趋势多"
             : rsi > 50
             ? "趋势多且增强-L3-1-3"
             : rsi > 47.5
-            ? emaSlope > config.emaSlope.emaSlopeThreshold
+            ? emaSlope > config.emaSlope.emaSlopeThreshold * 2
               ? "趋势多且增强-L3-1-4-1"
-              : emaSlope > config.emaSlope.emaSlopeThreshold * 2
+              : emaSlope > config.emaSlope.emaSlopeThreshold
               ? "趋势多且增强-L3-1-4-2"
-              : "趋势多且增强-L3-1-4-3"
+              : emaSlope > config.emaSlope.emaSlopeThreshold / 2
+              ? "趋势多且增强-L3-1-4-3"
+              : "趋势多且增强-L3-1-4-4"
             : rsi > 45
             ? "趋势多且增强-L3-1-5"
-            : "趋势空且增强-L3-1-6";
+            : "趋势空";
       }
       if (adx < 25) {
       }
@@ -417,6 +421,9 @@ function getMarketType(candle, lastCandle) {
           marketType = "趋势多";
         }
       }
+      if (rsi > 60) {
+        marketType = "趋势多";
+      }
     } else {
     }
   }
@@ -437,7 +444,7 @@ function getMarketType(candle, lastCandle) {
     close > emaFast
   ) {
     if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
-      marketType = "趋势多且增强-11";
+      marketType = "趋势多";
   }
 
   return marketType;
@@ -701,11 +708,15 @@ maxDrawdownTotal 32.8
     "趋势多且增强-L1-2-5": 36.25,
     "趋势空且增强-L-4-2-3": 61.18,
   };
+  return Math.min(
+    globalAvailableBalance * config.leverage * 0.75,
+    config.tradeAmount
+  );
   // return Math.min(
   // 	globalAvailableBalance * config.leverage * 0.85,
   // 	(config.tradeAmount * profitRateMap[marketType]) / 100
   // );
-  return globalAvailableBalance * config.leverage * 0.95;
+  // return globalAvailableBalance * config.leverage * 0.95;
 }
 
 // 限价单管理模块
@@ -1298,22 +1309,22 @@ async function initPositionData() {
   const positionResult = await cAuthClientBN.swap.getPosition();
   const { positions, availableBalance, totalMarginBalance } = positionResult;
   if (positions) {
-		const holding = positions.find(
-			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-		);
-		if (holding) {
-			const dataConfig = await readData();
-			state = {
-				activeOrders: [], // 活跃限价单
-				position: Number(holding.positionAmt), // 当前持仓数量
-				entryPrice: Number(holding.entryPrice), // 持仓均价
-				highestPrice: Number(holding.entryPrice), // 持仓期间最高价
-				lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
-				side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
-			};
-			delete dataConfig.position;
-			state = Object.assign(state, dataConfig);
-		}
+    const holding = positions.find(
+      (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+    );
+    if (holding) {
+      const dataConfig = await readData();
+      state = {
+        activeOrders: [], // 活跃限价单
+        position: Number(holding.positionAmt), // 当前持仓数量
+        entryPrice: Number(holding.entryPrice), // 持仓均价
+        highestPrice: Number(holding.entryPrice), // 持仓期间最高价
+        lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
+        side: holding.positionSide === "LONG" ? "buy" : "sell",
+      };
+      delete dataConfig.position;
+      state = Object.assign(state, dataConfig);
+    }
   }
   return Number(totalMarginBalance);
 }
