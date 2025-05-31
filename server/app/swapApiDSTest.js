@@ -636,7 +636,7 @@ class Backtester {
             rsi > 60
               ? "趋势多且增强-L3-1-1"
               : rsi > 55
-              ? "趋势多且增强-L3-1-2"
+              ? "趋势多"
               : rsi > 50
               ? "趋势多且增强-L3-1-3"
               : rsi > 47.5
@@ -787,7 +787,7 @@ class Backtester {
       emaFast < emaSlow &&
       close < emaFast
     ) {
-      if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
+      if (rsi < 32 && emaSlope < -config.emaSlope.emaSlopeThreshold)
         marketType = "趋势空且增强-11";
     }
     if (
