@@ -1237,8 +1237,8 @@ class Backtester {
 
     const profitTotal = this.balance - config.initialBalance;
 
-    // console.log("\n最近20笔交易:");
-    // console.table(this.trades);
+    console.log("\n最近20笔交易:");
+    console.table(this.trades);
 
     const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(2);
 
@@ -1334,7 +1334,7 @@ class Backtester {
           .filter(
             (item) =>
               moment(item.timestamp).isAfter(moment("2025-05-29 21:00:00")) &&
-              moment(item.timestamp).isBefore(moment("2025-05-31 08:00:00"))
+              moment(item.timestamp).isBefore(moment("2025-05-30 08:00:00"))
           )
           .map((candle) =>
             Object.assign(candle, {
