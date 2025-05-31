@@ -860,8 +860,8 @@ class Backtester {
     const newBalance =
       (config.initialBalance * profitRateMap[marketType]) / 100;
     // return newBalance / price;
-    // return config.initialBalance / 2 / price;
-    return this.balance / price;
+    return config.initialBalance / price;
+    // return this.balance / price;
   }
 
   getLongShort(dataList, index, WindowTreshold) {
