@@ -1315,13 +1315,13 @@ class Backtester {
       backtester.maxDrawdown = 0;
 
       // 步骤1: 加载历史数据
-      // const data = await backtester.loadHistoricalData(
-      //   moment(start).add(i, "days").format("YYYY-MM-DD"),
-      //   moment(start)
-      //     .add(i + interval, "days")
-      //     .format("YYYY-MM-DD"),
-      //   interval
-      // );
+      const data = await backtester.loadHistoricalData(
+        moment(start).add(i, "days").format("YYYY-MM-DD"),
+        moment(start)
+          .add(i + interval, "days")
+          .format("YYYY-MM-DD"),
+        interval
+      );
 
       // 生成相关价格路径
       // const simPaths = backtester.generateCorrelatedPaths(data);
@@ -1330,20 +1330,20 @@ class Backtester {
       // 步骤2: 计算指标
       await backtester.calculateIndicators();
 
-      console.log(
-        data[config.slowframe]
-          // .slice(-5)
-          .filter(
-            (item) =>
-              moment(item.timestamp).isAfter(moment("2025-05-29 21:00:00")) &&
-              moment(item.timestamp).isBefore(moment("2025-05-30 08:00:00"))
-          )
-          .map((candle) =>
-            Object.assign(candle, {
-              timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
-            })
-          )
-      );
+      // console.log(
+      //   data[config.slowframe]
+      //     // .slice(-5)
+      //     .filter(
+      //       (item) =>
+      //         moment(item.timestamp).isAfter(moment("2025-05-29 21:00:00")) &&
+      //         moment(item.timestamp).isBefore(moment("2025-05-30 08:00:00"))
+      //     )
+      //     .map((candle) =>
+      //       Object.assign(candle, {
+      //         timestamp: moment(candle.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+      //       })
+      //     )
+      // );
 
       // console.log(data[config.slowframe].length);
 
