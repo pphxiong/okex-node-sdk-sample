@@ -1285,7 +1285,7 @@ class Backtester {
 // 执行回测
 (async () => {
   const backtester = new Backtester();
-  const start = "2025-04-15";
+  const start = "2025-05-15";
   // const start = "2021-01-01";
   const end = "2025-04-10";
   const interval = 30;
@@ -1298,8 +1298,10 @@ class Backtester {
 
   let i = 0;
   let startTime = moment(start).add(i, "days");
+  let loop = 0;
   // while (moment(end).isAfter(startTime)) {
   while (i === 0) {
+    loop += 1;
     try {
       backtester.data = {
         [config.slowframe]: [],
@@ -1374,8 +1376,8 @@ class Backtester {
   console.log("profitTotal", profitTotal);
   console.log("maxLossTotal", maxLossTotal);
   console.log("winRateTotal", winRateTotal);
-  console.log("period month", i / interval);
-  console.log("avgRate", (winRateTotal / (i / interval)).toFixed(2));
+  console.log("period month", loop);
+  console.log("avgRate", (winRateTotal / loop).toFixed(2));
   console.log("maxDrawdownTotal", maxDrawdownTotal);
 
   formatProfitMap(profitMapTotal);
