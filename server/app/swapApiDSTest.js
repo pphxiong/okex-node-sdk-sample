@@ -662,7 +662,7 @@ class Backtester {
           if (rsi > 55 && adxPlusDI > adxMinusDI) marketType = "趋势空";
           if (rsi < 45 && adxPlusDI < adxMinusDI) marketType = "趋势空";
         }
-        if (rsi < 42) {
+        if (rsi < 45) {
           marketType = "趋势空";
         }
       } else {
