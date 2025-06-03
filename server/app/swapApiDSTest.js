@@ -654,8 +654,36 @@ class Backtester {
 								marketType =
 									emaSlope >
 									config.emaSlope.emaSlopeThreshold / 2
-										? '趋势多且增强-L-PLUS-1'
-										: '趋势空且增强-L-PLUS-2';
+										? emaSlope >
+										  config.emaSlope.emaSlopeThreshold * 2
+											? '趋势多且增强-L-PLUS-1-1'
+											: emaSlope >
+											  config.emaSlope.emaSlopeThreshold
+											? '趋势多且增强-L-PLUS-1-2'
+											: '趋势多且增强-L-PLUS-1-3'
+										: '';
+							} else if (rsi > 55) {
+								marketType =
+									emaSlope >
+									config.emaSlope.emaSlopeThreshold / 2
+										? emaSlope >
+										  config.emaSlope.emaSlopeThreshold * 2
+											? ''
+											: emaSlope >
+											  config.emaSlope.emaSlopeThreshold
+											? '趋势多且增强-L-PLUS-3-2'
+											: ''
+										:  emaSlope > 0
+										? '趋势空且增强-L-PLUS-4-1'
+										: '趋势空且增强-L-PLUS-4-2';
+							}
+						} else {
+							if (rsi > 60) {
+								marketType =
+									emaSlope >
+									config.emaSlope.emaSlopeThreshold / 2
+										? ''
+										: '趋势空且增强-L-PLUS-6';
 							} else if (rsi > 55) {
 								marketType =
 									emaSlope >
@@ -665,29 +693,11 @@ class Backtester {
 											? '趋势空且增强-L-PLUS-3-1'
 											: emaSlope >
 											  config.emaSlope.emaSlopeThreshold
-											? '趋势空且增强-L-PLUS-3-2'
-											: '趋势空且增强-L-PLUS-3-3'
-										: '趋势空且增强-L-PLUS-4';
-							}
-						} else {
-							if (rsi > 60) {
-								marketType =
-									emaSlope >
-									config.emaSlope.emaSlopeThreshold / 2
-										? '趋势多且增强-L-PLUS-5'
-										: '趋势空且增强-L-PLUS-6';
-							} else if (rsi > 55) {
-								marketType =
-									emaSlope >
-									config.emaSlope.emaSlopeThreshold / 2
-										? emaSlope >
-										  config.emaSlope.emaSlopeThreshold * 2
-											? '趋势多且增强-L-PLUS-3-1'
-											: emaSlope >
-											  config.emaSlope.emaSlopeThreshold
 											? '趋势多且增强-L-PLUS-3-2'
-											: '趋势多且增强-L-PLUS-3-3'
-										: '趋势多且增强-L-PLUS-4';
+											: '趋势空且增强-L-PLUS-3-3'
+										: emaSlope > 0
+										? '趋势多且增强-L-PLUS-4-1'
+										: '趋势多且增强-L-PLUS-4-2';
 							}
 						}
 					}
