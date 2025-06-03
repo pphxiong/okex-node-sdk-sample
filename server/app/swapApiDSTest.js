@@ -660,7 +660,7 @@ class Backtester {
 											  config.emaSlope
 													.emaSlopeThreshold *
 													3
-												? '趋势多且增强-L-PLUS-1-1'
+												? ''
 												: '趋势多且增强-L-PLUS-1-2'
 											: emaSlope >
 											  config.emaSlope.emaSlopeThreshold
@@ -676,7 +676,7 @@ class Backtester {
 											? ''
 											: emaSlope >
 											  config.emaSlope.emaSlopeThreshold
-											? '趋势多且增强-L-PLUS-3-2'
+											? ''
 											: ''
 										: emaSlope > 0
 										? '趋势空且增强-L-PLUS-4-1'
@@ -1553,7 +1553,7 @@ function formatProfitMap(profitMap) {
 	});
 
 	// list.sort((a, b) => b.typeA - a.typeA);
-	list.sort((a, b) => b.typeWinRate - a.typeWinRate);
+	list.sort((a, b) => b.typeAvgWin - a.typeAvgWin);
 	list.forEach((item) => {
 		console.log(
 			item.key,
