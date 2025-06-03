@@ -665,7 +665,7 @@ class Backtester {
                       : ""
                     : emaSlope > 0
                     ? ""
-                    : "趋势空且增强-L-PLUS-4-3";
+                    : "";
               }
             }
           }
