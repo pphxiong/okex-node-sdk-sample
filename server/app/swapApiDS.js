@@ -258,15 +258,16 @@ function getMarketType(candle, lastCandle) {
                 : "";
           }
         } else if (adx < 20 && adx > 15) {
-          if (rsi > 60)
+          if (rsi > 60) {
             marketType =
               emaSlope > config.emaSlope.emaSlopeThreshold * 2
                 ? "趋势空且增强-L2-4-1"
                 : emaSlope > config.emaSlope.emaSlopeThreshold
-                ? "趋势多且增强-L2-4-2"
+                ? ""
                 : emaSlope > config.emaSlope.emaSlopeThreshold / 2
-                ? "趋势多且增强-L2-4-3"
-                : "趋势多且增强-L2-4-4";
+                ? "趋势空且增强-L2-4-3"
+                : "";
+          }
         } else {
           if (adx > 20) {
             if (rsi > 60) {
