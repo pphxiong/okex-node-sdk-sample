@@ -623,7 +623,7 @@ class Backtester {
                   : emaSlope > config.emaSlope.emaSlopeThreshold
                   ? ""
                   : emaSlope > config.emaSlope.emaSlopeThreshold / 2
-                  ? ""
+                  ? "趋势空且增强-L2-4-3"
                   : "";
             }
           } else {
@@ -654,7 +654,9 @@ class Backtester {
             } else {
               if (rsi > 60) {
                 marketType =
-                  emaSlope > config.emaSlope.emaSlopeThreshold / 2 ? "" : "";
+                  emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                    ? "趋势空且增强-L-PLUS-4-1"
+                    : "趋势空且增强-L-PLUS-4-2";
               } else if (rsi > 55) {
                 marketType =
                   emaSlope > config.emaSlope.emaSlopeThreshold / 2
@@ -665,7 +667,7 @@ class Backtester {
                       : ""
                     : emaSlope > 0
                     ? ""
-                    : "";
+                    : "趋势空且增强-L-PLUS-4-3";
               }
             }
           }
