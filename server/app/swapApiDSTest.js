@@ -707,8 +707,8 @@ class Backtester {
                 : emaSlope > config.emaSlope.emaSlopeThreshold
                 ? ""
                 : emaSlope > config.emaSlope.emaSlopeThreshold / 2
-                ? "趋势多且增强-L3-1-4-3"
-                : "趋势多且增强-L3-1-4-4"
+                ? ""
+                : ""
               : rsi > 45
               ? "趋势多且增强-L3-1-5"
               : "趋势空";
