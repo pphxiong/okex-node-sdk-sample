@@ -588,10 +588,10 @@ class Backtester {
                   : emaSlope > config.emaSlope.emaSlopeThreshold / 2
                   ? ""
                   : emaSlope > 0
-                  ? rsi > 62
+                  ? rsi > 61
                     ? "趋势多且增强-L1-4-4-1"
                     : "趋势多且增强-L1-4-4-2"
-                  : rsi > 62
+                  : rsi > 61
                   ? "趋势多且增强-L1-4-5-1"
                   : "趋势多且增强-L1-4-5-2";
             }
