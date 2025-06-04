@@ -628,14 +628,12 @@ class Backtester {
                   : "";
             }
           } else if (adx < 20 && adx > 15) {
-            if (rsi > 60) {
+            if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
               marketType =
-                emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                rsi > 65
                   ? "趋势空且增强-L2-4-1"
-                  : emaSlope > config.emaSlope.emaSlopeThreshold
-                  ? ""
-                  : emaSlope > config.emaSlope.emaSlopeThreshold / 2
-                  ? ""
+                  : rsi > 60
+                  ? "趋势空且增强-L2-4-2"
                   : "";
             }
           } else {
