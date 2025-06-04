@@ -576,6 +576,10 @@ class Backtester {
                   ? ""
                   : "趋势多且增强-L1-3-9";
             }
+          } else {
+            if (adx < 20 && adx > 15) {
+              marketType = "趋势空且增强-L1-4-1";
+            }
           }
         } else {
           if (adx >= 25) {
