@@ -579,9 +579,9 @@ class Backtester {
                 emaSlope > config.emaSlope.emaSlopeThreshold * 3
                   ? "趋势多且增强-L1-4-1"
                   : emaSlope > config.emaSlope.emaSlopeThreshold * 2
-                  ? "趋势多且增强-L1-4-2"
+                  ? ""
                   : emaSlope > config.emaSlope.emaSlopeThreshold
-                  ? "趋势多且增强-L1-4-3"
+                  ? ""
                   : emaSlope > config.emaSlope.emaSlopeThreshold / 2
                   ? ""
                   : emaSlope > 0
