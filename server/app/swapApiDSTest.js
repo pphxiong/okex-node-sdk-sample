@@ -582,14 +582,18 @@ class Backtester {
                 emaSlope > config.emaSlope.emaSlopeThreshold * 3
                   ? "趋势多且增强-L1-4-1"
                   : emaSlope > config.emaSlope.emaSlopeThreshold * 2
-                  ? "趋势多且增强-L1-4-2"
+                  ? ""
                   : emaSlope > config.emaSlope.emaSlopeThreshold
                   ? ""
                   : emaSlope > config.emaSlope.emaSlopeThreshold / 2
                   ? ""
                   : emaSlope > 0
-                  ? "趋势多且增强-L1-4-4"
-                  : "趋势多且增强-L1-4-5";
+                  ? rsi > 65
+                    ? "趋势多且增强-L1-4-4-1"
+                    : "趋势空且增强-L1-4-4-2"
+                  : rsi > 65
+                  ? "趋势多且增强-L1-4-5-1"
+                  : "趋势空且增强-L1-4-5-2";
             }
           }
         } else {
