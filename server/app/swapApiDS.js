@@ -154,10 +154,7 @@ function getMarketType(candle, lastCandle) {
       if (adxPlusDI > adxMinusDI) {
         if (rsi > 70) {
           marketType = adx >= 30 ? "趋势多" : "趋势空";
-        } else if (
-          rsi < 60 &&
-          emaSlope > config.emaSlope.emaSlopeThreshold / 2
-        ) {
+        } else if (rsi < 60) {
           if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
             marketType =
               adx > 40
@@ -196,7 +193,7 @@ function getMarketType(candle, lastCandle) {
                 : adx > 10
                 ? ""
                 : "";
-          } else {
+          } else if (emaSlope > config.emaSlope.emaSlopeThreshold / 2) {
             marketType =
               adx > 40
                 ? "趋势多且增强-L1-3-1"
@@ -217,6 +214,21 @@ function getMarketType(candle, lastCandle) {
                 : adx > 10
                 ? ""
                 : "趋势多且增强-L1-3-9";
+          }
+        } else {
+          if (adx < 20 && adx > 15) {
+            marketType =
+              emaSlope > config.emaSlope.emaSlopeThreshold * 3
+                ? "趋势多且增强-L1-4-1"
+                : emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                ? ""
+                : emaSlope > config.emaSlope.emaSlopeThreshold
+                ? ""
+                : emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                ? ""
+                : emaSlope > 0
+                ? ""
+                : "";
           }
         }
       } else {
@@ -462,20 +474,6 @@ function getMarketType(candle, lastCandle) {
         if (rsi < 60) {
           marketType = "趋势空";
         }
-        // if (adx > 30) {
-        //   marketType =
-        //     rsi > 65
-        //       ? ""
-        //       : rsi > 60
-        //       ? ""
-        //       : rsi > 55
-        //       ? ""
-        //       : rsi > 50
-        //       ? adx > 35
-        //         ? "趋势多且增强PLUS-4-1"
-        //         : "趋势空且增强PLUS-4-2"
-        //       : "";
-        // }
       }
       if (adx < 25) {
         marketType = rsi > 60 ? "趋势多" : "趋势空";
@@ -505,7 +503,6 @@ function getMarketType(candle, lastCandle) {
     close > emaFast
   ) {
     if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
-      // marketType = "趋势多且增强-11";
       marketType = "趋势多";
   }
 
