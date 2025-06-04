@@ -513,65 +513,67 @@ class Backtester {
           if (rsi > 70) {
             marketType = adx >= 30 ? "趋势多" : "趋势空";
           } else if (rsi < 60) {
-            if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
-              marketType =
-                adx > 40
-                  ? ""
-                  : adx >= 35
-                  ? "趋势空且增强-L1-1-2"
-                  : adx >= 30
-                  ? ""
-                  : adx >= 25
-                  ? ""
-                  : adx > 20
-                  ? ""
-                  : adx > 17.5
-                  ? "趋势多且增强-L1-1-6"
-                  : adx > 15
-                  ? ""
-                  : adx > 10
-                  ? ""
-                  : "";
-            } else if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
-              marketType =
-                adx > 40
-                  ? "趋势多且增强-L1-2-1"
-                  : adx >= 35
-                  ? "趋势多且增强-L1-2-2"
-                  : adx >= 30
-                  ? ""
-                  : adx >= 25
-                  ? ""
-                  : adx > 20
-                  ? ""
-                  : adx > 17.5
-                  ? ""
-                  : adx > 15
-                  ? ""
-                  : adx > 10
-                  ? ""
-                  : "";
-            } else if (emaSlope > config.emaSlope.emaSlopeThreshold / 2) {
-              marketType =
-                adx > 40
-                  ? "趋势多且增强-L1-3-1"
-                  : adx >= 35
-                  ? "趋势多且增强-L1-3-2"
-                  : adx >= 30
-                  ? ""
-                  : adx >= 25
-                  ? emaSlope > config.emaSlope.emaSlopeThreshold
-                    ? "趋势多"
-                    : "趋势空且增强-L1-3-4-2"
-                  : adx > 20
-                  ? ""
-                  : adx > 17.5
-                  ? ""
-                  : adx > 15
-                  ? ""
-                  : adx > 10
-                  ? ""
-                  : "趋势多且增强-L1-3-9";
+            if (emaSlope > config.emaSlope.emaSlopeThreshold / 2) {
+              if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
+                marketType =
+                  adx > 40
+                    ? ""
+                    : adx >= 35
+                    ? "趋势空且增强-L1-1-2"
+                    : adx >= 30
+                    ? ""
+                    : adx >= 25
+                    ? ""
+                    : adx > 20
+                    ? ""
+                    : adx > 17.5
+                    ? "趋势多且增强-L1-1-6"
+                    : adx > 15
+                    ? ""
+                    : adx > 10
+                    ? ""
+                    : "";
+              } else if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
+                marketType =
+                  adx > 40
+                    ? "趋势多且增强-L1-2-1"
+                    : adx >= 35
+                    ? "趋势多且增强-L1-2-2"
+                    : adx >= 30
+                    ? ""
+                    : adx >= 25
+                    ? ""
+                    : adx > 20
+                    ? ""
+                    : adx > 17.5
+                    ? ""
+                    : adx > 15
+                    ? ""
+                    : adx > 10
+                    ? ""
+                    : "";
+              } else {
+                marketType =
+                  adx > 40
+                    ? "趋势多且增强-L1-3-1"
+                    : adx >= 35
+                    ? "趋势多且增强-L1-3-2"
+                    : adx >= 30
+                    ? ""
+                    : adx >= 25
+                    ? emaSlope > config.emaSlope.emaSlopeThreshold
+                      ? "趋势多"
+                      : "趋势空且增强-L1-3-4-2"
+                    : adx > 20
+                    ? ""
+                    : adx > 17.5
+                    ? ""
+                    : adx > 15
+                    ? ""
+                    : adx > 10
+                    ? ""
+                    : "趋势多且增强-L1-3-9";
+              }
             }
           } else {
             // if (adx < 20 && adx > 15) {
