@@ -917,24 +917,24 @@ class Backtester {
 					}
 				}
 			} else {
-				if (adx > 30) {
-					if (rsi < 45) {
-						marketType =
-							emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-								? ''
-								: emaSlope <
-								  -config.emaSlope.emaSlopeThreshold * 1.5
-								? ''
-								: emaSlope < -config.emaSlope.emaSlopeThreshold
-								? '趋势多且增强-R-4-3'
-								: emaSlope <
-								  -config.emaSlope.emaSlopeThreshold / 2
-								? ''
-								: emaSlope < 0
-								? ''
-								: '';
-					}
-				}
+				// if (adx > 30) {
+				// 	if (rsi < 45) {
+				// 		marketType =
+				// 			emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+				// 				? ''
+				// 				: emaSlope <
+				// 				  -config.emaSlope.emaSlopeThreshold * 1.5
+				// 				? ''
+				// 				: emaSlope < -config.emaSlope.emaSlopeThreshold
+				// 				? '趋势多且增强-R-4-3'
+				// 				: emaSlope <
+				// 				  -config.emaSlope.emaSlopeThreshold / 2
+				// 				? ''
+				// 				: emaSlope < 0
+				// 				? ''
+				// 				: '';
+				// 	}
+				// }
 			}
 		}
 
