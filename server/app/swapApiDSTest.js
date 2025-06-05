@@ -924,13 +924,13 @@ class Backtester {
 								? '趋势空且增强-R-4-1'
 								: emaSlope < -config.emaSlope.emaSlopeThreshold * 1.5
 								? '趋势空且增强-R-4-2'
-								: rsi > 55
-								? ''
-								: rsi > 50
-								? ''
-								: rsi > 45
-								? ''
-								: '趋势空且增强-R-4-1';
+								:  emaSlope < -config.emaSlope.emaSlopeThreshold 
+								? '趋势空且增强-R-4-3'
+								: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+								?  '趋势空且增强-R-4-4'
+								: emaSlope < 0
+								? '趋势空且增强-R-4-5'
+								: '趋势空且增强-R-4-6';
 					}
 				}
 			}
