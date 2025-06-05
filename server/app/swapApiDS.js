@@ -52,7 +52,7 @@ const config = {
     stdDev: 1.8,
   },
   orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-  tradeAmount: 4200, // 每单交易金额(USDT)
+  tradeAmount: 4600, // 每单交易金额(USDT)
   maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -154,10 +154,7 @@ function getMarketType(candle, lastCandle) {
       if (adxPlusDI > adxMinusDI) {
         if (rsi > 70) {
           marketType = adx >= 30 ? "趋势多" : "趋势空";
-        } else if (
-          rsi < 60 &&
-          emaSlope > config.emaSlope.emaSlopeThreshold / 2
-        ) {
+        } else if (rsi < 60) {
           if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
             marketType =
               adx > 40
@@ -196,7 +193,7 @@ function getMarketType(candle, lastCandle) {
                 : adx > 10
                 ? ""
                 : "";
-          } else {
+          } else if (emaSlope > config.emaSlope.emaSlopeThreshold / 2) {
             marketType =
               adx > 40
                 ? "趋势多且增强-L1-3-1"
@@ -217,6 +214,21 @@ function getMarketType(candle, lastCandle) {
                 : adx > 10
                 ? ""
                 : "趋势多且增强-L1-3-9";
+          }
+        } else {
+          if (adx < 20 && adx > 15) {
+            marketType =
+              emaSlope > config.emaSlope.emaSlopeThreshold * 3
+                ? "趋势多且增强-L1-4-1"
+                : emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                ? ""
+                : emaSlope > config.emaSlope.emaSlopeThreshold
+                ? ""
+                : emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                ? ""
+                : emaSlope > 0
+                ? ""
+                : "";
           }
         }
       } else {
@@ -258,8 +270,58 @@ function getMarketType(candle, lastCandle) {
                 : "";
           }
         } else if (adx < 20 && adx > 15) {
-          if (rsi > 60 && emaSlope > config.emaSlope.emaSlopeThreshold * 2)
-            marketType = "趋势空且增强-2";
+          if (rsi > 60) {
+            marketType =
+              emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                ? "趋势空且增强-L2-4-1"
+                : emaSlope > config.emaSlope.emaSlopeThreshold
+                ? ""
+                : emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                ? ""
+                : "";
+          }
+        } else {
+          if (adx > 20) {
+            if (rsi > 60) {
+              marketType =
+                emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                  ? emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                    ? emaSlope > config.emaSlope.emaSlopeThreshold * 3
+                      ? ""
+                      : ""
+                    : emaSlope > config.emaSlope.emaSlopeThreshold
+                    ? ""
+                    : ""
+                  : "";
+            } else if (rsi > 55) {
+              marketType =
+                emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                  ? emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                    ? ""
+                    : emaSlope > config.emaSlope.emaSlopeThreshold
+                    ? ""
+                    : ""
+                  : emaSlope > 0
+                  ? "趋势空且增强-L-PLUS-3-1"
+                  : "";
+            }
+          } else {
+            if (rsi > 60) {
+              marketType =
+                emaSlope > config.emaSlope.emaSlopeThreshold / 2 ? "" : "";
+            } else if (rsi > 55) {
+              marketType =
+                emaSlope > config.emaSlope.emaSlopeThreshold / 2
+                  ? emaSlope > config.emaSlope.emaSlopeThreshold * 2
+                    ? ""
+                    : emaSlope > config.emaSlope.emaSlopeThreshold
+                    ? "" // 趋势多且增强-L-PLUS-4-2
+                    : ""
+                  : emaSlope > 0
+                  ? ""
+                  : "趋势空且增强-L-PLUS-4-3";
+            }
+          }
         }
       }
     } else if (close < emaSlow) {
@@ -420,9 +482,6 @@ function getMarketType(candle, lastCandle) {
         if (rsi > 55 && adxPlusDI > adxMinusDI) {
           marketType = "趋势多";
         }
-      }
-      if (rsi > 60) {
-        marketType = "趋势多";
       }
     } else {
     }
