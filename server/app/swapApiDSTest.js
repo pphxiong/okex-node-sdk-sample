@@ -796,7 +796,7 @@ class Backtester {
 			if (adxPlusDI < adxMinusDI) {
 				if (rsi < 32) {
 					marketType =
-						adx >= 30 && adxMinusDI > 20 && adx < 30
+						adx >= 30 && adxMinusDI > 20 && adx < 31
 							? '趋势空'
 							: '趋势多';
 					if (rsi < 26) {
