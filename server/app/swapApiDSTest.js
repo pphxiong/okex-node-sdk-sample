@@ -805,6 +805,7 @@ class Backtester {
                       : "";
                 }
             }
+            if (adx > 40) marketType = '趋势空且增强-R-4-1';
           } else if (
             rsi > 40 &&
             emaSlope < -config.emaSlope.emaSlopeThreshold / 2
