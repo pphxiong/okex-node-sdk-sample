@@ -985,7 +985,7 @@ class Backtester {
 			(config.initialBalance * profitRateMap[marketType]) / 100;
 		// return newBalance / price;
 		// return config.initialBalance / price;
-		return (this.balance * 0.4) / price;
+		return (this.balance * 0.8) / price;
 	}
 
 	getLongShort(dataList, index, WindowTreshold) {
@@ -1444,6 +1444,11 @@ class Backtester {
 	}
 }
 
+function carryForluma(p, rl, rw) {
+	const f = p / rl - (1 - p) / rw;
+	return f;
+}
+
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
@@ -1546,6 +1551,8 @@ class Backtester {
 	const { totalProfit, winRate, profitFactor, rw, rl } =
 		backtester.calcTrades(totalTrades);
 
+	const carry = carryForluma(Number(winRate) / 100, rl, rw);
+
 	console.log(`
 	  ========== 回测结果 ==========
 	  总交易次数:     ${totalTrades.length}
@@ -1554,6 +1561,7 @@ class Backtester {
 	  盈亏比:        ${profitFactor.toFixed(2)}
     rw:        ${rw.toFixed(2)}
     rl:        ${rl.toFixed(2)}
+    carry:        ${carry.toFixed(2)}
 	  =============================
 	`);
 
