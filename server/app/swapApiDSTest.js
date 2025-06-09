@@ -1062,8 +1062,8 @@ class Backtester {
 
 				isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.025 / 1)
-						: d.close >= position.entryPrice * (1 + 0.025 / 1);
+						? d.close <= position.entryPrice * (1 - 0.025 / 2)
+						: d.close >= position.entryPrice * (1 + 0.025 / 2);
 				if (isStopLoss) stopLossDirection = position.direction;
 
 				const takeProfit =
@@ -1174,9 +1174,10 @@ class Backtester {
 				const isReverse =
 					// isLastIndex ||
 					// isProfitTarget ||
-					isStopLoss || position.direction === 'long'
+					isStopLoss ||
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
