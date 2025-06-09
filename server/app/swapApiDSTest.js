@@ -524,9 +524,9 @@ class Backtester {
       }
     }
 
-    // if (!marketType) {
-    //   marketType = macd > 0 ? "趋势多" : "趋势空";
-    // }
+    if (!marketType) {
+      marketType = close > emaFast ? "趋势多" : "趋势空";
+    }
 
     // if(marketType.includes('趋势多且增强')) {
     //   if(macd < 0 ) {
