@@ -519,7 +519,7 @@ class Backtester {
     if (emaFast < emaSlow) {
       if (close < emaFast) {
         if (macd > 0 && rsi < 50) {
-          marketType = "趋势空且增强-1";
+          marketType = "趋势多且增强-1";
         }
       }
     }
