@@ -510,7 +510,7 @@ class Backtester {
 			emaSlope,
 			emaFast,
 			emaSlow,
-      macd
+			macd,
 		} = candle;
 		const {
 			adx: lastAdx,
@@ -926,17 +926,17 @@ class Backtester {
 				marketType = '趋势多';
 		}
 
-    if(marketType.includes('趋势多且增强')) {
-      if(macd < 0 ) {
-        marketType = '趋势多';	
-      }
-    }
+		// if(marketType.includes('趋势多且增强')) {
+		//   if(macd < 0 ) {
+		//     marketType = '趋势多';
+		//   }
+		// }
 
-    if(marketType.includes('趋势空且增强')) {
-      if(macd > 0 ) {
-        marketType = '趋势空';
-      }	
-    }
+		// if(marketType.includes('趋势空且增强')) {
+		//   if(macd > 0 ) {
+		//     marketType = '趋势空';
+		//   }
+		// }
 
 		return marketType;
 	}
