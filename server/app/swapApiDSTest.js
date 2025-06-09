@@ -525,7 +525,8 @@ class Backtester {
     }
 
     if (!marketType) {
-      marketType = close > emaFast ? "趋势多" : "趋势空";
+      if (close > emaFast) marketType = "趋势多";
+      if (close < emaFast) marketType = "趋势空";
     }
 
     // if(marketType.includes('趋势多且增强')) {
