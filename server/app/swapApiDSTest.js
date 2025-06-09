@@ -476,7 +476,7 @@ class Backtester {
   }
 
   getMarketType(candle, lastCandle) {
-    let marketType = "不确定";
+    let marketType = "";
     if (!lastCandle) return marketType;
 
     const {
@@ -511,7 +511,7 @@ class Backtester {
     if (emaFast > emaSlow) {
       if (close > emaFast) {
         if (rsi > 50) {
-          marketType = macd < 0 ? "趋势空且增强-1" : "趋势多且增强-2";
+          marketType = macd < 0 ? "趋势空且增强-1" : "";
         }
       }
     }
@@ -519,9 +519,13 @@ class Backtester {
     if (emaFast < emaSlow) {
       if (close < emaFast) {
         if (rsi < 50) {
-          marketType = macd > 0 ? "趋势多且增强-1" : "趋势空且增强-2";
+          marketType = macd > 0 ? "趋势多且增强-1" : "";
         }
       }
+    }
+
+    if (!marketType) {
+      marketType = macd > 0 ? "趋势多" : "趋势空";
     }
 
     // if(marketType.includes('趋势多且增强')) {
