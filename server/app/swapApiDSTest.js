@@ -86,8 +86,8 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 20,
-	rsiPeriod: 10,
+	adxPeriod: 12,
+	rsiPeriod: 14,
 };
 
 class Backtester {
