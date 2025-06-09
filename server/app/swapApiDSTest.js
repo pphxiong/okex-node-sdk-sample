@@ -86,8 +86,8 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 14,
-	rsiPeriod: 14,
+	adxPeriod: 10,
+	rsiPeriod: 10,
 };
 
 class Backtester {
@@ -1062,8 +1062,8 @@ class Backtester {
 
 				isStopLoss =
 					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.025 * 1.5)
-						: d.close >= position.entryPrice * (1 + 0.025 * 1.5);
+						? d.close <= position.entryPrice * (1 - 0.025)
+						: d.close >= position.entryPrice * (1 + 0.025);
 				if (isStopLoss) stopLossDirection = position.direction;
 
 				const takeProfit =
