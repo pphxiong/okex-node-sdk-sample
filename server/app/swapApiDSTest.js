@@ -1395,8 +1395,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1451,9 +1451,9 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-05-20';
-	// const start = '2021-01-01';
-	const end = '2025-05-01';
+	// const start = '2025-05-20';
+	const start = '2021-01-01';
+	const end = '2025-06-01';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
@@ -1466,8 +1466,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
@@ -1553,7 +1553,7 @@ function carryForluma(p, rl, rw) {
 		}
 	}
 
-	const { totalProfit, winRate, profitFactor, rw, rl } =
+	const { wins, losses, totalProfit, winRate, profitFactor, rw, rl } =
 		backtester.calcTrades(totalTrades);
 
 	const carry = carryForluma(Number(winRate) / 100, rl, rw);
@@ -1561,6 +1561,8 @@ function carryForluma(p, rl, rw) {
 	console.log(`
 	  ========== 回测结果 ==========
 	  总交易次数:     ${totalTrades.length}
+    盈利次数:       ${wins.length}
+    亏损次数:       ${losses.length}
 	  胜率:          ${winRate}%
 	  总收益:        ${totalProfit.toFixed(2)} USDT
 	  盈亏比:        ${profitFactor.toFixed(2)}
