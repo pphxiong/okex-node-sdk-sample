@@ -511,7 +511,7 @@ class Backtester {
     if (emaFast > emaSlow) {
       if (close > emaFast) {
         if (rsi > 50) {
-          marketType = macd < 0 ? "" : "趋势多且增强-2";
+          marketType = macd < 0 ? "" : "趋势空且增强-2";
         }
       }
     }
@@ -519,14 +519,14 @@ class Backtester {
     if (emaFast < emaSlow) {
       if (close < emaFast) {
         if (rsi < 50) {
-          marketType = macd > 0 ? "" : "趋势空且增强-2";
+          marketType = macd > 0 ? "" : "趋势多且增强-2";
         }
       }
     }
 
     if (!marketType) {
-      if (close > emaFast) marketType = "趋势多";
-      if (close < emaFast) marketType = "趋势空";
+      if (close > emaFast) marketType = "趋势空";
+      if (close < emaFast) marketType = "趋势多";
     }
 
     // if(marketType.includes('趋势多且增强')) {
