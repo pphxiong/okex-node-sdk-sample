@@ -541,7 +541,7 @@ class Backtester {
 		}
 
 		if (close > emaFast && emaFast > emaSlow) {
-			if (macdHistogram > lastMacdHistogram) {
+			if (lastMacdHistogram < 0 && macdHistogram > lastMacdHistogram) {
 				marketType =
 					adx >= 60
 						? '趋势多且增强-L-1'
@@ -566,7 +566,7 @@ class Backtester {
 		}
 
 		if (close < emaFast && emaFast < emaSlow) {
-			if (macdHistogram < lastMacdHistogram) {
+			if (lastMacdHistogram > 0 && macdHistogram < lastMacdHistogram) {
 				marketType =
 					adx >= 60
 						? '趋势空且增强-R-1'
