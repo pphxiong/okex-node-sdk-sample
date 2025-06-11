@@ -530,12 +530,12 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (close > emaFast && emaFast > emaSlow && macd > 0) {
-			marketType = '趋势多';
+		if (close > emaFast && emaFast > emaSlow) {
+			marketType = macd < 0 ? '趋势多' : '趋势空';
 		}
 
-		if (close < emaFast && emaFast < emaSlow && macd < 0) {
-			marketType = '趋势空';
+		if (close < emaFast && emaFast < emaSlow) {
+			marketType = macd > 0 ? '趋势空' : '趋势多';
 		}
 
 		if (macd > 0) {
