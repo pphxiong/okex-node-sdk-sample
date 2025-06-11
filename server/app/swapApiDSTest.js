@@ -532,11 +532,11 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (macdHistogram > lastMacdHistogram && macd > 0) {
+		if (close > emaSlow) {
 			marketType = '趋势多';
 		}
 
-		if (macdHistogram < lastMacdHistogram && macd < 0) {
+		if (close < emaSlow) {
 			marketType = '趋势空';
 		}
 
