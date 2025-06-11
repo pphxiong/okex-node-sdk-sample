@@ -1125,26 +1125,26 @@ function carryForluma(p, rl, rw) {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			// console.log(
-			// 	data[config.slowframe]
-			// 		// .slice(-5)
-			// 		.filter(
-			// 			(item) =>
-			// 				moment(item.timestamp).isAfter(
-			// 					moment('2025-06-08 21:00:00')
-			// 				) &&
-			// 				moment(item.timestamp).isBefore(
-			// 					moment('2025-06-09 08:00:00')
-			// 				)
-			// 		)
-			// 		.map((candle) =>
-			// 			Object.assign(candle, {
-			// 				timestamp: moment(candle.timestamp).format(
-			// 					'YYYY-MM-DD HH:mm:ss'
-			// 				),
-			// 			})
-			// 		)
-			// );
+			console.log(
+				data[config.slowframe]
+					// .slice(-5)
+					.filter(
+						(item) =>
+							moment(item.timestamp).isAfter(
+								moment('2025-06-08 21:00:00')
+							) &&
+							moment(item.timestamp).isBefore(
+								moment('2025-06-09 08:00:00')
+							)
+					)
+					.map((candle) =>
+						Object.assign(candle, {
+							timestamp: moment(candle.timestamp).format(
+								'YYYY-MM-DD HH:mm:ss'
+							),
+						})
+					)
+			);
 
 			// console.log(data[config.slowframe].length);
 
