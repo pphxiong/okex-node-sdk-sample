@@ -1079,7 +1079,7 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-05-10';
+	const start = '2025-05-15';
 	// const start = "2021-01-01";
 	const end = '2025-06-01';
 	const interval = 30;
@@ -1131,10 +1131,10 @@ function carryForluma(p, rl, rw) {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-06-08 21:00:00')
+								moment('2025-06-10 21:00:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-06-09 08:00:00')
+								moment('2025-06-11 08:00:00')
 							)
 					)
 					.map((candle) =>
