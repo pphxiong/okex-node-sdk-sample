@@ -532,11 +532,11 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (macdHistogram > lastMacdHistogram && macdHistogram > 0) {
+		if (macdHistogram > lastMacdHistogram && macd > 0) {
 			marketType = '趋势多';
 		}
 
-		if (macdHistogram < lastMacdHistogram && macdHistogram < 0) {
+		if (macdHistogram < lastMacdHistogram && macd < 0) {
 			marketType = '趋势空';
 		}
 
@@ -565,7 +565,7 @@ class Backtester {
 						? '趋势多且增强-L-8'
 						: adx >= 10
 						? '趋势多且增强-L-9'
-						: '趋势多且增强-L-10';
+						: '趋势空且增强-L-10';
 			}
 		}
 
@@ -579,7 +579,7 @@ class Backtester {
 					adx >= 60
 						? '趋势空且增强-R-1'
 						: adx >= 50
-						? '趋势空且增强-R-2'
+						? '趋势多且增强-R-2'
 						: adx >= 40
 						? '趋势空且增强-R-3'
 						: adx >= 35
@@ -591,10 +591,10 @@ class Backtester {
 						: adx >= 20
 						? '趋势空且增强-R-7'
 						: adx >= 15
-						? '趋势空且增强-R-8'
+						? '趋势多且增强-R-8'
 						: adx >= 10
-						? '趋势空且增强-R-9'
-						: '趋势空且增强-R-10';
+						? '趋势多且增强-R-9'
+						: '趋势多且增强-R-10';
 			}
 		}
 
