@@ -541,14 +541,14 @@ class Backtester {
 		if (lastMacd < 0 && macd > 0) {
 			if (close > emaFast) {
 				marketType =
-					adx >= 40 ? '趋势空且增强-L-1' : '趋势空且增强-L-2';
+					adx >= 25 ? '趋势空且增强-L-1' : '趋势空且增强-L-2';
 			}
 		}
 
 		if (lastMacd > 0 && macd < 0) {
 			if (close < emaFast) {
 				marketType =
-					adx >= 40 ? '趋势空且增强-R-1' : '趋势多且增强-R-2';
+					adx >= 25 ? '趋势多且增强-R-1' : '趋势多且增强-R-2';
 			}
 		}
 
