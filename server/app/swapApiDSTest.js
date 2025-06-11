@@ -510,7 +510,7 @@ class Backtester {
 			emaSlope,
 			emaFast,
 			emaSlow,
-			macd,
+			macdHistogram: macd,
 		} = candle;
 		const {
 			adx: lastAdx,
@@ -520,7 +520,7 @@ class Backtester {
 			emaFast: lastEmaFast,
 			emaSlow: lastEmaSlow,
 			close: lastClose,
-			macd: lastMacd,
+			macdHistogram: lastMacd,
 		} = lastCandle;
 		// if (!lastAdx) return marketType;
 
