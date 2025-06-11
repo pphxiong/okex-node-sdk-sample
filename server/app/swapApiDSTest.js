@@ -542,9 +542,9 @@ class Backtester {
 
 		if (close > emaFast && emaFast > emaSlow) {
 			if (
-				lastClose > lastEmaSlow &&
 				close > emaSlow &&
-				macdHistogram > lastMacdHistogram
+				macdHistogram > lastMacdHistogram &&
+				lastMacdHistogram < 0
 			) {
 				marketType =
 					adx >= 60
@@ -571,9 +571,9 @@ class Backtester {
 
 		if (close < emaFast && emaFast < emaSlow) {
 			if (
-				lastClose < lastEmaSlow &&
 				close < emaSlow &&
-				macdHistogram < lastMacdHistogram
+				macdHistogram < lastMacdHistogram &&
+				lastMacdHistogram > 0
 			) {
 				marketType =
 					adx >= 60
