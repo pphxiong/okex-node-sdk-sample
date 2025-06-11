@@ -530,11 +530,11 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (close > emaFast && emaFast > emaSlow) {
+		if (close > emaFast && emaFast > emaSlow && macd > 0) {
 			marketType = '趋势多';
 		}
 
-		if (close < emaFast && emaFast < emaSlow) {
+		if (close < emaFast && emaFast < emaSlow && macd < 0) {
 			marketType = '趋势空';
 		}
 
@@ -542,24 +542,24 @@ class Backtester {
 			if (close > emaFast && emaFast > emaSlow) {
 				marketType =
 					adx >= 60
-						? '趋势多且增强-L-1'
+						? '趋势空且增强-L-1'
 						: adx >= 50
-						? '趋势多且增强-L-2'
+						? '趋势空且增强-L-2'
 						: adx >= 40
-						? '趋势多且增强-L-3'
+						? '趋势空且增强-L-3'
 						: adx >= 35
-						? '趋势多且增强-L-4'
+						? '趋势空且增强-L-4'
 						: adx >= 30
-						? '趋势多且增强-L-5'
+						? '趋势空且增强-L-5'
 						: adx >= 25
-						? '趋势多且增强-L-6'
+						? '趋势空且增强-L-6'
 						: adx >= 20
-						? '趋势多且增强-L-7'
+						? '趋势空且增强-L-7'
 						: adx >= 15
 						? '趋势多且增强-L-8'
 						: adx >= 10
 						? '趋势多且增强-L-9'
-						: '趋势多且增强-L-10';
+						: '趋势空且增强-L-10';
 			}
 		}
 
@@ -567,24 +567,24 @@ class Backtester {
 			if (close < emaFast && emaFast < emaSlow) {
 				marketType =
 					adx >= 60
-						? '趋势空且增强-R-1'
+						? '趋势多且增强-R-1'
 						: adx >= 50
-						? '趋势空且增强-R-2'
+						? '趋势多且增强-R-2'
 						: adx >= 40
-						? '趋势空且增强-R-3'
+						? '趋势多且增强-R-3'
 						: adx >= 35
-						? '趋势空且增强-R-4'
+						? '趋势多且增强-R-4'
 						: adx >= 30
-						? '趋势空且增强-R-5'
+						? '趋势多且增强-R-5'
 						: adx >= 25
-						? '趋势空且增强-R-6'
+						? '趋势多且增强-R-6'
 						: adx >= 20
-						? '趋势空且增强-R-7'
+						? '趋势多且增强-R-7'
 						: adx >= 15
-						? '趋势空且增强-R-8'
+						? '趋势多且增强-R-8'
 						: adx >= 10
-						? '趋势空且增强-R-9'
-						: '趋势空且增强-R-10';
+						? '趋势多且增强-R-9'
+						: '趋势多且增强-R-10';
 			}
 		}
 
