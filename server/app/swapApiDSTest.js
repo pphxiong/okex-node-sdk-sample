@@ -833,6 +833,21 @@ class Backtester {
 				} else if (adx < 15) {
 				}
 			}
+
+			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
+				marketType =
+					emaSlope > config.emaSlope.emaSlopeThreshold * 3
+						? '趋势多且增强-L1-5-1'
+						: emaSlope > config.emaSlope.emaSlopeThreshold * 2
+						? '趋势多且增强-L1-5-2'
+						: emaSlope > config.emaSlope.emaSlopeThreshold
+						? '趋势多且增强-L1-5-3'
+						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						? ''
+						: emaSlope > 0
+						? '趋势多且增强-L1-5-5'
+						: marketType;
+			}
 		}
 
 		if (emaFast < emaSlow) {
