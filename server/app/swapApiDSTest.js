@@ -933,7 +933,7 @@ class Backtester {
 				marketType = '趋势多';
 		}
 
-		if (marketType.indexOf('不确定') !== -1 || !marketType) {
+		if (marketType.indexOf('不确定') !== -1) {
 			if (emaFast > emaSlow) {
 				if (
 					lastMacd > lastLastMacd &&
