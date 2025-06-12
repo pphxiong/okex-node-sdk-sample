@@ -515,7 +515,7 @@ class Backtester {
 			emaSlope,
 			emaFast,
 			emaSlow,
-			macd,
+			macdHistogram: macd,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
