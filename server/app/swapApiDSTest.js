@@ -557,7 +557,7 @@ class Backtester {
 						? '趋势空'
 						: '趋势空';
 			}
-			if (rsi > 75) {
+			if (rsi > 73) {
 				marketType = '趋势空';
 			}
 			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
