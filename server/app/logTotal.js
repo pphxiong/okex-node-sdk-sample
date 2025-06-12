@@ -2579,4 +2579,98 @@ maxDrawdownTotal 25
 趋势多且增强-L1-5-5 总交易次数: 1083 盈利: 5757.52844545543 亏损: -5277.588415968945 最大盈利: 871.27 最大亏损: -83.46 总收益: 479.94 平均盈利: 0.44 typeA: 0.19 胜率: 42.66%
 趋势多且增强-L1-5-2 总交易次数: 127 盈利: 1366.1934979324342 亏损: -1464.651454021736 最大盈利: 293.83 最大亏损: -67.57 总收益: -98.46 平均盈利: -0.78 typeA: -0.32 胜率: 40.94%
 
+
+if (emaFast > emaSlow) {
+			if (lastMacd > lastLastMacd && macd < lastMacd && lastMacd > 0) {
+				marketType =
+					adx > 50
+						? '趋势多'
+						: adx >= 40
+						? '趋势多'
+						: adx >= 35
+						? '趋势多'
+						: adx >= 30
+						? '趋势多'
+						: adx > 25
+						? '趋势多'
+						: adx > 20
+						? '趋势空'
+						: adx > 15
+						? '趋势空'
+						: adx > 10
+						? '趋势空'
+						: '趋势空';
+			}
+			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
+				marketType =
+					emaSlope > config.emaSlope.emaSlopeThreshold * 3
+						? '趋势多且增强-L1-5-1'
+						: emaSlope > config.emaSlope.emaSlopeThreshold * 2
+						? '趋势多且增强-L1-5-2'
+						: emaSlope > config.emaSlope.emaSlopeThreshold
+						? '趋势多且增强-L1-5-3'
+						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						? ''
+						: emaSlope > 0
+						? '趋势多且增强-L1-5-5'
+						: emaSlope > -config.emaSlope.emaSlopeThreshold / 2
+						? adx >= 25
+							? ''
+							: ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold
+						? ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold * 2
+						? ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold * 3
+						? ''
+						: '';
+			}
+		}
+		if (emaFast < emaSlow) {
+			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
+				marketType =
+					adx > 50
+						? '趋势空'
+						: adx >= 40
+						? '趋势空'
+						: adx >= 35
+						? '趋势空'
+						: adx >= 30
+						? '趋势空'
+						: adx > 25
+						? '趋势空'
+						: adx > 20
+						? '趋势多'
+						: adx > 15
+						? '趋势多'
+						: adx > 10
+						? '趋势多'
+						: '趋势多';
+			}
+			if (lastMacd > lastLastMacd && macd < lastMacd && lastMacd > 0) {
+				marketType =
+					emaSlope > config.emaSlope.emaSlopeThreshold * 3
+						? '趋势空且增强-R1-5-1'
+						: emaSlope > config.emaSlope.emaSlopeThreshold * 2
+						? '趋势空且增强-R1-5-2'
+						: emaSlope > config.emaSlope.emaSlopeThreshold
+						? '趋势空且增强-R1-5-3'
+						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						? ''
+						: emaSlope > 0
+						? ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold / 2
+						? adx >= 25
+							? ''
+							: ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold
+						? ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold * 2
+						? ''
+						: emaSlope > -config.emaSlope.emaSlopeThreshold * 3
+						? ''
+						: '';
+			}
+		}
+
 */
