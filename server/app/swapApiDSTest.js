@@ -568,12 +568,12 @@ class Backtester {
 						: emaSlope > 0
 						? '趋势多且增强-L1-5-4'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold
-						? '趋势多且增强-L1-5-5'
+						? '趋势空且增强-L1-5-5'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold * 2
-						? '趋势多且增强-L1-5-6'
+						? '趋势空且增强-L1-5-6'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold * 3
-						? '趋势多且增强-L1-5-7'
-						: '趋势多且增强-L1-5-8';
+						? '趋势空且增强-L1-5-7'
+						: '趋势空且增强-L1-5-8';
 			}
 		}
 
@@ -609,12 +609,12 @@ class Backtester {
 						: emaSlope > 0
 						? '趋势空且增强-R1-5-4'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold
-						? '趋势空且增强-R1-5-5'
+						? '趋势多且增强-R1-5-5'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold * 2
-						? '趋势空且增强-R1-5-6'
+						? '趋势多且增强-R1-5-6'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold * 3
-						? '趋势空且增强-R1-5-7'
-						: '趋势空且增强-R1-5-8';
+						? '趋势多且增强-R1-5-7'
+						: '趋势多且增强-R1-5-8';
 			}
 		}
 
