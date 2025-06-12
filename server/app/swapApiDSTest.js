@@ -542,7 +542,7 @@ class Backtester {
 					macd < lastMacd &&
 					lastMacd > 0
 				) {
-					marketType = adx >= 25 ? '趋势多' : '趋势空';
+					marketType = adx >= 35 ? '趋势多' : '趋势空';
 				}
 				if (
 					lastMacd < lastLastMacd &&
@@ -553,9 +553,9 @@ class Backtester {
 						? '趋势多且增强-L1-5-1'
 						: adx >= 40
 						? '趋势多且增强-L1-5-2'
-						: adx >= 30
-						? '趋势多且增强-L1-5-3'
 						: adx >= 35
+						? '趋势多且增强-L1-5-3'
+						: adx >= 30
 						? '趋势多且增强-L1-5-4'
 						: adx > 25
 						? '趋势多且增强-L1-5-5'
@@ -575,7 +575,7 @@ class Backtester {
 					macd > lastMacd &&
 					lastMacd < 0
 				) {
-					marketType = adx >= 25 ? '趋势空' : '趋势多';
+					marketType = adx >= 35 ? '趋势空' : '趋势多';
 				}
 				if (
 					lastMacd > lastLastMacd &&
@@ -587,9 +587,9 @@ class Backtester {
 							? '趋势空且增强-R1-5-1'
 							: adx >= 40
 							? '趋势空且增强-R1-5-2'
-							: adx >= 30
-							? '趋势空且增强-R1-5-3'
 							: adx >= 35
+							? '趋势空且增强-R1-5-3'
+							: adx >= 30
 							? '趋势空且增强-R1-5-4'
 							: adx > 25
 							? '趋势空且增强-R1-5-5'
