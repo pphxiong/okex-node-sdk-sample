@@ -540,6 +540,8 @@ class Backtester {
 			if (macd < 0) {
 				marketType =
 					adx >= 25 ? '趋势空且增强-L-1' : '趋势空且增强-L-2';
+			} else {
+				marketType = '趋势多';
 			}
 		}
 
@@ -547,6 +549,8 @@ class Backtester {
 			if (macd > 0) {
 				marketType =
 					adx >= 25 ? '趋势空且增强-R-1' : '趋势多且增强-R-2';
+			} else {
+				marketType = '趋势空';
 			}
 		}
 
