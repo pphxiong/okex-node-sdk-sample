@@ -2057,4 +2057,74 @@ maxDrawdownTotal 28.4
 趋势空且增强-L2-2-3 总交易次数: 122 盈利: 631.6228780273548 亏损: -578.1078031173313 最大盈利: 114.24 最大亏损: -62.86 总收益: 53.52 平均盈利: 0.44 typeA: 0.30 胜率: 68.85%
 
 
+############################################################
+
+if (macdHistogram > lastMacdHistogram && macd > 0) {
+			marketType = '趋势多';
+		}
+
+		if (macdHistogram < lastMacdHistogram && macd < 0) {
+			marketType = '趋势空';
+		}
+
+		if (close > emaFast && emaFast > emaSlow) {
+			if (
+				close > emaSlow &&
+				macdHistogram > lastMacdHistogram &&
+				lastMacdHistogram < 0
+			) {
+				marketType =
+					adx >= 60
+						? '趋势多且增强-L-1'
+						: adx >= 50
+						? '趋势多且增强-L-2'
+						: adx >= 40
+						? '趋势多且增强-L-3'
+						: adx >= 35
+						? '趋势多且增强-L-4'
+						: adx >= 30
+						? '趋势多且增强-L-5'
+						: adx >= 25
+						? '趋势多且增强-L-6'
+						: adx >= 20
+						? '趋势多且增强-L-7'
+						: adx >= 15
+						? '趋势多且增强-L-8'
+						: adx >= 10
+						? '趋势多且增强-L-9'
+						: '趋势多且增强-L-10';
+			}
+		}
+
+		if (close < emaFast && emaFast < emaSlow) {
+			if (
+				close < emaSlow &&
+				macdHistogram < lastMacdHistogram &&
+				lastMacdHistogram > 0
+			) {
+				marketType =
+					adx >= 60
+						? '趋势空且增强-R-1'
+						: adx >= 50
+						? '趋势空且增强-R-2'
+						: adx >= 40
+						? '趋势空且增强-R-3'
+						: adx >= 35
+						? '趋势空且增强-R-4'
+						: adx >= 30
+						? '趋势空且增强-R-5'
+						: adx >= 25
+						? '趋势空且增强-R-6'
+						: adx >= 20
+						? '趋势空且增强-R-7'
+						: adx >= 15
+						? '趋势空且增强-R-8'
+						: adx >= 10
+						? '趋势空且增强-R-9'
+						: '趋势空且增强-R-10';
+			}
+		}
+
+    #####################################################
+
 */
