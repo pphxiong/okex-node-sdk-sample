@@ -620,17 +620,35 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
+				// marketType =
+				// 	adx > 50
+				// 		? '趋势空'
+				// 		: adx >= 40
+				// 		? '趋势空'
+				// 		: adx >= 35
+				// 		? '趋势空'
+				// 		: adx >= 30
+				// 		? '趋势空'
+				// 		: adx > 25
+				// 		? '趋势空'
+				// 		: adx > 20
+				// 		? '趋势多'
+				// 		: adx > 15
+				// 		? '趋势多'
+				// 		: adx > 10
+				// 		? '趋势多'
+				// 		: '趋势多';
 				marketType =
 					emaSlope > config.emaSlope.emaSlopeThreshold * 3
 						? '趋势多'
 						: emaSlope > config.emaSlope.emaSlopeThreshold * 2
 						? '趋势多'
 						: emaSlope > config.emaSlope.emaSlopeThreshold
-						? '趋势多'
+						? '趋势空'
 						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? '趋势多'
+						? '趋势空'
 						: emaSlope > 0
-						? '趋势多'
+						? '趋势空'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold
 						? '趋势空'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold * 2
