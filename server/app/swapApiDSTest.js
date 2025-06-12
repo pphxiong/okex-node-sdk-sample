@@ -536,6 +536,14 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
+		if (close > emaFast && emaFast > emaSlow) {
+			marketType = '趋势多';
+		}
+
+		if (close < emaFast && emaFast < emaSlow) {
+			marketType = '趋势空';
+		}
+
 		if (lastMacd < lastLastMacd && macd > lastMacd) {
 			if (macd < 0) {
 				if (emaSlope > config.emaSlope.emaSlopeThreshold * 3) {
@@ -990,10 +998,10 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isStopLoss ||
-					(position.direction === 'long'
+					// isStopLoss ||
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c));
+						: shortCloseConditions.some((c) => !!c);
 
 				if (isReverse) {
 					this.closePosition(
