@@ -544,12 +544,16 @@ class Backtester {
 			marketType = '趋势空';
 		}
 
-		if (emaFast > emaSlow && lastMacd < 0 && macd > 0) {
-			marketType = '趋势多且增强-L-1-1';
+		if (emaFast > emaSlow) {
+			if (lastMacd < lastLastMacd && macd > lastMacd) {
+				marketType = '趋势多且增强-L-1-1';
+			}
 		}
 
-		if (emaFast < emaSlow && lastMacd > 0 && macd < 0) {
-			marketType = '趋势空且增强-L-1-1';
+		if (emaFast < emaSlow) {
+			if (lastMacd > lastLastMacd && macd < lastMacd) {
+				marketType = '趋势空且增强-L-1-1';
+			}
 		}
 
 		// if (emaFast > emaSlow) {
