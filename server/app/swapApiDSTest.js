@@ -542,7 +542,7 @@ class Backtester {
 					macd < lastMacd &&
 					lastMacd > 0
 				) {
-					marketType = '趋势空';
+					marketType = adx >= 30 ? '趋势多' : '趋势空';
 				}
 				if (
 					lastMacd < lastLastMacd &&
@@ -559,7 +559,7 @@ class Backtester {
 					macd > lastMacd &&
 					lastMacd < 0
 				) {
-					marketType = '趋势多';
+					marketType = adx >= 30 ? '趋势空' : '趋势多';
 				}
 				if (
 					lastMacd > lastLastMacd &&
