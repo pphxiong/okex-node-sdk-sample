@@ -635,7 +635,7 @@ class Backtester {
 							: '趋势空且增强-L1-5-9';
 				}
 			} else {
-				marketType = adx > 30 ? '趋势多' : '';
+				// marketType = adx > 30 ? '趋势多' : '';
 			}
 		}
 
@@ -738,7 +738,7 @@ class Backtester {
 							: '趋势空且增强-R1-5-9';
 				}
 			} else {
-				marketType = adx > 30 ? '趋势空' : '';
+				// marketType = adx > 30 ? '趋势空' : '';
 			}
 		}
 
@@ -990,10 +990,10 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isStopLoss ||
-					position.direction === 'long'
+					isStopLoss ||
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
