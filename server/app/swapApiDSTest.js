@@ -537,7 +537,7 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaSlow) {
-			if (lastMacd > lastLastMacd && macd > lastMacd && lastMacd > 0) {
+			if (lastMacd > lastLastMacd && macd < lastMacd && lastMacd > 0) {
 				// marketType =
 				// 	adx > 50
 				// 		? '趋势多'
@@ -596,7 +596,7 @@ class Backtester {
 						: '';
 			}
 
-			if (lastMacd > lastLastMacd && macd < lastMacd && lastMacd > 0) {
+			if (lastMacd > lastLastMacd && macd > lastMacd && lastMacd > 0) {
 				marketType =
 					emaSlope > config.emaSlope.emaSlopeThreshold * 3
 						? ''
