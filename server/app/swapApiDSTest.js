@@ -635,7 +635,7 @@ class Backtester {
 							: '趋势空且增强-L1-5-9';
 				}
 			} else {
-				marketType = '趋势多';
+				// marketType = '趋势多';
 			}
 		}
 
@@ -738,7 +738,7 @@ class Backtester {
 							: '趋势空且增强-R1-5-9';
 				}
 			} else {
-				marketType = '趋势空';
+				// marketType = '趋势空';
 			}
 		}
 
