@@ -843,7 +843,7 @@ class Backtester {
 						: emaSlope > config.emaSlope.emaSlopeThreshold
 						? '趋势多且增强-L1-5-3'
 						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? ''
+						? marketType
 						: emaSlope > 0
 						? '趋势多且增强-L1-5-5'
 						: marketType;
