@@ -599,15 +599,15 @@ class Backtester {
 			if (lastMacd > lastLastMacd && macd < lastMacd && macd < 0) {
 				marketType =
 					emaSlope > config.emaSlope.emaSlopeThreshold * 3
-						? '趋势空且增强-L1-6-1'
+						? '趋势多且增强-L1-6-1'
 						: emaSlope > config.emaSlope.emaSlopeThreshold * 2
-						? '趋势空且增强-L1-6-2'
+						? '趋势多且增强-L1-6-2'
 						: emaSlope > config.emaSlope.emaSlopeThreshold
-						? '趋势空且增强-L1-6-3'
+						? '趋势多且增强-L1-6-3'
 						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? '趋势空且增强-L1-6-4'
+						? '趋势多且增强-L1-6-4'
 						: emaSlope > 0
-						? '趋势空且增强-L1-6-5'
+						? '趋势多且增强-L1-6-5'
 						: emaSlope > -config.emaSlope.emaSlopeThreshold
 						? ''
 						: emaSlope > -config.emaSlope.emaSlopeThreshold * 2
