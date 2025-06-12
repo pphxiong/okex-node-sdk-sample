@@ -548,7 +548,7 @@ class Backtester {
 			if (lastMacd > lastLastMacd && macd < lastMacd && lastMacd > 0) {
 				marketType = '趋势空';
 			}
-			if (lastMacd < lastLastMacd && macd > lastMacd && macd < 0) {
+			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
 				marketType = '趋势多且增强-L-1-1';
 			}
 		}
@@ -557,7 +557,7 @@ class Backtester {
 			if (lastMacd < lastLastMacd && macd > lastMacd && lastMacd < 0) {
 				marketType = '趋势多';
 			}
-			if (lastMacd > lastLastMacd && macd < lastMacd && macd > 0) {
+			if (lastMacd > lastLastMacd && macd < lastMacd && lastMacd > 0) {
 				marketType = '趋势空且增强-L-1-1';
 			}
 		}
