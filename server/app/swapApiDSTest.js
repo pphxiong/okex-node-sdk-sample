@@ -565,7 +565,7 @@ class Backtester {
 			}
 			if (emaSlope > -config.emaSlope.emaSlopeThreshold * 2) {
 				if (lastMacd > lastLastMacd && macd < lastMacd) {
-					marketType = '趋势空且增强-L1-1-1';
+					marketType = '趋势空且增强-R1-1-1';
 				}
 			}
 		}
