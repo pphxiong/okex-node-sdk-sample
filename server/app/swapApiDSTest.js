@@ -564,7 +564,7 @@ class Backtester {
 							: adx >= 40
 							? '趋势空且增强-L1-2-2'
 							: adx >= 30
-							? '趋势多且增强-L1-2-3'
+							? '趋势空且增强-L1-2-3'
 							: adx >= 35
 							? '趋势空且增强-L1-2-4'
 							: adx > 25
@@ -602,7 +602,7 @@ class Backtester {
 							: adx >= 40
 							? '趋势多且增强-L1-4-2'
 							: adx >= 30
-							? '趋势空且增强-L1-4-3'
+							? '趋势多且增强-L1-4-3'
 							: adx >= 35
 							? '趋势空且增强-L1-4-4'
 							: adx > 25
@@ -612,7 +612,7 @@ class Backtester {
 							: adx > 15
 							? '趋势多且增强-L1-4-7'
 							: adx > 10
-							? '趋势多且增强-L1-4-8'
+							? '趋势空且增强-L1-4-8'
 							: '趋势空且增强-L1-4-9';
 				} else {
 					marketType =
@@ -635,7 +635,7 @@ class Backtester {
 							: '趋势空且增强-L1-5-9';
 				}
 			} else {
-				// marketType = '趋势多';
+				marketType = adx > 30 ? '趋势多' : '';
 			}
 		}
 
@@ -715,7 +715,7 @@ class Backtester {
 							: adx > 15
 							? '趋势多且增强-R1-4-7'
 							: adx > 10
-							? '趋势多且增强-R1-4-8'
+							? '趋势空且增强-R1-4-8'
 							: '趋势多且增强-R1-4-9';
 				} else {
 					marketType =
@@ -738,7 +738,7 @@ class Backtester {
 							: '趋势空且增强-R1-5-9';
 				}
 			} else {
-				// marketType = '趋势空';
+				marketType = adx > 30 ? '趋势空' : '';
 			}
 		}
 
