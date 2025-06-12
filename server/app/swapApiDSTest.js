@@ -537,11 +537,11 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaSlow && macd > lastMacd) {
-			marketType = '趋势多';
+			marketType = '趋势空';
 		}
 
 		if (emaFast < emaSlow && macd < lastMacd) {
-			marketType = '趋势空';
+			marketType = '趋势多';
 		}
 
 		if (emaFast > emaSlow) {
@@ -552,10 +552,10 @@ class Backtester {
 			// }
 
 			if (lastMacd < lastLastMacd && macd > lastMacd) {
-				marketType = '趋势多且增强-L-1-1';
+				marketType = '趋势空且增强-L-1-1';
 			}
 			if (lastMacd > lastLastMacd && macd < lastMacd) {
-				marketType = '趋势空且增强-L-1-2';
+				marketType = '趋势多且增强-L-1-2';
 			}
 		}
 
@@ -567,10 +567,10 @@ class Backtester {
 			// }
 
 			if (lastMacd < lastLastMacd && macd > lastMacd) {
-				marketType = '趋势多且增强-R-1-1';
+				marketType = '趋势空且增强-R-1-1';
 			}
 			if (lastMacd > lastLastMacd && macd < lastMacd) {
-				marketType = '趋势空且增强-R-1-2';
+				marketType = '趋势多且增强-R-1-2';
 			}
 		}
 
