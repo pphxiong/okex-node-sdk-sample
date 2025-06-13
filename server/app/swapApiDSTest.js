@@ -541,12 +541,12 @@ class Backtester {
 
 		if (
 			(lastMacd > lastLastMacd && macd > lastMacd) ||
-			(close < lastClose && volume > lastVolume)
+			(close > lastClose && volume < lastVolume)
 		) {
 			marketType = '趋势多';
 		} else if (
 			(lastMacd < lastLastMacd && macd < lastMacd) ||
-			(close > lastClose && volume < lastVolume)
+			(close < lastClose && volume > lastVolume)
 		) {
 			marketType = '趋势空';
 		}
