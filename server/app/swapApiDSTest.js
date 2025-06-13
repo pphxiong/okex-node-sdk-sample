@@ -565,7 +565,7 @@ class Backtester {
 				}
 				if (macd < lastMacd && lastMacd > lastLastMacd) {
 					marketType =
-						rsi > 72 ? '趋势空' : rsi > 55 ? '趋势多' : '趋势空';
+						rsi > 70 ? '趋势空' : rsi > 55 ? '趋势多' : '趋势空';
 				}
 			}
 		}
@@ -582,7 +582,7 @@ class Backtester {
 				}
 				if (macd > lastMacd && lastMacd < lastLastMacd) {
 					marketType =
-						rsi < 28 ? '趋势多' : rsi < 55 ? '趋势空' : '趋势多';
+						rsi < 30 ? '趋势多' : rsi < 45 ? '趋势空' : '趋势多';
 				}
 			}
 		}
