@@ -1028,8 +1028,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
