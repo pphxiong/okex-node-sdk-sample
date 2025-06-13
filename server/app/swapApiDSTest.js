@@ -548,9 +548,9 @@ class Backtester {
 			marketType = '趋势空';
 		}
 
-		// if (volume / lastVolume > 2) {
-		// 	marketType = '趋势多趋势空';
-		// }
+		if (adx < 20) {
+			marketType = '趋势多趋势空';
+		}
 
 		if (emaFast > emaSlow) {
 			if (
