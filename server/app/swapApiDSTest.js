@@ -554,6 +554,7 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			if (
+				close > lastClose &&
 				lastMacd > lastLastMacd &&
 				macd > lastMacd &&
 				macd < 0 &&
@@ -564,6 +565,7 @@ class Backtester {
 		}
 		if (emaFast < emaSlow) {
 			if (
+				close < lastClose &&
 				lastMacd < lastLastMacd &&
 				macd < lastMacd &&
 				macd > 0 &&
