@@ -557,7 +557,7 @@ class Backtester {
 			if (macd > lastMacd && lastMacd > lastLastMacd && macd > 0) {
 				marketType = '趋势多且增强';
 			}
-			if (rsi > 72) {
+			if (rsi < 45) {
 				marketType = '趋势空';
 			}
 		}
@@ -566,7 +566,7 @@ class Backtester {
 			if (macd < lastMacd && lastMacd < lastLastMacd && macd < 0) {
 				marketType = '趋势空且增强';
 			}
-			if (rsi < 27) {
+			if (rsi > 55) {
 				marketType = '趋势多';
 			}
 		}
