@@ -648,8 +648,8 @@ class Backtester {
 		}
 
     if (
-		adx < 25 &&
-		adxPlusDI > adxMinusDI &&
+		// adx < 25 &&
+		// adxPlusDI > adxMinusDI &&
 		emaFast < emaSlow &&
 		close < emaFast
 	) {
@@ -657,8 +657,8 @@ class Backtester {
 			marketType = '趋势空';
 	}
 	if (
-		adx < 25 &&
-		adxPlusDI < adxMinusDI &&
+		// adx < 25 &&
+		// adxPlusDI < adxMinusDI &&
 		emaFast > emaSlow &&
 		close > emaFast
 	) {
