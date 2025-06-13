@@ -543,12 +543,12 @@ class Backtester {
 		}
 
 		if (emaFast > emaSlow) {
-			if (lastMacd < lastLastMacd && macd > lastMacd) {
+			if (lastMacd < lastLastMacd && macd > lastMacd && macd < 0) {
 				marketType = '趋势多且增强';
 			}
 		}
 		if (emaFast < emaSlow) {
-			if (lastMacd > lastLastMacd && macd < lastMacd) {
+			if (lastMacd > lastLastMacd && macd < lastMacd && macd > 0) {
 				marketType = '趋势空且增强';
 			}
 		}
