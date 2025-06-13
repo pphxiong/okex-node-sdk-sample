@@ -541,7 +541,7 @@ class Backtester {
 		}
 
 		if ((lastMacd < lastLastMacd && macd < lastMacd) || close < emaSlow) {
-			marketType = '趋势空';
+			marketType = marketType || '趋势空';
 		}
 
 		if (emaFast > emaSlow) {
