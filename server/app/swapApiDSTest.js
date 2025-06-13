@@ -556,6 +556,7 @@ class Backtester {
 			if (close > emaSlow) {
 				if (macd > lastMacd && lastMacd < lastLastMacd) {
 					if (adxPlusDI > adxMinusDI) {
+						marketType = '趋势多';
 						if (rsi < 60) {
 							marketType =
 								emaSlope > config.emaSlope.emaSlopeThreshold * 2
@@ -601,6 +602,7 @@ class Backtester {
 			if (close < emaSlow) {
 				if (macd < lastMacd && lastMacd > lastLastMacd) {
 					if (adxPlusDI < adxMinusDI) {
+						marketType = '趋势空';
 						if (rsi > 40) {
 							marketType =
 								emaSlope <
