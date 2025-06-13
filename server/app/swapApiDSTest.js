@@ -516,18 +516,21 @@ class Backtester {
 			emaFast,
 			emaSlow,
 			macdHistogram: macd,
+			volume,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
 			emaSlow: lastEmaSlow,
 			close: lastClose,
 			macdHistogram: lastMacd,
+			volume: lastVolume,
 		} = lastCandle;
 		const {
 			emaFast: lastLastEmaFast,
 			emaSlow: lastLastEmaSlow,
 			close: lastLastClose,
 			macdHistogram: lastLastMacd,
+			volume: lastLastVolume,
 		} = lastLastCandle;
 
 		const stronger = emaFast > emaSlow;
@@ -536,9 +539,15 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (lastMacd > lastLastMacd && macd > lastMacd) {
+		if (
+			(lastMacd > lastLastMacd && macd > lastMacd) ||
+			(close < lastClose && volume > lastVolume)
+		) {
 			marketType = '趋势多';
-		} else if (lastMacd < lastLastMacd && macd < lastMacd) {
+		} else if (
+			(lastMacd < lastLastMacd && macd < lastMacd) ||
+			(close > lastClose && volume < lastVolume)
+		) {
 			marketType = '趋势空';
 		}
 
