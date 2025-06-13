@@ -557,8 +557,8 @@ class Backtester {
 			if (
 				macd > lastMacd &&
 				lastMacd < lastLastMacd &&
-				lastMacd < 0 &&
-				emaSlope > config.emaSlope.emaSlopeThreshold
+				// lastMacd < 0 &&
+				emaSlope > config.emaSlope.emaSlopeThreshold / 2
 			) {
 				marketType = '趋势多且增强';
 			}
@@ -574,8 +574,8 @@ class Backtester {
 			if (
 				macd < lastMacd &&
 				lastMacd > lastLastMacd &&
-				lastMacd > 0 &&
-				emaSlope < -config.emaSlope.emaSlopeThreshold
+				// lastMacd > 0 &&
+				emaSlope < -config.emaSlope.emaSlopeThreshold / 2
 			) {
 				marketType = '趋势空且增强';
 			}
