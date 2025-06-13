@@ -558,7 +558,8 @@ class Backtester {
 				lastMacd > lastLastMacd &&
 				macd > lastMacd &&
 				macd < 0 &&
-				adx < 30
+				adx < 30 &&
+				adx > 20
 			) {
 				marketType = '趋势多且增强';
 			}
@@ -569,7 +570,8 @@ class Backtester {
 				lastMacd < lastLastMacd &&
 				macd < lastMacd &&
 				macd > 0 &&
-				adx < 30
+				adx < 30 &&
+				adx > 20
 			) {
 				marketType = '趋势空且增强';
 			}
