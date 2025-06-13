@@ -226,7 +226,15 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		}
 	}
 
-	return marketType;
+if (emaFast < emaSlow && close < emaFast) {
+	if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
+		marketType = '趋势空';
+}
+if (emaFast > emaSlow && close > emaFast) {
+	if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
+		marketType = '趋势多';
+}
+return marketType;
 }
 
 function findSwingPoints(candles) {
