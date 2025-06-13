@@ -1103,8 +1103,8 @@ function carryForluma(p, rl, rw) {
 (async () => {
 	const backtester = new Backtester();
 	// const start = '2025-02-09';
-	const start = '2021-01-01';
-	// const start = '2024-03-10';
+	// const start = '2021-01-01';
+	const start = '2023-02-20';
 	const end = '2025-06-01';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1118,8 +1118,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
@@ -1155,10 +1155,10 @@ function carryForluma(p, rl, rw) {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2024-03-15 23:45:00')
+								moment('2023-03-14 20:00:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2024-03-16 00:45:00')
+								moment('2023-03-14 21:00:00')
 							)
 					)
 					.map((candle) =>
