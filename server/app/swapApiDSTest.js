@@ -558,9 +558,7 @@ class Backtester {
 				lastMacd > lastLastMacd &&
 				macd > lastMacd &&
 				macd < 0 &&
-				adx < 30 &&
-				adxPlusDI > 15 &&
-				adxMinusDI > 15
+				adx < 30
 			) {
 				marketType = '趋势多且增强';
 			}
@@ -571,9 +569,7 @@ class Backtester {
 				lastMacd < lastLastMacd &&
 				macd < lastMacd &&
 				macd > 0 &&
-				adx < 30 &&
-				adxPlusDI > 15 &&
-				adxMinusDI > 15
+				adx < 30
 			) {
 				marketType = '趋势空且增强';
 			}
@@ -1122,8 +1118,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
