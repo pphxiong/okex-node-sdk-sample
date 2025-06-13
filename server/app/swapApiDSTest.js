@@ -549,7 +549,9 @@ class Backtester {
 				lastMacd < lastLastMacd &&
 				macd > lastMacd &&
 				lastMacd < 0 &&
-				rsi < 60
+				rsi < 60 &&
+				open > emaSlow &&
+				close > emaSlow
 			) {
 				marketType = '趋势多且增强';
 			}
@@ -559,7 +561,9 @@ class Backtester {
 				lastMacd > lastLastMacd &&
 				macd < lastMacd &&
 				lastMacd > 0 &&
-				rsi > 40
+				rsi > 40 &&
+				open < emaSlow &&
+				close < emaSlow
 			) {
 				marketType = '趋势空且增强';
 			}
