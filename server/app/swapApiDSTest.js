@@ -550,6 +550,7 @@ class Backtester {
 				macd > lastMacd &&
 				lastMacd < 0 &&
 				rsi > 55 &&
+				rsi < 60 &&
 				open > emaSlow &&
 				close > emaSlow
 			) {
@@ -562,6 +563,7 @@ class Backtester {
 				macd < lastMacd &&
 				lastMacd > 0 &&
 				rsi < 45 &&
+				rsi > 40 &&
 				open < emaSlow &&
 				close < emaSlow
 			) {
