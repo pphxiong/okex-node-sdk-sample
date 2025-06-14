@@ -156,85 +156,84 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (emaFast > emaSlow) {
+  if (macd > lastMacd && lastMacd < lastLastMacd) {
+		if (adxPlusDI > adxMinusDI) {
+			marketType = '趋势多';
+			if (rsi < 62) {
+				marketType =
+					emaSlope > config.emaSlope.emaSlopeThreshold * 2
+						? '趋势多且增强-L-1-1'
+						: emaSlope > config.emaSlope.emaSlopeThreshold
+						? '趋势多且增强-L-1-2'
+						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						? '趋势多且增强-L-1-3'
+						: emaSlope > 0
+						? '趋势多且增强-L-1-4'
+						: '';
+			}
+		}
+  }
+
+  if (macd < lastMacd && lastMacd > lastLastMacd) {
+		marketType = rsi > 72 ? '趋势空' : rsi > 60 ? '趋势多' : '';
+  }
+
+  if (emaFast > emaSlow) {
 		if (close > emaSlow) {
-			if (macd > lastMacd && lastMacd < lastLastMacd) {
-				if (adxPlusDI > adxMinusDI) {
-					marketType = '趋势多';
-					if (rsi < 60) {
-						marketType =
-							emaSlope > config.emaSlope.emaSlopeThreshold * 2
-								? '趋势多且增强-L-1-1'
-								: emaSlope > config.emaSlope.emaSlopeThreshold
-								? '趋势多且增强-L-1-2'
-								: emaSlope >
-								  config.emaSlope.emaSlopeThreshold / 2
-								? '趋势多且增强-L-1-3'
-								: emaSlope > 0
-								? '趋势多且增强-L-1-4'
-								: '';
-					}
-				}
-			}
-			if (macd < lastMacd && lastMacd > lastLastMacd) {
-				marketType = rsi > 70 ? '趋势空' : rsi > 60 ? '趋势多' : '';
+		}
+  }
+
+  if (macd < lastMacd && lastMacd > lastLastMacd) {
+		if (adxPlusDI < adxMinusDI) {
+			marketType = '趋势空';
+			if (rsi > 40) {
+				marketType =
+					emaSlope < -config.emaSlope.emaSlopeThreshold * 3
+						? '趋势空且增强-R-1-1'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+						? '趋势空且增强-R-1-2'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold
+						? '趋势空且增强-R-1-3'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+						? '趋势空且增强-R-1-4'
+						: emaSlope < 0
+						? '趋势空'
+						: '';
 			}
 		}
-	}
-	if (emaFast < emaSlow) {
+  }
+
+  if (macd > lastMacd && lastMacd < lastLastMacd) {
+		marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : '';
+
+		if (adxPlusDI > adxMinusDI) {
+			if (rsi > 40) {
+				marketType =
+					emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+						? '趋势多且增强-R-2-1'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold
+						? '趋势多且增强-R-2-2'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+						? '趋势多且增强-R-2-3'
+						: emaSlope < 0
+						? '趋势多且增强-R-2-4'
+						: '';
+			}
+		}
+  }
+
+  if (emaFast < emaSlow) {
 		if (close < emaSlow) {
-			if (macd < lastMacd && lastMacd > lastLastMacd) {
-				if (adxPlusDI < adxMinusDI) {
-					marketType = '趋势空';
-					if (rsi > 40) {
-						marketType =
-							emaSlope < -config.emaSlope.emaSlopeThreshold * 3
-								? '趋势空且增强-R-1-1'
-								: emaSlope <
-								  -config.emaSlope.emaSlopeThreshold * 2
-								? '趋势空且增强-R-1-2'
-								: emaSlope < -config.emaSlope.emaSlopeThreshold
-								? '趋势空且增强-R-1-3'
-								: emaSlope <
-								  -config.emaSlope.emaSlopeThreshold / 2
-								? '趋势空且增强-R-1-4'
-								: emaSlope < 0
-								? '趋势空且增强-R-1-5'
-								: '';
-					}
-				}
-			}
-			if (macd > lastMacd && lastMacd < lastLastMacd) {
-				marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : '';
-
-				if (adxPlusDI > adxMinusDI) {
-					if (rsi > 40) {
-						marketType =
-							emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-								? '趋势多且增强-R-2-1'
-								: emaSlope < -config.emaSlope.emaSlopeThreshold
-								? '趋势多且增强-R-2-2'
-								: emaSlope <
-								  -config.emaSlope.emaSlopeThreshold / 2
-								? '趋势多且增强-R-2-3'
-								: emaSlope < 0
-								? '趋势多且增强-R-2-4'
-								: '';
-					}
-				}
-			}
 		}
-	}
+  }
 
-if (emaFast < emaSlow && close < emaFast) {
-	if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
+  if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
 		marketType = '趋势空';
-}
-if (emaFast > emaSlow && close > emaFast) {
-	if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
+
+  if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
 		marketType = '趋势多';
-}
-return marketType;
+
+  return marketType;
 }
 
 function findSwingPoints(candles) {
