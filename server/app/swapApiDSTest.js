@@ -539,85 +539,72 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		// if ((lastMacd > lastLastMacd && macd > lastMacd) || close > emaSlow) {
-		// 	marketType = '趋势多';
-		// } else if (
-		// 	(lastMacd < lastLastMacd && macd < lastMacd) ||
-		// 	close < emaSlow
-		// ) {
-		// 	marketType = '趋势空';
+	if (macd > lastMacd && lastMacd < lastLastMacd) {
+		if (adxPlusDI > adxMinusDI) {
+			marketType = '趋势多';
+			if (rsi < 62 && rsi > 45) {
+				marketType =
+					emaSlope > config.emaSlope.emaSlopeThreshold * 2
+						? '趋势多且增强-L-1-1'
+						: emaSlope > config.emaSlope.emaSlopeThreshold
+						? '趋势多且增强-L-1-2'
+						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
+						? '趋势多且增强-L-1-3'
+						: emaSlope > 0
+						? '趋势多且增强-L-1-4'
+						: '';
+			}
+		}
+	}
+
+	if (macd < lastMacd && lastMacd > lastLastMacd) {
+		marketType = rsi > 72 ? '趋势空' : rsi > 60 ? '趋势多' : '';
+
+		// if (adxPlusDI < adxMinusDI) {
+		// 	if (rsi < 55) {
+		// 		marketType =
+		// 			emaSlope > config.emaSlope.emaSlopeThreshold * 3
+		// 				? '趋势空且增强-L-2-1'
+		// 				: emaSlope >
+		// 				  config.emaSlope.emaSlopeThreshold * 2
+		// 				? '趋势空且增强-L-2-2'
+		// 				: emaSlope >
+		// 				  config.emaSlope.emaSlopeThreshold
+		// 				? '趋势空且增强-L-2-3'
+		// 				: emaSlope >
+		// 				  config.emaSlope.emaSlopeThreshold / 2
+		// 				? '趋势空且增强-L-2-4'
+		// 				: emaSlope > 0
+		// 				? '趋势空且增强-L-2-5'
+		// 				: '';
+		// 	}
 		// }
+	}
 
-		// if (adx < 20) {
-		// 	marketType = '趋势多趋势空';
-		// }
+	if (emaFast > emaSlow) {
+		if (close > emaSlow) {
+		}
+	}
 
-		if (macd > lastMacd && lastMacd < lastLastMacd) {
-			if (adxPlusDI > adxMinusDI) {
-				marketType = '趋势多';
-				if (rsi < 62 && rsi > 45) {
-					marketType =
-						emaSlope > config.emaSlope.emaSlopeThreshold * 2
-							? '趋势多且增强-L-1-1'
-							: emaSlope > config.emaSlope.emaSlopeThreshold
-							? '趋势多且增强-L-1-2'
-							: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-							? '趋势多且增强-L-1-3'
-							: emaSlope > 0
-							? '趋势多且增强-L-1-4'
-							: '';
-				}
+	if (macd < lastMacd && lastMacd > lastLastMacd) {
+		if (adxPlusDI < adxMinusDI) {
+			marketType = '趋势空';
+			if (rsi > 40 && rsi < 55) {
+				marketType =
+					emaSlope < -config.emaSlope.emaSlopeThreshold * 3
+						? '趋势空且增强-R-1-1'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+						? '趋势空且增强-R-1-2'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold
+						? '趋势空且增强-R-1-3'
+						: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+						? '趋势空且增强-R-1-4'
+						: emaSlope < 0
+						? '趋势空'
+						: '';
 			}
 		}
-
-		if (macd < lastMacd && lastMacd > lastLastMacd) {
-			marketType = rsi > 72 ? '趋势空' : rsi > 60 ? '趋势多' : '';
-
-			// if (adxPlusDI < adxMinusDI) {
-			// 	if (rsi < 55) {
-			// 		marketType =
-			// 			emaSlope > config.emaSlope.emaSlopeThreshold * 3
-			// 				? '趋势空且增强-L-2-1'
-			// 				: emaSlope >
-			// 				  config.emaSlope.emaSlopeThreshold * 2
-			// 				? '趋势空且增强-L-2-2'
-			// 				: emaSlope >
-			// 				  config.emaSlope.emaSlopeThreshold
-			// 				? '趋势空且增强-L-2-3'
-			// 				: emaSlope >
-			// 				  config.emaSlope.emaSlopeThreshold / 2
-			// 				? '趋势空且增强-L-2-4'
-			// 				: emaSlope > 0
-			// 				? '趋势空且增强-L-2-5'
-			// 				: '';
-			// 	}
-			// }
-		}
-
-		if (emaFast > emaSlow) {
-			if (close > emaSlow) {
-			}
-		}
-
-		if (macd < lastMacd && lastMacd > lastLastMacd) {
-			if (adxPlusDI < adxMinusDI) {
-				marketType = '趋势空';
-				if (rsi > 40 && rsi < 55) {
-					marketType =
-						emaSlope < -config.emaSlope.emaSlopeThreshold * 3
-							? '趋势空且增强-R-1-1'
-							: emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-							? '趋势空且增强-R-1-2'
-							: emaSlope < -config.emaSlope.emaSlopeThreshold
-							? '趋势空且增强-R-1-3'
-							: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
-							? '趋势空且增强-R-1-4'
-							: emaSlope < 0
-							? '趋势空'
-							: '';
-				}
-			}
-		}
+	}
 
 		if (macd > lastMacd && lastMacd < lastLastMacd) {
 			marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : '';
