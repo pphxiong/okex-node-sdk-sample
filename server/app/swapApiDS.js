@@ -1,34 +1,34 @@
 import moment from 'moment';
-import helper from "../utils/index";
-const customAuthClientBN = require("./customAuthClientBN");
+import helper from '../utils/index';
+const customAuthClientBN = require('./customAuthClientBN');
 
-const express = require("express");
+const express = require('express');
 const app = express();
 
-app.all("*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "content-type");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By", " 3.2.1");
-  res.header("Content-Type", "application/json;charset=utf-8");
-  if (req.method.toLowerCase() == "options") res.send(200);
-  //让options尝试请求快速结束
-  else next();
+app.all('*', function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+	res.header('Access-Control-Allow-Headers', 'content-type');
+	res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+	res.header('X-Powered-By', ' 3.2.1');
+	res.header('Content-Type', 'application/json;charset=utf-8');
+	if (req.method.toLowerCase() == 'options') res.send(200);
+	//让options尝试请求快速结束
+	else next();
 });
 
-const configBN = require("./configBN2");
+const configBN = require('./configBN2');
 const cAuthClientBN = new customAuthClientBN(
-  configBN.httpkey,
-  configBN.httpsecret,
-  configBN.urlHost
+	configBN.httpkey,
+	configBN.httpsecret,
+	configBN.urlHost
 );
 
-const ccxt = require("ccxt");
-const tulind = require("tulind");
-const WebSocket = require("ws");
-const fs = require("fs");
-require("dotenv").config();
+const ccxt = require('ccxt');
+const tulind = require('tulind');
+const WebSocket = require('ws');
+const fs = require('fs');
+require('dotenv').config();
 
 // const MAX_TRADE_POSITION_RATIO = 7 / 10;
 // const LEVERAGE = 20;
@@ -1266,4 +1266,4 @@ function stop() {
 			}, 1000 * 60 * 60 * 24 * 1);
 		});
 	}, 1000 * 2);
-}		
+}
