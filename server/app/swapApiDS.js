@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 import helper from "../utils/index";
 const customAuthClientBN = require("./customAuthClientBN");
 
@@ -156,10 +156,10 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-  if (macd > lastMacd && lastMacd < lastLastMacd) {
+ if (macd > lastMacd && lastMacd < lastLastMacd) {
 		if (adxPlusDI > adxMinusDI) {
 			marketType = '趋势多';
-			if (rsi < 62) {
+			if (rsi < 62 && rsi > 45) {
 				marketType =
 					emaSlope > config.emaSlope.emaSlopeThreshold * 2
 						? '趋势多且增强-L-1-1'
@@ -172,21 +172,21 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 						: '';
 			}
 		}
-  }
+ }
 
-  if (macd < lastMacd && lastMacd > lastLastMacd) {
+ if (macd < lastMacd && lastMacd > lastLastMacd) {
 		marketType = rsi > 72 ? '趋势空' : rsi > 60 ? '趋势多' : '';
-  }
+ }
 
-  if (emaFast > emaSlow) {
+ if (emaFast > emaSlow) {
 		if (close > emaSlow) {
 		}
-  }
+ }
 
-  if (macd < lastMacd && lastMacd > lastLastMacd) {
+ if (macd < lastMacd && lastMacd > lastLastMacd) {
 		if (adxPlusDI < adxMinusDI) {
 			marketType = '趋势空';
-			if (rsi > 40) {
+			if (rsi > 40 && rsi < 65) {
 				marketType =
 					emaSlope < -config.emaSlope.emaSlopeThreshold * 3
 						? '趋势空且增强-R-1-1'
@@ -201,9 +201,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 						: '';
 			}
 		}
-  }
+ }
 
-  if (macd > lastMacd && lastMacd < lastLastMacd) {
+ if (macd > lastMacd && lastMacd < lastLastMacd) {
 		marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : '';
 
 		if (adxPlusDI > adxMinusDI) {
@@ -220,17 +220,16 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 						: '';
 			}
 		}
-  }
+ }
 
-  if (emaFast < emaSlow) {
+ if (emaFast < emaSlow) {
 		if (close < emaSlow) {
 		}
-  }
+ }
 
-  if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
+ if (rsi < 30 && emaSlope < -config.emaSlope.emaSlopeThreshold)
 		marketType = '趋势空';
-
-  if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
+ if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
 		marketType = '趋势多';
 
   return marketType;
@@ -500,7 +499,7 @@ maxDrawdownTotal 32.8
 		'趋势空且增强-L-4-2-3': 61.18,
 	};
 	return Math.min(
-		globalAvailableBalance * config.leverage * 0.25,
+		globalAvailableBalance * config.leverage * 0.6,
 		config.tradeAmount
 	);
 	// return Math.min(
@@ -1266,4 +1265,12 @@ function stop() {
       }, 1000 * 60 * 60 * 24 * 1);
     });
   }, 1000 * 2);
+}		} else {
+				console.log('stopping success');
+			}
+			setTimeout(() => {
+				start();
+			}, 1000 * 60 * 60 * 24 * 1);
+		});
+	}, 1000 * 2);
 }
