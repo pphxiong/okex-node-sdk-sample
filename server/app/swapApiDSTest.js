@@ -620,7 +620,7 @@ class Backtester {
 		}
 
 		if (macd > lastMacd && lastMacd < lastLastMacd) {
-			marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : '';
+			marketType = rsi < 27 ? '趋势多' : rsi < 40 ? '趋势空' : '';
 
 			if (adxPlusDI > adxMinusDI) {
 				if (rsi > 40) {
