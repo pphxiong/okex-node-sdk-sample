@@ -156,24 +156,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
   const lastStronger = lastEmaFast > lastEmaSlow;
   const lastWeeker = lastEmaFast < lastEmaSlow;
 
-  if (macd > lastMacd && lastMacd < lastLastMacd) {
-    if (adxPlusDI > adxMinusDI) {
-      marketType = "趋势多";
-      if (rsi < 62 && rsi > 45) {
-        marketType =
-          emaSlope > config.emaSlope.emaSlopeThreshold * 2
-            ? "趋势多且增强-L-1-1"
-            : emaSlope > config.emaSlope.emaSlopeThreshold
-            ? "趋势多且增强-L-1-2"
-            : emaSlope > config.emaSlope.emaSlopeThreshold / 2
-            ? "趋势多且增强-L-1-3"
-            : emaSlope > 0
-            ? "趋势多且增强-L-1-4"
-            : "";
-      }
-    }
-  }
-
   if (macd < lastMacd && lastMacd > lastLastMacd) {
     marketType = rsi > 72 ? "趋势空" : rsi > 60 ? "趋势多" : "";
   }
@@ -195,6 +177,22 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
             ? "趋势空"
             : "";
       }
+    } else {
+      if (rsi > 40 && rsi < 65 && adx < 20) {
+        marketType = "趋势空";
+        marketType =
+          emaSlope < -config.emaSlope.emaSlopeThreshold * 3
+            ? "趋势空且增强-R-3-1"
+            : emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+            ? "趋势空且增强-R-3-2"
+            : emaSlope < -config.emaSlope.emaSlopeThreshold
+            ? "趋势空且增强-R-3-3"
+            : emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+            ? "趋势空且增强-R-3-4"
+            : emaSlope < 0
+            ? "趋势空且增强-R-3-5"
+            : "";
+      }
     }
   }
 
@@ -214,6 +212,19 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
             ? "趋势多且增强-R-2-4"
             : "";
       }
+    } else {
+      //   if (rsi < 40 && adx < 20) {
+      //     marketType =
+      //       emaSlope > config.emaSlope.emaSlopeThreshold * 2
+      //         ? "趋势多且增强-L-3-1"
+      //         : emaSlope > config.emaSlope.emaSlopeThreshold
+      //         ? "趋势多且增强-L-3-2"
+      //         : emaSlope > config.emaSlope.emaSlopeThreshold / 2
+      //         ? "趋势多且增强-L-3-3"
+      //         : emaSlope > 0
+      //         ? "趋势多且增强-L-3-4"
+      //         : "";
+      //   }
     }
   }
 
