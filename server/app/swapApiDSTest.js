@@ -555,7 +555,7 @@ class Backtester {
 							? '趋势多且增强-R-2-4'
 							: '';
 				}
-				if (rsi > 50 && rsi < 60 && adx > 25) {
+				if (rsi > 40 && rsi < 65 && adx > 25) {
 					marketType =
 						emaSlope > config.emaSlope.emaSlopeThreshold * 2
 							? '趋势多且增强-R-2-1'
