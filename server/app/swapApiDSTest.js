@@ -560,7 +560,7 @@ class Backtester {
 							? '趋势多且增强-L-2-6'
 							: emaSlope > config.emaSlope.emaSlopeThreshold / 2
 							? '趋势多且增强-L-2-7'
-							: '趋势空且增强-L-2-8';
+							: '趋势多且增强-L-2-8';
 				}
 			} else {
 				// if (rsi > 40 && adx < 20) {
