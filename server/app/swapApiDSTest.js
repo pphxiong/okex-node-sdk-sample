@@ -556,16 +556,16 @@ class Backtester {
 							: '';
 				}
 			} else {
-				if (rsi > 55 && adx < 20) {
+				if (rsi > 55 && adx > 30) {
 					marketType =
-						emaSlope > config.emaSlope.emaSlopeThreshold * 2
-							? '趋势空且增强-L-1-1'
-							: emaSlope > config.emaSlope.emaSlopeThreshold
-							? '趋势空且增强-L-1-2'
-							: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-							? '趋势空且增强-L-1-3'
-							: emaSlope > 0
-							? '趋势空且增强-L-1-4'
+						emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+							? '趋势多且增强-L-2-1'
+							: emaSlope < -config.emaSlope.emaSlopeThreshold
+							? '趋势多且增强-L-2-2'
+							: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+							? '趋势多且增强-L-2-3'
+							: emaSlope < 0
+							? '趋势多且增强-L-2-4'
 							: '';
 				}
 			}
