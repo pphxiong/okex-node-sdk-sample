@@ -553,7 +553,7 @@ class Backtester {
 							? '趋势多且增强-R-2-3'
 							: emaSlope < 0
 							? '趋势多且增强-R-2-4'
-							: marketType;
+							: '';
 				}
 				// if (rsi > 50 && rsi < 60) {
 				// 	marketType =
