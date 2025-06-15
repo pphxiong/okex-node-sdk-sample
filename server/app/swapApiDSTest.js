@@ -540,20 +540,21 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (macd > lastMacd && lastMacd < lastLastMacd) {
-			if (rsi < 62 && rsi > 40) {
-				marketType =
-					emaSlope > config.emaSlope.emaSlopeThreshold * 2
-						? '趋势多且增强-L-1-1'
-						: emaSlope > config.emaSlope.emaSlopeThreshold
-						? '趋势多且增强-L-1-2'
-						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? '趋势多且增强-L-1-3'
-						: emaSlope > 0
-						? '趋势多且增强-L-1-4'
-						: '';
-			}
-			marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : marketType;
 			if (adxPlusDI > adxMinusDI) {
+				if (rsi < 62 && rsi > 40) {
+					marketType =
+						emaSlope > config.emaSlope.emaSlopeThreshold * 2
+							? '趋势多且增强-L-1-1'
+							: emaSlope > config.emaSlope.emaSlopeThreshold
+							? '趋势多且增强-L-1-2'
+							: emaSlope > config.emaSlope.emaSlopeThreshold / 2
+							? '趋势多且增强-L-1-3'
+							: emaSlope > 0
+							? '趋势多且增强-L-1-4'
+							: '';
+				}
+				marketType =
+					rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : marketType;
 				if (rsi > 40) {
 					marketType =
 						emaSlope < -config.emaSlope.emaSlopeThreshold * 2
