@@ -535,18 +535,18 @@ class Backtester {
               : "";
         }
       } else {
-        if (rsi > 40 && adx < 20) {
-          marketType =
-            emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-              ? "趋势多且增强-L-3-1"
-              : emaSlope < -config.emaSlope.emaSlopeThreshold
-              ? "趋势多且增强-L-3-2"
-              : emaSlope < -config.emaSlope.emaSlopeThreshold / 2
-              ? "趋势多且增强-L-3-3"
-              : emaSlope < 0
-              ? "趋势多且增强-L-3-4"
-              : "";
-        }
+        // if (rsi > 40 && adx < 20) {
+        //   marketType =
+        //     emaSlope < -config.emaSlope.emaSlopeThreshold * 2
+        //       ? "趋势多且增强-L-3-1"
+        //       : emaSlope < -config.emaSlope.emaSlopeThreshold
+        //       ? "趋势多且增强-L-3-2"
+        //       : emaSlope < -config.emaSlope.emaSlopeThreshold / 2
+        //       ? "趋势多且增强-L-3-3"
+        //       : emaSlope < 0
+        //       ? "趋势多且增强-L-3-4"
+        //       : "";
+        // }
       }
     }
 
