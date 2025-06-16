@@ -159,28 +159,28 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	if (macd > lastMacd && lastMacd < lastLastMacd) {
 		if (adxPlusDI > adxMinusDI) {
 			marketType = rsi < 30 ? '趋势多' : rsi < 40 ? '趋势空' : marketType;
-			if (rsi > 40 && rsi < 65) {
+			if (rsi > 40 && rsi < 65 && emaFast < emaSlow) {
 				marketType =
 					emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-						? '趋势多且增强-R-2-1'
+						? '趋势多且增强-L-2-1'
 						: emaSlope < -config.emaSlope.emaSlopeThreshold
-						? '趋势多且增强-R-2-2'
+						? '趋势多且增强-L-2-2'
 						: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
-						? '趋势多且增强-R-2-3'
+						? '趋势多'
 						: emaSlope < 0
-						? '趋势多且增强-R-2-4'
+						? '趋势多'
 						: '';
 			}
-			if (rsi > 40 && rsi < 65 && adx > 25) {
+			if (rsi > 40 && rsi < 65 && emaFast > emaSlow && adx > 25) {
 				marketType =
 					emaSlope > config.emaSlope.emaSlopeThreshold * 2
-						? '趋势多且增强-R-2-1'
+						? '趋势多且增强-L-2-1'
 						: emaSlope > config.emaSlope.emaSlopeThreshold
-						? '趋势多且增强-R-2-2'
+						? '趋势多且增强-L-2-2'
 						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? '趋势多且增强-R-2-3'
+						? '趋势多且增强-L-2-3'
 						: emaSlope > 0
-						? '趋势多且增强-R-2-4'
+						? '趋势多且增强-L-2-4'
 						: marketType;
 			}
 		} else {
@@ -234,15 +234,15 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		}
 	}
 
-		if (
-			rsi < 30 &&
-			emaSlope < -config.emaSlope.emaSlopeThreshold &&
-			adxPlusDI < adxMinusDI
-		)
-			marketType = '趋势空';
+	if (
+		rsi < 30 &&
+		emaSlope < -config.emaSlope.emaSlopeThreshold &&
+		adxPlusDI < adxMinusDI
+	)
+		marketType = '趋势空';
 
-		if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
-			marketType = '趋势多';
+	if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
+		marketType = '趋势多';
 
 	return marketType;
 }
