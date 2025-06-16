@@ -519,7 +519,7 @@ class Backtester {
     const lastWeeker = lastEmaFast < lastEmaSlow;
 
     if (macd > lastMacd && lastMacd < lastLastMacd) {
-      marketType = rsi < 30 ? "趋势多" : marketType;
+      marketType = rsi < 30 ? "趋势多" : rsi < 40 ? "趋势空" : marketType;
       if (adxPlusDI > adxMinusDI) {
         if (rsi > 70 && emaFast > emaSlow && close > emaFast) {
           marketType = adx >= 30 ? "趋势多" : "趋势空";
@@ -536,7 +536,7 @@ class Backtester {
               ? "趋势多"
               : "";
         }
-        if (close > emaFast && emaFast > emaSlow) {
+        if (rsi > 40) {
           if (rsi < 60) {
             marketType =
               emaSlope > config.emaSlope.emaSlopeThreshold * 2
