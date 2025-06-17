@@ -524,10 +524,10 @@ class Backtester {
           if (adxPlusDI > adxMinusDI) {
             if (macd > 0) {
               marketType =
-                rsi > 60 ? "趋势空且增强-L-3-1-1" : "趋势空且增强-L-3-1-2";
+                rsi > 40 ? "趋势空且增强-L-3-1-1" : "趋势空且增强-L-3-1-2";
             } else {
               marketType =
-                rsi > 60 ? "趋势多且增强-L-3-1-3" : "趋势多且增强-L-3-1-4";
+                rsi > 40 ? "趋势多且增强-L-3-1-3" : "趋势多且增强-L-3-1-4";
             }
           } else {
             if (macd > 0) {
