@@ -539,7 +539,7 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (adx < 30) {
+		if (adx < 30 && adx > 20) {
 			if (emaFast < emaSlow) {
 				// if (macd < lastMacd && lastMacd > lastLastMacd) {
 				marketType =
