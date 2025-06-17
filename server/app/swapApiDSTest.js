@@ -520,7 +520,27 @@ class Backtester {
 
     if (adx < 30) {
       if (emaFast < emaSlow) {
-        marketType = rsi < 45 && rsi > 35 ? "趋势多且增强-L-3-1" : "趋势空";
+        if ((marketType = rsi < 45 && rsi > 35)) {
+          if (adxPlusDI > adxMinusDI) {
+            if (macd > 0) {
+              marketType =
+                rsi > 60 ? "趋势空且增强-L-3-1-1" : "趋势空且增强-L-3-1-2";
+            } else {
+              marketType =
+                rsi > 60 ? "趋势多且增强-L-3-1-3" : "趋势多且增强-L-3-1-4";
+            }
+          } else {
+            if (macd > 0) {
+              marketType =
+                rsi > 60 ? "趋势空且增强-L-3-4-1" : "趋势空且增强-L-3-4-2";
+            } else {
+              marketType =
+                rsi > 60 ? "趋势多且增强-L-3-4-3" : "趋势多且增强-L-3-4-4";
+            }
+          }
+        } else {
+          marketType = "趋势空";
+        }
       }
 
       if (emaFast > emaSlow) {
