@@ -569,13 +569,13 @@ class Backtester {
 			marketType = '趋势多趋势空';
 		}
 
-		if (rsi > 75) {
-			marketType = adx >= 30 ? '趋势多' : '趋势空';
-		}
+		// if (rsi > 75) {
+		// 	marketType = adx >= 30 ? '趋势多' : '趋势空';
+		// }
 
-		if (rsi < 25) {
-			marketType = adx >= 30 ? '趋势空' : '趋势多';
-		}
+		// if (rsi < 25) {
+		// 	marketType = adx >= 30 ? '趋势空' : '趋势多';
+		// }
 
 		return marketType;
 	}
