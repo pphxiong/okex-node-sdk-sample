@@ -520,7 +520,7 @@ class Backtester {
 
     if (adx < 30) {
       if (emaFast < emaSlow) {
-        if ((marketType = rsi < 45 && rsi > 35)) {
+        if (rsi < 45 && rsi > 35) {
           if (adxPlusDI > adxMinusDI) {
             if (macd > 0) {
               marketType =
