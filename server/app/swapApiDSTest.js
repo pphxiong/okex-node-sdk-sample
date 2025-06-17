@@ -551,16 +551,16 @@ class Backtester {
 				marketType = rsi > 55 && rsi < 65 ? '趋势空且增强-L-3-1' : '';
 				// }
 			}
-		} else if (adx > 30) {
+		} else if (adx > 45) {
 			if (emaFast < emaSlow) {
 				// if (macd < lastMacd && lastMacd > lastLastMacd) {
-				marketType = rsi > 35 ? '趋势空且增强-L-2-1' : '趋势空';
+				marketType = rsi < 25 ? '趋势多且增强-L-2-1' : '趋势空';
 				// }
 			}
 
 			if (emaFast > emaSlow) {
 				// if (macd > lastMacd && lastMacd < lastLastMacd) {
-				marketType = rsi < 65 ? '趋势多且增强-R-2-1' : '趋势多';
+				marketType = rsi > 75 ? '趋势空且增强-R-2-1' : '趋势多';
 				// }
 			}
 		} else {
