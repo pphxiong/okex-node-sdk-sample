@@ -575,6 +575,14 @@ class Backtester {
 			marketType = adx >= 30 ? marketType : '趋势空';
 		}
 
+		if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
+			marketType = adx >= 30 ? marketType : '趋势多';
+		}
+
+		if (emaSlope < -config.emaSlope.emaSlopeThreshold * 2) {
+			marketType = adx >= 30 ? marketType : '趋势空';
+		}
+
 		return marketType;
 	}
 
