@@ -539,11 +539,11 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (adx < 15) {
+		if (adx < 30) {
 			if (emaFast < emaSlow) {
 				// if (macd < lastMacd && lastMacd > lastLastMacd) {
 				marketType =
-					rsi < 40 && rsi > 30
+					rsi < 45 && adxPlusDI > adxMinusDI
 						? '趋势多且增强-R-3-1'
 						: rsi < 35
 						? '趋势空'
@@ -554,7 +554,7 @@ class Backtester {
 			if (emaFast > emaSlow) {
 				// if (macd > lastMacd && lastMacd < lastLastMacd) {
 				marketType =
-					rsi > 60 && rsi < 70
+					rsi > 55 && adxPlusDI < adxMinusDI
 						? '趋势空且增强-L-3-1'
 						: rsi > 65
 						? '趋势多'
