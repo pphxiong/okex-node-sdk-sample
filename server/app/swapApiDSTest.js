@@ -543,15 +543,16 @@ class Backtester {
     } else if (adx > 30) {
       if (emaFast < emaSlow) {
         marketType =
-          rsi < 25
-            ? "趋势多且增强-R-2-1"
-            : macd < lastMacd && lastMacd > lastLastMacd
+          macd < lastMacd && lastMacd > lastLastMacd
             ? "趋势空且增强-R-2-1"
             : "趋势空";
       }
 
       if (emaFast > emaSlow) {
-        marketType = rsi > 55 ? "趋势多且增强-R-2-2" : "趋势多";
+        marketType =
+          macd > lastMacd && lastMacd < lastLastMacd
+            ? "趋势多且增强-R-2-2"
+            : "趋势多";
       }
     } else {
       // marketType = '趋势多趋势空';
