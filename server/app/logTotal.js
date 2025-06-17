@@ -1432,4 +1432,47 @@ maxDrawdownTotal 43.7
 趋势空且增强-R-3-4 总交易次数: 113 盈利: 1297.9501672752826 亏损: -1575.327759292472 最大盈利: 251.42 最大亏损: -143.92 总收益: -277.38 平均盈利: -2.45 typeA: -1.17 胜率: 47.79%
 趋势空且增强-R-1-2 总交易次数: 50 盈利: 504.42753830598235 亏损: -766.3727964803791 最大盈利: 110.84 最大亏损: -96.26 总收益: -261.95 平均盈利: -5.24 typeA: -2.31 胜率: 44.00%
 
+
+if (adx < 30) {
+			if (emaFast < emaSlow) {
+				marketType = rsi < 45 && rsi > 35 ? '趋势多且增强-L-3-1' : '';
+			}
+
+			if (emaFast > emaSlow) {
+				if (rsi > 55 && rsi < 65) {
+					if (adxPlusDI > adxMinusDI) {
+						if (macd > 0) {
+							marketType =
+								rsi > 60
+									? '趋势空且增强-L-3-2-1'
+									: '趋势空且增强-L-3-3-1';
+						} else {
+							marketType =
+								rsi > 60
+									? '趋势多且增强-L-3-2-2'
+									: '趋势多且增强-L-3-3-2';
+						}
+					} else {
+						marketType =
+							rsi > 60
+								? '趋势多且增强-L-3-2'
+								: '趋势多且增强-L-3-3';
+					}
+				} else {
+					marketType = '趋势多';
+				}
+			}
+		} else if (adx > 30) {
+			if (emaFast < emaSlow) {
+				marketType = rsi < 25 ? '趋势多且增强-R-2-1' : '趋势空';
+			}
+
+			if (emaFast > emaSlow) {
+				marketType = rsi > 55 ? '趋势多且增强-R-2-2' : '趋势多';
+			}
+		} else {
+			// marketType = '趋势多趋势空';
+		}
+      
+
 */
