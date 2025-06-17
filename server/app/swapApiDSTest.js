@@ -543,7 +543,7 @@ class Backtester {
 			if (emaFast < emaSlow) {
 				// if (macd < lastMacd && lastMacd > lastLastMacd) {
 				marketType =
-					rsi < 45 && rsi > 35
+					rsi < 40 && rsi > 30
 						? '趋势多且增强-R-3-1'
 						: rsi < 35
 						? '趋势空'
@@ -554,7 +554,7 @@ class Backtester {
 			if (emaFast > emaSlow) {
 				// if (macd > lastMacd && lastMacd < lastLastMacd) {
 				marketType =
-					rsi > 55 && rsi < 65
+					rsi > 60 && rsi < 70
 						? '趋势空且增强-L-3-1'
 						: rsi > 65
 						? '趋势多'
