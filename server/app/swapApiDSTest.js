@@ -519,14 +519,26 @@ class Backtester {
     const lastWeeker = lastEmaFast < lastEmaSlow;
 
     if (adx < 10) {
-      marketType = rsi < 45 ? "趋势多且增强-L-1-1" : "";
-      marketType = rsi > 55 ? "趋势空且增强-L-1-2" : "";
+      if (rsi < 45) {
+        marketType = "趋势多且增强-L-1-1";
+      }
+      if (rsi > 55) {
+        marketType = "趋势空且增强-L-1-1";
+      }
     } else if (adx < 20) {
-      marketType = rsi < 40 ? "趋势多且增强-L-2-1" : "";
-      marketType = rsi > 60 ? "趋势空且增强-L-2-2" : "";
+      if (rsi < 40) {
+        marketType = "趋势多且增强-L-2-1";
+      }
+      if (rsi > 60) {
+        marketType = "趋势空且增强-L-2-1";
+      }
     } else if (adx < 30) {
-      marketType = rsi < 35 ? "趋势多且增强-L-3-1" : "";
-      marketType = rsi > 65 ? "趋势空且增强-L-3-2" : "";
+      if (rsi < 35) {
+        marketType = "趋势多且增强-L-3-1";
+      }
+      if (rsi > 65) {
+        marketType = "趋势空且增强-L-3-1";
+      }
     } else if (adx > 30) {
       if (adxPlusDI > adxMinusDI) {
         // marketType = emaFast > emaSlow ? "趋势多且增强-R-2-1" : "趋势空";
