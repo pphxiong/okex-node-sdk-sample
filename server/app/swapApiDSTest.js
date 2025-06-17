@@ -550,8 +550,6 @@ class Backtester {
 				} else {
 					marketType = '趋势多';
 				}
-				marketType =
-					rsi > 55 && rsi < 65 ? '趋势空且增强-L-3-4' : '趋势多';
 			}
 		} else if (adx > 30) {
 			if (emaFast < emaSlow) {
