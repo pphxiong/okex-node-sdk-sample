@@ -542,6 +542,7 @@ class Backtester {
       }
     } else if (adx > 30) {
       if (emaFast < emaSlow) {
+        marketType = "趋势空";
         if (adxPlusDI > adxMinusDI) {
           marketType = "趋势空";
         } else {
@@ -553,6 +554,7 @@ class Backtester {
       }
 
       if (emaFast > emaSlow) {
+        marketType = "趋势多";
         if (adxPlusDI < adxMinusDI) {
           marketType = "趋势多";
         } else {
