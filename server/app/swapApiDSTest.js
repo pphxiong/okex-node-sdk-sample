@@ -550,8 +550,8 @@ class Backtester {
 						if (macd > 0) {
 							marketType =
 								rsi > 60
-									? '趋势多且增强-L-3-2-1'
-									: '趋势多且增强-L-3-3-1';
+									? '趋势空且增强-L-3-2-1'
+									: '趋势空且增强-L-3-3-1';
 						} else {
 							marketType =
 								rsi > 60
