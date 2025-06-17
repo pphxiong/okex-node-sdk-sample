@@ -518,45 +518,38 @@ class Backtester {
     const lastStronger = lastEmaFast > lastEmaSlow;
     const lastWeeker = lastEmaFast < lastEmaSlow;
 
-    if (adx < 10) {
-      if (rsi < 45) {
-        marketType = "趋势多且增强-L-1-1";
+    if (adx < 30) {
+      if (emaFast < emaSlow) {
+        marketType = rsi < 35 ? "趋势多且增强-L-3-1" : "";
       }
-      if (rsi > 55) {
-        marketType = "趋势空且增强-L-1-1";
+
+      if (emaFast > emaSlow) {
+        if (rsi > 55 && rsi < 65) {
+          if (adxPlusDI > adxMinusDI) {
+            if (macd > 0) {
+              marketType =
+                rsi > 60 ? "趋势空且增强-L-3-2-1" : "趋势空且增强-L-3-2-2";
+            } else {
+              marketType =
+                rsi > 60 ? "趋势多且增强-L-3-2-3" : "趋势多且增强-L-3-2-4";
+            }
+          } else {
+            marketType = rsi > 60 ? "趋势多且增强-L-3-3" : "趋势多且增强-L-3-4";
+          }
+        } else {
+          marketType = "趋势多";
+        }
       }
-    } else if (adx < 20) {
-      if (rsi < 40) {
-        marketType = "趋势多且增强-L-2-1";
+    } else if (adx > 30) {
+      if (emaFast < emaSlow) {
+        marketType = rsi < 25 ? "趋势多且增强-R-2-1" : "趋势空";
       }
-      if (rsi > 60) {
-        marketType = "趋势空且增强-L-2-1";
-      }
-    }
-    // else if (adx < 20) {
-    //   if (rsi < 35) {
-    //     marketType = "趋势多且增强-L-3-1";
-    //   }
-    //   if (rsi > 65) {
-    //     marketType = "趋势空且增强-L-3-1";
-    //   }
-    // }
-    else if (adx > 30) {
-      if (adxPlusDI > adxMinusDI) {
-        // marketType = emaFast > emaSlow ? "趋势多且增强-R-2-1" : "趋势空";
-        marketType = "趋势多且增强-R-2-1";
-      }
-      if (adxPlusDI < adxMinusDI) {
-        // marketType = emaFast < emaSlow ? "趋势空且增强-R-2-1" : "趋势多";
-        marketType =
-          emaFast > emaSlow
-            ? "趋势多"
-            : macd < lastMacd && lastMacd > lastLastMacd
-            ? "趋势空且增强-R-2-1"
-            : "趋势空";
+
+      if (emaFast > emaSlow) {
+        marketType = rsi > 55 ? "趋势多且增强-R-2-2" : "趋势多";
       }
     } else {
-      marketType = "趋势多趋势空";
+      // marketType = '趋势多趋势空';
     }
 
     return marketType;
