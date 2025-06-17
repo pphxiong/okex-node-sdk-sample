@@ -539,76 +539,17 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (adx < 25) {
+		if (macd > lastMacd && lastMacd < lastLastMacd) {
 			if (emaFast < emaSlow) {
-				marketType =
-					emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-						? '趋势多'
-						: emaSlope < -config.emaSlope.emaSlopeThreshold
-						? '趋势多'
-						: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
-						? '趋势多'
-						: emaSlope < 0
-						? '趋势多'
-						: '趋势多';
+				marketType = '趋势多且增强-L-3-1';
 			}
+		}
+
+		if (macd < lastMacd && lastMacd > lastLastMacd) {
 			if (emaFast > emaSlow) {
-				marketType =
-					emaSlope > config.emaSlope.emaSlopeThreshold * 2
-						? '趋势空'
-						: emaSlope > config.emaSlope.emaSlopeThreshold
-						? '趋势空'
-						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? '趋势空'
-						: emaSlope > 0
-						? '趋势空'
-						: '趋势空';
+				marketType = '趋势空且增强-R-3-1';
 			}
 		}
-		if (adx > 25) {
-			if (emaFast > emaSlow) {
-				marketType =
-					emaSlope > config.emaSlope.emaSlopeThreshold * 2
-						? '趋势多且增强-L-2-1'
-						: emaSlope > config.emaSlope.emaSlopeThreshold
-						? '趋势多且增强-L-2-2'
-						: emaSlope > config.emaSlope.emaSlopeThreshold / 2
-						? '趋势多且增强-L-2-3'
-						: emaSlope > 0
-						? '趋势多且增强-L-2-4'
-						: '趋势多且增强-L-2-5';
-			}
-			if (emaFast < emaSlow) {
-				marketType =
-					emaSlope < -config.emaSlope.emaSlopeThreshold * 2
-						? '趋势空且增强-R-3-1'
-						: emaSlope < -config.emaSlope.emaSlopeThreshold
-						? '趋势空且增强-R-3-2'
-						: emaSlope < -config.emaSlope.emaSlopeThreshold / 2
-						? '趋势空且增强-R-3-3'
-						: emaSlope < 0
-						? '趋势空且增强-R-3-4'
-						: '趋势空且增强-R-3-5';
-			}
-		}
-
-		if (rsi > 65 && emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
-			marketType = adx > 30 ? (rsi < 80 ? '趋势多' : '趋势空') : '趋势空';
-		}
-
-		if (rsi < 35 && emaSlope < -config.emaSlope.emaSlopeThreshold * 2) {
-			marketType = adx > 30 ? (adx > 20 ? '趋势空' : '趋势空') : '趋势多';
-		}
-
-		// if (
-		// 	rsi < 30 &&
-		// 	emaSlope < -config.emaSlope.emaSlopeThreshold &&
-		// 	adxPlusDI < adxMinusDI
-		// )
-		// 	marketType = '趋势空';
-
-		// if (rsi > 70 && emaSlope > config.emaSlope.emaSlopeThreshold)
-		// 	marketType = '趋势多';
 
 		return marketType;
 	}
