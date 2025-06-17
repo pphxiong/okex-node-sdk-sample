@@ -567,11 +567,11 @@ class Backtester {
 			marketType = '趋势多趋势空';
 		}
 
-		if (rsi > 68) {
+		if (rsi > 70) {
 			marketType = adx >= 30 ? '趋势多' : '趋势空';
 		}
 
-		if (rsi < 32) {
+		if (rsi < 26) {
 			marketType = adx >= 30 ? '趋势空' : '趋势多';
 		}
 
