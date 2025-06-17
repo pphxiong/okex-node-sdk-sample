@@ -156,7 +156,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (adx < 25) {
+	if (adx < 30) {
 		if (emaFast < emaSlow) {
 			marketType = rsi < 45 && rsi > 35 ? '趋势多且增强-L-3-1' : '';
 		}
@@ -183,7 +183,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				marketType = '趋势多';
 			}
 		}
-	} else if (adx > 25) {
+	} else if (adx > 30) {
 		if (emaFast < emaSlow) {
 			marketType = rsi < 25 ? '趋势多且增强-R-2-1' : '趋势空';
 		}
