@@ -489,10 +489,10 @@ class Backtester {
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
-						d.rsi_long = d.adx > 40 ? 42 : 42;
-						d.rsi_short = d.adx > 40 ? 58 : 58;
+						d.rsi_long = d.adx > 40 ? 35 : 42;
+						d.rsi_short = d.adx > 40 ? 65 : 58;
 						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
-            d.adx_threshold = d.atr / d.close > 0.02 ? 28 : 25;
+						d.adx_threshold = d.atr / d.close > 0.02 ? 28 : 25;
 					}
 					d.marketType = this.getMarketType(
 						d,
@@ -523,10 +523,10 @@ class Backtester {
 			emaSlow,
 			macdHistogram: macd,
 			volume,
-      rsi_long,
-      rsi_short,
-      stop_multiplier,
-      adx_threshold
+			rsi_long,
+			rsi_short,
+			stop_multiplier,
+			adx_threshold,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -713,7 +713,7 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.025);
 				// if (isStopLoss) stopLossDirection = position.direction;
 
-				const takeProfit = d.atr * config.atrParam.takeProfit;
+				const takeProfit = d.atr * d.stop_multiplier * 1.2;
 				const stopLoss = d.atr * d.stop_multiplier;
 
 				const isProfitTarget =
