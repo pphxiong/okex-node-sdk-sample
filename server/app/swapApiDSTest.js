@@ -1015,7 +1015,7 @@ class Backtester {
 		const losses = trades.filter((t) => t.profit <= 0);
 
 		const totalProfit = trades.reduce((sum, t) => sum + t.profit, 0);
-		const winRate = ((wins.length / trades.length) * 100).toFixed(2);
+		const winRate = ((wins.length / trades.length) * 100 || 0).toFixed(2);
 		const profitFactor =
 			wins.reduce((s, t) => s + t.profit, 0) /
 			Math.abs(losses.reduce((s, t) => s + t.profit, 0));
@@ -1245,7 +1245,7 @@ function formatProfitMap(profitMap) {
 			.reduce((sum, t) => sum + t, 0);
 		const typeWinNum = value.filter((t) => t > 0).length;
 		const typeLossNum = value.filter((t) => t <= 0).length;
-		const typeWinRate = ((typeWinNum / value.length) * 100).toFixed(2);
+		const typeWinRate = ((typeWinNum / value.length) * 100 || 0).toFixed(2);
 		const typeMax = Math.max(...value);
 		const typeMin = Math.min(...value);
 		const typeAvgWin = typeProfit / value.length;
