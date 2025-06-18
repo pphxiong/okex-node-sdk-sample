@@ -491,7 +491,7 @@ class Backtester {
 					if (d.adx && d.atr) {
 						d.rsi_long = d.adx > 35 ? 33 : 38;
 						d.rsi_short = d.adx > 35 ? 67 : 62;
-						d.stop_multiplier = d.atr / d.close > 0.02 ? 18 : 2.5;
+						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
 					}
 					d.marketType = this.getMarketType(
 						d,
