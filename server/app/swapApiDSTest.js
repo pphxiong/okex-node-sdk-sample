@@ -60,8 +60,8 @@ const config = {
 	atrParam: {
 		// ATR参数
 		atrPeriod: 14,
-		stopLoss: 1.6,
-		takeProfit: 6.4,
+		stopLoss: 2.5,
+		takeProfit: 2,
 	},
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
@@ -688,36 +688,43 @@ class Backtester {
 				slowMarketType
 			);
 
-			let isStopLoss = false;
 			let stopLossDirection = null;
 
 			// 处理平仓
 			if (position) {
-				const isProfitTarget =
-					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.025 * 2)
-						: d.close <= position.entryPrice * (1 - 0.025 * 2);
+				// const isProfitTarget =
+				// 	position.direction === 'long'
+				// 		? d.close >= position.entryPrice * (1 + 0.025 * 2)
+				// 		: d.close <= position.entryPrice * (1 - 0.025 * 2);
 
-				isStopLoss =
-					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.025)
-						: d.close >= position.entryPrice * (1 + 0.025);
-				if (isStopLoss) stopLossDirection = position.direction;
+				// const isStopLoss =
+				// 	position.direction === 'long'
+				// 		? d.close <= position.entryPrice * (1 - 0.025)
+				// 		: d.close >= position.entryPrice * (1 + 0.025);
+				// if (isStopLoss) stopLossDirection = position.direction;
 
 				const takeProfit =
 					candle[config.fastframe].atr * config.atrParam.takeProfit;
 				const stopLoss =
 					candle[config.fastframe].atr * config.atrParam.stopLoss;
 
-				// const isProfitTarget =
-				// 	position.direction === 'long'
-				// 		? d.close >= position.entryPrice + takeProfit
-				// 		: d.close <= position.entryPrice - takeProfit;
+				const isProfitTarget =
+					position.direction === 'long'
+						? d.close >=
+						  Math.max(
+								lastKline5M.emaFast,
+								position.entryPrice + takeProfit
+						  )
+						: d.close <=
+						  Math.min(
+								lastKline5M.emaFast,
+								position.entryPrice - takeProfit
+						  );
 
-				// const isStopLoss =
-				// 	position.direction === 'long'
-				// 		? d.close <= position.entryPrice * (1 - 0.1 / 2)
-				// 		: d.close >= position.entryPrice * (1 + 0.1 / 2);
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close <= position.entryPrice - stopLoss
+						: d.close >= position.entryPrice + stopLoss;
 
 				// const isReverse =
 				// 	position.direction === 'long'
@@ -811,7 +818,8 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isStopLoss ||
+					isProfitTarget ||
+					isStopLoss ||
 					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c);
