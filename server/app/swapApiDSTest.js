@@ -571,7 +571,7 @@ class Backtester {
 			// if (rsi < 30) marketType = '趋势多';
 		}
 
-		if (adx < adx_threshold - adx_threshold === 28 ? 8 : 5) marketType = '趋势多趋势空';
+		if (adx < (adx_threshold === 28 ? 8 : 5)) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
