@@ -489,8 +489,8 @@ class Backtester {
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
-						d.rsi_long = d.adx > 35 ? 35 : 42;
-						d.rsi_short = d.adx > 35 ? 65 : 58;
+						d.rsi_long = d.adx > 40 ? 35 : 42;
+						d.rsi_short = d.adx > 40 ? 65 : 58;
 						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
             d.adx_threshold = d.atr / d.close > 0.02 ? 28 : 25;
 					}
@@ -557,7 +557,7 @@ class Backtester {
 					}
 				}
 			}
-			// if (rsi > 70) marketType = '趋势空';
+			if (rsi > 70) marketType = '趋势空';
 		}
 
 		if (emaFast < emaSlow) {
@@ -568,7 +568,7 @@ class Backtester {
 					}
 				}
 			}
-			// if (rsi < 30) marketType = '趋势多';
+			if (rsi < 30) marketType = '趋势多';
 		}
 
 		if (adx < 20) marketType = '趋势多趋势空';
