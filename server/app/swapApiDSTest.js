@@ -37,8 +37,8 @@ const config = {
   timeframes: ["15m" /* '5m'  '1m'*/], // 多周期参数
   emaSettings: {
     // '30m': { periods: [10, 5], slopeWindow: 5 },
-    // "15m": { periods: [50, 15], slopeWindow: 5 },
-    "15m": { periods: [25, 5], slopeWindow: 5 },
+    "15m": { periods: [50, 15], slopeWindow: 5 },
+    // "15m": { periods: [25, 5], slopeWindow: 5 },
     // '5m': { periods: [10, 5], slopeWindow: 5 },
   },
   macdParams: { "15m": [12, 26, 9] /* '5m': [12, 26, 9] */ },
@@ -470,8 +470,8 @@ class Backtester {
           // d.adx = adx[0][i];
           if (d.adx && d.atr) {
             const isVolatility = d.atr / d.close > 0.02;
-            d.rsi_long = d.adx > 40 ? 35 : 42;
-            d.rsi_short = d.adx > 40 ? 65 : 58;
+            d.rsi_long = d.adx > 40 ? 46 : 42;
+            d.rsi_short = d.adx > 40 ? 62 : 58;
             d.stop_multiplier = isVolatility ? 1.8 : 2.5;
             d.adx_threshold = isVolatility ? 30 : 26;
             d.adx_stoploss_distance = isVolatility ? 5 : 3;
