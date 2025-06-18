@@ -703,8 +703,8 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.025);
 				// if (isStopLoss) stopLossDirection = position.direction;
 
-				const takeProfit = lastKline5M.atr * config.atrParam.takeProfit;
-				const stopLoss = lastKline5M.atr * config.atrParam.stopLoss;
+				const takeProfit = d.atr * config.atrParam.takeProfit;
+				const stopLoss = d.atr * config.atrParam.stopLoss;
 
 				const isProfitTarget =
 					position.direction === 'long'
