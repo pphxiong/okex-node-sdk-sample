@@ -489,8 +489,8 @@ class Backtester {
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
-						d.rsi_long = d.adx > 30 ? 33 : 38;
-						d.rsi_short = d.adx > 30 ? 67 : 62;
+						d.rsi_long = d.adx > 35 ? 33 : 40;
+						d.rsi_short = d.adx > 35 ? 67 : 60;
 						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
             d.adx_threshold = d.atr / d.close > 0.02 ? 28 : 25;
 					}
