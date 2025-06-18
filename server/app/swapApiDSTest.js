@@ -489,10 +489,12 @@ class Backtester {
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
+						const isVolatility = d.atr / d.close > 0.02;
 						d.rsi_long = d.adx > 40 ? 35 : 42;
 						d.rsi_short = d.adx > 40 ? 65 : 58;
-						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
-						d.adx_threshold = d.atr / d.close > 0.02 ? 32 : 28;
+						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
+						d.adx_threshold = isVolatility ? 30 : 26;
+						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 					}
 					d.marketType = this.getMarketType(
 						d,
@@ -527,6 +529,7 @@ class Backtester {
 			rsi_short,
 			stop_multiplier,
 			adx_threshold,
+      adx_stoploss_distance
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -571,7 +574,7 @@ class Backtester {
 			// if (rsi < 30) marketType = '趋势多';
 		}
 
-		if (adx < adx_threshold - 5) marketType = '趋势多趋势空';
+		if (adx < adx_threshold - adx_stoploss_distance) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
