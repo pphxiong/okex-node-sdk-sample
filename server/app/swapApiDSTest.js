@@ -492,7 +492,7 @@ class Backtester {
 						d.rsi_long = d.adx > 35 ? 33 : 38;
 						d.rsi_short = d.adx > 35 ? 67 : 62;
 						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
-            d.adx_threshold = d.atr / d.close > 0.02 ? 30 : 25;
+            d.adx_threshold = d.atr / d.close > 0.02 ? 28 : 25;
 					}
 					d.marketType = this.getMarketType(
 						d,
@@ -571,7 +571,7 @@ class Backtester {
 			// if (rsi < 30) marketType = '趋势多';
 		}
 
-		if (adx < adx_threshold - 8) marketType = '趋势多趋势空';
+		if (adx < adx_threshold - adx_threshold === 28 ? 8 : 5) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
