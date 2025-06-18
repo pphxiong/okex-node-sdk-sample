@@ -474,7 +474,7 @@ class Backtester {
             d.rsi_short = d.adx > 40 ? 62 : 58;
             d.stop_multiplier = isVolatility ? 2 : 2.5;
             d.adx_threshold = isVolatility ? 30 : 26;
-            d.adx_stoploss_distance = isVolatility ? 4 : 2;
+            d.adx_stoploss_distance = isVolatility ? 5 : 5;
           }
           d.marketType = this.getMarketType(
             d,
