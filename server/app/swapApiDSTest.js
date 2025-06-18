@@ -555,7 +555,7 @@ class Backtester {
 					}
 				}
 			}
-			if (rsi > 70) marketType = '趋势空';
+			// if (rsi > 70) marketType = '趋势空';
 		}
 
 		if (emaFast < emaSlow) {
@@ -566,7 +566,7 @@ class Backtester {
 					}
 				}
 			}
-			if (rsi < 30) marketType = '趋势多';
+			// if (rsi < 30) marketType = '趋势多';
 		}
 
 		if (adx < 20) marketType = '趋势多趋势空';
@@ -711,7 +711,7 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.025);
 				// if (isStopLoss) stopLossDirection = position.direction;
 
-				const takeProfit = d.atr * d.stop_multiplier * 1.5;
+				const takeProfit = d.atr * config.atrParam.takeProfit;
 				const stopLoss = d.atr * d.stop_multiplier;
 
 				const isProfitTarget =
