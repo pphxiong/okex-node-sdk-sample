@@ -561,7 +561,7 @@ class Backtester {
 			if (rsi < 30) marketType = '趋势多';
 		}
 
-		// if (adx < 20) marketType = '趋势多趋势空';
+		if (adx < 20) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
@@ -717,6 +717,15 @@ class Backtester {
 					position.direction === 'long'
 						? d.close <= position.entryPrice - stopLoss
 						: d.close >= position.entryPrice + stopLoss;
+
+				console.log(
+					233,
+					position.direction,
+					d.close,
+					d.emaFast,
+					position.entryPrice,
+					d.atr
+				);
 
 				// const isReverse =
 				// 	position.direction === 'long'
