@@ -708,10 +708,10 @@ class Backtester {
 
 				const isProfitTarget =
 					position.direction === 'long'
-						? d.close >=
-						  Math.max(d.emaFast, position.entryPrice + takeProfit)
-						: d.close <=
-						  Math.min(d.emaFast, position.entryPrice - takeProfit);
+						? d.close >= position.entryPrice + takeProfit &&
+						  d.close < d.emaFast
+						: d.close <= position.entryPrice - takeProfit &&
+						  d.close > d.emaFast;
 
 				const isStopLoss =
 					position.direction === 'long'
