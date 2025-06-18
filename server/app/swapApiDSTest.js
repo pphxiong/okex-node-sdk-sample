@@ -724,7 +724,10 @@ class Backtester {
 					d.close,
 					d.emaFast,
 					position.entryPrice,
-					d.atr
+					d.atr,
+					stopLoss,
+					position.entryPrice - stopLoss,
+					d.close <= position.entryPrice - stopLoss
 				);
 
 				// const isReverse =
