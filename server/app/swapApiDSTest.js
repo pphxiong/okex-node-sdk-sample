@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [25, 5], slopeWindow: 5 },
+		'15m': { periods: [50, 15], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
@@ -539,43 +539,29 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (adx < 30) {
-			if (emaFast < emaSlow && adxPlusDI > adxMinusDI) {
-				marketType =
-					rsi < 45
-						? rsi > 30
-							? '趋势多且增强-L-1-1'
-							: '趋势空'
-						: '';
+		if (emaFast > emaSlow) {
+			if (adx > 28) {
+				if (adxPlusDI > adxMinusDI) {
+					if (rsi < 38) {
+						marketType = '趋势多且增强-R-1-1';
+					}
+				}
 			}
-
-			if (emaFast > emaSlow && adxPlusDI < adxMinusDI) {
-				marketType =
-					rsi > 55
-						? rsi < 70
-							? '趋势空且增强-L-2-1'
-							: '趋势多'
-						: '';
-			}
-		} else if (adx > 30) {
-			if (emaFast < emaSlow) {
-				marketType = rsi > 35 ? '趋势空且增强-R-1-1' : '趋势空';
-			}
-
-			if (emaFast > emaSlow) {
-				marketType = rsi < 65 ? '趋势多且增强-R-2-1' : '趋势多';
-			}
-		} else {
-			// marketType = '趋势多趋势空';
+			if (rsi > 70) marketType = '趋势空';
 		}
 
-		// if (rsi > 70) {
-		// 	marketType = adx >= 30 ? '趋势多' : '趋势空';
-		// }
+		if (emaFast < emaSlow) {
+			if (adx > 28) {
+				if (adxPlusDI < adxMinusDI) {
+					if (rsi > 62) {
+						marketType = '趋势空且增强-R-1-1';
+					}
+				}
+			}
+			if (rsi < 30) marketType = '趋势多';
+		}
 
-		// if (rsi < 30) {
-		// 	marketType = adx >= 30 ? '趋势空' : '趋势多';
-		// }
+		if (adx < 20) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
