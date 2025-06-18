@@ -492,7 +492,7 @@ class Backtester {
 						d.rsi_long = d.adx > 35 ? 33 : 38;
 						d.rsi_short = d.adx > 35 ? 67 : 62;
 						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
-            d.adx_threshold = d.atr / d.close > 0.02 ? 35 : 28;
+            d.adx_threshold = d.atr / d.close > 0.02 ? 30 : 25;
 					}
 					d.marketType = this.getMarketType(
 						d,
