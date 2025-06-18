@@ -469,12 +469,12 @@ class Backtester {
           d.emaFast = emaFast[0][i];
           // d.adx = adx[0][i];
           if (d.adx && d.atr) {
-            const isVolatility = d.atr / d.close > 0.02;
+            const isVolatility = d.atr / d.close > 0.015;
             d.rsi_long = d.adx > 40 ? 46 : 42;
             d.rsi_short = d.adx > 40 ? 62 : 58;
             d.stop_multiplier = isVolatility ? 2 : 2.5;
             d.adx_threshold = isVolatility ? 30 : 26;
-            d.adx_stoploss_distance = isVolatility ? 5 : 5;
+            d.adx_stoploss_distance = isVolatility ? 5 : 3;
           }
           d.marketType = this.getMarketType(
             d,
