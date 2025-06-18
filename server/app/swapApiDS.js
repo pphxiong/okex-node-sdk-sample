@@ -180,7 +180,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		}
 	}
 
-	if (adx < 20) marketType = '趋势多趋势空';
+	if (adx < adx_threshold - 5) marketType = '趋势多趋势空';
 
 	return marketType;
 }
