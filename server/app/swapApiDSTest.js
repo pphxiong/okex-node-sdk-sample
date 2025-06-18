@@ -492,6 +492,7 @@ class Backtester {
 						d.rsi_long = d.adx > 35 ? 33 : 38;
 						d.rsi_short = d.adx > 35 ? 67 : 62;
 						d.stop_multiplier = d.atr / d.close > 0.02 ? 1.8 : 2.5;
+            d.adx_threshold = d.atr / d.close > 0.02 ? 35 : 28;
 					}
 					d.marketType = this.getMarketType(
 						d,
@@ -524,7 +525,8 @@ class Backtester {
 			volume,
       rsi_long,
       rsi_short,
-      stop_multiplier
+      stop_multiplier,
+      adx_threshold
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -548,7 +550,7 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaSlow) {
-			if (adx > 28) {
+			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-R-1-1';
@@ -559,7 +561,7 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			if (adx > 28) {
+			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
@@ -569,7 +571,7 @@ class Backtester {
 			// if (rsi < 30) marketType = '趋势多';
 		}
 
-		if (adx < 20) marketType = '趋势多趋势空';
+		if (adx < adx_threshold - 8) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
