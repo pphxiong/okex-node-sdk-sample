@@ -561,7 +561,7 @@ class Backtester {
 			if (rsi < 30) marketType = '趋势多';
 		}
 
-		if (adx < 20) marketType = '趋势多趋势空';
+		// if (adx < 20) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
