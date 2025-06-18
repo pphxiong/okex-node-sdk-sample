@@ -488,6 +488,11 @@ class Backtester {
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
+					if (d.adx && d.atr) {
+						d.rsi_long = d.adx > 35 ? 33 : 38;
+						d.rsi_short = d.adx > 35 ? 67 : 62;
+						d.stop_multiplier = d.atr / d.close > 0.02 ? 18 : 2.5;
+					}
 					d.marketType = this.getMarketType(
 						d,
 						this.data[tf][i - 1],
@@ -517,6 +522,9 @@ class Backtester {
 			emaSlow,
 			macdHistogram: macd,
 			volume,
+      rsi_long,
+      rsi_short,
+      stop_multiplier
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -542,7 +550,7 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (adx > 28) {
 				if (adxPlusDI > adxMinusDI) {
-					if (rsi < 38) {
+					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-R-1-1';
 					}
 				}
@@ -553,7 +561,7 @@ class Backtester {
 		if (emaFast < emaSlow) {
 			if (adx > 28) {
 				if (adxPlusDI < adxMinusDI) {
-					if (rsi > 62) {
+					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
 				}
@@ -703,8 +711,8 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.025);
 				// if (isStopLoss) stopLossDirection = position.direction;
 
-				const takeProfit = d.atr * config.atrParam.takeProfit;
-				const stopLoss = d.atr * config.atrParam.stopLoss;
+				const takeProfit = d.atr * d.stop_multiplier * 1.5;
+				const stopLoss = d.atr * d.stop_multiplier;
 
 				const isProfitTarget =
 					position.direction === 'long'
