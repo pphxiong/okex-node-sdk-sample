@@ -582,7 +582,7 @@ class Backtester {
 		if (adx < adx_threshold - adx_stoploss_distance)
 			marketType = '趋势多趋势空';
 
-		if (rsi > 70 || rsi < 30) marketType = '趋势多趋势空';
+		// if (rsi > 70 || rsi < 30) marketType = '趋势多趋势空';
 
 		return marketType;
 	}
