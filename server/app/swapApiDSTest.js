@@ -550,6 +550,8 @@ class Backtester {
 			close: lastClose,
 			macdHistogram: lastMacd,
 			volume: lastVolume,
+			adxPlusDI: lastAdxPlusDI,
+			adxMinusDI: lastAdxMinusDI,
 		} = lastCandle;
 		const {
 			emaFast: lastLastEmaFast,
@@ -573,7 +575,10 @@ class Backtester {
 				if (adxPlusDI > adxMinusDI) {
 					marketType = '趋势多';
 					if (rsi < rsi_long) {
-						marketType = '趋势多且增强-R-1-1';
+						marketType = '趋势多且增强-L-1-1';
+					}
+					if (lastAdxPlusDI < lastAdxPlusDI) {
+						marketType = '趋势多且增强-L-1-2';
 					}
 				}
 			}
@@ -586,6 +591,9 @@ class Backtester {
 					marketType = '趋势空';
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
+					}
+					if (lastAdxPlusDI > lastAdxPlusDI) {
+						marketType = '趋势空且增强-R-1-2';
 					}
 				}
 			}
