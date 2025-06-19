@@ -502,32 +502,10 @@ class Backtester {
 
 						d.is_latest_has_rsi_long = this.data[tf]
 							.slice(i - 4, i + 1)
-							.some((it) => {
-								if (it.emaFast > it.emaSlow) {
-									if (it.adx > it.adx_threshold) {
-										if (it.adxPlusDI > it.adxMinusDI) {
-											if (it.rsi < it.rsi_long) {
-												return true;
-											}
-										}
-									}
-								}
-								return false;
-							});
+							.some((it) => it.rsi < it.rsi_long);
 						d.is_latest_has_rsi_short = this.data[tf]
 							.slice(i - 4, i + 1)
-							.some((it) => {
-								if (it.emaFast < it.emaSlow) {
-									if (it.adx > it.adx_threshold) {
-										if (it.adxPlusDI < it.adxMinusDI) {
-											if (it.rsi > it.rsi_short) {
-												return true;
-											}
-										}
-									}
-								}
-								return false;
-							});
+							.some((it) => it.rsi > it.rsi_short);
 					}
 					d.marketType = this.getMarketType(
 						d,
@@ -593,7 +571,7 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
-					if (is_latest_has_rsi_long && macd > lastMacd) {
+					if (rsi > rsi_long) {
 						marketType = '趋势多且增强-R-1-1';
 					}
 				}
@@ -604,7 +582,7 @@ class Backtester {
 		if (emaFast < emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
-					if (is_latest_has_rsi_short && macd < lastMacd) {
+					if (rsi < rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
 				}
