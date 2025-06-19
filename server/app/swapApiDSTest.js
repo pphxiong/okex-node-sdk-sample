@@ -554,8 +554,10 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-    const macd_rising = macd >lastMacd && lastMacd > lastLastMacd && macd > 0;
-    const macd_falling = macd < lastMacd && lastMacd < lastLastMacd && macd < 0;
+    const macd_rising =
+		macd > 0 && lastMacd && lastMacd > lastLastMacd && macd > 0;
+	const macd_falling =
+		macd < 0 && lastMacd && lastMacd < lastLastMacd && macd < 0;
 
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
