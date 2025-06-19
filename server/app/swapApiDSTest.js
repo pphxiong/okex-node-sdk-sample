@@ -491,8 +491,8 @@ class Backtester {
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
 						const isVolatility = d.atr / d.close > 0.02;
-						d.rsi_long = d.adx > 35 ? 38 : 40;
-						d.rsi_short = d.adx > 35 ? 64 : 62;
+						d.rsi_long = d.adx > 40 ? 38 : 40;
+						d.rsi_short = d.adx > 40 ? 64 : 62;
 						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
 						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
