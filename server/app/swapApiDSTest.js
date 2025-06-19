@@ -571,6 +571,7 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
+					marketType = '趋势多';
 					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-R-1-1';
 					}
@@ -582,6 +583,7 @@ class Backtester {
 		if (emaFast < emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
+					marketType = '趋势空';
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
@@ -743,7 +745,7 @@ class Backtester {
 						? d.close >= position.entryPrice + takeProfit &&
 						  d.emaFast < d.emaSlow
 						: d.close <= position.entryPrice - takeProfit &&
-						 d.emaFast > d.emaSlow;
+						  d.emaFast > d.emaSlow;
 
 				const isStopLoss =
 					position.direction === 'long'
