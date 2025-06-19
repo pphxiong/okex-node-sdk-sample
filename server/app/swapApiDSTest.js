@@ -608,10 +608,10 @@ class Backtester {
 			marketType = '趋势多趋势空';
 
 		const max_rsi = adx > 40 ? 75 : 70;
-		if (rsi > max_rsi) marketType = '趋势空';
+		if (rsi > max_rsi) marketType = '趋势多';
 
 		const min_rsi = adx > 40 ? 30 : 25;
-		if (rsi < min_rsi) marketType = '趋势多';
+		if (rsi < min_rsi) marketType = '趋势空';
 
 		// if (rsi > 70 || rsi < 30) marketType = '趋势多趋势空';
 
