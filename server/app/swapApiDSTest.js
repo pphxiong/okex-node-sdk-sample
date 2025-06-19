@@ -582,6 +582,9 @@ class Backtester {
 		if (adx < adx_threshold - adx_stoploss_distance)
 			marketType = '趋势多趋势空';
 
+		if (Math.abs(adxPlusDI - adxMinusDI) < adx_stoploss_distance)
+			marketType = '趋势多趋势空';
+
 		return marketType;
 	}
 
@@ -1176,7 +1179,7 @@ function carryForluma(p, rl, rw) {
 								moment('2025-06-17 06:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-06-17 07:30:00')
+								moment('2025-06-17 08:00:00')
 							)
 					)
 					.map((candle) =>
