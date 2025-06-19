@@ -583,6 +583,8 @@ class Backtester {
 					// if (lastAdxPlusDI < lastAdxMinusDI) {
 					// 	marketType = '趋势多且增强-L-1-2';
 					// }
+				} else {
+					if (close < emaSlow) marketType = '趋势多趋势空';
 				}
 			}
 		}
@@ -603,6 +605,8 @@ class Backtester {
 					// if (lastAdxPlusDI > lastAdxMinusDI) {
 					// 	marketType = '趋势空且增强-R-1-2';
 					// }
+				} else {
+					if (close > emaSlow) marketType = '趋势多趋势空';
 				}
 			}
 		}
