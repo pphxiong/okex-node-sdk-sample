@@ -577,9 +577,9 @@ class Backtester {
 					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-L-1-1';
 					}
-					if (rsi < rsi_long - 10) {
-						marketType = '趋势空';
-					}
+					// if (rsi < rsi_long - 10) {
+					// 	marketType = '趋势空';
+					// }
 					// if (lastAdxPlusDI < lastAdxMinusDI) {
 					// 	marketType = '趋势多且增强-L-1-2';
 					// }
@@ -594,9 +594,9 @@ class Backtester {
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
-					if (rsi > rsi_long + 10) {
-						marketType = '趋势多';
-					}
+					// if (rsi > rsi_long + 10) {
+					// 	marketType = '趋势多';
+					// }
 					// if (adx > adx_threshold + 5) {
 					// 	marketType = '趋势空且增强-R-1-2';
 					// }
@@ -1172,8 +1172,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
