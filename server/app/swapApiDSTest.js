@@ -583,9 +583,6 @@ class Backtester {
 					// if (lastAdxPlusDI < lastAdxMinusDI) {
 					// 	marketType = '趋势多且增强-L-1-2';
 					// }
-
-					const max_rsi = adx > 40 ? 75 : 70;
-					if (rsi > max_rsi) marketType = '趋势空';
 				}
 			}
 		}
@@ -603,15 +600,18 @@ class Backtester {
 					// if (lastAdxPlusDI > lastAdxMinusDI) {
 					// 	marketType = '趋势空且增强-R-1-2';
 					// }
-
-					const min_rsi = adx > 40 ? 30 : 25;
-					if (rsi < min_rsi) marketType = '趋势多';
 				}
 			}
 		}
 
 		if (adx < adx_threshold - adx_stoploss_distance)
 			marketType = '趋势多趋势空';
+
+		const max_rsi = adx > 40 ? 75 : 70;
+		if (rsi > max_rsi) marketType = '趋势空';
+
+		const min_rsi = adx > 40 ? 30 : 25;
+		if (rsi < min_rsi) marketType = '趋势多';
 
 		// if (rsi > 70 || rsi < 30) marketType = '趋势多趋势空';
 
