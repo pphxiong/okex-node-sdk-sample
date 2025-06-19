@@ -614,7 +614,7 @@ class Backtester {
 		if (adx < adx_threshold - adx_stoploss_distance)
 			marketType = '趋势多趋势空';
 
-		if (adxMinusDI > 10 || adxPlusDI > 10) marketType = '趋势多趋势空';
+		if (adxMinusDI < 10 || adxPlusDI < 10) marketType = '趋势多趋势空';
 
 
 		const max_rsi = adx > 40 ? 75 : 70;
