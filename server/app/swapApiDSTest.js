@@ -491,8 +491,8 @@ class Backtester {
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
 						const isVolatility = d.atr / d.close > 0.02;
-						d.rsi_long = d.adx > 40 ? 46 : 42;
-						d.rsi_short = d.adx > 40 ? 62 : 58;
+						d.rsi_long = d.adx > 40 ? 38 : 42;
+						d.rsi_short = d.adx > 40 ? 64 : 58;
 						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
 						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
@@ -554,7 +554,6 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaSlow) {
-			marketType = '趋势多';
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi < rsi_long) {
@@ -566,7 +565,6 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			marketType = '趋势空';
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi > rsi_short) {
