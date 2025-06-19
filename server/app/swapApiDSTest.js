@@ -577,7 +577,7 @@ class Backtester {
 					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-L-1-1';
 					}
-					if (lastAdxPlusDI < lastAdxPlusDI) {
+					if (lastAdxPlusDI < lastAdxMinusDI) {
 						marketType = '趋势多且增强-L-1-2';
 					}
 				}
@@ -592,7 +592,7 @@ class Backtester {
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
-					if (lastAdxPlusDI > lastAdxPlusDI) {
+					if (lastAdxPlusDI > lastAdxMinusDI) {
 						marketType = '趋势空且增强-R-1-2';
 					}
 				}
