@@ -554,8 +554,8 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		const macd_rising = macd > lastMacd && lastMacd > lastLastMacd;
-		const macd_falling = macd < lastMacd && lastMacd < lastLastMacd;
+		const macd_rising = macd > lastMacd;
+		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
@@ -1123,7 +1123,6 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2025-06-01';
 	const start = '2021-01-01';
-	// const start = '2023-02-20';
 	const end = '2025-06-01';
 	const interval = 30;
 	let profitTotal = 0;
