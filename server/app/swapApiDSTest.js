@@ -459,6 +459,7 @@ class Backtester {
 						d.lower = bollinger[0][bbIndex];
 						d.middle = bollinger[1][bbIndex];
 						d.upper = bollinger[2][bbIndex];
+						d.bandwidth = (d.upper - d.lower) / d.middle;
 					}
 					if (i >= config.emaSettings[tf].slopeWindow) {
 						const slopeIndex =
@@ -561,10 +562,7 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
-					if (
-						rsi < rsi_long &&
-						Math.abs(adxPlusDI - adxMinusDI) > 5
-					) {
+					if (rsi < rsi_long && emaSlope > 0) {
 						marketType = '趋势多且增强-R-1-1';
 					}
 				}
@@ -575,10 +573,7 @@ class Backtester {
 		if (emaFast < emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
-					if (
-						rsi > rsi_short &&
-						Math.abs(adxPlusDI - adxMinusDI) > 5
-					) {
+					if (rsi > rsi_short && emaSlope < 0) {
 						marketType = '趋势空且增强-R-1-1';
 					}
 				}
@@ -1132,7 +1127,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2025-06-01';
 	const start = '2021-01-01';
-	const end = '2025-06-01';
+	const end = '2025-07-01';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
