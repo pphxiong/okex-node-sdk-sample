@@ -501,10 +501,10 @@ class Backtester {
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 
 						d.is_latest_has_rsi_long = this.data[tf]
-							.slice(i - 4, i + 1)
+							.slice(i - 8, i + 1)
 							.some((it) => it.rsi < it.rsi_long);
 						d.is_latest_has_rsi_short = this.data[tf]
-							.slice(i - 4, i + 1)
+							.slice(i - 8, i + 1)
 							.some((it) => it.rsi > it.rsi_short);
 					}
 					d.marketType = this.getMarketType(
