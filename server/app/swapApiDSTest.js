@@ -616,7 +616,6 @@ class Backtester {
 
 		if (adxMinusDI < 10 || adxPlusDI < 10) marketType = '趋势多趋势空';
 
-
 		const max_rsi = adx > 40 ? 75 : 70;
 		if (rsi > max_rsi) marketType = '趋势多';
 
@@ -1106,8 +1105,8 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.log('\n最近20笔交易:');
-		console.table(this.trades);
+		// console.log('\n最近20笔交易:');
+		// console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1179,8 +1178,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
