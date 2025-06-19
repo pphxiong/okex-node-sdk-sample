@@ -571,9 +571,8 @@ class Backtester {
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
-					if (is_latest_has_rsi_long) {
-						marketType = '趋势多';
-						if (macd > lastMacd) marketType = '趋势多且增强-R-1-1';
+					if (rsi < rsi_long) {
+						marketType = '趋势多且增强-R-1-1';
 					}
 				}
 			}
@@ -583,9 +582,8 @@ class Backtester {
 		if (emaFast < emaSlow) {
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
-					if (is_latest_has_rsi_short) {
-						marketType = '趋势空';
-						if (macd < lastMacd) marketType = '趋势空且增强-R-1-1';
+					if (rsi > rsi_short) {
+						marketType = '趋势空且增强-R-1-1';
 					}
 				}
 			}
@@ -1188,10 +1186,10 @@ function carryForluma(p, rl, rw) {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-06-17 06:30:00')
+								moment('2025-06-16 06:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-06-17 08:00:00')
+								moment('2025-06-16 13:00:00')
 							)
 					)
 					.map((candle) =>
