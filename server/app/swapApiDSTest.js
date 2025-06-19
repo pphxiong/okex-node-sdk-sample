@@ -569,6 +569,9 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
+			if (adxPlusDI < adxMinusDI) {
+				marketType = '趋势空';
+			}
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi < rsi_long) {
@@ -580,6 +583,9 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
+			if (adxPlusDI > adxMinusDI) {
+				marketType = '趋势多';
+			}
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi > rsi_short) {
@@ -1189,7 +1195,7 @@ function carryForluma(p, rl, rw) {
 								moment('2025-06-16 06:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-06-16 13:00:00')
+								moment('2025-06-16 13:30:00')
 							)
 					)
 					.map((candle) =>
