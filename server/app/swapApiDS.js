@@ -892,15 +892,26 @@ class RiskManager {
 				: state.slowMarketType.indexOf('趋势空且增强') !== -1 &&
 				  slowMarketType.indexOf('趋势多') !== -1);
 
-		// console.log('***********************************');
-		// console.log('entryPrice', state.entryPrice);
-		// console.log('currentPrice', currentPrice);
+		console.log('***********************************');
+		console.log('entryPrice', state.entryPrice);
+		console.log('currentPrice', currentPrice);
 		// console.log('state.slowMarketType', state.slowMarketType);
 		// console.log('slowMarketType', slowMarketType);
-		// console.log('side', state.side);
+		console.log('side', state.side);
+		if (side === 'buy') {
+			console.log(
+				'position.entryPrice - stopLoss',
+				position.entryPrice - stopLoss
+			);
+		} else {
+			console.log(
+				'position.entryPrice + stopLoss',
+				position.entryPrice + stopLoss
+			);
+		}
 		// console.log('fastMarketType', fastMarketType);
 		// console.log('isStop', isStop);
-		// console.log('***********************************');
+		console.log('***********************************');
 		return isStop;
 	}
 
