@@ -167,7 +167,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				if (rsi < rsi_long) {
 					marketType = '趋势多且增强-L-1-1';
 				}
-				if (rsi > 70) marketType = '趋势空';
+				if (rsi > 74) marketType = '趋势空';
 			} else if (adxPlusDI < adxMinusDI) {
 				if (rsi < 30) marketType = '趋势空';
 			}
@@ -180,7 +180,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				if (rsi > rsi_short) {
 					marketType = '趋势空且增强-R-1-1';
 				}
-				if (rsi < 30) marketType = '趋势多';
+				if (rsi < 26) marketType = '趋势多';
 			} else if (adxPlusDI > adxMinusDI) {
 				if (rsi > 70) marketType = '趋势多';
 			}
@@ -362,7 +362,7 @@ async function calculateIndicators() {
 					const isVolatility = d.adx > 40;
 					d.rsi_long = d.adx > 40 ? 46 : 42;
 					d.rsi_short = d.adx > 40 ? 62 : 58;
-					d.stop_multiplier = isVolatility ? 1.8 : 2.5;
+					d.stop_multiplier = isVolatility ? 3 : 2.5;
 					d.adx_threshold = isVolatility ? 30 : 26;
 					d.adx_stoploss_distance = isVolatility ? 5 : 3;
 				}
