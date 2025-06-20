@@ -861,15 +861,15 @@ class RiskManager {
 
 		const isProfitTarget =
 			side === 'buy'
-				? d.close >= position.entryPrice + takeProfit &&
+				? d.close >= state.entryPrice + takeProfit &&
 				  d.emaFast < d.emaSlow
-				: d.close <= position.entryPrice - takeProfit &&
+				: d.close <= state.entryPrice - takeProfit &&
 				  d.emaFast > d.emaSlow;
 
 		const isStopLoss =
 			side === 'buy'
-				? d.close <= position.entryPrice - stopLoss
-				: d.close >= position.entryPrice + stopLoss;
+				? d.close <= state.entryPrice - stopLoss
+				: d.close >= state.entryPrice + stopLoss;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -879,9 +879,9 @@ class RiskManager {
 		// const isProfitTarget =
 		//   side === "buy"
 		//     ? lastKline5M[config.fastframe].close >=
-		//       position.entryPrice + takeProfit
+		//       state.entryPrice + takeProfit
 		//     : lastKline5M[config.fastframe].close <=
-		//       position.entryPrice - takeProfit;
+		//       state.entryPrice - takeProfit;
 
 		isStop =
 			isProfitTarget ||
@@ -905,7 +905,7 @@ class RiskManager {
 			);
 		} else {
 			console.log(
-				'position.entryPrice + stopLoss',
+				'state.entryPrice + stopLoss',
 				state.entryPrice + stopLoss
 			);
 		}
