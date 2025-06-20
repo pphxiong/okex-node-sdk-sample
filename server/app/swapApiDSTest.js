@@ -496,7 +496,7 @@ class Backtester {
 						const isVolatility = d.adx > 40;
 						d.rsi_long = isVolatility ? 46 : 42;
 						d.rsi_short = isVolatility ? 62 : 58;
-						d.stop_multiplier = isVolatility ? 6 : 5;
+						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
@@ -588,7 +588,7 @@ class Backtester {
 					// if (lastAdxPlusDI < lastAdxMinusDI) {
 					// 	marketType = '趋势多且增强-L-1-2';
 					// }
-					if (rsi > 74) marketType = '趋势空';
+					if (rsi > 74) marketType = '趋势空趋势多';
 				} else if (adxPlusDI < adxMinusDI) {
 					if (rsi < 30) marketType = '趋势空';
 				}
@@ -608,7 +608,7 @@ class Backtester {
 					// if (lastAdxPlusDI > lastAdxMinusDI) {
 					// 	marketType = '趋势空且增强-R-1-2';
 					// }
-					if (rsi < 26) marketType = '趋势多';
+					if (rsi < 26) marketType = '趋势多趋势空';
 				} else if (adxPlusDI > adxMinusDI) {
 					if (rsi > 70) marketType = '趋势多';
 				}
@@ -883,7 +883,7 @@ class Backtester {
 				const isReverse =
 					// isLastIndex ||
 					isProfitTarget ||
-					isStopLoss ||
+					// isStopLoss ||
 					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c));
