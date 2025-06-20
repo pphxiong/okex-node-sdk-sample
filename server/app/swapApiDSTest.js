@@ -499,7 +499,7 @@ class Backtester {
 						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 26;
-						d.adx_stoploss_distance = isVolatility ? 4 : 2;
+						d.adx_stoploss_distance = isVolatility ? 6 : 4;
 
 						d.is_latest_has_rsi_long = this.data[tf]
 							.slice(i - 4, i + 1)
