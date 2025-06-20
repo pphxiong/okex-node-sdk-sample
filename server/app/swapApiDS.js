@@ -910,7 +910,7 @@ class RiskManager {
 			);
 		}
 		// console.log('fastMarketType', fastMarketType);
-		// console.log('isStop', isStop);
+		console.log('isStop', isStop);
 		console.log('***********************************');
 		return isStop;
 	}
