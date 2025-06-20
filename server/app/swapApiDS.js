@@ -165,8 +165,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		if (adx > adx_threshold) {
 			if (adxPlusDI > adxMinusDI) {
 				if (rsi < rsi_long) {
-					marketType = '趋势多且增强-R-1-1';
+					marketType = '趋势多且增强-L-1-1';
 				}
+				if (rsi > 70) marketType = '趋势空';
 			}
 		}
 	}
@@ -177,6 +178,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				if (rsi > rsi_short) {
 					marketType = '趋势空且增强-R-1-1';
 				}
+				if (rsi < 30) marketType = '趋势多';
 			}
 		}
 	}
@@ -856,9 +858,9 @@ class RiskManager {
 		const isProfitTarget =
 			side === 'buy'
 				? d.close >= position.entryPrice + takeProfit &&
-				  d.close < d.emaFast
+				  d.emaFast < d.emaSlow
 				: d.close <= position.entryPrice - takeProfit &&
-				  d.close > d.emaFast;
+				  d.emaFast > d.emaSlow;
 
 		const isStopLoss =
 			side === 'buy'
