@@ -496,7 +496,7 @@ class Backtester {
 						const isVolatility = d.adx > 40;
 						d.rsi_long = isVolatility ? 46 : 42;
 						d.rsi_short = isVolatility ? 62 : 58;
-						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
+						d.stop_multiplier = !isVolatility ? 1.8 : 2.5;
 						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 
@@ -508,7 +508,8 @@ class Backtester {
 							.some((it) => it.rsi > it.rsi_short);
 
 						d.stopLoss = d.atr * d.stop_multiplier;
-            d.takeProfit = isVolatility ? d.stopLoss * 1.5 : d.stopLoss * 1.2;
+						// d.takeProfit = isVolatility ? d.stopLoss * 1.5 : d.stopLoss * 1.2;
+						d.takeProfit = d.atr * config.atrParam.takeProfit;
 					}
 					d.marketType = this.getMarketType(
 						d,
