@@ -1096,7 +1096,7 @@ class Backtester {
 			maxWinCount = Math.max(maxWinCount, winCount);
 			maxLossCount = Math.max(maxLossCount, lossCount);
 			maxContinueWin = Math.max(maxContinueWin, continueWin);
-			maxContinueLoss = Math.max(maxContinueLoss, continueLoss);
+			maxContinueLoss = Math.min(maxContinueLoss, continueLoss);
 		});
 		return {
 			maxWinCount,
