@@ -900,13 +900,13 @@ class RiskManager {
 		console.log('side', state.side);
 		if (side === 'buy') {
 			console.log(
-				'position.entryPrice - stopLoss',
-				position.entryPrice - stopLoss
+				'state.entryPrice - stopLoss',
+				state.entryPrice - stopLoss
 			);
 		} else {
 			console.log(
 				'position.entryPrice + stopLoss',
-				position.entryPrice + stopLoss
+				state.entryPrice + stopLoss
 			);
 		}
 		// console.log('fastMarketType', fastMarketType);
