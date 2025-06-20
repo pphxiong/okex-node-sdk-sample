@@ -506,6 +506,9 @@ class Backtester {
 						d.is_latest_has_rsi_short = this.data[tf]
 							.slice(i - 4, i + 1)
 							.some((it) => it.rsi > it.rsi_short);
+
+						d.takeProfit = d.atr * config.atrParam.takeProfit;
+						d.stopLoss = d.atr * d.stop_multiplier;
 					}
 					d.marketType = this.getMarketType(
 						d,
@@ -583,8 +586,7 @@ class Backtester {
 					// if (lastAdxPlusDI < lastAdxMinusDI) {
 					// 	marketType = '趋势多且增强-L-1-2';
 					// }
-					if (rsi > 70 || (rsi < 30 && adxMinusDI < 10))
-						marketType = '趋势空';
+					if (rsi > 70) marketType = '趋势空';
 				} else if (adxPlusDI < adxMinusDI) {
 					if (rsi < 30) marketType = '趋势空';
 				}
@@ -604,8 +606,7 @@ class Backtester {
 					// if (lastAdxPlusDI > lastAdxMinusDI) {
 					// 	marketType = '趋势空且增强-R-1-2';
 					// }
-					if (rsi < 30 || (rsi > 70 && adxPlusDI < 10))
-						marketType = '趋势多';
+					if (rsi < 30) marketType = '趋势多';
 				} else if (adxPlusDI > adxMinusDI) {
 					if (rsi > 70) marketType = '趋势多';
 				}
@@ -757,8 +758,11 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.025);
 				// if (isStopLoss) stopLossDirection = position.direction;
 
-				const takeProfit = d.atr * config.atrParam.takeProfit;
-				const stopLoss = d.atr * d.stop_multiplier;
+				// const takeProfit = d.atr * config.atrParam.takeProfit;
+				// const stopLoss = d.atr * d.stop_multiplier;
+
+				const takeProfit = d.takeProfit;
+				const stopLoss = d.stopLoss;
 
 				const isProfitTarget =
 					position.direction === 'long'
