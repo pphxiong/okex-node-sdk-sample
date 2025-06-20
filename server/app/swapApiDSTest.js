@@ -508,7 +508,7 @@ class Backtester {
 							.some((it) => it.rsi > it.rsi_short);
 
 						d.stopLoss = d.atr * d.stop_multiplier;
-            d.takeProfit = isVolatility ? d.stopLoss * 2 : d.stopLoss * 1.5;
+            d.takeProfit = isVolatility ? d.stopLoss * 1.5 : d.stopLoss * 1.2;
 					}
 					d.marketType = this.getMarketType(
 						d,
