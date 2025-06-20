@@ -507,8 +507,8 @@ class Backtester {
 							.slice(i - 4, i + 1)
 							.some((it) => it.rsi > it.rsi_short);
 
-						d.takeProfit = d.atr * config.atrParam.takeProfit;
 						d.stopLoss = d.atr * d.stop_multiplier;
+            d.takeProfit = isVolatility ? d.stopLoss * 2 : d.stopLoss * 1.5;
 					}
 					d.marketType = this.getMarketType(
 						d,
