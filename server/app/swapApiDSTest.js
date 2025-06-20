@@ -1127,16 +1127,18 @@ class Backtester {
 		const rw = winsTotal / winPositionTotal;
 		const rl = lossesTotal / lossPositionTotal;
 
-		return {
-			wins,
-			losses,
-			totalProfit,
-			winRate,
-			profitFactor,
-			rw,
-			rl,
-			...this.calContinueWinLoss(trades),
-		};
+		return Object.assign(
+			{
+				wins,
+				losses,
+				totalProfit,
+				winRate,
+				profitFactor,
+				rw,
+				rl,
+			},
+			this.calContinueWinLoss(trades)
+		);
 	}
 
 	showResults(startTime) {
