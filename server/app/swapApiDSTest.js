@@ -1087,9 +1087,11 @@ class Backtester {
 			if (t.profit > 0) {
 				winCount++;
 				lossCount = 0;
+				continueLoss = 0;
 				continueWin += t.profit;
 			} else {
 				winCount = 0;
+				continueWin = 0;
 				lossCount++;
 				continueLoss += t.profit;
 			}
@@ -1177,8 +1179,8 @@ class Backtester {
       手续费:       ${this.totalFee}
       最大连续盈利:  ${maxContinueWin}
       最大连续亏损:  ${maxContinueLoss}
-      最大盈利次数:  ${maxWinCount}
-      最大亏损次数:  ${maxLossCount}
+      最大连盈次数:  ${maxWinCount}
+      最大连亏次数:  ${maxLossCount}
       =============================
     `);
 		console.log('profit:', profitTotal);
@@ -1349,8 +1351,8 @@ function carryForluma(p, rl, rw) {
     carry:        ${carry.toFixed(2)}
     最大连续盈利:  ${maxContinueWin}
     最大连续亏损:  ${maxContinueLoss}
-    最大盈利次数:  ${maxWinCount}
-    最大亏损次数:  ${maxLossCount}
+    最大连盈次数:  ${maxWinCount}
+    最大连亏次数:  ${maxLossCount}
 	  =============================
 	`);
 
