@@ -498,7 +498,7 @@ class Backtester {
 						d.rsi_short = isVolatility ? 62 : 58;
 						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 30 : 28;
+						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 
 						d.is_latest_has_rsi_long = this.data[tf]
@@ -760,11 +760,11 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.025);
 				// if (isStopLoss) stopLossDirection = position.direction;
 
-				// const takeProfit = d.atr * config.atrParam.takeProfit;
-				// const stopLoss = d.atr * d.stop_multiplier;
+				const takeProfit = d.atr * config.atrParam.takeProfit;
+				const stopLoss = d.atr * d.stop_multiplier;
 
-				const takeProfit = d.takeProfit;
-				const stopLoss = d.stopLoss;
+				// const takeProfit = d.takeProfit;
+				// const stopLoss = d.stopLoss;
 
 				const isProfitTarget =
 					position.direction === 'long'
