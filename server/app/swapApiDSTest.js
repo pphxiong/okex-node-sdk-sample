@@ -499,7 +499,7 @@ class Backtester {
 						d.stop_multiplier = isVolatility ? 1.8 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 26;
-						d.adx_stoploss_distance = isVolatility ? 6 : 4;
+						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 
 						d.is_latest_has_rsi_long = this.data[tf]
 							.slice(i - 4, i + 1)
@@ -1074,6 +1074,38 @@ class Backtester {
 		this.maxDrawdown = Math.max(this.maxDrawdown, drawdown);
 	}
 
+	calContinueWinLoss(trades) {
+		let winCount = 0;
+		let lossCount = 0;
+		let maxWinCount = 0;
+		let maxLossCount = 0;
+		let continueWin = 0;
+		let continueLoss = 0;
+		let maxContinueWin = 0;
+		let maxContinueLoss = 0;
+		trades.forEach((t) => {
+			if (t.profit > 0) {
+				winCount++;
+				lossCount = 0;
+				continueWin += t.profit;
+			} else {
+				winCount = 0;
+				lossCount++;
+				continueLoss += t.profit;
+			}
+			maxWinCount = Math.max(maxWinCount, winCount);
+			maxLossCount = Math.max(maxLossCount, lossCount);
+			maxContinueWin = Math.max(maxContinueWin, continueWin);
+			maxContinueLoss = Math.max(maxContinueLoss, continueLoss);
+		});
+		return {
+			maxWinCount,
+			maxLossCount,
+			maxContinueWin,
+			maxContinueLoss,
+		};
+	}
+
 	calcTrades(trades) {
 		const wins = trades.filter((t) => t.profit > 0);
 		const losses = trades.filter((t) => t.profit <= 0);
@@ -1095,12 +1127,30 @@ class Backtester {
 		const rw = winsTotal / winPositionTotal;
 		const rl = lossesTotal / lossPositionTotal;
 
-		return { wins, losses, totalProfit, winRate, profitFactor, rw, rl };
+		return {
+			wins,
+			losses,
+			totalProfit,
+			winRate,
+			profitFactor,
+			rw,
+			rl,
+			...this.calContinueWinLoss(trades),
+		};
 	}
 
 	showResults(startTime) {
-		const { wins, losses, totalProfit, winRate, profitFactor } =
-			this.calcTrades(this.trades);
+		const {
+			wins,
+			losses,
+			totalProfit,
+			winRate,
+			profitFactor,
+			maxContinueWin,
+			maxContinueLoss,
+			maxWinCount,
+			maxLossCount,
+		} = this.calcTrades(this.trades);
 
 		const profitTotal = this.balance - config.initialBalance;
 
@@ -1123,6 +1173,10 @@ class Backtester {
       最大单笔盈利:  ${Math.max(...this.trades.map((t) => t.profit)).toFixed(2)}
       最大单笔亏损:  ${maxLoss}
       手续费:       ${this.totalFee}
+      最大连续盈利:  ${maxContinueWin}
+      最大连续亏损:  ${maxContinueLoss}
+      最大盈利次数:  ${maxWinCount}
+      最大亏损次数:  ${maxLossCount}
       =============================
     `);
 		console.log('profit:', profitTotal);
@@ -1264,8 +1318,19 @@ function carryForluma(p, rl, rw) {
 		}
 	}
 
-	const { wins, losses, totalProfit, winRate, profitFactor, rw, rl } =
-		backtester.calcTrades(totalTrades);
+	const {
+		wins,
+		losses,
+		totalProfit,
+		winRate,
+		profitFactor,
+		rw,
+		rl,
+		maxContinueWin,
+		maxContinueLoss,
+		maxWinCount,
+		maxLossCount,
+	} = backtester.calcTrades(totalTrades);
 
 	const carry = carryForluma(Number(winRate) / 100, rl, rw);
 
@@ -1280,6 +1345,10 @@ function carryForluma(p, rl, rw) {
     rw:        ${rw.toFixed(4)}
     rl:        ${rl.toFixed(4)}
     carry:        ${carry.toFixed(2)}
+    最大连续盈利:  ${maxContinueWin}
+    最大连续亏损:  ${maxContinueLoss}
+    最大盈利次数:  ${maxWinCount}
+    最大亏损次数:  ${maxLossCount}
 	  =============================
 	`);
 
