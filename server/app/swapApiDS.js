@@ -168,6 +168,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 					marketType = '趋势多且增强-L-1-1';
 				}
 				if (rsi > 70) marketType = '趋势空';
+			} else if (adxPlusDI < adxMinusDI) {
+				if (rsi < 30) marketType = '趋势空';
 			}
 		}
 	}
@@ -179,6 +181,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 					marketType = '趋势空且增强-R-1-1';
 				}
 				if (rsi < 30) marketType = '趋势多';
+			} else if (adxPlusDI > adxMinusDI) {
+				if (rsi > 70) marketType = '趋势多';
 			}
 		}
 	}
