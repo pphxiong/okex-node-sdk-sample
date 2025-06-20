@@ -62,7 +62,7 @@ const config = {
 		// ATR参数
 		atrPeriod: 14,
 		stopLoss: 2.5,
-		takeProfit: 3,
+		takeProfit: 2,
 	},
 	feeRate: 2 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
