@@ -577,7 +577,7 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
-			marketType = '趋势多空';
+			marketType = '趋势多';
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (rsi < rsi_long) {
