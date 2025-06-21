@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [50, 15], slopeWindow: 5 },
+		'15m': { periods: [15, 7], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -494,11 +494,11 @@ class Backtester {
 						// const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
 						const isVolatility = d.adx > 40;
-						d.rsi_long = d.adx > 40 ? 46 : 42;
-						d.rsi_short = d.adx > 40 ? 62 : 58;
+						d.rsi_long = d.adx > 40 ? 46 : 40;
+						d.rsi_short = d.adx > 40 ? 62 : 60;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 30 : 26;
+						d.adx_threshold = isVolatility ? 30 : 28;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 
 						d.is_latest_has_rsi_long = this.data[tf]
@@ -577,35 +577,29 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
+			marketType = '趋势空';
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
-					if (
-						rsi < rsi_long &&
-						// close < lastClose &&
-						macd > lastMacd
-					) {
+					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-L-1-1';
 					}
-					if (rsi > 74) marketType = '趋势空';
+					if (rsi > 65) marketType = '趋势空';
 				} else if (adxPlusDI < adxMinusDI) {
-					if (rsi < 30) marketType = '趋势空';
+					// if (rsi < 30) marketType = '趋势空';
 				}
 			}
 		}
 
 		if (emaFast < emaSlow) {
+			marketType = '趋势多';
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
-					if (
-						rsi > rsi_short &&
-						// close > lastClose &&
-						macd < lastMacd
-					) {
+					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
-					if (rsi < 26) marketType = '趋势多';
+					if (rsi < 35) marketType = '趋势多';
 				} else if (adxPlusDI > adxMinusDI) {
-					if (rsi > 70) marketType = '趋势多';
+					// if (rsi > 70) marketType = '趋势多';
 				}
 			}
 		}
