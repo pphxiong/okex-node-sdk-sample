@@ -580,8 +580,8 @@ class Backtester {
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (
-						lastRSI < rsi_long &&
-						close < lastClose &&
+						rsi < rsi_long &&
+						// close < lastClose &&
 						macd > lastMacd
 					) {
 						marketType = '趋势多且增强-L-1-1';
@@ -597,8 +597,8 @@ class Backtester {
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
 					if (
-						lastRSI > rsi_short &&
-						close > lastClose &&
+						rsi > rsi_short &&
+						// close > lastClose &&
 						macd < lastMacd
 					) {
 						marketType = '趋势空且增强-R-1-1';
