@@ -562,7 +562,7 @@ class Backtester {
           }
           if (rsi > 74) marketType = "趋势空";
         } else if (adxPlusDI < adxMinusDI) {
-          if (rsi < 24) marketType = "趋势空";
+          if (rsi < 30) marketType = "趋势空";
         }
       }
     }
@@ -575,7 +575,7 @@ class Backtester {
           }
           if (rsi < 26) marketType = "趋势空";
         } else if (adxPlusDI > adxMinusDI) {
-          if (rsi > 76) marketType = "趋势多";
+          if (rsi > 70) marketType = "趋势多";
         }
       }
     }
