@@ -560,7 +560,7 @@ class Backtester {
           if (rsi < rsi_long && close < emaSlow) {
             marketType = "趋势多且增强-L-1-1";
           }
-          if (rsi > 74) marketType = "趋势空";
+          if (rsi > 74) marketType = "趋势多趋势空";
         } else if (adxPlusDI < adxMinusDI) {
           if (rsi < 30) marketType = "趋势空";
         }
@@ -573,7 +573,7 @@ class Backtester {
           if (rsi > rsi_short && close > emaSlow) {
             marketType = "趋势空且增强-R-1-1";
           }
-          if (rsi < 26) marketType = "趋势多";
+          if (rsi < 26) marketType = "趋势多趋势空";
         } else if (adxPlusDI > adxMinusDI) {
           if (rsi > 70) marketType = "趋势多";
         }
