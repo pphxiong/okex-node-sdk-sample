@@ -557,6 +557,7 @@ class Backtester {
 			volume: lastVolume,
 			adxPlusDI: lastAdxPlusDI,
 			adxMinusDI: lastAdxMinusDI,
+			rsi: lastRSI,
 		} = lastCandle;
 		const {
 			emaFast: lastLastEmaFast,
@@ -579,7 +580,7 @@ class Backtester {
 			if (adx > adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (
-						rsi < rsi_long &&
+						lastRSI < rsi_long &&
 						close < lastClose &&
 						macd > lastMacd
 					) {
@@ -596,7 +597,7 @@ class Backtester {
 			if (adx > adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
 					if (
-						rsi > rsi_short &&
+						lastRSI > rsi_short &&
 						close > lastClose &&
 						macd < lastMacd
 					) {
