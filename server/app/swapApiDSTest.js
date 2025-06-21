@@ -554,11 +554,11 @@ class Backtester {
     const macd_rising = macd > lastMacd;
     const macd_falling = macd < lastMacd;
 
-    if (emaFast > emaSlow) {
+    if (emaFast < emaSlow) {
       if (adx > adx_threshold) {
-        if (adxPlusDI < adxMinusDI) {
+        if (adxPlusDI > adxMinusDI) {
           if (rsi < rsi_long) {
-            marketType = "趋势空且增强-L-1-1";
+            marketType = "趋势多且增强-L-1-1";
           }
           if (rsi > 74) marketType = "趋势空";
         } else if (adxPlusDI < adxMinusDI) {
@@ -567,11 +567,11 @@ class Backtester {
       }
     }
 
-    if (emaFast < emaSlow) {
+    if (emaFast > emaSlow) {
       if (adx > adx_threshold) {
-        if (adxPlusDI > adxMinusDI) {
+        if (adxPlusDI < adxMinusDI) {
           if (rsi > rsi_short) {
-            marketType = "趋势多且增强-R-1-1";
+            marketType = "趋势空且增强-R-1-1";
           }
           if (rsi < 26) marketType = "趋势多";
         } else if (adxPlusDI > adxMinusDI) {
