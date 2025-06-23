@@ -586,6 +586,9 @@ class Backtester {
 					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-L-1-1';
 					}
+					if (rsi < rsi_long - 5) {
+						marketType = '趋势空';
+					}
 					// if (rsi > 65) marketType = '趋势多';
 				} else if (adxPlusDI < adxMinusDI) {
 					// if (rsi < 30) marketType = '趋势空';
@@ -604,6 +607,9 @@ class Backtester {
 				if (adxPlusDI < adxMinusDI) {
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
+					}
+					if (rsi > rsi_short + 5) {
+						marketType = '趋势多';
 					}
 					// if (rsi < 35) marketType = '趋势空';
 				} else if (adxPlusDI > adxMinusDI) {
@@ -807,8 +813,8 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 
 				const longCloseConditions = [
-					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
-						position.adx - adx > 5,
+					// position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+					// 	position.adx - adx > 5,
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 						slowMarketType.indexOf('趋势空') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
