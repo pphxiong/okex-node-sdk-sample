@@ -807,7 +807,7 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 
 				const longCloseConditions = [
-					position.slowMarketType.indexOf('趋势多') &&
+					position.slowMarketType.indexOf('趋势多') !== -1 &&
 						position.adx - adx > 3,
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 						slowMarketType.indexOf('趋势空') !== -1,
