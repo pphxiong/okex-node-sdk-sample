@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [50, 15], slopeWindow: 5 },
+		'15m': { periods: [25, 5], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -1052,9 +1052,10 @@ class Backtester {
 			// exitMarketType: `${fastMarketType},${slowMarketType}`,
 			entryMarketType: `${position.slowMarketType}`,
 			exitMarketType: `${slowMarketType}`,
-			duration: `${Math.round(
-				(exitCandle.timestamp - position.entryTime) / (1000 * 60 * 60)
-			)}h`,
+			duration: `${(
+				(exitCandle.timestamp - position.entryTime) /
+				(1000 * 60 * 60)
+			).toFixed(1)}h`,
 			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
 			exitTime: moment(exitCandle.timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
