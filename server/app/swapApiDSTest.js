@@ -583,15 +583,12 @@ class Backtester {
 			if (adx > adx_threshold) {
 				marketType = '趋势多';
 				if (adxPlusDI > adxMinusDI) {
-					if (
-						rsi < rsi_long &&
-						emaSlope > config.emaSlope.emaSlopeThreshold
-					) {
+					if (rsi < rsi_long && emaSlope > 0) {
 						marketType = '趋势多且增强-L-1-1';
 					}
 					if (
 						(rsi < rsi_long - 5 || rsi > rsi_long + 5) &&
-						emaSlope < -config.emaSlope.emaSlopeThreshold
+						emaSlope < 0
 					) {
 						marketType = '趋势空';
 					}
@@ -610,16 +607,13 @@ class Backtester {
 			}
 			if (adx > adx_threshold) {
 				marketType = '趋势空';
-				if (
-					adxPlusDI < adxMinusDI &&
-					emaSlope < -config.emaSlope.emaSlopeThreshold
-				) {
+				if (adxPlusDI < adxMinusDI && emaSlope < 0) {
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
 					if (
 						(rsi > rsi_short + 5 || rsi < rsi_short - 5) &&
-						emaSlope > config.emaSlope.emaSlopeThreshold
+						emaSlope > 0
 					) {
 						marketType = '趋势多';
 					}
@@ -1242,8 +1236,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-02-20';
-	// const start = '2021-01-01';
+	// const start = '2025-02-20';
+	const start = '2021-01-01';
 	const end = '2025-07-01';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1257,8 +1251,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
