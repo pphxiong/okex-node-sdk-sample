@@ -732,7 +732,12 @@ class Backtester {
 			};
 
 			const { marketType: fastMarketType } = candle[config.fastframe];
-			const { marketType: slowMarketType } = candle[config.slowframe];
+			const {
+				marketType: slowMarketType,
+				adx,
+				adxPlusDI,
+				adxMinusDI,
+			} = candle[config.slowframe];
 
 			// 生成信号
 			const signal = this.generateSignal(
@@ -802,6 +807,7 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 
 				const longCloseConditions = [
+					Math.abs(position.adx - adx) > 3,
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 						slowMarketType.indexOf('趋势空') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
