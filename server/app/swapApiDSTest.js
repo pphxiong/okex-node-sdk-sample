@@ -591,7 +591,7 @@ class Backtester {
 					// if (rsi < 30) marketType = '趋势空';
 				}
 			} else {
-				marketType = '趋势多';
+				// marketType = '趋势多';
 			}
 		}
 
@@ -610,7 +610,7 @@ class Backtester {
 					// if (rsi > 70) marketType = '趋势多';
 				}
 			} else {
-				marketType = '趋势空';
+				// marketType = '趋势空';
 			}
 		}
 
