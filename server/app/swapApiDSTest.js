@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 6,
+	adxPeriod: 14,
 	rsiPeriod: 14,
 };
 
@@ -585,7 +585,11 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
-			marketType = '趋势多且增强';
+			marketType = '趋势多';
+			if (close < emaFast) {
+				marketType = '趋势多且增强';
+			}
+
 			// if (adxPlusDI > adxMinusDI) {
 			// 	marketType = '趋势多';
 			// 	if (rsi > 80) {
@@ -599,7 +603,11 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			marketType = '趋势空且增强';
+			marketType = '趋势空';
+			if (close > emaFast) {
+				marketType = '趋势空且增强';
+			}
+
 			// if (adxPlusDI < adxMinusDI) {
 			// 	marketType = '趋势空';
 			// 	if (rsi < 20) {
