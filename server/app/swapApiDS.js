@@ -40,7 +40,7 @@ const config = {
 	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [25, 5], slopeWindow: 5 },
+		'15m': { periods: [100, 20], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] },
@@ -75,8 +75,8 @@ const config = {
 	},
 	riskPerTrade: 0.02, // 每笔交易风险2%
 	leverage: 20, // 杠杆倍数
-	adxPeriod: 9,
-	rsiPeriod: 10,
+	adxPeriod: 14,
+	rsiPeriod: 14,
 	// EMA斜率参数
 	emaSlope: {
 		period: 10,
@@ -162,40 +162,29 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
 	if (emaFast > emaSlow) {
+		marketType = '趋势多';
 		if (adx > adx_threshold) {
-			marketType = '趋势多';
-			if (adxPlusDI > adxMinusDI) {
-				if (rsi < rsi_long && emaSlope > 0) {
-					marketType = '趋势多且增强-L-1-1';
-				}
-				if (
-					(rsi < rsi_long - 5 || rsi > rsi_long + 5) &&
-					emaSlope < 0
-				) {
-					marketType = '趋势空';
-				}
-			} else if (adxPlusDI < adxMinusDI) {
+			if (close > emaSlow && rsi < rsi_long && rsi > rsi_long - 10) {
+				marketType = '趋势多且增强';
+			} else if (close < emaSlow) {
+				marketType = '趋势空';
 			}
 		}
 	}
 
 	if (emaFast < emaSlow) {
+		marketType = '趋势空';
 		if (adx > adx_threshold) {
-			marketType = '趋势空';
-			if (adxPlusDI < adxMinusDI && emaSlope < 0) {
-				if (rsi > rsi_short) {
-					marketType = '趋势空且增强-R-1-1';
-				}
-				if (
-					(rsi > rsi_short + 5 || rsi < rsi_short - 5) &&
-					emaSlope > 0
-				) {
-					marketType = '趋势多';
-				}
-			} else if (adxPlusDI > adxMinusDI) {
+			if (close < emaSlow && rsi > rsi_short && rsi < rsi_short + 10) {
+				marketType = '趋势空且增强';
+			} else if (close > emaSlow) {
+				marketType = '趋势多';
 			}
-		} else {
 		}
+	}
+
+	if (adx < adx_threshold) {
+		marketType = '趋势多趋势空';
 	}
 
 	return marketType;
@@ -371,12 +360,12 @@ async function calculateIndicators() {
 				d.emaSlow = emaSlow[0][i];
 				d.emaFast = emaFast[0][i];
 				if (d.adx && d.atr) {
-					const isVolatility = d.atr / d.close > 0.02;
-					// const isVolatility = d.adx > 40;
-					d.rsi_long = d.adx > 40 ? 42 : 45;
-					d.rsi_short = d.adx > 40 ? 58 : 55;
+					// const isVolatility = d.atr / d.close > 0.02;
+					const isVolatility = d.adx > 30;
+					d.rsi_long = d.adx > 30 ? 48 : 58;
+					d.rsi_short = d.adx > 30 ? 58 : 42;
 					d.stop_multiplier = isVolatility ? 3 : 2.5;
-					d.adx_threshold = isVolatility ? 32 : 28;
+					d.adx_threshold = isVolatility ? 30 : 28;
 					d.adx_stoploss_distance = isVolatility ? 5 : 3;
 				}
 				d.marketType = getMarketType(
@@ -897,13 +886,13 @@ class RiskManager {
 		//       state.entryPrice - takeProfit;
 
 		isStop =
-			isProfitTarget ||
-			isStopLoss ||
-			(side === 'buy'
+			// isProfitTarget ||
+			// isStopLoss ||
+			side === 'buy'
 				? state.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 				  slowMarketType.indexOf('趋势空') !== -1
 				: state.slowMarketType.indexOf('趋势空且增强') !== -1 &&
-				  slowMarketType.indexOf('趋势多') !== -1);
+				  slowMarketType.indexOf('趋势多') !== -1;
 
 		console.log('***********************************');
 		console.log('entryPrice', state.entryPrice);
