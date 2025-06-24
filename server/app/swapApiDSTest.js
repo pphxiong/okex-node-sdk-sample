@@ -502,8 +502,8 @@ class Backtester {
 						// const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
 						const isVolatility = d.adx > 40;
-						d.rsi_long = d.adx > 40 ? 45 : 50;
-						d.rsi_short = d.adx > 40 ? 55 : 50;
+						d.rsi_long = d.adx > 40 ? 45 : 60;
+						d.rsi_short = d.adx > 40 ? 55 : 40;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 28;
@@ -585,27 +585,31 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
-			if (adxPlusDI > adxMinusDI) {
-				marketType = '趋势多';
-				if (rsi > 80) {
-					marketType = '趋势空';
-				} else if (rsi > 70) {
-					marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
-				} else if (rsi < rsi_long) {
-					marketType = '趋势多且增强';
+			if (close > emaFast) {
+				if (adxPlusDI > adxMinusDI) {
+					marketType = '趋势多';
+					if (rsi > 80) {
+						marketType = '趋势空';
+					} else if (rsi > 70) {
+						marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
+					} else if (rsi < rsi_long) {
+						marketType = '趋势多且增强';
+					}
 				}
 			}
 		}
 
 		if (emaFast < emaSlow) {
-			if (adxPlusDI < adxMinusDI) {
-				marketType = '趋势空';
-				if (rsi < 20) {
-					marketType = '趋势多';
-				} else if (rsi < 30) {
-					marketType = adx >= adx_threshold ? '趋势空' : '趋势多';
-				} else if (rsi > rsi_short) {
-					marketType = '趋势空且增强';
+			if (close < emaFast) {
+				if (adxPlusDI < adxMinusDI) {
+					marketType = '趋势空';
+					if (rsi < 20) {
+						marketType = '趋势多';
+					} else if (rsi < 30) {
+						marketType = adx >= adx_threshold ? '趋势空' : '趋势多';
+					} else if (rsi > rsi_short) {
+						marketType = '趋势空且增强';
+					}
 				}
 			}
 		}
@@ -884,9 +888,9 @@ class Backtester {
 					// isLastIndex ||
 					// isProfitTarget ||
 					// isStopLoss ||
-					(position.direction === 'long'
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c));
+						: shortCloseConditions.some((c) => !!c);
 
 				if (isReverse) {
 					this.closePosition(
