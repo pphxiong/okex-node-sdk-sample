@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 9,
+	adxPeriod: 14,
 	rsiPeriod: 10,
 };
 
@@ -506,7 +506,7 @@ class Backtester {
 						d.rsi_short = d.adx > 40 ? 55 : 45;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 30 : 26;
+						d.adx_threshold = isVolatility ? 30 : 30;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 
 						d.is_latest_has_rsi_long = this.data[tf]
