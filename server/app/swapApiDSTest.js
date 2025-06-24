@@ -427,14 +427,15 @@ class Backtester {
 					[adx, adxPlusDI, adxMinusDI],
 					rsi,
 				] = result.slice(index * 7, (index + 1) * 7);
-				// if (tf === config.slowframe) {
-				// 	console.log(
-				// 		23,
-				// 		this.data[tf].length,
-				// 		emaSlow[0].length,
-				// 		emaFast[0].length
-				// 	);
-				// }
+				if (tf === config.slowframe) {
+					console.log(
+						23,
+						this.data[tf].length,
+						adx.length,
+						adxPlusDI.length,
+						adxMinusDI.length
+					);
+				}
 
 				// 计算EMA斜率
 				const emaSlopes = [];
