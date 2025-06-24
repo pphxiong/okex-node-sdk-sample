@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 28,
+	adxPeriod: 14,
 	rsiPeriod: 14,
 };
 
@@ -586,7 +586,7 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx > adx_threshold) {
+			if (adx > 20) {
 				if (close > emaSlow) {
 					marketType = '趋势多且增强';
 				} else {
