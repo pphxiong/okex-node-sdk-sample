@@ -585,59 +585,33 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
-			if (rsi < rsi_long) {
-				// marketType = '趋势多且增强-L-1-1';
-			}
 			if (adx > adx_threshold) {
-				marketType = '趋势多';
 				if (adxPlusDI > adxMinusDI) {
-					marketType = '趋势多且增强-L-1-1';
-					// if (rsi < rsi_long) {
-					// 	marketType = '趋势多且增强-L-1-1';
-					// }
-					// if (
-					// 	(rsi < rsi_long - 10 || rsi > rsi_long + 25) &&
-					// 	emaSlope < 0
-					// ) {
-					// 	marketType = '趋势空';
-					// }
-					// if (rsi > 65) marketType = '趋势多';
+					if (rsi < rsi_long) {
+						marketType = '趋势多且增强-L-1-1';
+					}
+					if (rsi > 74) marketType = '趋势空';
 				} else if (adxPlusDI < adxMinusDI) {
-					// if (rsi < 30) marketType = '趋势空';
+					if (rsi < 30) marketType = '趋势空';
 				}
-			} else {
-				// marketType = '趋势多';
 			}
 		}
 
 		if (emaFast < emaSlow) {
-			if (rsi > rsi_short) {
-				// marketType = '趋势空且增强-R-1-1';
-			}
 			if (adx > adx_threshold) {
-				marketType = '趋势空';
 				if (adxPlusDI < adxMinusDI) {
-					marketType = '趋势空且增强-R-1-1';
-					// if (rsi > rsi_short) {
-					// 	marketType = '趋势空且增强-R-1-1';
-					// }
-					// if (
-					// 	(rsi > rsi_short + 10 || rsi < rsi_short - 25) &&
-					// 	emaSlope > 0
-					// ) {
-					// 	marketType = '趋势多';
-					// }
-					// if (rsi < 35) marketType = '趋势空';
+					if (rsi > rsi_short) {
+						marketType = '趋势空且增强-R-1-1';
+					}
+					if (rsi < 26) marketType = '趋势多';
 				} else if (adxPlusDI > adxMinusDI) {
-					// if (rsi > 70) marketType = '趋势多';
+					if (rsi > 70) marketType = '趋势多';
 				}
-			} else {
-				// marketType = '趋势空';
 			}
 		}
 
-		// if (adx < adx_threshold - adx_stoploss_distance)
-		// 	marketType = '趋势多趋势空';
+	if (adx < adx_threshold - adx_stoploss_distance)
+		marketType = '趋势多趋势空';
 
 		return marketType;
 	}
@@ -908,11 +882,11 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
-					// isStopLoss ||
-					position.direction === 'long'
+					isProfitTarget ||
+					isStopLoss ||
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
