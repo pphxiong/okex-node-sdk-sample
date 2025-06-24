@@ -502,8 +502,8 @@ class Backtester {
 						const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
 						// const isVolatility = d.adx > 40;
-						d.rsi_long = d.adx > 40 ? 42 : 55;
-						d.rsi_short = d.adx > 40 ? 58 : 45;
+						d.rsi_long = d.adx > 40 ? 42 : 45;
+						d.rsi_short = d.adx > 40 ? 58 : 55;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 32 : 28;
@@ -595,7 +595,7 @@ class Backtester {
 						marketType = '趋势多且增强-L-1-1';
 					}
 					if (
-						(rsi < rsi_long - 5 || rsi > rsi_long + 15) &&
+						(rsi < rsi_long - 10 || rsi > rsi_long + 25) &&
 						emaSlope < 0
 					) {
 						marketType = '趋势空';
@@ -620,7 +620,7 @@ class Backtester {
 						marketType = '趋势空且增强-R-1-1';
 					}
 					if (
-						(rsi > rsi_short + 5 || rsi < rsi_short - 15) &&
+						(rsi > rsi_short + 10 || rsi < rsi_short - 25) &&
 						emaSlope > 0
 					) {
 						marketType = '趋势多';
@@ -1244,8 +1244,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-02-20';
-	const start = '2021-01-01';
+	const start = '2025-06-01';
+	// const start = '2021-01-01';
 	const end = '2025-07-01';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1259,8 +1259,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
