@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 14,
+	adxPeriod: 9,
 	rsiPeriod: 10,
 };
 
@@ -427,16 +427,16 @@ class Backtester {
 					[adx, adxPlusDI, adxMinusDI],
 					rsi,
 				] = result.slice(index * 7, (index + 1) * 7);
-				if (tf === config.slowframe) {
-					console.log(
-						23,
-						this.data[tf].length,
-						adx.length,
-						adxPlusDI.length,
-						adxMinusDI.length,
-						atr[0].length
-					);
-				}
+				// if (tf === config.slowframe) {
+				// 	console.log(
+				// 		23,
+				// 		this.data[tf].length,
+				// 		adx.length,
+				// 		adxPlusDI.length,
+				// 		adxMinusDI.length,
+				// 		atr[0].length
+				// 	);
+				// }
 
 				// 计算EMA斜率
 				const emaSlopes = [];
@@ -478,14 +478,18 @@ class Backtester {
 						const atrIndex = i - config.atrParam.atrPeriod + 1;
 						d.atr = atr[0][atrIndex];
 					}
-					if (i >= config.adxPeriod) {
+					if (i >= config.adxPeriod * 2) {
 						// const offset = this.data[tf].length - adx[0].length;
 						const adxIndex = i - config.adxPeriod * 2 + 2;
 						const adxPlusDIIndex = i - config.adxPeriod + 1;
 
 						d.adx = adx[adxIndex];
-						d.adxPlusDI = adxPlusDI ? adxPlusDI[adxPlusDIIndex] : null;
-						d.adxMinusDI = adxMinusDI ? adxMinusDI[adxPlusDIIndex] : null;
+						d.adxPlusDI = adxPlusDI
+							? adxPlusDI[adxPlusDIIndex]
+							: null;
+						d.adxMinusDI = adxMinusDI
+							? adxMinusDI[adxPlusDIIndex]
+							: null;
 					}
 					if (i >= config.rsiPeriod) {
 						const rsiIndex = i - config.rsiPeriod;
