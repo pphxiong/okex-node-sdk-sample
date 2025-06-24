@@ -591,7 +591,7 @@ class Backtester {
 			if (adx > adx_threshold) {
 				marketType = '趋势多';
 				if (adxPlusDI > adxMinusDI) {
-					if (rsi < rsi_long && emaSlope > 0) {
+					if (rsi < rsi_long) {
 						marketType = '趋势多且增强-L-1-1';
 					}
 					if (
@@ -615,7 +615,7 @@ class Backtester {
 			}
 			if (adx > adx_threshold) {
 				marketType = '趋势空';
-				if (adxPlusDI < adxMinusDI && emaSlope < 0) {
+				if (adxPlusDI < adxMinusDI) {
 					if (rsi > rsi_short) {
 						marketType = '趋势空且增强-R-1-1';
 					}
@@ -1296,10 +1296,10 @@ function carryForluma(p, rl, rw) {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-06-23 06:30:00')
+								moment('2025-06-24 06:30:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-06-23 08:30:00')
+								moment('2025-06-24 10:30:00')
 							)
 					)
 					.map((candle) =>
