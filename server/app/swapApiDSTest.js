@@ -584,7 +584,7 @@ class Backtester {
 		const macd_rising = macd > lastMacd;
 		const macd_falling = macd < lastMacd;
 
-		if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
+		if (emaFast > emaSlow) {
 			marketType = '趋势多';
 			if (adx > adx_threshold) {
 				marketType =
@@ -604,7 +604,7 @@ class Backtester {
 			// }
 		}
 
-		if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
+		if (emaFast < emaSlow) {
 			marketType = '趋势空';
 			if (adx > adx_threshold) {
 				marketType =
