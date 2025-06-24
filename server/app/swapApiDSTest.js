@@ -586,53 +586,34 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx > 20) {
+			if (adx > adx_threshold) {
 				if (close > emaSlow) {
 					marketType = '趋势多且增强';
 				} else {
 					marketType = '趋势空';
 				}
-			} else {
-				marketType = '趋势空';
-				if (close < emaSlow) {
-					marketType = '趋势空';
-				}
 			}
-
-			// if (close < emaSlow) {
-			// 	marketType = '趋势空';
-			// }
-
-			// if (adxPlusDI > adxMinusDI) {
-			// 	marketType = '趋势多';
-			// 	if (rsi > 80) {
-			// 		marketType = '趋势空';
-			// 	} else if (rsi > 70) {
-			// 		marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
-			// 	} else if (rsi < rsi_long) {
-			// 		marketType = '趋势多且增强';
-			// 	}
-			// }
+			if (close < emaSlow) {
+				marketType = '趋势空';
+			}
 		}
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (adx > 20) {
+			if (adx > adx_threshold) {
 				if (close < emaSlow) {
 					marketType = '趋势空且增强';
 				} else {
 					marketType = '趋势多';
 				}
-			} else {
-				marketType = '趋势多';
-				if (close > emaSlow) {
-					marketType = '趋势多';
-				}
 			}
+			if (close > emaSlow) {
+				marketType = '趋势多';
+			}
+		}
 
-			// if (close > emaSlow) {
-			// 	marketType = '趋势多';
-			// }
+		if (adx < adx_threshold) {
+			marketType = '趋势多趋势空';
 		}
 
 		return marketType;
@@ -1244,8 +1225,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-06-01';
-	const start = '2021-01-01';
+	const start = '2025-06-01';
+	// const start = '2021-01-01';
 	const end = '2025-07-01';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1259,8 +1240,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
