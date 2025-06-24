@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 6,
+	adxPeriod: 14,
 	rsiPeriod: 10,
 };
 
@@ -433,7 +433,8 @@ class Backtester {
 						this.data[tf].length,
 						adx.length,
 						adxPlusDI.length,
-						adxMinusDI.length
+						adxMinusDI.length,
+						atr.length
 					);
 				}
 
@@ -480,6 +481,8 @@ class Backtester {
 					if (i >= config.adxPeriod) {
 						// const offset = this.data[tf].length - adx[0].length;
 						const adxIndex = i - config.adxPeriod * 2 + 2;
+						const adxPlusDIIndex = i - config.adxPeriod * 2 + 2;
+
 						d.adx = adx[adxIndex];
 						d.adxPlusDI = adxPlusDI ? adxPlusDI[adxIndex] : null;
 						d.adxMinusDI = adxMinusDI ? adxMinusDI[adxIndex] : null;
