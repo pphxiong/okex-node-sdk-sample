@@ -1060,10 +1060,12 @@ class Backtester {
 			// fee,
 			// entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
 			// exitMarketType: `${fastMarketType},${slowMarketType}`,
-			entryMarketType: `${position.slowMarketType}`,
-			exitMarketType: `${slowMarketType}`,
+			// entryMarketType: `${position.slowMarketType}`,
+			// exitMarketType: `${slowMarketType}`,
 			entryAdx: `${position.adx}`,
 			exitAdx: `${exitCandle.adx}`,
+			entryRSI: `${position.rsi}`,
+			exitRSI: `${exitCandle.rsi}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
