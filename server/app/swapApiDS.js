@@ -356,9 +356,13 @@ async function calculateIndicators() {
 				}
 				if (i >= config.adxPeriod) {
 					const adxIndex = i - config.adxPeriod * 2 + 2;
+					const adxPlusDIIndex = i - config.adxPeriod + 1;
+
 					d.adx = adx[adxIndex];
-					d.adxPlusDI = adxPlusDI ? adxPlusDI[adxIndex] : null;
-					d.adxMinusDI = adxMinusDI ? adxMinusDI[adxIndex] : null;
+					d.adxPlusDI = adxPlusDI ? adxPlusDI[adxPlusDIIndex] : null;
+					d.adxMinusDI = adxMinusDI
+						? adxMinusDI[adxPlusDIIndex]
+						: null;
 				}
 				if (i >= config.rsiPeriod) {
 					const rsiIndex = i - config.rsiPeriod;
