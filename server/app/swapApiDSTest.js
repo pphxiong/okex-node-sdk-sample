@@ -586,7 +586,10 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			if (adxPlusDI > adxMinusDI) {
-				if (rsi > 70) {
+				marketType = '趋势多';
+				if (rsi > 80) {
+					marketType = '趋势空';
+				} else if (rsi > 70) {
 					marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
 				} else if (rsi < rsi_long) {
 					marketType = '趋势多且增强';
@@ -596,7 +599,10 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			if (adxPlusDI < adxMinusDI) {
-				if (rsi < 30) {
+				marketType = '趋势空';
+				if (rsi < 20) {
+					marketType = '趋势多';
+				} else if (rsi < 30) {
 					marketType = adx >= adx_threshold ? '趋势空' : '趋势多';
 				} else if (rsi > rsi_short) {
 					marketType = '趋势空且增强';
@@ -876,8 +882,8 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isProfitTarget ||
-					isStopLoss ||
+					// isProfitTarget ||
+					// isStopLoss ||
 					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c));
