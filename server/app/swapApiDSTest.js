@@ -499,11 +499,11 @@ class Backtester {
 					d.emaFast = emaFast[0][i];
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
-						const isVolatility = d.atr / d.close > 0.02;
+						// const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
-						// const isVolatility = d.adx > 40;
-						d.rsi_long = d.adx > 40 ? 42 : 45;
-						d.rsi_short = d.adx > 40 ? 58 : 55;
+						const isVolatility = d.adx > 40;
+						d.rsi_long = d.adx > 40 ? 38 : 42;
+						d.rsi_short = d.adx > 40 ? 62 : 58;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 26;
