@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [25, 5], slopeWindow: 5 },
+		'15m': { periods: [100, 50], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -585,33 +585,31 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
-			if (close > emaFast) {
-				if (adxPlusDI > adxMinusDI) {
-					marketType = '趋势多';
-					if (rsi > 80) {
-						marketType = '趋势空';
-					} else if (rsi > 70) {
-						marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
-					} else if (rsi < rsi_long) {
-						marketType = '趋势多且增强';
-					}
-				}
-			}
+			marketType = '趋势多且增强';
+			// if (adxPlusDI > adxMinusDI) {
+			// 	marketType = '趋势多';
+			// 	if (rsi > 80) {
+			// 		marketType = '趋势空';
+			// 	} else if (rsi > 70) {
+			// 		marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
+			// 	} else if (rsi < rsi_long) {
+			// 		marketType = '趋势多且增强';
+			// 	}
+			// }
 		}
 
 		if (emaFast < emaSlow) {
-			if (close < emaFast) {
-				if (adxPlusDI < adxMinusDI) {
-					marketType = '趋势空';
-					if (rsi < 20) {
-						marketType = '趋势多';
-					} else if (rsi < 30) {
-						marketType = adx >= adx_threshold ? '趋势空' : '趋势多';
-					} else if (rsi > rsi_short) {
-						marketType = '趋势空且增强';
-					}
-				}
-			}
+			marketType = '趋势空且增强';
+			// if (adxPlusDI < adxMinusDI) {
+			// 	marketType = '趋势空';
+			// 	if (rsi < 20) {
+			// 		marketType = '趋势多';
+			// 	} else if (rsi < 30) {
+			// 		marketType = adx >= adx_threshold ? '趋势空' : '趋势多';
+			// 	} else if (rsi > rsi_short) {
+			// 		marketType = '趋势空且增强';
+			// 	}
+			// }
 		}
 
 		// if (adx < adx_threshold - adx_stoploss_distance)
