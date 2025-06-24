@@ -494,8 +494,8 @@ class Backtester {
 						const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
 						// const isVolatility = d.adx > 40;
-						d.rsi_long = d.adx > 40 ? 42 : 45;
-						d.rsi_short = d.adx > 40 ? 58 : 55;
+						d.rsi_long = d.adx > 40 ? 42 : 55;
+						d.rsi_short = d.adx > 40 ? 58 : 45;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 32 : 28;
@@ -587,7 +587,7 @@ class Backtester {
 						marketType = '趋势多且增强-L-1-1';
 					}
 					if (
-						(rsi < rsi_long - 5 || rsi > rsi_long + 5) &&
+						(rsi < rsi_long - 5 || rsi > rsi_long + 15) &&
 						emaSlope < 0
 					) {
 						marketType = '趋势空';
@@ -612,7 +612,7 @@ class Backtester {
 						marketType = '趋势空且增强-R-1-1';
 					}
 					if (
-						(rsi > rsi_short + 5 || rsi < rsi_short - 5) &&
+						(rsi > rsi_short + 5 || rsi < rsi_short - 15) &&
 						emaSlope > 0
 					) {
 						marketType = '趋势多';
