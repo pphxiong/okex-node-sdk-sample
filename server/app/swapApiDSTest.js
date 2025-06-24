@@ -620,6 +620,14 @@ class Backtester {
 			// }
 		}
 
+		if (close > emaSlow) {
+			marketType = '趋势多';
+		}
+
+		if (close < emaSlow) {
+			marketType = '趋势空';
+		}
+
 		// if (adx < adx_threshold - adx_stoploss_distance)
 		// 	marketType = '趋势多趋势空';
 
