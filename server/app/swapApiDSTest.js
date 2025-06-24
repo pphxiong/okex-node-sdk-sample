@@ -591,6 +591,7 @@ class Backtester {
 					marketType = '趋势多且增强';
 				}
 			} else {
+				marketType = '趋势空';
 				if (close < emaSlow) {
 					marketType = '趋势空';
 				}
@@ -615,6 +616,7 @@ class Backtester {
 					marketType = '趋势空且增强';
 				}
 			} else {
+				marketType = '趋势多';
 				if (close > emaSlow) {
 					marketType = '趋势多';
 				}
@@ -1070,7 +1072,7 @@ class Backtester {
 		this.balance += profit - fee;
 		this.totalFee += fee;
 		this.trades.push({
-			positionSize,
+			// positionSize,
 			size: position.size,
 			direction: position.direction,
 			entry: position.entryPrice,
@@ -1081,10 +1083,12 @@ class Backtester {
 			// exitMarketType: `${fastMarketType},${slowMarketType}`,
 			entryMarketType: `${position.slowMarketType}`,
 			exitMarketType: `${slowMarketType}`,
-			duration: `${(
-				(exitCandle.timestamp - position.entryTime) /
-				(1000 * 60 * 60)
-			).toFixed(1)}h`,
+			entryAdx: `${position.adx}`,
+			exitAdx: `${exitCandle.adx}`,
+			// duration: `${(
+			// 	(exitCandle.timestamp - position.entryTime) /
+			// 	(1000 * 60 * 60)
+			// ).toFixed(1)}h`,
 			entryTime: moment(position.entryTime).format('YYYY-MM-DD HH:mm:ss'),
 			exitTime: moment(exitCandle.timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
