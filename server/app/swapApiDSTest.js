@@ -502,8 +502,8 @@ class Backtester {
 						// const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
 						const isVolatility = d.adx > 40;
-						d.rsi_long = d.adx > 40 ? 45 : 55;
-						d.rsi_short = d.adx > 40 ? 55 : 45;
+						d.rsi_long = d.adx > 40 ? 45 : 60;
+						d.rsi_short = d.adx > 40 ? 55 : 40;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 28;
@@ -585,47 +585,23 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (emaFast > emaSlow) {
-			// marketType = '趋势多';
-			if (adx > adx_threshold) {
-				marketType =
-					adxPlusDI > adxMinusDI
-						? '趋势多且增强-L-1-1'
-						: '趋势空且增强-L-1-1';
+			if (adxPlusDI > adxMinusDI) {
+				if (rsi > 70) {
+					marketType = adx >= adx_threshold ? '趋势多' : '趋势空';
+				} else if (rsi < rsi_long) {
+					marketType = '趋势多且增强';
+				}
 			}
-
-			// marketType = '趋势多';
-			// if (adx > adx_threshold) {
-			// 	if (adxPlusDI > adxMinusDI) {
-			// 		if (rsi < rsi_long) {
-			// 			marketType = '趋势多且增强-L-1-1';
-			// 		}
-			// 		if (rsi > 70) marketType = '趋势空';
-			// 	} else if (adxPlusDI < adxMinusDI) {
-			// 		// if (rsi < 30) marketType = '趋势空';
-			// 	}
-			// }
 		}
 
 		if (emaFast < emaSlow) {
-			// marketType = '趋势空';
-			if (adx > adx_threshold) {
-				marketType =
-					adxPlusDI < adxMinusDI
-						? '趋势空且增强-R-1-1'
-						: '趋势多且增强-R-1-1';
+			if (adxPlusDI < adxMinusDI) {
+				if (rsi < 30) {
+					marketType = adx >= adx_threshold ? '趋势空' : '趋势多';
+				} else if (rsi > rsi_short) {
+					marketType = '趋势空且增强';
+				}
 			}
-
-			// marketType = '趋势空';
-			// if (adx > adx_threshold) {
-			// 	if (adxPlusDI < adxMinusDI) {
-			// 		if (rsi > rsi_short) {
-			// 			marketType = '趋势空且增强-R-1-1';
-			// 		}
-			// 		if (rsi < 30) marketType = '趋势多';
-			// 	} else if (adxPlusDI > adxMinusDI) {
-			// 		// if (rsi > 70) marketType = '趋势多';
-			// 	}
-			// }
 		}
 
 		// if (adx < adx_threshold - adx_stoploss_distance)
