@@ -633,9 +633,9 @@ class Backtester {
 			}
 		}
 
-		// if (adx < adx_threshold) {
-		// 	marketType = '趋势多趋势空';
-		// }
+		if (adx < adx_threshold) {
+			marketType = '趋势多趋势空';
+		}
 
 		return marketType;
 	}
@@ -1260,7 +1260,7 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-01-01';
+	const start = '2021-01-01';
 	// const start = '2021-01-01';
 	const end = '2025-06-01';
 	const interval = 30;
