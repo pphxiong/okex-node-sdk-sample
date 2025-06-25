@@ -1079,6 +1079,8 @@ class Backtester {
 			exitAdx: `${exitCandle.adx}`,
 			entryRSI: `${position.rsi}`,
 			exitRSI: `${exitCandle.rsi}`,
+			entryEmaSlope: `${position.emaSlope}`,
+			exitEmaSlope: `${exitCandle.emaSlope}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
