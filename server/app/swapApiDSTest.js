@@ -589,7 +589,7 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx > adx_threshold && volatility_ratio > 0.02) {
+			if (adx > adx_threshold && volatility_ratio > 0.015) {
 				if (close > emaSlow && rsi < rsi_long && rsi > rsi_long - 10) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -603,7 +603,7 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (adx > adx_threshold && volatility_ratio > 0.02) {
+			if (adx > adx_threshold && volatility_ratio > 0.015) {
 				if (
 					close < emaSlow &&
 					rsi > rsi_short &&
