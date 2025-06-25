@@ -1095,6 +1095,8 @@ class Backtester {
 			exitVolatilityRatio: `${exitCandle.volatility_ratio}`,
 			entryMacd: `${position.macdHistogram}`,
 			exitMacd: `${exitCandle.macdHistogram}`,
+			entryEmaScope: `${position.emaScope}`,
+			exitEmaScope: `${exitCandle.emaScope}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
