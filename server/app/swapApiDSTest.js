@@ -1078,8 +1078,8 @@ class Backtester {
 			entryAdx: `${position.adx}`,
 			exitAdx: `${exitCandle.adx}`,
 			entryRSI: `${position.rsi}`,
-			exitRSI: `${exitCandle.rsi}`,
-			entryATR: `${position.atr}`,
+			exitAdxPlusDI: `${exitCandle.adxPlusDI}`,
+			entryAdxPlusDI: `${position.adxPlusDI}`,
 			exitATR: `${exitCandle.atr}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
