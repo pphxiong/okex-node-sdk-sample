@@ -602,7 +602,8 @@ class Backtester {
 					adxPlusDI > 20 &&
 					// macd > -0.001 &&
 					volatility_ratio < 0.01 &&
-					volatility_ratio > 0.01 / 3
+					volatility_ratio > 0.01 / 3 &&
+					emaSlope < config.emaSlope.emaSlopeThreshold / 2
 				) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -624,7 +625,8 @@ class Backtester {
 					adxMinusDI > 20 &&
 					// macd < 0.001 &&
 					volatility_ratio < 0.01 &&
-					volatility_ratio > 0.01 / 3
+					volatility_ratio > 0.01 / 3 &&
+					emaSlope > -config.emaSlope.emaSlopeThreshold / 2
 				) {
 					marketType = '趋势空且增强';
 				} else if (close > emaSlow) {
