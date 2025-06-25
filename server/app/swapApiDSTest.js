@@ -867,6 +867,8 @@ class Backtester {
 				];
 
 				const shortCloseConditions = [
+					position.slowMarketType.indexOf('趋势空且增强') !== -1 &&
+						position.adx - adx > 5,
 					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
 						slowMarketType.indexOf('趋势多') !== -1,
 					position.slowMarketType === '趋势潜在减弱' &&
