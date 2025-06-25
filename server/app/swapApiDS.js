@@ -40,7 +40,7 @@ const config = {
 	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [100, 20], slopeWindow: 5 },
+		'15m': { periods: [125, 25], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] },
@@ -139,6 +139,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		stop_multiplier,
 		adx_threshold,
 		adx_stoploss_distance,
+		volatility_ratio,
 	} = candle;
 	const {
 		emaFast: lastEmaFast,
@@ -163,8 +164,17 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	if (emaFast > emaSlow) {
 		marketType = '趋势多';
-		if (adx > adx_threshold) {
-			if (close > emaSlow && rsi < rsi_long && rsi > rsi_long - 10) {
+		if (adx > adx_threshold && volatility_ratio > 0.01 / 2) {
+			if (
+				close > emaSlow &&
+				rsi < rsi_long &&
+				rsi > rsi_long - 10 &&
+				adxMinusDI < 25 &&
+				Math.abs(adxPlusDI - adxMinusDI) < 6 &&
+				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
+				macd > -0.001 &&
+				volatility_ratio < 0.01
+			) {
 				marketType = '趋势多且增强';
 			} else if (close < emaSlow) {
 				marketType = '趋势空';
@@ -174,8 +184,18 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	if (emaFast < emaSlow) {
 		marketType = '趋势空';
-		if (adx > adx_threshold) {
-			if (close < emaSlow && rsi > rsi_short && rsi < rsi_short + 10) {
+		if (adx > adx_threshold && volatility_ratio > 0.01 / 2) {
+			if (
+				close < emaSlow &&
+				rsi > rsi_short &&
+				rsi < rsi_short + 10 &&
+				adxPlusDI < 25 &&
+				Math.abs(adxPlusDI - adxMinusDI) < 6 &&
+				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
+				adxMinusDI > 20 &&
+				macd < 0.001 &&
+				volatility_ratio < 0.01
+			) {
 				marketType = '趋势空且增强';
 			} else if (close > emaSlow) {
 				marketType = '趋势多';
@@ -361,12 +381,14 @@ async function calculateIndicators() {
 				d.emaFast = emaFast[0][i];
 				if (d.adx && d.atr) {
 					// const isVolatility = d.atr / d.close > 0.02;
+					const volatility_ratio = d.atr / d.close;
 					const isVolatility = d.adx > 30;
 					d.rsi_long = d.adx > 30 ? 48 : 58;
 					d.rsi_short = d.adx > 30 ? 58 : 42;
 					d.stop_multiplier = isVolatility ? 3 : 2.5;
-					d.adx_threshold = isVolatility ? 30 : 28;
+					d.adx_threshold = isVolatility ? 30 : 26;
 					d.adx_stoploss_distance = isVolatility ? 5 : 3;
+					d.volatility_ratio = volatility_ratio;
 				}
 				d.marketType = getMarketType(
 					d,
