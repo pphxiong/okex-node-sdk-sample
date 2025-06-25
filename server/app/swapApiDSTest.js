@@ -595,7 +595,7 @@ class Backtester {
 				if (
 					close > emaSlow &&
 					rsi < rsi_long &&
-					rsi > rsi_long - 8 &&
+					rsi > rsi_long - 10 &&
 					adxMinusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
@@ -617,7 +617,7 @@ class Backtester {
 				if (
 					close < emaSlow &&
 					rsi > rsi_short &&
-					rsi < rsi_short + 8 &&
+					rsi < rsi_short + 10 &&
 					adxPlusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
@@ -1258,7 +1258,7 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-01-01';
+	const start = '2025-01-01';
 	// const start = '2021-01-01';
 	const end = '2025-07-01';
 	const interval = 30;
@@ -1273,8 +1273,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
