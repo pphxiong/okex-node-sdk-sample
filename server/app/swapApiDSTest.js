@@ -594,7 +594,8 @@ class Backtester {
 					close > emaSlow &&
 					rsi < rsi_long &&
 					rsi > rsi_long - 10 &&
-					adxMinusDI < 25
+					adxMinusDI < 25 &&
+					Math.abs(adxPlusDI - adxMinusDI) < 7
 				) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -613,7 +614,8 @@ class Backtester {
 					close < emaSlow &&
 					rsi > rsi_short &&
 					rsi < rsi_short + 10 &&
-					adxPlusDI < 25
+					adxPlusDI < 25 &&
+					Math.abs(adxPlusDI - adxMinusDI) < 7
 				) {
 					marketType = '趋势空且增强';
 				} else if (close > emaSlow) {
@@ -1080,8 +1082,8 @@ class Backtester {
 			entryRSI: `${position.rsi}`,
 			exitRSI: `${exitCandle.rsi}`,
 			entryAdxPlusDI: `${position.adxPlusDI}`,
-			exitAdxPlusDI: `${exitCandle.adxPlusDI}`,
 			entryAdxMinusDI: `${position.adxMinusDI}`,
+			exitAdxPlusDI: `${exitCandle.adxPlusDI}`,
 			exitAdxMinusDI: `${exitCandle.adxMinusDI}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
