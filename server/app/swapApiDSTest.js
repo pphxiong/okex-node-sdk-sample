@@ -600,7 +600,6 @@ class Backtester {
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 					adxPlusDI > 20 &&
-					adxPlusDI < 25 &&
 					// macd > -0.001 &&
 					volatility_ratio < 0.01 &&
 					volatility_ratio > 0.01 / 3
@@ -623,7 +622,6 @@ class Backtester {
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 					adxMinusDI > 20 &&
-					adxMinusDI < 25 &&
 					// macd < 0.001 &&
 					volatility_ratio < 0.01 &&
 					volatility_ratio > 0.01 / 3
@@ -1095,8 +1093,8 @@ class Backtester {
 			exitAdxMinusDI: `${exitCandle.adxMinusDI}`,
 			entryVolatilityRatio: `${position.volatility_ratio}`,
 			exitVolatilityRatio: `${exitCandle.volatility_ratio}`,
-			// entryMacd: `${position.macdHistogram}`,
-			// exitMacd: `${exitCandle.macdHistogram}`,
+			entryMacd: `${position.macdHistogram}`,
+			exitMacd: `${exitCandle.macdHistogram}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
