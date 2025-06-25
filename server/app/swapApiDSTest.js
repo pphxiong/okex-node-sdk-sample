@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [125, 25], slopeWindow: 5 },
+		'15m': { periods: [100, 10], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -595,7 +595,7 @@ class Backtester {
 				if (
 					close > emaSlow &&
 					rsi < rsi_long &&
-					rsi > rsi_long - 10 &&
+					rsi > rsi_long - 15 &&
 					// adxMinusDI < 25 &&
 					// Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
@@ -616,7 +616,7 @@ class Backtester {
 				if (
 					close < emaSlow &&
 					rsi > rsi_short &&
-					rsi < rsi_short + 10 &&
+					rsi < rsi_short + 15 &&
 					// adxPlusDI < 25 &&
 					// Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&

@@ -168,7 +168,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if (
 				close > emaSlow &&
 				rsi < rsi_long &&
-				rsi > rsi_long - 10 &&
+				rsi > rsi_long - 15 &&
 				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 				volatility_ratio < 0.01
 			) {
@@ -185,7 +185,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if (
 				close < emaSlow &&
 				rsi > rsi_short &&
-				rsi < rsi_short + 10 &&
+				rsi < rsi_short + 15 &&
 				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 				volatility_ratio < 0.01
 			) {
