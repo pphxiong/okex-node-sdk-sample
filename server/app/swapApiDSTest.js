@@ -504,7 +504,7 @@ class Backtester {
 						const volatility_ratio = d.atr / d.close;
 						const isVolatility = volatility_ratio > 0.01;
 						d.rsi_long = d.adx > 30 ? 48 : 58;
-						d.rsi_short = d.adx > 30 ? 58 : 42;
+						d.rsi_short = d.adx > 30 ? 52 : 42;
 						// d.rsi_long = d.adx > 40 ? 42 : d.adx > 30 ? 48 : 58;
 						// d.rsi_short = d.adx > 40 ? 64 : d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
@@ -595,7 +595,7 @@ class Backtester {
 				if (
 					close > emaSlow &&
 					rsi < rsi_long &&
-					rsi > rsi_long - 10 &&
+					// rsi > rsi_long - 10 &&
 					// adxMinusDI < 25 &&
 					// Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
@@ -616,7 +616,7 @@ class Backtester {
 				if (
 					close < emaSlow &&
 					rsi > rsi_short &&
-					rsi < rsi_short + 10 &&
+					// rsi < rsi_short + 10 &&
 					// adxPlusDI < 25 &&
 					// Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
