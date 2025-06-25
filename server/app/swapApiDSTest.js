@@ -599,7 +599,7 @@ class Backtester {
 					adxMinusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-					// adxPlusDI > 20 &&
+					adxPlusDI > 20 &&
 					// macd > -0.001 &&
 					volatility_ratio < 0.01 &&
 					volatility_ratio > 0.01 / 3
@@ -621,7 +621,7 @@ class Backtester {
 					adxPlusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-					// adxMinusDI > 20 &&
+					adxMinusDI > 20 &&
 					// macd < 0.001 &&
 					volatility_ratio < 0.01 &&
 					volatility_ratio > 0.01 / 3
