@@ -169,10 +169,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				close > emaSlow &&
 				rsi < rsi_long &&
 				rsi > rsi_long - 10 &&
-				adxMinusDI < 25 &&
-				Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-				macd > -0.001 &&
 				volatility_ratio < 0.01
 			) {
 				marketType = '趋势多且增强';
@@ -189,11 +186,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				close < emaSlow &&
 				rsi > rsi_short &&
 				rsi < rsi_short + 10 &&
-				adxPlusDI < 25 &&
-				Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-				adxMinusDI > 20 &&
-				macd < 0.001 &&
 				volatility_ratio < 0.01
 			) {
 				marketType = '趋势空且增强';
