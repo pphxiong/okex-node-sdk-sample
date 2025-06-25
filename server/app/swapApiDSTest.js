@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [100, 20], slopeWindow: 5 },
+		'15m': { periods: [50, 10], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -511,7 +511,7 @@ class Backtester {
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
-						d.volatility_ratio = d.atr / d.close;
+						d.volatility_ratio = volatility_ratio;
 
 						d.is_latest_has_rsi_long = this.data[tf]
 							.slice(i - 4, i + 1)
@@ -599,10 +599,9 @@ class Backtester {
 					adxMinusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
+					// adxPlusDI > 20 &&
 					macd > -0.001 &&
 					volatility_ratio < 0.01
-					// adxPlusDI > adxMinusDI
-					// adxPlusDI > 20
 				) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -624,7 +623,6 @@ class Backtester {
 					adxPlusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 6 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-					// adxPlusDI < adxMinusDI
 					adxMinusDI > 20 &&
 					macd < 0.001 &&
 					volatility_ratio < 0.01
