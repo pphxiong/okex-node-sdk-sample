@@ -633,9 +633,9 @@ class Backtester {
 			}
 		}
 
-		if (adx < adx_threshold) {
-			marketType = '趋势多趋势空';
-		}
+		// if (adx < adx_threshold) {
+		// 	marketType = '趋势多趋势空';
+		// }
 
 		return marketType;
 	}
@@ -827,8 +827,8 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 
 				const longCloseConditions = [
-					// position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
-					// 	position.adx - adx > 5,
+					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+						position.adx - adx > 5,
 					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 						slowMarketType.indexOf('趋势空') !== -1,
 					position.slowMarketType === '趋势潜在增强' &&
