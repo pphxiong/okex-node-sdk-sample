@@ -1095,6 +1095,8 @@ class Backtester {
 			entryAdxMinusDI: `${position.adxMinusDI}`,
 			exitAdxPlusDI: `${exitCandle.adxPlusDI}`,
 			exitAdxMinusDI: `${exitCandle.adxMinusDI}`,
+			entryVolatilityRatio: `${position.volatility_ratio}`,
+			exitVolatilityRatio: `${exitCandle.volatility_ratio}`,
 			// entryMacd: `${position.macdHistogram}`,
 			// exitMacd: `${exitCandle.macdHistogram}`,
 			// duration: `${(
