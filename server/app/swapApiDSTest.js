@@ -507,8 +507,9 @@ class Backtester {
 						d.rsi_short = d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 30 : 28;
+						d.adx_threshold = isVolatility ? 30 : 26;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
+						d.volatility_ratio = d.atr / d.close;
 
 						d.is_latest_has_rsi_long = this.data[tf]
 							.slice(i - 4, i + 1)
@@ -557,6 +558,7 @@ class Backtester {
 			adx_stoploss_distance,
 			is_latest_has_rsi_long,
 			is_latest_has_rsi_short,
+			volatility_ratio,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -587,7 +589,7 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx > adx_threshold) {
+			if (adx > adx_threshold && volatility_ratio > 0.02) {
 				if (close > emaSlow && rsi < rsi_long && rsi > rsi_long - 10) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -601,8 +603,12 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (adx > adx_threshold) {
-				if (close < emaSlow && rsi > rsi_short && rsi < rsi_short + 10) {
+			if (adx > adx_threshold && volatility_ratio > 0.02) {
+				if (
+					close < emaSlow &&
+					rsi > rsi_short &&
+					rsi < rsi_short + 10
+				) {
 					marketType = '趋势空且增强';
 				} else if (close > emaSlow) {
 					marketType = '趋势多';
