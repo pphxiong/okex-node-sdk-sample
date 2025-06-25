@@ -594,7 +594,7 @@ class Backtester {
 					close > emaSlow &&
 					rsi < rsi_long &&
 					rsi > rsi_long - 10 &&
-					adxMinusDI < 25 &&
+					adxMinusDI < 20 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 6
 					// adxPlusDI > adxMinusDI
 					// adxPlusDI > 20
@@ -616,7 +616,7 @@ class Backtester {
 					close < emaSlow &&
 					rsi > rsi_short &&
 					rsi < rsi_short + 10 &&
-					adxPlusDI < 25 &&
+					adxPlusDI < 20 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 6
 					// adxPlusDI < adxMinusDI
 					// adxMinusDI > 20
