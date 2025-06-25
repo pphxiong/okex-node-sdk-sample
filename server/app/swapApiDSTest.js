@@ -509,7 +509,7 @@ class Backtester {
 						// d.rsi_short = d.adx > 40 ? 64 : d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 28 : 25;
+						d.adx_threshold = isVolatility ? 30 : 25;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 						d.volatility_ratio = volatility_ratio;
 
@@ -1260,8 +1260,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
-	// const start = '2021-01-01';
+	// const start = '2025-01-01';
+	const start = '2021-01-01';
 	const end = '2025-07-01';
 	const interval = 30;
 	let profitTotal = 0;
