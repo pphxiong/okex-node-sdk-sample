@@ -596,10 +596,11 @@ class Backtester {
 					close > emaSlow &&
 					rsi < rsi_long &&
 					rsi > rsi_long - 15 &&
-					adxMinusDI < 20 &&
+					adxMinusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 					adxPlusDI > 20 &&
+					adxPlusDI < 25 &&
 					// macd > -0.001 &&
 					volatility_ratio < 0.01 &&
 					volatility_ratio > 0.01 / 3
@@ -618,10 +619,11 @@ class Backtester {
 					close < emaSlow &&
 					rsi > rsi_short &&
 					rsi < rsi_short + 15 &&
-					adxPlusDI < 20 &&
+					adxPlusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 					adxMinusDI > 20 &&
+					adxMinusDI < 25 &&
 					// macd < 0.001 &&
 					volatility_ratio < 0.01 &&
 					volatility_ratio > 0.01 / 3
