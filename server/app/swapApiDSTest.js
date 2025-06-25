@@ -503,10 +503,10 @@ class Backtester {
 						// const isVolatility = d.atr / d.close > 0.02;
 						const volatility_ratio = d.atr / d.close;
 						const isVolatility = d.adx > 30;
-						// d.rsi_long = d.adx > 30 ? 48 : 58;
-						// d.rsi_short = d.adx > 30 ? 58 : 42;
-						d.rsi_long = d.adx > 40 ? 42 : d.adx > 30 ? 48 : 58;
-						d.rsi_short = d.adx > 40 ? 64 : d.adx > 30 ? 58 : 42;
+						d.rsi_long = d.adx > 30 ? 48 : 58;
+						d.rsi_short = d.adx > 30 ? 58 : 42;
+						// d.rsi_long = d.adx > 40 ? 42 : d.adx > 30 ? 48 : 58;
+						// d.rsi_short = d.adx > 40 ? 64 : d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
 						d.adx_threshold = isVolatility ? 30 : 26;
@@ -1262,7 +1262,7 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
+	const start = '2024-01-01';
 	// const start = '2021-01-01';
 	const end = '2025-07-01';
 	const interval = 30;
@@ -1277,8 +1277,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
