@@ -601,7 +601,8 @@ class Backtester {
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 					// adxPlusDI > 20 &&
 					// macd > -0.001 &&
-					volatility_ratio < 0.01
+					volatility_ratio < 0.01 &&
+					volatility_ratio > 0.01 / 2
 				) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -622,7 +623,8 @@ class Backtester {
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
 					// adxMinusDI > 20 &&
 					// macd < 0.001 &&
-					volatility_ratio < 0.01
+					volatility_ratio < 0.01 &&
+					volatility_ratio > 0.01 / 2
 				) {
 					marketType = '趋势空且增强';
 				} else if (close > emaSlow) {
