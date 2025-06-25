@@ -634,7 +634,7 @@ class Backtester {
 		}
 
 		if (adx < adx_threshold) {
-			// marketType = '趋势多趋势空';
+			marketType = '趋势多趋势空';
 		}
 
 		return marketType;
