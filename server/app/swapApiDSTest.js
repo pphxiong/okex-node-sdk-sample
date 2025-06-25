@@ -591,44 +591,44 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx > adx_threshold && adx < adx_threshold + 5) {
+			if (adx > adx_threshold) {
 				if (
 					close > emaSlow &&
-					// rsi < rsi_long &&
+					rsi < rsi_long &&
 					rsi > rsi_long - 10 &&
-					// adxMinusDI < 25 &&
-					// Math.abs(adxPlusDI - adxMinusDI) < 8 &&
+					adxMinusDI < 25 &&
+					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-					// adxPlusDI > 20 &&
+					adxPlusDI > 20 &&
 					// macd > -0.001 &&
-					// volatility_ratio > 0.01 / 3 &&
-					volatility_ratio < 0.01
+					volatility_ratio < 0.01 &&
+					volatility_ratio > 0.01 / 3
 				) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
-					// marketType = '趋势空';
+					marketType = '趋势空';
 				}
 			}
 		}
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (adx > adx_threshold && adx < adx_threshold + 5) {
+			if (adx > adx_threshold) {
 				if (
 					close < emaSlow &&
-					// rsi > rsi_short &&
+					rsi > rsi_short &&
 					rsi < rsi_short + 10 &&
-					// adxPlusDI < 25 &&
-					// Math.abs(adxPlusDI - adxMinusDI) < 8 &&
+					adxPlusDI < 25 &&
+					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
 					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-					// adxMinusDI > 20 &&
+					adxMinusDI > 20 &&
 					// macd < 0.001 &&
-					// volatility_ratio > 0.01 / 3 &&
-					volatility_ratio < 0.01
+					volatility_ratio < 0.01 &&
+					volatility_ratio > 0.01 / 3
 				) {
 					marketType = '趋势空且增强';
 				} else if (close > emaSlow) {
-					// marketType = '趋势多';
+					marketType = '趋势多';
 				}
 			}
 		}
@@ -1260,7 +1260,7 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2021-01-01';
+	const start = '2025-01-01';
 	// const start = '2021-01-01';
 	const end = '2025-06-01';
 	const interval = 30;
