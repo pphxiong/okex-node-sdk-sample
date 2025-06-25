@@ -596,7 +596,8 @@ class Backtester {
 					rsi > rsi_long - 10 &&
 					adxMinusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 7 &&
-					adxPlusDI > 20
+					adxPlusDI > adxMinusDI
+					// adxPlusDI > 20
 				) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -617,7 +618,8 @@ class Backtester {
 					rsi < rsi_short + 10 &&
 					adxPlusDI < 25 &&
 					Math.abs(adxPlusDI - adxMinusDI) < 7 &&
-					adxMinusDI > 20
+					adxPlusDI < adxMinusDI
+					// adxMinusDI > 20
 				) {
 					marketType = '趋势空且增强';
 				} else if (close > emaSlow) {
