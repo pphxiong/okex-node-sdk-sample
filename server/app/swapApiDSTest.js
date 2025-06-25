@@ -1077,7 +1077,7 @@ class Backtester {
 			exit: exitCandle.close,
 			profit: profit - fee,
 			// fee,
-			// entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
+			entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
 			// exitMarketType: `${fastMarketType},${slowMarketType}`,
 			// entryMarketType: `${position.slowMarketType}`,
 			// exitMarketType: `${slowMarketType}`,
