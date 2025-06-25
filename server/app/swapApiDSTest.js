@@ -507,7 +507,7 @@ class Backtester {
 						d.rsi_short = d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 30 : 26;
+						d.adx_threshold = isVolatility ? 30 : 28;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 						d.volatility_ratio = d.atr / d.close;
 
@@ -589,7 +589,7 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx > adx_threshold && volatility_ratio > 0.004) {
+			if (adx > adx_threshold && volatility_ratio > 0.01 / 2) {
 				if (close > emaSlow && rsi < rsi_long && rsi > rsi_long - 10) {
 					marketType = '趋势多且增强';
 				} else if (close < emaSlow) {
@@ -603,7 +603,7 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (adx > adx_threshold && volatility_ratio > 0.004) {
+			if (adx > adx_threshold && volatility_ratio > 0.01 / 2) {
 				if (
 					close < emaSlow &&
 					rsi > rsi_short &&
