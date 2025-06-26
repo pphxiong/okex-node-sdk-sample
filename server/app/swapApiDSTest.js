@@ -596,11 +596,6 @@ class Backtester {
 					marketType = '趋势多且增强';
 				}
 			}
-
-			// if (adx > adx_threshold) {
-			// 	marketType =
-			// 		adxPlusDI > adxMinusDI ? '趋势多且增强' : '趋势空且增强';
-			// }
 			if (adx < adx_threshold) {
 				if (adxPlusDI < adxMinusDI) {
 					if (emaFast > emaSlow) marketType = '趋势多且增强';
@@ -620,11 +615,6 @@ class Backtester {
 					marketType = '趋势空且增强';
 				}
 			}
-
-			// if (adx > adx_threshold) {
-			// 	marketType =
-			// 		adxPlusDI > adxMinusDI ? '趋势多且增强' : '趋势空且增强';
-			// }
 			if (adx < adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
 					if (emaFast < emaSlow) marketType = '趋势空且增强';
@@ -1260,8 +1250,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
-	// const start = '2021-01-01';
+	// const start = '2025-01-01';
+	const start = '2021-01-01';
 	const end = '2025-06-01';
 	const interval = 30;
 	let profitTotal = 0;
