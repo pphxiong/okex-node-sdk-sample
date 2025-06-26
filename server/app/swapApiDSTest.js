@@ -596,7 +596,10 @@ class Backtester {
 					if (close < emaFast) {
 						marketType = '趋势多且增强';
 					}
-					if (close > emaFast && adxPlusDI < 20) {
+					if (
+						close > emaFast &&
+						Math.abs(adxPlusDI - adxMinusDI) < 20
+					) {
 						marketType = '趋势多且增强';
 					}
 				}
@@ -621,7 +624,10 @@ class Backtester {
 					if (close > emaFast) {
 						marketType = '趋势空且增强';
 					}
-					if (close < emaFast && adxMinusDI < 20) {
+					if (
+						close < emaFast &&
+						Math.abs(adxPlusDI - adxMinusDI) < 20
+					) {
 						marketType = '趋势空且增强';
 					}
 				}
