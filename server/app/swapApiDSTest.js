@@ -1067,10 +1067,10 @@ class Backtester {
 			exitAdxMinusDI: `${exitCandle.adxMinusDI}`,
 			entryVolatilityRatio: `${position.volatility_ratio}`,
 			exitVolatilityRatio: `${exitCandle.volatility_ratio}`,
-			entryMacd: `${position.macdHistogram}`,
-			exitMacd: `${exitCandle.macdHistogram}`,
-			entryEmaSlope: `${position.emaSlope}`,
-			exitEmaSlope: `${exitCandle.emaSlope}`,
+			// entryMacd: `${position.macdHistogram}`,
+			// exitMacd: `${exitCandle.macdHistogram}`,
+			// entryEmaSlope: `${position.emaSlope}`,
+			// exitEmaSlope: `${exitCandle.emaSlope}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
