@@ -162,42 +162,42 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (emaFast > emaSlow) {
+	if (close > emaSlow) {
 		marketType = '趋势多';
-		if (adx > adx_threshold) {
-			if (
-				close > emaSlow &&
-				rsi < rsi_long &&
-				rsi > rsi_long - 15 &&
-				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-				volatility_ratio < 0.01
-			) {
-				marketType = '趋势多且增强';
-			} else if (close < emaSlow) {
-				marketType = '趋势空';
+		if (close > emaFast) {
+			marketType = '趋势多且增强';
+		}
+		if (adx > adx_threshold + 10) {
+			if (adxPlusDI > adxMinusDI)
+				marketType = emaFast > emaSlow ? '趋势空' : '趋势多';
+		}
+		if (adx < adx_threshold) {
+			if (adxPlusDI > adxMinusDI) {
+				marketType =
+					emaFast > emaSlow
+						? close > emaFast
+							? '趋势多'
+							: '趋势空'
+						: '趋势多';
 			}
 		}
 	}
 
-	if (emaFast < emaSlow) {
+	if (close < emaSlow) {
 		marketType = '趋势空';
-		if (adx > adx_threshold) {
-			if (
-				close < emaSlow &&
-				rsi > rsi_short &&
-				rsi < rsi_short + 15 &&
-				Math.abs(adxPlusDI - adxMinusDI) > 1 &&
-				volatility_ratio < 0.01
-			) {
-				marketType = '趋势空且增强';
-			} else if (close > emaSlow) {
-				marketType = '趋势多';
+		if (close < emaFast) {
+			marketType = '趋势空且增强';
+		}
+		if (adx < adx_threshold) {
+			if (adxPlusDI < adxMinusDI) {
+				marketType =
+					emaFast > emaSlow
+						? close > emaFast
+							? '趋势多'
+							: '趋势空'
+						: '趋势多';
 			}
 		}
-	}
-
-	if (adx < adx_threshold) {
-		marketType = '趋势多趋势空';
 	}
 
 	return marketType;
@@ -376,8 +376,8 @@ async function calculateIndicators() {
 					// const isVolatility = d.adx > 30;
 					const volatility_ratio = d.atr / d.close;
 					const isVolatility = volatility_ratio > 0.01;
-					d.rsi_long = d.adx > 30 ? 48 : 58;
-					d.rsi_short = d.adx > 30 ? 58 : 42;
+					d.rsi_long = isVolatility ? 48 : 58;
+					d.rsi_short = isVolatility ? 58 : 48;
 					d.stop_multiplier = isVolatility ? 3 : 2.5;
 					d.adx_threshold = isVolatility ? 30 : 25;
 					d.adx_stoploss_distance = isVolatility ? 5 : 3;
