@@ -603,9 +603,9 @@ class Backtester {
 					marketType =
 						emaFast > emaSlow
 							? close > emaFast
-								? '趋势多且增强'
+								? '趋势多'
 								: '趋势空'
-							: '趋势多';
+							: '趋势多且增强';
 				}
 			}
 		}
@@ -624,9 +624,9 @@ class Backtester {
 					marketType =
 						emaFast < emaSlow
 							? close < emaFast
-								? '趋势空且增强'
+								? '趋势空'
 								: '趋势多'
-							: '趋势空';
+							: '趋势空且增强';
 				}
 			}
 		}
