@@ -589,24 +589,52 @@ class Backtester {
 		const macd_rising = macd > lastMacd;
 		const macd_falling = macd < lastMacd;
 
-		if (close > emaSlow) {
+		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (adx < adx_threshold) {
-				marketType = '趋势多且增强';
-			}
-			if (adx > adx_threshold + 10) {
-				marketType = '趋势空';
+			if (adx > adx_threshold) {
+				if (
+					close > emaSlow &&
+					rsi < rsi_long &&
+					rsi > rsi_long - 10 &&
+					adxMinusDI < 25 &&
+					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
+					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
+					adxPlusDI > 20 &&
+					// macd > -0.001 &&
+					volatility_ratio < 0.01 &&
+					volatility_ratio > 0.01 / 3
+				) {
+					marketType = '趋势多且增强';
+				} else if (close < emaSlow) {
+					marketType = '趋势空';
+				}
 			}
 		}
 
-		if (close < emaSlow) {
+		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (adx < adx_threshold) {
-				marketType = '趋势空且增强';
+			if (adx > adx_threshold) {
+				if (
+					close < emaSlow &&
+					rsi > rsi_short &&
+					rsi < rsi_short + 10 &&
+					adxPlusDI < 25 &&
+					Math.abs(adxPlusDI - adxMinusDI) < 8 &&
+					Math.abs(adxPlusDI - adxMinusDI) > 1 &&
+					adxMinusDI > 20 &&
+					// macd < 0.001 &&
+					volatility_ratio < 0.01 &&
+					volatility_ratio > 0.01 / 3
+				) {
+					marketType = '趋势空且增强';
+				} else if (close > emaSlow) {
+					marketType = '趋势多';
+				}
 			}
-			if (adx > adx_threshold + 10) {
-				marketType = '趋势多';
-			}
+		}
+
+		if (adx < adx_threshold) {
+			marketType = '趋势多趋势空';
 		}
 
 		return marketType;
@@ -1247,8 +1275,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
