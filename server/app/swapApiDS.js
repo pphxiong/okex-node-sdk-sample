@@ -915,17 +915,17 @@ class RiskManager {
 		// console.log('state.slowMarketType', state.slowMarketType);
 		// console.log('slowMarketType', slowMarketType);
 		console.log('side', state.side);
-		if (side === 'buy') {
-			console.log(
-				'state.entryPrice - stopLoss',
-				state.entryPrice - stopLoss
-			);
-		} else {
-			console.log(
-				'state.entryPrice + stopLoss',
-				state.entryPrice + stopLoss
-			);
-		}
+		// if (side === 'buy') {
+		// 	console.log(
+		// 		'state.entryPrice - stopLoss',
+		// 		state.entryPrice - stopLoss
+		// 	);
+		// } else {
+		// 	console.log(
+		// 		'state.entryPrice + stopLoss',
+		// 		state.entryPrice + stopLoss
+		// 	);
+		// }
 		// console.log('fastMarketType', fastMarketType);
 		console.log('isStop', isStop);
 		console.log('***********************************');
