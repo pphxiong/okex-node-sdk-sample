@@ -599,7 +599,7 @@ class Backtester {
 					if (
 						close > emaFast &&
 						adxPlusDI > adxMinusDI &&
-						adxPlusDI - adxMinusDI < 5
+						adxPlusDI - adxMinusDI < 7
 					) {
 						marketType = '趋势多且增强';
 					}
@@ -628,7 +628,7 @@ class Backtester {
 					if (
 						close < emaFast &&
 						adxPlusDI < adxMinusDI &&
-						adxMinusDI - adxPlusDI < 5
+						adxMinusDI - adxPlusDI < 7
 					) {
 						marketType = '趋势空且增强';
 					}
