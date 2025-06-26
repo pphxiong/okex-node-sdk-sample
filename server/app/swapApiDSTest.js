@@ -590,17 +590,20 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		if (close > emaSlow) {
-			if (adx > adx_threshold) marketType = '趋势多';
-			if (close > emaFast && emaFast > emaSlow) {
-				marketType = '趋势多且增强';
+			if (adx > adx_threshold) {
+				marketType = '趋势多';
+				if (close > emaFast && emaFast > emaSlow) {
+					marketType = '趋势多且增强';
+				}
 			}
+
 			// if (adx > adx_threshold) {
 			// 	marketType =
 			// 		adxPlusDI > adxMinusDI ? '趋势多且增强' : '趋势空且增强';
 			// }
 			if (adx < adx_threshold) {
-				if (emaFast > emaSlow && adxPlusDI < adxMinusDI) {
-					marketType = '趋势多且增强';
+				if (adxPlusDI < adxMinusDI) {
+					if (emaFast > emaSlow) marketType = '趋势多且增强';
 				}
 				if (adxPlusDI > adxMinusDI) {
 					if (emaFast > emaSlow && close > emaFast) {
@@ -611,17 +614,20 @@ class Backtester {
 		}
 
 		if (close < emaSlow) {
-			if (adx > adx_threshold) marketType = '趋势空';
-			if (close < emaFast && emaFast < emaSlow) {
-				marketType = '趋势空且增强';
+			if (adx > adx_threshold) {
+				marketType = '趋势空';
+				if (close < emaFast && emaFast < emaSlow) {
+					marketType = '趋势空且增强';
+				}
 			}
+
 			// if (adx > adx_threshold) {
 			// 	marketType =
 			// 		adxPlusDI > adxMinusDI ? '趋势多且增强' : '趋势空且增强';
 			// }
 			if (adx < adx_threshold) {
-				if (emaFast < emaSlow && adxPlusDI > adxMinusDI) {
-					marketType = '趋势空且增强';
+				if (adxPlusDI > adxMinusDI) {
+					if (emaFast < emaSlow) marketType = '趋势空且增强';
 				}
 				if (adxPlusDI < adxMinusDI) {
 					if (emaFast < emaSlow && close < emaFast) {
