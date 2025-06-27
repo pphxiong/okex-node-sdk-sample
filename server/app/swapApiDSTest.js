@@ -636,8 +636,8 @@ class Backtester {
 			}
 			if (adx < adx_threshold) {
 				if (adxPlusDI > adxMinusDI) {
-					if (close < emaSlow && close > emaFast)
-						marketType = '趋势多且增强-R-3';
+					if (close > emaSlow && close > emaFast)
+						marketType = '趋势空且增强-R-3';
 				}
 				if (adxPlusDI < adxMinusDI) {
 					if (emaFast < emaSlow && close < emaFast) {
