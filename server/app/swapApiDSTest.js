@@ -611,7 +611,7 @@ class Backtester {
 					if (close < emaFast) {
 						if (close < emaSlow && adx > 15) {
 							marketType =
-								adxMinusDI < 30
+								adxMinusDI - adxPlusDI < 12
 									? '趋势多且增强-L-3-1'
 									: '趋势多';
 						}
