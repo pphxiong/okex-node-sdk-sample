@@ -162,63 +162,63 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (emaFast > emaSlow) {
-		if (adx > adx_threshold) {
-			marketType = '趋势多';
-			if (close > emaSlow) {
-				if (close < emaFast) {
-					marketType = '趋势多且增强-L-1';
+		if (emaFast > emaSlow) {
+			if (adx > adx_threshold) {
+				marketType = '趋势多';
+				if (close > emaSlow) {
+					if (close < emaFast) {
+						marketType = '趋势多且增强-L-1';
+					}
+					if (
+						close > emaFast &&
+						adxPlusDI > adxMinusDI &&
+						adxPlusDI - adxMinusDI < 5
+					) {
+						marketType = '趋势多且增强-L-2';
+					}
 				}
-				if (
-					close > emaFast &&
-					adxPlusDI > adxMinusDI &&
-					adxPlusDI - adxMinusDI < 5
-				) {
-					marketType = '趋势多且增强-L-2';
+			}
+			if (adx < adx_threshold) {
+				if (adxPlusDI < adxMinusDI) {
+					if (close < emaSlow && close < emaFast)
+						marketType = '趋势多且增强-L-3';
+				}
+				if (adxPlusDI > adxMinusDI) {
+					if (emaFast > emaSlow && close > emaFast) {
+						marketType = '趋势空';
+					}
 				}
 			}
 		}
-		if (adx < adx_threshold) {
-			if (adxPlusDI < adxMinusDI) {
-				if (close < emaSlow && close < emaFast)
-					marketType = '趋势多且增强-L-3';
-			}
-			if (adxPlusDI > adxMinusDI) {
-				if (emaFast > emaSlow && close > emaFast) {
-					marketType = '趋势空';
-				}
-			}
-		}
-	}
 
-	if (emaFast < emaSlow) {
-		if (adx > adx_threshold) {
-			marketType = '趋势空';
-			if (close < emaSlow) {
-				if (close > emaFast) {
-					marketType = '趋势空且增强-R-1';
+		if (emaFast < emaSlow) {
+			if (adx > adx_threshold) {
+				marketType = '趋势空';
+				if (close < emaSlow) {
+					if (close > emaFast) {
+						marketType = '趋势空且增强-R-1';
+					}
+					if (
+						close < emaFast &&
+						adxPlusDI < adxMinusDI &&
+						adxMinusDI - adxPlusDI < 5
+					) {
+						marketType = '趋势空且增强-R-2';
+					}
 				}
-				if (
-					close < emaFast &&
-					adxPlusDI < adxMinusDI &&
-					adxMinusDI - adxPlusDI < 5
-				) {
-					marketType = '趋势空且增强-R-2';
+			}
+			if (adx < adx_threshold) {
+				if (adxPlusDI > adxMinusDI) {
+					if (close < emaSlow && close > emaFast)
+						marketType = '趋势多且增强-R-3';
+				}
+				if (adxPlusDI < adxMinusDI) {
+					if (emaFast < emaSlow && close < emaFast) {
+						marketType = '趋势多';
+					}
 				}
 			}
 		}
-		if (adx < adx_threshold) {
-			if (adxPlusDI > adxMinusDI) {
-				if (close > emaSlow && close > emaFast)
-					marketType = '趋势空且增强-R-3';
-			}
-			if (adxPlusDI < adxMinusDI) {
-				if (emaFast < emaSlow && close < emaFast) {
-					marketType = '趋势多';
-				}
-			}
-		}
-	}
 
 	return marketType;
 }
