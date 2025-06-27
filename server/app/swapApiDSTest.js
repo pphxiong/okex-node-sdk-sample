@@ -595,6 +595,7 @@ class Backtester {
 				if (close > emaSlow) {
 					if (close < emaFast) {
 						marketType =
+							adx < 40 &&
 							adxMinusDI < 25 &&
 							Math.abs(adxPlusDI - adxMinusDI) > 2
 								? '趋势多且增强-L-1'
@@ -637,6 +638,7 @@ class Backtester {
 				if (close < emaSlow) {
 					if (close > emaFast) {
 						marketType =
+							adx < 40 &&
 							adxPlusDI < 25 &&
 							Math.abs(adxPlusDI - adxMinusDI) > 2
 								? '趋势空且增强-R-1'
