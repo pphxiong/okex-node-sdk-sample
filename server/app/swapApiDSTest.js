@@ -611,7 +611,7 @@ class Backtester {
 					if (close < emaFast) {
 						if (close < emaSlow && adx > 15) {
 							marketType =
-								adxMinusDI - adxPlusDI < 12
+								adxMinusDI - adxPlusDI < 12 && adxMinusDI < 25
 									? '趋势多且增强-L-3-1'
 									: '趋势多';
 						}
@@ -650,7 +650,7 @@ class Backtester {
 					if (close > emaFast) {
 						if (close > emaSlow && adx > 15) {
 							marketType =
-								adxPlusDI - adxMinusDI < 12
+								adxPlusDI - adxMinusDI < 12 && adxPlusDI < 25
 									? '趋势空且增强-R-3-1'
 									: '趋势空';
 						}
@@ -1338,26 +1338,26 @@ function carryForluma(p, rl, rw) {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					// .slice(-5)
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2025-03-03 08:00:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2025-03-03 15:30:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		// .slice(-5)
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2025-03-03 08:00:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2025-03-03 15:30:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
