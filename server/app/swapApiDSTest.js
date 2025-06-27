@@ -1231,7 +1231,7 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.table(this.trades);
+		// console.table(this.trades);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
