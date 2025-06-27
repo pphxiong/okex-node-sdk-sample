@@ -1119,8 +1119,10 @@ class Backtester {
 			// exitVolatilityRatio: `${exitCandle.volatility_ratio}`,
 			// entryMacd: `${position.macdHistogram}`,
 			// exitMacd: `${exitCandle.macdHistogram}`,
-			// entryEmaSlope: `${position.emaSlope}`,
-			// exitEmaSlope: `${exitCandle.emaSlope}`,
+			entryEmaFast: `${position.emaFast}`,
+			entryEmaSlow: `${position.emaSlow}`,
+			exitEmaFast: `${exitCandle.emaFast}`,
+			exitEmaSlow: `${exitCandle.emaSlow}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
@@ -1282,8 +1284,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2023-05-21';
-	const start = '2021-01-01';
+	const start = '2023-05-21';
+	// const start = '2021-01-01';
 	const end = '2025-06-01';
 	const interval = 30;
 	let profitTotal = 0;
