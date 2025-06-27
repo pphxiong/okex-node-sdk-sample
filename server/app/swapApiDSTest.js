@@ -633,7 +633,8 @@ class Backtester {
 				marketType = '趋势空';
 				if (close < emaSlow) {
 					if (close > emaFast) {
-						marketType = '趋势空且增强-R-1';
+						marketType =
+							adxPlusDI < 30 ? '趋势空且增强-R-1' : '趋势空';
 					}
 					if (
 						close < emaFast &&
@@ -1306,8 +1307,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
