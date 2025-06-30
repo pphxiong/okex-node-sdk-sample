@@ -170,11 +170,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 					marketType =
 						adxMinusDI < 25 ? '趋势多且增强-L-1' : '趋势多';
 				}
-				if (
-					close > emaFast &&
-					adxPlusDI > adxMinusDI &&
-					adxPlusDI - adxMinusDI < 5
-				) {
+				if (adxPlusDI > adxMinusDI && adxPlusDI - adxMinusDI < 5) {
 					marketType = '趋势多且增强-L-2';
 				}
 			}
@@ -208,11 +204,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				if (close > emaFast) {
 					marketType = adxPlusDI < 25 ? '趋势空且增强-R-1' : '趋势空';
 				}
-				if (
-					close < emaFast &&
-					adxPlusDI < adxMinusDI &&
-					adxMinusDI - adxPlusDI < 5
-				) {
+				if (adxPlusDI < adxMinusDI && adxMinusDI - adxPlusDI < 5) {
 					marketType = '趋势空且增强-R-2';
 				}
 			}
