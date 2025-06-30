@@ -1112,7 +1112,7 @@ class Backtester {
 		this.balance += profit - fee;
 		this.totalFee += fee;
 		this.trades.push({
-			// positionSize,
+			positionSize,
 			size: position.size,
 			direction: position.direction,
 			entry: position.entryPrice,
