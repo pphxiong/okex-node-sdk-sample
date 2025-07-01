@@ -501,8 +501,8 @@ class Backtester {
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
 						const volatility_ratio = d.atr / d.close;
-						const isVolatility = volatility_ratio > 0.01;
-						// const isVolatility = adx > 30;
+						// const isVolatility = volatility_ratio > 0.01;
+						const isVolatility = adx > 30;
 						d.rsi_long = isVolatility ? 48 : 58;
 						d.rsi_short = isVolatility ? 58 : 48;
 						// d.rsi_long = d.adx > 40 ? 42 : d.adx > 30 ? 48 : 58;
