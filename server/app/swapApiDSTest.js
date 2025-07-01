@@ -1229,7 +1229,33 @@ class Backtester {
 
 		const profitTotal = this.balance - config.initialBalance;
 
-		console.table(this.trades);
+		const whiteFields = [
+			'direction',
+			'profit',
+			'entryMarketType',
+			// 'exitMarketType',
+			'entryAdx',
+			'entryAdxPlusDI',
+			'entryAdxMinusDI',
+			'entryEmaFast',
+			'entryEmaSlow',
+			'exitAdx',
+			'exitAdxPlusDI',
+			'exitAdxMinusDI',
+			'exitEmaFast',
+			'exitEmaSlow',
+			'entryTime',
+			'exitTime',
+		];
+		const filterTable = [];
+		this.trades.forEach((t) => {
+			const target = {};
+			whiteFields.forEach((field) => {
+				target[field] = t[field];
+			});
+			filterTable.push(target);
+		});
+		console.table(filterTable);
 
 		const maxLoss = Math.min(...this.trades.map((t) => t.profit)).toFixed(
 			2
@@ -1290,9 +1316,9 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-06-14';
-	const start = '2021-01-01';
-	const end = '2025-06-01';
+	const start = '2025-01-01';
+	// const start = '2021-01-01';
+	const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
