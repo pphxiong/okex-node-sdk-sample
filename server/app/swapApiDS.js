@@ -180,12 +180,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 								: '趋势空且增强-L-2';
 					}
 				}
-				if (close > emaFast) {
-					marketType =
-						volatility_ratio > 0.01 && adx > adx_threshold + 5
-							? '趋势多且增强-L-4'
-							: marketType;
-				}
 			}
 		}
 		if (adx < adx_threshold) {
@@ -231,12 +225,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 								: '趋势多且增强-R-2';
 					}
 				}
-				if (close < emaFast) {
-					marketType =
-						volatility_ratio > 0.01 && adx > adx_threshold + 5
-							? '趋势空且增强-R-4'
-							: marketType;
-				}
 			}
 		}
 		if (adx < adx_threshold) {
@@ -263,7 +251,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			}
 		}
 	}
-
 	return marketType;
 }
 
