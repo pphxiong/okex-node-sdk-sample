@@ -611,7 +611,7 @@ class Backtester {
 						}
 					}
 					if (volatility_ratio > 0.015 && adxPlusDI > adxMinusDI) {
-						marketType = '趋势多且增强-L-4';
+						marketType = '趋势多';
 					}
 				}
 			}
