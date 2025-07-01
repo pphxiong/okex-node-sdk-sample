@@ -665,12 +665,12 @@ class Backtester {
 									: '趋势多且增强-R-2';
 						}
 					}
-					if (close < emaFast) {
-						marketType =
-							volatility_ratio > 0.01 && adx > adx_threshold + 2
-								? '趋势空且增强-R-4'
-								: marketType;
-					}
+					// if (close < emaFast) {
+					// 	marketType =
+					// 		volatility_ratio > 0.01 && adx > adx_threshold + 2
+					// 			? '趋势空且增强-R-4'
+					// 			: marketType;
+					// }
 				}
 			}
 			if (adx < adx_threshold) {
