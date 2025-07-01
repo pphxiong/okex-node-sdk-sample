@@ -610,7 +610,7 @@ class Backtester {
 					if (close < emaFast) {
 						if (close < emaSlow && adx > 15) {
 							marketType =
-								adxMinusDI - adxPlusDI < 12 && adxMinusDI < 25
+								adxMinusDI - adxPlusDI > 5 && adxMinusDI - adxPlusDI < 12 && adxMinusDI < 25
 									? '趋势多且增强-L-3-1'
 									: '趋势多';
 						}
@@ -648,7 +648,7 @@ class Backtester {
 					if (close > emaFast) {
 						if (close > emaSlow && adx > 15) {
 							marketType =
-								adxPlusDI - adxMinusDI < 12 && adxPlusDI < 25
+								adxPlusDI - adxMinusDI > 5 && adxPlusDI - adxMinusDI < 12 && adxPlusDI < 25
 									? '趋势空且增强-R-3-1'
 									: '趋势空';
 						}
@@ -1231,14 +1231,15 @@ class Backtester {
 
 		const whiteFields = [
 			'direction',
-			'profit',
 			'entryMarketType',
+			'profit',
 			// 'exitMarketType',
 			'entryAdx',
 			'entryAdxPlusDI',
 			'entryAdxMinusDI',
 			'entryEmaFast',
 			'entryEmaSlow',
+			'entry',
 			'exitAdx',
 			'exitAdxPlusDI',
 			'exitAdxMinusDI',
