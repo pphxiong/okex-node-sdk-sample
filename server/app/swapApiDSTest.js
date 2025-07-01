@@ -512,6 +512,7 @@ class Backtester {
 						d.adx_threshold = isVolatility ? 30 : 25;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 						d.volatility_ratio = volatility_ratio;
+						d.isVolatility = isVolatility;
 
 						d.is_latest_has_rsi_long = this.data[tf]
 							.slice(i - 4, i + 1)
@@ -1351,10 +1352,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2024-07-01';
-	const end = '2024-12-31';
-	// const start = '2021-01-01';
-	// const end = '2025-07-02';
+	// const start = '2024-07-01';
+	// const end = '2024-12-31';
+	const start = '2021-01-01';
+	const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
