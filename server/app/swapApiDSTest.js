@@ -601,6 +601,7 @@ class Backtester {
 								? '趋势多且增强-L-1'
 								: '趋势多';
 						if (
+							volatility_ratio < 0.01 &&
 							adxPlusDI > adxMinusDI &&
 							adxPlusDI - adxMinusDI < 5
 						) {
@@ -646,6 +647,7 @@ class Backtester {
 								? '趋势空且增强-R-1'
 								: '趋势空';
 						if (
+							volatility_ratio < 0.01 &&
 							adxPlusDI < adxMinusDI &&
 							adxMinusDI - adxPlusDI < 5
 						) {
