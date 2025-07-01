@@ -610,9 +610,9 @@ class Backtester {
 							}
 						}
 					}
-					if (volatility_ratio > 0.015 && adxPlusDI > adxMinusDI) {
-						marketType = '趋势多';
-					}
+					// if (volatility_ratio > 0.015 && adxPlusDI > adxMinusDI) {
+					// 	marketType = '趋势多';
+					// }
 				}
 			}
 			if (adx < adx_threshold) {
