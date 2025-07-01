@@ -509,7 +509,7 @@ class Backtester {
 						// d.rsi_short = d.adx > 40 ? 64 : d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 25 : 25;
+						d.adx_threshold = isVolatility ? 30 : 25;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 						d.volatility_ratio = volatility_ratio;
 						d.isVolatility = isVolatility;
@@ -599,7 +599,7 @@ class Backtester {
 							adxMinusDI < 25 && adxPlusDI - adxMinusDI < 10
 								? volatility_ratio < 0.01
 									? '趋势多且增强-L-1'
-									: adx < adx_threshold + 5
+									: adx < adx_threshold + 3
 									? '趋势空且增强-L-1'
 									: '趋势多且增强-L-5'
 								: '趋势多';
@@ -655,7 +655,7 @@ class Backtester {
 							adxPlusDI < 25 && adxMinusDI - adxPlusDI < 10
 								? volatility_ratio < 0.01
 									? '趋势空且增强-R-1'
-									: adx < adx_threshold + 5
+									: adx < adx_threshold + 3
 									? '趋势多且增强-R-1'
 									: '趋势空且增强-R-5'
 								: '趋势空';
