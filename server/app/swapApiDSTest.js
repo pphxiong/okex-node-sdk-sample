@@ -1349,7 +1349,7 @@ function carryForluma(p, rl, rw) {
 (async () => {
 	const backtester = new Backtester();
 	const start = '2024-01-01';
-	const end = '2024-06-31';
+	const end = '2024-06-30';
 	// const start = '2021-01-01';
 	// const end = '2025-07-02';
 	const interval = 30;
