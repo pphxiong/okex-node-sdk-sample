@@ -2161,7 +2161,77 @@ maxDrawdownTotal 15.8
 趋势多且增强-L-1 总交易次数: 39 盈利: 196.34446657744226 亏损: -239.25461972266731 最大盈利: 24.83 最大亏损: -51.47 总收益: -42.91 平均盈利: -1.10 typeA: -0.59 胜率: 53.85%
 趋势空且增强-R-4 总交易次数: 29 盈利: 310.8179102246629 亏损: -374.11418545285983 最大盈利: 78.05 最大亏损: -86.47 总收益: -63.30 平均盈利: -2.18 typeA: -0.75 胜率: 34.48%
 
+if (emaFast > emaSlow) {
+		if (adx > adx_threshold) {
+			marketType = '趋势多';
+			if (close > emaSlow) {
+				if (close < emaFast) {
+					marketType =
+						adxMinusDI < 25 ? '趋势多且增强-L-1' : '趋势多';
+				}
+				if (adxPlusDI > adxMinusDI && adxPlusDI - adxMinusDI < 5) {
+					marketType = '趋势多且增强-L-2';
+				}
+			}
+		}
+		if (adx < adx_threshold) {
+			if (adxPlusDI < adxMinusDI) {
+				if (close < emaFast) {
+					if (close < emaSlow && adx > 15) {
+						marketType =
+							adxMinusDI - adxPlusDI < 12 && adxMinusDI < 25
+								? '趋势多且增强-L-3-1'
+								: '趋势多';
+					}
+					if (close < emaSlow && adx < 15) {
+						marketType = '趋势多';
+					}
+				}
+			}
+			if (adxPlusDI > adxMinusDI) {
+				if (emaFast > emaSlow && close > emaFast) {
+					marketType = '趋势空';
+				}
+			}
+		}
+	}
 
+	if (emaFast < emaSlow) {
+		if (adx > adx_threshold) {
+			marketType = '趋势空';
+			if (close < emaSlow) {
+				if (close > emaFast) {
+					marketType = adxPlusDI < 25 ? '趋势空且增强-R-1' : '趋势空';
+				}
+				if (adxPlusDI < adxMinusDI && adxMinusDI - adxPlusDI < 5) {
+					marketType = '趋势空且增强-R-2';
+				}
+			}
+		}
+		if (adx < adx_threshold) {
+			if (adxPlusDI > adxMinusDI) {
+				if (close > emaFast) {
+					if (close > emaSlow && adx > 15) {
+						marketType =
+							adxPlusDI - adxMinusDI < 12 && adxPlusDI < 25
+								? '趋势空且增强-R-3-1'
+								: '趋势空';
+					}
+					if (close > emaSlow && adx < 15) {
+						marketType = '趋势空';
+					}
+				}
+			}
+			if (adxPlusDI < adxMinusDI) {
+				if (emaFast < emaSlow && close < emaFast) {
+					marketType = '趋势多';
+				}
+			}
+		}
+	}
+
+
+  
 
 
 
