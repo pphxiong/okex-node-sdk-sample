@@ -1339,8 +1339,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
-	// const start = '2021-01-01';
+	// const start = '2025-01-01';
+	const start = '2021-01-01';
 	const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
