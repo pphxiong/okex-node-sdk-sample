@@ -610,8 +610,6 @@ class Backtester {
 							marketType =
 								volatility_ratio < 0.01
 									? '趋势多且增强-L-2'
-									: adxPlusDI < adxMinusDI
-									? '趋势空且增强-L-2'
 									: '趋势多且增强-L-2-5';
 						}
 					}
@@ -668,8 +666,6 @@ class Backtester {
 							marketType =
 								volatility_ratio < 0.01
 									? '趋势空且增强-R-2'
-									: adxPlusDI > adxMinusDI
-									? '趋势多且增强-R-2'
 									: '趋势空且增强-R-2-5';
 						}
 					}
