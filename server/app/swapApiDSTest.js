@@ -598,7 +598,7 @@ class Backtester {
 							adxMinusDI < 25 && adxPlusDI - adxMinusDI < 10
 								? volatility_ratio < 0.01
 									? '趋势多且增强-L-1'
-									: '趋势多'
+									: '趋势空且增强-L-1'
 								: '趋势多';
 						if (
 							adxPlusDI > adxMinusDI &&
@@ -607,7 +607,7 @@ class Backtester {
 							marketType =
 								volatility_ratio < 0.01
 									? '趋势多且增强-L-2'
-									: '趋势多';
+									: '趋势空且增强-L-2';
 						}
 					}
 				}
@@ -646,7 +646,7 @@ class Backtester {
 							adxPlusDI < 25 && adxMinusDI - adxPlusDI < 10
 								? volatility_ratio < 0.01
 									? '趋势空且增强-R-1'
-									: '趋势空'
+									: '趋势多且增强-R-1'
 								: '趋势空';
 						if (
 							adxPlusDI < adxMinusDI &&
@@ -655,7 +655,7 @@ class Backtester {
 							marketType =
 								volatility_ratio < 0.01
 									? '趋势空且增强-R-2'
-									: '趋势空';
+									: '趋势多且增强-R-2';
 						}
 					}
 				}
@@ -1261,7 +1261,7 @@ class Backtester {
 			'entryEmaSlow',
 			'entry',
 			'entryRSI',
-      'entryVolatilityRatio',
+			'entryVolatilityRatio',
 			'exitAdx',
 			'exitAdxPlusDI',
 			'exitAdxMinusDI',
@@ -1339,9 +1339,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-01-01';
-	const start = '2021-01-01';
-	const end = '2025-07-02';
+	const start = '2024-07-01';
+	const end = '2024-12-31';
+	// const start = '2021-01-01';
+	// const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
