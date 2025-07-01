@@ -612,7 +612,7 @@ class Backtester {
 					}
 					if (close > emaFast) {
 						marketType =
-							volatility_ratio > 0.01
+							volatility_ratio > 0.01 && rsi < 65
 								? '趋势多且增强-L-4'
 								: marketType;
 					}
@@ -666,7 +666,7 @@ class Backtester {
 					}
 					if (close < emaFast) {
 						marketType =
-							volatility_ratio > 0.01
+							volatility_ratio > 0.01 && rsi > 35
 								? '趋势空且增强-R-4'
 								: marketType;
 					}
