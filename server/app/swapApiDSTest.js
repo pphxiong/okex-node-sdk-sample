@@ -628,6 +628,9 @@ class Backtester {
 					}
 				}
 			}
+			if (open > emaFast && close > emaFast) {
+				marketType = '趋势多';
+			}
 		}
 
 		if (emaFast < emaSlow) {
@@ -667,6 +670,9 @@ class Backtester {
 						marketType = '趋势多';
 					}
 				}
+			}
+			if (open < emaFast && close < emaFast) {
+				marketType = '趋势空';
 			}
 		}
 
