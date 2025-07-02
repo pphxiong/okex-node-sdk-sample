@@ -628,7 +628,7 @@ class Backtester {
 					}
 				}
 			}
-			if (open > emaFast && close > emaFast) {
+			if (open > emaFast && close > emaFast && volatility_ratio > 0.01) {
 				marketType = '趋势多';
 			}
 		}
@@ -671,7 +671,7 @@ class Backtester {
 					}
 				}
 			}
-			if (open < emaFast && close < emaFast) {
+			if (open < emaFast && close < emaFast && volatility_ratio > 0.01) {
 				marketType = '趋势空';
 			}
 		}
