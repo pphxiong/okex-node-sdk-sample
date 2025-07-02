@@ -606,9 +606,6 @@ class Backtester {
 					if (adxPlusDI > adxMinusDI && adxPlusDI - adxMinusDI < 5) {
 						marketType = '趋势多且增强-L-2';
 					}
-					// if (open > emaFast && close > emaFast) {
-					// 	marketType = '趋势多';
-					// }
 				}
 			}
 			if (adx < adx_threshold) {
@@ -649,9 +646,6 @@ class Backtester {
 					if (adxPlusDI < adxMinusDI && adxMinusDI - adxPlusDI < 5) {
 						marketType = '趋势空且增强-R-2';
 					}
-					// if (open < emaFast && close < emaFast) {
-					// 	marketType = '趋势空';
-					// }
 				}
 			}
 			if (adx < adx_threshold) {
@@ -1332,9 +1326,9 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
+	// const start = '2025-01-01';
 	// const end = "2022-07-01";
-	// const start = '2021-01-01';
+	const start = '2021-01-01';
 	const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
