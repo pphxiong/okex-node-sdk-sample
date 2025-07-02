@@ -606,7 +606,8 @@ class Backtester {
 							marketType = '趋势多且增强-L-2';
 						}
 					}
-					if (close > emaFast) {
+					if (open > emaFast && close > emaFast) {
+						marketType = '趋势多且增强-L-4';
 					}
 				}
 			}
@@ -647,6 +648,9 @@ class Backtester {
 						) {
 							marketType = '趋势空且增强-R-2';
 						}
+					}
+					if (open < emaFast && close < emaFast) {
+						marketType = '趋势空且增强-R-4';
 					}
 				}
 			}
