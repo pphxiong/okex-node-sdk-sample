@@ -605,9 +605,12 @@ class Backtester {
 								marketType = '趋势空且增强-L-1-2';
 							}
 						}
-					}
-					if (adxPlusDI > adxMinusDI && adxPlusDI - adxMinusDI < 5) {
-						marketType = '趋势多且增强-L-2';
+						if (
+							adxPlusDI > adxMinusDI &&
+							adxPlusDI - adxMinusDI < 5
+						) {
+							marketType = '趋势多且增强-L-2';
+						}
 					}
 				}
 			}
@@ -645,9 +648,12 @@ class Backtester {
 								marketType = '趋势多且增强-R-1-2';
 							}
 						}
-					}
-					if (adxPlusDI < adxMinusDI && adxMinusDI - adxPlusDI < 5) {
-						marketType = '趋势空且增强-R-2';
+						if (
+							adxPlusDI < adxMinusDI &&
+							adxMinusDI - adxPlusDI < 5
+						) {
+							marketType = '趋势空且增强-R-2';
+						}
 					}
 				}
 			}
