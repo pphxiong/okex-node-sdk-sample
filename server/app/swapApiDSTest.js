@@ -596,7 +596,9 @@ class Backtester {
 				if (close > emaSlow) {
 					if (close < emaFast) {
 						marketType =
-							adxMinusDI < 25 ? '趋势多且增强-L-1' : '趋势多';
+							adxMinusDI < 25
+								? '趋势多且增强-L-1'
+								: '趋势多趋势空';
 					}
 					if (adxPlusDI > adxMinusDI && adxPlusDI - adxMinusDI < 5) {
 						marketType = '趋势多且增强-L-2';
@@ -613,13 +615,16 @@ class Backtester {
 									: '趋势多';
 						}
 						if (close < emaSlow && adx < 15) {
-							marketType = '趋势多';
+							marketType = '趋势多趋势空';
 						}
 					}
 				}
 				if (adxPlusDI > adxMinusDI) {
-					if (emaFast > emaSlow && close > emaFast) {
+					if (close > emaFast) {
 						marketType = '趋势空';
+						if (adxPlusDI < 25) {
+							marketType = '趋势多且增强-L-4-1';
+						}
 					}
 				}
 			}
@@ -631,7 +636,9 @@ class Backtester {
 				if (close < emaSlow) {
 					if (close > emaFast) {
 						marketType =
-							adxPlusDI < 25 ? '趋势空且增强-R-1' : '趋势空';
+							adxPlusDI < 25
+								? '趋势空且增强-R-1'
+								: '趋势多趋势空';
 					}
 					if (adxPlusDI < adxMinusDI && adxMinusDI - adxPlusDI < 5) {
 						marketType = '趋势空且增强-R-2';
@@ -648,13 +655,16 @@ class Backtester {
 									: '趋势空';
 						}
 						if (close > emaSlow && adx < 15) {
-							marketType = '趋势空';
+							marketType = '趋势多趋势空';
 						}
 					}
 				}
 				if (adxPlusDI < adxMinusDI) {
-					if (emaFast < emaSlow && close < emaFast) {
+					if (close < emaFast) {
 						marketType = '趋势多';
+						if (adxMinusDI < 25) {
+							marketType = '趋势空且增强-L-4-1';
+						}
 					}
 				}
 			}
