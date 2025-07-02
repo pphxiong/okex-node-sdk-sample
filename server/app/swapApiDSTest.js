@@ -601,7 +601,10 @@ class Backtester {
 									? '趋势多且增强-L-1'
 									: '趋势空且增强-L-1';
 						} else {
-							marketType = '趋势多';
+							marketType =
+								volatility_ratio < 0.01
+									? '趋势多'
+									: '趋势空且增强-L-4';
 						}
 						if (
 							adxPlusDI > adxMinusDI &&
