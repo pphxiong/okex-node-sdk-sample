@@ -659,10 +659,10 @@ class Backtester {
 				if (adxPlusDI < adxMinusDI) {
 					if (close < emaFast) {
 						marketType = '趋势多';
-						if (close > emaFast) {
-							marketType =
-								volatility_ratio > 0.01 ? '趋势多' : '趋势空';
-						}
+					}
+					if (close > emaFast) {
+						marketType =
+							volatility_ratio > 0.01 ? '趋势多' : '趋势空';
 					}
 				}
 			}
