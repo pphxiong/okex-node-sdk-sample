@@ -603,6 +603,9 @@ class Backtester {
 					if (adxPlusDI > adxMinusDI && adxPlusDI - adxMinusDI < 5) {
 						marketType = '趋势多且增强-L-2';
 					}
+					if (close > emaFast && macd_falling) {
+						marketType = '趋势空';
+					}
 				}
 			}
 			if (adx < adx_threshold) {
@@ -643,6 +646,9 @@ class Backtester {
 					}
 					if (adxPlusDI < adxMinusDI && adxMinusDI - adxPlusDI < 5) {
 						marketType = '趋势空且增强-R-2';
+					}
+					if (close < emaFast && macd_rising) {
+						marketType = '趋势多';
 					}
 				}
 			}
