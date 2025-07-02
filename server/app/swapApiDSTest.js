@@ -686,8 +686,9 @@ class Backtester {
 		if (
 			close > emaFast &&
 			close > emaSlow &&
+			open > emaFast &&
 			open > emaSlow &&
-			open > emaSlow
+			close > open
 		) {
 			marketType = marketType.indexOf('趋势空') ? '趋势多' : marketType;
 		}
@@ -695,8 +696,9 @@ class Backtester {
 		if (
 			close < emaFast &&
 			close < emaSlow &&
+			open < emaFast &&
 			open < emaSlow &&
-			open < emaSlow
+			close < open
 		) {
 			marketType = marketType.indexOf('趋势多') ? '趋势空' : marketType;
 		}
