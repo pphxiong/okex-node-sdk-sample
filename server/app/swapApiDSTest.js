@@ -602,9 +602,7 @@ class Backtester {
 			if (adx > adx_threshold) {
 				if (close > emaFast) {
 					marketType =
-						adxPlusDI > adxMinusDI && adxPlusDI < 30
-							? '趋势多且增强-L-3-1'
-							: '';
+						adxPlusDI > adxMinusDI ? '趋势多且增强-L-3-1' : '';
 				}
 			}
 		}
@@ -619,9 +617,7 @@ class Backtester {
 			if (adx > adx_threshold) {
 				if (close < emaFast) {
 					marketType =
-						adxPlusDI < adxMinusDI && adxMinusDI < 30
-							? '趋势空且增强-R-3-1'
-							: '';
+						adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-1' : '';
 				}
 			}
 		}
@@ -1240,8 +1236,9 @@ class Backtester {
 			whiteFields.forEach((field) => {
 				target[field] = t[field];
 			});
-			if(target.profit < 0) filterTable.push(target);
+			// if(target.profit < 0) filterTable.push(target);
 		});
+    filterTable.sort((a, b) => a.entryMarketType - b.entryMarketType);
 
 		console.table(filterTable);
 
