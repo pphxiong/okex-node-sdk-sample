@@ -33,11 +33,11 @@ const _ = require('lodash');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '5m',
-	timeframes: ['5m' /* '5m'  '1m'*/], // 多周期参数
+	timeframe: '15m',
+	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'5m': { periods: [125, 25], slopeWindow: 5 },
+		'15m': { periods: [125, 25], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -597,6 +597,11 @@ class Backtester {
 				if (close < emaFast) {
 					marketType = '趋势空';
 				}
+				if (close > emaFast) {
+					if ((emaFast - emaSlow) / emaSlow < volatility_ratio) {
+						marketType = '趋势空且增强-L-1-1';
+					}
+				}
 			}
 			if (adx > adx_threshold) {
 				marketType = '趋势多';
@@ -614,6 +619,11 @@ class Backtester {
 			if (adx < adx_threshold) {
 				if (close > emaFast) {
 					marketType = '趋势多';
+				}
+				if (close < emaFast) {
+					if ((emaFast - emaSlow) / emaSlow > -volatility_ratio) {
+						marketType = '趋势多且增强-R-1-1';
+					}
 				}
 			}
 			if (adx > adx_threshold) {
