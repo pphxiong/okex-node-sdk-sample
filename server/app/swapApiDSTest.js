@@ -610,7 +610,7 @@ class Backtester {
 				}
 			}
 			if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
-				marketType = '趋势空';
+				marketType = '趋势多趋势空';
 			}
 		}
 
@@ -632,7 +632,7 @@ class Backtester {
 				}
 			}
 			if (emaSlope < -config.emaSlope.emaSlopeThreshold * 2) {
-				marketType = '趋势多';
+				marketType = '趋势多趋势空';
 			}
 		}
 
