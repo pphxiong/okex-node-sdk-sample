@@ -1108,6 +1108,8 @@ class Backtester {
 			entryEmaSlow: `${position.emaSlow}`,
 			exitEmaFast: `${exitCandle.emaFast}`,
 			exitEmaSlow: `${exitCandle.emaSlow}`,
+			entryEmaSlope: `${position.emaSlope}`,
+			exitEmaSlope: `${exitCandle.emaSlope}`,
 			// duration: `${(
 			// 	(exitCandle.timestamp - position.entryTime) /
 			// 	(1000 * 60 * 60)
@@ -1227,6 +1229,7 @@ class Backtester {
 			'exitAdxMinusDI',
 			'exitEmaFast',
 			'exitEmaSlow',
+      'entryEmaSlope',
 			'entryTime',
 			'exitTime',
 		];
@@ -1238,7 +1241,6 @@ class Backtester {
 			});
 			filterTable.push(target);
 		});
-    filterTable.sort((a, b) => a.entryMarketType - b.entryMarketType);
 
 		console.table(filterTable);
 
