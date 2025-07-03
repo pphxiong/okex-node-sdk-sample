@@ -509,7 +509,7 @@ class Backtester {
 						// d.rsi_short = d.adx > 40 ? 64 : d.adx > 30 ? 58 : 42;
 						d.stop_multiplier = isVolatility ? 3 : 2.5;
 						d.profit_multiplier = isVolatility ? 2 : 2;
-						d.adx_threshold = isVolatility ? 30 : 25;
+						d.adx_threshold = isVolatility ? 25 : 20;
 						d.adx_stoploss_distance = isVolatility ? 5 : 3;
 						d.volatility_ratio = volatility_ratio;
 						d.isVolatility = isVolatility;
@@ -599,7 +599,7 @@ class Backtester {
 				}
 			}
 			if (adx > adx_threshold) {
-				if (adxPlusDI > adxMinusDI) marketType = '趋势多';
+				marketType = '趋势多';
 				if (close > emaFast) {
 					marketType =
 						adxPlusDI > adxMinusDI &&
@@ -617,7 +617,7 @@ class Backtester {
 				}
 			}
 			if (adx > adx_threshold) {
-				if (adxPlusDI < adxMinusDI) marketType = '趋势空';
+				marketType = '趋势空';
 				if (close < emaFast) {
 					marketType =
 						adxPlusDI < adxMinusDI &&
