@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 20,
+	adxPeriod: 25,
 	rsiPeriod: 14,
 };
 
@@ -1309,10 +1309,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2025-01-01';
-	const start = '2023-07-01';
-	const end = '2023-12-01';
-	// const end = '2025-07-02';
+	const start = '2025-01-01';
+	// const start = '2023-07-01';
+	// const end = '2023-12-01';
+	const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
