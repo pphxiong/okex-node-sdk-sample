@@ -609,9 +609,9 @@ class Backtester {
 							: '';
 				}
 			}
-			if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
-				marketType = '趋势多趋势空';
-			}
+			// if (emaSlope > config.emaSlope.emaSlopeThreshold * 2) {
+			// 	marketType = '趋势多趋势空';
+			// }
 		}
 
 		if (emaFast < emaSlow) {
@@ -631,9 +631,9 @@ class Backtester {
 							: '';
 				}
 			}
-			if (emaSlope < -config.emaSlope.emaSlopeThreshold * 2) {
-				marketType = '趋势多趋势空';
-			}
+			// if (emaSlope < -config.emaSlope.emaSlopeThreshold * 2) {
+			// 	marketType = '趋势多趋势空';
+			// }
 		}
 
 		// if (
