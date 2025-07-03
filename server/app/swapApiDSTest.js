@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [125, 25], slopeWindow: 5 },
+		'5m': { periods: [125, 25], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -628,11 +628,11 @@ class Backtester {
 			}
 		}
 
-		if (marketType.indexOf('多') != -1) {
-			marketType = marketType.replace('多', '空');
-		} else if (marketType.indexOf('空') != -1) {
-			marketType = marketType.replace('空', '多');
-		}
+		// if (marketType.indexOf('多') != -1) {
+		// 	marketType = marketType.replace('多', '空');
+		// } else if (marketType.indexOf('空') != -1) {
+		// 	marketType = marketType.replace('空', '多');
+		// }
 
 		return marketType;
 	}
