@@ -33,8 +33,8 @@ const _ = require('lodash');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
-	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
+	timeframe: '5m',
+	timeframes: ['5m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		'5m': { periods: [125, 25], slopeWindow: 5 },
