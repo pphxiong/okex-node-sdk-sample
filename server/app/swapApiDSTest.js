@@ -1236,7 +1236,7 @@ class Backtester {
 			whiteFields.forEach((field) => {
 				target[field] = t[field];
 			});
-			// if(target.profit < 0) filterTable.push(target);
+			filterTable.push(target);
 		});
     filterTable.sort((a, b) => a.entryMarketType - b.entryMarketType);
 
