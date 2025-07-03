@@ -87,7 +87,7 @@ const config = {
 	simulations: 5000, // 模拟次数
 	volatility: 0.04, // 日波动率（比特币历史平均约3-5%）
 	drift: 0.0002, // 每日趋势偏移量
-	adxPeriod: 25,
+	adxPeriod: 14,
 	rsiPeriod: 14,
 };
 
@@ -628,27 +628,11 @@ class Backtester {
 			}
 		}
 
-		// if (
-		// 	close > emaFast &&
-		// 	close > emaSlow &&
-		// 	open > emaFast &&
-		// 	open > emaSlow &&
-		// 	close > open
-		// ) {
-		// 	marketType =
-		// 		marketType.indexOf('趋势空') != -1 ? '趋势多' : marketType;
-		// }
-
-		// if (
-		// 	close < emaFast &&
-		// 	close < emaSlow &&
-		// 	open < emaFast &&
-		// 	open < emaSlow &&
-		// 	close < open
-		// ) {
-		// 	marketType =
-		// 		marketType.indexOf('趋势多') != -1 ? '趋势空' : marketType;
-		// }
+		if (marketType.indexOf('多') != -1) {
+			marketType = marketType.replace('多', '空');
+		} else if (marketType.indexOf('空') != -1) {
+			marketType = marketType.replace('空', '多');
+		}
 
 		return marketType;
 	}
@@ -1309,10 +1293,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2025-01-01';
-	// const start = '2023-07-01';
-	// const end = '2023-12-01';
-	const end = '2025-07-02';
+	// const start = '2025-01-01';
+	const start = '2023-07-01';
+	const end = '2023-12-01';
+	// const end = '2025-07-02';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
