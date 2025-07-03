@@ -636,7 +636,7 @@ class Backtester {
 			}
 		}
 
-		if (volatility_ratio > 0.01) {
+		if (volatility_ratio > 0.015) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
 			} else if (marketType.indexOf('空') != -1) {
