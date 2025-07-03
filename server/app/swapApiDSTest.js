@@ -607,6 +607,9 @@ class Backtester {
 							: '';
 				}
 			}
+			if (adx < adx_threshold) {
+				marketType = '趋势空';
+			}
 		}
 
 		if (emaFast < emaSlow) {
