@@ -162,48 +162,46 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (adx < adx_threshold) {
-		if (close < emaFast) {
-			marketType = '趋势多';
-			if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
-				marketType = '趋势空且增强-L-1-1';
-			}
-		}
-		if (close > emaFast) {
-			marketType = '趋势空';
-			if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
-				marketType = '趋势多且增强-L-2-1';
-			}
-		}
-	}
-
-	if (emaFast > emaSlow) {
-		if (adx > adx_threshold) {
-			marketType = '趋势多';
-			marketType =
-				adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : marketType;
-			if (
-				(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
-				(emaFast - emaSlow) / emaSlow < volatility_ratio
-			) {
-				marketType = '趋势空';
-			}
-		}
-	}
-
-	if (emaFast < emaSlow) {
-		if (adx > adx_threshold) {
-			marketType = '趋势空';
-			marketType =
-				adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : marketType;
-			if (
-				(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
-				(emaSlow - emaFast) / emaSlow < volatility_ratio
-			) {
+		if (adx < adx_threshold) {
+			if (close < emaFast) {
 				marketType = '趋势多';
+				if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
+					marketType = '趋势空且增强-L-1-1';
+				}
+			}
+			if (close > emaFast) {
+				marketType = '趋势空';
+				if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
+					marketType = '趋势多且增强-L-2-1';
+				}
 			}
 		}
-	}
+
+		if (emaFast > emaSlow) {
+			if (adx > adx_threshold) {
+				marketType =
+					adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : '趋势多';
+				if (
+					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
+					(emaFast - emaSlow) / emaSlow < volatility_ratio
+				) {
+					marketType = '趋势空';
+				}
+			}
+		}
+
+		if (emaFast < emaSlow) {
+			if (adx > adx_threshold) {
+				marketType =
+					adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : '趋势空';
+				if (
+					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
+					(emaSlow - emaFast) / emaSlow < volatility_ratio
+				) {
+					marketType = '趋势多';
+				}
+			}
+		}
 
 	return marketType;
 }

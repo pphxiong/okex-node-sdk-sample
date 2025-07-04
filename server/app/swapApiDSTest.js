@@ -611,7 +611,10 @@ class Backtester {
 			if (adx > adx_threshold) {
 				marketType =
 					adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : '趋势多';
-				if (close < emaFast && adxMinusDI < 10) {
+				if (
+					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
+					(emaFast - emaSlow) / emaSlow < volatility_ratio
+				) {
 					marketType = '趋势空';
 				}
 			}
@@ -621,7 +624,10 @@ class Backtester {
 			if (adx > adx_threshold) {
 				marketType =
 					adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : '趋势空';
-				if (close > emaFast && adxPlusDI < 10) {
+				if (
+					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
+					(emaSlow - emaFast) / emaSlow < volatility_ratio
+				) {
 					marketType = '趋势多';
 				}
 			}
@@ -1346,26 +1352,26 @@ function carryForluma(p, rl, rw) {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					// .slice(-5)
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2025-07-04 08:00:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2025-07-04 15:30:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		// .slice(-5)
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2025-07-04 08:00:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2025-07-04 15:30:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
