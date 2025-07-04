@@ -639,7 +639,7 @@ class Backtester {
 			}
 		}
 
-		if (rsi > 72 || rsi < 28) {
+		if (rsi > 70 || rsi < 30) {
 			if (adx < adx_threshold) marketType = '趋势多趋势空';
 		}
 
