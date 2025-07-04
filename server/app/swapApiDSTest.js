@@ -592,7 +592,7 @@ class Backtester {
 		const macd_rising = macd > lastMacd;
 		const macd_falling = macd < lastMacd;
 
-		if (adx < adx_threshold) {
+		if (adx < adx_threshold - 5) {
 			if (close < emaFast) {
 				marketType = '趋势多';
 				if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
