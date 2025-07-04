@@ -182,7 +182,10 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			marketType = '趋势多';
 			marketType =
 				adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : marketType;
-			if ((emaFast - emaSlow) / emaSlow < volatility_ratio) {
+			if (
+				(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
+				(emaFast - emaSlow) / emaSlow < volatility_ratio
+			) {
 				marketType = '趋势空';
 			}
 		}
@@ -193,7 +196,10 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			marketType = '趋势空';
 			marketType =
 				adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : marketType;
-			if ((emaSlow - emaFast) / emaSlow < volatility_ratio) {
+			if (
+				(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
+				(emaSlow - emaFast) / emaSlow < volatility_ratio
+			) {
 				marketType = '趋势多';
 			}
 		}
