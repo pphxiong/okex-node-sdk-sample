@@ -620,6 +620,9 @@ class Backtester {
 							? '趋势多且增强-L-3-1'
 							: marketType;
 				}
+				if (close < emaFast) {
+					marketType = '趋势空';
+				}
 			}
 		}
 
@@ -650,6 +653,9 @@ class Backtester {
 						(emaFast - emaSlow) / emaSlow < -volatility_ratio
 							? '趋势空且增强-R-3-1'
 							: marketType;
+				}
+				if (close > emaFast) {
+					marketType = '趋势多';
 				}
 			}
 		}
