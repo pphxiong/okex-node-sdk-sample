@@ -592,37 +592,32 @@ class Backtester {
 		const macd_rising = macd > lastMacd;
 		const macd_falling = macd < lastMacd;
 
-		if (emaFast > emaSlow) {
-			if (adx < adx_threshold) {
-				if (
-					close < emaFast &&
-					Math.abs(emaFast - emaSlow) / emaSlow < volatility_ratio
-				) {
-					marketType = '趋势空';
-				}
-				if (close < emaFast) {
-					if (
-						Math.abs(emaFast - emaSlow) / emaSlow >
-						volatility_ratio
-					) {
-						marketType = '趋势空且增强-L-1-1';
-					}
-				}
-				if (
-					close > emaFast &&
-					Math.abs(emaFast - emaSlow) / emaSlow < volatility_ratio
-				) {
-					marketType = '趋势多';
-				}
-				if (close > emaFast) {
-					if (
-						Math.abs(emaFast - emaSlow) / emaSlow >
-						volatility_ratio
-					) {
-						marketType = '趋势多且增强-L-2-1';
-					}
+		if (adx < adx_threshold) {
+			// if (
+			// 	close < emaFast &&
+			// 	Math.abs(emaFast - emaSlow) / emaSlow < volatility_ratio
+			// ) {
+			// 	marketType = '趋势空';
+			// }
+			if (close < emaFast) {
+				if (Math.abs(emaFast - emaSlow) / emaSlow > volatility_ratio) {
+					marketType = '趋势空且增强-L-1-1';
 				}
 			}
+			// if (
+			// 	close > emaFast &&
+			// 	Math.abs(emaFast - emaSlow) / emaSlow < volatility_ratio
+			// ) {
+			// 	marketType = '趋势多';
+			// }
+			if (close > emaFast) {
+				if (Math.abs(emaFast - emaSlow) / emaSlow > volatility_ratio) {
+					marketType = '趋势多且增强-L-2-1';
+				}
+			}
+		}
+
+		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
 				marketType = '趋势多';
 				if (close > emaFast) {
@@ -641,36 +636,6 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			if (adx < adx_threshold) {
-				if (
-					close < emaFast &&
-					Math.abs(emaFast - emaSlow) / emaSlow < volatility_ratio
-				) {
-					marketType = '趋势空';
-				}
-				if (close < emaFast) {
-					if (
-						Math.abs(emaFast - emaSlow) / emaSlow >
-						volatility_ratio
-					) {
-						marketType = '趋势空且增强-R-1-1';
-					}
-				}
-				if (
-					close > emaFast &&
-					Math.abs(emaFast - emaSlow) / emaSlow < volatility_ratio
-				) {
-					marketType = '趋势多';
-				}
-				if (close > emaFast) {
-					if (
-						Math.abs(emaFast - emaSlow) / emaSlow >
-						volatility_ratio
-					) {
-						marketType = '趋势多且增强-R-2-1';
-					}
-				}
-			}
 			if (adx > adx_threshold) {
 				marketType = '趋势空';
 				if (close < emaFast) {
