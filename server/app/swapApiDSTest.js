@@ -639,6 +639,10 @@ class Backtester {
 			}
 		}
 
+		if (rsi > 70 || rsi < 30) {
+			marketType = '趋势多趋势空';
+		}
+
 		// if (Math.abs(emaFast - emaSlow) / emaSlow > volatility_ratio || true) {
 		// 	if (marketType.indexOf('多') != -1) {
 		// 		marketType = marketType.replace('多', '空');

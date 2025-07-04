@@ -379,7 +379,7 @@ async function calculateIndicators() {
 				d.emaFast = emaFast[0][i];
 				if (d.adx && d.atr) {
 					// const isVolatility = d.adx > 30;
-					const volatility_ratio = d.atr / d.close;
+					const volatility_ratio = d.atr / d.emaSlow;
 					const isVolatility = volatility_ratio > 0.01;
 					d.rsi_long = isVolatility ? 48 : 58;
 					d.rsi_short = isVolatility ? 58 : 48;
