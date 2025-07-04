@@ -639,8 +639,9 @@ class Backtester {
 			}
 		}
 
-		if (rsi > 65 || rsi < 35) {
-			if (adx < adx_threshold) marketType = '趋势多趋势空';
+		if (adx < adx_threshold) {
+			if (rsi > 70) marketType = '趋势多';
+			if (rsi < 30) marketType = '趋势空';
 		}
 
 		// if (Math.abs(emaFast - emaSlow) / emaSlow > volatility_ratio || true) {
