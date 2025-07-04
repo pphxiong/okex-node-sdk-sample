@@ -86,36 +86,7 @@ const config = {
 	},
 };
 
-const initState = {
-	activeOrders: [], // 活跃限价单
-	position: 0, // 当前持仓数量
-	entryPrice: 0, // 持仓均价
-	highestPrice: 0, // 持仓期间最高价
-	lowestPrice: Infinity, // 持仓期间最低价
-	side: 'buy', // 交易方向
-	coolingUntil: 0, // 基础冷却结束时间
-};
 
-// 全局状态
-let state = JSON.parse(JSON.stringify(initState));
-let marketData = {
-	[config.slowframe]: [],
-	[config.fastframe]: [],
-};
-let ws = null;
-let globalAvailableBalance = 0;
-let RESTART_TIME = 0;
-
-// 初始化交易所
-const exchange = new ccxt.binance({
-	apiKey: configBN.httpkey,
-	secret: configBN.httpsecret,
-	options: {
-		adjustForTimeDifference: true,
-		defaultType: 'future',
-		hedgeMode: true,
-	},
-});
 
 function getMarketType(candle, lastCandle, lastLastCandle) {
 	let marketType = '';
@@ -162,49 +133,81 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (adx < adx_threshold) {
-			if (close < emaFast) {
-				marketType = '趋势多';
-				if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
-					marketType = '趋势空且增强-L-1-1';
-				}
+	if (adx < adx_threshold) {
+		if (close < emaFast) {
+			marketType = '趋势多';
+			if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
+				marketType = '趋势空且增强-L-1-1';
 			}
-			if (close > emaFast) {
+		}
+		if (close > emaFast) {
+			marketType = '趋势空';
+			if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
+				marketType = '趋势多且增强-L-2-1';
+			}
+		}
+	}
+
+	if (emaFast > emaSlow) {
+		if (adx > adx_threshold) {
+			marketType =
+				adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : '趋势多';
+			if (
+				(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
+				(emaFast - emaSlow) / emaSlow < volatility_ratio
+			) {
 				marketType = '趋势空';
-				if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
-					marketType = '趋势多且增强-L-2-1';
-				}
 			}
 		}
+	}
 
-		if (emaFast > emaSlow) {
-			if (adx > adx_threshold) {
-				marketType =
-					adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : '趋势多';
-				if (
-					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
-					(emaFast - emaSlow) / emaSlow < volatility_ratio
-				) {
-					marketType = '趋势空';
-				}
+	if (emaFast < emaSlow) {
+		if (adx > adx_threshold) {
+			marketType =
+				adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : '趋势空';
+			if (
+				(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
+				(emaSlow - emaFast) / emaSlow < volatility_ratio
+			) {
+				marketType = '趋势多';
 			}
 		}
-
-		if (emaFast < emaSlow) {
-			if (adx > adx_threshold) {
-				marketType =
-					adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : '趋势空';
-				if (
-					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
-					(emaSlow - emaFast) / emaSlow < volatility_ratio
-				) {
-					marketType = '趋势多';
-				}
-			}
-		}
+	}
 
 	return marketType;
 }
+
+const initState = {
+	activeOrders: [], // 活跃限价单
+	position: 0, // 当前持仓数量
+	entryPrice: 0, // 持仓均价
+	highestPrice: 0, // 持仓期间最高价
+	lowestPrice: Infinity, // 持仓期间最低价
+	side: 'buy', // 交易方向
+	coolingUntil: 0, // 基础冷却结束时间
+};
+
+// 全局状态
+let state = JSON.parse(JSON.stringify(initState));
+let marketData = {
+	[config.slowframe]: [],
+	[config.fastframe]: [],
+};
+let ws = null;
+let globalAvailableBalance = 0;
+let RESTART_TIME = 0;
+
+// 初始化交易所
+const exchange = new ccxt.binance({
+	apiKey: configBN.httpkey,
+	secret: configBN.httpsecret,
+	options: {
+		adjustForTimeDifference: true,
+		defaultType: 'future',
+		hedgeMode: true,
+	},
+});
+
 
 function findSwingPoints(candles) {
 	const swingPoints = { highs: [], lows: [] };
