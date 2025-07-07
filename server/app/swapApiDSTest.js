@@ -649,7 +649,7 @@ class Backtester {
 
 	toogleMarketType(marketType) {
 		const { continueWin, continueLoss, marketMode } = this;
-		if (continueWin >= 3) this.marketMode = marketMode === 1 ? 2 : 1;
+		if (continueLoss >= 2) this.marketMode = marketMode === 1 ? 2 : 1;
 		if (this.marketMode == 2) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
@@ -774,7 +774,7 @@ class Backtester {
 			const { marketType: fastMarketType } = candle[config.fastframe];
 			let { marketType: slowMarketType } = candle[config.slowframe];
 
-			slowMarketType = this.toogleMarketType(slowMarketType);
+			if (!position) slowMarketType = this.toogleMarketType(slowMarketType);
 
 			// 生成信号
 			const signal = this.generateSignal(
