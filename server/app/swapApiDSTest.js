@@ -649,9 +649,7 @@ class Backtester {
 
 	toogleMarketType(marketType) {
 		const { continueLoss, marketMode } = this;
-		if (continueLoss >= 2) {
-			this.marketMode = marketMode === 1 ? 2 : 1;
-		}
+		if (continueLoss >= 3) this.marketMode = marketMode === 1 ? 2 : 1;
 		if (this.marketMode == 2) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
