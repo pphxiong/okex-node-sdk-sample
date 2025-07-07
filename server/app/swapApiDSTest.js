@@ -112,6 +112,9 @@ class Backtester {
 		this.totalFee = 0;
 		this.maxBalance = this.balance;
 		this.maxDrawdown = 0;
+		this.continueWin = 0;
+		this.continueLoss = 0;
+		this.mode = 0;
 	}
 
 	covariance(x, y) {
@@ -633,17 +636,26 @@ class Backtester {
 			}
 		}
 
-		if (marketType.indexOf('且增强') != -1) {
-			const random = Math.random();
-			if (random > 0.5) {
-				if (marketType.indexOf('多') != -1) {
-					marketType = marketType.replace('多', '空');
-				} else if (marketType.indexOf('空') != -1) {
-					marketType = marketType.replace('空', '多');
-				}
+		// if (true) {
+		// 	if (marketType.indexOf('多') != -1) {
+		// 		marketType = marketType.replace('多', '空');
+		// 	} else if (marketType.indexOf('空') != -1) {
+		// 		marketType = marketType.replace('空', '多');
+		// 	}
+		// }
+
+		return marketType;
+	}
+
+	toogleMarketType(marketType) {
+		const { continueWin, continueLoss } = this;
+		if (continueLoss >= 3) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
 			}
 		}
-
 		return marketType;
 	}
 
@@ -759,12 +771,9 @@ class Backtester {
 			};
 
 			const { marketType: fastMarketType } = candle[config.fastframe];
-			const {
-				marketType: slowMarketType,
-				adx,
-				adxPlusDI,
-				adxMinusDI,
-			} = candle[config.slowframe];
+			let { marketType: slowMarketType } = candle[config.slowframe];
+
+			slowMarketType = this.toogleMarketType(slowMarketType);
 
 			// 生成信号
 			const signal = this.generateSignal(
@@ -1124,6 +1133,14 @@ class Backtester {
 		this.maxBalance = Math.max(this.maxBalance, this.balance);
 		const drawdown = (this.maxBalance - this.balance) / this.maxBalance;
 		this.maxDrawdown = Math.max(this.maxDrawdown, drawdown);
+
+		if (profit > 0) {
+			this.continueWin++;
+			this.continueLoss = 0;
+		} else {
+			this.continueWin = 0;
+			this.continueLoss++;
+		}
 	}
 
 	calContinueWinLoss(trades) {
