@@ -114,7 +114,7 @@ class Backtester {
 		this.maxDrawdown = 0;
 		this.continueWin = 0;
 		this.continueLoss = 0;
-		this.mode = 0;
+		this.marketMode = 1;
 	}
 
 	covariance(x, y) {
@@ -648,10 +648,10 @@ class Backtester {
 	}
 
 	toogleMarketType(marketType) {
-		const { continueWin, continueLoss } = this;
-		const random = Math.random();
-		if (random > 0.5) {
-			if (continueLoss >= 1) {
+		const { continueLoss, marketMode } = this;
+		if (continueLoss >= 2) {
+			this.marketMode = marketMode === 1 ? 2 : 1;
+			if (this.marketMode == 2) {
 				if (marketType.indexOf('多') != -1) {
 					marketType = marketType.replace('多', '空');
 				} else if (marketType.indexOf('空') != -1) {
@@ -659,6 +659,10 @@ class Backtester {
 				}
 			}
 		}
+		// const random = Math.random();
+		// if (random > 0.5) {
+
+		// }
 		return marketType;
 	}
 
