@@ -649,7 +649,7 @@ class Backtester {
 
 	toogleMarketType(marketType) {
 		const { continueWin, continueLoss, marketMode } = this;
-		if (continueWin >= 1 || continueLoss >= 1) {
+		if (continueWin >= 2 || continueLoss >= 2) {
 			const random = Math.random();
 			if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
 		}
