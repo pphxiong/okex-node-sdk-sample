@@ -651,7 +651,7 @@ class Backtester {
 		const { continueWin, continueLoss } = this;
 		const random = Math.random();
 		if (random > 0.5) {
-			if (continueLoss >= 2) {
+			if (continueLoss >= 1) {
 				if (marketType.indexOf('多') != -1) {
 					marketType = marketType.replace('多', '空');
 				} else if (marketType.indexOf('空') != -1) {
