@@ -651,18 +651,14 @@ class Backtester {
 		const { continueLoss, marketMode } = this;
 		if (continueLoss >= 2) {
 			this.marketMode = marketMode === 1 ? 2 : 1;
-			if (this.marketMode == 2) {
-				if (marketType.indexOf('多') != -1) {
-					marketType = marketType.replace('多', '空');
-				} else if (marketType.indexOf('空') != -1) {
-					marketType = marketType.replace('空', '多');
-				}
+		}
+		if (this.marketMode == 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
 			}
 		}
-		// const random = Math.random();
-		// if (random > 0.5) {
-
-		// }
 		return marketType;
 	}
 
