@@ -1144,7 +1144,7 @@ class Backtester {
 		}
 
 		this.latestTradeProfits.push(profit);
-		if (this.latestTradeProfits.length > 5) {
+		if (this.latestTradeProfits.length > 10) {
 			this.latestTradeProfits.shift();
 
 			const winTotal = this.latestTradeProfits
@@ -1155,7 +1155,7 @@ class Backtester {
 				.reduce((a, b) => a + b, 0);
 
 			const { continueWin, continueLoss, marketMode } = this;
-			if (winTotal < -lossTotal) {
+			if (winTotal > -lossTotal) {
 				// const random = Math.random();
 				// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
 				this.marketMode = marketMode === 1 ? 2 : 1;
