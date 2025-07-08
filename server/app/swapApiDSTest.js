@@ -1144,7 +1144,7 @@ class Backtester {
 		}
 
 		this.latestTradeProfits.push(profit);
-		if (this.latestTradeProfits.length > 14) {
+		if (this.latestTradeProfits.length > 5) {
 			this.latestTradeProfits.shift();
 
 			const winTotal = this.latestTradeProfits
@@ -1160,7 +1160,7 @@ class Backtester {
 				// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
 				this.marketMode = marketMode === 1 ? 2 : 1;
 
-        this.latestTradeProfits = [];
+				this.latestTradeProfits = [];
 			}
 		}
 	}
