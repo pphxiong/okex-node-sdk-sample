@@ -629,7 +629,10 @@ class Backtester {
 			}
 		}
 
-		if (adx < adx_threshold) {
+		if (
+			adx < adx_threshold &&
+			Math.abs(emaFast - emaSlow) / emaSlow > volatility_ratio
+		) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
 			} else if (marketType.indexOf('空') != -1) {
