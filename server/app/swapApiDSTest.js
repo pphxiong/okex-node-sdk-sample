@@ -1144,7 +1144,7 @@ class Backtester {
 		}
 
 		this.latestTradeProfits.push(profit);
-		if (this.latestTradeProfits.length > 5) {
+		if (this.latestTradeProfits.length > 10) {
 			this.latestTradeProfits.shift();
 
 			const winTotal = this.latestTradeProfits
