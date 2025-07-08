@@ -596,53 +596,48 @@ class Backtester {
 		const macd_rising = macd > lastMacd;
 		const macd_falling = macd < lastMacd;
 
-		// if (adx < adx_threshold) {
-		// 	if (close < emaFast) {
-		// 		marketType = '趋势多';
-		// 		if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
-		// 			marketType = '趋势空且增强-L-1-1';
-		// 		}
-		// 	}
-		// 	if (close > emaFast) {
-		// 		marketType = '趋势空';
-		// 		if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
-		// 			marketType = '趋势多且增强-L-2-1';
-		// 		}
-		// 	}
-		// }
-
-		if (emaFast > emaSlow) {
-			if (close > emaFast) {
-				if (adx > adx_threshold) {
-					marketType = '趋势多且增强-L-3-1';
+		if (adx < adx_threshold) {
+			if (close < emaFast) {
+				// marketType = '趋势多';
+				if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
+					marketType = '趋势空且增强-L-1-1';
 				}
 			}
-			if (close < emaFast) {
+			if (close > emaFast) {
 				// marketType = '趋势空';
-				if (adx > adx_threshold) {
-					marketType = '趋势空且增强-L-3-1';
+				if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
+					marketType = '趋势多且增强-L-2-1';
+				}
+			}
+		}
+
+		if (emaFast > emaSlow) {
+			if (adx > adx_threshold) {
+				marketType =
+					adxPlusDI > adxMinusDI ? '趋势多且增强-R-3-1' : '趋势多';
+				if (
+					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
+					(emaFast - emaSlow) / emaSlow < volatility_ratio
+				) {
+					marketType = '趋势空';
 				}
 			}
 		}
 
 		if (emaFast < emaSlow) {
-			if (close < emaFast) {
-				if (adx > adx_threshold) {
-					marketType = '趋势空且增强-R-3-2';
-				}
-			}
-			if (close > emaFast) {
-				// marketType = '趋势多';
-				if (adx > adx_threshold) {
-					marketType = '趋势多且增强-R-3-2';
+			if (adx > adx_threshold) {
+				marketType =
+					adxPlusDI < adxMinusDI ? '趋势空且增强-R-3-2' : '趋势空';
+				if (
+					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
+					(emaSlow - emaFast) / emaSlow < volatility_ratio
+				) {
+					marketType = '趋势多';
 				}
 			}
 		}
 
-		// if (
-		// 	adx < adx_threshold &&
-		// 	Math.abs(emaFast - emaSlow) / emaSlow > volatility_ratio
-		// ) {
+		// if (true) {
 		// 	if (marketType.indexOf('多') != -1) {
 		// 		marketType = marketType.replace('多', '空');
 		// 	} else if (marketType.indexOf('空') != -1) {
