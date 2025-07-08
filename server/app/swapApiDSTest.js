@@ -1167,15 +1167,15 @@ class Backtester {
 				.filter((p) => p < 0)
 				.reduce((a, b) => a + b, 0);
 
-			// const { continueWin, continueLoss, marketMode } = this;
-			// if (winTotal < -lossTotal) {
-			// 	const random = Math.random();
-			// 	if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
-			// 	// this.marketMode = marketMode === 1 ? 2 : 1;
-			// 	this.latestTradeProfits = this.latestTradeProfits.slice(
-			// 		-preholder / 2
-			// 	);
-			// }
+			const { continueWin, continueLoss, marketMode } = this;
+			if (winTotal < -lossTotal) {
+				const random = Math.random();
+				if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
+				// this.marketMode = marketMode === 1 ? 2 : 1;
+				this.latestTradeProfits = this.latestTradeProfits.slice(
+					-preholder / 2
+				);
+			}
 		}
 	}
 
