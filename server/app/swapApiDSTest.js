@@ -1142,12 +1142,12 @@ class Backtester {
 			this.continueLoss++;
 		}
 
-		// const { continueWin, continueLoss, marketMode } = this;
-		// if (continueWin >= 8 || continueLoss >= 1) {
-		// 	// const random = Math.random();
-		// 	// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
-		// 	this.marketMode = marketMode === 1 ? 2 : 1;
-		// }
+		const { continueWin, continueLoss, marketMode } = this;
+		if (continueWin >= 8 || continueLoss >= 3) {
+			// const random = Math.random();
+			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
+			this.marketMode = marketMode === 1 ? 2 : 1;
+		}
 	}
 
 	calContinueWinLoss(trades) {
