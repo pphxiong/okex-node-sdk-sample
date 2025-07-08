@@ -1144,25 +1144,28 @@ class Backtester {
 		}
 
 		this.latestTradeProfits.push(profit);
-		if (this.latestTradeProfits.length > 10) {
-			this.latestTradeProfits.shift();
+    const preholder = 10;
+	if (this.latestTradeProfits.length > preholder) {
+		this.latestTradeProfits.shift();
 
-			const winTotal = this.latestTradeProfits
-				.filter((p) => p > 0)
-				.reduce((a, b) => a + b, 0);
-			const lossTotal = this.latestTradeProfits
-				.filter((p) => p < 0)
-				.reduce((a, b) => a + b, 0);
+		const winTotal = this.latestTradeProfits
+			.filter((p) => p > 0)
+			.reduce((a, b) => a + b, 0);
+		const lossTotal = this.latestTradeProfits
+			.filter((p) => p < 0)
+			.reduce((a, b) => a + b, 0);
 
-			const { continueWin, continueLoss, marketMode } = this;
-			if (winTotal < -lossTotal) {
-				// const random = Math.random();
-				// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
-				this.marketMode = marketMode === 1 ? 2 : 1;
+		const { continueWin, continueLoss, marketMode } = this;
+		if (winTotal < -lossTotal) {
+			// const random = Math.random();
+			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
+			this.marketMode = marketMode === 1 ? 2 : 1;
 
-				this.latestTradeProfits = [];
-			}
+			this.latestTradeProfits = this.latestTradeProfits.slice(
+				-preholder / 2
+			);
 		}
+	}
 	}
 
 	calContinueWinLoss(trades) {
