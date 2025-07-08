@@ -115,6 +115,7 @@ class Backtester {
 		this.continueWin = 0;
 		this.continueLoss = 0;
 		this.marketMode = 1;
+		this.latestTradeProfits = [];
 	}
 
 	covariance(x, y) {
@@ -1142,11 +1143,19 @@ class Backtester {
 			this.continueLoss++;
 		}
 
-		const { continueWin, continueLoss, marketMode } = this;
-		if (continueWin >= 8 || continueLoss >= 3) {
-			// const random = Math.random();
-			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
-			this.marketMode = marketMode === 1 ? 2 : 1;
+		this.latestTradeProfits.push(profit);
+		if (this.latestTradeProfits.length > 10) {
+			this.latestTradeProfits.shift();
+
+			const winNum = this.latestTradeProfits.filter((p) => p > 0);
+			const lossNum = this.latestTradeProfits.filter((p) => p < 0);
+
+			const { continueWin, continueLoss, marketMode } = this;
+			if (winNum < lossNum) {
+				// const random = Math.random();
+				// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
+				this.marketMode = marketMode === 1 ? 2 : 1;
+			}
 		}
 	}
 
