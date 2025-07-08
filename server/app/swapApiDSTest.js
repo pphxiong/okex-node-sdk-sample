@@ -1143,7 +1143,7 @@ class Backtester {
 		}
 
 		const { continueWin, continueLoss, marketMode } = this;
-		if (continueLoss >= 1) {
+		if (continueWin >= 6 || continueLoss >= 2) {
 			// const random = Math.random();
 			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
 			this.marketMode = marketMode === 1 ? 2 : 1;
