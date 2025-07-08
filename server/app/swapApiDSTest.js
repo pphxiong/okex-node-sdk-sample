@@ -1144,7 +1144,7 @@ class Backtester {
 		}
 
 		this.latestTradeProfits.push(profit);
-    const preholder = 12;
+    const preholder = 2;
 	if (this.latestTradeProfits.length > preholder) {
 		this.latestTradeProfits.shift();
 
