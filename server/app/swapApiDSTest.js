@@ -607,7 +607,7 @@ class Backtester {
 						emaFast > emaSlow &&
 						adxPlusDI > adxMinusDI &&
 						adx > adx_threshold - 2 &&
-						(emaFast - emaSlow) / emaSlow < volatility_ratio
+						(emaFast - emaSlow) / emaSlow < volatility_ratio * 3
 					) {
 						marketType = '趋势多且增强-L-1-2';
 					}
@@ -623,7 +623,7 @@ class Backtester {
 						emaFast < emaSlow &&
 						adxPlusDI < adxMinusDI &&
 						adx > adx_threshold - 2 &&
-						(emaSlow - emaFast) / emaSlow < volatility_ratio
+						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 					) {
 						marketType = '趋势空且增强-L-2-2';
 					}
