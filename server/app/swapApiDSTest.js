@@ -626,7 +626,7 @@ class Backtester {
 				if (
 					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
 					((emaFast - emaSlow) / emaSlow < volatility_ratio &&
-						adx < adx_threshold + 3)
+						adx < adx_threshold + 2)
 				) {
 					marketType = '趋势空';
 				} else {
@@ -643,7 +643,7 @@ class Backtester {
 				if (
 					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
 					((emaSlow - emaFast) / emaSlow < volatility_ratio &&
-						adx < adx_threshold + 3)
+						adx < adx_threshold + 2)
 				) {
 					marketType = '趋势多';
 				} else {
@@ -1362,10 +1362,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-07-10';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
