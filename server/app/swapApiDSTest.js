@@ -1409,10 +1409,10 @@ function carryForluma(p, rl, rw) {
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2025-07-03 09:45:00')
+								moment('2025-07-09 03:15:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2025-07-03 14:30:00')
+								moment('2025-07-09 12:30:00')
 							)
 					)
 					.map((candle) =>
