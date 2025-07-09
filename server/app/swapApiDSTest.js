@@ -32,7 +32,7 @@ const _ = require('lodash');
 
 // 策略配置
 const config = {
-	symbol: 'DOGE/USDT',
+	symbol: 'BTC/USDT',
 	timeframe: '15m',
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
@@ -603,9 +603,9 @@ class Backtester {
 					if ((emaFast - emaSlow) / emaSlow > volatility_ratio) {
 						marketType = '趋势空且增强-L-1-1';
 					}
-				}
-				if (adxPlusDI < adxMinusDI && adx < adx_threshold - 2) {
-					marketType = '趋势空且增强-L-1-2';
+					if (adxPlusDI < adxMinusDI && adx > adx_threshold - 2) {
+						marketType = '趋势空且增强-L-1-2';
+					}
 				}
 			}
 			if (close > emaFast) {
@@ -614,12 +614,11 @@ class Backtester {
 					if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
 						marketType = '趋势多且增强-L-2-1';
 					}
-				}
-				if (adxPlusDI > adxMinusDI && adx < adx_threshold - 2) {
-					marketType = '趋势多且增强-L-2-2';
+					if (adxPlusDI > adxMinusDI && adx > adx_threshold - 2) {
+						marketType = '趋势多且增强-L-2-2';
+					}
 				}
 			}
-			// if (adx < adx_threshold - 5) marketType = '趋势多趋势空';
 		}
 
 		if (emaFast > emaSlow) {
