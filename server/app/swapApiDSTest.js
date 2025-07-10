@@ -607,8 +607,8 @@ class Backtester {
 						emaFast > emaSlow &&
 						adxPlusDI > adxMinusDI &&
 						adx > adx_threshold - 2 &&
-						(close - emaFast) / close < volatility_ratio * 2 &&
-						(emaFast - emaSlow) / emaFast > volatility_ratio
+						(close - emaFast) / close < volatility_ratio * 2
+						//  &&(emaFast - emaSlow) / emaFast > volatility_ratio
 					) {
 						marketType = '趋势多且增强-L-1-2';
 					}
@@ -624,8 +624,8 @@ class Backtester {
 						emaFast < emaSlow &&
 						adxPlusDI < adxMinusDI &&
 						adx > adx_threshold - 2 &&
-						(emaFast - close) / emaFast < volatility_ratio * 2 &&
-						(emaSlow - emaFast) / emaSlow > volatility_ratio
+						(emaFast - close) / emaFast < volatility_ratio * 2
+						// &&(emaSlow - emaFast) / emaSlow > volatility_ratio
 					) {
 						marketType = '趋势空且增强-L-2-2';
 					}
@@ -649,9 +649,7 @@ class Backtester {
 							? close > emaSlow
 								? '趋势多且增强-R-3-1'
 								: '趋势空'
-							: adxPlusDI - adxMinusDI < 50
-							? '趋势多'
-							: '趋势空';
+							: '趋势多';
 				}
 			}
 		}
@@ -672,9 +670,7 @@ class Backtester {
 							? close < emaSlow
 								? '趋势空且增强-R-3-2'
 								: '趋势多'
-							: adxMinusDI - adxPlusDI < 50
-							? '趋势空'
-							: '趋势多';
+							: '趋势空';
 				}
 			}
 		}
@@ -1197,15 +1193,15 @@ class Backtester {
 		// 		.filter((p) => p < 0)
 		// 		.reduce((a, b) => a + b, 0);
 
-		// 	const { continueWin, continueLoss, marketMode } = this;
-		// 	if (winTotal < -lossTotal) {
-		// 		const random = Math.random();
-		// 		if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
-		// 		// this.marketMode = marketMode === 1 ? 2 : 1;
-		// 		this.latestTradeProfits = this.latestTradeProfits.slice(
-		// 			-preholder / 2
-		// 		);
-		// 	}
+		const { continueWin, continueLoss, marketMode } = this;
+		if ((profit / (exitCandle.close * position.size)) * 100 < -1 / 2) {
+			// const random = Math.random();
+			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
+			this.marketMode = marketMode === 1 ? 2 : 1;
+			// this.latestTradeProfits = this.latestTradeProfits.slice(
+			// 	-preholder / 2
+			// );
+		}
 		// }
 	}
 
