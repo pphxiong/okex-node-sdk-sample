@@ -679,13 +679,6 @@ class Backtester {
 			}
 		}
 
-		if (rsi > 80) {
-			marketType = '趋势多';
-		}
-		if (rsi < 20) {
-			marketType = '趋势空';
-		}
-
 		// if (true) {
 		// 	if (marketType.indexOf('多') != -1) {
 		// 		marketType = marketType.replace('多', '空');
