@@ -643,7 +643,7 @@ class Backtester {
 					marketType =
 						adxPlusDI > adxMinusDI &&
 						adxPlusDI - adxMinusDI < 30 &&
-						(close - emaSlow) / close < volatility_ratio * 3
+						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 							? close > emaSlow
 								? '趋势多且增强-R-3-1'
 								: '趋势空'
@@ -664,7 +664,7 @@ class Backtester {
 					marketType =
 						adxPlusDI < adxMinusDI &&
 						adxMinusDI - adxPlusDI < 30 &&
-						(close - emaFast) / close < volatility_ratio * 3
+						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 							? close < emaSlow
 								? '趋势空且增强-R-3-2'
 								: '趋势多'
