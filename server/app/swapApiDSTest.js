@@ -645,7 +645,7 @@ class Backtester {
 							? close > emaSlow
 								? '趋势多且增强-R-3-1'
 								: '趋势空'
-							: '趋势多';
+							: '趋势多趋势空';
 				}
 			}
 		}
@@ -666,7 +666,7 @@ class Backtester {
 							? close < emaSlow
 								? '趋势空且增强-R-3-2'
 								: '趋势多'
-							: '趋势空';
+							: '趋势多趋势空';
 				}
 			}
 		}
