@@ -647,12 +647,11 @@ class Backtester {
 						adxPlusDI - adxMinusDI < 30 &&
 						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 							? close > emaSlow
-								? emaSlope >
-								  config.emaSlope.emaSlopeThreshold / 2
-									? '趋势多且增强-R-3-1'
-									: '趋势空'
+								? '趋势多且增强-R-3-1'
 								: '趋势空'
-							: '趋势多';
+							: adxPlusDI - adxMinusDI < 50
+							? '趋势多'
+							: '趋势空';
 				}
 			}
 		}
@@ -671,14 +670,20 @@ class Backtester {
 						adxMinusDI - adxPlusDI < 30 &&
 						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 							? close < emaSlow
-								? emaSlope <
-								  -config.emaSlope.emaSlopeThreshold / 2
-									? '趋势空且增强-R-3-2'
-									: '趋势多'
+								? '趋势空且增强-R-3-2'
 								: '趋势多'
-							: '趋势空';
+							: adxMinusDI - adxPlusDI < 50
+							? '趋势空'
+							: '趋势多';
 				}
 			}
+		}
+
+		if (rsi > 80) {
+			marketType = '趋势多';
+		}
+		if (rsi < 20) {
+			marketType = '趋势空';
 		}
 
 		// if (true) {
