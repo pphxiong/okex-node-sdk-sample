@@ -1427,14 +1427,22 @@ function carryForluma(p, rl, rw) {
 
 			console.log(
 				data[config.slowframe]
-					// .slice(-5)
+					// .filter(
+					// 	(item) =>
+					// 		moment(item.timestamp).isAfter(
+					// 			moment('2023-07-24 10:00:00')
+					// 		) &&
+					// 		moment(item.timestamp).isBefore(
+					// 			moment('2023-07-24 16:00:00')
+					// 		)
+					// )
 					.filter(
 						(item) =>
 							moment(item.timestamp).isAfter(
-								moment('2023-07-24 10:00:00')
+								moment('2025-07-09 22:00:00')
 							) &&
 							moment(item.timestamp).isBefore(
-								moment('2023-07-24 16:00:00')
+								moment('2025-07-10 10:00:00')
 							)
 					)
 					.map((candle) =>
