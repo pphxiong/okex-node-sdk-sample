@@ -1194,7 +1194,7 @@ class Backtester {
 		// 		.reduce((a, b) => a + b, 0);
 
 		const { continueWin, continueLoss, marketMode } = this;
-		if (profit < -38.2 / 1000) {
+		if (profit < -38.2) {
 			// const random = Math.random();
 			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
 			this.marketMode = marketMode === 1 ? 2 : 1;
