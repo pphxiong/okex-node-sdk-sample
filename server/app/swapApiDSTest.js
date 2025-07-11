@@ -1193,15 +1193,15 @@ class Backtester {
 		// 		.filter((p) => p < 0)
 		// 		.reduce((a, b) => a + b, 0);
 
-		// const { continueWin, continueLoss, marketMode } = this;
-		// if ((profit / (exitCandle.close * position.size)) * 100 < -0.618) {
-		// 	// const random = Math.random();
-		// 	// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
-		// 	this.marketMode = marketMode === 1 ? 2 : 1;
-		// 	// this.latestTradeProfits = this.latestTradeProfits.slice(
-		// 	// 	-preholder / 2
-		// 	// );
-		// }
+		const { continueWin, continueLoss, marketMode } = this;
+		if (profit / (exitCandle.close * position.size) < -38.2 / 1000) {
+			// const random = Math.random();
+			// if (random > 0.5) this.marketMode = marketMode === 1 ? 2 : 1;
+			this.marketMode = marketMode === 1 ? 2 : 1;
+			// this.latestTradeProfits = this.latestTradeProfits.slice(
+			// 	-preholder / 2
+			// );
+		}
 		// }
 	}
 
@@ -1384,7 +1384,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-06-01';
+	const start = '2021-01-01';
 	const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
