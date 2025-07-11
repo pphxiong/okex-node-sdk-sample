@@ -1431,24 +1431,24 @@ function carryForluma(p, rl, rw) {
 
 			console.log(
 				data[config.slowframe]
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2023-04-03 23:00:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2023-04-04 02:00:00')
-							)
-					)
 					// .filter(
 					// 	(item) =>
 					// 		moment(item.timestamp).isAfter(
-					// 			moment('2025-07-09 22:00:00')
+					// 			moment('2023-04-03 23:00:00')
 					// 		) &&
 					// 		moment(item.timestamp).isBefore(
-					// 			moment('2025-07-10 10:00:00')
+					// 			moment('2023-04-04 02:00:00')
 					// 		)
 					// )
+					.filter(
+						(item) =>
+							moment(item.timestamp).isAfter(
+								moment('2025-07-10 23:00:00')
+							) &&
+							moment(item.timestamp).isBefore(
+								moment('2025-07-11 10:00:00')
+							)
+					)
 					.map((candle) =>
 						Object.assign(candle, {
 							timestamp: moment(candle.timestamp).format(
