@@ -115,7 +115,7 @@ class Backtester {
 		this.maxDrawdown = 0;
 		this.continueWin = 0;
 		this.continueLoss = 0;
-		this.marketMode = 1;
+		this.marketMode = config.marketMode;
 		this.latestTradeProfits = [];
 	}
 
