@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 1,
+	marketMode: 2,
 };
 
 class Backtester {
@@ -1200,23 +1200,26 @@ class Backtester {
 
 		this.latestTradeProfits.push(profit);
 		const preholder = 6;
-		if (this.latestTradeProfits.length > preholder) {
-			this.latestTradeProfits.shift();
+		// if (this.latestTradeProfits.length > preholder) {
+		// 	this.latestTradeProfits.shift();
 
-			const winTotal = this.latestTradeProfits
-				.filter((p) => p > 0)
-				.reduce((a, b) => a + b, 0);
-			const lossTotal = this.latestTradeProfits
-				.filter((p) => p < 0)
-				.reduce((a, b) => a + b, 0);
+		// 	const winTotal = this.latestTradeProfits
+		// 		.filter((p) => p > 0)
+		// 		.reduce((a, b) => a + b, 0);
+		// 	const lossTotal = this.latestTradeProfits
+		// 		.filter((p) => p < 0)
+		// 		.reduce((a, b) => a + b, 0);
 
-			const { continueWin, continueLoss, marketMode } = this;
-			// if (profit < -38.2 / 2) {
-			if (lossTotal < winTotal) {
-				this.marketMode = marketMode === 1 ? 2 : 1;
-				config.marketMode = this.marketMode;
-			}
-		}
+		// 	const { continueWin, continueLoss, marketMode } = this;
+		// 	if (lossTotal < winTotal) {
+		// 		this.marketMode = marketMode === 1 ? 2 : 1;
+		// 		config.marketMode = this.marketMode;
+		// 	}
+		// }
+		// if (profit < -38.2 / 2) {
+		// 	this.marketMode = marketMode === 1 ? 2 : 1;
+		// 	config.marketMode = this.marketMode;
+		// }
 	}
 
 	calContinueWinLoss(trades) {
@@ -1396,10 +1399,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-07-10';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
