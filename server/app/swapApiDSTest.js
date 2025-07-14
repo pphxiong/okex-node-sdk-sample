@@ -598,79 +598,81 @@ class Backtester {
 		const macd_falling = macd < lastMacd;
 
 		const { marketMode } = this;
-		if (adx < adx_threshold) {
-			if (close > emaFast) {
-				marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
-				if (adx > adx_threshold - 3) {
-					if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
-						marketType = '趋势多且增强-L-1-1';
+		if (marketMode == 1) {
+			if (adx < adx_threshold) {
+				if (close > emaFast) {
+					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
+					if (adx > adx_threshold - 3) {
+						if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
+							marketType = '趋势多且增强-L-1-1';
+						}
+						if (
+							emaFast > emaSlow &&
+							adxPlusDI > adxMinusDI &&
+							adx > adx_threshold - 2 &&
+							(close - emaFast) / close < volatility_ratio * 2
+						) {
+							marketType = '趋势多且增强-L-1-2';
+						}
 					}
-					if (
-						emaFast > emaSlow &&
-						adxPlusDI > adxMinusDI &&
-						adx > adx_threshold - 2 &&
-						(close - emaFast) / close < volatility_ratio * 2
-					) {
-						marketType = '趋势多且增强-L-1-2';
+				}
+				if (close < emaFast) {
+					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
+					if (adx > adx_threshold - 3) {
+						if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
+							marketType = '趋势空且增强-L-2-1';
+						}
+						if (
+							emaFast < emaSlow &&
+							adxPlusDI < adxMinusDI &&
+							adx > adx_threshold - 2 &&
+							(emaFast - close) / emaFast < volatility_ratio * 2
+						) {
+							marketType = '趋势空且增强-L-2-2';
+						}
 					}
 				}
 			}
-			if (close < emaFast) {
-				marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
-				if (adx > adx_threshold - 3) {
-					if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
-						marketType = '趋势空且增强-L-2-1';
-					}
-					if (
-						emaFast < emaSlow &&
-						adxPlusDI < adxMinusDI &&
-						adx > adx_threshold - 2 &&
-						(emaFast - close) / emaFast < volatility_ratio * 2
-					) {
-						marketType = '趋势空且增强-L-2-2';
-					}
-				}
-			}
-		}
 
-		if (emaFast > emaSlow) {
-			if (adx > adx_threshold) {
-				if (
-					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
-					((emaFast - emaSlow) / emaFast < volatility_ratio &&
-						adx < adx_threshold + 3)
-				) {
-					marketType = '趋势空';
-				} else {
-					marketType =
-						adxPlusDI > adxMinusDI &&
-						adxPlusDI - adxMinusDI < 30 &&
-						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
-							? close > emaSlow
-								? '趋势多且增强-R-3-1'
-								: '趋势空'
-							: '趋势多';
+			if (emaFast > emaSlow) {
+				if (adx > adx_threshold) {
+					if (
+						(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
+						((emaFast - emaSlow) / emaFast < volatility_ratio &&
+							adx < adx_threshold + 3)
+					) {
+						marketType = '趋势空';
+					} else {
+						marketType =
+							adxPlusDI > adxMinusDI &&
+							adxPlusDI - adxMinusDI < 30 &&
+							(emaFast - emaSlow) / emaFast < volatility_ratio * 3
+								? close > emaSlow
+									? '趋势多且增强-R-3-1'
+									: '趋势空'
+								: '趋势多';
+					}
 				}
 			}
-		}
 
-		if (emaFast < emaSlow) {
-			if (adx > adx_threshold) {
-				if (
-					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
-					((emaSlow - emaFast) / emaSlow < volatility_ratio &&
-						adx < adx_threshold + 3)
-				) {
-					marketType = '趋势多';
-				} else {
-					marketType =
-						adxPlusDI < adxMinusDI &&
-						adxMinusDI - adxPlusDI < 30 &&
-						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
-							? close < emaSlow
-								? '趋势空且增强-R-3-2'
-								: '趋势多'
-							: '趋势空';
+			if (emaFast < emaSlow) {
+				if (adx > adx_threshold) {
+					if (
+						(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
+						((emaSlow - emaFast) / emaSlow < volatility_ratio &&
+							adx < adx_threshold + 3)
+					) {
+						marketType = '趋势多';
+					} else {
+						marketType =
+							adxPlusDI < adxMinusDI &&
+							adxMinusDI - adxPlusDI < 30 &&
+							(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
+								? close < emaSlow
+									? '趋势空且增强-R-3-2'
+									: '趋势多'
+								: '趋势空';
+					}
 				}
 			}
 		}
