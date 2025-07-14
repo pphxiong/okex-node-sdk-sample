@@ -638,7 +638,7 @@ class Backtester {
 		if (this.marketMode === 2) {
 			if (adx < adx_threshold) {
 				if (close > emaFast) {
-					marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
+					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
 					if (adx > adx_threshold - 3) {
 						if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
 							marketType = '趋势空且增强-L-M-1-1';
@@ -654,7 +654,7 @@ class Backtester {
 					}
 				}
 				if (close < emaFast) {
-					marketType = adxPlusDI > adxMinusDI ? '趋势多' : '趋势空';
+					marketType = adxPlusDI > adxMinusDI ? '趋势空' : '趋势多';
 					if (adx > adx_threshold - 3) {
 						if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
 							marketType = '趋势多且增强-L-M-2-1';
@@ -716,7 +716,7 @@ class Backtester {
 					((emaFast - emaSlow) / emaFast < volatility_ratio &&
 						adx < adx_threshold + 3)
 				) {
-					marketType = '趋势空';
+					marketType = '趋势多';
 				} else {
 					marketType =
 						adxPlusDI > adxMinusDI &&
@@ -737,7 +737,7 @@ class Backtester {
 					((emaSlow - emaFast) / emaSlow < volatility_ratio &&
 						adx < adx_threshold + 3)
 				) {
-					marketType = '趋势多';
+					marketType = '趋势空';
 				} else {
 					marketType =
 						adxPlusDI < adxMinusDI &&
@@ -1270,7 +1270,7 @@ class Backtester {
 		// 		.reduce((a, b) => a + b, 0);
 
 		const { continueWin, continueLoss, marketMode } = this;
-		if (profit < -38.2 / 1) {
+		if (profit < -38.2 / 2) {
 			this.marketMode = marketMode === 1 ? 2 : 1;
 		}
 	}
