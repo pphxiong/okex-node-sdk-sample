@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
+	marketMode: 1,
 };
 
 class Backtester {
@@ -1198,23 +1198,25 @@ class Backtester {
 			this.continueLoss++;
 		}
 
-		// this.latestTradeProfits.push(profit);
-		// const preholder = 6;
-		// if (this.latestTradeProfits.length > preholder) {
-		// 	this.latestTradeProfits.shift();
+		this.latestTradeProfits.push(profit);
+		const preholder = 6;
+		if (this.latestTradeProfits.length > preholder) {
+			this.latestTradeProfits.shift();
 
-		// 	const winTotal = this.latestTradeProfits
-		// 		.filter((p) => p > 0)
-		// 		.reduce((a, b) => a + b, 0);
-		// 	const lossTotal = this.latestTradeProfits
-		// 		.filter((p) => p < 0)
-		// 		.reduce((a, b) => a + b, 0);
+			const winTotal = this.latestTradeProfits
+				.filter((p) => p > 0)
+				.reduce((a, b) => a + b, 0);
+			const lossTotal = this.latestTradeProfits
+				.filter((p) => p < 0)
+				.reduce((a, b) => a + b, 0);
 
-		const { continueWin, continueLoss, marketMode } = this;
-		// if (profit < -38.2 / 2) {
-		// 	this.marketMode = marketMode === 1 ? 2 : 1;
-		// 	config.marketMode = this.marketMode;
-		// }
+			const { continueWin, continueLoss, marketMode } = this;
+			// if (profit < -38.2 / 2) {
+			if (lossTotal < winTotal) {
+				this.marketMode = marketMode === 1 ? 2 : 1;
+				config.marketMode = this.marketMode;
+			}
+		}
 	}
 
 	calContinueWinLoss(trades) {
