@@ -680,16 +680,10 @@ class Backtester {
 		if (marketMode === 2) {
 			if (adx > adx_threshold) {
 				if (emaFast > emaSlow) {
-					marketType =
-						close < emaFast
-							? '趋势空且增强-M-L-1'
-							: '趋势多且增强-M-L-2';
+					marketType = close > emaFast ? '趋势空且增强-M-L-1' : '';
 				}
 				if (emaFast < emaSlow) {
-					marketType =
-						close > emaFast
-							? '趋势多且增强-M-L-3'
-							: '趋势空且增强-M-L-4';
+					marketType = close < emaFast ? '趋势多且增强-M-L-3' : '';
 				}
 			}
 
