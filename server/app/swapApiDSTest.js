@@ -633,7 +633,7 @@ class Backtester {
 			}
 		}
 
-		if (true) {
+		if (this.marketMode === 2) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
 			} else if (marketType.indexOf('空') != -1) {
