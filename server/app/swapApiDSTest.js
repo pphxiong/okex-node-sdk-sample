@@ -725,9 +725,9 @@ class Backtester {
 							adxPlusDI > adxMinusDI &&
 							adxPlusDI - adxMinusDI < 30 &&
 							(emaFast - emaSlow) / emaFast < volatility_ratio * 3
-								? close > emaFast
-									? '趋势多'
-									: '趋势空且增强-R-M-3-1'
+								? close > emaSlow
+									? '趋势空且增强-R-M-3-1'
+									: '趋势多'
 								: '趋势空';
 					}
 				}
@@ -746,9 +746,9 @@ class Backtester {
 							adxPlusDI < adxMinusDI &&
 							adxMinusDI - adxPlusDI < 30 &&
 							(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
-								? close < emaFast
-									? '趋势空'
-									: '趋势多且增强-R-M-3-2'
+								? close < emaSlow
+									? '趋势多且增强-R-M-3-2'
+									: '趋势空'
 								: '趋势多';
 					}
 				}
