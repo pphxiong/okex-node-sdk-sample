@@ -680,16 +680,10 @@ class Backtester {
 		if (marketMode === 2) {
 			if (adx > adx_threshold) {
 				if (emaFast > emaSlow && close > emaFast) {
-					marketType =
-						adx < adx_threshold + 5
-							? '趋势空且增强-M-L-1'
-							: '趋势多且增强-M-L-1';
+					marketType = '趋势空且增强-M-L-1';
 				}
 				if (emaFast < emaSlow && close < emaFast) {
-					marketType =
-						adx < adx_threshold + 5
-							? '趋势多且增强-M-L-3'
-							: '趋势空且增强-M-L-4';
+					marketType = '趋势多且增强-M-L-3';
 				}
 			}
 
@@ -1223,11 +1217,11 @@ class Backtester {
 		// 	}
 		// }
 		const { marketMode } = this;
-		// if (marketMode === 1 && profit > 38.2 * 2) {
-		// 	this.marketMode = 2;
-		// } else if (marketMode === 2 && profit > -38.2 * 2) {
-		// 	this.marketMode = 1;
-		// }
+		if (marketMode === 1 && profit < -38.2 / 2) {
+			this.marketMode = 2;
+		} else if (marketMode === 2 && profit < -38.2 * 2) {
+			this.marketMode = 1;
+		}
 		config.marketMode = this.marketMode;
 	}
 
