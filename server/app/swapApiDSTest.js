@@ -89,6 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
+	marketMode: 1,
 };
 
 class Backtester {
@@ -753,7 +754,7 @@ class Backtester {
 		// 	}
 		// }
 
-		if (this.marketMode === 2) {
+		if (marketMode === 2) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
 			} else if (marketType.indexOf('空') != -1) {
@@ -1274,6 +1275,7 @@ class Backtester {
 		const { continueWin, continueLoss, marketMode } = this;
 		if (profit < -38.2 / 1) {
 			this.marketMode = marketMode === 1 ? 2 : 1;
+			config.marketMode = this.marketMode;
 		}
 	}
 
@@ -1484,6 +1486,7 @@ function carryForluma(p, rl, rw) {
 			backtester.totalFee = 0;
 			backtester.maxBalance = config.initialBalance;
 			backtester.maxDrawdown = 0;
+			backtester.marketMode = config.marketMode;
 
 			// 步骤1: 加载历史数据
 			const data = await backtester.loadHistoricalData(
