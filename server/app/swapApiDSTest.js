@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 1,
+	marketMode: 2,
 };
 
 class Backtester {
@@ -678,12 +678,21 @@ class Backtester {
 		}
 
 		if (marketMode === 2) {
-			if (emaFast > emaSlow && close > emaFast) {
-				marketType = '趋势空且增强-M-L-1';
+			if (adx > adx_threshold) {
+				if (emaFast > emaSlow) {
+					marketType =
+						close < emaFast
+							? '趋势空且增强-M-L-1'
+							: '趋势多且增强-M-L-2';
+				}
+				if (emaFast < emaSlow) {
+					marketType =
+						close > emaFast
+							? '趋势多且增强-M-L-3'
+							: '趋势空且增强-M-L-4';
+				}
 			}
-			if (emaFast < emaSlow && close < emaFast) {
-				marketType = '趋势多且增强-M-L-2';
-			}
+
 			if (adx < adx_threshold) {
 				marketType = emaFast > emaSlow ? '趋势空' : '趋势多';
 			}
@@ -1208,10 +1217,10 @@ class Backtester {
 		// 		.reduce((a, b) => a + b, 0);
 
 		const { continueWin, continueLoss, marketMode } = this;
-		if (profit < -38.2 / 2) {
-			this.marketMode = marketMode === 1 ? 2 : 1;
-			config.marketMode = this.marketMode;
-		}
+		// if (profit < -38.2 / 2) {
+		// 	this.marketMode = marketMode === 1 ? 2 : 1;
+		// 	config.marketMode = this.marketMode;
+		// }
 	}
 
 	calContinueWinLoss(trades) {
