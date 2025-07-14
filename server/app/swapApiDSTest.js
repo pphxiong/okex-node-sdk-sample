@@ -675,28 +675,32 @@ class Backtester {
 			}
 		}
 
-		// if (marketMode === 2) {
-		// 	if (adx > adx_threshold) {
-		// 		if (emaFast > emaSlow) {
-		// 			marketType = close > emaFast ? '趋势空且增强-M-L-1' : '';
-		// 		}
-		// 		if (emaFast < emaSlow) {
-		// 			marketType = close < emaFast ? '趋势多且增强-M-L-3' : '';
-		// 		}
-		// 	}
-
-		// 	if (adx < adx_threshold) {
-		// 		marketType = emaFast > emaSlow ? '趋势空' : '趋势多';
-		// 	}
-		// }
-
 		if (marketMode === 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
+			if (adx > adx_threshold) {
+				if (emaFast > emaSlow && close > emaFast) {
+					marketType =
+						adx < adx_threshold + 5
+							? '趋势空且增强-M-L-1'
+							: '趋势多且增强-M-L-1';
+				}
+				if (emaFast < emaSlow && close < emaFast) {
+					marketType =
+						adx < adx_threshold + 5 ? '趋势多且增强-M-L-3' : '趋势空且增强-M-L-4';
+				}
+			}
+
+			if (adx < adx_threshold) {
+				marketType = emaFast > emaSlow ? '趋势空' : '趋势多';
 			}
 		}
+
+		// if (marketMode === 2) {
+		// 	if (marketType.indexOf('多') != -1) {
+		// 		marketType = marketType.replace('多', '空');
+		// 	} else if (marketType.indexOf('空') != -1) {
+		// 		marketType = marketType.replace('空', '多');
+		// 	}
+		// }
 
 		return marketType;
 	}
@@ -1214,10 +1218,13 @@ class Backtester {
 		// 		config.marketMode = this.marketMode;
 		// 	}
 		// }
-		// if (profit < -38.2 / 2) {
-		// 	this.marketMode = marketMode === 1 ? 2 : 1;
-		// 	config.marketMode = this.marketMode;
+		const { marketMode } = this;
+		// if (marketMode === 1 && profit > 38.2 * 2) {
+		// 	this.marketMode = 2;
+		// } else if (marketMode === 2 && profit > -38.2 * 2) {
+		// 	this.marketMode = 1;
 		// }
+		config.marketMode = this.marketMode;
 	}
 
 	calContinueWinLoss(trades) {
