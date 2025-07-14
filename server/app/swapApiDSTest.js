@@ -709,13 +709,7 @@ class Backtester {
 			}
 		}
 
-		if (this.marketType === 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
-		}
+
 
 		if (emaFast > emaSlow) {
 			if (adx > adx_threshold) {
@@ -756,6 +750,14 @@ class Backtester {
 								: '趋势多'
 							: '趋势空';
 				}
+			}
+		}
+    
+		if (this.marketMode === 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
 			}
 		}
 
