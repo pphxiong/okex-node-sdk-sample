@@ -751,7 +751,7 @@ class Backtester {
 			}
 		}
 
-		if (this.marketMode === 2 || true) {
+		if (this.marketMode === 2) {
 			if (marketType.indexOf('多') != -1) {
 				marketType = marketType.replace('多', '空');
 			} else if (marketType.indexOf('空') != -1) {
@@ -1270,9 +1270,9 @@ class Backtester {
 		// 		.reduce((a, b) => a + b, 0);
 
 		const { continueWin, continueLoss, marketMode } = this;
-		// if (profit < -38.2 / 1) {
-		// 	this.marketMode = marketMode === 1 ? 2 : 1;
-		// }
+		if (profit < -38.2 / 1) {
+			this.marketMode = marketMode === 1 ? 2 : 1;
+		}
 	}
 
 	calContinueWinLoss(trades) {
