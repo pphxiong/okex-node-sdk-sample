@@ -687,7 +687,7 @@ class Backtester {
 				}
 			}
 			if (adx < adx_threshold) {
-				marketType = '趋势多趋势空';
+				marketType = close > emaFast ? '趋势多' : '趋势空';
 			}
 		}
 
