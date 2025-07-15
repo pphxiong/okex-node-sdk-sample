@@ -569,6 +569,8 @@ class Backtester {
 			is_latest_has_rsi_short,
 			volatility_ratio,
 			adx_threshold,
+			upper,
+			lower,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -678,10 +680,10 @@ class Backtester {
 		}
 
 		if (marketMode === 2) {
-			if (close > high) {
+			if (close > upper) {
 				marketType = '趋势空且增强-M-L-1';
 			}
-			if (close < low) {
+			if (close < lower) {
 				marketType = '趋势多且增强-M-L-2';
 			}
 
