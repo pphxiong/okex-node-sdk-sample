@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 1,
+	marketMode: 2,
 };
 
 class Backtester {
@@ -1247,12 +1247,12 @@ class Backtester {
 		// 		config.marketMode = this.marketMode;
 		// 	}
 		// }
-		const { marketMode } = this;
-		if (marketMode === 1 && profit < -38.2) {
-			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < -61.8) {
-			this.marketMode = 1;
-		}
+		// const { marketMode } = this;
+		// if (marketMode === 1 && profit < -38.2) {
+		// 	this.marketMode = 2;
+		// } else if (marketMode === 2 && profit < -61.8) {
+		// 	this.marketMode = 1;
+		// }
 		config.marketMode = this.marketMode;
 	}
 
@@ -1433,10 +1433,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2021-01-01';
-	const end = '2025-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-07-10';
+	// const start = '2021-01-01';
+	// const end = '2025-07-01';
+	const start = '2025-01-01';
+	const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
