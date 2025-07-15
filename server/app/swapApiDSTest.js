@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
+	marketMode: 1,
 };
 
 class Backtester {
@@ -684,13 +684,13 @@ class Backtester {
 			if (adx < adx_threshold) {
 				if (close > upper) {
 					marketType =
-						emaFast > emaSlow && close > emaFast
+						emaFast > emaSlow
 							? '趋势空且增强-M-L-1'
 							: '趋势多且增强-M-L-1';
 				}
 				if (close < lower) {
 					marketType =
-						emaFast < emaSlow && close < emaFast
+						emaFast < emaSlow
 							? '趋势多且增强-M-L-2'
 							: '趋势空且增强-M-L-2';
 				}
@@ -1433,8 +1433,8 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
+	const start = '2021-01-01';
+	const end = '2025-07-01';
 	// const start = '2025-01-01';
 	// const end = '2025-07-10';
 	const interval = 30;
