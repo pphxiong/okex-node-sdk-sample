@@ -678,19 +678,32 @@ class Backtester {
 		}
 
 		if (marketMode === 2) {
-			if (adx > adx_threshold) {
-				if (emaFast > emaSlow && close > emaFast) {
-					marketType = '趋势空且增强-M-L-1';
-				}
-				if (emaFast < emaSlow && close < emaFast) {
-					marketType = '趋势多且增强-M-L-3';
-				}
+			if (close > high) {
+				marketType = '趋势空且增强-M-L-1';
+			}
+			if (close < low) {
+				marketType = '趋势多且增强-M-L-2';
 			}
 
-			if (adx < adx_threshold) {
-				marketType = emaFast > emaSlow ? '趋势空' : '趋势多';
+			if (adx > adx_threshold) {
+				marketType = emaFast > emaSlow ? '趋势多' : '趋势空';
 			}
 		}
+
+		// if (marketMode === 2) {
+		// 	if (adx > adx_threshold) {
+		// 		if (emaFast > emaSlow && close > emaFast) {
+		// 			marketType = '趋势空且增强-M-L-1';
+		// 		}
+		// 		if (emaFast < emaSlow && close < emaFast) {
+		// 			marketType = '趋势多且增强-M-L-3';
+		// 		}
+		// 	}
+
+		// 	if (adx < adx_threshold) {
+		// 		marketType = emaFast > emaSlow ? '趋势空' : '趋势多';
+		// 	}
+		// }
 
 		// if (marketMode === 2) {
 		// 	if (marketType.indexOf('多') != -1) {
@@ -1216,12 +1229,12 @@ class Backtester {
 		// 		config.marketMode = this.marketMode;
 		// 	}
 		// }
-		const { marketMode } = this;
-		if (marketMode === 1 && profit < -38.2 / 2) {
-			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < -38.2 * 2) {
-			this.marketMode = 1;
-		}
+		// const { marketMode } = this;
+		// if (marketMode === 1 && profit < -38.2 / 2) {
+		// 	this.marketMode = 2;
+		// } else if (marketMode === 2 && profit < -38.2 * 2) {
+		// 	this.marketMode = 1;
+		// }
 		config.marketMode = this.marketMode;
 	}
 
@@ -1402,10 +1415,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2023-01-01';
-	// const end = '2023-07-01';
-	const start = '2025-01-01';
-	const end = '2025-07-10';
+	const start = '2023-01-01';
+	const end = '2023-07-01';
+	// const start = '2025-01-01';
+	// const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
