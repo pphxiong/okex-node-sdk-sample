@@ -571,6 +571,7 @@ class Backtester {
 			adx_threshold,
 			upper,
 			lower,
+			middle,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -681,19 +682,19 @@ class Backtester {
 
 		if (marketMode === 2) {
 			if (adx < adx_threshold) {
-				if (close > upper) {
+				if (close > middle) {
 					marketType = '趋势多且增强-M-L-1';
 				}
-				if (close < lower) {
+				if (close < middle) {
 					marketType = '趋势空且增强-M-L-2';
 				}
 			}
 
 			if (adx > adx_threshold) {
-				if (emaFast > emaSlow && close > emaFast) {
+				if (emaFast > emaSlow && close > high) {
 					marketType = '趋势空';
 				}
-				if (emaFast < emaSlow && close < emaFast) {
+				if (emaFast < emaSlow && close < lower) {
 					marketType = '趋势多';
 				}
 			}
