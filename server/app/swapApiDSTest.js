@@ -616,7 +616,7 @@ class Backtester {
 						(close - emaFast) / close < volatility_ratio * 2
 					) {
 						marketType =
-							(emaFast - emaSlow) / emaFast < volatility_ratio * 2
+							(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 								? '趋势多且增强-L-1-2'
 								: '趋势空且增强-L-1-2-2';
 					}
@@ -635,7 +635,7 @@ class Backtester {
 						(emaFast - close) / emaFast < volatility_ratio * 2
 					) {
 						marketType =
-							(emaSlow - emaFast) / emaSlow < volatility_ratio * 2
+							(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 								? '趋势空且增强-L-2-2'
 								: '趋势多且增强-L-2-2-2';
 					}
