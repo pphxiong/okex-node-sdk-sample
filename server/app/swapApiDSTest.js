@@ -606,7 +606,7 @@ class Backtester {
 			if (close > emaFast) {
 				marketType =
 					adxPlusDI > adxMinusDI &&
-					(emaFast - emaSlow) / emaFast > volatility_ratio * 1
+					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
 						? '趋势空'
 						: '趋势多';
 				if (adx > adx_threshold - 3) {
@@ -628,10 +628,10 @@ class Backtester {
 			}
 			if (close < emaFast) {
 				marketType =
-					adxMinusDI > adxPlusDI &&
-					(emaSlow - emaFast) / emaSlow > volatility_ratio * 1
-						? '趋势多'
-						: '趋势空';
+					adxPlusDI > adxMinusDI &&
+					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
+						? '趋势空'
+						: '趋势多';
 				if (adx > adx_threshold - 3) {
 					if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
 						marketType = '趋势空且增强-L-2-1';
