@@ -1264,9 +1264,9 @@ class Backtester {
 		// 	}
 		// }
 		const { marketMode } = this;
-		if (marketMode === 1 && profit > 38.2) {
+		if (marketMode === 1 && profit > 61.8) {
 			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < -38.2 / 2) {
+		} else if (marketMode === 2 && profit < -38.2 / 4) {
 			this.marketMode = 1;
 		}
 		config.marketMode = this.marketMode;
