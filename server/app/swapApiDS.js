@@ -169,8 +169,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			}
 		}
 
-		if (emaFast > emaSlow) {
-			if (adx > adx_threshold) {
+		if (adx > adx_threshold) {
+			if (emaFast > emaSlow) {
 				if (
 					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
 					((emaFast - emaSlow) / emaFast < volatility_ratio &&
@@ -183,15 +183,15 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 						adxPlusDI - adxMinusDI < 30 &&
 						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 							? close > emaSlow
-								? '趋势多且增强-R-3-1'
+								? adx > adx_threshold + 2
+									? '趋势多且增强-R-3-1-1'
+									: '趋势空且增强-R-3-1-2'
 								: '趋势空'
 							: '趋势多';
 				}
 			}
-		}
 
-		if (emaFast < emaSlow) {
-			if (adx > adx_threshold) {
+			if (emaFast < emaSlow) {
 				if (
 					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
 					((emaSlow - emaFast) / emaSlow < volatility_ratio &&
@@ -204,7 +204,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 						adxMinusDI - adxPlusDI < 30 &&
 						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 							? close < emaSlow
-								? '趋势空且增强-R-3-2'
+								? adx > adx_threshold + 2
+									? '趋势空且增强-R-3-2-1'
+									: '趋势多且增强-R-3-2-2'
 								: '趋势多'
 							: '趋势空';
 				}
