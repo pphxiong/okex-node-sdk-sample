@@ -602,8 +602,8 @@ class Backtester {
 
 		const { marketMode } = this;
 
-		if (emaFast > emaSlow) {
-			if (adx > adx_threshold) {
+		if (adx > adx_threshold) {
+			if (emaFast > emaSlow) {
 				if (
 					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
 					((emaFast - emaSlow) / emaFast < volatility_ratio &&
@@ -621,10 +621,8 @@ class Backtester {
 							: '趋势多';
 				}
 			}
-		}
 
-		if (emaFast < emaSlow) {
-			if (adx > adx_threshold) {
+			if (emaFast < emaSlow) {
 				if (
 					(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
 					((emaSlow - emaFast) / emaSlow < volatility_ratio &&
@@ -642,32 +640,32 @@ class Backtester {
 							: '趋势空';
 				}
 			}
-		}
 
-		if (marketMode === 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
+			if (marketMode === 2) {
+				if (marketType.indexOf('多') != -1) {
+					marketType = marketType.replace('多', '空');
+				} else if (marketType.indexOf('空') != -1) {
+					marketType = marketType.replace('空', '多');
+				}
+
+				if (adx > adx_threshold) {
+					if (emaFast > emaSlow && close > emaFast) {
+						if (close > upper)
+							marketType =
+								marketType.indexOf('多') != -1
+									? marketType
+									: '趋势多';
+					}
+
+					if (emaFast < emaSlow && close < emaFast) {
+						if (close < lower)
+							marketType =
+								marketType.indexOf('空') != -1
+									? marketType
+									: '趋势空';
+					}
+				}
 			}
-
-			// if (adx > adx_threshold) {
-			// 	if (emaFast > emaSlow && close > emaFast) {
-			// 		if (close > upper)
-			// 			marketType =
-			// 				marketType.indexOf('多') != -1
-			// 					? marketType
-			// 					: '趋势多';
-			// 	}
-
-			// 	if (emaFast < emaSlow && close < emaFast) {
-			// 		if (close < lower)
-			// 			marketType =
-			// 				marketType.indexOf('空') != -1
-			// 					? marketType
-			// 					: '趋势空';
-			// 	}
-			// }
 		}
 
 		if (adx < adx_threshold) {
