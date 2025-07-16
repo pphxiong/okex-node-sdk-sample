@@ -642,11 +642,13 @@ class Backtester {
 			}
 
 			if (marketMode === 2) {
-				if (marketType.indexOf('多') != -1) {
-					marketType = marketType.replace('多', '空');
-				} else if (marketType.indexOf('空') != -1) {
-					marketType = marketType.replace('空', '多');
-				}
+			}
+
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
+			}
 
 				if (adx > adx_threshold) {
 					if (emaFast > emaSlow && close > emaFast) {
@@ -654,7 +656,7 @@ class Backtester {
 							marketType =
 								marketType.indexOf('多') != -1
 									? marketType
-									: '趋势多';
+									: '趋势多且增强-T-3-1';
 					}
 
 					if (emaFast < emaSlow && close < emaFast) {
@@ -662,10 +664,9 @@ class Backtester {
 							marketType =
 								marketType.indexOf('空') != -1
 									? marketType
-									: '趋势空';
+									: '趋势空且增强-T-3-2';
 					}
 				}
-			}
 		}
 
 		if (adx < adx_threshold) {
@@ -1263,11 +1264,11 @@ class Backtester {
 		// 	}
 		// }
 		const { marketMode } = this;
-		if (marketMode === 1 && profit > 38.2) {
-			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < -38.2 / 3) {
-			this.marketMode = 1;
-		}
+		// if (marketMode === 1 && profit > 38.2) {
+		// 	this.marketMode = 2;
+		// } else if (marketMode === 2 && profit < -38.2 / 3) {
+		// 	this.marketMode = 1;
+		// }
 		config.marketMode = this.marketMode;
 	}
 
