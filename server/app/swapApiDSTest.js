@@ -651,7 +651,8 @@ class Backtester {
 						adxPlusDI - adxMinusDI < 30 &&
 						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 							? close > emaSlow
-								? adx > adx_threshold + 2
+								? adx > adx_threshold + 2 &&
+								  adxPlusDI - adxMinusDI > 5
 									? '趋势多且增强-R-3-1-1'
 									: '趋势空且增强-R-3-1-2'
 								: '趋势空'
@@ -672,7 +673,8 @@ class Backtester {
 						adxMinusDI - adxPlusDI < 30 &&
 						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 							? close < emaSlow
-								? adx > adx_threshold + 2
+								? adx > adx_threshold + 2 &&
+								  adxMinusDI - adxPlusDI > 5
 									? '趋势空且增强-R-3-2-1'
 									: '趋势多且增强-R-3-2-2'
 								: '趋势多'
@@ -1432,10 +1434,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-07-10';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
