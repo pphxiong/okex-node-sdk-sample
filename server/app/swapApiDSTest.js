@@ -606,7 +606,7 @@ class Backtester {
 			if (close > emaFast) {
 				marketType =
 					adxPlusDI > adxMinusDI &&
-					(emaFast - emaSlow) / emaFast > volatility_ratio * 3
+					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
 						? '趋势空'
 						: '趋势多';
 				if (adx > adx_threshold - 3) {
@@ -629,7 +629,7 @@ class Backtester {
 			if (close < emaFast) {
 				marketType =
 					adxMinusDI > adxPlusDI &&
-					(emaSlow - emaFast) / emaSlow > volatility_ratio * 3
+					(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
 						? '趋势多'
 						: '趋势空';
 				if (adx > adx_threshold - 3) {
@@ -1448,10 +1448,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-07-10';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-07-10';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
@@ -1496,34 +1496,34 @@ function carryForluma(p, rl, rw) {
 			// 步骤2: 计算指标
 			await backtester.calculateIndicators();
 
-			console.log(
-				data[config.slowframe]
-					// .filter(
-					// 	(item) =>
-					// 		moment(item.timestamp).isAfter(
-					// 			moment('2023-04-03 23:00:00')
-					// 		) &&
-					// 		moment(item.timestamp).isBefore(
-					// 			moment('2023-04-04 02:00:00')
-					// 		)
-					// )
-					.filter(
-						(item) =>
-							moment(item.timestamp).isAfter(
-								moment('2025-07-10 23:00:00')
-							) &&
-							moment(item.timestamp).isBefore(
-								moment('2025-07-11 10:00:00')
-							)
-					)
-					.map((candle) =>
-						Object.assign(candle, {
-							timestamp: moment(candle.timestamp).format(
-								'YYYY-MM-DD HH:mm:ss'
-							),
-						})
-					)
-			);
+			// console.log(
+			// 	data[config.slowframe]
+			// 		// .filter(
+			// 		// 	(item) =>
+			// 		// 		moment(item.timestamp).isAfter(
+			// 		// 			moment('2023-04-03 23:00:00')
+			// 		// 		) &&
+			// 		// 		moment(item.timestamp).isBefore(
+			// 		// 			moment('2023-04-04 02:00:00')
+			// 		// 		)
+			// 		// )
+			// 		.filter(
+			// 			(item) =>
+			// 				moment(item.timestamp).isAfter(
+			// 					moment('2025-07-10 23:00:00')
+			// 				) &&
+			// 				moment(item.timestamp).isBefore(
+			// 					moment('2025-07-11 10:00:00')
+			// 				)
+			// 		)
+			// 		.map((candle) =>
+			// 			Object.assign(candle, {
+			// 				timestamp: moment(candle.timestamp).format(
+			// 					'YYYY-MM-DD HH:mm:ss'
+			// 				),
+			// 			})
+			// 		)
+			// );
 
 			// console.log(data[config.slowframe].length);
 
