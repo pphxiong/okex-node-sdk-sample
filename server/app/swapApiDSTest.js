@@ -697,7 +697,7 @@ class Backtester {
 			}
 		}
 
-		if (adx < adx_threshold - 3) {
+		if (adx < adx_threshold) {
 			if (emaFast > emaSlow && close > emaFast) {
 				marketType = '趋势多';
 			}
