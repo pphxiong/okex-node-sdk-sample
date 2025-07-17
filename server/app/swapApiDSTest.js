@@ -607,7 +607,7 @@ class Backtester {
 				marketType =
 					adxPlusDI > adxMinusDI &&
 					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
-						? '趋势空'
+						? '趋势多'
 						: '趋势多';
 				if (adx > adx_threshold - 3) {
 					if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
@@ -630,7 +630,7 @@ class Backtester {
 				marketType =
 					adxMinusDI > adxPlusDI &&
 					(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
-						? '趋势多'
+						? '趋势空'
 						: '趋势空';
 				if (adx > adx_threshold - 3) {
 					if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
@@ -697,15 +697,15 @@ class Backtester {
 			}
 		}
 
-		if (adx < adx_threshold - 5) {
-			// marketType = '趋势多趋势空';
-			if (emaFast > emaSlow && close > emaFast) {
-				marketType = '趋势多';
-			}
-			if (emaFast < emaSlow && close < emaFast) {
-				marketType = '趋势空';
-			}
-		}
+		// if (adx < adx_threshold - 5) {
+		// 	// marketType = '趋势多趋势空';
+		// 	if (emaFast > emaSlow && close > emaFast) {
+		// 		marketType = '趋势多';
+		// 	}
+		// 	if (emaFast < emaSlow && close < emaFast) {
+		// 		marketType = '趋势空';
+		// 	}
+		// }
 
 		// 	if (marketType.indexOf('多') != -1) {
 		// 		marketType = marketType.replace('多', '空');
