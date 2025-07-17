@@ -697,8 +697,13 @@ class Backtester {
 			}
 		}
 
-		if (adx < adx_threshold) {
-			marketType = '趋势空趋势多';
+		if (adx < adx_threshold - 3) {
+			if (emaFast > emaSlow && close > emaFast) {
+				marketType = '趋势多';
+			}
+			if (emaFast > emaSlow && close > emaFast) {
+				marketType = '趋势多';
+			}
 		}
 
 		// 	if (marketType.indexOf('多') != -1) {
