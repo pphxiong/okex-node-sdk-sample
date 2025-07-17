@@ -701,8 +701,8 @@ class Backtester {
 			if (emaFast > emaSlow && close > emaFast) {
 				marketType = '趋势多';
 			}
-			if (emaFast > emaSlow && close > emaFast) {
-				marketType = '趋势多';
+			if (emaFast < emaSlow && close < emaFast) {
+				marketType = '趋势空';
 			}
 		}
 
