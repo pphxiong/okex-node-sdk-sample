@@ -1366,6 +1366,8 @@ class Backtester {
 		const profitTotal = this.balance - config.initialBalance;
 
 		const whiteFields = [
+			'positionSize',
+			'size',
 			'direction',
 			'entryMarketType',
 			'profit',
