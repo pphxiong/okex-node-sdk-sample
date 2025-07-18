@@ -625,7 +625,7 @@ class Backtester {
 								: '趋势多且增强-L-1-2-2';
 					}
 				}
-				if (adx < adx_threshold - 8) {
+				if (adx < adx_threshold - 12) {
 					if (
 						emaFast > emaSlow &&
 						(emaFast - emaSlow) / emaFast < volatility_ratio
@@ -656,7 +656,7 @@ class Backtester {
 								: '趋势空且增强-L-2-2-2';
 					}
 				}
-				if (adx < adx_threshold - 8) {
+				if (adx < adx_threshold - 12) {
 					if (
 						emaSlow > emaFast &&
 						(emaSlow - emaFast) / emaSlow < volatility_ratio
