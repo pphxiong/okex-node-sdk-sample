@@ -625,6 +625,14 @@ class Backtester {
 								: '趋势多且增强-L-1-2-2';
 					}
 				}
+				if (adx < adx_threshold - 10) {
+					if (
+						emaFast > emaSlow &&
+						(emaFast - emaSlow) / emaFast < volatility_ratio
+					) {
+						marketType = '趋势多且增强-L-3-1';
+					}
+				}
 			}
 			if (close < emaFast) {
 				marketType =
@@ -646,6 +654,14 @@ class Backtester {
 							(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 								? '趋势空且增强-L-2-2'
 								: '趋势空且增强-L-2-2-2';
+					}
+				}
+				if (adx < adx_threshold - 10) {
+					if (
+						emaSlow > emaFast &&
+						(emaSlow - emaFast) / emaSlow < volatility_ratio
+					) {
+						marketType = '趋势空且增强-L-3-1';
 					}
 				}
 			}
@@ -1366,8 +1382,8 @@ class Backtester {
 		const profitTotal = this.balance - config.initialBalance;
 
 		const whiteFields = [
-			'positionSize',
-			'size',
+			// 'positionSize',
+			// 'size',
 			'direction',
 			'entryMarketType',
 			'profit',
