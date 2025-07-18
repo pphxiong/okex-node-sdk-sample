@@ -685,7 +685,7 @@ class Backtester {
 								  adxPlusDI - adxMinusDI > 2
 									? '趋势多且增强-R-3-1-1'
 									: '趋势空且增强-R-3-1-2'
-								: '趋势空且增强-R-4-1-2'
+								: '趋势空'
 							: '趋势多';
 				}
 			}
@@ -707,7 +707,7 @@ class Backtester {
 								  adxMinusDI - adxPlusDI > 2
 									? '趋势空且增强-R-3-2-1'
 									: '趋势多且增强-R-3-2-2'
-								: '趋势多且增强-R-4-1-2'
+								: '趋势多'
 							: '趋势空';
 				}
 			}
