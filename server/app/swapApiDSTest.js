@@ -1376,6 +1376,7 @@ class Backtester {
 			'entryEmaFast',
 			'entryEmaSlow',
 			'entry',
+			'exit',
 			'entryMacd',
 			'entryRSI',
 			'entryVolatilityRatio',
