@@ -580,7 +580,7 @@ maxDrawdownTotal 32.8
 		'趋势空且增强-L-4-2-3': 61.18,
 	};
 	return Math.min(
-		globalAvailableBalance * config.leverage * 0.75,
+		globalAvailableBalance * config.leverage * 0.5,
 		config.tradeAmount
 	);
 	// return Math.min(
