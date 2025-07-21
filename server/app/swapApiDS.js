@@ -229,13 +229,13 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			}
 		}
 
-		//  if (true) {
-		//  	if (marketType.indexOf('多') != -1) {
-		// 	marketType = marketType.replace('多', '空');
-		//  	} else if (marketType.indexOf('空') != -1) {
-		//  		marketType = marketType.replace('空', '多');
-		//  	}
-		//  }
+		 if (true) {
+				if (marketType.indexOf('多') != -1) {
+					marketType = marketType.replace('多', '空');
+				} else if (marketType.indexOf('空') != -1) {
+					marketType = marketType.replace('空', '多');
+				}
+			}
 	}
 
 	if (marketMode === 2) {
