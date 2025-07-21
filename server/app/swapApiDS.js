@@ -74,7 +74,7 @@ const config = {
 		takeProfit: 2,
 	},
 	riskPerTrade: 0.02, // 每笔交易风险2%
-	leverage: 20, // 杠杆倍数
+	leverage: 45, // 杠杆倍数
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	// EMA斜率参数
@@ -229,13 +229,13 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			}
 		}
 
-		// if (true) {
-		// 	if (marketType.indexOf('多') != -1) {
-		// 		marketType = marketType.replace('多', '空');
-		// 	} else if (marketType.indexOf('空') != -1) {
-		// 		marketType = marketType.replace('空', '多');
-		// 	}
-		// }
+		 if (true) {
+		 	if (marketType.indexOf('多') != -1) {
+			marketType = marketType.replace('多', '空');
+		 	} else if (marketType.indexOf('空') != -1) {
+		 		marketType = marketType.replace('空', '多');
+		 	}
+		 }
 	}
 
 	if (marketMode === 2) {
