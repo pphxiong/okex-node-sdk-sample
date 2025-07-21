@@ -74,7 +74,7 @@ const config = {
 		takeProfit: 2,
 	},
 	riskPerTrade: 0.02, // 每笔交易风险2%
-	leverage: 45, // 杠杆倍数
+	leverage: 40, // 杠杆倍数
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	// EMA斜率参数
