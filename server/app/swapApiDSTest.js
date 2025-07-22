@@ -1285,11 +1285,11 @@ class Backtester {
 		// 	}
 		// }
 		const { marketMode } = this;
-		if (marketMode === 1 && profit < 0) {
-			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < 0) {
-			this.marketMode = 1;
-		}
+		// if (marketMode === 1 && profit < 0) {
+		// 	this.marketMode = 2;
+		// } else if (marketMode === 2 && profit < -20) {
+		// 	this.marketMode = 1;
+		// }
 		config.marketMode = this.marketMode;
 	}
 
