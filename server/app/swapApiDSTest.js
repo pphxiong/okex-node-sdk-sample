@@ -1041,7 +1041,7 @@ class Backtester {
 					// isLastIndex ||
 					// isProfitTarget ||
 					// isStopLoss ||
-					(lnp < 0 && duration >= 15) ||
+					(lnp < 0 && duration >= 30) ||
 					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
 						: shortCloseConditions.some((c) => !!c));
@@ -1285,11 +1285,11 @@ class Backtester {
 		// 	}
 		// }
 		const { marketMode } = this;
-		// if (marketMode === 1 && profit < 0) {
-		// 	this.marketMode = 2;
-		// } else if (marketMode === 2 && profit < -20) {
-		// 	this.marketMode = 1;
-		// }
+		if (marketMode === 1 && profit < -15) {
+			this.marketMode = 2;
+		} else if (marketMode === 2 && profit < -15) {
+			this.marketMode = 1;
+		}
 		config.marketMode = this.marketMode;
 	}
 
