@@ -1250,6 +1250,7 @@ class Backtester {
 			exitTime: moment(exitCandle.timestamp).format(
 				'YYYY-MM-DD HH:mm:ss'
 			),
+			marketMode: this.marketMode,
 		});
 
 		// 计算最大回撤
@@ -1401,6 +1402,7 @@ class Backtester {
 			'entryEmaSlope',
 			'entryTime',
 			'exitTime',
+      'marketMode'
 		];
 		const filterTable = [];
 		this.trades.forEach((t) => {
