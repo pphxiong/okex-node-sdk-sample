@@ -670,7 +670,7 @@ class Backtester {
 									? '趋势多且增强-R-3-1-1'
 									: '趋势多且增强-R-3-1-2'
 								: '趋势空'
-							: '趋势多且增强-R-3-1-5';
+							: '趋势多趋势空';
 				}
 			}
 
@@ -692,16 +692,16 @@ class Backtester {
 									? '趋势空且增强-R-3-2-1'
 									: '趋势空且增强-R-3-2-2'
 								: '趋势多'
-							: '趋势空且增强-R-3-2-3';
+							: '趋势多趋势空';
 				}
 			}
 		}
 
-		// if (marketType.indexOf('多') != -1) {
-		// 	marketType = marketType.replace('多', '空');
-		// } else if (marketType.indexOf('空') != -1) {
-		// 	marketType = marketType.replace('空', '多');
-		// }
+		if (marketType.indexOf('多') != -1) {
+			marketType = marketType.replace('多', '空');
+		} else if (marketType.indexOf('空') != -1) {
+			marketType = marketType.replace('空', '多');
+		}
 
 		// if (adx < adx_threshold - 5) {
 		// 	// marketType = '趋势多趋势空';
