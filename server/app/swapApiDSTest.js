@@ -723,11 +723,11 @@ class Backtester {
 		// 	}
 		// }
 
-		// 	if (marketType.indexOf('多') != -1) {
-		// 		marketType = marketType.replace('多', '空');
-		// 	} else if (marketType.indexOf('空') != -1) {
-		// 		marketType = marketType.replace('空', '多');
-		// 	}
+		if (marketType.indexOf('多') != -1) {
+			marketType = marketType.replace('多', '空');
+		} else if (marketType.indexOf('空') != -1) {
+			marketType = marketType.replace('空', '多');
+		}
 
 		// if (marketMode === 2) {
 		// 	if (adx < adx_threshold) {
@@ -1479,8 +1479,8 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-01-01';
-	const end = '2025-07-10';
+	const start = '2025-07-01';
+	const end = '2025-07-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
