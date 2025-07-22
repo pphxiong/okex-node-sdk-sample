@@ -670,7 +670,7 @@ class Backtester {
 									? '趋势多且增强-R-3-1-1'
 									: '趋势多且增强-R-3-1-2'
 								: '趋势空'
-							: '趋势多趋势空';
+							: '趋势多';
 				}
 			}
 
@@ -692,15 +692,17 @@ class Backtester {
 									? '趋势空且增强-R-3-2-1'
 									: '趋势空且增强-R-3-2-2'
 								: '趋势多'
-							: '趋势多趋势空';
+							: '趋势空';
 				}
 			}
 		}
 
-		if (marketType.indexOf('多') != -1) {
-			marketType = marketType.replace('多', '空');
-		} else if (marketType.indexOf('空') != -1) {
-			marketType = marketType.replace('空', '多');
+		if (marketMode === 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
+			}
 		}
 
 		// if (adx < adx_threshold - 5) {
@@ -953,96 +955,96 @@ class Backtester {
 				// 		(false && (isStopLoss || isProfitTarget)));
 
 				const lnp = this.getLnp(position, d);
-        const duration = this.getTimeInterval(position, d);
+				const duration = this.getTimeInterval(position, d);
 
-		const longCloseConditions = [
-			// position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
-			// 	position.adx - adx > 5,
-			position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
-				slowMarketType.indexOf('趋势空') !== -1,
-			position.slowMarketType === '趋势潜在增强' &&
-				[
-					'超买市',
-					'趋势空且增强',
-					'潜在转折空',
-					'震荡市开空',
-					'趋势潜在减弱',
-					'趋势多且减弱',
-					'不确定',
-					'趋势多只平不开',
-				].includes(slowMarketType),
-			position.slowMarketType === '震荡市开多' &&
-				[
-					'超买市',
-					'趋势空且增强',
-					'潜在转折空',
-					'震荡市开空',
-					'趋势潜在减弱',
-					'趋势多且减弱',
-					'不确定',
-					'趋势多只平不开',
-				].includes(slowMarketType),
-			position.slowMarketType === '潜在转折多' &&
-				[
-					'超买市',
-					'趋势空且增强',
-					'潜在转折空',
-					'震荡市开空',
-					'趋势潜在减弱',
-					'趋势多且减弱',
-					'不确定',
-					'趋势多只平不开',
-				].includes(slowMarketType),
-		];
+				const longCloseConditions = [
+					// position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+					// 	position.adx - adx > 5,
+					position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+						slowMarketType.indexOf('趋势空') !== -1,
+					position.slowMarketType === '趋势潜在增强' &&
+						[
+							'超买市',
+							'趋势空且增强',
+							'潜在转折空',
+							'震荡市开空',
+							'趋势潜在减弱',
+							'趋势多且减弱',
+							'不确定',
+							'趋势多只平不开',
+						].includes(slowMarketType),
+					position.slowMarketType === '震荡市开多' &&
+						[
+							'超买市',
+							'趋势空且增强',
+							'潜在转折空',
+							'震荡市开空',
+							'趋势潜在减弱',
+							'趋势多且减弱',
+							'不确定',
+							'趋势多只平不开',
+						].includes(slowMarketType),
+					position.slowMarketType === '潜在转折多' &&
+						[
+							'超买市',
+							'趋势空且增强',
+							'潜在转折空',
+							'震荡市开空',
+							'趋势潜在减弱',
+							'趋势多且减弱',
+							'不确定',
+							'趋势多只平不开',
+						].includes(slowMarketType),
+				];
 
-		const shortCloseConditions = [
-			// position.slowMarketType.indexOf('趋势空且增强') !== -1 &&
-			// 	position.adx - adx > 5,
-			position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
-				slowMarketType.indexOf('趋势多') !== -1,
-			position.slowMarketType === '趋势潜在减弱' &&
-				[
-					'超卖市',
-					'趋势多且增强',
-					'潜在转折多',
-					'震荡市开多',
-					'趋势潜在增强',
-					'趋势空且减弱',
-					'不确定',
-					'趋势空只平不开',
-				].includes(slowMarketType),
-			position.slowMarketType === '震荡市开空' &&
-				[
-					'超卖市',
-					'趋势多且增强',
-					'潜在转折多',
-					'震荡市开多',
-					'趋势潜在增强',
-					'趋势空且减弱',
-					'不确定',
-					'趋势空只平不开',
-				].includes(slowMarketType),
-			position.slowMarketType === '潜在转折空' &&
-				[
-					'超卖市',
-					'趋势多且增强',
-					'潜在转折多',
-					'震荡市开多',
-					'趋势潜在增强',
-					'趋势空且减弱',
-					'不确定',
-					'趋势空只平不开',
-				].includes(slowMarketType),
-		];
+				const shortCloseConditions = [
+					// position.slowMarketType.indexOf('趋势空且增强') !== -1 &&
+					// 	position.adx - adx > 5,
+					position.slowMarketType.indexOf('趋势空且增强') !== 1 &&
+						slowMarketType.indexOf('趋势多') !== -1,
+					position.slowMarketType === '趋势潜在减弱' &&
+						[
+							'超卖市',
+							'趋势多且增强',
+							'潜在转折多',
+							'震荡市开多',
+							'趋势潜在增强',
+							'趋势空且减弱',
+							'不确定',
+							'趋势空只平不开',
+						].includes(slowMarketType),
+					position.slowMarketType === '震荡市开空' &&
+						[
+							'超卖市',
+							'趋势多且增强',
+							'潜在转折多',
+							'震荡市开多',
+							'趋势潜在增强',
+							'趋势空且减弱',
+							'不确定',
+							'趋势空只平不开',
+						].includes(slowMarketType),
+					position.slowMarketType === '潜在转折空' &&
+						[
+							'超卖市',
+							'趋势多且增强',
+							'潜在转折多',
+							'震荡市开多',
+							'趋势潜在增强',
+							'趋势空且减弱',
+							'不确定',
+							'趋势空只平不开',
+						].includes(slowMarketType),
+				];
 
-		const isReverse =
-			// isLastIndex ||
-			// isProfitTarget ||
-			// isStopLoss ||
-			(lnp < 0 && duration > 45) ||
-			(position.direction === 'long'
-				? longCloseConditions.some((c) => !!c)
-				: shortCloseConditions.some((c) => !!c));
+				const isReverse =
+					// isLastIndex ||
+					// isProfitTarget ||
+					// isStopLoss ||
+					(lnp < 0 && duration > 45) ||
+					(position.direction === 'long'
+						? longCloseConditions.some((c) => !!c)
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
@@ -1282,11 +1284,11 @@ class Backtester {
 		// 	}
 		// }
 		const { marketMode } = this;
-		// if (marketMode === 1 && profit > 38.2) {
-		// 	this.marketMode = 2;
-		// } else if (marketMode === 2 && profit < -38.2 / 3) {
-		// 	this.marketMode = 1;
-		// }
+		if (marketMode === 1 && profit < 0) {
+			this.marketMode = 2;
+		} else if (marketMode === 2 && profit < 0) {
+			this.marketMode = 1;
+		}
 		config.marketMode = this.marketMode;
 	}
 
