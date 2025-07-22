@@ -1041,10 +1041,10 @@ class Backtester {
 					// isLastIndex ||
 					// isProfitTarget ||
 					// isStopLoss ||
-					(lnp < 0 && duration >= 30) ||
-					(position.direction === 'long'
+					// (lnp < 0 && duration >= 30) ||
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c));
+						: shortCloseConditions.some((c) => !!c);
 
 				if (isReverse) {
 					this.closePosition(
