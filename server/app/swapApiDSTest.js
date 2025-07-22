@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 1,
+	marketMode: 2,
 };
 
 class Backtester {
@@ -1287,7 +1287,7 @@ class Backtester {
 		const { marketMode } = this;
 		if (marketMode === 1 && profit < 0) {
 			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < 0) {
+		} else if (marketMode === 2 && profit < -10) {
 			this.marketMode = 1;
 		}
 		config.marketMode = this.marketMode;
@@ -1402,7 +1402,7 @@ class Backtester {
 			'entryEmaSlope',
 			'entryTime',
 			'exitTime',
-      'marketMode'
+			'marketMode',
 		];
 		const filterTable = [];
 		this.trades.forEach((t) => {
