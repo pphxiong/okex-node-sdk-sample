@@ -1267,30 +1267,37 @@ class Backtester {
 		}
 
 		this.latestTradeProfits.push(profit);
-		const preholder = 6;
-		// if (this.latestTradeProfits.length > preholder) {
-		// 	this.latestTradeProfits.shift();
+		const preholder = 5;
+		if (this.latestTradeProfits.length > preholder) {
+			this.latestTradeProfits.shift();
 
-		// 	const winTotal = this.latestTradeProfits
-		// 		.filter((p) => p > 0)
-		// 		.reduce((a, b) => a + b, 0);
-		// 	const lossTotal = this.latestTradeProfits
-		// 		.filter((p) => p < 0)
-		// 		.reduce((a, b) => a + b, 0);
+			const winTotal = this.latestTradeProfits
+				.filter((p) => p > 0)
+				.reduce((a, b) => a + b, 0);
+			const lossTotal = this.latestTradeProfits
+				.filter((p) => p < 0)
+				.reduce((a, b) => a + b, 0);
 
-		// 	const { continueWin, continueLoss, marketMode } = this;
-		// 	if (lossTotal < winTotal) {
-		// 		this.marketMode = marketMode === 1 ? 2 : 1;
-		// 		config.marketMode = this.marketMode;
-		// 	}
-		// }
-		const { marketMode } = this;
-		if (marketMode === 1 && profit < -10) {
-			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < -10) {
-			this.marketMode = 1;
+			const winNum = this.latestTradeProfits.filter((p) => p > 0).length;
+			const lossNum = this.latestTradeProfits.filter((p) => p < 0).length;
+
+			const { continueWin, continueLoss, marketMode } = this;
+			// if (lossTotal < winTotal) {
+			// 	this.marketMode = marketMode === 1 ? 2 : 1;
+			// 	config.marketMode = this.marketMode;
+			// }
+			if (lossNum > winNum) {
+				this.marketMode = marketMode === 1 ? 2 : 1;
+				config.marketMode = this.marketMode;
+			}
 		}
-		config.marketMode = this.marketMode;
+		// const { marketMode } = this;
+		// if (marketMode === 1 && profit < -10) {
+		// 	this.marketMode = 2;
+		// } else if (marketMode === 2 && profit < -10) {
+		// 	this.marketMode = 1;
+		// }
+		// config.marketMode = this.marketMode;
 	}
 
 	calContinueWinLoss(trades) {
