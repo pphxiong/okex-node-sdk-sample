@@ -1286,10 +1286,10 @@ class Backtester {
 			// 	this.marketMode = marketMode === 1 ? 2 : 1;
 			// 	config.marketMode = this.marketMode;
 			// }
-			if (lossNum > winNum) {
-				this.marketMode = marketMode === 1 ? 2 : 1;
-				config.marketMode = this.marketMode;
-			}
+			// if (lossNum > winNum) {
+			// 	this.marketMode = marketMode === 1 ? 2 : 1;
+			// 	config.marketMode = this.marketMode;
+			// }
 		}
 		// const { marketMode } = this;
 		// if (marketMode === 1 && profit < -10) {
