@@ -659,7 +659,7 @@ class Backtester {
 		// 	}
 		// }
 
-		if (adx > adx_threshold) {
+		if (adx > adx_threshold + 5) {
 			marketType = '趋势多趋势空';
 			// if (emaFast > emaSlow) {
 			// 	if (
@@ -1042,12 +1042,12 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
-					// isStopLoss ||
+					isProfitTarget ||
+					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
-					position.direction === 'long'
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
