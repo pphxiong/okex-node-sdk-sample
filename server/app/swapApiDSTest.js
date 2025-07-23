@@ -1298,10 +1298,11 @@ class Backtester {
 			// 	config.marketMode = this.marketMode;
 			// }
 		}
+		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
-		if (marketMode === 1 && (profit > 20 ||  profit < -10)) {
+		if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
 			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < -10) {
+		} else if (marketMode == 2 && lnp < -0.02) {
 			this.marketMode = 1;
 		}
 		config.marketMode = this.marketMode;

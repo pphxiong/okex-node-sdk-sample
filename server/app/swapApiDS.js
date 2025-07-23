@@ -556,7 +556,14 @@ maxDrawdownTotal 32.8
 
 // 限价单管理模块
 class OrderManager {
-	static async createLimitOrder(side, amount, price, isOpen = true, singal) {
+	static async createLimitOrder(
+		side,
+		amount,
+		price,
+		isOpen = true,
+		singal,
+		lnp
+	) {
 		// const positionSize = isOpen ? getPositionSize() : amount;
 		const positionSize = amount;
 		const positionSide = isOpen
@@ -583,6 +590,7 @@ class OrderManager {
 			price,
 			fastMarketType,
 			slowMarketType,
+			lnp,
 			timestamp: Date.now(),
 		});
 		return order;
@@ -674,6 +682,17 @@ class OrderManager {
 					);
 				}
 
+				const { lnp } = order;
+				let { marketMode } = config;
+				if (lnp) {
+					if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
+						marketMode = 2;
+					} else if (marketMode == 2 && lnp < -0.02) {
+						marketMode = 1;
+					}
+				}
+				config.marketMode = marketMode;
+
 				this.writeData();
 			}
 		}
@@ -682,6 +701,7 @@ class OrderManager {
 	static async writeData() {
 		let jsonStr = JSON.stringify(
 			Object.assign(state, {
+				marketMode: config.marketMode,
 				writeMoment: moment().format('YYYY-MM-DD HH:mm:ss'),
 			})
 		);
@@ -1010,6 +1030,11 @@ class RiskManager {
 		const { price: currentPrice } = singal;
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
+		const lnp = getLnp(
+			Math.abs(state.entryPrice),
+			Math.abs(currentPrice),
+			side
+		);
 
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.log(
@@ -1024,7 +1049,8 @@ class RiskManager {
 				amount,
 				limitPrice,
 				false,
-				singal
+				singal,
+				lnp
 			);
 		}
 
@@ -1035,7 +1061,8 @@ class RiskManager {
 				amount,
 				limitPrice,
 				false,
-				singal
+				singal,
+				lnp
 			);
 		}
 
@@ -1110,6 +1137,11 @@ async function initialize() {
 			marketData[config.fastframe].length
 		}根历史K线`
 	);
+}
+
+function getLnp(entryPrice, close, side) {
+	const lnp = (close - entryPrice) / entryPrice;
+	return side === 'sell' ? lnp : -lnp;
 }
 
 // 策略主逻辑
