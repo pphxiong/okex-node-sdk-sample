@@ -84,6 +84,7 @@ const config = {
 		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
+	marketMode: 1,
 };
 
 function getMarketType(candle, lastCandle, lastLastCandle) {
@@ -131,8 +132,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	const marketMode = 1;
-
 	if (adx < adx_threshold) {
 		if (close > emaFast) {
 			marketType =
@@ -143,11 +142,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
 				marketType = '趋势多且增强-L-1-1';
 			}
-			if (
-				emaFast > emaSlow &&
-				adxPlusDI > adxMinusDI &&
-				(close - emaFast) / close < volatility_ratio * 2
-			) {
+			if (emaFast > emaSlow && adxPlusDI > adxMinusDI) {
 				marketType =
 					(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 						? '趋势多且增强-L-1-2'
@@ -163,11 +158,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
 				marketType = '趋势空且增强-L-2-1';
 			}
-			if (
-				emaFast < emaSlow &&
-				adxPlusDI < adxMinusDI &&
-				(emaFast - close) / emaFast < volatility_ratio * 2
-			) {
+			if (emaFast < emaSlow && adxPlusDI < adxMinusDI) {
 				marketType =
 					(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 						? '趋势空且增强-L-2-2'
@@ -176,21 +167,19 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		}
 	}
 
-	if (marketMode === 2) {
-		if (marketType.indexOf('多') != -1) {
-			marketType = marketType.replace('多', '空');
-		} else if (marketType.indexOf('空') != -1) {
-			marketType = marketType.replace('空', '多');
-		}
-	}
+	// if (marketMode === 2) {
+	// 	if (marketType.indexOf('多') != -1) {
+	// 		marketType = marketType.replace('多', '空');
+	// 	} else if (marketType.indexOf('空') != -1) {
+	// 		marketType = marketType.replace('空', '多');
+	// 	}
+	// }
 
 	if (adx > adx_threshold) {
-		marketType = '趋势多趋势空';
 		if (emaFast > emaSlow) {
 			if (
 				(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
-				((emaFast - emaSlow) / emaFast < volatility_ratio &&
-					adx < adx_threshold + 3)
+				(emaFast - emaSlow) / emaFast < volatility_ratio
 			) {
 				marketType = '趋势空';
 			} else {
@@ -199,8 +188,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 					adxPlusDI - adxMinusDI < 30 &&
 					(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 						? close > emaSlow
-							? adx > adx_threshold + 2 &&
-							  adxPlusDI - adxMinusDI > 2
+							? close > emaFast
 								? '趋势多且增强-R-3-1-1'
 								: '趋势多且增强-R-3-1-2'
 							: '趋势空'
@@ -211,8 +199,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		if (emaFast < emaSlow) {
 			if (
 				(close > emaFast && adxMinusDI - adxPlusDI > 10) ||
-				((emaSlow - emaFast) / emaSlow < volatility_ratio &&
-					adx < adx_threshold + 3)
+				(emaSlow - emaFast) / emaSlow < volatility_ratio
 			) {
 				marketType = '趋势多';
 			} else {
@@ -221,8 +208,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 					adxMinusDI - adxPlusDI < 30 &&
 					(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 						? close < emaSlow
-							? adx > adx_threshold + 2 &&
-							  adxMinusDI - adxPlusDI > 2
+							? close < emaFast
 								? '趋势空且增强-R-3-2-1'
 								: '趋势空且增强-R-3-2-2'
 							: '趋势多'
@@ -673,6 +659,7 @@ class OrderManager {
 					state.side = status.side;
 					state.fastMarketType = order.fastMarketType;
 					state.slowMarketType = order.slowMarketType;
+					state.marketMode = config.marketMode;
 				} else {
 					state.position = 0;
 					state.entryPrice = 0;
@@ -836,6 +823,21 @@ function getTimeStampSlowBefore(dataList, timestamp) {
 	return data;
 }
 
+function toogleMarketType(marketType, candle) {
+	const { adx, adx_threshold } = candle;
+	if (adx < adx_threshold) {
+		if (config.marketMode == 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
+			}
+		}
+	}
+
+	return marketType;
+}
+
 // 交易信号生成
 async function generateSignal(currentPrice, isShowLog = false) {
 	const lastKline5M = JSON.parse(
@@ -853,7 +855,9 @@ async function generateSignal(currentPrice, isShowLog = false) {
 	};
 
 	const { marketType: fastMarketType } = candle[config.fastframe];
-	const { marketType: slowMarketType } = candle[config.slowframe];
+	let { marketType: slowMarketType } = candle[config.slowframe];
+
+	slowMarketType = toogleMarketType(slowMarketType, candle[config.slowframe]);
 
 	const longConditions = [
 		slowMarketType.indexOf('趋势多且增强') !== -1,
@@ -880,6 +884,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 		console.log('side', state.side);
 		console.log('longCondition', longCondition);
 		console.log('shortCondition', shortCondition);
+		console.log('marketMode', config.marketMode);
 		// console.log(
 		// 	config.fastframe,
 		// 	Object.assign(candle[config.fastframe], {
@@ -947,8 +952,8 @@ class RiskManager {
 
 		const isStopLoss =
 			side === 'buy'
-				? d.close <= state.entryPrice - stopLoss
-				: d.close >= state.entryPrice + stopLoss;
+				? d.close <= state.entryPrice * (1 - 0.01)
+				: d.close >= state.entryPrice * (1 + 0.01);
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -964,12 +969,12 @@ class RiskManager {
 
 		isStop =
 			// isProfitTarget ||
-			// isStopLoss ||
-			side === 'buy'
+			isStopLoss ||
+			(side === 'buy'
 				? state.slowMarketType.indexOf('趋势多且增强') !== -1 &&
 				  slowMarketType.indexOf('趋势空') !== -1
 				: state.slowMarketType.indexOf('趋势空且增强') !== -1 &&
-				  slowMarketType.indexOf('趋势多') !== -1;
+				  slowMarketType.indexOf('趋势多') !== -1);
 
 		console.log('***********************************');
 		console.log('entryPrice', state.entryPrice);
@@ -1213,6 +1218,7 @@ async function initPositionData() {
 			};
 			delete dataConfig.position;
 			state = Object.assign(state, dataConfig);
+			config.marketMode = state.marketMode || config.marketMode;
 		}
 	}
 	return Number(totalMarginBalance);
