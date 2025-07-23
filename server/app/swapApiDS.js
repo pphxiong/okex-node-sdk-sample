@@ -177,7 +177,16 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			}
 		}
 
+		if (true) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
+			}
+		}
+
 		if (adx > adx_threshold) {
+			marketType = '趋势多趋势空';
 			if (emaFast > emaSlow) {
 				if (
 					(close < emaFast && adxPlusDI - adxMinusDI > 10) ||
@@ -222,14 +231,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				}
 			}
 		}
-
-		if (true) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
-		}
+    
 	}
 
 	if (marketMode === 2) {
