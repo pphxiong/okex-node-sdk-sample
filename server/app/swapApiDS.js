@@ -85,6 +85,7 @@ const config = {
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	marketMode: 1,
+	isMarketModeAuto: true,
 };
 
 function getMarketType(candle, lastCandle, lastLastCandle) {
@@ -682,16 +683,18 @@ class OrderManager {
 					);
 				}
 
-				const { lnp } = order;
-				let { marketMode } = config;
-				if (lnp) {
-					if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
-						marketMode = 2;
-					} else if (marketMode == 2 && lnp < -0.01) {
-						marketMode = 1;
+				if (config.isMarketModeAuto) {
+					const { lnp } = order;
+					let { marketMode } = config;
+					if (lnp) {
+						if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
+							marketMode = 2;
+						} else if (marketMode == 2 && lnp < -0.01) {
+							marketMode = 1;
+						}
 					}
+					config.marketMode = marketMode;
 				}
-				config.marketMode = marketMode;
 
 				this.writeData();
 			}
