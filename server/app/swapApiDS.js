@@ -1022,6 +1022,7 @@ class RiskManager {
 		// }
 		// console.log('fastMarketType', fastMarketType);
 		console.log('isStop', isStop);
+		console.log('marketMode', config.marketMode);
 		console.log('***********************************');
 		return isStop;
 	}
