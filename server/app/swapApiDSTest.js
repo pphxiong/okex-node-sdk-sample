@@ -906,8 +906,8 @@ class Backtester {
 			if (position) {
 				const isProfitTarget =
 					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.01 * 2.5)
-						: d.close <= position.entryPrice * (1 - 0.01 * 2.5);
+						? d.close >= position.entryPrice * (1 + 0.01 * 10)
+						: d.close <= position.entryPrice * (1 - 0.01 * 10);
 
 				const isStopLoss =
 					position.direction === 'long'
