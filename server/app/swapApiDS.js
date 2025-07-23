@@ -131,7 +131,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	const marketMode = 2;
+	const marketMode = 1;
 
 	if (adx < adx_threshold) {
 		if (close > emaFast) {
