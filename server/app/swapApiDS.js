@@ -932,7 +932,12 @@ class RiskManager {
 		};
 
 		const { marketType: fastMarketType } = candle[config.fastframe];
-		const { marketType: slowMarketType } = candle[config.slowframe];
+		let { marketType: slowMarketType } = candle[config.slowframe];
+
+		slowMarketType = toogleMarketType(
+			slowMarketType,
+			candle[config.slowframe]
+		);
 
 		const { price: currentPrice } = signal;
 		const { side, position } = state;
@@ -952,8 +957,10 @@ class RiskManager {
 
 		const isStopLoss =
 			side === 'buy'
-				? d.close <= state.entryPrice * (1 - 0.01)
-				: d.close >= state.entryPrice * (1 + 0.01);
+				? Math.abs(Number(d.close)) <=
+				  Math.abs(Number(state.entryPrice)) * (1 - 0.01)
+				: Math.abs(Number(d.close)) >=
+				  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
