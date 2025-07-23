@@ -606,7 +606,7 @@ class Backtester {
 			if (close > emaFast) {
 				marketType =
 					adxPlusDI > adxMinusDI &&
-					(emaFast - emaSlow) / emaFast > volatility_ratio * 1
+					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
 						? '趋势空'
 						: '趋势多';
 				// if (adx > adx_threshold - 3) {
@@ -629,7 +629,7 @@ class Backtester {
 			if (close < emaFast) {
 				marketType =
 					adxMinusDI > adxPlusDI &&
-					(emaSlow - emaFast) / emaSlow > volatility_ratio * 1
+					(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
 						? '趋势多'
 						: '趋势空';
 				// if (adx > adx_threshold - 3) {
@@ -906,8 +906,8 @@ class Backtester {
 			if (position) {
 				const isProfitTarget =
 					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.025 * 2)
-						: d.close <= position.entryPrice * (1 - 0.025 * 2);
+						? d.close >= position.entryPrice * (1 + 0.01 * 2)
+						: d.close <= position.entryPrice * (1 - 0.01 * 2);
 
 				const isStopLoss =
 					position.direction === 'long'
@@ -1042,7 +1042,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
+					isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
