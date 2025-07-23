@@ -673,10 +673,9 @@ class Backtester {
 						adxPlusDI - adxMinusDI < 30 &&
 						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
 							? close > emaSlow
-								? adx > adx_threshold + 2 &&
-								  adxPlusDI - adxMinusDI > 2
+								? close > emaFast
 									? '趋势多且增强-R-3-1-1'
-									: '趋势多且增强-R-3-1-2'
+									: '趋势空且增强-R-3-1-2'
 								: '趋势空'
 							: '趋势多';
 				}
@@ -695,10 +694,9 @@ class Backtester {
 						adxMinusDI - adxPlusDI < 30 &&
 						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
 							? close < emaSlow
-								? adx > adx_threshold + 2 &&
-								  adxMinusDI - adxPlusDI > 2
+								? close < emaFast
 									? '趋势空且增强-R-3-2-1'
-									: '趋势空且增强-R-3-2-2'
+									: '趋势多且增强-R-3-2-2'
 								: '趋势多'
 							: '趋势空';
 				}
@@ -1041,10 +1039,10 @@ class Backtester {
 					// isLastIndex ||
 					// isProfitTarget ||
 					// isStopLoss ||
-					(lnp < 0 && duration >= 60) ||
-					(position.direction === 'long'
+					// (lnp < 0 && duration >= 60) ||
+					position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c));
+						: shortCloseConditions.some((c) => !!c);
 
 				if (isReverse) {
 					this.closePosition(
