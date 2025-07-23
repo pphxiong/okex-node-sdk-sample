@@ -687,7 +687,7 @@ class OrderManager {
 				if (lnp) {
 					if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
 						marketMode = 2;
-					} else if (marketMode == 2 && lnp < -0.02) {
+					} else if (marketMode == 2 && lnp < -0.01) {
 						marketMode = 1;
 					}
 				}
