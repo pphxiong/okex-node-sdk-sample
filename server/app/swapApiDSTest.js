@@ -1390,7 +1390,7 @@ class Backtester {
 			'direction',
 			'entryMarketType',
 			'profit',
-			// 'exitMarketType',
+			'exitMarketType',
 			'entryAdx',
 			'entryAdxPlusDI',
 			'entryAdxMinusDI',
