@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
+	marketMode: 1,
 };
 
 class Backtester {
@@ -667,7 +667,7 @@ class Backtester {
 					((emaFast - emaSlow) / emaFast < volatility_ratio &&
 						adx < adx_threshold + 3)
 				) {
-					marketType = '趋势多趋势空';
+					marketType = '趋势空';
 				} else {
 					marketType =
 						adxPlusDI > adxMinusDI &&
@@ -677,8 +677,8 @@ class Backtester {
 								? close > emaFast
 									? '趋势多且增强-R-3-1-1'
 									: '趋势多且增强-R-3-1-2'
-								: '趋势多趋势空'
-							: '趋势多趋势空';
+								: '趋势空'
+							: '趋势多';
 				}
 			}
 
@@ -688,7 +688,7 @@ class Backtester {
 					((emaSlow - emaFast) / emaSlow < volatility_ratio &&
 						adx < adx_threshold + 3)
 				) {
-					marketType = '趋势多趋势空';
+					marketType = '趋势多';
 				} else {
 					marketType =
 						adxPlusDI < adxMinusDI &&
@@ -698,8 +698,8 @@ class Backtester {
 								? close < emaFast
 									? '趋势空且增强-R-3-2-1'
 									: '趋势空且增强-R-3-2-2'
-								: '趋势多趋势空'
-							: '趋势多趋势空';
+								: '趋势多'
+							: '趋势空';
 				}
 			}
 		}
