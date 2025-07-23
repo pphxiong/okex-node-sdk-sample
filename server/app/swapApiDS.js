@@ -147,7 +147,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				if (
 					emaFast > emaSlow &&
 					adxPlusDI > adxMinusDI &&
-					adx > adx_threshold - 2 &&
 					(close - emaFast) / close < volatility_ratio * 2
 				) {
 					marketType =
@@ -168,7 +167,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 				if (
 					emaFast < emaSlow &&
 					adxPlusDI < adxMinusDI &&
-					adx > adx_threshold - 2 &&
 					(emaFast - close) / emaFast < volatility_ratio * 2
 				) {
 					marketType =
