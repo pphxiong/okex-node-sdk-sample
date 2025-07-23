@@ -1223,7 +1223,7 @@ class Backtester {
 			// entryMarketType: `${position.fastMarketType},${position.slowMarketType}`,
 			// exitMarketType: `${fastMarketType},${slowMarketType}`,
 			entryMarketType: `${position.slowMarketType}`,
-			// exitMarketType: `${slowMarketType}`,
+			exitMarketType: `${slowMarketType}`,
 			entryAdx: `${position.adx}`,
 			exitAdx: `${exitCandle.adx}`,
 			entryRSI: `${position.rsi}`,
