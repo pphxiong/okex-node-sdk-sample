@@ -89,7 +89,8 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 1,
+	marketMode: 2,
+	isMarketModeAuto: false,
 };
 
 class Backtester {
@@ -1300,10 +1301,12 @@ class Backtester {
 		}
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
-		if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
-			this.marketMode = 2;
-		} else if (marketMode == 2 && lnp < -0.01) {
-			this.marketMode = 1;
+		if (config.isMarketModeAuto) {
+			if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
+				this.marketMode = 2;
+			} else if (marketMode == 2 && lnp < -0.01) {
+				this.marketMode = 1;
+			}
 		}
 		config.marketMode = this.marketMode;
 	}
