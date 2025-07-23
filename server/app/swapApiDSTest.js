@@ -762,15 +762,21 @@ class Backtester {
 
 	toogleMarketType(marketType, candle) {
 		const { adx, adx_threshold } = candle;
-		// if (adx < adx_threshold) {
-		if (this.marketMode == 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
+		if (adx < adx_threshold) {
+			if (this.marketMode == 2) {
+				// if (marketType.indexOf('多') != -1) {
+				// 	marketType = marketType.replace('多', '空');
+				// } else if (marketType.indexOf('空') != -1) {
+				// 	marketType = marketType.replace('空', '多');
+				// }
+				const index = marketType.indexOf('且增强');
+				if (marketType.indexOf('且增强') != -1) {
+					marketType = marketType.slice(0, index);
+				} else {
+					marketType = `${marketType}且增强`;
+				}
 			}
 		}
-		// }
 
 		return marketType;
 	}
