@@ -762,7 +762,7 @@ class Backtester {
 
 	toogleMarketType(marketType, candle) {
 		const { adx, adx_threshold } = candle;
-		if (adx < adx_threshold || adx > adx_threshold) {
+		if (adx < adx_threshold) {
 			if (this.marketMode == 2) {
 				if (marketType.indexOf('多') != -1) {
 					marketType = marketType.replace('多', '空');
@@ -1295,9 +1295,9 @@ class Backtester {
 			// }
 		}
 		const { marketMode } = this;
-		if (marketMode === 1 && profit < 0) {
+		if (marketMode === 1 && (profit > 20 || profit < -10)) {
 			this.marketMode = 2;
-		} else if (marketMode === 2 && profit < 0) {
+		} else if (marketMode === 2 && profit < -10) {
 			this.marketMode = 1;
 		}
 		config.marketMode = this.marketMode;
