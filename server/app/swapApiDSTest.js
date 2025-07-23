@@ -651,13 +651,13 @@ class Backtester {
 			}
 		}
 
-		if (marketMode === 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
-		}
+		// if (marketMode === 2) {
+		// 	if (marketType.indexOf('多') != -1) {
+		// 		marketType = marketType.replace('多', '空');
+		// 	} else if (marketType.indexOf('空') != -1) {
+		// 		marketType = marketType.replace('空', '多');
+		// 	}
+		// }
 
 		if (adx > adx_threshold) {
 			marketType = '趋势多趋势空';
@@ -760,14 +760,18 @@ class Backtester {
 		return marketType;
 	}
 
-	toogleMarketType(marketType) {
-		// if (this.marketMode == 2) {
-		// 	if (marketType.indexOf('多') != -1) {
-		// 		marketType = marketType.replace('多', '空');
-		// 	} else if (marketType.indexOf('空') != -1) {
-		// 		marketType = marketType.replace('空', '多');
-		// 	}
-		// }
+	toogleMarketType(marketType, candle) {
+		const { adx, adx_threshold } = candle;
+		if (adx < adx_threshold) {
+			if (this.marketMode == 2) {
+				if (marketType.indexOf('多') != -1) {
+					marketType = marketType.replace('多', '空');
+				} else if (marketType.indexOf('空') != -1) {
+					marketType = marketType.replace('空', '多');
+				}
+			}
+		}
+
 		return marketType;
 	}
 
@@ -886,7 +890,7 @@ class Backtester {
 			let { marketType: slowMarketType } = candle[config.slowframe];
 
 			// if (!position)
-			slowMarketType = this.toogleMarketType(slowMarketType);
+			slowMarketType = this.toogleMarketType(slowMarketType, d);
 
 			// 生成信号
 			const signal = this.generateSignal(
