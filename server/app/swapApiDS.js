@@ -978,7 +978,7 @@ class RiskManager {
 		const lnp = getLnp(
 			Math.abs(state.entryPrice),
 			Math.abs(currentPrice),
-			side
+			side === 'buy' ? 'sell' : 'buy'
 		);
 
 		const isProfitTarget =
