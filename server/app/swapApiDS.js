@@ -84,7 +84,7 @@ const config = {
 		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
-	marketMode: 1,
+	marketMode: 2,
 	isMarketModeAuto: true,
 };
 
