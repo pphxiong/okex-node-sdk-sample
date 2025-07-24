@@ -674,6 +674,22 @@ class OrderManager {
 					state.entryPrice = 0;
 					state.highestPrice = 0;
 					state.lowestPrice = 0;
+
+					if (config.isMarketModeAuto) {
+						const { lnp } = order;
+						let { marketMode } = config;
+						if (lnp) {
+							if (
+								marketMode == 1 &&
+								(lnp > 0.02 || lnp < -0.01)
+							) {
+								marketMode = 2;
+							} else if (marketMode == 2 && lnp < -0.01) {
+								marketMode = 1;
+							}
+						}
+						config.marketMode = marketMode;
+					}
 				}
 
 				// 移除完全成交订单
@@ -681,19 +697,6 @@ class OrderManager {
 					state.activeOrders = state.activeOrders.filter(
 						(o) => o.id !== status.id
 					);
-				}
-
-				if (config.isMarketModeAuto) {
-					const { lnp } = order;
-					let { marketMode } = config;
-					if (lnp) {
-						if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
-							marketMode = 2;
-						} else if (marketMode == 2 && lnp < -0.01) {
-							marketMode = 1;
-						}
-					}
-					config.marketMode = marketMode;
 				}
 
 				this.writeData();
@@ -925,7 +928,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 			})
 		);
 		// console.log(marketData[config.slowframe].slice(-3));
-    console.log('marketType', slowMarketType);
+		console.log('marketType', slowMarketType);
 		console.log('################################');
 	}
 
@@ -972,6 +975,12 @@ class RiskManager {
 		const takeProfit = d.atr * config.atrParam.takeProfit;
 		const stopLoss = d.atr * d.stop_multiplier;
 
+		const lnp = getLnp(
+			Math.abs(state.entryPrice),
+			Math.abs(currentPrice),
+			side
+		);
+
 		const isProfitTarget =
 			side === 'buy'
 				? d.close >= state.entryPrice + takeProfit &&
@@ -979,12 +988,14 @@ class RiskManager {
 				: d.close <= state.entryPrice - takeProfit &&
 				  d.emaFast > d.emaSlow;
 
-		const isStopLoss =
-			side === 'buy'
-				? Math.abs(Number(d.close)) <=
-				  Math.abs(Number(state.entryPrice)) * (1 - 0.01)
-				: Math.abs(Number(d.close)) >=
-				  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
+		// const isStopLoss =
+		// 	side === 'buy'
+		// 		? Math.abs(Number(d.close)) <=
+		// 		  Math.abs(Number(state.entryPrice)) * (1 - 0.01)
+		// 		: Math.abs(Number(d.close)) >=
+		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
+
+		const isStopLoss = lnp < -0.01;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1027,6 +1038,7 @@ class RiskManager {
 		// console.log('fastMarketType', fastMarketType);
 		console.log('isStop', isStop);
 		console.log('marketMode', config.marketMode);
+		console.log('lnp', lnp);
 		console.log('***********************************');
 		return isStop;
 	}
