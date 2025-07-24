@@ -922,7 +922,7 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
-				const isStopLoss = lnp < -0.01;
+				const isStopLoss = lnp < -0.01 / 2;
 
 				if (isStopLoss) stopLossDirection = position.direction;
 
