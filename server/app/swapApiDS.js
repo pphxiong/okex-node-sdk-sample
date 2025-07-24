@@ -1019,6 +1019,7 @@ class RiskManager {
 				  slowMarketType.indexOf('趋势多') !== -1);
 
 		console.log('***********************************');
+		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.log('entryPrice', state.entryPrice);
 		console.log('currentPrice', currentPrice);
 		// console.log('state.slowMarketType', state.slowMarketType);
@@ -1238,6 +1239,8 @@ async function strategyLoop(isShowLog = false) {
 	} catch (err) {
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.error('策略错误:', err.message);
+		config.marketMode = config.marketMode == 1 ? 2 : 1;
+		await OrderManager.writeData();
 		restart(err.message);
 	}
 }
