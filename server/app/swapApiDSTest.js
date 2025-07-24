@@ -909,15 +909,21 @@ class Backtester {
 
 			// 处理平仓
 			if (position) {
+				const lnp = this.getLnp(position, d);
+				const duration = this.getTimeInterval(position, d);
+
 				const isProfitTarget =
 					position.direction === 'long'
 						? d.close >= position.entryPrice * (1 + 0.01 * 10)
 						: d.close <= position.entryPrice * (1 - 0.01 * 10);
 
-				const isStopLoss =
-					position.direction === 'long'
-						? d.close <= position.entryPrice * (1 - 0.01)
-						: d.close >= position.entryPrice * (1 + 0.01);
+				// const isStopLoss =
+				// 	position.direction === 'long'
+				// 		? d.close <= position.entryPrice * (1 - 0.01)
+				// 		: d.close >= position.entryPrice * (1 + 0.01);
+
+				const isStopLoss = lnp < -0.01;
+
 				if (isStopLoss) stopLossDirection = position.direction;
 
 				const takeProfit = d.atr * config.atrParam.takeProfit;
@@ -961,9 +967,6 @@ class Backtester {
 				// 		? signal.direction === 'short'
 				// 		: signal.direction === 'long') ||
 				// 		(false && (isStopLoss || isProfitTarget)));
-
-				const lnp = this.getLnp(position, d);
-				const duration = this.getTimeInterval(position, d);
 
 				const longCloseConditions = [
 					// position.slowMarketType.indexOf('趋势多且增强') !== -1 &&
