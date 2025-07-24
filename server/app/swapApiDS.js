@@ -925,6 +925,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 			})
 		);
 		// console.log(marketData[config.slowframe].slice(-3));
+    console.log('marketType', slowMarketType);
 		console.log('################################');
 	}
 
