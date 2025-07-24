@@ -945,7 +945,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 // 风险管理模块
 class RiskManager {
 	static checkStopConditions(signal) {
-		if (state.position === 0) return false;
+		if (state.position === 0) return { isStop: false };
 
 		const lastKline5M = JSON.parse(
 			JSON.stringify(marketData[config.fastframe].slice(-1)[0])
@@ -1041,10 +1041,10 @@ class RiskManager {
 		console.log('marketMode', config.marketMode);
 		console.log('lnp', lnp);
 		console.log('***********************************');
-		return isStop;
+		return { isStop, isStopLoss };
 	}
 
-	static async closePosition(singal, orderBook) {
+	static async closePosition(singal, orderBook, isStopLoss = false) {
 		const { price: currentPrice } = singal;
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
@@ -1059,6 +1059,33 @@ class RiskManager {
 			`%c强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`,
 			'color: red; font-weight: bold;'
 		);
+
+		if (isStopLoss) {
+			await exchange.createOrder(
+				config.symbol,
+				'market',
+				side,
+				amount,
+				null,
+				{
+					positionSide: side === 'sell' ? 'LONG' : 'SHORT',
+				}
+			);
+			// 重置状态
+			state.position = 0;
+			state.entryPrice = 0;
+			state.highestPrice = 0;
+			state.lowestPrice = 0;
+
+			if (config.isMarketModeAuto) {
+				config.marketMode = config.marketMode == 1 ? 2 : 1;
+				await OrderManager.writeData();
+			}
+
+			restart('market position closed...');
+
+			return;
+		}
 
 		if (side === 'buy') {
 			const limitPrice = orderBook.bid * (1 - config.orderDepth);
@@ -1083,23 +1110,6 @@ class RiskManager {
 				lnp
 			);
 		}
-
-		// await exchange.createOrder(
-		// 	config.symbol,
-		// 	'market',
-		// 	side,
-		// 	amount,
-		// 	null,
-		// 	{
-		// 		positionSide: side === 'sell' ? 'LONG' : 'SHORT',
-		// 	}
-		// );
-
-		// 重置状态
-		// state.position = 0;
-		// state.entryPrice = 0;
-		// state.highestPrice = 0;
-		// state.lowestPrice = 0;
 
 		// this.activateCooldown();
 	}
@@ -1179,8 +1189,9 @@ async function strategyLoop(isShowLog = false) {
 		const orderBook = await getOrderBook();
 
 		// 步骤3: 检查强制平仓
-		if (RiskManager.checkStopConditions(signal)) {
-			await RiskManager.closePosition(signal, orderBook);
+		const { isStop, isStopLoss } = RiskManager.checkStopConditions(signal);
+		if (isStop) {
+			await RiskManager.closePosition(signal, orderBook, isStopLoss);
 			return;
 		}
 
@@ -1239,8 +1250,10 @@ async function strategyLoop(isShowLog = false) {
 	} catch (err) {
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.error('策略错误:', err.message);
-		config.marketMode = config.marketMode == 1 ? 2 : 1;
-		await OrderManager.writeData();
+		// if (config.isMarketModeAuto) {
+		// 	config.marketMode = config.marketMode == 1 ? 2 : 1;
+		// 	await OrderManager.writeData();
+		// }
 		restart(err.message);
 	}
 }
@@ -1249,6 +1262,9 @@ const readData = async () => {
 	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
 
 	const { position, entryPrice } = dataConfig;
+	if (!config.isMarketModeAuto) {
+		delete dataConfig.marketMode;
+	}
 	dataConfig = Object.assign(dataConfig, {
 		position: Number(position),
 		entryPrice: Number(entryPrice),
@@ -1277,7 +1293,8 @@ async function initPositionData() {
 			};
 			delete dataConfig.position;
 			state = Object.assign(state, dataConfig);
-			config.marketMode = state.marketMode || config.marketMode;
+			if (config.isMarketModeAuto)
+				config.marketMode = state.marketMode || config.marketMode;
 		}
 	}
 	return Number(totalMarginBalance);

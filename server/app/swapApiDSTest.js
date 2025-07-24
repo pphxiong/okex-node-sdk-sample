@@ -922,7 +922,7 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
-				const isStopLoss = lnp < -0.02;
+				const isStopLoss = lnp < -0.01;
 
 				if (isStopLoss) stopLossDirection = position.direction;
 
@@ -1062,7 +1062,8 @@ class Backtester {
 						position,
 						d,
 						fastMarketType,
-						slowMarketType
+						slowMarketType,
+						isStopLoss
 					);
 					position = null;
 				}
@@ -1210,7 +1211,7 @@ class Backtester {
 		return duration;
 	}
 
-	closePosition(position, exitCandle, fastMarketType, slowMarketType) {
+	closePosition(position, exitCandle, fastMarketType, slowMarketType, isMarketOrder = false) {
 		const fee =
 			position.size *
 			exitCandle.close *
