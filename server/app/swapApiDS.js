@@ -557,7 +557,8 @@ class OrderManager {
     price,
     isOpen = true,
     singal,
-    lnp
+    lnp,
+    kline
   ) {
     // const positionSize = isOpen ? getPositionSize() : amount;
     const positionSize = amount;
@@ -586,6 +587,7 @@ class OrderManager {
       fastMarketType,
       slowMarketType,
       lnp,
+      kline,
       timestamp: Date.now(),
     });
     return order;
@@ -669,12 +671,17 @@ class OrderManager {
           state.lowestPrice = 0;
 
           if (config.isMarketModeAuto) {
-            const { lnp } = order;
+            const { lnp, kline } = order;
             let { marketMode } = config;
             if (lnp) {
               if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
                 marketMode = 2;
-              } else if (marketMode == 2 && lnp < -0.01) {
+              } else if (
+                marketMode == 2 &&
+                lnp < -0.01 &&
+                kline &&
+                kline.adx > kline.adx_threshold - 10
+              ) {
                 marketMode = 1;
               }
             }
@@ -1039,7 +1046,7 @@ class RiskManager {
   }
 
   static async closePosition(singal, orderBook, isStopLoss = false) {
-    const { price: currentPrice } = singal;
+    const { price: currentPrice, kline } = singal;
     const side = state.position > 0 ? "sell" : "buy";
     const amount = Math.abs(state.position);
     const lnp = getLnp(
@@ -1065,7 +1072,11 @@ class RiskManager {
       state.lowestPrice = 0;
 
       if (config.isMarketModeAuto) {
-        config.marketMode = config.marketMode == 1 ? 2 : 1;
+        if (config.marketMode == 1) {
+          config.marketMode = 2;
+        } else if (kline && kline.adx > kline.adx_threshold - 10) {
+          config.marketMode = 1;
+        }
         await OrderManager.writeData();
       }
 
@@ -1082,7 +1093,8 @@ class RiskManager {
         limitPrice,
         false,
         singal,
-        lnp
+        lnp,
+        kline
       );
     }
 
@@ -1094,7 +1106,8 @@ class RiskManager {
         limitPrice,
         false,
         singal,
-        lnp
+        lnp,
+        kline
       );
     }
 
