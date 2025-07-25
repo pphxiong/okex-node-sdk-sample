@@ -1288,12 +1288,12 @@ async function initPositionData() {
 				activeOrders: [], // 活跃限价单
 				position: Number(holding.positionAmt), // 当前持仓数量
 				entryPrice: Number(holding.entryPrice), // 持仓均价
-				highestPrice: Number(holding.entryPrice), // 持仓期间最高价
-				lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
+				// highestPrice: Number(holding.entryPrice), // 持仓期间最高价
+				// lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
 				side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
 			};
 			delete dataConfig.position;
-			state = Object.assign(state, dataConfig);
+			state = Object.assign(dataConfig, state);
 			if (config.isMarketModeAuto)
 				config.marketMode = state.marketMode || config.marketMode;
 		}

@@ -1,1 +1,13 @@
-{"activeOrders":[],"position":-3055,"entryPrice":0,"highestPrice":0,"lowestPrice":null,"side":"buy","coolingUntil":0,"marketMode":1,"writeMoment":"2025-07-25 10:55:21"}
+{
+	"activeOrders": [],
+	"position": -3055,
+	"entryPrice": 0.23029,
+	"highestPrice": 0,
+	"lowestPrice": null,
+	"side": "buy",
+	"coolingUntil": 0,
+	"marketMode": 1,
+	"fastMarketType": "趋势空且增强-L-2-2",
+	"slowMarketType": "趋势空且增强-L-2-2",
+	"writeMoment": "2025-07-25 10:55:21"
+}
