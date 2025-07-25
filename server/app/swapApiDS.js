@@ -1405,7 +1405,8 @@ function send(res, ret) {
 }
 
 app.get('/changeMode', function (req, res) {
-	send(res, { errcode: 0, errmsg: 'ok' });
+   const { query = {} } = req;
+   send(res, { errcode: 0, errmsg: 'ok', data: { query } });
 });
 
 app.listen(8093);
