@@ -1399,6 +1399,10 @@ function mergeTimeframes() {
 	console.log('策略已启动...');
 })();
 
+app.get('/changeMode', function (req, res) {
+	send(res, { errcode: 0, errmsg: 'ok' });
+});
+
 app.listen(8093);
 
 console.log('8093 server start');
