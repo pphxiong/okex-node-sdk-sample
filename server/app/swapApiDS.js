@@ -1405,8 +1405,13 @@ function send(res, ret) {
 }
 
 app.get('/changeMode', function (req, res) {
-   const { query = {} } = req;
-   send(res, { errcode: 0, errmsg: 'ok', data: { query } });
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		send(res, { errcode: 0, errmsg: 'ok', data: { query } });
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
 });
 
 app.listen(8093);
