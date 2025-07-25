@@ -1399,6 +1399,11 @@ function mergeTimeframes() {
 	console.log('策略已启动...');
 })();
 
+function send(res, ret) {
+	var str = JSON.stringify(ret);
+	res.send(str);
+}
+
 app.get('/changeMode', function (req, res) {
 	send(res, { errcode: 0, errmsg: 'ok' });
 });
