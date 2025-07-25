@@ -1041,6 +1041,8 @@ class RiskManager {
 		console.log(
 			'adx',
 			d.adx,
+			'adx_threshold',
+			d.adx_threshold,
 			'adxPlusDI',
 			d.adxPlusDI,
 			'adxMinusDI',
