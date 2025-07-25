@@ -1023,7 +1023,6 @@ class RiskManager {
 		console.log('entryPrice', state.entryPrice);
 		console.log('currentPrice', currentPrice);
 		// console.log('state.slowMarketType', state.slowMarketType);
-		// console.log('slowMarketType', slowMarketType);
 		console.log('side', state.side);
 		// if (side === 'buy') {
 		// 	console.log(
@@ -1039,6 +1038,14 @@ class RiskManager {
 		// console.log('fastMarketType', fastMarketType);
 		console.log('isStop', isStop);
 		console.log('marketMode', config.marketMode);
+		console.log(
+			'adx',
+			d.adx,
+			'adxPlusDI',
+			d.adxPlusDI,
+			'adxMinusDI',
+			d.adxMinusDI
+		);
 		console.log('lnp', lnp);
 		console.log('***********************************');
 		return { isStop, isStopLoss };
