@@ -1082,7 +1082,7 @@ class RiskManager {
 				await OrderManager.writeData();
 			}
 
-			restart('market position closed...');
+			// restart('market position closed...');
 
 			return;
 		}
@@ -1277,12 +1277,13 @@ const readData = async () => {
 async function initPositionData() {
 	const positionResult = await cAuthClientBN.swap.getPosition();
 	const { positions, availableBalance, totalMarginBalance } = positionResult;
+	const dataConfig = await readData();
+	config.marketMode = dataConfig.marketMode || config.marketMode;
 	if (positions) {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
 		);
 		if (holding) {
-			const dataConfig = await readData();
 			state = {
 				activeOrders: [], // 活跃限价单
 				position: Number(holding.positionAmt), // 当前持仓数量
