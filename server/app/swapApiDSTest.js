@@ -1286,7 +1286,7 @@ class Backtester {
       } else if (
         marketMode == 2 &&
         lnp < -0.01 &&
-        exitCandle.adx > exitCandle.adx_threshold - 15
+        exitCandle.adx > exitCandle.adx_threshold - 5
       ) {
         this.marketMode = 1;
       }
