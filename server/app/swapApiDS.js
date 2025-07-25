@@ -1404,6 +1404,20 @@ function send(res, ret) {
 	res.send(str);
 }
 
+app.get('/getMode', async function (req, res) {
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: { marketMode: config.marketMode },
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
 app.get('/changeMode', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
