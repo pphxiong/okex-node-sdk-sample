@@ -90,7 +90,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 };
 
 class Backtester {
@@ -604,30 +604,36 @@ class Backtester {
 		const { marketMode } = this;
 
 		if (adx < adx_threshold) {
-			if (emaFast > emaSlow) {
-				if (close < emaFast) {
+			if (close > emaFast) {
+				marketType =
+					adxPlusDI > adxMinusDI &&
+					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
+						? '趋势空'
+						: '趋势多';
+				if ((emaSlow - emaFast) / emaSlow > volatility_ratio) {
+					marketType = '趋势多且增强-L-1-1';
+				}
+				if (emaFast > emaSlow && adxPlusDI > adxMinusDI) {
 					marketType =
 						(emaFast - emaSlow) / emaFast < volatility_ratio * 3
-							? '趋势多且增强-L-2-2'
-							: '趋势空且增强-L-2-2-2';
-				} else {
-					marketType =
-						(emaFast - emaSlow) / emaFast > volatility_ratio * 2
-							? '趋势空'
-							: '趋势多';
+							? '趋势多且增强-L-1-2'
+							: '趋势多且增强-L-1-2-2';
 				}
 			}
-			if (emaFast < emaSlow) {
-				if (close > emaFast) {
+			if (close < emaFast) {
+				marketType =
+					adxMinusDI > adxPlusDI &&
+					(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
+						? '趋势多'
+						: '趋势空';
+				if ((emaFast - emaSlow) / emaFast > volatility_ratio) {
+					marketType = '趋势空且增强-L-2-1';
+				}
+				if (emaFast < emaSlow && adxPlusDI < adxMinusDI) {
 					marketType =
 						(emaSlow - emaFast) / emaSlow < volatility_ratio * 3
-							? '趋势空且增强-L-3-2'
-							: '趋势多且增强-L-3-2-2';
-				} else {
-					marketType =
-						(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
-							? '趋势多'
-							: '趋势空';
+							? '趋势空且增强-L-2-2'
+							: '趋势空且增强-L-2-2-2';
 				}
 			}
 		}
