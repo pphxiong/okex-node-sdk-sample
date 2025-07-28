@@ -606,8 +606,9 @@ class Backtester {
 		if (adx < adx_threshold) {
 			if (emaFast > emaSlow) {
 				if (close < emaFast) {
-					if (close > lastClose) {
+					if (close < lastClose) {
 						marketType = '趋势多且增强-L-2-2';
+					} else {
 						if (
 							(emaFast - emaSlow) / emaFast <
 							volatility_ratio * 3
