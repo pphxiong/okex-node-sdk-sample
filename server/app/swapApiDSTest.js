@@ -614,28 +614,22 @@ class Backtester {
 					// ) {
 					// 	marketType = '趋势空且增强-L-2-2';
 					// }
-					marketType =
-						(emaFast - emaSlow) / emaFast < volatility_ratio * 1
-							? '趋势多且增强-L-2-2'
-							: '趋势多';
+					marketType = '趋势多且增强-L-2-2';
 				} else {
-					marketType =
-						(close - emaFast) / close > volatility_ratio * 2
-							? '趋势空'
-							: '趋势多';
+					// marketType =
+					// 	(close - emaFast) / close > volatility_ratio * 2
+					// 		? '趋势空'
+					// 		: '趋势多';
 				}
 			}
 			if (emaFast < emaSlow) {
 				if (close > emaFast) {
-					marketType =
-						(emaSlow - emaFast) / emaSlow < volatility_ratio * 1
-							? '趋势空且增强-L-3-2'
-							: '趋势空';
+					marketType = '趋势空且增强-L-3-2';
 				} else {
-					marketType =
-						(emaFast - close) / emaFast > volatility_ratio * 2
-							? '趋势多'
-							: '趋势空';
+					// marketType =
+					// 	(emaFast - close) / emaFast > volatility_ratio * 2
+					// 		? '趋势多'
+					// 		: '趋势空';
 				}
 			}
 		}
@@ -1039,7 +1033,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
+					isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
