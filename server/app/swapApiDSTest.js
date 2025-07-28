@@ -1482,7 +1482,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-07-26';
+	const start = '2025-07-01';
 	const end = '2025-07-30';
 	const interval = 30;
 	let profitTotal = 0;
