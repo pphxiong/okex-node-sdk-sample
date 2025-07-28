@@ -900,16 +900,17 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 				const duration = this.getTimeInterval(position, d);
 
-				const isProfitTarget =
-					position.direction === 'long'
-						? d.close >= position.entryPrice * (1 + 0.01 * 10)
-						: d.close <= position.entryPrice * (1 - 0.01 * 10);
+				// const isProfitTarget =
+				// 	position.direction === 'long'
+				// 		? d.close >= position.entryPrice * (1 + 0.01 * 10)
+				// 		: d.close <= position.entryPrice * (1 - 0.01 * 10);
 
 				// const isStopLoss =
 				// 	position.direction === 'long'
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
+				const isProfitTarget = lnp > -0.01 * 1.5;
 				const isStopLoss = lnp < -0.01;
 
 				if (isStopLoss) stopLossDirection = position.direction;
