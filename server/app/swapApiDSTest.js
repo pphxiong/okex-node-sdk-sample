@@ -90,7 +90,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: true,
+	isMarketModeAuto: false,
 };
 
 class Backtester {
@@ -611,7 +611,10 @@ class Backtester {
 							? '趋势多且增强-L-2-2'
 							: '趋势空且增强-L-2-2-2';
 				} else {
-					marketType = close < lastClose ? '趋势空' : '趋势多';
+					marketType =
+						(emaFast - emaSlow) / emaFast > volatility_ratio * 2
+							? '趋势空'
+							: '趋势多';
 				}
 			}
 			if (emaFast < emaSlow) {
@@ -621,7 +624,10 @@ class Backtester {
 							? '趋势空且增强-L-3-2'
 							: '趋势多且增强-L-3-2-2';
 				} else {
-					marketType = close > lastClose ? '趋势多' : '趋势空';
+					marketType =
+						(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
+							? '趋势多'
+							: '趋势空';
 				}
 			}
 		}
