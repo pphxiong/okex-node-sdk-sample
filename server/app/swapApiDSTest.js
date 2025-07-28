@@ -605,14 +605,14 @@ class Backtester {
 
 		if (adx < adx_threshold) {
 			if (emaFast > emaSlow) {
-				if (close < emaFast) {
+				if (close < emaFast && close > lastClose) {
 					marketType = '趋势多且增强-L-2-2';
-				}
+				} 
 			}
 			if (emaFast < emaSlow) {
-				if (close > emaFast) {
+				if (close > emaFast && close < lastClose) {
 					marketType = '趋势空且增强-L-3-2';
-				}
+				} 
 			}
 		}
 
@@ -1281,7 +1281,8 @@ class Backtester {
 				this.marketMode = 2;
 			} else if (
 				marketMode == 2 &&
-				lnp < -0.01 
+				lnp < -0.01 &&
+				exitCandle.adx > exitCandle.adx_threshold - 10
 			) {
 				this.marketMode = 1;
 			}
