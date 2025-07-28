@@ -611,7 +611,7 @@ class Backtester {
 							? '趋势多且增强-L-2-2'
 							: '趋势多且增强-L-2-2-2';
 				} else {
-					marketType = '趋势空';
+					marketType = close < lastClose ? '趋势空' : '趋势多';
 				}
 			}
 			if (emaFast < emaSlow) {
@@ -621,7 +621,7 @@ class Backtester {
 							? '趋势空且增强-L-3-2'
 							: '趋势空且增强-L-3-2-2';
 				} else {
-					marketType = '趋势多';
+					marketType = close > lastClose ? '趋势多' : '趋势空';
 				}
 			}
 		}
