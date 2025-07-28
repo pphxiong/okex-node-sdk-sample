@@ -90,7 +90,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 };
 
 class Backtester {
@@ -605,11 +605,13 @@ class Backtester {
 
 		// if (adx < adx_threshold) {
 		if (emaFast > emaSlow) {
+			marketType = '趋势多';
 			if (close < emaFast && close > lastClose) {
 				marketType = '趋势多且增强-L-2-2';
 			}
 		}
 		if (emaFast < emaSlow) {
+			marketType = '趋势空';
 			if (close > emaFast && close < lastClose) {
 				marketType = '趋势空且增强-L-3-2';
 			}
