@@ -887,7 +887,7 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
-				const isProfitTarget = lnp > 0.015 && d.adx < d.adx_threshold;
+				const isProfitTarget = lnp > 0.012 && d.adx < d.adx_threshold;
 				const isStopLoss = lnp < -0.01;
 
 				if (isStopLoss) stopLossDirection = position.direction;
@@ -1278,11 +1278,11 @@ class Backtester {
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
-			if (marketMode == 1 && (lnp > 0.02 || lnp < -0.01)) {
+			if (marketMode == 1 && (lnp > 0.012 || lnp < -0.01)) {
 				this.marketMode = 2;
 			} else if (
 				marketMode == 2 &&
-				(lnp > 0.02 || lnp < -0.01) &&
+				(lnp > 0.012 || lnp < -0.01) &&
 				exitCandle.adx > exitCandle.adx_threshold - 10
 			) {
 				this.marketMode = 1;
