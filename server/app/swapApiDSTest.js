@@ -616,14 +616,14 @@ class Backtester {
 		}
 		// }
 
-		if (adx > adx_threshold) {
-			if (close > emaFast) {
-				marketType = '趋势多';
-			}
-			if (close < emaFast) {
-				marketType = '趋势空';
-			}
-		}
+		// if (adx > adx_threshold) {
+		// 	if (close > emaFast) {
+		// 		marketType = '趋势多';
+		// 	}
+		// 	if (close < emaFast) {
+		// 		marketType = '趋势空';
+		// 	}
+		// }
 
 		// if (marketMode === 2) {
 		// 	if (marketType.indexOf('多') != -1) {
