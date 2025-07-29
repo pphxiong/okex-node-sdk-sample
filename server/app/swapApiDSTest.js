@@ -89,8 +89,8 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
-	isMarketModeAuto: false,
+	marketMode: 1,
+	isMarketModeAuto: true,
 };
 
 class Backtester {
@@ -609,7 +609,7 @@ class Backtester {
 				marketType = '趋势多且增强-L-1-1';
 			}
 			if (adx > adx_threshold) {
-				if (close > emaFast) {
+				if (close > emaFast && close < lastClose) {
 					marketType = '趋势多且增强-L-1-2';
 				}
 				if (close < emaFast) {
@@ -622,7 +622,7 @@ class Backtester {
 				marketType = '趋势空且增强-L-2-1';
 			}
 			if (adx > adx_threshold) {
-				if (close < emaFast) {
+				if (close < emaFast && close > lastClose) {
 					marketType = '趋势空且增强-L-2-2';
 				}
 				if (close > emaFast) {
@@ -904,9 +904,8 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
-				const isProfitTarget =
-					lnp > 0.012 / 2 && d.adx < d.adx_threshold;
-				const isStopLoss = lnp < -0.01 / 2;
+				const isProfitTarget = lnp > 0.012 && d.adx < d.adx_threshold;
+				const isStopLoss = lnp < -0.01;
 
 				if (isStopLoss) stopLossDirection = position.direction;
 
