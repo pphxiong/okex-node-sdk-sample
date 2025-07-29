@@ -794,7 +794,6 @@ function toogleMarketType(marketType, candle) {
 			}
 		}
 	}
-
 	return marketType;
 }
 
