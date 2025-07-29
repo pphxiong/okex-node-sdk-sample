@@ -613,7 +613,7 @@ class Backtester {
 					marketType = '趋势多且增强-L-1-2';
 				}
 				if (close < emaFast) {
-					marketType = '趋势空且增强-L-1-3';
+					marketType = '趋势空';
 				}
 			}
 		}
@@ -626,7 +626,7 @@ class Backtester {
 					marketType = '趋势空且增强-L-2-2';
 				}
 				if (close > emaFast) {
-					marketType = '趋势多且增强-L-2-3';
+					marketType = '趋势多';
 				}
 			}
 		}
@@ -904,7 +904,7 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
-				const isProfitTarget = lnp > 0.012 && d.adx < d.adx_threshold;
+				const isProfitTarget = lnp > 0.012 ;
 				const isStopLoss = lnp < -0.01;
 
 				if (isStopLoss) stopLossDirection = position.direction;
