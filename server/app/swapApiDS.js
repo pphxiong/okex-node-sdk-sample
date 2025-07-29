@@ -135,12 +135,12 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
 	if (emaFast > emaSlow) {
-		if (close < emaFast && close > lastClose) {
+		if (close >  emaSlow) {
 			marketType = '趋势多且增强-L-2-2';
 		}
 	}
 	if (emaFast < emaSlow) {
-		if (close > emaFast && close < lastClose) {
+		if (close < emaSlow) {
 			marketType = '趋势空且增强-L-3-2';
 		}
 	}
