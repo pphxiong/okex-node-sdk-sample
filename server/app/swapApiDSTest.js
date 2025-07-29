@@ -1299,8 +1299,9 @@ class Backtester {
 				this.marketMode = 2;
 			} else if (
 				marketMode == 2 &&
-				(lnp > 0.02 || lnp < -0.01) &&
-				exitCandle.adx > exitCandle.adx_threshold - 10
+				(lnp > 0.02 ||
+					(lnp < -0.01 &&
+						exitCandle.adx > exitCandle.adx_threshold - 10))
 			) {
 				this.marketMode = 1;
 			}
@@ -1491,7 +1492,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2021-01-01';
+	const start = '2025-01-01';
 	const end = '2025-07-30';
 	const interval = 30;
 	let profitTotal = 0;
