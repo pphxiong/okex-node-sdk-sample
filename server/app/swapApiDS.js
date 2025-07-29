@@ -1404,6 +1404,20 @@ app.get('/restart', async function (req, res) {
 	}
 });
 
+app.get('/stop', async function (req, res) {
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		stop('api stop success...');
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
 app.listen(8093);
 
 console.log('8093 server start');
@@ -1438,8 +1452,8 @@ function start() {
 		});
 	}, 1000 * 2);
 }
-function stop() {
-	console.log('stopping......');
+function stop(e) {
+	console.log('stopping......', e);
 	setTimeout(() => {
 		exec('npm run stop', function (err, stdout, stderr) {
 			if (err) {
