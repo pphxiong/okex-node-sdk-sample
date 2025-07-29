@@ -612,11 +612,8 @@ class Backtester {
 				if (close > emaFast && rsi < 75) {
 					marketType = '趋势多且增强-L-1-2';
 				}
-				if (
-					close < emaFast &&
-					(emaFast - emaSlow) / emaFast > volatility_ratio * 2
-				) {
-					marketType = '趋势空';
+				if (close < emaFast) {
+					marketType = '趋势空且增强-L-1-3';
 				}
 			}
 		}
@@ -628,11 +625,8 @@ class Backtester {
 				if (close < emaFast && rsi > 25) {
 					marketType = '趋势空且增强-L-2-2';
 				}
-				if (
-					close > emaFast &&
-					(emaSlow - emaFast) / emaSlow > volatility_ratio * 2
-				) {
-					marketType = '趋势多';
+				if (close > emaFast) {
+					marketType = '趋势多且增强-L-2-3';
 				}
 			}
 		}
