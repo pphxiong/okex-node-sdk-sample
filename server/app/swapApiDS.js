@@ -139,7 +139,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			marketType = '趋势多且增强-L-1-1';
 		}
 		if (adx > adx_threshold) {
-			if (close > emaFast) {
+			if (close > emaFast && rsi < 75) {
 				marketType = '趋势多且增强-L-1-2';
 			}
 			if (close < emaFast) {
@@ -152,7 +152,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			marketType = '趋势空且增强-L-2-1';
 		}
 		if (adx > adx_threshold) {
-			if (close < emaFast) {
+			if (close < emaFast && rsi > 25) {
 				marketType = '趋势空且增强-L-2-2';
 			}
 			if (close > emaFast) {
@@ -415,87 +415,11 @@ function getLastIndicators(indicators, key) {
 function getPositionSize(marketType) {
 	// const riskAmount = config.tradeAmount * config.riskPerTrade;
 	// return riskAmount / (atr * config.leverage);
-	/*
-
-tradeNumTotal 3660
-profitTotal 162929.5514844662
-maxLossTotal -2061.77
-winRateTotal 2985.4099999999994
-period month 53
-avgRate 56.33
-maxDrawdownTotal 32.8
-趋势空且增强-L2-1-3: 77.94,
-趋势多且增强-R-2-2: 73.08,
-趋势多且增强-R-1-1-1: 70.27,
-趋势空且增强-L2-2-3: 69.05,
-趋势多且增强-R-1-2-2: 67.80,
-趋势多且增强-L3-1-5: 67.00,
-趋势空且增强-L1-1-2: 64.86,
-趋势多且增强-L3-1-4-1: 63.13,
-趋势空且增强-11: 62.80,
-趋势多且增强-L3-1-4-3: 60.48,
-趋势空且增强-L2-3-3: 59.25,
-趋势多且增强-R-2-1: 58.90,
-趋势多且增强-R-3-2: 58.82,
-趋势多且增强-R-3-1: 58.33,
-趋势空且增强-L2-3-4: 57.66,
-趋势多且增强-L1-2-1: 57.14,
-趋势空且增强-L2-3-5: 56.63,
-趋势多且增强-R-1-1-2: 56.60,
-趋势空且增强-2: 53.92,
-趋势多且增强-11: 50.71,
-趋势多且增强-L3-1-3: 50.38,
-趋势多且增强-L1-3-9: 47.06,
-趋势多且增强-L1-1-6: 46.43,
-趋势多且增强-L1-2-2: 45.45,
-趋势多且增强-L1-3-2: 40.63,
-趋势多且增强-L1-3-1: 40.00,
-趋势多且增强-L1-3-4: 39.67,
-趋势空且增强-L3-1-6: 37.80,
-趋势多且增强-L1-2-5: 36.25,
-
-	 */
-	const profitRateMap = {
-		'趋势空且增强-L2-1-3': 77.94,
-		'趋势多且增强-R-2-2': 73.08,
-		'趋势多且增强-R-1-1-1': 70.27,
-		'趋势空且增强-L2-2-3': 69.05,
-		'趋势多且增强-R-1-2-2': 67.8,
-		'趋势多且增强-L3-1-5': 67.0,
-		'趋势空且增强-L1-1-2': 64.86,
-		'趋势多且增强-L3-1-4-1': 63.13,
-		'趋势空且增强-11': 62.8,
-		'趋势多且增强-L3-1-4-3': 60.48,
-		'趋势空且增强-L2-3-3': 59.25,
-		'趋势多且增强-R-2-1': 58.9,
-		'趋势多且增强-R-3-2': 58.82,
-		'趋势多且增强-R-3-1': 58.33,
-		'趋势空且增强-L2-3-4': 57.66,
-		'趋势多且增强-L1-2-1': 57.14,
-		'趋势空且增强-L2-3-5': 56.63,
-		'趋势多且增强-R-1-1-2': 56.6,
-		'趋势空且增强-2': 53.92,
-		'趋势多且增强-11': 50.71,
-		'趋势多且增强-L3-1-3': 50.38,
-		'趋势多且增强-L1-3-9': 47.06,
-		'趋势多且增强-L1-1-6': 46.43,
-		'趋势多且增强-L1-2-2': 45.45,
-		'趋势多且增强-L1-3-2': 40.63,
-		'趋势多且增强-L1-3-1': 40.0,
-		'趋势多且增强-L1-3-4': 39.67,
-		'趋势空且增强-L3-1-6': 37.8,
-		'趋势多且增强-L1-2-5': 36.25,
-		'趋势空且增强-L-4-2-3': 61.18,
-	};
+	// return globalAvailableBalance * config.leverage * 0.95;
 	return Math.min(
 		globalAvailableBalance * config.leverage * 0.191,
 		config.tradeAmount
 	);
-	// return Math.min(
-	// 	globalAvailableBalance * config.leverage * 0.85,
-	// 	(config.tradeAmount * profitRateMap[marketType]) / 100
-	// );
-	// return globalAvailableBalance * config.leverage * 0.95;
 }
 
 // 限价单管理模块
