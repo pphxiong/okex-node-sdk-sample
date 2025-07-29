@@ -609,7 +609,7 @@ class Backtester {
 				if (marketMode == 1 && close < lastClose) {
 					marketType = '趋势多且增强-L-1-1';
 				}
-				if (marketMode == 2 && close > lastClose) {
+				if (marketMode == 2 && close < lastClose) {
 					marketType = '趋势多且增强-L-1-1';
 				}
 			}
@@ -627,7 +627,7 @@ class Backtester {
 				if (marketMode == 1 && close > lastClose) {
 					marketType = '趋势空且增强-L-2-1';
 				}
-				if (marketMode == 2 && close < lastClose) {
+				if (marketMode == 2 && close > lastClose) {
 					marketType = '趋势空且增强-L-2-1';
 				}
 			}
