@@ -85,7 +85,7 @@ const config = {
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	marketMode: 2,
-	isMarketModeAuto: true,
+	isMarketModeAuto: false,
 	currentCandle: {},
 };
 
@@ -554,17 +554,9 @@ class OrderManager {
 						const { lnp, kline } = order;
 						let { marketMode } = config;
 						if (lnp) {
-							if (
-								marketMode == 1 &&
-								(lnp > 0.02 || lnp < -0.01)
-							) {
+							if (marketMode == 1 && lnp < -0.01) {
 								marketMode = 2;
-							} else if (
-								marketMode == 2 &&
-								(lnp > 0.02 || lnp < -0.01) &&
-								kline &&
-								kline.adx > kline.adx_threshold - 10
-							) {
+							} else if (marketMode == 2 && lnp < -0.01) {
 								marketMode = 1;
 							}
 						}
@@ -588,6 +580,7 @@ class OrderManager {
 		let jsonStr = JSON.stringify(
 			Object.assign(state, {
 				marketMode: config.marketMode,
+				isMarketModeAuto: config.isMarketModeAuto,
 				writeMoment: moment().format('YYYY-MM-DD HH:mm:ss'),
 			})
 		);
@@ -1177,6 +1170,10 @@ async function initPositionData() {
 	const { positions, availableBalance, totalMarginBalance } = positionResult;
 	const dataConfig = await readData();
 	config.marketMode = dataConfig.marketMode || config.marketMode;
+	config.isMarketModeAuto =
+		dataConfig.isMarketModeAuto ||
+		dataConfig.isMarketModeAuto === 'true' ||
+		config.isMarketModeAuto;
 	if (positions) {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
@@ -1330,6 +1327,22 @@ app.get('/changeMode', async function (req, res) {
 			errcode: 0,
 			errmsg: 'ok',
 			data: { marketMode: config.marketMode },
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
+app.get('/changeIsMarketModeAuto', async function (req, res) {
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		config.isMarketModeAuto = !config.isMarketModeAuto;
+		await OrderManager.writeData();
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: { isMarketModeAuto: config.isMarketModeAuto },
 		});
 	} else {
 		send(res, { errcode: 1, errmsg: 'password error' });
