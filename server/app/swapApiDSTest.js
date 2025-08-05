@@ -1306,8 +1306,8 @@ class Backtester {
 			} else if (
 				marketMode == 2 &&
 				(lnp > 0.02 || lnp < -0.01) &&
-				kline &&
-				kline.adx > kline.adx_threshold - 10
+				exitCandle &&
+				exitCandle.adx > exitCandle.adx_threshold - 10
 			) {
 				marketMode = 1;
 			}
