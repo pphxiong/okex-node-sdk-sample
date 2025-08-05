@@ -85,7 +85,7 @@ const config = {
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	marketMode: 2,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 	currentCandle: {},
 };
 
