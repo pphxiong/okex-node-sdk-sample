@@ -1039,7 +1039,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isProfitTarget ||
+					// isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
