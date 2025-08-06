@@ -554,7 +554,10 @@ class OrderManager {
 						const { lnp, kline } = order;
 						let { marketMode } = config;
 						if (lnp) {
-							if (marketMode == 1 && lnp < -0.01) {
+							if (
+								marketMode == 1 &&
+								(lnp < -0.01 || lnp > 0.02)
+							) {
 								marketMode = 2;
 							} else if (marketMode == 2 && lnp < -0.01) {
 								marketMode = 1;
@@ -870,7 +873,8 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const isProfitTarget = lnp > 0.012 && d.adx < d.adx_threshold;
+		const isProfitTarget =
+			(lnp > 0.012 && d.adx < d.adx_threshold) || lnp > 0.02;
 		const isStopLoss = lnp < -0.01;
 
 		// const takeProfit =
