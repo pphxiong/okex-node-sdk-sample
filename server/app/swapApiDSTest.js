@@ -616,23 +616,23 @@ class Backtester {
 					marketType =
 						(emaFast - emaSlow) / emaFast > volatility_ratio
 							? '趋势多且增强-L-1-3'
-							: '趋势空';
+							: '趋势空且增强-L-1-3';
 				}
 			}
 		}
 		if (emaFast < emaSlow) {
 			if (close < emaSlow && close > emaFast && close > lastClose) {
-				marketType = '趋势空且增强-L-2-1';
+				marketType = '趋势空且增强-R-2-1';
 			}
 			if (adx > adx_threshold) {
 				if (close < emaFast && rsi > 25) {
-					marketType = '趋势空且增强-L-2-2';
+					marketType = '趋势空且增强-R-2-2';
 				}
 				if (close > emaFast) {
 					marketType =
 						(emaSlow - emaFast) / emaSlow > volatility_ratio
-							? '趋势空且增强-L-2-3'
-							: '趋势多';
+							? '趋势空且增强-R-2-3'
+							: '趋势多且增强-R-2-3';
 				}
 			}
 		}
