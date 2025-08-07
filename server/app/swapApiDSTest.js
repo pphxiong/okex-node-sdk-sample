@@ -912,7 +912,8 @@ class Backtester {
 
 				const isProfitTarget =
 					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.02;
-				const isStopLoss = lnp < -0.015;
+				const isStopLoss = position.marketMode == 1 ? lnp < -0.015 : lnp < -0.01;
+
 
 				if (isStopLoss) stopLossDirection = position.direction;
 
@@ -1175,6 +1176,7 @@ class Backtester {
 			stopLoss: atr * config.atrParam.stopLoss,
 			fastMarketType,
 			slowMarketType,
+			marketMode: this.marketMode,
 		});
 
 		this.balance -= fee; // 扣除手续费
@@ -1304,7 +1306,7 @@ class Backtester {
 		if (config.isMarketModeAuto) {
 			if (marketMode == 1 && (lnp < -0.015 || lnp > 0.02)) {
 				this.marketMode = 2;
-			} else if (marketMode == 2 && lnp < -0.015) {
+			} else if (marketMode == 2 && lnp < -0.01) {
 				this.marketMode = 1;
 			}
 		}
