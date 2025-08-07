@@ -632,7 +632,7 @@ class Backtester {
 					marketType =
 						(emaSlow - emaFast) / emaSlow > volatility_ratio
 							? '趋势空且增强-R-2-3'
-							: '趋势空';
+							: '趋势多';
 				}
 			}
 		}
