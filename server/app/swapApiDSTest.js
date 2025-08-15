@@ -90,7 +90,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 };
 
 class Backtester {
@@ -611,7 +611,7 @@ class Backtester {
 			// ) {
 			// 	marketType = '趋势空';
 			// }
-			if (close > emaFast) {
+			if (close > emaFast && lastClose < lastEmaFast) {
 				marketType = '趋势多且增强-L-1-1';
 			}
 			if (lastClose < lastEmaSlow) {
@@ -627,7 +627,7 @@ class Backtester {
 			// ) {
 			// 	marketType = '趋势多';
 			// }
-			if (close < emaFast) {
+			if (close < emaFast && lastClose > lastEmaFast) {
 				marketType = '趋势空且增强-R-1-1';
 			}
 			if (lastClose > lastEmaSlow) {
@@ -1220,9 +1220,9 @@ class Backtester {
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
-			if (marketMode == 1 && lnp < -0.015) {
+			if (marketMode == 1 && (lnp < -0.015 || lnp > 0.02)) {
 				this.marketMode = 2;
-			} else if (marketMode == 2 && (lnp < -0.015 || lnp > 0)) {
+			} else if (marketMode == 2 && lnp < -0.015) {
 				this.marketMode = 1;
 			}
 		}
