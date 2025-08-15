@@ -813,7 +813,7 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
 				const isProfitTarget =
-					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.02;
+					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.03;
 				const isStopLoss =
 					position.marketMode == 1 ? lnp < -0.015 : lnp < -0.015;
 
@@ -943,7 +943,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
+					isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
