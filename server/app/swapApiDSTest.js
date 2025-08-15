@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [70, 7], slopeWindow: 5 },
+		'15m': { periods: [50, 5], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -1410,10 +1410,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	// const start = '2023-01-01';
-	// const end = '2023-07-01';
-	const start = '2025-01-01';
-	const end = '2025-08-30';
+	const start = '2023-01-01';
+	const end = '2023-07-01';
+	// const start = '2025-01-01';
+	// const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
