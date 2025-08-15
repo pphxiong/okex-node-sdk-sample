@@ -40,7 +40,7 @@ const config = {
 	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [125, 25], slopeWindow: 5 },
+		'15m': { periods: [50, 5], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] },
