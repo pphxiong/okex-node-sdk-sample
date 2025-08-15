@@ -603,20 +603,18 @@ class Backtester {
 
 		const { marketMode } = this;
 
-		if (close > emaFast || rsi > 60) {
+		if (emaFast > emaSlow) {
 			marketType = '趋势多';
+			if (close > emaFast && lastClose < emaFast) {
+				marketType = '趋势多且增强-L-1-1';
+			}
 		}
 
-		if (close < emaFast || rsi < 40) {
+		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-		}
-
-		if (close > emaSlow) {
-			marketType = rsi > 40 ? '趋势多且增强-L-1-1' : '趋势空且增强-L-1-2';
-		}
-
-		if (close < emaSlow) {
-			marketType = rsi < 60 ? '趋势空且增强-R-1-1' : '趋势多且增强-R-1-1';
+			if (close < emaFast && lastClose > emaFast) {
+				marketType = '趋势空且增强-R-1-1';
+			}
 		}
 
 		// if (emaFast > emaSlow) {
