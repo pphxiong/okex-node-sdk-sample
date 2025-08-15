@@ -84,8 +84,8 @@ const config = {
 		emaSlopeThreshold: 0.005 * 0.01, // EMA斜率阈值
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
-	marketMode: 2,
-	isMarketModeAuto: true,
+	marketMode: 1,
+	isMarketModeAuto: false,
 	currentCandle: {},
 };
 
@@ -135,37 +135,57 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
 	if (emaFast > emaSlow) {
-		if (close > emaSlow && close < emaFast && close < lastClose) {
+		marketType = '趋势多';
+		if (close > emaFast && lastClose < lastEmaFast) {
 			marketType = '趋势多且增强-L-1-1';
 		}
-		if (adx > adx_threshold) {
-			if (close > emaFast && rsi < 75) {
-				marketType = '趋势多且增强-L-1-2';
-			}
-			if (close < emaFast) {
-				marketType =
-					(emaFast - emaSlow) / emaFast > volatility_ratio
-						? '趋势多且增强-L-1-3'
-						: '趋势空且增强-L-1-4';
-			}
+		if (lastClose < lastEmaSlow) {
+			marketType = '趋势多且增强-L-1-2';
 		}
 	}
+
 	if (emaFast < emaSlow) {
-		if (close < emaSlow && close > emaFast && close > lastClose) {
-			marketType = '趋势空且增强-R-2-1';
+		marketType = '趋势空';
+		if (close < emaFast && lastClose > lastEmaFast) {
+			marketType = '趋势空且增强-R-1-1';
 		}
-		if (adx > adx_threshold) {
-			if (close < emaFast && rsi > 25) {
-				marketType = '趋势空且增强-R-2-2';
-			}
-			if (close > emaFast) {
-				marketType =
-					(emaSlow - emaFast) / emaSlow > volatility_ratio
-						? '趋势空且增强-R-2-3'
-						: '趋势空且增强-R-2-4';
-			}
+		if (lastClose > lastEmaSlow) {
+			marketType = '趋势空且增强-R-1-2';
 		}
 	}
+
+	// if (emaFast > emaSlow) {
+	// 	if (close > emaSlow && close < emaFast && close < lastClose) {
+	// 		marketType = '趋势多且增强-L-1-1';
+	// 	}
+	// 	if (adx > adx_threshold) {
+	// 		if (close > emaFast && rsi < 75) {
+	// 			marketType = '趋势多且增强-L-1-2';
+	// 		}
+	// 		if (close < emaFast) {
+	// 			marketType =
+	// 				(emaFast - emaSlow) / emaFast > volatility_ratio
+	// 					? '趋势多且增强-L-1-3'
+	// 					: '趋势空且增强-L-1-4';
+	// 		}
+	// 	}
+	// }
+	// if (emaFast < emaSlow) {
+	// 	if (close < emaSlow && close > emaFast && close > lastClose) {
+	// 		marketType = '趋势空且增强-R-2-1';
+	// 	}
+	// 	if (adx > adx_threshold) {
+	// 		if (close < emaFast && rsi > 25) {
+	// 			marketType = '趋势空且增强-R-2-2';
+	// 		}
+	// 		if (close > emaFast) {
+	// 			marketType =
+	// 				(emaSlow - emaFast) / emaSlow > volatility_ratio
+	// 					? '趋势空且增强-R-2-3'
+	// 					: '趋势空且增强-R-2-4';
+	// 		}
+	// 	}
+	// }
 
 	return marketType;
 }
@@ -550,7 +570,7 @@ class OrderManager {
 					state.highestPrice = 0;
 					state.lowestPrice = 0;
 
-					if (config.isMarketModeAuto) {
+					if (config.isMarketModeAuto && false) {
 						const { lnp, kline } = order;
 						let { marketMode } = config;
 						if (lnp) {
@@ -727,15 +747,15 @@ function getTimeStampSlowBefore(dataList, timestamp) {
 
 function toogleMarketType(marketType, candle) {
 	const { adx, adx_threshold } = candle;
-	if (adx < adx_threshold) {
-		if (config.marketMode == 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
+	// if (adx < adx_threshold) {
+	if (config.marketMode == 2) {
+		if (marketType.indexOf('多') != -1) {
+			marketType = marketType.replace('多', '空');
+		} else if (marketType.indexOf('空') != -1) {
+			marketType = marketType.replace('空', '多');
 		}
 	}
+	// }
 	return marketType;
 }
 
@@ -890,7 +910,7 @@ class RiskManager {
 		//       state.entryPrice - takeProfit;
 
 		isStop =
-			isProfitTarget ||
+			// isProfitTarget ||
 			isStopLoss ||
 			(side === 'buy'
 				? state.slowMarketType.indexOf('趋势多且增强') !== -1 &&
@@ -966,7 +986,7 @@ class RiskManager {
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
 
-			if (config.isMarketModeAuto) {
+			if (config.isMarketModeAuto && false) {
 				if (config.marketMode == 1) {
 					config.marketMode = 2;
 				} else if (kline && kline.adx > kline.adx_threshold - 10) {
