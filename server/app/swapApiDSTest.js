@@ -813,7 +813,7 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
 				const isProfitTarget =
-					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.03;
+					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.02;
 				const isStopLoss =
 					position.marketMode == 1 ? lnp < -0.015 : lnp < -0.015;
 
@@ -1398,7 +1398,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-08-01';
+	const start = '2025-01-01';
 	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
