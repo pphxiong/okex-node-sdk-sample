@@ -609,7 +609,11 @@ class Backtester {
 			// 	marketType = '趋势空';
 			// }
 			// if (adx > adx_threshold && adxPlusDI > adxMinusDI) {
-			if (close > emaFast && close < lastClose) {
+			if (
+				close > emaFast &&
+				close < lastClose &&
+				(emaFast - emaSlow) / emaFast < volatility_ratio * 2
+			) {
 				marketType = '趋势多且增强-L-1-1';
 			}
 			// }
@@ -628,7 +632,11 @@ class Backtester {
 			// 	marketType = '趋势多';
 			// }
 			// if (adx > adx_threshold && adxPlusDI < adxMinusDI) {
-			if (close < emaFast && close > lastClose) {
+			if (
+				close < emaFast &&
+				close > lastClose &&
+				(emaSlow - emaFast) / emaSlow < volatility_ratio * 2
+			) {
 				marketType = '趋势空且增强-R-1-1';
 			}
 			// }
