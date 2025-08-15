@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [75, 25], slopeWindow: 5 },
+		'15m': { periods: [125, 25], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -805,7 +805,7 @@ class Backtester {
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
 				const isProfitTarget =
-					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.02;
+					(lnp > 0.02 && d.adx < d.adx_threshold) || lnp > 0.02;
 				const isStopLoss =
 					position.marketMode == 1 ? lnp < -0.015 : lnp < -0.015;
 
