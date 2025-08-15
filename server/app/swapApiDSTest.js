@@ -603,14 +603,14 @@ class Backtester {
 
 		const { marketMode } = this;
 
-		if (emaFast > emaSlow) {
+		if (close > emaSlow) {
 			marketType = '趋势多';
 			if (close > emaFast && lastClose < emaFast) {
 				marketType = '趋势多且增强-L-1-1';
 			}
 		}
 
-		if (emaFast < emaSlow) {
+		if (close < emaSlow) {
 			marketType = '趋势空';
 			if (close < emaFast && lastClose > emaFast) {
 				marketType = '趋势空且增强-R-1-1';
@@ -810,10 +810,8 @@ class Backtester {
 				// 		? d.close <= position.entryPrice * (1 - 0.01)
 				// 		: d.close >= position.entryPrice * (1 + 0.01);
 
-				const isProfitTarget =
-					(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.02;
-				const isStopLoss =
-					position.marketMode == 1 ? lnp < -0.015 : lnp < -0.015;
+				const isProfitTarget = lnp > 0.04;
+				const isStopLoss = lnp < -0.015;
 
 				if (isStopLoss) stopLossDirection = position.direction;
 
