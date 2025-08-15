@@ -603,19 +603,19 @@ class Backtester {
 
 		const { marketMode } = this;
 
-		if (close > emaFast) {
+		if (close > emaFast || rsi > 55) {
 			marketType = '趋势多';
 		}
 
-		if (close < emaFast) {
+		if (close < emaFast || rsi < 45) {
 			marketType = '趋势空';
 		}
 
-		if (close > emaSlow && rsi < 45) {
+		if (close > emaSlow && rsi > 45) {
 			marketType = '趋势多且增强-L-1-1';
 		}
 
-		if (close < emaSlow && rsi > 55) {
+		if (close < emaSlow && rsi < 55) {
 			marketType = '趋势空且增强-L-1-1';
 		}
 
