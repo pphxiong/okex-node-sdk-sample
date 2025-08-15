@@ -578,7 +578,6 @@ class Backtester {
 			emaFast: lastEmaFast,
 			emaSlow: lastEmaSlow,
 			close: lastClose,
-			open: lastOpen,
 			macdHistogram: lastMacd,
 			volume: lastVolume,
 			adxPlusDI: lastAdxPlusDI,
@@ -612,7 +611,7 @@ class Backtester {
 			// if (adx > adx_threshold && adxPlusDI > adxMinusDI) {
 			if (
 				close > emaFast &&
-				lastOpen < lastEmaFast
+				close < lastClose
 				// &&(emaFast - emaSlow) / emaFast < volatility_ratio * 2
 			) {
 				marketType = '趋势多且增强-L-1-1';
@@ -635,7 +634,7 @@ class Backtester {
 			// if (adx > adx_threshold && adxPlusDI < adxMinusDI) {
 			if (
 				close < emaFast &&
-				lastOpen > lastEmaFast
+				close > lastClose
 				// &&(emaSlow - emaFast) / emaSlow < volatility_ratio * 2
 			) {
 				marketType = '趋势空且增强-R-1-1';
