@@ -611,12 +611,12 @@ class Backtester {
 			marketType = '趋势空';
 		}
 
-		if (close > emaSlow && rsi > 40) {
-			marketType = '趋势多且增强-L-1-1';
+		if (close > emaSlow) {
+			marketType = rsi > 40 ? '趋势多且增强-L-1-1' : '趋势空且增强-L-1-2';
 		}
 
-		if (close < emaSlow && rsi < 60) {
-			marketType = '趋势空且增强-L-1-1';
+		if (close < emaSlow) {
+			marketType = rsi < 60 ? '趋势空且增强-R-1-1' : '趋势多且增强-R-1-1';
 		}
 
 		// if (emaFast > emaSlow) {
