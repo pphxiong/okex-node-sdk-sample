@@ -89,7 +89,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 1,
+	marketMode: 2,
 	isMarketModeAuto: false,
 };
 
@@ -673,15 +673,15 @@ class Backtester {
 
 	toogleMarketType(marketType, candle) {
 		const { adx, adx_threshold } = candle;
-		if (adx < adx_threshold) {
-			if (this.marketMode == 2) {
-				if (marketType.indexOf('多') != -1) {
-					marketType = marketType.replace('多', '空');
-				} else if (marketType.indexOf('空') != -1) {
-					marketType = marketType.replace('空', '多');
-				}
+		// if (adx < adx_threshold) {
+		if (this.marketMode == 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
 			}
 		}
+		// }
 
 		return marketType;
 	}
