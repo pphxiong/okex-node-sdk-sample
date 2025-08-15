@@ -611,11 +611,11 @@ class Backtester {
 			marketType = '趋势空';
 		}
 
-		if (close > emaSlow) {
+		if (close > emaSlow && rsi < 45) {
 			marketType = '趋势多且增强-L-1-1';
 		}
 
-		if (close < emaSlow) {
+		if (close < emaSlow && rsi > 55) {
 			marketType = '趋势空且增强-L-1-1';
 		}
 
@@ -943,7 +943,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
+					isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
