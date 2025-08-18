@@ -610,7 +610,7 @@ class Backtester {
 			// }
 			// if (adx > adx_threshold && adxPlusDI > adxMinusDI) {
 			if (
-				lastClose > lastEmaFast &&
+				close > emaFast &&
 				close < open
 				// &&(emaFast - emaSlow) / emaFast < volatility_ratio * 2
 			) {
@@ -633,7 +633,7 @@ class Backtester {
 			// }
 			// if (adx > adx_threshold && adxPlusDI < adxMinusDI) {
 			if (
-				lastClose < lastEmaFast &&
+				close < emaFast &&
 				close > open
 				// &&(emaSlow - emaFast) / emaSlow < volatility_ratio * 2
 			) {
