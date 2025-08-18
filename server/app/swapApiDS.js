@@ -893,8 +893,7 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const isProfitTarget =
-			(lnp > 0.0175 && d.adx < d.adx_threshold) || lnp > 0.02;
+		const isProfitTarget = lnp > 0.015 * 1.5;
 		const isStopLoss = lnp < -0.015;
 
 		// const takeProfit =
@@ -910,7 +909,7 @@ class RiskManager {
 		//       state.entryPrice - takeProfit;
 
 		isStop =
-			// isProfitTarget ||
+			isProfitTarget ||
 			isStopLoss ||
 			(side === 'buy'
 				? state.slowMarketType.indexOf('趋势多且增强') !== -1 &&
