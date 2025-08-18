@@ -136,7 +136,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	if (emaFast > emaSlow) {
 		marketType = '趋势多';
-		if (close > emaFast && close < lastClose) {
+		if (lastClose > emaFast && close < open) {
 			marketType = '趋势多且增强-L-1-1';
 		}
 		if (lastClose < lastEmaSlow) {
@@ -146,7 +146,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	if (emaFast < emaSlow) {
 		marketType = '趋势空';
-		if (close < emaFast && close > lastClose) {
+		if (lastClose < emaFast && close > open) {
 			marketType = '趋势空且增强-R-1-1';
 		}
 		if (lastClose > lastEmaSlow) {
@@ -893,7 +893,7 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const isProfitTarget = lnp > 0.015 * 1.5;
+		const isProfitTarget = lnp > 0.015 * 1.25;
 		const isStopLoss = lnp < -0.015;
 
 		// const takeProfit =
