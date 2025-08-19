@@ -569,7 +569,12 @@ class Backtester {
 					d.emaFast = emaFast[0][i];
 					d.emaTrend = emaTrend[0][i];
           d.volumeEMA20 = volumeEMA20[i];
-          console.log('volumeEMA20', this.data[tf].length, volumeEMA20.length);
+          console.log(
+				'volumeEMA20',
+				this.data[tf].length,
+				volumeEMA20.length,
+				emaTrend[0].length
+			);
 
 
 					// d.adx = adx[0][i];
