@@ -1230,7 +1230,7 @@ class Backtester {
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
-			if (marketMode == 1 && (lnp < -0.015 || lnp > 0.015 * 1.25)) {
+			if (marketMode == 1 && lnp > 0.015 * 1.25) {
 				this.marketMode = 2;
 			} else if (
 				marketMode == 2 &&
