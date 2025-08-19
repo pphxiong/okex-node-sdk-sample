@@ -629,14 +629,6 @@ class Backtester {
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
 
-		// 量能确认系数 (DOGE需要量能验证)
-		const volumeConfirm = volume > volumeEMA20 * 1.5;
-
-		// DOGE特有震荡模式识别
-		if (Math.abs(emaFast - emaSlow) < atr * 0.15) {
-			return 'DOGE_RANGE_MODE';
-		}
-
 		// 趋势判断
 		if (close > emaTrend) {
 			if (emaFast > emaSlow) {
@@ -645,10 +637,10 @@ class Backtester {
 				const isBreakout = emaSlow > emaTrend;
 
 				if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
-				if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
+				// if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
 				return '趋势多_DOGE_UP_BASE';
 			}
-			return '趋势空';
+			// return '趋势空';
 		}
 
 		if (close < emaTrend) {
@@ -658,10 +650,10 @@ class Backtester {
 				const isBreakout = emaFast < emaTrend;
 
 				if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
-				if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
+				// if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
 				return '趋势空_DOGE_DOWN_BASE';
 			}
-			return '趋势多';
+			// return '趋势多';
 		}
 
 		return 'DOGE_NOISE';
@@ -983,7 +975,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isProfitTarget ||
+					// isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
