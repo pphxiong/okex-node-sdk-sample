@@ -90,7 +90,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: true,
+	isMarketModeAuto: false,
 };
 
 class Backtester {
@@ -544,141 +544,41 @@ class Backtester {
 	}
 
 	getMarketType(candle, lastCandle, lastLastCandle) {
-		let marketType = '';
-		if (!lastCandle) return marketType;
-		if (!lastLastCandle) return marketType;
+		const { close, emaFast, emaSlow, atr } = candle;
+		const { close: lastClose, emaSlow: lastEmaSlow } = lastCandle || {};
 
-		const {
-			adx,
-			adxPlusDI,
-			adxMinusDI,
-			rsi,
-			close,
-			open,
-			high,
-			low,
-			emaSlope,
-			emaFast,
-			emaSlow,
-			macdHistogram: macd,
-			volume,
-			rsi_long,
-			rsi_short,
-			stop_multiplier,
-			adx_stoploss_distance,
-			is_latest_has_rsi_long,
-			is_latest_has_rsi_short,
-			volatility_ratio,
-			adx_threshold,
-			upper,
-			lower,
-			middle,
-		} = candle;
-		const {
-			emaFast: lastEmaFast,
-			emaSlow: lastEmaSlow,
-			close: lastClose,
-			macdHistogram: lastMacd,
-			volume: lastVolume,
-			adxPlusDI: lastAdxPlusDI,
-			adxMinusDI: lastAdxMinusDI,
-			rsi: lastRSI,
-		} = lastCandle;
-		const {
-			emaFast: lastLastEmaFast,
-			emaSlow: lastLastEmaSlow,
-			close: lastLastClose,
-			macdHistogram: lastLastMacd,
-			volume: lastLastVolume,
-		} = lastLastCandle;
+		// 增加趋势强度阈值 (避免毛刺)
+		const trendThreshold = atr * 0.3; // 使用ATR动态阈值
 
-		const stronger = emaFast > emaSlow;
-		const weeker = emaFast < emaSlow;
+		if (emaFast - emaSlow > trendThreshold) {
+			// 多头增强条件优化
+			const isPullback =
+				close > emaSlow && close < emaFast && close < lastClose;
+			const isBreakout = lastClose < lastEmaSlow && close > emaFast;
 
-		const lastStronger = lastEmaFast > lastEmaSlow;
-		const lastWeeker = lastEmaFast < lastEmaSlow;
-
-		const macd_rising = macd > lastMacd;
-		const macd_falling = macd < lastMacd;
-
-		const { marketMode } = this;
-
-		if (emaFast > emaSlow) {
-			marketType = '趋势多';
-			// if (close < emaFast && adx < adx_threshold) {
-			// 	marketType = '趋势空';
-			// }
-			// if (adx > adx_threshold && adxPlusDI > adxMinusDI) {
-			if (
-				close > emaFast &&
-				close < open
-				// &&(emaFast - emaSlow) / emaFast < volatility_ratio * 2
-			) {
-				marketType = '趋势多且增强-L-1-1';
-			}
-			// }
-			if (lastClose < lastEmaSlow) {
-				marketType = '趋势多且增强-L-1-2';
-			}
+			if (isBreakout) return '趋势多且增强_TREND_UP_STRONG'; // 强势突破
+			if (isPullback) return '趋势多且增强_TREND_UP_PULLBACK'; // 回调买入机会
+			return '趋势多_TREND_UP';
 		}
 
-		if (emaFast < emaSlow) {
-			marketType = '趋势空';
-			// if (
-			// 	close > emaFast &&
-			// 	adx < adx_threshold
-			// 	// && (emaSlow - emaFast) / emaSlow > volatility_ratio * 2
-			// ) {
-			// 	marketType = '趋势多';
-			// }
-			// if (adx > adx_threshold && adxPlusDI < adxMinusDI) {
-			if (
-				close < emaFast &&
-				close > open
-				// &&(emaSlow - emaFast) / emaSlow < volatility_ratio * 2
-			) {
-				marketType = '趋势空且增强-R-1-1';
-			}
-			// }
-			if (lastClose > lastEmaSlow) {
-				marketType = '趋势空且增强-R-1-2';
-			}
+		if (emaSlow - emaFast > trendThreshold) {
+			// 空头增强条件优化
+			const isPullback =
+				close < emaSlow && close > emaFast && close > lastClose;
+			const isBreakout = lastClose > lastEmaSlow && close < emaFast;
+
+			if (isBreakout) return '趋势空且增强_TREND_DOWN_STRONG';
+			if (isPullback) return '趋势空且增强_TREND_DOWN_PULLBACK';
+			return '趋势空_TREND_DOWN';
 		}
 
-		// if (emaFast > emaSlow) {
-		// 	if (close > emaSlow && close < emaFast && close < lastClose) {
-		// 		marketType = '趋势多且增强-L-1-1';
-		// 	}
-		// 	if (adx > adx_threshold) {
-		// 		if (close > emaFast && rsi < 75) {
-		// 			marketType = '趋势多且增强-L-1-2';
-		// 		}
-		// 		if (close < emaFast) {
-		// 			marketType =
-		// 				(emaFast - emaSlow) / emaFast > volatility_ratio
-		// 					? '趋势多且增强-L-1-3'
-		// 					: '趋势空且增强-L-1-4';
-		// 		}
-		// 	}
-		// }
-		// if (emaFast < emaSlow) {
-		// 	if (close < emaSlow && close > emaFast && close > lastClose) {
-		// 		marketType = '趋势空且增强-R-2-1';
-		// 	}
-		// 	if (adx > adx_threshold) {
-		// 		if (close < emaFast && rsi > 25) {
-		// 			marketType = '趋势空且增强-R-2-2';
-		// 		}
-		// 		if (close > emaFast) {
-		// 			marketType =
-		// 				(emaSlow - emaFast) / emaSlow > volatility_ratio
-		// 					? '趋势空且增强-R-2-3'
-		// 					: '趋势空且增强-R-2-4';
-		// 		}
-		// 	}
-		// }
+		// 增加震荡行情识别
+		const rangeThreshold = atr * 0.1;
+		if (Math.abs(emaFast - emaSlow) < rangeThreshold) {
+			return 'RANGE_BOUND';
+		}
 
-		return marketType;
+		return 'NO_CLEAR_TREND';
 	}
 
 	toogleMarketType(marketType, candle) {
