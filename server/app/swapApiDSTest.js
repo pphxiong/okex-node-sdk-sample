@@ -624,17 +624,6 @@ class Backtester {
 			volumeEMA20,
 		} = candle;
 
-		console.log(
-			'volumeEMA20',
-			volumeEMA20,
-			atr,
-			close,
-			low,
-			high,
-			candle.low - candle.atr * 0.7,
-			candle.high + candle.atr * 0.8
-		);
-
 		const { close: lastClose, high: lastHigh } = lastCandle || {};
 
 		// 动态波动率调整
@@ -1423,7 +1412,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-08-01';
+	const start = '2025-01-01';
 	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
