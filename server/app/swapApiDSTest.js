@@ -495,7 +495,7 @@ class Backtester {
 					[adx, adxPlusDI, adxMinusDI],
 					rsi,
 					volumeEMA20,
-				] = result.slice(index * 8, (index + 1) * 8);
+				] = result.slice(index * 9, (index + 1) * 9);
 				// if (tf === config.slowframe) {
 				// 	console.log(
 				// 		23,
