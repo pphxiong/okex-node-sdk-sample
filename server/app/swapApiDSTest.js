@@ -37,7 +37,7 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [50, 5], slopeWindow: 5 },
+		'15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -390,6 +390,13 @@ class Backtester {
 				);
 
 				indicatorPromises.push(
+					tulind.indicators.ema.indicator(
+						[closes],
+						[config.emaSettings[tf].periods[2]]
+					)
+				);
+
+				indicatorPromises.push(
 					tulind.indicators.bbands.indicator(
 						[closes],
 						[config.bollinger.period, config.bollinger.stdDev]
@@ -425,14 +432,15 @@ class Backtester {
 			// 合并指标到数据
 			config.timeframes.forEach((tf, index) => {
 				const [
-					emaSlow,
 					emaFast,
+					emaSlow,
+					emaTrend,
 					bollinger,
 					atr,
 					macd,
 					[adx, adxPlusDI, adxMinusDI],
 					rsi,
-				] = result.slice(index * 7, (index + 1) * 7);
+				] = result.slice(index * 8, (index + 1) * 8);
 				// if (tf === config.slowframe) {
 				// 	console.log(
 				// 		23,
@@ -504,6 +512,8 @@ class Backtester {
 					}
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
+					d.emaTrend = emaTrend[0][i];
+
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
 						const volatility_ratio = d.atr / d.emaSlow;
@@ -544,41 +554,48 @@ class Backtester {
 	}
 
 	getMarketType(candle, lastCandle, lastLastCandle) {
-		const { close, emaFast, emaSlow, atr } = candle;
-		const { close: lastClose, emaSlow: lastEmaSlow } = lastCandle || {};
+		const { close, high, low, volume, emaFast, emaSlow, emaTrend, atr } =
+			candle;
 
-		// 增加趋势强度阈值 (避免毛刺)
-		const trendThreshold = atr * 0.3; // 使用ATR动态阈值
+		const { close: lastClose, high: lastHigh } = lastCandle || {};
 
-		if (emaFast - emaSlow > trendThreshold) {
-			// 多头增强条件优化
+		// 动态波动率调整
+		const volatilityFactor = atr / close;
+
+		// 量能确认系数 (DOGE需要量能验证)
+		// const volumeConfirm = volume > ema(volume, 20) * 1.5;
+
+		// 趋势判断
+		if (emaFast > emaSlow && close > emaTrend) {
+			// 多头增强条件
 			const isPullback =
 				close > emaSlow && close < emaFast && close < lastClose;
-			const isBreakout = lastClose < lastEmaSlow && close > emaFast;
+			const isBreakout = lastClose < emaSlow && close > emaFast;
 
-			if (isBreakout) return '趋势多且增强_TREND_UP_STRONG'; // 强势突破
-			if (isPullback) return '趋势多且增强_TREND_UP_PULLBACK'; // 回调买入机会
-			return '趋势多_TREND_UP';
+			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+			if (isPullback && volatilityFactor < 0.08)
+				return '趋势多且增强_DOGE_UP_PULLBACK';
+			return '趋势多_DOGE_UP_BASE';
 		}
 
-		if (emaSlow - emaFast > trendThreshold) {
-			// 空头增强条件优化
+		if (emaFast < emaSlow && close < emaTrend) {
+			// 空头增强条件
 			const isPullback =
 				close < emaSlow && close > emaFast && close > lastClose;
-			const isBreakout = lastClose > lastEmaSlow && close < emaFast;
+			const isBreakout = lastClose > emaSlow && close < emaFast;
 
-			if (isBreakout) return '趋势空且增强_TREND_DOWN_STRONG';
-			if (isPullback) return '趋势空且增强_TREND_DOWN_PULLBACK';
-			return '趋势空_TREND_DOWN';
+			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+			if (isPullback && volatilityFactor < 0.08)
+				return '趋势空且增强_DOGE_DOWN_PULLBACK';
+			return '趋势空_DOGE_DOWN_BASE';
 		}
 
-		// 增加震荡行情识别
-		const rangeThreshold = atr * 0.1;
-		if (Math.abs(emaFast - emaSlow) < rangeThreshold) {
-			return 'RANGE_BOUND';
+		// DOGE特有震荡模式识别
+		if (Math.abs(emaFast - emaSlow) < atr * 0.15) {
+			return 'DOGE_RANGE_MODE';
 		}
 
-		return 'NO_CLEAR_TREND';
+		return 'DOGE_NOISE';
 	}
 
 	toogleMarketType(marketType, candle) {
@@ -871,7 +888,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isProfitTarget ||
+					// isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
