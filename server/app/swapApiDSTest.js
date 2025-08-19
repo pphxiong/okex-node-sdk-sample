@@ -816,30 +816,41 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 				const duration = this.getTimeInterval(position, d);
 
-        let isProfitTarget = false;
-		let isStopLoss = false;
+				let isProfitTarget = false;
+				let isStopLoss = false;
 
-		if (position.slowMarketType.indexOf('DOGE_UP_BREAKOUT') !== -1) {
-			isProfitTarget = d.close >= position.close + position.atr * 2.5;
-			isStopLoss = d.close <= position.low - position.atr * 0.7;
-		}
+				if (
+					position.slowMarketType.indexOf('DOGE_UP_BREAKOUT') !== -1
+				) {
+					isProfitTarget =
+						d.close >= position.close + position.atr * 2.5;
+					isStopLoss = d.close <= position.low - position.atr * 0.7;
+				}
 
-		if (position.slowMarketType.indexOf('DOGE_DOWN_BREAKOUT') !== -1) {
-			isProfitTarget = d.close <= position.close - position.atr * 3;
-			isStopLoss = d.close >= position.high + position.atr * 0.8;
-		}
+				if (
+					position.slowMarketType.indexOf('DOGE_DOWN_BREAKOUT') !== -1
+				) {
+					isProfitTarget =
+						d.close <= position.close - position.atr * 3;
+					isStopLoss = d.close >= position.high + position.atr * 0.8;
+				}
 
-		if (position.slowMarketType.indexOf('DOGE_UP_PULLBACK') !== -1) {
-			isProfitTarget = d.close >= position.emaSlow * 1.15;
-			isStopLoss = d.close <= position.low - position.atr * 0.3;
-		}
+				if (
+					position.slowMarketType.indexOf('DOGE_UP_PULLBACK') !== -1
+				) {
+					isProfitTarget = d.close >= position.emaSlow * 1.15;
+					isStopLoss = d.close <= position.low - position.atr * 0.3;
+				}
 
-		if (position.slowMarketType.indexOf('DOGE_DOWN_PULLBACK') !== -1) {
-			isProfitTarget = d.close <= position.emaSlow * 0.85;
-			isStopLoss = d.close >= position.high + position.atr * 0.3;
-		}
+				if (
+					position.slowMarketType.indexOf('DOGE_DOWN_PULLBACK') !== -1
+				) {
+					isProfitTarget = d.close <= position.emaSlow * 0.85;
+					isStopLoss = d.close >= position.high + position.atr * 0.3;
+				}
 
-
+				isProfitTarget = lnp > 0.015 * 1.25;
+				isStopLoss = lnp < -0.015;
 
 				// const isProfitTarget =
 				// 	position.marketMode === 1
