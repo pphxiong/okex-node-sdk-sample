@@ -633,30 +633,32 @@ class Backtester {
 		const volumeConfirm = volume > volumeEMA20 * 1.5;
 
 		// 趋势判断
-		if (emaFast > emaSlow && close > emaTrend) {
-			// 多头增强条件
-			const isPullback =
-				close > emaSlow && close < emaFast && close < lastClose;
-			const isBreakout =
-				lastClose < emaSlow && close < emaFast && volumeConfirm;
+		if (close > emaTrend) {
+			if (emaFast > emaSlow) {
+				// 多头增强条件
+				const isPullback = lastClose < emaSlow && close > emaSlow;
+				const isBreakout = close > emaFast;
 
-			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
-			if (isPullback && volatilityFactor < 0.08)
-				return '趋势多且增强_DOGE_UP_PULLBACK';
-			return '趋势多_DOGE_UP_BASE';
+				if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+				if (isPullback && volatilityFactor < 0.08)
+					return '趋势多且增强_DOGE_UP_PULLBACK';
+				return '趋势多_DOGE_UP_BASE';
+			}
+			return '趋势空';
 		}
 
-		if (emaFast < emaSlow && close < emaTrend) {
-			// 空头增强条件
-			const isPullback =
-				close < emaSlow && close > emaFast && close > lastClose;
-			const isBreakout =
-				lastClose > emaSlow && close > emaFast && volumeConfirm;
+		if (close < emaTrend) {
+			if (emaFast < emaSlow) {
+				// 空头增强条件
+				const isPullback = lastClose > emaSlow && close < emaSlow;
+				const isBreakout = close < emaFast;
 
-			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
-			if (isPullback && volatilityFactor < 0.08)
-				return '趋势空且增强_DOGE_DOWN_PULLBACK';
-			return '趋势空_DOGE_DOWN_BASE';
+				if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+				if (isPullback && volatilityFactor < 0.08)
+					return '趋势空且增强_DOGE_DOWN_PULLBACK';
+				return '趋势空_DOGE_DOWN_BASE';
+			}
+			return '趋势多';
 		}
 
 		// DOGE特有震荡模式识别
