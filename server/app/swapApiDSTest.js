@@ -568,15 +568,9 @@ class Backtester {
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
 					d.emaTrend = emaTrend[0][i];
-          if (i >= 19) {
-				d.volumeEMA20 = volumeEMA20[i - 19];
-				console.log(
-					'volumeEMA20',
-					volumeEMA20[i - 19],
-					volumeEMA20[i - 19 + 1]
-				);
-			}
-
+					if (i >= 19) {
+						d.volumeEMA20 = volumeEMA20[i - 19].volumeEMA;
+					}
 
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
@@ -618,8 +612,17 @@ class Backtester {
 	}
 
 	getMarketType(candle, lastCandle, lastLastCandle) {
-		const { close, high, low, volume, emaFast, emaSlow, emaTrend, atr } =
-			candle;
+		const {
+			close,
+			high,
+			low,
+			volume,
+			emaFast,
+			emaSlow,
+			emaTrend,
+			atr,
+			volumeEMA20,
+		} = candle;
 
 		const { close: lastClose, high: lastHigh } = lastCandle || {};
 
@@ -627,14 +630,15 @@ class Backtester {
 		const volatilityFactor = atr / close;
 
 		// 量能确认系数 (DOGE需要量能验证)
-		// const volumeConfirm = volume > ema(volume, 20) * 1.5;
+		const volumeConfirm = volume > volumeEMA20 * 1.5;
 
 		// 趋势判断
 		if (emaFast > emaSlow && close > emaTrend) {
 			// 多头增强条件
 			const isPullback =
 				close > emaSlow && close < emaFast && close < lastClose;
-			const isBreakout = lastClose < emaSlow && close > emaFast;
+			const isBreakout =
+				lastClose < emaSlow && close > emaFast && volumeConfirm;
 
 			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
 			if (isPullback && volatilityFactor < 0.08)
@@ -646,7 +650,8 @@ class Backtester {
 			// 空头增强条件
 			const isPullback =
 				close < emaSlow && close > emaFast && close > lastClose;
-			const isBreakout = lastClose > emaSlow && close < emaFast;
+			const isBreakout =
+				lastClose > emaSlow && close < emaFast && volumeConfirm;
 
 			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
 			if (isPullback && volatilityFactor < 0.08)
