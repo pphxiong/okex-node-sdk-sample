@@ -624,7 +624,16 @@ class Backtester {
 			volumeEMA20,
 		} = candle;
 
-    console.log('volumeEMA20', volumeEMA20, atr, close, low, high);
+    console.log(
+		'volumeEMA20',
+		volumeEMA20,
+		atr,
+		close,
+		low,
+		high,
+		candle.low - candle.atr * 0.7,
+		candle.high + candle.atr * 0.8
+	);
 
 
 		const { close: lastClose, high: lastHigh } = lastCandle || {};
