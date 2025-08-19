@@ -52,7 +52,7 @@ const config = {
 		stdDev: 1.8,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 240, // 每单交易金额(USDT)
+	tradeAmount: 100, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -439,13 +439,11 @@ function getLastIndicators(indicators, key) {
 }
 
 function getPositionSize(marketType) {
-	// const riskAmount = config.tradeAmount * config.riskPerTrade;
-	// return riskAmount / (atr * config.leverage);
-	// return globalAvailableBalance * config.leverage * 0.95;
-	return Math.min(
-		globalAvailableBalance * config.leverage * 0.191,
-		config.tradeAmount
-	);
+	// return Math.min(
+	// 	globalAvailableBalance * config.leverage * 0.191,
+	// 	config.tradeAmount
+	// );
+	return config.tradeAmount;
 }
 
 // 限价单管理模块
