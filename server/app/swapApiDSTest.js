@@ -90,7 +90,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 };
 
 class Backtester {
@@ -1230,9 +1230,12 @@ class Backtester {
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
-			if (marketMode == 1 && (lnp < -0.015 || lnp > 0.02)) {
+			if (marketMode == 1 && (lnp < -0.015 || lnp > 0.015 * 1.25)) {
 				this.marketMode = 2;
-			} else if (marketMode == 2 && lnp < -0.015) {
+			} else if (
+				marketMode == 2 &&
+				(lnp < -0.015 || lnp > 0.015 * 1.25)
+			) {
 				this.marketMode = 1;
 			}
 		}
