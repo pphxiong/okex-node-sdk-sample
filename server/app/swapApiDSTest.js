@@ -624,17 +624,16 @@ class Backtester {
 			volumeEMA20,
 		} = candle;
 
-    console.log(
-		'volumeEMA20',
-		volumeEMA20,
-		atr,
-		close,
-		low,
-		high,
-		candle.low - candle.atr * 0.7,
-		candle.high + candle.atr * 0.8
-	);
-
+		console.log(
+			'volumeEMA20',
+			volumeEMA20,
+			atr,
+			close,
+			low,
+			high,
+			candle.low - candle.atr * 0.7,
+			candle.high + candle.atr * 0.8
+		);
 
 		const { close: lastClose, high: lastHigh } = lastCandle || {};
 
@@ -826,22 +825,22 @@ class Backtester {
 				const lnp = this.getLnp(position, d);
 				const duration = this.getTimeInterval(position, d);
 
-				// const isProfitTarget =
-				// 	position.direction === 'long'
-				// 		? d.close >= position.entryPrice * (1 + 0.01 * 10)
-				// 		: d.close <= position.entryPrice * (1 - 0.01 * 10);
-
-				// const isStopLoss =
-				// 	position.direction === 'long'
-				// 		? d.close <= position.entryPrice * (1 - 0.01)
-				// 		: d.close >= position.entryPrice * (1 + 0.01);
-
 				const isProfitTarget =
-					position.marketMode === 1
-						? lnp > 0.015 * 1.25
-						: lnp > 0.015 * 1.25;
+					position.direction === 'long'
+						? d.close >= position.low + position.atr * 2.5
+						: d.close <= position.low - position.atr * 2.5;
 
-				const isStopLoss = lnp < -0.015;
+				const isStopLoss =
+					position.direction === 'long'
+						? d.close >= position.low - position.atr * 0.7
+						: d.close <= position.low + position.atr * 0.7;
+
+				// const isProfitTarget =
+				// 	position.marketMode === 1
+				// 		? lnp > 0.015 * 1.25
+				// 		: lnp > 0.015 * 1.25;
+
+				// const isStopLoss = lnp < -0.015;
 
 				if (isStopLoss) stopLossDirection = position.direction;
 
@@ -969,12 +968,12 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
-					// isStopLoss ||
+					isProfitTarget ||
+					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
-					position.direction === 'long'
+					(position.direction === 'long'
 						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c);
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
@@ -1422,10 +1421,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-08-30';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-08-01';
+	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
