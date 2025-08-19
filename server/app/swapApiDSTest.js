@@ -93,6 +93,53 @@ const config = {
 	isMarketModeAuto: false,
 };
 
+// 计算单期EMA
+function calculateSingleEMA(currentValue, previousEMA, period = 20) {
+	const k = 2 / (period + 1); // 平滑系数
+	return currentValue * k + previousEMA * (1 - k);
+}
+
+// 计算成交量EMA(20)
+function calculateVolumeEMA(candles, period = 20) {
+	if (!candles || candles.length < period) {
+		throw new Error(`至少需要${period}根K线数据`);
+	}
+
+	// 初始化：前period周期的SMA作为EMA起点
+	let sum = 0;
+	for (let i = 0; i < period; i++) {
+		sum += candles[i].volume;
+	}
+	const initialSMA = sum / period;
+
+	// 存储EMA结果
+	const emaResults = [];
+
+	// 第一期的EMA就是SMA
+	emaResults.push({
+		timestamp: candles[period - 1].timestamp,
+		volumeEMA: initialSMA,
+	});
+
+	// 计算后续EMA值
+	for (let i = period; i < candles.length; i++) {
+		const currentVolume = candles[i].volume;
+		const previousEMA = emaResults[emaResults.length - 1].volumeEMA;
+		const currentEMA = calculateSingleEMA(
+			currentVolume,
+			previousEMA,
+			period
+		);
+
+		emaResults.push({
+			timestamp: candles[i].timestamp,
+			volumeEMA: currentEMA,
+		});
+	}
+
+	return emaResults;
+}
+
 class Backtester {
 	constructor() {
 		this.exchange = new ccxt.binance({
@@ -425,6 +472,13 @@ class Backtester {
 						[config.rsiPeriod]
 					)
 				);
+
+				// 计算成交量EMA(20)
+				const volumeEMA20List = calculateVolumeEMA(this.data[tf]);
+				const volumeEMA20Promise = new Promise((resolve) => {
+					resolve(volumeEMA20List);
+				});
+				indicatorPromises.push(volumeEMA20Promise);
 			});
 
 			const result = await Promise.all(indicatorPromises);
@@ -440,6 +494,7 @@ class Backtester {
 					macd,
 					[adx, adxPlusDI, adxMinusDI],
 					rsi,
+					volumeEMA20,
 				] = result.slice(index * 8, (index + 1) * 8);
 				// if (tf === config.slowframe) {
 				// 	console.log(
@@ -513,6 +568,9 @@ class Backtester {
 					d.emaSlow = emaSlow[0][i];
 					d.emaFast = emaFast[0][i];
 					d.emaTrend = emaTrend[0][i];
+          d.volumeEMA20 = volumeEMA20[i];
+          console.log('volumeEMA20', this.data[tf].length, volumeEMA20.length);
+
 
 					// d.adx = adx[0][i];
 					if (d.adx && d.atr) {
