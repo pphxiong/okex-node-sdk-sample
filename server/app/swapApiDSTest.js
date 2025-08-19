@@ -632,12 +632,17 @@ class Backtester {
 		// 量能确认系数 (DOGE需要量能验证)
 		const volumeConfirm = volume > volumeEMA20 * 1.5;
 
+		// DOGE特有震荡模式识别
+		if (Math.abs(emaFast - emaSlow) < atr * 0.15) {
+			return 'DOGE_RANGE_MODE';
+		}
+
 		// 趋势判断
 		if (close > emaTrend) {
 			if (emaFast > emaSlow) {
 				// 多头增强条件
 				const isPullback = close < emaFast && close > emaSlow;
-				const isBreakout = close > emaFast;
+				const isBreakout = emaSlow > emaTrend;
 
 				if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
 				if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
@@ -650,18 +655,13 @@ class Backtester {
 			if (emaFast < emaSlow) {
 				// 空头增强条件
 				const isPullback = close > emaFast && close < emaSlow;
-				const isBreakout = close < emaFast;
+				const isBreakout = emaFast < emaTrend;
 
 				if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
 				if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
 				return '趋势空_DOGE_DOWN_BASE';
 			}
 			return '趋势多';
-		}
-
-		// DOGE特有震荡模式识别
-		if (Math.abs(emaFast - emaSlow) < atr * 0.15) {
-			return 'DOGE_RANGE_MODE';
 		}
 
 		return 'DOGE_NOISE';
