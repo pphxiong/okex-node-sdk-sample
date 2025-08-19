@@ -840,7 +840,7 @@ class Backtester {
 
 				const isProfitTarget =
 					position.marketMode === 1
-						? lnp > 0.015 * 1.5
+						? lnp > 0.015 * 1.25
 						: lnp > 0.015 * 1.25;
 
 				const isStopLoss = lnp < -0.015;
