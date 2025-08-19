@@ -624,6 +624,9 @@ class Backtester {
 			volumeEMA20,
 		} = candle;
 
+    console.log('volumeEMA20', volumeEMA20, atr, close, low, high);
+
+
 		const { close: lastClose, high: lastHigh } = lastCandle || {};
 
 		// 动态波动率调整
