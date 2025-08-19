@@ -636,12 +636,11 @@ class Backtester {
 		if (close > emaTrend) {
 			if (emaFast > emaSlow) {
 				// 多头增强条件
-				const isPullback = lastClose < emaSlow && close > emaSlow;
+				const isPullback = close < emaFast && close > emaSlow;
 				const isBreakout = close > emaFast;
 
-				if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
-				if (isPullback && volatilityFactor < 0.08)
-					return '趋势多且增强_DOGE_UP_PULLBACK';
+				// if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+				if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
 				return '趋势多_DOGE_UP_BASE';
 			}
 			return '趋势空';
@@ -650,12 +649,11 @@ class Backtester {
 		if (close < emaTrend) {
 			if (emaFast < emaSlow) {
 				// 空头增强条件
-				const isPullback = lastClose > emaSlow && close < emaSlow;
+				const isPullback = close > emaFast && close < emaSlow;
 				const isBreakout = close < emaFast;
 
-				if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
-				if (isPullback && volatilityFactor < 0.08)
-					return '趋势空且增强_DOGE_DOWN_PULLBACK';
+				// if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+				if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
 				return '趋势空_DOGE_DOWN_BASE';
 			}
 			return '趋势多';
@@ -985,7 +983,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
+					isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
