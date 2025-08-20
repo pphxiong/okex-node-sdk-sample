@@ -624,30 +624,37 @@ class Backtester {
 			volumeEMA20,
 		} = candle;
 
-		const { close: lastClose, high: lastHigh } = lastCandle || {};
+		const {
+			close: lastClose,
+			high: lastHigh,
+			emaFast: lastEmaFast,
+			emaSlow: lastEmaSlow,
+		} = lastCandle || {};
 
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
 
 		// 趋势判断
-		if (emaSlow > emaTrend) {
+		if (close > emaTrend) {
 			// 多头增强条件
 			const isPullback =
-				close < emaFast && emaFast < emaSlow && close > lastClose;
+				(close < emaFast && lastClose > lastEmaFast) ||
+				(close < emaSlow && lastClose > lastEmaSlow);
 			const isBreakout = close > emaFast && emaFast > emaSlow;
 
-			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+			// if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
 			if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
 			return '趋势多_DOGE_UP_BASE';
 		}
 
-		if (emaSlow < emaTrend) {
+		if (close < emaTrend) {
 			// 空头增强条件
 			const isPullback =
-				close > emaFast && emaFast > emaSlow && close < lastClose;
+				(close > emaFast && lastClose < lastEmaFast) ||
+				(close > emaSlow && lastClose < lastEmaSlow);
 			const isBreakout = close < emaFast && emaFast < emaSlow;
 
-			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+			// if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
 			if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
 			return '趋势空_DOGE_DOWN_BASE';
 		}
@@ -835,7 +842,7 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				isProfitTarget = lnp > 0.015 * 1.25;
+				isProfitTarget = lnp > 0.015 * 3;
 				isStopLoss = lnp < -0.015;
 
 				// const isProfitTarget =
