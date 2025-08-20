@@ -642,7 +642,10 @@ class Backtester {
 				(close < emaFast && close > lastClose) ||
 				(close < emaSlow && close > lastClose);
 			const isBreakout =
-				close > emaFast && emaFast > emaSlow && emaSlow > emaTrend;
+				close > emaFast &&
+				emaFast > emaSlow &&
+				emaSlow > emaTrend &&
+				(lastClose < emaFast || lastClose < emaSlow);
 
 			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
 			// if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
@@ -659,7 +662,10 @@ class Backtester {
 				(close > emaFast && close < lastClose) ||
 				(close > emaSlow && close < lastClose);
 			const isBreakout =
-				close < emaFast && emaFast < emaSlow && emaSlow < emaTrend;
+				close < emaFast &&
+				emaFast < emaSlow &&
+				emaSlow < emaTrend &&
+				(lastClose > emaFast || lastClose > emaSlow);
 
 			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
 			// if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
@@ -1442,10 +1448,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-08-30';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
