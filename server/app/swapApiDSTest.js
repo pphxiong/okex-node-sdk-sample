@@ -639,8 +639,8 @@ class Backtester {
 		if (emaSlow > emaTrend) {
 			// 多头增强条件
 			const isPullback =
-				(close < emaFast && lastClose > lastEmaFast) ||
-				(close < emaSlow && lastClose > lastEmaSlow);
+				(close < emaFast && close > lastClose) ||
+				(close < emaSlow && close > lastClose);
 			const isBreakout =
 				close > emaFast && emaFast > emaSlow && emaSlow > emaTrend;
 
@@ -652,8 +652,8 @@ class Backtester {
 		if (emaSlow < emaTrend) {
 			// 空头增强条件
 			const isPullback =
-				(close > emaFast && lastClose < lastEmaFast) ||
-				(close > emaSlow && lastClose < lastEmaSlow);
+				(close > emaFast && close < lastClose) ||
+				(close > emaSlow && close < lastClose);
 			const isBreakout =
 				close < emaFast && emaFast < emaSlow && emaSlow < emaTrend;
 
