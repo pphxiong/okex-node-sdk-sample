@@ -641,9 +641,10 @@ class Backtester {
 			const isPullback =
 				(close < emaFast && lastClose > lastEmaFast) ||
 				(close < emaSlow && lastClose > lastEmaSlow);
-			const isBreakout = close > emaFast && emaFast > emaSlow;
+			const isBreakout =
+				close > emaFast && emaFast > emaSlow && emaSlow > emaTrend;
 
-			// if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
 			if (isPullback && adx > 25) return '趋势多且增强_DOGE_UP_PULLBACK';
 			return '趋势多_DOGE_UP_BASE';
 		}
@@ -653,9 +654,10 @@ class Backtester {
 			const isPullback =
 				(close > emaFast && lastClose < lastEmaFast) ||
 				(close > emaSlow && lastClose < lastEmaSlow);
-			const isBreakout = close < emaFast && emaFast < emaSlow;
+			const isBreakout =
+				close < emaFast && emaFast < emaSlow && emaSlow < emaTrend;
 
-			// if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
 			if (isPullback && adx > 25)
 				return '趋势空且增强_DOGE_DOWN_PULLBACK';
 			return '趋势空_DOGE_DOWN_BASE';
