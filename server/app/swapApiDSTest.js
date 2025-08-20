@@ -636,55 +636,55 @@ class Backtester {
 		const volatilityFactor = atr / close;
 
 		// 趋势判断
-		if (close > emaTrend) {
+		if (emaSlow > emaTrend) {
 			// 多头增强条件
 			const isPullback =
 				(close < emaFast && close > lastClose) ||
 				(close < emaSlow && close > lastClose);
-			// const isBreakout =
-			// 	close > emaFast &&
-			// 	emaFast > emaSlow &&
-			// 	emaSlow > emaTrend &&
-			// 	(lastClose < emaFast || lastClose < emaSlow);
+			const isBreakout =
+				close > emaFast &&
+				emaFast > emaSlow &&
+				emaSlow > emaTrend &&
+				(lastClose < emaFast || lastClose < emaSlow);
 
-			const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
+			// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
 
 			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
 			// if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
 
-			// if (emaFast < emaSlow || emaFast < emaTrend) {
-			// 	return '趋势空';
-			// }
-
-			if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
+			if (emaFast < emaSlow || emaFast < emaTrend) {
 				return '趋势空';
 			}
+
+			// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
+			// 	return '趋势空';
+			// }
 			return '趋势多_DOGE_UP_BASE';
 		}
 
-		if (close < emaTrend) {
+		if (emaSlow < emaTrend) {
 			// 空头增强条件
 			const isPullback =
 				(close > emaFast && close < lastClose) ||
 				(close > emaSlow && close < lastClose);
-			// const isBreakout =
-			// 	close < emaFast &&
-			// 	emaFast < emaSlow &&
-			// 	emaSlow < emaTrend &&
-			// 	(lastClose > emaFast || lastClose > emaSlow);
+			const isBreakout =
+				close < emaFast &&
+				emaFast < emaSlow &&
+				emaSlow < emaTrend &&
+				(lastClose > emaFast || lastClose > emaSlow);
 
-			const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
+			// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
 
 			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
 			// if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
 
-			// if (emaFast > emaSlow || emaFast > emaTrend) {
-			// 	return '趋势多';
-			// }
-
-			if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
+			if (emaFast > emaSlow || emaFast > emaTrend) {
 				return '趋势多';
 			}
+
+			// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
+			// 	return '趋势多';
+			// }
 			return '趋势空_DOGE_DOWN_BASE';
 		}
 
