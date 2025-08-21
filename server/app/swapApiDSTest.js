@@ -37,7 +37,8 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [12, 26, 50], slopeWindow: 5 },
+		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
+		'15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
@@ -635,58 +636,60 @@ class Backtester {
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
 
-    const isFaraway = Math.abs(emaSlow - emaTrend) / emaTrend > atr;
+		const isFaraway = Math.abs(emaSlow - emaTrend) / emaTrend > atr;
 
-	// 趋势判断
-	if (emaFast > emaTrend) {
-		// 多头增强条件
-		const isPullback = close < emaFast && close > lastClose;
-		const isBreakout =
-			close > emaFast &&
-			emaFast > emaSlow &&
-			emaSlow > emaTrend &&
-			(lastClose < emaFast || lastClose < emaSlow);
+		// 趋势判断
+		if (emaFast > emaTrend) {
+			// 多头增强条件
+			const isPullback = close < emaFast && close > lastClose;
+			const isBreakout =
+				close > emaFast &&
+				emaFast > emaSlow &&
+				emaSlow > emaTrend &&
+				(lastClose < emaFast || lastClose < emaSlow);
 
-		// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
+			// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
 
-		if (isBreakout && isFaraway) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
-		if (isPullback && isFaraway) return '趋势多且增强_DOGE_UP_PULLBACK';
+			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+			if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
 
-		// if (emaFast < emaSlow || emaFast < emaTrend) {
-		// 	return '趋势空';
-		// }
+			// if (emaFast < emaSlow || emaFast < emaTrend) {
+			// 	return '趋势空';
+			// }
 
-		// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
-		// 	return '趋势空';
-		// }
-		return '趋势多_DOGE_UP_BASE';
-		// return 'DOGE_NOISE';
-	}
+			// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
+			// 	return '趋势空';
+			// }
+			return '趋势多_DOGE_UP_BASE';
+			// return 'DOGE_NOISE';
+		}
 
-	if (emaFast < emaTrend) {
-		// 空头增强条件
-		const isPullback = close > emaFast && close < lastClose;
-		const isBreakout =
-			close < emaFast &&
-			emaFast < emaSlow &&
-			emaSlow < emaTrend &&
-			(lastClose > emaFast || lastClose > emaSlow);
+		if (emaFast < emaTrend) {
+			// 空头增强条件
+			const isPullback = close > emaFast && close < lastClose;
+			const isBreakout =
+				close < emaFast &&
+				emaFast < emaSlow &&
+				emaSlow < emaTrend &&
+				(lastClose > emaFast || lastClose > emaSlow);
 
-		// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
+			// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
 
-		if (isBreakout && isFaraway) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
-		if (isPullback && isFaraway) return '趋势空且增强_DOGE_DOWN_PULLBACK';
+			if (isBreakout && isFaraway)
+				return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+			if (isPullback && isFaraway)
+				return '趋势空且增强_DOGE_DOWN_PULLBACK';
 
-		// if (emaFast > emaSlow || emaFast > emaTrend) {
-		// 	return '趋势多';
-		// }
+			// if (emaFast > emaSlow || emaFast > emaTrend) {
+			// 	return '趋势多';
+			// }
 
-		// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
-		// 	return '趋势多';
-		// }
-		return '趋势空_DOGE_DOWN_BASE';
-		// return 'DOGE_NOISE';
-	}
+			// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
+			// 	return '趋势多';
+			// }
+			return '趋势空_DOGE_DOWN_BASE';
+			// return 'DOGE_NOISE';
+		}
 
 		return 'DOGE_NOISE';
 	}
