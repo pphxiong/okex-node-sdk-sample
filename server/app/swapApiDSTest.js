@@ -759,7 +759,7 @@ class Backtester {
 					emaFast > emaSlow &&
 					emaSlow > emaTrend &&
 					(lastClose < emaFast || lastClose < emaSlow);
-				// if (isBreakout) marketType = '趋势多且增强-L-1-3';
+				if (isBreakout) marketType = '趋势多且增强-L-1-3';
 			}
 		}
 
@@ -777,7 +777,7 @@ class Backtester {
 					emaFast < emaSlow &&
 					emaSlow < emaTrend &&
 					(lastClose > emaFast || lastClose > emaSlow);
-				// if (isBreakout) marketType = '趋势空且增强-R-1-3';
+				if (isBreakout) marketType = '趋势空且增强-R-1-3';
 			}
 		}
 
@@ -819,15 +819,15 @@ class Backtester {
 
 	toogleMarketType(marketType, candle) {
 		const { adx, adx_threshold } = candle;
-		if (adx < adx_threshold) {
-			if (this.marketMode == 2) {
-				if (marketType.indexOf('多') != -1) {
-					marketType = marketType.replace('多', '空');
-				} else if (marketType.indexOf('空') != -1) {
-					marketType = marketType.replace('空', '多');
-				}
+		// if (adx < adx_threshold) {
+		if (this.marketMode == 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
 			}
 		}
+		// }
 
 		return marketType;
 	}
