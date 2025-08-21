@@ -747,8 +747,8 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (emaSlow > emaTrend && isFaraway) {
-				if (close > emaFast && close < lastClose) {
+			if (emaSlow > emaTrend) {
+				if (close > emaFast && close < lastClose && isFaraway) {
 					marketType = '趋势多且增强-L-1-1';
 				}
 				if (lastClose < emaTrend) {
@@ -759,8 +759,8 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (emaSlow < emaTrend && isFaraway) {
-				if (close < emaFast && close > lastClose) {
+			if (emaSlow < emaTrend) {
+				if (close < emaFast && close > lastClose && isFaraway) {
 					marketType = '趋势空且增强-R-1-1';
 				}
 				if (lastClose > emaTrend) {
