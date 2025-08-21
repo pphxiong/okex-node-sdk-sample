@@ -820,13 +820,18 @@ class Backtester {
 	toogleMarketType(marketType, candle) {
 		const { adx, adx_threshold } = candle;
 		// if (adx < adx_threshold) {
-		if (this.marketMode == 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
+		if (config.isMarketModeAuto) {
+			const random = Math.random();
+			if (random > 0.5) this.marketMode = this.marketMode == 1 ? 2 : 1;
+			// if (this.marketMode == 2) {
+			// 	if (marketType.indexOf('多') != -1) {
+			// 		marketType = marketType.replace('多', '空');
+			// 	} else if (marketType.indexOf('空') != -1) {
+			// 		marketType = marketType.replace('空', '多');
+			// 	}
+			// }
 		}
+
 		// }
 
 		return marketType;
@@ -1590,10 +1595,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-08-30';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
