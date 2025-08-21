@@ -754,6 +754,12 @@ class Backtester {
 				if (lastClose < emaTrend) {
 					marketType = '趋势多且增强-L-1-2';
 				}
+				const isBreakout =
+					close > emaFast &&
+					emaFast > emaSlow &&
+					emaSlow > emaTrend &&
+					(lastClose < emaFast || lastClose < emaSlow);
+				if (isBreakout) marketType = '趋势多且增强-L-1-3';
 			}
 		}
 
@@ -766,6 +772,12 @@ class Backtester {
 				if (lastClose > emaTrend) {
 					marketType = '趋势空且增强-R-1-2';
 				}
+				const isBreakout =
+					close < emaFast &&
+					emaFast < emaSlow &&
+					emaSlow < emaTrend &&
+					(lastClose > emaFast || lastClose > emaSlow);
+				if (isBreakout) marketType = '趋势空且增强-R-1-3';
 			}
 		}
 
@@ -1121,7 +1133,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					// isProfitTarget ||
+					isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
