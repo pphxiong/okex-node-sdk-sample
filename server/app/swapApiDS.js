@@ -40,7 +40,8 @@ const config = {
 	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [50, 5], slopeWindow: 5 },
+		'15m': { periods: [12, 26, 50], slopeWindow: 5 },
+		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	macdParams: { '15m': [12, 26, 9] },
@@ -100,6 +101,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		adxMinusDI,
 		rsi,
 		close,
+		atr,
 		open,
 		emaSlope,
 		emaFast,
@@ -136,21 +138,25 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	if (emaFast > emaSlow) {
 		marketType = '趋势多';
-		if (close > emaFast && close < lastClose) {
-			marketType = '趋势多且增强-L-1-1';
-		}
-		if (lastClose < lastEmaSlow) {
-			marketType = '趋势多且增强-L-1-2';
+		if (emaSlow > emaTrend) {
+			if (close > emaFast && close < lastClose) {
+				marketType = '趋势多且增强-L-1-1';
+			}
+			if (lastClose < emaTrend) {
+				marketType = '趋势多且增强-L-1-2';
+			}
 		}
 	}
 
 	if (emaFast < emaSlow) {
 		marketType = '趋势空';
-		if (close < emaFast && close > lastClose) {
-			marketType = '趋势空且增强-R-1-1';
-		}
-		if (lastClose > lastEmaSlow) {
-			marketType = '趋势空且增强-R-1-2';
+		if (emaSlow < emaTrend) {
+			if (close < emaFast && close > lastClose) {
+				marketType = '趋势空且增强-R-1-1';
+			}
+			if (lastClose > emaTrend) {
+				marketType = '趋势空且增强-R-1-2';
+			}
 		}
 	}
 
@@ -298,6 +304,13 @@ async function calculateIndicators() {
 			);
 
 			indicatorPromises.push(
+				tulind.indicators.ema.indicator(
+					[closes],
+					[config.emaSettings[tf].periods[2]]
+				)
+			);
+
+			indicatorPromises.push(
 				tulind.indicators.bbands.indicator(
 					[closes],
 					[config.bollinger.period, config.bollinger.stdDev]
@@ -330,14 +343,15 @@ async function calculateIndicators() {
 		// 合并指标到数据
 		config.timeframes.forEach((tf, index) => {
 			const [
-				emaSlow,
 				emaFast,
+				emaSlow,
+				emaTrend,
 				bollinger,
 				atr,
 				macd,
 				[adx, adxPlusDI, adxMinusDI],
 				rsi,
-			] = result.slice(index * 7, (index + 1) * 7);
+			] = result.slice(index * 8, (index + 1) * 8);
 			// 计算EMA斜率
 			const emaSlopes = [];
 			for (
@@ -390,6 +404,7 @@ async function calculateIndicators() {
 				}
 				d.emaSlow = emaSlow[0][i];
 				d.emaFast = emaFast[0][i];
+				d.emaTrend = emaTrend[0][i];
 				if (d.adx && d.atr) {
 					// const isVolatility = d.adx > 30;
 					const volatility_ratio = d.atr / d.emaSlow;
