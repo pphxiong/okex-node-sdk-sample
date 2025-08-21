@@ -740,9 +740,12 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
+		// 动态波动率调整
+		const volatilityFactor = atr / close;
+
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (close > emaTrend) {
+			if (emaSlow > emaTrend && volatilityFactor > 0.05) {
 				if (close > emaFast && close < lastClose) {
 					marketType = '趋势多且增强-L-1-1';
 				}
@@ -754,7 +757,7 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (close < emaTrend) {
+			if (emaSlow < emaTrend && volatilityFactor > 0.05) {
 				if (close < emaFast && close > lastClose) {
 					marketType = '趋势空且增强-R-1-1';
 				}
