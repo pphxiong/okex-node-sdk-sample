@@ -823,13 +823,13 @@ class Backtester {
 		if (config.isMarketModeAuto) {
 			const random = Math.random();
 			if (random > 0.5) this.marketMode = this.marketMode == 1 ? 2 : 1;
-			// if (this.marketMode == 2) {
-			// 	if (marketType.indexOf('多') != -1) {
-			// 		marketType = marketType.replace('多', '空');
-			// 	} else if (marketType.indexOf('空') != -1) {
-			// 		marketType = marketType.replace('空', '多');
-			// 	}
-			// }
+			if (this.marketMode == 2) {
+				if (marketType.indexOf('多') != -1) {
+					marketType = marketType.replace('多', '空');
+				} else if (marketType.indexOf('空') != -1) {
+					marketType = marketType.replace('空', '多');
+				}
+			}
 		}
 
 		// }
