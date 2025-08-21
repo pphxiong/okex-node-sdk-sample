@@ -705,6 +705,7 @@ class Backtester {
 			adxMinusDI,
 			rsi,
 			close,
+			atr,
 			open,
 			emaSlope,
 			emaFast,
