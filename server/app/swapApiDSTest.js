@@ -709,6 +709,7 @@ class Backtester {
 			emaSlope,
 			emaFast,
 			emaSlow,
+			emaTrend,
 			macdHistogram: macd,
 			volume,
 			rsi_long,
@@ -741,21 +742,25 @@ class Backtester {
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (close > emaFast && close < lastClose) {
-				marketType = '趋势多且增强-L-1-1';
-			}
-			if (lastClose < lastEmaSlow) {
-				marketType = '趋势多且增强-L-1-2';
+			if (emaSlow > emaTrend) {
+				if (close > emaFast && close < lastClose) {
+					marketType = '趋势多且增强-L-1-1';
+				}
+				if (lastClose < lastEmaSlow) {
+					marketType = '趋势多且增强-L-1-2';
+				}
 			}
 		}
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (close < emaFast && close > lastClose) {
-				marketType = '趋势空且增强-R-1-1';
-			}
-			if (lastClose > lastEmaSlow) {
-				marketType = '趋势空且增强-R-1-2';
+			if (emaSlow < emaTrend) {
+				if (close < emaFast && close > lastClose) {
+					marketType = '趋势空且增强-R-1-1';
+				}
+				if (lastClose > lastEmaSlow) {
+					marketType = '趋势空且增强-R-1-2';
+				}
 			}
 		}
 
