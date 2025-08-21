@@ -91,7 +91,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 };
 
 // 计算单期EMA
@@ -1396,7 +1396,7 @@ class Backtester {
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
-			if (marketMode == 1 && lnp > 0.015 * 1.25) {
+			if (marketMode == 1 && lnp > 0.015 * 3) {
 				this.marketMode = 2;
 			} else if (marketMode == 2 && lnp < -0.015) {
 				this.marketMode = 1;
