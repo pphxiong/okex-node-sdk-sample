@@ -91,7 +91,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 2,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 };
 
 // 计算单期EMA
