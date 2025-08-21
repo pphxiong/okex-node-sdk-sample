@@ -635,56 +635,58 @@ class Backtester {
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
 
-		// 趋势判断
-		if (emaFast > emaTrend) {
-			// 多头增强条件
-			const isPullback = close < emaFast && close > lastClose;
-			const isBreakout =
-				close > emaFast &&
-				emaFast > emaSlow &&
-				emaSlow > emaTrend &&
-				(lastClose < emaFast || lastClose < emaSlow);
+    const isFaraway = Math.abs(emaSlow - emaTrend) > atr * 2;
 
-			// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
+	// 趋势判断
+	if (emaFast > emaTrend) {
+		// 多头增强条件
+		const isPullback = close < emaFast && close > lastClose;
+		const isBreakout =
+			close > emaFast &&
+			emaFast > emaSlow &&
+			emaSlow > emaTrend &&
+			(lastClose < emaFast || lastClose < emaSlow);
 
-			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
-			if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
+		// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
 
-			// if (emaFast < emaSlow || emaFast < emaTrend) {
-			// 	return '趋势空';
-			// }
+		if (isBreakout && isFaraway) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+		if (isPullback && isFaraway) return '趋势多且增强_DOGE_UP_PULLBACK';
 
-			// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
-			// 	return '趋势空';
-			// }
-			return '趋势多_DOGE_UP_BASE';
-			// return 'DOGE_NOISE';
-		}
+		// if (emaFast < emaSlow || emaFast < emaTrend) {
+		// 	return '趋势空';
+		// }
 
-		if (emaFast < emaTrend) {
-			// 空头增强条件
-			const isPullback = close > emaFast && close < lastClose;
-			const isBreakout =
-				close < emaFast &&
-				emaFast < emaSlow &&
-				emaSlow < emaTrend &&
-				(lastClose > emaFast || lastClose > emaSlow);
+		// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
+		// 	return '趋势空';
+		// }
+		return '趋势多_DOGE_UP_BASE';
+		// return 'DOGE_NOISE';
+	}
 
-			// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
+	if (emaFast < emaTrend) {
+		// 空头增强条件
+		const isPullback = close > emaFast && close < lastClose;
+		const isBreakout =
+			close < emaFast &&
+			emaFast < emaSlow &&
+			emaSlow < emaTrend &&
+			(lastClose > emaFast || lastClose > emaSlow);
 
-			if (isBreakout) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
-			if (isPullback) return '趋势空且增强_DOGE_DOWN_PULLBACK';
+		// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
 
-			// if (emaFast > emaSlow || emaFast > emaTrend) {
-			// 	return '趋势多';
-			// }
+		if (isBreakout && isFaraway) return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+		if (isPullback && isFaraway) return '趋势空且增强_DOGE_DOWN_PULLBACK';
 
-			// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
-			// 	return '趋势多';
-			// }
-			return '趋势空_DOGE_DOWN_BASE';
-			// return 'DOGE_NOISE';
-		}
+		// if (emaFast > emaSlow || emaFast > emaTrend) {
+		// 	return '趋势多';
+		// }
+
+		// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
+		// 	return '趋势多';
+		// }
+		return '趋势空_DOGE_DOWN_BASE';
+		// return 'DOGE_NOISE';
+	}
 
 		return 'DOGE_NOISE';
 	}
