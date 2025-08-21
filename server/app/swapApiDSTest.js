@@ -743,10 +743,11 @@ class Backtester {
 
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
+		const isFaraway = (Math.abs(emaSlow - emaTrend) / emaTrend) * 100 > 0.2;
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
-			if (emaSlow > emaTrend) {
+			if (emaSlow > emaTrend && isFaraway) {
 				if (close > emaFast && close < lastClose) {
 					marketType = '趋势多且增强-L-1-1';
 				}
@@ -758,7 +759,7 @@ class Backtester {
 
 		if (emaFast < emaSlow) {
 			marketType = '趋势空';
-			if (emaSlow < emaTrend) {
+			if (emaSlow < emaTrend && isFaraway) {
 				if (close < emaFast && close > lastClose) {
 					marketType = '趋势空且增强-R-1-1';
 				}
@@ -1573,10 +1574,10 @@ function carryForluma(p, rl, rw) {
 // 执行回测
 (async () => {
 	const backtester = new Backtester();
-	const start = '2023-01-01';
-	const end = '2023-07-01';
-	// const start = '2025-01-01';
-	// const end = '2025-08-30';
+	// const start = '2023-01-01';
+	// const end = '2023-07-01';
+	const start = '2025-01-01';
+	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
