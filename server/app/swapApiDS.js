@@ -919,7 +919,7 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const isProfitTarget = lnp > 0.015 * 3;
+		const isProfitTarget = lnp > 0.015 * 1.25;
 		const isStopLoss = lnp < -0.015;
 
 		// const takeProfit =
