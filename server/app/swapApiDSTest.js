@@ -1396,11 +1396,15 @@ class Backtester {
 		const lnp = this.getLnp(position, exitCandle);
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
-			if (marketMode == 1 && lnp > 0.015 * 3) {
-				this.marketMode = 2;
-			} else if (marketMode == 2 && lnp < -0.015) {
-				this.marketMode = 1;
+			const random = Math.random();
+			if (random > 0.5) {
+				this.marketMode = marketMode == 1 ? 2 : 1;
 			}
+			// if (marketMode == 1 && lnp > 0.015 * 3) {
+			// 	this.marketMode = 2;
+			// } else if (marketMode == 2 && lnp < -0.015) {
+			// 	this.marketMode = 1;
+			// }
 		}
 		config.marketMode = this.marketMode;
 	}
