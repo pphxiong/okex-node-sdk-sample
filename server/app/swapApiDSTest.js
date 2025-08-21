@@ -635,7 +635,7 @@ class Backtester {
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
 
-    const isFaraway = Math.abs(emaSlow - emaTrend) > atr * 2;
+    const isFaraway = Math.abs(emaSlow - emaTrend) / emaTrend > atr;
 
 	// 趋势判断
 	if (emaFast > emaTrend) {
