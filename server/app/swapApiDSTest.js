@@ -612,86 +612,187 @@ class Backtester {
 		}
 	}
 
+	// getMarketType(candle, lastCandle, lastLastCandle) {
+	// 	const {
+	// 		close,
+	// 		high,
+	// 		low,
+	// 		volume,
+	// 		emaFast,
+	// 		emaSlow,
+	// 		emaTrend,
+	// 		atr,
+	// 		adx,
+	// 		volumeEMA20,
+	// 	} = candle;
+
+	// 	const {
+	// 		close: lastClose,
+	// 		high: lastHigh,
+	// 		emaFast: lastEmaFast,
+	// 		emaSlow: lastEmaSlow,
+	// 	} = lastCandle || {};
+
+	// 	// 动态波动率调整
+	// 	const volatilityFactor = atr / close;
+
+	// 	const isFaraway = Math.abs(emaSlow - emaTrend) / emaTrend > atr;
+
+	// 	// 趋势判断
+	// 	if (emaFast > emaTrend) {
+	// 		// 多头增强条件
+	// 		const isPullback = close < emaFast && close > lastClose;
+	// 		const isBreakout =
+	// 			close > emaFast &&
+	// 			emaFast > emaSlow &&
+	// 			emaSlow > emaTrend &&
+	// 			(lastClose < emaFast || lastClose < emaSlow);
+
+	// 		// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
+
+	// 		if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
+	// 		if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
+
+	// 		// if (emaFast < emaSlow || emaFast < emaTrend) {
+	// 		// 	return '趋势空';
+	// 		// }
+
+	// 		// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
+	// 		// 	return '趋势空';
+	// 		// }
+	// 		return '趋势多_DOGE_UP_BASE';
+	// 		// return 'DOGE_NOISE';
+	// 	}
+
+	// 	if (emaFast < emaTrend) {
+	// 		// 空头增强条件
+	// 		const isPullback = close > emaFast && close < lastClose;
+	// 		const isBreakout =
+	// 			close < emaFast &&
+	// 			emaFast < emaSlow &&
+	// 			emaSlow < emaTrend &&
+	// 			(lastClose > emaFast || lastClose > emaSlow);
+
+	// 		// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
+
+	// 		if (isBreakout && isFaraway)
+	// 			return '趋势空且增强_DOGE_DOWN_BREAKOUT';
+	// 		if (isPullback && isFaraway)
+	// 			return '趋势空且增强_DOGE_DOWN_PULLBACK';
+
+	// 		// if (emaFast > emaSlow || emaFast > emaTrend) {
+	// 		// 	return '趋势多';
+	// 		// }
+
+	// 		// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
+	// 		// 	return '趋势多';
+	// 		// }
+	// 		return '趋势空_DOGE_DOWN_BASE';
+	// 		// return 'DOGE_NOISE';
+	// 	}
+
+	// 	return 'DOGE_NOISE';
+	// }
+
 	getMarketType(candle, lastCandle, lastLastCandle) {
+		let marketType = '';
+		if (!lastCandle) return marketType;
+		if (!lastLastCandle) return marketType;
+
 		const {
+			adx,
+			adxPlusDI,
+			adxMinusDI,
+			rsi,
 			close,
-			high,
-			low,
-			volume,
+			open,
+			emaSlope,
 			emaFast,
 			emaSlow,
-			emaTrend,
-			atr,
-			adx,
-			volumeEMA20,
+			macdHistogram: macd,
+			volume,
+			rsi_long,
+			rsi_short,
+			stop_multiplier,
+			adx_threshold,
+			adx_stoploss_distance,
+			volatility_ratio,
 		} = candle;
-
 		const {
-			close: lastClose,
-			high: lastHigh,
 			emaFast: lastEmaFast,
 			emaSlow: lastEmaSlow,
-		} = lastCandle || {};
+			close: lastClose,
+			macdHistogram: lastMacd,
+			volume: lastVolume,
+		} = lastCandle;
+		const {
+			emaFast: lastLastEmaFast,
+			emaSlow: lastLastEmaSlow,
+			close: lastLastClose,
+			macdHistogram: lastLastMacd,
+			volume: lastLastVolume,
+		} = lastLastCandle;
 
-		// 动态波动率调整
-		const volatilityFactor = atr / close;
+		const stronger = emaFast > emaSlow;
+		const weeker = emaFast < emaSlow;
 
-		const isFaraway = Math.abs(emaSlow - emaTrend) / emaTrend > atr;
+		const lastStronger = lastEmaFast > lastEmaSlow;
+		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		// 趋势判断
-		if (emaFast > emaTrend) {
-			// 多头增强条件
-			const isPullback = close < emaFast && close > lastClose;
-			const isBreakout =
-				close > emaFast &&
-				emaFast > emaSlow &&
-				emaSlow > emaTrend &&
-				(lastClose < emaFast || lastClose < emaSlow);
-
-			// const isBreakout = emaFast > emaSlow && lastEmaFast < lastEmaSlow;
-
-			if (isBreakout) return '趋势多且增强_DOGE_UP_BREAKOUT'; // 强势突破
-			if (isPullback) return '趋势多且增强_DOGE_UP_PULLBACK';
-
-			// if (emaFast < emaSlow || emaFast < emaTrend) {
-			// 	return '趋势空';
-			// }
-
-			// if (emaFast < emaSlow && lastEmaFast > lastEmaSlow) {
-			// 	return '趋势空';
-			// }
-			return '趋势多_DOGE_UP_BASE';
-			// return 'DOGE_NOISE';
+		if (emaFast > emaSlow) {
+			marketType = '趋势多';
+			if (close > emaFast && close < lastClose) {
+				marketType = '趋势多且增强-L-1-1';
+			}
+			if (lastClose < lastEmaSlow) {
+				marketType = '趋势多且增强-L-1-2';
+			}
 		}
 
-		if (emaFast < emaTrend) {
-			// 空头增强条件
-			const isPullback = close > emaFast && close < lastClose;
-			const isBreakout =
-				close < emaFast &&
-				emaFast < emaSlow &&
-				emaSlow < emaTrend &&
-				(lastClose > emaFast || lastClose > emaSlow);
-
-			// const isBreakout = emaFast < emaSlow && lastEmaFast > lastEmaSlow;
-
-			if (isBreakout && isFaraway)
-				return '趋势空且增强_DOGE_DOWN_BREAKOUT';
-			if (isPullback && isFaraway)
-				return '趋势空且增强_DOGE_DOWN_PULLBACK';
-
-			// if (emaFast > emaSlow || emaFast > emaTrend) {
-			// 	return '趋势多';
-			// }
-
-			// if (emaFast > emaSlow && lastEmaFast < lastEmaSlow) {
-			// 	return '趋势多';
-			// }
-			return '趋势空_DOGE_DOWN_BASE';
-			// return 'DOGE_NOISE';
+		if (emaFast < emaSlow) {
+			marketType = '趋势空';
+			if (close < emaFast && close > lastClose) {
+				marketType = '趋势空且增强-R-1-1';
+			}
+			if (lastClose > lastEmaSlow) {
+				marketType = '趋势空且增强-R-1-2';
+			}
 		}
 
-		return 'DOGE_NOISE';
+		// if (emaFast > emaSlow) {
+		// 	if (close > emaSlow && close < emaFast && close < lastClose) {
+		// 		marketType = '趋势多且增强-L-1-1';
+		// 	}
+		// 	if (adx > adx_threshold) {
+		// 		if (close > emaFast && rsi < 75) {
+		// 			marketType = '趋势多且增强-L-1-2';
+		// 		}
+		// 		if (close < emaFast) {
+		// 			marketType =
+		// 				(emaFast - emaSlow) / emaFast > volatility_ratio
+		// 					? '趋势多且增强-L-1-3'
+		// 					: '趋势空且增强-L-1-4';
+		// 		}
+		// 	}
+		// }
+		// if (emaFast < emaSlow) {
+		// 	if (close < emaSlow && close > emaFast && close > lastClose) {
+		// 		marketType = '趋势空且增强-R-2-1';
+		// 	}
+		// 	if (adx > adx_threshold) {
+		// 		if (close < emaFast && rsi > 25) {
+		// 			marketType = '趋势空且增强-R-2-2';
+		// 		}
+		// 		if (close > emaFast) {
+		// 			marketType =
+		// 				(emaSlow - emaFast) / emaSlow > volatility_ratio
+		// 					? '趋势空且增强-R-2-3'
+		// 					: '趋势空且增强-R-2-4';
+		// 		}
+		// 	}
+		// }
+
+		return marketType;
 	}
 
 	toogleMarketType(marketType, candle) {
