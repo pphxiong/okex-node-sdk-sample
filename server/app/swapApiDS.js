@@ -106,6 +106,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		emaSlope,
 		emaFast,
 		emaSlow,
+		emaTrend,
 		macdHistogram: macd,
 		volume,
 		rsi_long,
@@ -145,6 +146,12 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if (lastClose < emaTrend) {
 				marketType = '趋势多且增强-L-1-2';
 			}
+			const isBreakout =
+				close > emaFast &&
+				emaFast > emaSlow &&
+				emaSlow > emaTrend &&
+				(lastClose < emaFast || lastClose < emaSlow);
+			if (isBreakout) marketType = '趋势多且增强-L-1-3';
 		}
 	}
 
@@ -157,6 +164,12 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if (lastClose > emaTrend) {
 				marketType = '趋势空且增强-R-1-2';
 			}
+			const isBreakout =
+				close < emaFast &&
+				emaFast < emaSlow &&
+				emaSlow < emaTrend &&
+				(lastClose > emaFast || lastClose > emaSlow);
+			if (isBreakout) marketType = '趋势空且增强-R-1-3';
 		}
 	}
 
