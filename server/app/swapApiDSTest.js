@@ -743,7 +743,7 @@ class Backtester {
 
 		// 动态波动率调整
 		const volatilityFactor = atr / close;
-		const isFaraway = (Math.abs(emaSlow - emaTrend) / emaTrend) * 100 > 0.2;
+		const isFaraway = (Math.abs(emaSlow - emaTrend) / emaTrend) * 100 < 0.5;
 
 		if (emaFast > emaSlow) {
 			marketType = '趋势多';
