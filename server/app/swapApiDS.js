@@ -1202,9 +1202,9 @@ const readData = async () => {
 	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
 
 	const { position, entryPrice } = dataConfig;
-	if (!config.isMarketModeAuto) {
-		delete dataConfig.marketMode;
-	}
+	// if (!config.isMarketModeAuto) {
+	// 	delete dataConfig.marketMode;
+	// }
 	dataConfig = Object.assign(dataConfig, {
 		position: Number(position),
 		entryPrice: Number(entryPrice),
