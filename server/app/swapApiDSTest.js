@@ -725,6 +725,7 @@ class Backtester {
 			emaSlow: lastEmaSlow,
 			emaTrend: lastEmaTrend,
 			close: lastClose,
+			open: lastOpen,
 			macdHistogram: lastMacd,
 			volume: lastVolume,
 		} = lastCandle;
@@ -751,7 +752,11 @@ class Backtester {
 			if (emaSlow > emaTrend) {
 				if (close > emaFast) {
 					marketType =
-						close < lastClose ? '趋势多且增强-L-1-1' : '趋势空';
+						close < lastClose
+							? '趋势多且增强-L-1-1'
+							: lastClose > lastOpen
+							? '趋势空且增强-L-1-1'
+							: '趋势多';
 				}
 				if (close > emaTrend && lastClose < lastEmaTrend) {
 					marketType = '趋势多且增强-L-1-2';
@@ -770,7 +775,11 @@ class Backtester {
 			if (emaSlow < emaTrend) {
 				if (close < emaFast) {
 					marketType =
-						close > lastClose ? '趋势空且增强-R-1-1' : '趋势多';
+						close > lastClose
+							? '趋势空且增强-R-1-1'
+							: lastClose < lastOpen
+							? '趋势多且增强-R-1-1'
+							: '趋势空';
 				}
 				if (close < emaTrend && lastClose > lastEmaTrend) {
 					marketType = '趋势空且增强-R-1-2';
