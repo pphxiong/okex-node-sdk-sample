@@ -119,6 +119,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const {
 		emaFast: lastEmaFast,
 		emaSlow: lastEmaSlow,
+		emaTrend: lastEmaTrend,
 		close: lastClose,
 		macdHistogram: lastMacd,
 		volume: lastVolume,
@@ -143,14 +144,14 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if (close > emaFast && close < lastClose) {
 				marketType = '趋势多且增强-L-1-1';
 			}
-			if (lastClose < emaTrend) {
+			if (close > emaTrend && lastClose < lastEmaTrend) {
 				marketType = '趋势多且增强-L-1-2';
 			}
 			const isBreakout =
 				close > emaFast &&
 				emaFast > emaSlow &&
 				emaSlow > emaTrend &&
-				(lastClose < emaFast || lastClose < emaSlow);
+				(lastClose < lastEmaFast || lastClose < lastEmaSlow);
 			if (isBreakout) marketType = '趋势多且增强-L-1-3';
 		}
 	}
@@ -161,14 +162,14 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			if (close < emaFast && close > lastClose) {
 				marketType = '趋势空且增强-R-1-1';
 			}
-			if (lastClose > emaTrend) {
+			if (close < emaTrend && lastClose > lastEmaTrend) {
 				marketType = '趋势空且增强-R-1-2';
 			}
 			const isBreakout =
 				close < emaFast &&
 				emaFast < emaSlow &&
 				emaSlow < emaTrend &&
-				(lastClose > emaFast || lastClose > emaSlow);
+				(lastClose > lastEmaFast || lastClose > lastEmaSlow);
 			if (isBreakout) marketType = '趋势空且增强-R-1-3';
 		}
 	}
