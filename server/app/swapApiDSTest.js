@@ -829,7 +829,7 @@ class Backtester {
 		// 	}
 		// }
 		// }
-		if (this.marketMode == 1) {
+		if (this.marketMode == 2) {
 			const andIndex = marketType.indexOf('且');
 			if (andIndex != -1) {
 				// marketType = marketType.substring(0, andIndex);
