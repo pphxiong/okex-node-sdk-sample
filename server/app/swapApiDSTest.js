@@ -1021,7 +1021,7 @@ class Backtester {
 				}
 
 				const basicLnp = 0.01;
-				isProfitTarget = lnp > basicLnp * 3.5;
+				isProfitTarget = lnp > basicLnp * 2.5;
 				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
