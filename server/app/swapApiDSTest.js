@@ -819,7 +819,7 @@ class Backtester {
 
 	toogleMarketType(marketType, candle) {
 		const { adx, adx_threshold } = candle;
-		// if (adx < adx_threshold) {
+		if (adx < adx_threshold) {
 			if (this.marketMode == 2) {
 				if (marketType.indexOf('多') != -1) {
 					marketType = marketType.replace('多', '空');
@@ -827,7 +827,7 @@ class Backtester {
 					marketType = marketType.replace('空', '多');
 				}
 			}
-		// }
+		}
 
 		return marketType;
 	}
