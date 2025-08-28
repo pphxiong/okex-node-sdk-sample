@@ -997,8 +997,9 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				isProfitTarget = lnp > 0.015;
-				isStopLoss = lnp < -0.015;
+				const basicLnp = 0.01;
+				isProfitTarget = lnp > basicLnp * 1.5;
+				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
 				// 	position.marketMode === 1
