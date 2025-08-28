@@ -747,51 +747,51 @@ class Backtester {
 		const volatilityFactor = atr / close;
 		const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
 
-		if (emaFast > emaSlow) {
-			marketType = '趋势多';
-			if (emaSlow > emaTrend) {
-				if (close > emaFast) {
-					marketType =
-						close < lastClose
-							? '趋势多且增强-L-1-1'
-							: lastClose > lastOpen
-							? '趋势空且增强-L-1-1'
-							: '趋势多';
-				}
-				if (close > emaTrend && lastClose < lastEmaTrend) {
-					marketType = '趋势多且增强-L-1-2';
-				}
-				const isBreakout =
-					close > emaFast &&
-					emaFast > emaSlow &&
-					emaSlow > emaTrend &&
-					(lastClose < lastEmaFast || lastClose < lastEmaSlow);
-				if (isBreakout) marketType = '趋势多且增强-L-1-3';
-			}
+		if (close > open) {
+			marketType = '趋势多且增强-L-1-1';
 		}
 
-		if (emaFast < emaSlow) {
-			marketType = '趋势空';
-			if (emaSlow < emaTrend) {
-				if (close < emaFast) {
-					marketType =
-						close > lastClose
-							? '趋势空且增强-R-1-1'
-							: lastClose < lastOpen
-							? '趋势多且增强-R-1-1'
-							: '趋势空';
-				}
-				if (close < emaTrend && lastClose > lastEmaTrend) {
-					marketType = '趋势空且增强-R-1-2';
-				}
-				const isBreakout =
-					close < emaFast &&
-					emaFast < emaSlow &&
-					emaSlow < emaTrend &&
-					(lastClose > lastEmaFast || lastClose > lastEmaSlow);
-				if (isBreakout) marketType = '趋势空且增强-R-1-3';
-			}
+		if (close < open) {
+			marketType = '趋势空且增强-R-1-1';
 		}
+
+		// if (emaFast > emaSlow) {
+		// 	marketType = '趋势多';
+		// 	if (emaSlow > emaTrend) {
+		// 		if (close > emaFast) {
+		// 			marketType =
+		// 				close < lastClose ? '趋势多且增强-L-1-1' : '趋势多';
+		// 		}
+		// 		if (close > emaTrend && lastClose < lastEmaTrend) {
+		// 			marketType = '趋势多且增强-L-1-2';
+		// 		}
+		// 		const isBreakout =
+		// 			close > emaFast &&
+		// 			emaFast > emaSlow &&
+		// 			emaSlow > emaTrend &&
+		// 			(lastClose < lastEmaFast || lastClose < lastEmaSlow);
+		// 		if (isBreakout) marketType = '趋势多且增强-L-1-3';
+		// 	}
+		// }
+
+		// if (emaFast < emaSlow) {
+		// 	marketType = '趋势空';
+		// 	if (emaSlow < emaTrend) {
+		// 		if (close < emaFast) {
+		// 			marketType =
+		// 				close > lastClose ? '趋势空且增强-R-1-1' : '趋势空';
+		// 		}
+		// 		if (close < emaTrend && lastClose > lastEmaTrend) {
+		// 			marketType = '趋势空且增强-R-1-2';
+		// 		}
+		// 		const isBreakout =
+		// 			close < emaFast &&
+		// 			emaFast < emaSlow &&
+		// 			emaSlow < emaTrend &&
+		// 			(lastClose > lastEmaFast || lastClose > lastEmaSlow);
+		// 		if (isBreakout) marketType = '趋势空且增强-R-1-3';
+		// 	}
+		// }
 
 		// if (emaFast > emaSlow) {
 		// 	if (close > emaSlow && close < emaFast && close < lastClose) {
@@ -1158,11 +1158,11 @@ class Backtester {
 				const isReverse =
 					// isLastIndex ||
 					isProfitTarget ||
-					isStopLoss ||
+					isStopLoss; 
 					// (lnp < 0 && duration >= 60) ||
-					(position.direction === 'long'
-						? longCloseConditions.some((c) => !!c)
-						: shortCloseConditions.some((c) => !!c));
+					// (position.direction === 'long'
+					// 	? longCloseConditions.some((c) => !!c)
+					// 	: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
