@@ -1021,7 +1021,7 @@ class Backtester {
 				}
 
 				const basicLnp = 0.01;
-				isProfitTarget = lnp > basicLnp * 1;
+				isProfitTarget = lnp > basicLnp * 2.5;
 				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
@@ -1157,12 +1157,12 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isProfitTarget ||
-					isStopLoss; 
+					// isProfitTarget ||
+					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
-					// (position.direction === 'long'
-					// 	? longCloseConditions.some((c) => !!c)
-					// 	: shortCloseConditions.some((c) => !!c));
+					(position.direction === 'long'
+						? longCloseConditions.some((c) => !!c)
+						: shortCloseConditions.some((c) => !!c));
 
 				if (isReverse) {
 					this.closePosition(
