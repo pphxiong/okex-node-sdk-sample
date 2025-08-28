@@ -750,10 +750,10 @@ class Backtester {
 			marketType = '趋势多';
 			if (emaSlow > emaTrend) {
 				if (close > emaFast && close < lastClose) {
-					marketType = '趋势空且增强-L-1-1';
+					marketType = '趋势多且增强-L-1-1';
 				}
 				if (close > emaTrend && lastClose < lastEmaTrend) {
-					marketType = '趋势空且增强-L-1-2';
+					marketType = '趋势多且增强-L-1-2';
 				}
 				const isBreakout =
 					close > emaFast &&
@@ -768,10 +768,10 @@ class Backtester {
 			marketType = '趋势空';
 			if (emaSlow < emaTrend) {
 				if (close < emaFast && close > lastClose) {
-					marketType = '趋势多且增强-R-1-1';
+					marketType = '趋势空且增强-R-1-1';
 				}
 				if (close < emaTrend && lastClose > lastEmaTrend) {
-					marketType = '趋势多且增强-R-1-2';
+					marketType = '趋势空且增强-R-1-2';
 				}
 				const isBreakout =
 					close < emaFast &&

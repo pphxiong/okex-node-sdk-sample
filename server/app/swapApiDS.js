@@ -919,8 +919,9 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const isProfitTarget = lnp > 0.015 * 1.5;
-		const isStopLoss = lnp < -0.015;
+    const basicLnp = 0.015;
+	const isProfitTarget = lnp > basicLnp * 1.5;
+	const isStopLoss = lnp < -basicLnp;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
