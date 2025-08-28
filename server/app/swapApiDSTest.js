@@ -830,15 +830,15 @@ class Backtester {
 		// }
 		// }
 		if (this.marketMode == 2) {
-			const andIndex = marketType.indexOf('且');
-			if (andIndex != -1) {
-				// marketType = marketType.substring(0, andIndex);
-				if (marketType.indexOf('多') != -1) {
-					marketType = marketType.replace('多', '空');
-				} else if (marketType.indexOf('空') != -1) {
-					marketType = marketType.replace('空', '多');
-				}
+			// const andIndex = marketType.indexOf('且');
+			// if (andIndex != -1) {
+			// marketType = marketType.substring(0, andIndex);
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
 			}
+			// }
 		}
 
 		return marketType;
