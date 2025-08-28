@@ -748,13 +748,10 @@ class Backtester {
 		const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
 
 		if (emaFast > emaSlow) {
-			marketType = rsi > 60 ? '趋势多' : '趋势空';
+			marketType = '趋势多';
 			if (emaSlow > emaTrend) {
 				if (close > emaFast && close < lastClose) {
-					marketType =
-						rsi > 60
-							? '趋势多且增强-L-1-1'
-							: '趋势多空且增强-L-1-1';
+					marketType = '趋势多且增强-L-1-1';
 				}
 				if (close > emaTrend && lastClose < lastEmaTrend) {
 					marketType = '趋势多且增强-L-1-2';
@@ -769,11 +766,10 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			marketType = rsi < 40 ? '趋势空' : '趋势多';
+			marketType = '趋势空';
 			if (emaSlow < emaTrend) {
 				if (close < emaFast && close > lastClose) {
-					marketType =
-						rsi < 40 ? '趋势空且增强-R-1-1' : '趋势多且增强-R-1-1';
+					marketType = '趋势空且增强-R-1-1';
 				}
 				if (close < emaTrend && lastClose > lastEmaTrend) {
 					marketType = '趋势空且增强-R-1-2';
@@ -1607,7 +1603,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-01-01';
+	const start = '2025-08-01';
 	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
