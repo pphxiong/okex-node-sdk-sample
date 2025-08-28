@@ -753,13 +753,13 @@ class Backtester {
 					marketType = '趋势空且增强-L-1-1';
 				}
 				if (close > emaTrend && lastClose < lastEmaTrend) {
-					marketType = '趋势多且增强-L-1-2';
+					marketType = '趋势空且增强-L-1-2';
 				}
 				const isBreakout =
 					close > emaFast &&
 					emaFast > emaSlow &&
 					emaSlow > emaTrend &&
-					(lastClose < emaFast || lastClose < emaSlow);
+					(lastClose < lastEmaFast || lastClose < lastEmaSlow);
 				if (isBreakout) marketType = '趋势多且增强-L-1-3';
 			}
 		}
@@ -771,13 +771,13 @@ class Backtester {
 					marketType = '趋势多且增强-R-1-1';
 				}
 				if (close < emaTrend && lastClose > lastEmaTrend) {
-					marketType = '趋势空且增强-R-1-2';
+					marketType = '趋势多且增强-R-1-2';
 				}
 				const isBreakout =
 					close < emaFast &&
 					emaFast < emaSlow &&
 					emaSlow < emaTrend &&
-					(lastClose > emaFast || lastClose > emaSlow);
+					(lastClose > lastEmaFast || lastClose > lastEmaSlow);
 				if (isBreakout) marketType = '趋势空且增强-R-1-3';
 			}
 		}
