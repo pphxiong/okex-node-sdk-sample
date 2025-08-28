@@ -748,10 +748,13 @@ class Backtester {
 		const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
 
 		if (emaFast > emaSlow) {
-			marketType = '趋势多';
+			marketType = rsi > 60 ? '趋势多' : '趋势空';
 			if (emaSlow > emaTrend) {
 				if (close > emaFast && close < lastClose) {
-					marketType = rsi > 60 ? '趋势多且增强-L-1-1' : '趋势多';
+					marketType =
+						rsi > 60
+							? '趋势多且增强-L-1-1'
+							: '趋势多空且增强-L-1-1';
 				}
 				if (close > emaTrend && lastClose < lastEmaTrend) {
 					marketType = '趋势多且增强-L-1-2';
@@ -766,10 +769,11 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			marketType = '趋势空';
+			marketType = rsi < 40 ? '趋势空' : '趋势多';
 			if (emaSlow < emaTrend) {
 				if (close < emaFast && close > lastClose) {
-					marketType = rsi < 40 ?'趋势空且增强-R-1-1':'趋势空';
+					marketType =
+						rsi < 40 ? '趋势空且增强-R-1-1' : '趋势多且增强-R-1-1';
 				}
 				if (close < emaTrend && lastClose > lastEmaTrend) {
 					marketType = '趋势空且增强-R-1-2';
