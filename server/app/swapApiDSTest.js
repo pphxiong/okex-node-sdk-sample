@@ -90,7 +90,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
+	marketMode: 1,
 	isMarketModeAuto: false,
 };
 
