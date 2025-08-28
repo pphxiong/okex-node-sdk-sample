@@ -747,7 +747,7 @@ class Backtester {
 		const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
 
 		if (emaFast > emaSlow) {
-			marketType = '趋势空';
+			marketType = '趋势多';
 			if (emaSlow > emaTrend) {
 				if (close > emaFast && close < lastClose) {
 					marketType = '趋势空且增强-L-1-1';
@@ -765,7 +765,7 @@ class Backtester {
 		}
 
 		if (emaFast < emaSlow) {
-			marketType = '趋势多';
+			marketType = '趋势空';
 			if (emaSlow < emaTrend) {
 				if (close < emaFast && close > lastClose) {
 					marketType = '趋势多且增强-R-1-1';
@@ -830,16 +830,14 @@ class Backtester {
 		// }
 		// }
 		if (this.marketMode == 1) {
-			// const andIndex = marketType.indexOf('且');
-			// if (andIndex != -1) {
-			// 	marketType = marketType.substring(0, andIndex);
-			// } else {
-			// 	marketType = `${marketType}且增强`;
-			// }
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
+			const andIndex = marketType.indexOf('且');
+			if (andIndex != -1) {
+				// marketType = marketType.substring(0, andIndex);
+				if (marketType.indexOf('多') != -1) {
+					marketType = marketType.replace('多', '空');
+				} else if (marketType.indexOf('空') != -1) {
+					marketType = marketType.replace('空', '多');
+				}
 			}
 		}
 
