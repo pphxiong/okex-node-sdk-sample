@@ -753,7 +753,7 @@ class Backtester {
 			const isBullishCross =
 				emaFast > emaSlow && lastEmaFast < lastEmaSlow;
 			if (isBullishCross && rsi < 75) marketType = '趋势多且增强-L-1';
-			if (emaFast < emaSlow) marketType = '趋势空';
+			if (close < emaSlow) marketType = '趋势空';
 			// const isBreakout =
 			// 	close > emaFast &&
 			// 	emaFast > emaSlow &&
@@ -767,7 +767,7 @@ class Backtester {
 			const isBearishCross =
 				emaFast < emaSlow && lastEmaFast > lastEmaSlow;
 			if (isBearishCross && rsi > 25) marketType = '趋势空且增强-R-1';
-			if (emaFast > emaSlow) marketType = '趋势多';
+			if (close > emaSlow) marketType = '趋势多';
 			// const isBreakout =
 			// 	close < emaFast &&
 			// 	emaFast < emaSlow &&
