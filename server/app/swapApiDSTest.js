@@ -1004,7 +1004,7 @@ class Backtester {
 				}
 
 				const basicLnp = 0.015;
-				isProfitTarget = lnp > basicLnp * 2.5;
+				isProfitTarget = lnp > basicLnp * 1.5;
 				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
@@ -1596,7 +1596,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-08-01';
+	const start = '2025-01-01';
 	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
