@@ -37,7 +37,8 @@ const config = {
 	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
-		'15m': { periods: [12, 26, 50], slopeWindow: 5 },
+		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
+		'15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
@@ -90,7 +91,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
+	marketMode: 1,
 	isMarketModeAuto: false,
 };
 
@@ -747,40 +748,32 @@ class Backtester {
 		const volatilityFactor = atr / close;
 		const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
 
-		if (emaFast > emaSlow) {
+		if (emaSlow > emaTrend) {
 			marketType = '趋势多';
-			if (emaSlow > emaTrend) {
-				if (close > emaFast && close < lastClose) {
-					marketType = '趋势多且增强-L-1-1';
-				}
-				if (close > emaTrend && lastClose < lastEmaTrend) {
-					marketType = '趋势多且增强-L-1-2';
-				}
-				const isBreakout =
-					close > emaFast &&
-					emaFast > emaSlow &&
-					emaSlow > emaTrend &&
-					(lastClose < lastEmaFast || lastClose < lastEmaSlow);
-				if (isBreakout) marketType = '趋势多且增强-L-1-3';
-			}
+			const isBullishCross =
+				emaFast > emaSlow && lastEmaFast < lastEmaSlow;
+			if (isBullishCross && rsi < 75) marketType = '趋势多且增强-L-1';
+			if (emaFast < emaSlow) marketType = '趋势空';
+			// const isBreakout =
+			// 	close > emaFast &&
+			// 	emaFast > emaSlow &&
+			// 	emaSlow > emaTrend &&
+			// 	(lastClose < lastEmaFast || lastClose < lastEmaSlow);
+			// if (isBreakout) marketType = '趋势多且增强-L-1-3';
 		}
 
-		if (emaFast < emaSlow) {
+		if (emaSlow < emaTrend) {
 			marketType = '趋势空';
-			if (emaSlow < emaTrend) {
-				if (close < emaFast && close > lastClose) {
-					marketType = '趋势空且增强-R-1-1';
-				}
-				if (close < emaTrend && lastClose > lastEmaTrend) {
-					marketType = '趋势空且增强-R-1-2';
-				}
-				const isBreakout =
-					close < emaFast &&
-					emaFast < emaSlow &&
-					emaSlow < emaTrend &&
-					(lastClose > lastEmaFast || lastClose > lastEmaSlow);
-				if (isBreakout) marketType = '趋势空且增强-R-1-3';
-			}
+			const isBearishCross =
+				emaFast < emaSlow && lastEmaFast > lastEmaSlow;
+			if (isBearishCross && rsi > 25) marketType = '趋势空且增强-R-1';
+			if (emaFast > emaSlow) marketType = '趋势多';
+			// const isBreakout =
+			// 	close < emaFast &&
+			// 	emaFast < emaSlow &&
+			// 	emaSlow < emaTrend &&
+			// 	(lastClose > lastEmaFast || lastClose > lastEmaSlow);
+			// if (isBreakout) marketType = '趋势空且增强-R-1-3';
 		}
 
 		// if (emaFast > emaSlow) {
@@ -1147,7 +1140,7 @@ class Backtester {
 
 				const isReverse =
 					// isLastIndex ||
-					isProfitTarget ||
+					// isProfitTarget ||
 					isStopLoss ||
 					// (lnp < 0 && duration >= 60) ||
 					(position.direction === 'long'
