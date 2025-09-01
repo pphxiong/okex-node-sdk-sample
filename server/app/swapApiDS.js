@@ -1121,10 +1121,10 @@ function getLnp(entryPrice, close, side) {
 async function strategyLoop(isShowLog = false) {
 	const { isPaused } = config;
 	if (isPaused) {
-		if (intervalId) {
-			clearInterval(intervalId);
-			intervalId = null;
-		}
+		// if (intervalId) {
+		// 	clearInterval(intervalId);
+		// 	intervalId = null;
+		// }
 		return;
 	}
 
