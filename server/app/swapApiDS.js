@@ -1378,6 +1378,7 @@ app.get('/getMode', async function (req, res) {
 			errmsg: 'ok',
 			data: {
 				marketMode: config.marketMode,
+				isPaused: config.isPaused,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
 			},
