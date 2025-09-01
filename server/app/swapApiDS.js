@@ -53,7 +53,7 @@ const config = {
 		stdDev: 1.8,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 40, // 每单交易金额(USDT)
+	tradeAmount: 50, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -88,7 +88,9 @@ const config = {
 	marketMode: 1,
 	isMarketModeAuto: false,
 	currentCandle: {},
+	isPaused: false,
 };
+let intervalId = null;
 
 function getMarketType(candle, lastCandle, lastLastCandle) {
 	let marketType = '';
@@ -631,6 +633,7 @@ class OrderManager {
 			Object.assign(state, {
 				marketMode: config.marketMode,
 				isMarketModeAuto: config.isMarketModeAuto,
+				isPaused: config.isPaused,
 				writeMoment: moment().format('YYYY-MM-DD HH:mm:ss'),
 			})
 		);
@@ -920,9 +923,9 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-    const basicLnp = 0.015;
-	const isProfitTarget = lnp > basicLnp * 1.5;
-	const isStopLoss = lnp < -basicLnp;
+		const basicLnp = 0.015;
+		const isProfitTarget = lnp > basicLnp * 1.5;
+		const isStopLoss = lnp < -basicLnp;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1116,6 +1119,15 @@ function getLnp(entryPrice, close, side) {
 
 // 策略主逻辑
 async function strategyLoop(isShowLog = false) {
+	const { isPaused } = config;
+	if (isPaused) {
+		if (intervalId) {
+			clearInterval(intervalId);
+			intervalId = null;
+		}
+		return;
+	}
+
 	try {
 		// const currentPrice = candles[candles.length - 1][4];
 		const ticker = await exchange.fetchTicker(config.symbol);
@@ -1203,13 +1215,15 @@ async function strategyLoop(isShowLog = false) {
 const readData = async () => {
 	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
 
-	const { position, entryPrice } = dataConfig;
+	const { position, entryPrice, isPaused } = dataConfig;
+
 	// if (!config.isMarketModeAuto) {
 	// 	delete dataConfig.marketMode;
 	// }
 	dataConfig = Object.assign(dataConfig, {
 		position: Number(position),
 		entryPrice: Number(entryPrice),
+		isPaused: isPaused,
 	});
 
 	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -1225,6 +1239,10 @@ async function initPositionData() {
 		dataConfig.isMarketModeAuto ||
 		dataConfig.isMarketModeAuto === 'true' ||
 		config.isMarketModeAuto;
+	config.isPaused =
+		dataConfig.isPaused ||
+		dataConfig.isPaused === 'true' ||
+		config.isPaused;
 	if (positions) {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
@@ -1331,9 +1349,10 @@ function mergeTimeframes() {
 	await exchange.loadMarkets();
 	await initialize();
 	globalAvailableBalance = await initPositionData();
+
 	connectWebSocket();
 	await strategyLoop(true);
-	setInterval(async () => {
+	intervalId = setInterval(async () => {
 		await strategyLoop(false);
 		// RESTART_TIME += 1;
 		// if (RESTART_TIME >= 3) {
@@ -1395,6 +1414,22 @@ app.get('/changeIsMarketModeAuto', async function (req, res) {
 			errcode: 0,
 			errmsg: 'ok',
 			data: { isMarketModeAuto: config.isMarketModeAuto },
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
+app.get('/changeIsPaused', async function (req, res) {
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		config.isPaused = !config.isPaused;
+		await OrderManager.writeData();
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: { isPaused: config.isPaused },
 		});
 	} else {
 		send(res, { errcode: 1, errmsg: 'password error' });
