@@ -89,6 +89,8 @@ const config = {
 	isMarketModeAuto: false,
 	currentCandle: {},
 	isPaused: false,
+	signal: {},
+	orderBook: {},
 };
 let intervalId = null;
 
@@ -923,8 +925,8 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const basicLnp = 0.015;
-		const isProfitTarget = lnp > basicLnp * 1.5;
+		const basicLnp = 0.01;
+		const isProfitTarget = lnp > basicLnp * 2;
 		const isStopLoss = lnp < -basicLnp;
 
 		// const takeProfit =
@@ -1141,6 +1143,8 @@ async function strategyLoop(isShowLog = false) {
 		// 步骤2: 获取信号
 		const signal = await generateSignal(currentPrice, isShowLog);
 		const orderBook = await getOrderBook();
+		config.signal = signal;
+		config.orderBook = orderBook;
 
 		// 步骤3: 检查强制平仓
 		const { isStop, isStopLoss } = RiskManager.checkStopConditions(signal);
@@ -1382,6 +1386,22 @@ app.get('/getMode', async function (req, res) {
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
 			},
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
+app.get('/closePosition', async function (req, res) {
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		const { signal, orderBook } = config;
+		await RiskManager.closePosition(signal, orderBook);
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: {},
 		});
 	} else {
 		send(res, { errcode: 1, errmsg: 'password error' });
