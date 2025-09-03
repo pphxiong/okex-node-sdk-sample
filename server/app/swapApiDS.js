@@ -1460,6 +1460,7 @@ app.get('/changeIsPaused', async function (req, res) {
 	if (pw && pw.trim() === '@Xiong092479') {
 		config.isPaused = !config.isPaused;
 		await OrderManager.writeData();
+    restart('change isPaused restart success...');
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
