@@ -143,41 +143,47 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (emaFast > emaSlow) {
-		marketType = '趋势多';
-		if (emaSlow > emaTrend) {
-			if (close > emaFast && close < lastClose) {
-				marketType = '趋势多且增强-L-1-1';
-			}
-			if (close > emaTrend && lastClose < lastEmaTrend) {
-				marketType = '趋势多且增强-L-1-2';
-			}
-			const isBreakout =
-				close > emaFast &&
-				emaFast > emaSlow &&
-				emaSlow > emaTrend &&
-				(lastClose < lastEmaFast || lastClose < lastEmaSlow);
-			if (isBreakout) marketType = '趋势多且增强-L-1-3';
-		}
+	if (close > emaTrend) {
+		marketType = '趋势多且增强-L-1-1';
+	} else {
+		marketType = '趋势空且增强-L-1-1';
 	}
 
-	if (emaFast < emaSlow) {
-		marketType = '趋势空';
-		if (emaSlow < emaTrend) {
-			if (close < emaFast && close > lastClose) {
-				marketType = '趋势空且增强-R-1-1';
-			}
-			if (close < emaTrend && lastClose > lastEmaTrend) {
-				marketType = '趋势空且增强-R-1-2';
-			}
-			const isBreakout =
-				close < emaFast &&
-				emaFast < emaSlow &&
-				emaSlow < emaTrend &&
-				(lastClose > lastEmaFast || lastClose > lastEmaSlow);
-			if (isBreakout) marketType = '趋势空且增强-R-1-3';
-		}
-	}
+	// if (emaFast > emaSlow) {
+	// 	marketType = '趋势多';
+	// 	if (emaSlow > emaTrend) {
+	// 		if (close > emaFast && close < lastClose) {
+	// 			marketType = '趋势多且增强-L-1-1';
+	// 		}
+	// 		if (close > emaTrend && lastClose < lastEmaTrend) {
+	// 			marketType = '趋势多且增强-L-1-2';
+	// 		}
+	// 		const isBreakout =
+	// 			close > emaFast &&
+	// 			emaFast > emaSlow &&
+	// 			emaSlow > emaTrend &&
+	// 			(lastClose < lastEmaFast || lastClose < lastEmaSlow);
+	// 		if (isBreakout) marketType = '趋势多且增强-L-1-3';
+	// 	}
+	// }
+
+	// if (emaFast < emaSlow) {
+	// 	marketType = '趋势空';
+	// 	if (emaSlow < emaTrend) {
+	// 		if (close < emaFast && close > lastClose) {
+	// 			marketType = '趋势空且增强-R-1-1';
+	// 		}
+	// 		if (close < emaTrend && lastClose > lastEmaTrend) {
+	// 			marketType = '趋势空且增强-R-1-2';
+	// 		}
+	// 		const isBreakout =
+	// 			close < emaFast &&
+	// 			emaFast < emaSlow &&
+	// 			emaSlow < emaTrend &&
+	// 			(lastClose > lastEmaFast || lastClose > lastEmaSlow);
+	// 		if (isBreakout) marketType = '趋势空且增强-R-1-3';
+	// 	}
+	// }
 
 	// if (emaFast > emaSlow) {
 	// 	if (close > emaSlow && close < emaFast && close < lastClose) {
