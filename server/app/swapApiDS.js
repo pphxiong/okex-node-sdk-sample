@@ -1024,6 +1024,12 @@ class RiskManager {
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
 
+			const basicLnp = 0.01 / 2;
+			if (lnp < -basicLnp) {
+				config.isPaused = true;
+				await OrderManager.writeData();
+			}
+
 			if (config.isMarketModeAuto && false) {
 				if (config.marketMode == 1) {
 					config.marketMode = 2;
@@ -1062,12 +1068,6 @@ class RiskManager {
 				lnp,
 				kline
 			);
-		}
-
-		const basicLnp = 0.01 / 2;
-		if (lnp < -basicLnp) {
-			config.isPaused = true;
-			await OrderManager.writeData();
 		}
 
 		// this.activateCooldown();
@@ -1417,7 +1417,7 @@ app.get('/closePosition', async function (req, res) {
 		// 步骤2: 获取信号
 		const signal = await generateSignal(currentPrice);
 		const orderBook = await getOrderBook();
-		await RiskManager.closePosition(signal, orderBook);
+		await RiskManager.closePosition(signal, orderBook, true);
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
