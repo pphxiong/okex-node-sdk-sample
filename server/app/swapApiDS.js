@@ -1418,6 +1418,8 @@ app.get('/closePosition', async function (req, res) {
 		const signal = await generateSignal(currentPrice);
 		const orderBook = await getOrderBook();
 		await RiskManager.closePosition(signal, orderBook, true);
+		config.isPaused = true;
+		await OrderManager.writeData();
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
