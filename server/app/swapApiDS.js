@@ -1024,12 +1024,6 @@ class RiskManager {
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
 
-			const basicLnp = 0.01 / 2;
-			if (lnp < -basicLnp) {
-				config.isPaused = true;
-				await OrderManager.writeData();
-			}
-
 			if (config.isMarketModeAuto && false) {
 				if (config.marketMode == 1) {
 					config.marketMode = 2;
@@ -1068,6 +1062,12 @@ class RiskManager {
 				lnp,
 				kline
 			);
+		}
+
+		const basicLnp = 0.01 / 2;
+		if (lnp < -basicLnp) {
+			config.isPaused = true;
+			await OrderManager.writeData();
 		}
 
 		// this.activateCooldown();
@@ -1408,7 +1408,15 @@ app.get('/closePosition', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
 	if (pw && pw.trim() === '@Xiong092479') {
-		const { signal, orderBook } = config;
+		const ticker = await exchange.fetchTicker(config.symbol);
+		const currentPrice = ticker.last;
+
+		// 步骤1: 清理过期订单
+		await OrderManager.checkOrderStatus(currentPrice);
+		await calculateIndicators();
+		// 步骤2: 获取信号
+		const signal = await generateSignal(currentPrice);
+		const orderBook = await getOrderBook();
 		await RiskManager.closePosition(signal, orderBook);
 		send(res, {
 			errcode: 0,
@@ -1460,7 +1468,7 @@ app.get('/changeIsPaused', async function (req, res) {
 	if (pw && pw.trim() === '@Xiong092479') {
 		config.isPaused = !config.isPaused;
 		await OrderManager.writeData();
-    restart('change isPaused restart success...');
+		restart('change isPaused restart success...');
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
