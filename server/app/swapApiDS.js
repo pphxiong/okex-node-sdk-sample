@@ -54,7 +54,7 @@ const config = {
 		stdDev: 1.8,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 70, // 每单交易金额(USDT)
+	tradeAmount: 90, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -608,12 +608,6 @@ class OrderManager {
 					state.highestPrice = 0;
 					state.lowestPrice = 0;
 
-					const { lnp, kline } = order;
-					const basicLnp = 0.01 / 2;
-					if (lnp < -basicLnp) {
-						config.isPaused = true;
-					}
-
 					if (config.isMarketModeAuto && false) {
 						let { marketMode } = config;
 						if (lnp) {
@@ -1029,6 +1023,12 @@ class RiskManager {
 			state.entryPrice = 0;
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
+
+			const basicLnp = 0.01 / 2;
+			if (lnp < -basicLnp) {
+				config.isPaused = true;
+				await OrderManager.writeData();
+			}
 
 			if (config.isMarketModeAuto && false) {
 				if (config.marketMode == 1) {
