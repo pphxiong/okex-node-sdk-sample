@@ -143,11 +143,19 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	if (emaFast > emaTrend) {
-		marketType = '趋势多且增强-L-1-1';
-	} else {
-		marketType = '趋势空且增强-L-1-1';
-	}
+	marketType = '趋势多且增强';
+
+	// if (emaFast > emaTrend) {
+	// 	marketType = '趋势多';
+	// 	if (emaSlow > emaTrend && close > emaFast) {
+	// 		marketType = '趋势多且增强';
+	// 	}
+	// } else {
+	// 	marketType = '趋势空';
+	// 	if (emaSlow < emaTrend && close < emaFast) {
+	// 		marketType = '趋势空且增强';
+	// 	}
+	// }
 
 	// if (emaFast > emaSlow) {
 	// 	marketType = '趋势多';
