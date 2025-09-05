@@ -813,6 +813,11 @@ async function generateSignal(currentPrice, isShowLog = false) {
 		[config.fastframe]: lastKline5M,
 	};
 
+	// 当 slowframe 与 fastframe 相同或未显式设置时，使用 fastframe 的最新K线
+	if (!candle[config.slowframe]) {
+		candle[config.slowframe] = candle[config.fastframe];
+	}
+
 	const { marketType: fastMarketType } = candle[config.fastframe];
 	let { marketType: slowMarketType } = candle[config.slowframe];
 
@@ -931,8 +936,8 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const basicLnp = 0.01 / 2;
-		const isProfitTarget = lnp > basicLnp * 2 * 2;
+		const basicLnp = 0.01 / 3;
+		const isProfitTarget = lnp > basicLnp * 3;
 		const isStopLoss = lnp < -basicLnp;
 
 		// const takeProfit =
@@ -1024,7 +1029,7 @@ class RiskManager {
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
 
-			const basicLnp = 0.01 / 2;
+			const basicLnp = 0.01 / 3;
 			if (lnp < -basicLnp) {
 				config.isPaused = true;
 				await OrderManager.writeData();
@@ -1508,6 +1513,37 @@ app.get('/stop', async function (req, res) {
 		send(res, { errcode: 1, errmsg: 'password error' });
 	}
 });
+
+// 获取最新信号与市场判断
+// app.get('/signal', async function (req, res) {
+// 	try {
+// 		const ticker = await exchange.fetchTicker(config.symbol);
+// 		const currentPrice = ticker.last;
+// 		await calculateIndicators();
+// 		const signal = await generateSignal(currentPrice, false);
+// 		const outlook = signal.buySignal
+// 			? '偏多'
+// 			: signal.sellSignal
+// 			? '偏空'
+// 			: '中性/观望';
+// 		send(res, {
+// 			errcode: 0,
+// 			errmsg: 'ok',
+// 			data: {
+// 				symbol: config.symbol,
+// 				timeframe: config.fastframe,
+// 				price: signal.price,
+// 				buySignal: signal.buySignal,
+// 				sellSignal: signal.sellSignal,
+// 				fastMarketType: signal.fastMarketType,
+// 				slowMarketType: signal.slowMarketType,
+// 				outlook,
+// 			},
+// 		});
+// 	} catch (e) {
+// 		send(res, { errcode: 1, errmsg: e.message });
+// 	}
+// });
 
 app.listen(8093);
 
