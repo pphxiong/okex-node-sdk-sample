@@ -57,7 +57,7 @@ const config = {
 	tradeAmount: 100, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	basicLnp: (0.01 * 2) / 7,
-  profitStopLossRatio: 3, // 盈亏比
+  profitStopLossRatio: 1.5, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
@@ -1049,7 +1049,7 @@ class RiskManager {
 			state.lowestPrice = 0;
 
 			const { basicLnp } = config;
-			if (lnp < -basicLnp) {
+			if (lnp < -basicLnp || true) {
 				config.isPaused = true;
 				await OrderManager.writeData();
 			}
