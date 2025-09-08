@@ -1396,7 +1396,7 @@ function mergeTimeframes() {
 		// 	restart('normal');
 		// 	return;
 		// }
-	}, 1000 * 60 * 1.5);
+	}, config.maxOrderAge * 1.5);
 	console.log('策略已启动...');
 })();
 
