@@ -944,7 +944,7 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const basicLnp = 0.01 / 3;
+		const basicLnp = 0.01 * 2 / 7;
 		const isProfitTarget = lnp > basicLnp * 3;
 		const isStopLoss = lnp < -basicLnp;
 
@@ -1037,7 +1037,7 @@ class RiskManager {
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
 
-			const basicLnp = 0.01 / 3;
+			const basicLnp = 0.01 * 2 / 7;
 			if (lnp < -basicLnp) {
 				config.isPaused = true;
 				await OrderManager.writeData();
@@ -1389,7 +1389,7 @@ function mergeTimeframes() {
 		// 	restart('normal');
 		// 	return;
 		// }
-	}, 1000 * 60 * 3);
+	}, 1000 * 60 * 2);
 	console.log('策略已启动...');
 })();
 
