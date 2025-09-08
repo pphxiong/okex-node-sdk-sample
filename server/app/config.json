@@ -1,15 +1,1 @@
-{
-	"activeOrders": [],
-	"position": 91,
-	"entryPrice": 0.21303,
-	"highestPrice": 0,
-	"lowestPrice": null,
-	"side": "buy",
-	"coolingUntil": 0,
-	"fastMarketType": "趋势空且增强-L-1-1",
-	"slowMarketType": "趋势空且增强-L-1-1",
-	"marketMode": 2,
-	"isMarketModeAuto": false,
-	"isPaused": false,
-	"writeMoment": "2025-08-27 03:51:10"
-}
+{"activeOrders":[],"position":-655,"entryPrice":-0.22891,"highestPrice":0,"lowestPrice":null,"side":"sell","coolingUntil":0,"fastMarketType":"趋势多且增强","slowMarketType":"趋势空且增强","marketMode":2,"isMarketModeAuto":false,"isPaused":false,"writeMoment":"2025-09-08 07:26:42"}
