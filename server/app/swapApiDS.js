@@ -54,10 +54,10 @@ const config = {
 		stdDev: 1.8,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 120, // 每单交易金额(USDT)
+	tradeAmount: 100, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
-	basicLnp: (0.01 * 2) / 8,
-  profitStopLossRatio: 3.5, // 盈亏比
+	basicLnp: (0.01 * 2) / 7,
+  profitStopLossRatio: 3, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
@@ -961,6 +961,10 @@ class RiskManager {
 		//       state.entryPrice + takeProfit
 		//     : lastKline5M[config.fastframe].close <=
 		//       state.entryPrice - takeProfit;
+
+    if(!state.slowMarketType) {
+      return { isStop: true, isStopLoss: true };
+    }
 
 		isStop =
 			isProfitTarget ||
