@@ -57,7 +57,7 @@ const config = {
 	tradeAmount: 8000, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
 	basicLnp: (0.01 * 2) / 6,
-  profitStopLossRatio: 3, // 盈亏比
+	profitStopLossRatio: 4, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
 	coolingPeriod: 120, // 基础冷却时间(秒)
@@ -946,8 +946,8 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const { basicLnp } = config;
-		const isProfitTarget = lnp > basicLnp * 3;
+		const { basicLnp, profitStopLossRatio } = config;
+		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 
 		// const takeProfit =
@@ -962,9 +962,9 @@ class RiskManager {
 		//     : lastKline5M[config.fastframe].close <=
 		//       state.entryPrice - takeProfit;
 
-    if(!state.slowMarketType) {
-      return { isStop: true, isStopLoss: true };
-    }
+		if (!state.slowMarketType) {
+			return { isStop: true, isStopLoss: true };
+		}
 
 		isStop =
 			isProfitTarget ||
@@ -1049,7 +1049,7 @@ class RiskManager {
 			state.lowestPrice = 0;
 
 			const { basicLnp } = config;
-			if (lnp < -basicLnp || true) {
+			if (lnp < -basicLnp) {
 				config.isPaused = true;
 				await OrderManager.writeData();
 			}
@@ -1095,6 +1095,8 @@ class RiskManager {
 		}
 
 		// this.activateCooldown();
+		config.isPaused = true;
+		await OrderManager.writeData();
 	}
 
 	static activateCooldown() {
@@ -1400,7 +1402,7 @@ function mergeTimeframes() {
 		// 	restart('normal');
 		// 	return;
 		// }
-	}, config.maxOrderAge * 2);
+	}, config.maxOrderAge * 3);
 	console.log('策略已启动...');
 })();
 
