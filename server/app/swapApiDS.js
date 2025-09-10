@@ -2,6 +2,8 @@ import moment from 'moment';
 import helper from '../utils/index';
 const customAuthClientBN = require('./customAuthClientBN');
 
+const PASSWORD = '@Xiong092479';
+
 const express = require('express');
 const app = express();
 
@@ -89,7 +91,7 @@ const config = {
 		// emaSlopeThreshold: 0, // EMA斜率阈值
 	},
 	marketMode: 1,
-	isMarketModeAuto: false,
+	isMarketModeAuto: true,
 	currentCandle: {},
 	isPaused: false,
 	signal: {},
@@ -964,7 +966,8 @@ class RiskManager {
 		//       state.entryPrice - takeProfit;
 
 		if (!state.slowMarketType) {
-			return { isStop: true, isStopLoss: true };
+      state.slowMarketType = slowMarketType;
+			return { isStop: false, isStopLoss: false };
 		}
 
 		isStop =
@@ -1095,6 +1098,11 @@ class RiskManager {
 			);
 		}
 
+		if (config.isMarketModeAuto) {
+			config.marketMode = config.marketMode == 1 ? 2 : 1;
+			await OrderManager.writeData();
+		}
+
 		// this.activateCooldown();
 		// config.isPaused = true;
 		// await OrderManager.writeData();
@@ -1205,6 +1213,7 @@ async function strategyLoop(isShowLog = false) {
 				const amount = getPositionSize(slowMarketType) / limitPrice;
 
 				state = JSON.parse(JSON.stringify(initState));
+        state.slowMarketType = slowMarketType;
 
 				await OrderManager.createLimitOrder(
 					'buy',
@@ -1228,6 +1237,7 @@ async function strategyLoop(isShowLog = false) {
 				const amount = getPositionSize(slowMarketType) / limitPrice;
 
 				state = JSON.parse(JSON.stringify(initState));
+        state.slowMarketType = slowMarketType;
 
 				await OrderManager.createLimitOrder(
 					'sell',
@@ -1267,7 +1277,9 @@ const readData = async () => {
 		position: Number(position),
 		entryPrice: Number(entryPrice),
 		isPaused,
-		profitStopLossRatio: profitStopLossRatio ? Number(profitStopLossRatio) : config.profitStopLossRatio,
+		profitStopLossRatio: profitStopLossRatio
+			? Number(profitStopLossRatio)
+			: config.profitStopLossRatio,
 	});
 
 	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -1418,7 +1430,7 @@ function send(res, ret) {
 app.get('/getMode', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
@@ -1427,6 +1439,7 @@ app.get('/getMode', async function (req, res) {
 				isPaused: config.isPaused,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
+				profitStopLossRatio: config.profitStopLossRatio,
 			},
 		});
 	} else {
@@ -1437,7 +1450,7 @@ app.get('/getMode', async function (req, res) {
 app.get('/closePosition', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		const ticker = await exchange.fetchTicker(config.symbol);
 		const currentPrice = ticker.last;
 
@@ -1461,7 +1474,7 @@ app.get('/closePosition', async function (req, res) {
 app.get('/setProfitLossRatio', async function (req, res) {
 	const { query = {} } = req;
 	const { pw, ratio } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		config.profitStopLossRatio = Number(ratio);
 		await OrderManager.writeData();
 		send(res, {
@@ -1477,7 +1490,7 @@ app.get('/setProfitLossRatio', async function (req, res) {
 app.get('/closeLimitPosition', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		const ticker = await exchange.fetchTicker(config.symbol);
 		const currentPrice = ticker.last;
 
@@ -1499,7 +1512,7 @@ app.get('/closeLimitPosition', async function (req, res) {
 app.get('/changeMode', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		config.marketMode = config.marketMode == 1 ? 2 : 1;
 		state.marketMode = config.marketMode;
 		config.isPaused = false;
@@ -1518,7 +1531,7 @@ app.get('/changeMode', async function (req, res) {
 app.get('/changeIsMarketModeAuto', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		config.isMarketModeAuto = !config.isMarketModeAuto;
 		await OrderManager.writeData();
 		send(res, {
@@ -1534,7 +1547,7 @@ app.get('/changeIsMarketModeAuto', async function (req, res) {
 app.get('/changeIsPaused', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		config.isPaused = !config.isPaused;
 		await OrderManager.writeData();
 		restart('change isPaused restart success...');
@@ -1551,7 +1564,7 @@ app.get('/changeIsPaused', async function (req, res) {
 app.get('/restart', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		restart('api restart success...');
 		send(res, {
 			errcode: 0,
@@ -1565,7 +1578,7 @@ app.get('/restart', async function (req, res) {
 app.get('/stop', async function (req, res) {
 	const { query = {} } = req;
 	const { pw } = query;
-	if (pw && pw.trim() === '@Xiong092479') {
+	if (pw && pw.trim() === PASSWORD) {
 		stop('api stop success...');
 		send(res, {
 			errcode: 0,
