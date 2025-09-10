@@ -966,7 +966,7 @@ class RiskManager {
 		//       state.entryPrice - takeProfit;
 
 		if (!state.slowMarketType) {
-      state.slowMarketType = slowMarketType;
+			state.slowMarketType = slowMarketType;
 			return { isStop: false, isStopLoss: false };
 		}
 
@@ -1213,7 +1213,7 @@ async function strategyLoop(isShowLog = false) {
 				const amount = getPositionSize(slowMarketType) / limitPrice;
 
 				state = JSON.parse(JSON.stringify(initState));
-        state.slowMarketType = slowMarketType;
+				state.slowMarketType = slowMarketType;
 
 				await OrderManager.createLimitOrder(
 					'buy',
@@ -1237,7 +1237,7 @@ async function strategyLoop(isShowLog = false) {
 				const amount = getPositionSize(slowMarketType) / limitPrice;
 
 				state = JSON.parse(JSON.stringify(initState));
-        state.slowMarketType = slowMarketType;
+				state.slowMarketType = slowMarketType;
 
 				await OrderManager.createLimitOrder(
 					'sell',
@@ -1437,9 +1437,9 @@ app.get('/getMode', async function (req, res) {
 			data: {
 				marketMode: config.marketMode,
 				isPaused: config.isPaused,
+				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
-				profitStopLossRatio: config.profitStopLossRatio,
 			},
 		});
 	} else {
