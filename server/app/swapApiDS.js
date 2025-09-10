@@ -652,6 +652,7 @@ class OrderManager {
 				marketMode: config.marketMode,
 				isMarketModeAuto: config.isMarketModeAuto,
 				isPaused: config.isPaused,
+				profitStopLossRatio: config.profitStopLossRatio,
 				writeMoment: moment().format('YYYY-MM-DD HH:mm:ss'),
 			})
 		);
@@ -1095,8 +1096,8 @@ class RiskManager {
 		}
 
 		// this.activateCooldown();
-		config.isPaused = true;
-		await OrderManager.writeData();
+		// config.isPaused = true;
+		// await OrderManager.writeData();
 	}
 
 	static activateCooldown() {
@@ -1257,7 +1258,7 @@ async function strategyLoop(isShowLog = false) {
 const readData = async () => {
 	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
 
-	const { position, entryPrice, isPaused } = dataConfig;
+	const { position, entryPrice, isPaused, profitStopLossRatio } = dataConfig;
 
 	// if (!config.isMarketModeAuto) {
 	// 	delete dataConfig.marketMode;
@@ -1265,7 +1266,8 @@ const readData = async () => {
 	dataConfig = Object.assign(dataConfig, {
 		position: Number(position),
 		entryPrice: Number(entryPrice),
-		isPaused: isPaused,
+		isPaused,
+		profitStopLossRatio: profitStopLossRatio ? Number(profitStopLossRatio) : config.profitStopLossRatio,
 	});
 
 	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -1285,6 +1287,8 @@ async function initPositionData() {
 		dataConfig.isPaused ||
 		dataConfig.isPaused === 'true' ||
 		config.isPaused;
+	config.profitStopLossRatio =
+		dataConfig.profitStopLossRatio || config.profitStopLossRatio;
 	if (positions) {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
@@ -1444,8 +1448,44 @@ app.get('/closePosition', async function (req, res) {
 		const signal = await generateSignal(currentPrice);
 		const orderBook = await getOrderBook();
 		await RiskManager.closePosition(signal, orderBook, true);
-		config.isPaused = true;
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: {},
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
+app.get('/setProfitLossRatio', async function (req, res) {
+	const { query = {} } = req;
+	const { pw, ratio } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		config.profitStopLossRatio = Number(ratio);
 		await OrderManager.writeData();
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: { marketMode: config.marketMode },
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
+app.get('/closeLimitPosition', async function (req, res) {
+	const { query = {} } = req;
+	const { pw } = query;
+	if (pw && pw.trim() === '@Xiong092479') {
+		const ticker = await exchange.fetchTicker(config.symbol);
+		const currentPrice = ticker.last;
+
+		await calculateIndicators();
+		// 步骤2: 获取信号
+		const signal = await generateSignal(currentPrice);
+		const orderBook = await getOrderBook();
+		await RiskManager.closePosition(signal, orderBook);
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
@@ -1462,6 +1502,7 @@ app.get('/changeMode', async function (req, res) {
 	if (pw && pw.trim() === '@Xiong092479') {
 		config.marketMode = config.marketMode == 1 ? 2 : 1;
 		state.marketMode = config.marketMode;
+		config.isPaused = false;
 		await OrderManager.writeData();
 		restart('change mode restart success...');
 		send(res, {
