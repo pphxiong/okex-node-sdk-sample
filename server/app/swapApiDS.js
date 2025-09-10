@@ -1467,7 +1467,7 @@ app.get('/setProfitLossRatio', async function (req, res) {
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
-			data: { marketMode: config.marketMode },
+			data: { profitStopLossRatio: config.profitStopLossRatio },
 		});
 	} else {
 		send(res, { errcode: 1, errmsg: 'password error' });
