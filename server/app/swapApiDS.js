@@ -1316,8 +1316,8 @@ async function initPositionData() {
 			};
 			delete dataConfig.position;
 			state = Object.assign(dataConfig, state);
-			if (config.isMarketModeAuto)
-				config.marketMode = state.marketMode || config.marketMode;
+			// if (config.isMarketModeAuto)
+			// 	config.marketMode = state.marketMode || config.marketMode;
 		}
 	}
 	return Number(totalMarginBalance);
