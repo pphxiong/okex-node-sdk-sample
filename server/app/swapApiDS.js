@@ -57,7 +57,7 @@ const config = {
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
 	tradeAmount: 8000, // 每单交易金额(USDT)
-	maxOrderAge: 1000 * 60, // 限价单最长存活时间(30秒)
+	maxOrderAge: 1000 * 15, // 限价单最长存活时间(30秒)
 	basicLnp: (0.01 * 2) / 6,
 	profitStopLossRatio: 4, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
@@ -1418,7 +1418,7 @@ function mergeTimeframes() {
 		// 	restart('normal');
 		// 	return;
 		// }
-	}, config.maxOrderAge * 3);
+	}, config.maxOrderAge * 2);
 	console.log('策略已启动...');
 })();
 
