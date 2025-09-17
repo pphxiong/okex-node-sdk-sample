@@ -955,7 +955,10 @@ class RiskManager {
 
 		const { basicLnp, profitStopLossRatio } = config;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
-		const isStopLoss = (position * currentPrice) > (config.tradeAmount * 1.3) ? lnp < (basicLnp / 2) : lnp < -basicLnp;
+		const isStopLoss =
+			position * currentPrice > config.tradeAmount * 1.3
+				? lnp < basicLnp / 2
+				: lnp < -basicLnp;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -986,6 +989,7 @@ class RiskManager {
 		console.log('***********************************');
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.log('entryPrice', state.entryPrice);
+		console.log('position', state.position);
 		console.log('currentPrice', currentPrice);
 		// console.log('state.slowMarketType', state.slowMarketType);
 		console.log('side', state.side);
