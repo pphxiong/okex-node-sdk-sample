@@ -43,7 +43,8 @@ const config = {
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
-		'15m': { periods: [21, 55, 200], slopeWindow: 5 },
+		'15m': { periods: [8, 21, 55], slopeWindow: 5 },
+		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
@@ -532,6 +533,7 @@ class OrderManager {
 			id: order.id,
 			side,
 			positionSize,
+			isOpen,
 			price,
 			fastMarketType,
 			slowMarketType,
@@ -641,6 +643,8 @@ class OrderManager {
 					state.activeOrders = state.activeOrders.filter(
 						(o) => o.id !== status.id
 					);
+
+					if (!order.isOpen) config.isPaused = true;
 				}
 
 				this.writeData();
@@ -899,7 +903,8 @@ async function generateSignal(currentPrice, isShowLog = false) {
 // 风险管理模块
 class RiskManager {
 	static checkStopConditions(signal) {
-		if (state.position === 0) return { isStop: false };
+		const { side, position } = state;
+		if (position === 0) return { isStop: false };
 
 		const lastKline5M = JSON.parse(
 			JSON.stringify(marketData[config.fastframe].slice(-1)[0])
@@ -921,7 +926,6 @@ class RiskManager {
 		);
 
 		const { price: currentPrice } = signal;
-		const { side, position } = state;
 		let isStop = false;
 
 		const d = candle[config.slowframe];
@@ -951,7 +955,10 @@ class RiskManager {
 
 		const { basicLnp, profitStopLossRatio } = config;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
-		const isStopLoss = lnp < -basicLnp;
+		const isStopLoss =
+			position * currentPrice > config.tradeAmount * 1.3
+				? lnp < basicLnp / 2
+				: lnp < -basicLnp;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -982,6 +989,7 @@ class RiskManager {
 		console.log('***********************************');
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.log('entryPrice', state.entryPrice);
+		console.log('position', state.position);
 		console.log('currentPrice', currentPrice);
 		// console.log('state.slowMarketType', state.slowMarketType);
 		console.log('side', state.side);
@@ -1499,6 +1507,8 @@ app.get('/closeLimitPosition', async function (req, res) {
 		const signal = await generateSignal(currentPrice);
 		const orderBook = await getOrderBook();
 		await RiskManager.closePosition(signal, orderBook);
+		// config.isPaused = true;
+		// await OrderManager.writeData();
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
