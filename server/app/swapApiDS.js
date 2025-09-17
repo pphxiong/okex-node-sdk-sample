@@ -56,7 +56,7 @@ const config = {
 		stdDev: 1.8,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
-	tradeAmount: 3000, // 每单交易金额(USDT)
+	tradeAmount: 8000, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 15, // 限价单最长存活时间(30秒)
 	basicLnp: (0.01 * 2) / 6,
 	profitStopLossRatio: 4, // 盈亏比
