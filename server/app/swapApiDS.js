@@ -157,7 +157,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		emaSlowSlope > 0 &&
 		emaFastSlope > 0 &&
 		emaTrendSlope > 0 &&
-		close > emaTrendSlope
+		close > emaTrend
 	) {
 		marketType = '趋势多且增强';
 	}
@@ -166,7 +166,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		emaSlowSlope < 0 &&
 		emaFastSlope < 0 &&
 		emaTrendSlope < 0 &&
-		close < emaTrendSlope
+		close < emaTrend
 	) {
 		marketType = '趋势空且增强';
 	}
