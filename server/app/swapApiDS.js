@@ -1006,8 +1006,9 @@ class RiskManager {
     //       state.entryPrice - takeProfit;
 
     if (!state.slowMarketType) {
-      state.slowMarketType = slowMarketType;
-      return { isStop: false, isStopLoss: false };
+      // state.slowMarketType = slowMarketType;
+      state.slowMarketType = side === "buy" ? "趋势多且增强" : "趋势空且增强";
+      // return { isStop: false, isStopLoss: false };
     }
 
     isStop =
