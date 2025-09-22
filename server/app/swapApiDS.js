@@ -956,7 +956,7 @@ class RiskManager {
 		const { basicLnp, profitStopLossRatio } = config;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss =
-			position * currentPrice > config.tradeAmount * 1.3
+			position * currentPrice > config.tradeAmount * 10
 				? lnp < basicLnp / 2
 				: lnp < -basicLnp;
 
