@@ -125,9 +125,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		adx_threshold,
 		adx_stoploss_distance,
 		volatility_ratio,
-    emaSlowSlope,
-    emaFastSlope,
-    emaTrendSlope,
+		emaSlowSlope,
+		emaFastSlope,
+		emaTrendSlope,
 	} = candle;
 	const {
 		emaFast: lastEmaFast,
@@ -153,13 +153,23 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	// marketType = '趋势多且增强';
 
-  if(emaSlowSlope > 0 && emaFastSlope > 0 && emaTrendSlope > 0 && close > emaTrendSlope){ {
-    marketType = '趋势多且增强';
-  }
+	if (
+		emaSlowSlope > 0 &&
+		emaFastSlope > 0 &&
+		emaTrendSlope > 0 &&
+		close > emaTrendSlope
+	) {
+		marketType = '趋势多且增强';
+	}
 
-  if(emaSlowSlope < 0 && emaFastSlope < 0 && emaTrendSlope < 0 && close < emaTrendSlope){ {
-    marketType = '趋势空且增强';
-  }
+	if (
+		emaSlowSlope < 0 &&
+		emaFastSlope < 0 &&
+		emaTrendSlope < 0 &&
+		close < emaTrendSlope
+	) {
+		marketType = '趋势空且增强';
+	}
 
 	// if (emaFast > emaTrend) {
 	// 	marketType = '趋势多';
@@ -403,8 +413,8 @@ async function calculateIndicators() {
 			] = result.slice(index * 8, (index + 1) * 8);
 			// 计算EMA斜率
 			const emaSlowSlopes = [];
-      const emaFastSlopes = [];
-      const emaTrendSlopes = [];
+			const emaFastSlopes = [];
+			const emaTrendSlopes = [];
 			for (
 				let i = config.emaSettings[tf].slopeWindow;
 				i < emaSlow[0].length;
@@ -416,7 +426,7 @@ async function calculateIndicators() {
 					config.emaSettings[tf].slopeWindow;
 				emaSlowSlopes.push(slope);
 			}
-      for (
+			for (
 				let i = config.emaSettings[tf].slopeWindow;
 				i < emaFast[0].length;
 				i++
@@ -427,7 +437,7 @@ async function calculateIndicators() {
 					config.emaSettings[tf].slopeWindow;
 				emaFastSlopes.push(slope);
 			}
-      for (
+			for (
 				let i = config.emaSettings[tf].slopeWindow;
 				i < emaTrend[0].length;
 				i++
@@ -450,8 +460,8 @@ async function calculateIndicators() {
 				if (i >= config.emaSettings[tf].slopeWindow) {
 					const slopeIndex = i - config.emaSettings[tf].slopeWindow;
 					d.emaSlowSlope = emaSlowSlopes[slopeIndex];
-          d.emaFastSlope = emaFastSlopes[slopeIndex];
-          d.emaTrendSlope = emaTrendSlopes[slopeIndex];
+					d.emaFastSlope = emaFastSlopes[slopeIndex];
+					d.emaTrendSlope = emaTrendSlopes[slopeIndex];
 				}
 				if (i >= config.macdParams[tf][1]) {
 					const macdIndex = i - config.macdParams[tf][1] + 1;
