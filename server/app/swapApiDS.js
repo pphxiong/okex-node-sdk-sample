@@ -492,11 +492,12 @@ function getLastIndicators(indicators, key) {
 }
 
 function getPositionSize(marketType) {
+	return (globalAvailableBalance * config.leverage * 1) / 3;
 	// return Math.min(
-	// 	globalAvailableBalance * config.leverage * 0.191,
+	// 	globalAvailableBalance * config.leverage * 1 / 3,
 	// 	config.tradeAmount
 	// );
-	return config.tradeAmount;
+	// return config.tradeAmount;
 }
 
 // 限价单管理模块
@@ -644,7 +645,11 @@ class OrderManager {
 						(o) => o.id !== status.id
 					);
 
-					if (!order.isOpen) config.isPaused = true;
+					if (order.isOpen === false) {
+						config.isPaused = true;
+					} else {
+						config.isPaused = false;
+					}
 				}
 
 				this.writeData();
