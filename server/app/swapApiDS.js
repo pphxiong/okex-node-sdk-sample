@@ -39,18 +39,18 @@ require('dotenv').config();
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['15m' /*  '5m''1m'*/], // 多周期参数
+	timeframes: ['1m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
-		'15m': { periods: [8, 21, 55], slopeWindow: 5 },
+		'1m': { periods: [8, 21, 55], slopeWindow: 5 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
-	macdParams: { '15m': [12, 26, 9] },
-	slowframe: '15m',
-	fastframe: '15m',
+	macdParams: { '1m': [12, 26, 9] },
+	slowframe: '1m',
+	fastframe: '1m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -125,6 +125,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		adx_threshold,
 		adx_stoploss_distance,
 		volatility_ratio,
+    emaSlowSlope,
+    emaFastSlope,
+    emaTrendSlope,
 	} = candle;
 	const {
 		emaFast: lastEmaFast,
@@ -148,7 +151,15 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	const lastStronger = lastEmaFast > lastEmaSlow;
 	const lastWeeker = lastEmaFast < lastEmaSlow;
 
-	marketType = '趋势多且增强';
+	// marketType = '趋势多且增强';
+
+  if(emaSlowSlope > 0 && emaFastSlope > 0 && emaTrendSlope > 0 && close > emaTrendSlope){ {
+    marketType = '趋势多且增强';
+  }
+
+  if(emaSlowSlope < 0 && emaFastSlope < 0 && emaTrendSlope < 0 && close < emaTrendSlope){ {
+    marketType = '趋势空且增强';
+  }
 
 	// if (emaFast > emaTrend) {
 	// 	marketType = '趋势多';
@@ -391,7 +402,9 @@ async function calculateIndicators() {
 				rsi,
 			] = result.slice(index * 8, (index + 1) * 8);
 			// 计算EMA斜率
-			const emaSlopes = [];
+			const emaSlowSlopes = [];
+      const emaFastSlopes = [];
+      const emaTrendSlopes = [];
 			for (
 				let i = config.emaSettings[tf].slopeWindow;
 				i < emaSlow[0].length;
@@ -401,7 +414,29 @@ async function calculateIndicators() {
 					(emaSlow[0][i] -
 						emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
 					config.emaSettings[tf].slopeWindow;
-				emaSlopes.push(slope);
+				emaSlowSlopes.push(slope);
+			}
+      for (
+				let i = config.emaSettings[tf].slopeWindow;
+				i < emaFast[0].length;
+				i++
+			) {
+				const slope =
+					(emaFast[0][i] -
+						emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
+					config.emaSettings[tf].slopeWindow;
+				emaFastSlopes.push(slope);
+			}
+      for (
+				let i = config.emaSettings[tf].slopeWindow;
+				i < emaTrend[0].length;
+				i++
+			) {
+				const slope =
+					(emaTrend[0][i] -
+						emaTrend[0][i - config.emaSettings[tf].slopeWindow]) /
+					config.emaSettings[tf].slopeWindow;
+				emaTrendSlopes.push(slope);
 			}
 
 			// 合并指标到数据
@@ -414,7 +449,9 @@ async function calculateIndicators() {
 				}
 				if (i >= config.emaSettings[tf].slopeWindow) {
 					const slopeIndex = i - config.emaSettings[tf].slopeWindow;
-					d.emaSlope = emaSlopes[slopeIndex];
+					d.emaSlowSlope = emaSlowSlopes[slopeIndex];
+          d.emaFastSlope = emaFastSlopes[slopeIndex];
+          d.emaTrendSlope = emaTrendSlopes[slopeIndex];
 				}
 				if (i >= config.macdParams[tf][1]) {
 					const macdIndex = i - config.macdParams[tf][1] + 1;
@@ -807,14 +844,12 @@ function getTimeStampSlowBefore(dataList, timestamp) {
 
 function toogleMarketType(marketType, candle) {
 	const { adx, adx_threshold } = candle;
-	// if (adx < adx_threshold) {
-	if (config.marketMode == 2) {
-		if (marketType.indexOf('多') != -1) {
-			marketType = marketType.replace('多', '空');
-		} else if (marketType.indexOf('空') != -1) {
-			marketType = marketType.replace('空', '多');
-		}
-	}
+	// if (config.marketMode == 2) {
+	// 	if (marketType.indexOf('多') != -1) {
+	// 		marketType = marketType.replace('多', '空');
+	// 	} else if (marketType.indexOf('空') != -1) {
+	// 		marketType = marketType.replace('空', '多');
+	// 	}
 	// }
 	return marketType;
 }
