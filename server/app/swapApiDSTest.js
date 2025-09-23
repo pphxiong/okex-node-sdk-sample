@@ -511,7 +511,9 @@ class Backtester {
 				// }
 
 				// 计算EMA斜率
-				const emaSlopes = [];
+				const emaSlowSlopes = [];
+				const emaFastSlopes = [];
+				const emaTrendSlopes = [];
 				for (
 					let i = config.emaSettings[tf].slopeWindow;
 					i < emaSlow[0].length;
@@ -523,7 +525,33 @@ class Backtester {
 								i - config.emaSettings[tf].slopeWindow
 							]) /
 						config.emaSettings[tf].slopeWindow;
-					emaSlopes.push(slope);
+					emaSlowSlopes.push(slope);
+				}
+				for (
+					let i = config.emaSettings[tf].slopeWindow;
+					i < emaFast[0].length;
+					i++
+				) {
+					const slope =
+						(emaFast[0][i] -
+							emaFast[0][
+								i - config.emaSettings[tf].slopeWindow
+							]) /
+						config.emaSettings[tf].slopeWindow;
+					emaFastSlopes.push(slope);
+				}
+				for (
+					let i = config.emaSettings[tf].slopeWindow;
+					i < emaTrend[0].length;
+					i++
+				) {
+					const slope =
+						(emaTrend[0][i] -
+							emaTrend[0][
+								i - config.emaSettings[tf].slopeWindow
+							]) /
+						config.emaSettings[tf].slopeWindow;
+					emaTrendSlopes.push(slope);
 				}
 
 				// 合并指标到数据
@@ -538,7 +566,9 @@ class Backtester {
 					if (i >= config.emaSettings[tf].slopeWindow) {
 						const slopeIndex =
 							i - config.emaSettings[tf].slopeWindow;
-						d.emaSlope = emaSlopes[slopeIndex];
+						d.emaSlowSlope = emaSlowSlopes[slopeIndex];
+						d.emaFastSlope = emaFastSlopes[slopeIndex];
+						d.emaTrendSlope = emaTrendSlopes[slopeIndex];
 					}
 					if (i >= config.macdParams[tf][1]) {
 						const macdIndex = i - config.macdParams[tf][1] + 1;
@@ -720,6 +750,9 @@ class Backtester {
 			adx_threshold,
 			adx_stoploss_distance,
 			volatility_ratio,
+			emaSlowSlope,
+			emaFastSlope,
+			emaTrendSlope,
 		} = candle;
 		const {
 			emaFast: lastEmaFast,
@@ -744,45 +777,64 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		// 动态波动率调整
-		const volatilityFactor = atr / close;
-		const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
-
-		if (emaFast > emaSlow) {
-			marketType = '趋势多';
-			if (emaSlow > emaTrend) {
-				if (close > emaFast && close < lastClose) {
-					marketType = '趋势多且增强-L-1-1';
-				}
-				if (close > emaTrend && lastClose < lastEmaTrend) {
-					marketType = '趋势多且增强-L-1-2';
-				}
-				const isBreakout =
-					close > emaFast &&
-					emaFast > emaSlow &&
-					emaSlow > emaTrend &&
-					(lastClose < lastEmaFast || lastClose < lastEmaSlow);
-				if (isBreakout) marketType = '趋势多且增强-L-1-3';
-			}
+		const zoomOut = 100000;
+		if (
+			emaSlowSlope * zoomOut > 0 &&
+			emaFastSlope * zoomOut > 0 &&
+			emaTrendSlope * zoomOut > 0 &&
+			close > emaTrend
+		) {
+			marketType = '趋势多且增强';
 		}
 
-		if (emaFast < emaSlow) {
-			marketType = '趋势空';
-			if (emaSlow < emaTrend) {
-				if (close < emaFast && close > lastClose) {
-					marketType = '趋势空且增强-R-1-1';
-				}
-				if (close < emaTrend && lastClose > lastEmaTrend) {
-					marketType = '趋势空且增强-R-1-2';
-				}
-				const isBreakout =
-					close < emaFast &&
-					emaFast < emaSlow &&
-					emaSlow < emaTrend &&
-					(lastClose > lastEmaFast || lastClose > lastEmaSlow);
-				if (isBreakout) marketType = '趋势空且增强-R-1-3';
-			}
+		if (
+			emaSlowSlope * zoomOut < 0 &&
+			emaFastSlope * zoomOut < 0 &&
+			emaTrendSlope * zoomOut < 0 &&
+			close < emaTrend
+		) {
+			marketType = '趋势空且增强';
 		}
+
+		// // 动态波动率调整
+		// const volatilityFactor = atr / close;
+		// const isFaraway = (Math.abs(emaFast - emaSlow) / emaSlow) * 100 < 0.5;
+
+		// if (emaFast > emaSlow) {
+		// 	marketType = '趋势多';
+		// 	if (emaSlow > emaTrend) {
+		// 		if (close > emaFast && close < lastClose) {
+		// 			marketType = '趋势多且增强-L-1-1';
+		// 		}
+		// 		if (close > emaTrend && lastClose < lastEmaTrend) {
+		// 			marketType = '趋势多且增强-L-1-2';
+		// 		}
+		// 		const isBreakout =
+		// 			close > emaFast &&
+		// 			emaFast > emaSlow &&
+		// 			emaSlow > emaTrend &&
+		// 			(lastClose < lastEmaFast || lastClose < lastEmaSlow);
+		// 		if (isBreakout) marketType = '趋势多且增强-L-1-3';
+		// 	}
+		// }
+
+		// if (emaFast < emaSlow) {
+		// 	marketType = '趋势空';
+		// 	if (emaSlow < emaTrend) {
+		// 		if (close < emaFast && close > lastClose) {
+		// 			marketType = '趋势空且增强-R-1-1';
+		// 		}
+		// 		if (close < emaTrend && lastClose > lastEmaTrend) {
+		// 			marketType = '趋势空且增强-R-1-2';
+		// 		}
+		// 		const isBreakout =
+		// 			close < emaFast &&
+		// 			emaFast < emaSlow &&
+		// 			emaSlow < emaTrend &&
+		// 			(lastClose > lastEmaFast || lastClose > lastEmaSlow);
+		// 		if (isBreakout) marketType = '趋势空且增强-R-1-3';
+		// 	}
+		// }
 
 		return marketType;
 	}
@@ -798,17 +850,13 @@ class Backtester {
 		// 	}
 		// }
 		// }
-		if (this.marketMode == 2) {
-			// const andIndex = marketType.indexOf('且');
-			// if (andIndex != -1) {
-			// marketType = marketType.substring(0, andIndex);
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
-			// }
-		}
+		// if (this.marketMode == 2) {
+		// 	if (marketType.indexOf('多') != -1) {
+		// 		marketType = marketType.replace('多', '空');
+		// 	} else if (marketType.indexOf('空') != -1) {
+		// 		marketType = marketType.replace('空', '多');
+		// 	}
+		// }
 
 		return marketType;
 	}
