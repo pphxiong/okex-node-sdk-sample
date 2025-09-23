@@ -154,22 +154,16 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	// marketType = '趋势多且增强';
 
 	const zoomOut = 100000;
-	if (
-		emaSlowSlope * zoomOut > 0 &&
-		emaFastSlope * zoomOut > 0 &&
-		emaTrendSlope * zoomOut > 0 &&
-		close > emaTrend
-	) {
-		marketType = '趋势多且增强';
+	if (emaSlowSlope * zoomOut > 0 && emaFastSlope * zoomOut > 0) {
+		marketType = '趋势多';
+		if (emaTrendSlope * zoomOut > 0 && close > emaTrend)
+			marketType = '趋势多且增强';
 	}
 
-	if (
-		emaSlowSlope * zoomOut < 0 &&
-		emaFastSlope * zoomOut < 0 &&
-		emaTrendSlope * zoomOut < 0 &&
-		close < emaTrend
-	) {
-		marketType = '趋势空且增强';
+	if (emaSlowSlope * zoomOut < 0 && emaFastSlope * zoomOut < 0) {
+		marketType = '趋势空';
+		if (emaTrendSlope * zoomOut < 0 && close < emaTrend)
+			marketType = '趋势空且增强';
 	}
 
 	// if (emaFast > emaTrend) {
@@ -1502,7 +1496,7 @@ app.get('/getMode', async function (req, res) {
 			data: {
 				marketMode: config.marketMode,
 				isPaused: config.isPaused,
-        tradeAmount: config.tradeAmount,
+				tradeAmount: config.tradeAmount,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
