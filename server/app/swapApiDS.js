@@ -39,19 +39,19 @@ require('dotenv').config();
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['1m' /*  '5m''1m'*/], // 多周期参数
+	timeframes: ['5m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
-		'1m': { periods: [5, 15, 30], slopeWindow: 3 },
+		'5m': { periods: [5, 15, 30], slopeWindow: 3 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
-	macdParams: { '1m': [12, 26, 9] },
-	slowframe: '1m',
-	fastframe: '1m',
+	macdParams: { '5m': [12, 26, 9] },
+	slowframe: '5m',
+	fastframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
