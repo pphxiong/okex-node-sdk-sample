@@ -164,8 +164,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		marketType = '趋势多';
 		if (
 			emaFastSlope * zoomOut < emaSlowSlope * zoomOut &&
-      emaFastSlope * zoomOut < 0 &&
-			emaSlowSlope * zoomOut < 0 
+			emaFastSlope * zoomOut < 0 &&
+			emaSlowSlope * zoomOut < 0
 		)
 			marketType = '趋势多且增强';
 	}
@@ -174,8 +174,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		marketType = '趋势空';
 		if (
 			emaFastSlope * zoomOut > emaSlowSlope * zoomOut &&
-      emaFastSlope * zoomOut > 0 &&
-			emaSlowSlope * zoomOut > 0 
+			emaFastSlope * zoomOut > 0 &&
+			emaSlowSlope * zoomOut > 0
 		)
 			marketType = '趋势空且增强';
 	}
@@ -572,7 +572,7 @@ class OrderManager {
 		amount,
 		price,
 		isOpen = true,
-		singal,
+		singnal,
 		lnp,
 		kline
 	) {
@@ -594,7 +594,7 @@ class OrderManager {
 				positionSide,
 			}
 		);
-		const { fastMarketType, slowMarketType } = singal;
+		const { fastMarketType, slowMarketType } = singnal;
 		state.activeOrders.push({
 			id: order.id,
 			side,
@@ -1098,8 +1098,8 @@ class RiskManager {
 		return { isStop, isStopLoss };
 	}
 
-	static async closePosition(singal, orderBook, isStopLoss = false) {
-		const { price: currentPrice, kline } = singal;
+	static async closePosition(singnal, orderBook, isStopLoss = false) {
+		const { price: currentPrice, kline } = singnal;
 		const side = state.position > 0 ? 'sell' : 'buy';
 		const amount = Math.abs(state.position);
 		const lnp = getLnp(
@@ -1158,7 +1158,7 @@ class RiskManager {
 				amount,
 				limitPrice,
 				false,
-				singal,
+				singnal,
 				lnp,
 				kline
 			);
@@ -1171,7 +1171,7 @@ class RiskManager {
 				amount,
 				limitPrice,
 				false,
-				singal,
+				singnal,
 				lnp,
 				kline
 			);
@@ -1185,6 +1185,63 @@ class RiskManager {
 		// this.activateCooldown();
 		// config.isPaused = true;
 		// await OrderManager.writeData();
+	}
+
+	static async openPosition(signal, orderBook) {
+		// 步骤4: 生成限价单
+		if (state.position === 0 && !RiskManager.isCoolingDown()) {
+			if (!signal.buySignal && !signal.sellSignal) {
+				return;
+			}
+			const { slowMarketType } = signal;
+			if (
+				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
+			) {
+				const limitPrice = orderBook.bid * (1 - config.orderDepth);
+				const amount = getPositionSize(limitPrice) / limitPrice;
+
+				state = JSON.parse(JSON.stringify(initState));
+				state.slowMarketType = slowMarketType;
+
+				await OrderManager.createLimitOrder(
+					'buy',
+					amount,
+					limitPrice,
+					true,
+					signal
+					// kline.atr
+				);
+				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+				console.log(
+					`%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
+					'color: red; font-weight: bold;'
+				);
+			}
+
+			if (
+				signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
+			) {
+				const limitPrice = orderBook.ask * (1 + config.orderDepth);
+				const amount = getPositionSize(limitPrice) / limitPrice;
+
+				state = JSON.parse(JSON.stringify(initState));
+				state.slowMarketType = slowMarketType;
+
+				await OrderManager.createLimitOrder(
+					'sell',
+					amount,
+					limitPrice,
+					true,
+					signal
+					// kline.atr
+				);
+				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+				console.log(
+					`%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
+					'color: red; font-weight: bold;'
+				);
+			}
+		}
 	}
 
 	static activateCooldown() {
@@ -1279,60 +1336,62 @@ async function strategyLoop(isShowLog = false) {
 			return;
 		}
 
-		// 步骤4: 生成限价单
-		if (state.position === 0 && !RiskManager.isCoolingDown()) {
-			if (!signal.buySignal && !signal.sellSignal) {
-				return;
-			}
-			const { klin, slowMarketType } = signal;
-			if (
-				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
-			) {
-				const limitPrice = orderBook.bid * (1 - config.orderDepth);
-				const amount = getPositionSize(limitPrice) / limitPrice;
+		await RiskManager.openPosition(signal, orderBook);
 
-				state = JSON.parse(JSON.stringify(initState));
-				state.slowMarketType = slowMarketType;
+		// // 步骤4: 生成限价单
+		// if (state.position === 0 && !RiskManager.isCoolingDown()) {
+		// 	if (!signal.buySignal && !signal.sellSignal) {
+		// 		return;
+		// 	}
+		// 	const { klin, slowMarketType } = signal;
+		// 	if (
+		// 		signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
+		// 	) {
+		// 		const limitPrice = orderBook.bid * (1 - config.orderDepth);
+		// 		const amount = getPositionSize(limitPrice) / limitPrice;
 
-				await OrderManager.createLimitOrder(
-					'buy',
-					amount,
-					limitPrice,
-					true,
-					signal
-					// kline.atr
-				);
-				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
-				console.log(
-					`%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
-					'color: red; font-weight: bold;'
-				);
-			}
+		// 		state = JSON.parse(JSON.stringify(initState));
+		// 		state.slowMarketType = slowMarketType;
 
-			if (
-				signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
-			) {
-				const limitPrice = orderBook.ask * (1 + config.orderDepth);
-				const amount = getPositionSize(limitPrice) / limitPrice;
+		// 		await OrderManager.createLimitOrder(
+		// 			'buy',
+		// 			amount,
+		// 			limitPrice,
+		// 			true,
+		// 			signal
+		// 			// kline.atr
+		// 		);
+		// 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+		// 		console.log(
+		// 			`%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
+		// 			'color: red; font-weight: bold;'
+		// 		);
+		// 	}
 
-				state = JSON.parse(JSON.stringify(initState));
-				state.slowMarketType = slowMarketType;
+		// 	if (
+		// 		signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
+		// 	) {
+		// 		const limitPrice = orderBook.ask * (1 + config.orderDepth);
+		// 		const amount = getPositionSize(limitPrice) / limitPrice;
 
-				await OrderManager.createLimitOrder(
-					'sell',
-					amount,
-					limitPrice,
-					true,
-					signal
-					// kline.atr
-				);
-				console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
-				console.log(
-					`%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
-					'color: red; font-weight: bold;'
-				);
-			}
-		}
+		// 		state = JSON.parse(JSON.stringify(initState));
+		// 		state.slowMarketType = slowMarketType;
+
+		// 		await OrderManager.createLimitOrder(
+		// 			'sell',
+		// 			amount,
+		// 			limitPrice,
+		// 			true,
+		// 			signal
+		// 			// kline.atr
+		// 		);
+		// 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+		// 		console.log(
+		// 			`%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
+		// 			'color: red; font-weight: bold;'
+		// 		);
+		// 	}
+		// }
 	} catch (err) {
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.error('策略错误:', err.message);
@@ -1544,6 +1603,47 @@ app.get('/closePosition', async function (req, res) {
 		const signal = await generateSignal(currentPrice);
 		const orderBook = await getOrderBook();
 		await RiskManager.closePosition(signal, orderBook, true);
+		send(res, {
+			errcode: 0,
+			errmsg: 'ok',
+			data: {},
+		});
+	} else {
+		send(res, { errcode: 1, errmsg: 'password error' });
+	}
+});
+
+app.get('/openPosition', async function (req, res) {
+	const { query = {} } = req;
+	const { pw, side } = query;
+	if (pw && pw.trim() === PASSWORD) {
+		const ticker = await exchange.fetchTicker(config.symbol);
+		const currentPrice = ticker.last;
+
+		// 步骤1: 清理过期订单
+		await OrderManager.checkOrderStatus(currentPrice);
+		await calculateIndicators();
+		// 步骤2: 获取信号
+		// const signal = await generateSignal(currentPrice);
+		let signal = null;
+		if (side === 'buy') {
+			signal = {
+				buySignal: true,
+				sellSignal: false,
+				price: currentPrice,
+				fastMarketType: '趋势多且增强',
+				slowMarketType: '趋势多且增强',
+			};
+		} else if (side === 'sell') {
+      signal = {
+        buySignal: false,
+        sellSignal: true,
+        price: currentPrice,
+        fastMarketType: '趋势空且增强',
+        slowMarketType: '趋势空且增强',
+      };
+		const orderBook = await getOrderBook();
+		await RiskManager.openPosition(signal, orderBook, true);
 		send(res, {
 			errcode: 0,
 			errmsg: 'ok',
