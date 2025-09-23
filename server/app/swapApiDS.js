@@ -531,7 +531,7 @@ function getLastIndicators(indicators, key) {
   return indicators[key][indicators[key].length - 1];
 }
 
-function getPositionSize(marketType) {
+function getPositionSize() {
   return (globalAvailableBalance * config.leverage * 1) / 3;
   // return Math.min(
   // 	globalAvailableBalance * config.leverage * 1 / 3,
@@ -1241,7 +1241,7 @@ async function strategyLoop(isShowLog = false) {
       const { klin, slowMarketType } = signal;
       if (signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */) {
         const limitPrice = orderBook.bid * (1 - config.orderDepth);
-        const amount = getPositionSize(slowMarketType) / limitPrice;
+        const amount = getPositionSize(limitPrice) / limitPrice;
 
         state = JSON.parse(JSON.stringify(initState));
         state.slowMarketType = slowMarketType;
@@ -1263,7 +1263,7 @@ async function strategyLoop(isShowLog = false) {
 
       if (signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */) {
         const limitPrice = orderBook.ask * (1 + config.orderDepth);
-        const amount = getPositionSize(slowMarketType) / limitPrice;
+        const amount = getPositionSize(limitPrice) / limitPrice;
 
         state = JSON.parse(JSON.stringify(initState));
         state.slowMarketType = slowMarketType;
