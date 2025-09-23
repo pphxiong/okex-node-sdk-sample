@@ -1635,13 +1635,14 @@ app.get('/openPosition', async function (req, res) {
 				slowMarketType: '趋势多且增强',
 			};
 		} else if (side === 'sell') {
-      signal = {
-        buySignal: false,
-        sellSignal: true,
-        price: currentPrice,
-        fastMarketType: '趋势空且增强',
-        slowMarketType: '趋势空且增强',
-      };
+			signal = {
+				buySignal: false,
+				sellSignal: true,
+				price: currentPrice,
+				fastMarketType: '趋势空且增强',
+				slowMarketType: '趋势空且增强',
+			};
+		}
 		const orderBook = await getOrderBook();
 		await RiskManager.openPosition(signal, orderBook, true);
 		send(res, {
