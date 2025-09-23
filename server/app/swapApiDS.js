@@ -159,24 +159,15 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	// marketType = '趋势多且增强';
 
-	const zoomOut = 100000;
 	if (emaFast > emaTrend && emaSlow > emaTrend) {
 		marketType = '趋势多';
-		if (
-			emaFastSlope * zoomOut < emaSlowSlope * zoomOut &&
-			emaFastSlope * zoomOut < 0 &&
-			emaSlowSlope * zoomOut < 0
-		)
+		if (emaFastSlope < emaSlowSlope && emaFastSlope < 0 && emaSlowSlope < 0)
 			marketType = '趋势多且增强';
 	}
 
 	if (emaFast < emaTrend && emaSlow < emaTrend) {
 		marketType = '趋势空';
-		if (
-			emaFastSlope * zoomOut > emaSlowSlope * zoomOut &&
-			emaFastSlope * zoomOut > 0 &&
-			emaSlowSlope * zoomOut > 0
-		)
+		if (emaFastSlope > emaSlowSlope && emaFastSlope > 0 && emaSlowSlope > 0)
 			marketType = '趋势空且增强';
 	}
 
@@ -473,9 +464,10 @@ async function calculateIndicators() {
 				}
 				if (i >= config.emaSettings[tf].slopeWindow) {
 					const slopeIndex = i - config.emaSettings[tf].slopeWindow;
-					d.emaSlowSlope = emaSlowSlopes[slopeIndex];
-					d.emaFastSlope = emaFastSlopes[slopeIndex];
-					d.emaTrendSlope = emaTrendSlopes[slopeIndex];
+					const zoomOut = 100000;
+					d.emaSlowSlope = emaSlowSlopes[slopeIndex] * zoomOut;
+					d.emaFastSlope = emaFastSlopes[slopeIndex] * zoomOut;
+					d.emaTrendSlope = emaTrendSlopes[slopeIndex] * zoomOut;
 				}
 				if (i >= config.macdParams[tf][1]) {
 					const macdIndex = i - config.macdParams[tf][1] + 1;
