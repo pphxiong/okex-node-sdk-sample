@@ -33,19 +33,20 @@ const _ = require('lodash');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
-	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
+	timeframe: '1m',
+	timeframes: ['1m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
-		'15m': { periods: [21, 55, 200], slopeWindow: 5 },
+		// '1m': { periods: [21, 55, 200], slopeWindow: 5 },
+		'1m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
-	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
-	slowframe: '15m',
-	fastframe: '15m',
+	macdParams: { '1m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
+	slowframe: '1m',
+	fastframe: '1m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -1619,7 +1620,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-01-01';
+	const start = '2025-09-01';
 	const end = '2025-08-30';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1633,8 +1634,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-		// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+		while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
