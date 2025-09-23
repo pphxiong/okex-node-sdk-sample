@@ -1626,7 +1626,7 @@ app.get('/openPosition', async function (req, res) {
 		// 步骤2: 获取信号
 		// const signal = await generateSignal(currentPrice);
 		let signal = null;
-		if (side === 'buy') {
+		if (side === 'long') {
 			signal = {
 				buySignal: true,
 				sellSignal: false,
@@ -1634,7 +1634,7 @@ app.get('/openPosition', async function (req, res) {
 				fastMarketType: '趋势多且增强',
 				slowMarketType: '趋势多且增强',
 			};
-		} else if (side === 'sell') {
+		} else if (side === 'short') {
 			signal = {
 				buySignal: false,
 				sellSignal: true,
