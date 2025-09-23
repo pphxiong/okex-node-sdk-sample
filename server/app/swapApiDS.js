@@ -122,6 +122,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		emaTrend,
 		macdHistogram: macd,
 		volume,
+		volumeAvg,
 		rsi_long,
 		rsi_short,
 		stop_multiplier,
@@ -165,7 +166,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			emaFastSlope * zoomOut > emaSlowSlope * zoomOut &&
 			emaSlowSlope * zoomOut > 0 &&
 			emaTrendSlope * zoomOut > 0 &&
-			close > lastHigh
+			close > lastHigh &&
+			volume > volumeAvg
 		)
 			marketType = '趋势多且增强';
 	}
@@ -176,7 +178,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 			emaFastSlope * zoomOut < emaSlowSlope * zoomOut &&
 			emaSlowSlope * zoomOut < 0 &&
 			emaTrendSlope * zoomOut < 0 &&
-			close < lastLow
+			close < lastLow &&
+			volume > volumeAvg
 		)
 			marketType = '趋势空且增强';
 	}
@@ -409,6 +412,11 @@ async function calculateIndicators() {
 
 		const result = await Promise.all(indicatorPromises);
 
+		const SMA = (list, key) => {
+			const sum = list.reduce((acc, cur) => acc + cur[key], 0);
+			return sum / list.length;
+		};
+
 		// 合并指标到数据
 		config.timeframes.forEach((tf, index) => {
 			const [
@@ -515,6 +523,10 @@ async function calculateIndicators() {
 					d,
 					marketData[tf][i - 1],
 					marketData[tf][i - 2]
+				);
+				d.volumeAvg = SMA(
+					marketData[tf].slice(i - 20, i + 1),
+					'volume'
 				);
 			});
 		});
