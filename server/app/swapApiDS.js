@@ -43,7 +43,8 @@ const config = {
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
-		'1m': { periods: [8, 21, 55], slopeWindow: 3 },
+		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
+		'1m': { periods: [5, 15, 30], slopeWindow: 3 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
@@ -154,15 +155,23 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	// marketType = '趋势多且增强';
 
 	const zoomOut = 100000;
-	if (emaSlowSlope * zoomOut > 0 && emaFastSlope * zoomOut > 0) {
-		// marketType = '趋势多';
-		if (emaTrendSlope * zoomOut > 0 && close > emaTrend)
+	if (emaFastSlope * zoomOut > 0) {
+		marketType = '趋势多';
+		if (
+			emaFastSlope * zoomOut > emaSlowSlope * zoomOut &&
+			emaSlowSlope * zoomOut > 0 &&
+			emaTrendSlope * zoomOut > 0
+		)
 			marketType = '趋势多且增强';
 	}
 
-	if (emaSlowSlope * zoomOut < 0 && emaFastSlope * zoomOut < 0) {
-		// marketType = '趋势空';
-		if (emaTrendSlope * zoomOut < 0 && close < emaTrend)
+	if (emaFastSlope * zoomOut < 0) {
+		marketType = '趋势空';
+		if (
+			emaFastSlope * zoomOut < emaSlowSlope * zoomOut &&
+			emaSlowSlope * zoomOut < 0 &&
+			emaTrendSlope * zoomOut < 0
+		)
 			marketType = '趋势空且增强';
 	}
 
