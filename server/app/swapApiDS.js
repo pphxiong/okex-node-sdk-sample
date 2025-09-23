@@ -112,6 +112,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		adxMinusDI,
 		rsi,
 		close,
+		high,
+		low,
 		atr,
 		open,
 		emaSlope,
@@ -135,6 +137,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		emaSlow: lastEmaSlow,
 		emaTrend: lastEmaTrend,
 		close: lastClose,
+		high: lastHigh,
+		low: lastLow,
 		macdHistogram: lastMacd,
 		volume: lastVolume,
 	} = lastCandle;
@@ -160,7 +164,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		if (
 			emaFastSlope * zoomOut > emaSlowSlope * zoomOut &&
 			emaSlowSlope * zoomOut > 0 &&
-			emaTrendSlope * zoomOut > 0
+			emaTrendSlope * zoomOut > 0 &&
+			close > lastHigh
 		)
 			marketType = '趋势多且增强';
 	}
@@ -170,7 +175,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		if (
 			emaFastSlope * zoomOut < emaSlowSlope * zoomOut &&
 			emaSlowSlope * zoomOut < 0 &&
-			emaTrendSlope * zoomOut < 0
+			emaTrendSlope * zoomOut < 0 &&
+			close < lastLow
 		)
 			marketType = '趋势空且增强';
 	}
