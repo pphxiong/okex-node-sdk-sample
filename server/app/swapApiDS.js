@@ -155,13 +155,13 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	const zoomOut = 100000;
 	if (emaSlowSlope * zoomOut > 0 && emaFastSlope * zoomOut > 0) {
-		marketType = '趋势多';
+		// marketType = '趋势多';
 		if (emaTrendSlope * zoomOut > 0 && close > emaTrend)
 			marketType = '趋势多且增强';
 	}
 
 	if (emaSlowSlope * zoomOut < 0 && emaFastSlope * zoomOut < 0) {
-		marketType = '趋势空';
+		// marketType = '趋势空';
 		if (emaTrendSlope * zoomOut < 0 && close < emaTrend)
 			marketType = '趋势空且增强';
 	}
