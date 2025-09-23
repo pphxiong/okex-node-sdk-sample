@@ -692,11 +692,11 @@ class OrderManager {
 						(o) => o.id !== status.id
 					);
 
-					if (order.isOpen === false) {
-						config.isPaused = true;
-					} else {
-						config.isPaused = false;
-					}
+					// if (order.isOpen === false) {
+					// 	config.isPaused = true;
+					// } else {
+					// 	config.isPaused = false;
+					// }
 				}
 
 				this.writeData();
@@ -1112,7 +1112,7 @@ class RiskManager {
 
 			const { basicLnp } = config;
 			if (lnp < -basicLnp) {
-				config.isPaused = true;
+				// config.isPaused = true;
 				await OrderManager.writeData();
 			}
 
