@@ -788,9 +788,10 @@ class Backtester {
 			if (
 				emaFastSlope < emaSlowSlope &&
 				emaFastSlope < 0 &&
-				emaSlowSlope < 0 
+				emaSlowSlope < 0 &&
+				emaTrendSlope > 0
 			)
-				marketType = emaTrendSlope > 0 ? '趋势多且增强' : '趋势空';
+				marketType = '趋势多且增强';
 		}
 
 		if (emaFast < emaTrend && emaSlow < emaTrend) {
@@ -798,9 +799,10 @@ class Backtester {
 			if (
 				emaFastSlope > emaSlowSlope &&
 				emaFastSlope > 0 &&
-				emaSlowSlope > 0 
+				emaSlowSlope > 0 &&
+				emaTrendSlope < 0
 			)
-				marketType = emaTrendSlope < 0 ? '趋势空且增强' : '趋势多';
+				marketType = '趋势空且增强';
 		}
 
 		// if (close > emaSlow) {
