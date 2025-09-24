@@ -33,20 +33,21 @@ const _ = require('lodash');
 // 策略配置
 const config = {
 	symbol: 'DOGE/USDT',
-	timeframe: '15m',
-	timeframes: ['15m' /* '5m'  '1m'*/], // 多周期参数
+	timeframe: '5m',
+	timeframes: ['5m' /* '5m'  '1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [21, 55, 200], slopeWindow: 5 },
-		'15m': { periods: [8, 21, 55], slopeWindow: 3 },
+		// '15m': { periods: [8, 21, 55], slopeWindow: 3 },
+		'5m': { periods: [5, 15, 30], slopeWindow: 3 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
 	},
-	macdParams: { '15m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
-	slowframe: '15m',
-	fastframe: '15m',
+	macdParams: { '5m': [12, 26, 9] /* '5m': [12, 26, 9] */ },
+	slowframe: '5m',
+	fastframe: '5m',
 	kWindowTresholdFast: 3,
 	kWindowTresholdMedium: 5,
 	// 布林线参数
@@ -737,8 +738,8 @@ class Backtester {
 			adxMinusDI,
 			rsi,
 			close,
-      high,
-      low,
+			high,
+			low,
 			atr,
 			open,
 			emaSlope,
@@ -762,7 +763,7 @@ class Backtester {
 			emaSlow: lastEmaSlow,
 			emaTrend: lastEmaTrend,
 			close: lastClose,
-      high: lastHigh,
+			high: lastHigh,
 			low: lastLow,
 			open: lastOpen,
 			macdHistogram: lastMacd,
