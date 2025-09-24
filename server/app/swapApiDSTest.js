@@ -815,8 +815,7 @@ class Backtester {
 				emaFastSlope < emaSlowSlope &&
 				emaFastSlope < 0 &&
 				emaSlowSlope < 0 &&
-				emaTrendSlope > 0 &&
-				adx > adx_threshold - 7
+				emaTrendSlope > 0
 			)
 				marketType = '趋势多且增强';
 		}
@@ -827,8 +826,7 @@ class Backtester {
 				emaFastSlope > emaSlowSlope &&
 				emaFastSlope > 0 &&
 				emaSlowSlope > 0 &&
-				emaTrendSlope < 0 &&
-				adx > adx_threshold - 7
+				emaTrendSlope < 0 
 			)
 				marketType = '趋势空且增强';
 		}
@@ -1064,7 +1062,7 @@ class Backtester {
 				}
 
 				const basicLnp = (0.01 * 1) / 3;
-				isProfitTarget = lnp > basicLnp * 12;
+				isProfitTarget = lnp > basicLnp * 10;
 				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
