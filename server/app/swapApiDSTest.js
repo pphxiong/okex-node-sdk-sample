@@ -737,6 +737,8 @@ class Backtester {
 			adxMinusDI,
 			rsi,
 			close,
+      high,
+      low,
 			atr,
 			open,
 			emaSlope,
@@ -760,6 +762,8 @@ class Backtester {
 			emaSlow: lastEmaSlow,
 			emaTrend: lastEmaTrend,
 			close: lastClose,
+      high: lastHigh,
+			low: lastLow,
 			open: lastOpen,
 			macdHistogram: lastMacd,
 			volume: lastVolume,
@@ -778,23 +782,30 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		const zoomOut = 100000;
-		if (
-			emaSlowSlope * zoomOut > 0 &&
-			emaFastSlope * zoomOut > 0 &&
-			emaTrendSlope * zoomOut > 0 &&
-			close > emaTrend
-		) {
-			marketType = '趋势多且增强';
+		if (close > emaSlow) {
+			marketType = '趋势多';
+			if (
+				close > emaTrend &&
+				emaFastSlope > 0 &&
+				emaSlowSlope > 0 &&
+				emaTrendSlope > 0 &&
+				high > lastHigh &&
+				adx > adx_threshold - 7
+			)
+				marketType = '趋势多且增强';
 		}
 
-		if (
-			emaSlowSlope * zoomOut < 0 &&
-			emaFastSlope * zoomOut < 0 &&
-			emaTrendSlope * zoomOut < 0 &&
-			close < emaTrend
-		) {
-			marketType = '趋势空且增强';
+		if (close < emaSlow) {
+			marketType = '趋势空';
+			if (
+				close < emaTrend &&
+				emaFastSlope < 0 &&
+				emaSlowSlope < 0 &&
+				emaTrendSlope < 0 &&
+				low < lastLow &&
+				adx > adx_threshold - 7
+			)
+				marketType = '趋势空且增强';
 		}
 
 		// // 动态波动率调整
@@ -1635,7 +1646,7 @@ function carryForluma(p, rl, rw) {
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
 	// while (moment(end).isAfter(startTime)) {
-		while (i === 0) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {

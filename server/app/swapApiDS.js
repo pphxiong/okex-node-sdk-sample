@@ -60,7 +60,7 @@ const config = {
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
 	tradeAmount: 2400, // 每单交易金额(USDT)
 	maxOrderAge: 1000 * 15, // 限价单最长存活时间(30秒)
-	basicLnp: (0.01 * 2) / 6,
+	basicLnp: (0.01 * 2) / 3,
 	profitStopLossRatio: 4, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -159,17 +159,43 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	// marketType = '趋势多且增强';
 
-	if (emaFast > emaTrend && emaSlow > emaTrend) {
+	if (close > emaSlow) {
 		marketType = '趋势多';
-		if (emaFastSlope < emaSlowSlope && emaFastSlope < 0 && emaSlowSlope < 0)
+		if (
+      close > emaTrend &&
+			emaFastSlope > 0 &&
+			emaSlowSlope > 0 &&
+			emaTrendSlope > 0 &&
+			high > lastHigh &&
+			adx > adx_threshold - 7
+		)
 			marketType = '趋势多且增强';
 	}
 
-	if (emaFast < emaTrend && emaSlow < emaTrend) {
+	if (close < emaSlow) {
 		marketType = '趋势空';
-		if (emaFastSlope > emaSlowSlope && emaFastSlope > 0 && emaSlowSlope > 0)
+		if (
+      close < emaTrend &&
+			emaFastSlope < 0 &&
+			emaSlowSlope < 0 &&
+			emaTrendSlope < 0 &&
+      low < lastLow &&
+			adx > adx_threshold - 7
+		)
 			marketType = '趋势空且增强';
 	}
+
+	// if (emaFast > emaTrend && emaSlow > emaTrend) {
+	// 	marketType = '趋势多';
+	// 	if (emaFastSlope < emaSlowSlope && emaFastSlope < 0 && emaSlowSlope < 0)
+	// 		marketType = '趋势多且增强';
+	// }
+
+	// if (emaFast < emaTrend && emaSlow < emaTrend) {
+	// 	marketType = '趋势空';
+	// 	if (emaFastSlope > emaSlowSlope && emaFastSlope > 0 && emaSlowSlope > 0)
+	// 		marketType = '趋势空且增强';
+	// }
 
 	// if (emaFast > emaTrend) {
 	// 	marketType = '趋势多';
@@ -1016,10 +1042,7 @@ class RiskManager {
 
 		const { basicLnp, profitStopLossRatio } = config;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
-		const isStopLoss =
-			position * currentPrice > config.tradeAmount * 10
-				? lnp < basicLnp / 2
-				: lnp < -basicLnp;
+		const isStopLoss = lnp < -basicLnp;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
