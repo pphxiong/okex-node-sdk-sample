@@ -93,7 +93,7 @@ const config = {
 	drift: 0.0002, // 每日趋势偏移量
 	adxPeriod: 14,
 	rsiPeriod: 14,
-	marketMode: 2,
+	marketMode: 1,
 	isMarketModeAuto: false,
 };
 
@@ -1061,7 +1061,7 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				const basicLnp = (0.01 * 1) / 3;
+				const basicLnp = (0.01 * 2) / 3;
 				isProfitTarget = lnp > basicLnp * 1.0;
 				isStopLoss = lnp < -basicLnp;
 
