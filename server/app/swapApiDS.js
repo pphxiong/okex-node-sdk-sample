@@ -159,28 +159,24 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	// marketType = '趋势多且增强';
 
-	if (close > emaSlow) {
+	if (emaFast > emaTrend && emaSlow > emaTrend) {
 		marketType = '趋势多';
 		if (
-      close > emaTrend &&
-			emaFastSlope > 0 &&
-			emaSlowSlope > 0 &&
-			emaTrendSlope > 0 &&
-			high > lastHigh &&
-			adx > adx_threshold - 7
+			emaFastSlope < emaSlowSlope &&
+			emaFastSlope < 0 &&
+			emaSlowSlope < 0 &&
+			emaTrendSlope > 0
 		)
 			marketType = '趋势多且增强';
 	}
 
-	if (close < emaSlow) {
+	if (emaFast < emaTrend && emaSlow < emaTrend) {
 		marketType = '趋势空';
 		if (
-      close < emaTrend &&
-			emaFastSlope < 0 &&
-			emaSlowSlope < 0 &&
-			emaTrendSlope < 0 &&
-      low < lastLow &&
-			adx > adx_threshold - 7
+			emaFastSlope > emaSlowSlope &&
+			emaFastSlope > 0 &&
+			emaSlowSlope > 0 &&
+			emaTrendSlope < 0
 		)
 			marketType = '趋势空且增强';
 	}
@@ -1041,8 +1037,13 @@ class RiskManager {
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
 		const { basicLnp, profitStopLossRatio } = config;
+		const amount = Math.abs(position) * currentPrice;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
+		const isProfitFirst =
+			amount > (config.tradeAmount * 2) / 3 && lnp > basicLnp;
+		const isProfitSecond =
+			amount > (config.tradeAmount * 1) / 3 && lnp > basicLnp * 2.5;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1110,13 +1111,21 @@ class RiskManager {
 			(lnp * config.leverage * 100).toFixed(2) + '%'
 		);
 		console.log('***********************************');
-		return { isStop, isStopLoss };
+		return { isStop, isStopLoss, isProfitFirst, isProfitSecond };
 	}
 
-	static async closePosition(singnal, orderBook, isStopLoss = false) {
+	static async closePosition(
+		singnal,
+		orderBook,
+		isStopLoss = false,
+		isProfitFirst = false,
+		isProfitSecond = false
+	) {
 		const { price: currentPrice, kline } = singnal;
 		const side = state.position > 0 ? 'sell' : 'buy';
-		const amount = Math.abs(state.position);
+		let amount = Math.abs(state.position);
+		if (isProfitFirst) amount = amount / 3;
+		if (isProfitSecond) amount = (amount * 3) / 5;
 		const lnp = getLnp(
 			Math.abs(state.entryPrice),
 			Math.abs(currentPrice),
@@ -1345,9 +1354,19 @@ async function strategyLoop(isShowLog = false) {
 		config.orderBook = orderBook;
 
 		// 步骤3: 检查强制平仓
-		const { isStop, isStopLoss } = RiskManager.checkStopConditions(signal);
+		const { isStop, isStopLoss, isProfitFirst, isProfitSecond } =
+			RiskManager.checkStopConditions(signal);
 		if (isStop) {
 			await RiskManager.closePosition(signal, orderBook, isStopLoss);
+			return;
+		} else if (isProfitFirst || isProfitSecond) {
+			await RiskManager.closePosition(
+				signal,
+				orderBook,
+				isStopLoss,
+				isProfitFirst,
+				isProfitSecond
+			);
 			return;
 		}
 
