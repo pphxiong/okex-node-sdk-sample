@@ -1113,8 +1113,8 @@ class RiskManager {
 			lnp,
 			'lnpPercent',
 			(lnp * config.leverage * 100).toFixed(2) + '%',
-      'maxLnpPercent',
-      maxLnpPercent,
+			'maxLnpPercent',
+			maxLnpPercent
 		);
 		console.log('***********************************');
 		const lnpPercent = lnp * config.leverage * 100;
@@ -1168,7 +1168,7 @@ class RiskManager {
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
 			state.lnpPercent = 0;
-      state.maxLnpPercent = 0;
+			state.maxLnpPercent = 0;
 
 			const { basicLnp } = config;
 			if (lnp < -basicLnp) {
@@ -1232,8 +1232,8 @@ class RiskManager {
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
-      config.lnpPercent = 0;
-      config.maxLnpPercent = 0;
+			config.lnpPercent = 0;
+			config.maxLnpPercent = 0;
 
 			const { slowMarketType } = signal;
 			if (
@@ -1379,12 +1379,12 @@ async function strategyLoop(isShowLog = false) {
 			isProfitSecond,
 			lnpPercent,
 		} = RiskManager.checkStopConditions(signal);
-    let isReverseStop = false
+		let isReverseStop = false;
 		config.lnpPercent = lnpPercent;
 		if (lnpPercent > config.maxLnpPercent) {
 			config.maxLnpPercent = lnpPercent;
 		}
-    if(lnpPercent < config.maxLnpPercent - 20) isReverseStop = true
+		if (lnpPercent < config.maxLnpPercent - 20) isReverseStop = true;
 		if (isStop || isReverseStop) {
 			await RiskManager.closePosition(signal, orderBook, isStopLoss);
 			return;
@@ -1655,11 +1655,11 @@ app.get('/getMode', async function (req, res) {
 				marketMode: config.marketMode,
 				isPaused: config.isPaused,
 				tradeAmount: config.tradeAmount,
+				lnpPercent: config.lnpPercent,
+				maxLnpPercent: config.maxLnpPercent,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
-        lnpPercent: config.lnpPercent,
-        maxLnpPercent: config.maxLnpPercent,
 			},
 		});
 	} else {
