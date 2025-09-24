@@ -783,55 +783,55 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (close > emaTrend) {
-			marketType = '趋势多';
-			if (
-				close > emaTrend &&
-				emaFastSlope > 0 &&
-				emaSlowSlope > 0 &&
-				emaTrendSlope > 0 &&
-				high > lastHigh &&
-				adx > adx_threshold - 7
-			)
-				marketType = '趋势多且增强';
-		}
-
-		if (close < emaTrend) {
-			marketType = '趋势空';
-			if (
-				close < emaTrend &&
-				emaFastSlope < 0 &&
-				emaSlowSlope < 0 &&
-				emaTrendSlope < 0 &&
-				low < lastLow &&
-				adx > adx_threshold - 7
-			)
-				marketType = '趋势空且增强';
-		}
-
-		// if (emaFast > emaTrend && emaSlow > emaTrend) {
+		// if (close > emaSlow) {
 		// 	marketType = '趋势多';
 		// 	if (
-		// 		emaFastSlope < emaSlowSlope &&
-		// 		emaFastSlope < 0 &&
-		// 		emaSlowSlope < 0 &&
+		// 		close > emaTrend &&
+		// 		emaFastSlope > 0 &&
+		// 		emaSlowSlope > 0 &&
 		// 		emaTrendSlope > 0 &&
+		// 		high > lastHigh &&
 		// 		adx > adx_threshold - 7
 		// 	)
 		// 		marketType = '趋势多且增强';
 		// }
 
-		// if (emaFast < emaTrend && emaSlow < emaTrend) {
+		// if (close < emaSlow) {
 		// 	marketType = '趋势空';
 		// 	if (
-		// 		emaFastSlope > emaSlowSlope &&
-		// 		emaFastSlope > 0 &&
-		// 		emaSlowSlope > 0 &&
+		// 		close < emaTrend &&
+		// 		emaFastSlope < 0 &&
+		// 		emaSlowSlope < 0 &&
 		// 		emaTrendSlope < 0 &&
+		// 		low < lastLow &&
 		// 		adx > adx_threshold - 7
 		// 	)
 		// 		marketType = '趋势空且增强';
 		// }
+
+		if (emaFast > emaTrend && emaSlow > emaTrend) {
+			marketType = '趋势多';
+			if (
+				emaFastSlope < emaSlowSlope &&
+				emaFastSlope < 0 &&
+				emaSlowSlope < 0 &&
+				emaTrendSlope > 0 &&
+				adx > adx_threshold - 7
+			)
+				marketType = '趋势多且增强';
+		}
+
+		if (emaFast < emaTrend && emaSlow < emaTrend) {
+			marketType = '趋势空';
+			if (
+				emaFastSlope > emaSlowSlope &&
+				emaFastSlope > 0 &&
+				emaSlowSlope > 0 &&
+				emaTrendSlope < 0 &&
+				adx > adx_threshold - 7
+			)
+				marketType = '趋势空且增强';
+		}
 
 		// // 动态波动率调整
 		// const volatilityFactor = atr / close;
@@ -1063,8 +1063,8 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				const basicLnp = (0.01 * 1) / 3;
-				isProfitTarget = lnp > basicLnp * 10;
+				const basicLnp = (0.01 * 2) / 3;
+				isProfitTarget = lnp > basicLnp * 5;
 				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
