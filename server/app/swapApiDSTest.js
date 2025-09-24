@@ -783,28 +783,48 @@ class Backtester {
 		const lastStronger = lastEmaFast > lastEmaSlow;
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
-		if (close > emaSlow) {
+		// if (close > emaSlow) {
+		// 	marketType = '趋势多';
+		// 	if (
+		// 		close > emaTrend &&
+		// 		emaFastSlope > 0 &&
+		// 		emaSlowSlope > 0 &&
+		// 		emaTrendSlope > 0 &&
+		// 		high > lastHigh &&
+		// 		adx > adx_threshold - 7
+		// 	)
+		// 		marketType = '趋势多且增强';
+		// }
+
+		// if (close < emaSlow) {
+		// 	marketType = '趋势空';
+		// 	if (
+		// 		close < emaTrend &&
+		// 		emaFastSlope < 0 &&
+		// 		emaSlowSlope < 0 &&
+		// 		emaTrendSlope < 0 &&
+		// 		low < lastLow &&
+		// 		adx > adx_threshold - 7
+		// 	)
+		// 		marketType = '趋势空且增强';
+		// }
+
+		if (emaFast > emaTrend && emaSlow > emaTrend) {
 			marketType = '趋势多';
 			if (
-				close > emaTrend &&
-				emaFastSlope > 0 &&
-				emaSlowSlope > 0 &&
-				emaTrendSlope > 0 &&
-				high > lastHigh &&
-				adx > adx_threshold - 7
+				emaFastSlope < emaSlowSlope &&
+				emaFastSlope < 0 &&
+				emaSlowSlope < 0
 			)
 				marketType = '趋势多且增强';
 		}
 
-		if (close < emaSlow) {
+		if (emaFast < emaTrend && emaSlow < emaTrend) {
 			marketType = '趋势空';
 			if (
-				close < emaTrend &&
-				emaFastSlope < 0 &&
-				emaSlowSlope < 0 &&
-				emaTrendSlope < 0 &&
-				low < lastLow &&
-				adx > adx_threshold - 7
+				emaFastSlope > emaSlowSlope &&
+				emaFastSlope > 0 &&
+				emaSlowSlope > 0
 			)
 				marketType = '趋势空且增强';
 		}
