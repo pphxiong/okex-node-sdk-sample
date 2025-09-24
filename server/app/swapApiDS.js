@@ -731,6 +731,8 @@ class OrderManager {
 					// } else {
 					//   config.isPaused = false;
 					// }
+          config.lnpPercent = 0;
+          config.maxLnpPercent = 0;
 				}
 
 				this.writeData();
@@ -1173,8 +1175,8 @@ class RiskManager {
 			const { basicLnp } = config;
 			if (lnp < -basicLnp) {
 				// config.isPaused = true;
-				await OrderManager.writeData();
 			}
+			await OrderManager.writeData();
 
 			if (config.isMarketModeAuto && false) {
 				if (config.marketMode == 1) {
@@ -1379,13 +1381,17 @@ async function strategyLoop(isShowLog = false) {
 			isProfitSecond,
 			lnpPercent,
 		} = RiskManager.checkStopConditions(signal);
-		let isReverseStop = false;
+		let isStopReverse = false;
 		config.lnpPercent = lnpPercent;
 		if (lnpPercent > config.maxLnpPercent) {
 			config.maxLnpPercent = lnpPercent;
 		}
-		if (lnpPercent < config.maxLnpPercent - 20) isReverseStop = true;
-		if (isStop || isReverseStop) {
+		if (
+			lnpPercent <
+			config.maxLnpPercent - config.basicLnp * config.leverage * 100
+		)
+			isStopReverse = true;
+		if (isStop || isStopReverse) {
 			await RiskManager.closePosition(signal, orderBook, isStopLoss);
 			return;
 		} else if (isProfitFirst || isProfitSecond) {
