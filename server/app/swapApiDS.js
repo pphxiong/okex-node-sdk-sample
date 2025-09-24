@@ -98,6 +98,8 @@ const config = {
 	isPaused: false,
 	signal: {},
 	orderBook: {},
+	lnpPercent: 0,
+	maxLnpPercent: 0,
 };
 let intervalId = null;
 
@@ -744,6 +746,8 @@ class OrderManager {
 				tradeAmount: config.tradeAmount,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
+				maxLnpPercent: config.maxLnpPercent,
+				lnpPercent: config.lnpPercent,
 				writeMoment: moment().format('YYYY-MM-DD HH:mm:ss'),
 			})
 		);
@@ -1036,7 +1040,7 @@ class RiskManager {
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
 
-		const { basicLnp, profitStopLossRatio } = config;
+		const { basicLnp, profitStopLossRatio, maxLnpPercent } = config;
 		const amount = Math.abs(position) * currentPrice;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
@@ -1108,10 +1112,19 @@ class RiskManager {
 			'lnp',
 			lnp,
 			'lnpPercent',
-			(lnp * config.leverage * 100).toFixed(2) + '%'
+			(lnp * config.leverage * 100).toFixed(2) + '%',
+      'maxLnpPercent',
+      maxLnpPercent,
 		);
 		console.log('***********************************');
-		return { isStop, isStopLoss, isProfitFirst, isProfitSecond };
+		const lnpPercent = lnp * config.leverage * 100;
+		return {
+			isStop,
+			isStopLoss,
+			isProfitFirst,
+			isProfitSecond,
+			lnpPercent,
+		};
 	}
 
 	static async closePosition(
@@ -1154,6 +1167,8 @@ class RiskManager {
 			state.entryPrice = 0;
 			state.highestPrice = 0;
 			state.lowestPrice = 0;
+			state.lnpPercent = 0;
+      state.maxLnpPercent = 0;
 
 			const { basicLnp } = config;
 			if (lnp < -basicLnp) {
@@ -1217,6 +1232,9 @@ class RiskManager {
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
+      config.lnpPercent = 0;
+      config.maxLnpPercent = 0;
+
 			const { slowMarketType } = signal;
 			if (
 				signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
@@ -1354,9 +1372,20 @@ async function strategyLoop(isShowLog = false) {
 		config.orderBook = orderBook;
 
 		// 步骤3: 检查强制平仓
-		const { isStop, isStopLoss, isProfitFirst, isProfitSecond } =
-			RiskManager.checkStopConditions(signal);
-		if (isStop) {
+		const {
+			isStop,
+			isStopLoss,
+			isProfitFirst,
+			isProfitSecond,
+			lnpPercent,
+		} = RiskManager.checkStopConditions(signal);
+    let isReverseStop = false
+		config.lnpPercent = lnpPercent;
+		if (lnpPercent > config.maxLnpPercent) {
+			config.maxLnpPercent = lnpPercent;
+		}
+    if(lnpPercent < config.maxLnpPercent - 20) isReverseStop = true
+		if (isStop || isReverseStop) {
 			await RiskManager.closePosition(signal, orderBook, isStopLoss);
 			return;
 		} else if (isProfitFirst || isProfitSecond) {
@@ -1440,8 +1469,15 @@ async function strategyLoop(isShowLog = false) {
 const readData = async () => {
 	let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
 
-	const { position, entryPrice, isPaused, profitStopLossRatio, tradeAmount } =
-		dataConfig;
+	const {
+		position,
+		entryPrice,
+		isPaused,
+		profitStopLossRatio,
+		tradeAmount,
+		maxLnpPercent,
+		lnpPercent,
+	} = dataConfig;
 
 	// if (!config.isMarketModeAuto) {
 	// 	delete dataConfig.marketMode;
@@ -1454,6 +1490,10 @@ const readData = async () => {
 		profitStopLossRatio: profitStopLossRatio
 			? Number(profitStopLossRatio)
 			: config.profitStopLossRatio,
+		maxLnpPercent: maxLnpPercent
+			? Number(maxLnpPercent)
+			: config.maxLnpPercent,
+		lnpPercent: lnpPercent ? Number(lnpPercent) : config.lnpPercent,
 	});
 
 	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -1476,6 +1516,8 @@ async function initPositionData() {
 	config.profitStopLossRatio =
 		dataConfig.profitStopLossRatio || config.profitStopLossRatio;
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
+	config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
+	config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
 	if (positions) {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
