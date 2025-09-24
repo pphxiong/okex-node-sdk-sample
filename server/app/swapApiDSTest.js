@@ -517,38 +517,44 @@ class Backtester {
 				const emaFastSlopes = [];
 				const emaTrendSlopes = [];
 				for (
-				let i = config.emaSettings[tf].slopeWindow;
-				i < emaSlow[0].length;
-				i++
-			) {
-				const slope =
-					(emaSlow[0][i] -
-						emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
-					emaSlow[0][i - config.emaSettings[tf].slopeWindow];
-				emaSlowSlopes.push(slope);
-			}
-			for (
-				let i = config.emaSettings[tf].slopeWindow;
-				i < emaFast[0].length;
-				i++
-			) {
-				const slope =
-					(emaFast[0][i] -
-						emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
-					emaFast[0][i - config.emaSettings[tf].slopeWindow];
-				emaFastSlopes.push(slope);
-			}
-			for (
-				let i = config.emaSettings[tf].slopeWindow;
-				i < emaTrend[0].length;
-				i++
-			) {
-				const slope =
-					(emaTrend[0][i] -
-						emaTrend[0][i - config.emaSettings[tf].slopeWindow]) /
-					emaTrend[0][i - config.emaSettings[tf].slopeWindow];
-				emaTrendSlopes.push(slope);
-			}
+					let i = config.emaSettings[tf].slopeWindow;
+					i < emaSlow[0].length;
+					i++
+				) {
+					const slope =
+						(emaSlow[0][i] -
+							emaSlow[0][
+								i - config.emaSettings[tf].slopeWindow
+							]) /
+						emaSlow[0][i - config.emaSettings[tf].slopeWindow];
+					emaSlowSlopes.push(slope);
+				}
+				for (
+					let i = config.emaSettings[tf].slopeWindow;
+					i < emaFast[0].length;
+					i++
+				) {
+					const slope =
+						(emaFast[0][i] -
+							emaFast[0][
+								i - config.emaSettings[tf].slopeWindow
+							]) /
+						emaFast[0][i - config.emaSettings[tf].slopeWindow];
+					emaFastSlopes.push(slope);
+				}
+				for (
+					let i = config.emaSettings[tf].slopeWindow;
+					i < emaTrend[0].length;
+					i++
+				) {
+					const slope =
+						(emaTrend[0][i] -
+							emaTrend[0][
+								i - config.emaSettings[tf].slopeWindow
+							]) /
+						emaTrend[0][i - config.emaSettings[tf].slopeWindow];
+					emaTrendSlopes.push(slope);
+				}
 
 				// 合并指标到数据
 				this.data[tf].forEach((d, i) => {
@@ -879,13 +885,13 @@ class Backtester {
 		// 	}
 		// }
 		// }
-		// if (this.marketMode == 2) {
-		// 	if (marketType.indexOf('多') != -1) {
-		// 		marketType = marketType.replace('多', '空');
-		// 	} else if (marketType.indexOf('空') != -1) {
-		// 		marketType = marketType.replace('空', '多');
-		// 	}
-		// }
+		if (this.marketMode == 2) {
+			if (marketType.indexOf('多') != -1) {
+				marketType = marketType.replace('多', '空');
+			} else if (marketType.indexOf('空') != -1) {
+				marketType = marketType.replace('空', '多');
+			}
+		}
 
 		return marketType;
 	}
