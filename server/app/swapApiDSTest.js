@@ -40,7 +40,7 @@ const config = {
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 21, 55], slopeWindow: 3 },
-		'5m': { periods: [5, 15, 30], slopeWindow: 2 },
+		'5m': { periods: [5, 15, 30], slopeWindow: 4 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
