@@ -517,44 +517,38 @@ class Backtester {
 				const emaFastSlopes = [];
 				const emaTrendSlopes = [];
 				for (
-					let i = config.emaSettings[tf].slopeWindow;
-					i < emaSlow[0].length;
-					i++
-				) {
-					const slope =
-						(emaSlow[0][i] -
-							emaSlow[0][
-								i - config.emaSettings[tf].slopeWindow
-							]) /
-						config.emaSettings[tf].slopeWindow;
-					emaSlowSlopes.push(slope);
-				}
-				for (
-					let i = config.emaSettings[tf].slopeWindow;
-					i < emaFast[0].length;
-					i++
-				) {
-					const slope =
-						(emaFast[0][i] -
-							emaFast[0][
-								i - config.emaSettings[tf].slopeWindow
-							]) /
-						config.emaSettings[tf].slopeWindow;
-					emaFastSlopes.push(slope);
-				}
-				for (
-					let i = config.emaSettings[tf].slopeWindow;
-					i < emaTrend[0].length;
-					i++
-				) {
-					const slope =
-						(emaTrend[0][i] -
-							emaTrend[0][
-								i - config.emaSettings[tf].slopeWindow
-							]) /
-						config.emaSettings[tf].slopeWindow;
-					emaTrendSlopes.push(slope);
-				}
+				let i = config.emaSettings[tf].slopeWindow;
+				i < emaSlow[0].length;
+				i++
+			) {
+				const slope =
+					(emaSlow[0][i] -
+						emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
+					emaSlow[0][i - config.emaSettings[tf].slopeWindow];
+				emaSlowSlopes.push(slope);
+			}
+			for (
+				let i = config.emaSettings[tf].slopeWindow;
+				i < emaFast[0].length;
+				i++
+			) {
+				const slope =
+					(emaFast[0][i] -
+						emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
+					emaFast[0][i - config.emaSettings[tf].slopeWindow];
+				emaFastSlopes.push(slope);
+			}
+			for (
+				let i = config.emaSettings[tf].slopeWindow;
+				i < emaTrend[0].length;
+				i++
+			) {
+				const slope =
+					(emaTrend[0][i] -
+						emaTrend[0][i - config.emaSettings[tf].slopeWindow]) /
+					emaTrend[0][i - config.emaSettings[tf].slopeWindow];
+				emaTrendSlopes.push(slope);
+			}
 
 				// 合并指标到数据
 				this.data[tf].forEach((d, i) => {
@@ -1654,8 +1648,8 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-09-01';
-	const end = '2025-08-30';
+	const start = '2025-01-01';
+	const end = '2025-09-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
@@ -1668,8 +1662,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+	// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
