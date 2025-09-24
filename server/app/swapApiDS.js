@@ -1385,6 +1385,7 @@ async function strategyLoop(isShowLog = false) {
 		config.lnpPercent = lnpPercent;
 		if (lnpPercent > config.maxLnpPercent) {
 			config.maxLnpPercent = lnpPercent;
+      await OrderManager.writeData();
 		}
 		if (
 			lnpPercent <
