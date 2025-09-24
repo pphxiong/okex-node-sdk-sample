@@ -452,7 +452,7 @@ async function calculateIndicators() {
 				const slope =
 					(emaSlow[0][i] -
 						emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
-					config.emaSettings[tf].slopeWindow;
+					emaSlow[0][i - config.emaSettings[tf].slopeWindow];
 				emaSlowSlopes.push(slope);
 			}
 			for (
@@ -463,7 +463,7 @@ async function calculateIndicators() {
 				const slope =
 					(emaFast[0][i] -
 						emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
-					config.emaSettings[tf].slopeWindow;
+					emaFast[0][i - config.emaSettings[tf].slopeWindow];
 				emaFastSlopes.push(slope);
 			}
 			for (
@@ -474,7 +474,7 @@ async function calculateIndicators() {
 				const slope =
 					(emaTrend[0][i] -
 						emaTrend[0][i - config.emaSettings[tf].slopeWindow]) /
-					config.emaSettings[tf].slopeWindow;
+					emaTrend[0][i - config.emaSettings[tf].slopeWindow];
 				emaTrendSlopes.push(slope);
 			}
 
@@ -731,8 +731,8 @@ class OrderManager {
 					// } else {
 					//   config.isPaused = false;
 					// }
-          config.lnpPercent = 0;
-          config.maxLnpPercent = 0;
+					config.lnpPercent = 0;
+					config.maxLnpPercent = 0;
 				}
 
 				this.writeData();
