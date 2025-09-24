@@ -1658,6 +1658,8 @@ app.get('/getMode', async function (req, res) {
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
+        lnpPercent: config.lnpPercent,
+        maxLnpPercent: config.maxLnpPercent,
 			},
 		});
 	} else {
