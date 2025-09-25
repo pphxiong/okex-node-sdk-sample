@@ -100,7 +100,7 @@ const config = {
 	orderBook: {},
 	lnpPercent: 0,
 	maxLnpPercent: 0,
-	minLnpPercent: Infinity,
+	minLnpPercent: 10000,
 };
 let intervalId = null;
 
@@ -285,7 +285,7 @@ const initState = {
 	position: 0, // 当前持仓数量
 	entryPrice: 0, // 持仓均价
 	highestPrice: 0, // 持仓期间最高价
-	lowestPrice: Infinity, // 持仓期间最低价
+	lowestPrice: 10000, // 持仓期间最低价
 	side: 'buy', // 交易方向
 	coolingUntil: 0, // 基础冷却结束时间
 };
@@ -734,7 +734,7 @@ class OrderManager {
 					// }
 					config.lnpPercent = 0;
 					config.maxLnpPercent = 0;
-          config.minLnpPercent = Infinity;
+          config.minLnpPercent = 10000;
 				}
 
 				this.writeData();
@@ -1184,7 +1184,7 @@ class RiskManager {
 			state.lowestPrice = 0;
 			state.lnpPercent = 0;
 			state.maxLnpPercent = 0;
-      state.minLnpPercent = Infinity;
+      state.minLnpPercent = 10000;
 
 			const { basicLnp } = config;
 			if (lnp < -basicLnp) {
@@ -1250,7 +1250,7 @@ class RiskManager {
 			}
 			config.lnpPercent = 0;
 			config.maxLnpPercent = 0;
-      config.minLnpPercent = Infinity;
+      config.minLnpPercent = 10000;
 
 			const { slowMarketType } = signal;
 			if (
