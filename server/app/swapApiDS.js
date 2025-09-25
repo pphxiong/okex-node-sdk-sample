@@ -734,7 +734,7 @@ class OrderManager {
 					// }
 					config.lnpPercent = 0;
 					config.maxLnpPercent = 0;
-          config.minLnpPercent = 10000;
+					config.minLnpPercent = 10000;
 				}
 
 				this.writeData();
@@ -1044,19 +1044,21 @@ class RiskManager {
 		// 		  Math.abs(Number(state.entryPrice)) * (1 - 0.01)
 		// 		: Math.abs(Number(d.close)) >=
 		// 		  Math.abs(Number(state.entryPrice)) * (1 + 0.01);
+		//  7 / 10 ; 3 / 10
 
-		const { basicLnp, profitStopLossRatio, maxLnpPercent, minLnpPercent } = config;
+		const { basicLnp, profitStopLossRatio, maxLnpPercent, minLnpPercent } =
+			config;
 		const amount = Math.abs(position) * currentPrice;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		const isProfitFirst =
-			amount > (config.tradeAmount * 2) / 3 && lnp > basicLnp;
+			amount > (config.tradeAmount * 8) / 10 && lnp > basicLnp;
 		const isProfitSecond =
-			amount > (config.tradeAmount * 1) / 3 && lnp > basicLnp * 2.5;
+			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 2.5;
 		const isLossFirst =
-			amount > (config.tradeAmount * 2) / 3 && lnp < -basicLnp / 2;
+			amount > (config.tradeAmount * 8) / 10 && lnp < -basicLnp / 2;
 		const isLossSecond =
-			amount > (config.tradeAmount * 1) / 3 && lnp > -basicLnp;
+			amount > (config.tradeAmount * 5) / 10 && lnp > -basicLnp;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1124,8 +1126,8 @@ class RiskManager {
 			(lnp * config.leverage * 100).toFixed(2) + '%',
 			'maxLnpPercent',
 			maxLnpPercent,
-      'minLnpPercent',
-			minLnpPercent,
+			'minLnpPercent',
+			minLnpPercent
 		);
 		console.log('***********************************');
 		const lnpPercent = lnp * config.leverage * 100;
@@ -1152,8 +1154,8 @@ class RiskManager {
 		const { price: currentPrice, kline } = singnal;
 		const side = state.position > 0 ? 'sell' : 'buy';
 		let amount = Math.abs(state.position);
-		if (isProfitFirst || isLossFirst) amount = amount / 3;
-		if (isProfitSecond || isLossSecond) amount = (amount * 3) / 5;
+		if (isProfitFirst || isLossFirst) amount = (amount * 3) / 10;
+		if (isProfitSecond || isLossSecond) amount = (amount * 4) / (10 - 3);
 		const lnp = getLnp(
 			Math.abs(state.entryPrice),
 			Math.abs(currentPrice),
@@ -1184,7 +1186,7 @@ class RiskManager {
 			state.lowestPrice = 0;
 			state.lnpPercent = 0;
 			state.maxLnpPercent = 0;
-      state.minLnpPercent = 10000;
+			state.minLnpPercent = 10000;
 
 			const { basicLnp } = config;
 			if (lnp < -basicLnp) {
@@ -1250,7 +1252,7 @@ class RiskManager {
 			}
 			config.lnpPercent = 0;
 			config.maxLnpPercent = 0;
-      config.minLnpPercent = 10000;
+			config.minLnpPercent = 10000;
 
 			const { slowMarketType } = signal;
 			if (
@@ -1559,7 +1561,7 @@ async function initPositionData() {
 		dataConfig.profitStopLossRatio || config.profitStopLossRatio;
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
 	config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
-  config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
+	config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
 	config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
 	if (positions) {
 		const holding = positions.find(
@@ -1700,7 +1702,7 @@ app.get('/getMode', async function (req, res) {
 				tradeAmount: config.tradeAmount,
 				lnpPercent: config.lnpPercent,
 				maxLnpPercent: config.maxLnpPercent,
-        minLnpPercent: config.minLnpPercent,
+				minLnpPercent: config.minLnpPercent,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: config.currentCandle,
