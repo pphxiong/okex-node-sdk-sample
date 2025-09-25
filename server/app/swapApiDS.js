@@ -1050,6 +1050,10 @@ class RiskManager {
 			amount > (config.tradeAmount * 2) / 3 && lnp > basicLnp;
 		const isProfitSecond =
 			amount > (config.tradeAmount * 1) / 3 && lnp > basicLnp * 2.5;
+		const isLossFirst =
+			amount > (config.tradeAmount * 2) / 3 && lnp < -basicLnp;
+		const isLossSecond =
+			amount > (config.tradeAmount * 1) / 3 && lnp > -basicLnp * 2.5;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1385,7 +1389,7 @@ async function strategyLoop(isShowLog = false) {
 		config.lnpPercent = lnpPercent;
 		if (lnpPercent > config.maxLnpPercent) {
 			config.maxLnpPercent = lnpPercent;
-      await OrderManager.writeData();
+			await OrderManager.writeData();
 		}
 		if (
 			lnpPercent <
