@@ -1411,14 +1411,16 @@ async function strategyLoop(isShowLog = false) {
 			await OrderManager.writeData();
 		}
 		if (
-			(lnpPercent > 0 &&
+			(config.maxLnpPercent >
+				config.basicLnp * 3 * config.leverage * 100 &&
 				lnpPercent <
 					config.maxLnpPercent -
-						config.basicLnp * config.leverage * 100) ||
-			(lnpPercent < 0 &&
+						config.basicLnp * 1.5 * config.leverage * 100) ||
+			(config.minLnpPercent <
+				(-config.basicLnp / 1.5) * config.leverage * 100 &&
 				lnpPercent >
 					config.minLnpPercent +
-						config.basicLnp * config.leverage * 100)
+						(config.basicLnp / 1.5) * config.leverage * 100)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
@@ -1709,10 +1711,10 @@ app.get('/getMode', async function (req, res) {
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
 				currentCandle: Object.assign(config.currentCandle, {
-						timestamp: moment(config.currentCandle.timestamp).format(
-							'YYYY-MM-DD HH:mm:ss'
-						),
-					}),
+					timestamp: moment(config.currentCandle.timestamp).format(
+						'YYYY-MM-DD HH:mm:ss'
+					),
+				}),
 			},
 		});
 	} else {
