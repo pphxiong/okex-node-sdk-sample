@@ -1412,7 +1412,7 @@ async function strategyLoop(isShowLog = false) {
 		}
 		if (
 			(config.maxLnpPercent >
-				config.basicLnp * 3 * config.leverage * 100 &&
+				config.basicLnp * 1.5 * config.leverage * 100 &&
 				lnpPercent <
 					config.maxLnpPercent -
 						config.basicLnp * 1.5 * config.leverage * 100) ||
