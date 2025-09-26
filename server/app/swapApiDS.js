@@ -1415,12 +1415,11 @@ async function strategyLoop(isShowLog = false) {
 				config.basicLnp * 1.5 * config.leverage * 100 &&
 				lnpPercent <
 					config.maxLnpPercent -
-						config.basicLnp * 1.5 * config.leverage * 100) ||
-			(config.minLnpPercent <
-				(-config.basicLnp / 1.5) * config.leverage * 100 &&
+						config.basicLnp * config.leverage * 100) ||
+			(config.minLnpPercent < -config.basicLnp * config.leverage * 100 &&
 				lnpPercent >
 					config.minLnpPercent +
-						(config.basicLnp / 1.5) * config.leverage * 100)
+						config.basicLnp * 1.5 * config.leverage * 100)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
