@@ -1708,13 +1708,11 @@ app.get('/getMode', async function (req, res) {
 				minLnpPercent: config.minLnpPercent,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
-				currentCandle: config.currentCandle.map((i) =>
-					Object.assign(i, {
-						timestamp: moment(i.timestamp).format(
+				currentCandle: Object.assign(config.currentCandle, {
+						timestamp: moment(config.currentCandle.timestamp).format(
 							'YYYY-MM-DD HH:mm:ss'
 						),
-					})
-				),
+					}),
 			},
 		});
 	} else {
