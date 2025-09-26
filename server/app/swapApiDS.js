@@ -163,7 +163,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	// marketType = '趋势多且增强';
 
 	if (emaFast > emaTrend && emaSlow > emaTrend) {
-		// marketType = '趋势多';
+		marketType = '趋势多';
 		if (
 			emaFastSlope < emaSlowSlope &&
 			emaFastSlope < 0 &&
@@ -174,7 +174,7 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	}
 
 	if (emaFast < emaTrend && emaSlow < emaTrend) {
-		// marketType = '趋势空';
+		marketType = '趋势空';
 		if (
 			emaFastSlope > emaSlowSlope &&
 			emaFastSlope > 0 &&
@@ -442,7 +442,7 @@ async function calculateIndicators() {
 				rsi,
 			] = result.slice(index * 8, (index + 1) * 8);
 			// 计算EMA斜率
-      const emaFastSlopes = [];
+			const emaFastSlopes = [];
 			const emaSlowSlopes = [];
 			const emaTrendSlopes = [];
 			for (
@@ -490,7 +490,7 @@ async function calculateIndicators() {
 				if (i >= config.emaSettings[tf].slopeWindow) {
 					const slopeIndex = i - config.emaSettings[tf].slopeWindow;
 					const zoomOut = 100000;
-          d.emaFastSlope = emaFastSlopes[slopeIndex] * zoomOut;
+					d.emaFastSlope = emaFastSlopes[slopeIndex] * zoomOut;
 					d.emaSlowSlope = emaSlowSlopes[slopeIndex] * zoomOut;
 					d.emaTrendSlope = emaTrendSlopes[slopeIndex] * zoomOut;
 				}
@@ -518,8 +518,8 @@ async function calculateIndicators() {
 					const rsiIndex = i - config.rsiPeriod;
 					d.rsi = rsi[0][rsiIndex];
 				}
-				d.emaSlow = emaSlow[0][i];
 				d.emaFast = emaFast[0][i];
+				d.emaSlow = emaSlow[0][i];
 				d.emaTrend = emaTrend[0][i];
 				if (d.adx && d.atr) {
 					// const isVolatility = d.adx > 30;
