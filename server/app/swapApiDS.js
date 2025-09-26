@@ -1054,11 +1054,11 @@ class RiskManager {
 		const isProfitFirst =
 			amount > (config.tradeAmount * 8) / 10 && lnp > basicLnp;
 		const isProfitSecond =
-			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 2.5;
+			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 3;
 		const isLossFirst =
-			amount > (config.tradeAmount * 8) / 10 && lnp < -basicLnp / 2;
+			amount > (config.tradeAmount * 8) / 10 && lnp < -basicLnp / 1.5;
 		const isLossSecond =
-			amount > (config.tradeAmount * 5) / 10 && lnp < -basicLnp;
+			amount > (config.tradeAmount * 5) / 10 && lnp < -basicLnp * 1.5;
 
 		// const takeProfit =
 		//   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
