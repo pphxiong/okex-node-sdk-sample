@@ -1411,11 +1411,14 @@ async function strategyLoop(isShowLog = false) {
 			await OrderManager.writeData();
 		}
 		if (
-			lnpPercent <
-				config.maxLnpPercent -
-					config.basicLnp * config.leverage * 100 ||
-			lnpPercent >
-				config.minLnpPercent + config.basicLnp * config.leverage * 100
+			(lnpPercent > 0 &&
+				lnpPercent <
+					config.maxLnpPercent -
+						config.basicLnp * config.leverage * 100) ||
+			(lnpPercent < 0 &&
+				lnpPercent >
+					config.minLnpPercent +
+						config.basicLnp * config.leverage * 100)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
