@@ -132,8 +132,8 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 		adx_threshold,
 		adx_stoploss_distance,
 		volatility_ratio,
-		emaSlowSlope,
 		emaFastSlope,
+		emaSlowSlope,
 		emaTrendSlope,
 	} = candle;
 	const {
@@ -442,20 +442,9 @@ async function calculateIndicators() {
 				rsi,
 			] = result.slice(index * 8, (index + 1) * 8);
 			// 计算EMA斜率
+      const emaFastSlopes = [];
 			const emaSlowSlopes = [];
-			const emaFastSlopes = [];
 			const emaTrendSlopes = [];
-			for (
-				let i = config.emaSettings[tf].slopeWindow;
-				i < emaSlow[0].length;
-				i++
-			) {
-				const slope =
-					(emaSlow[0][i] -
-						emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
-					emaSlow[0][i - config.emaSettings[tf].slopeWindow];
-				emaSlowSlopes.push(slope);
-			}
 			for (
 				let i = config.emaSettings[tf].slopeWindow;
 				i < emaFast[0].length;
@@ -466,6 +455,17 @@ async function calculateIndicators() {
 						emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
 					emaFast[0][i - config.emaSettings[tf].slopeWindow];
 				emaFastSlopes.push(slope);
+			}
+			for (
+				let i = config.emaSettings[tf].slopeWindow;
+				i < emaSlow[0].length;
+				i++
+			) {
+				const slope =
+					(emaSlow[0][i] -
+						emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
+					emaSlow[0][i - config.emaSettings[tf].slopeWindow];
+				emaSlowSlopes.push(slope);
 			}
 			for (
 				let i = config.emaSettings[tf].slopeWindow;
@@ -490,8 +490,8 @@ async function calculateIndicators() {
 				if (i >= config.emaSettings[tf].slopeWindow) {
 					const slopeIndex = i - config.emaSettings[tf].slopeWindow;
 					const zoomOut = 100000;
+          d.emaFastSlope = emaFastSlopes[slopeIndex] * zoomOut;
 					d.emaSlowSlope = emaSlowSlopes[slopeIndex] * zoomOut;
-					d.emaFastSlope = emaFastSlopes[slopeIndex] * zoomOut;
 					d.emaTrendSlope = emaTrendSlopes[slopeIndex] * zoomOut;
 				}
 				if (i >= config.macdParams[tf][1]) {
