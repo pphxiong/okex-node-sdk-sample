@@ -163,9 +163,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	// marketType = '趋势多且增强';
 
 	if (emaFast > emaTrend && emaSlow > emaTrend) {
-		marketType = '趋势多';
+		// marketType = '趋势多';
 		if (
-			emaFastSlope < emaSlowSlope &&
+			// emaFastSlope < emaSlowSlope &&
 			emaFastSlope < 0 &&
 			emaSlowSlope > 0 &&
 			emaTrendSlope > 0
@@ -174,9 +174,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	}
 
 	if (emaFast < emaTrend && emaSlow < emaTrend) {
-		marketType = '趋势空';
+		// marketType = '趋势空';
 		if (
-			emaFastSlope > emaSlowSlope &&
+			// emaFastSlope > emaSlowSlope &&
 			emaFastSlope > 0 &&
 			emaSlowSlope < 0 &&
 			emaTrendSlope < 0
@@ -1708,7 +1708,13 @@ app.get('/getMode', async function (req, res) {
 				minLnpPercent: config.minLnpPercent,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
-				currentCandle: config.currentCandle,
+				currentCandle: config.currentCandle.map((i) =>
+					Object.assign(i, {
+						timestamp: moment(i.timestamp).format(
+							'YYYY-MM-DD HH:mm:ss'
+						),
+					})
+				),
 			},
 		});
 	} else {
