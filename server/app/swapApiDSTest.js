@@ -568,9 +568,10 @@ class Backtester {
 					if (i >= config.emaSettings[tf].slopeWindow) {
 						const slopeIndex =
 							i - config.emaSettings[tf].slopeWindow;
-						d.emaSlowSlope = emaSlowSlopes[slopeIndex];
-						d.emaFastSlope = emaFastSlopes[slopeIndex];
-						d.emaTrendSlope = emaTrendSlopes[slopeIndex];
+						const zoomOut = 100000;
+						d.emaSlowSlope = emaSlowSlopes[slopeIndex] * zoomOut;
+						d.emaFastSlope = emaFastSlopes[slopeIndex] * zoomOut;
+						d.emaTrendSlope = emaTrendSlopes[slopeIndex] * zoomOut;
 					}
 					if (i >= config.macdParams[tf][1]) {
 						const macdIndex = i - config.macdParams[tf][1] + 1;
@@ -784,26 +785,26 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaTrend && emaSlow > emaTrend) {
-		// marketType = '趋势多';
-		if (
-			emaFastSlope < emaSlowSlope &&
-			emaFastSlope < 0 &&
-			emaSlowSlope > 0 &&
-			emaTrendSlope > 20
-		)
-			marketType = '趋势多且增强';
-	}
+			// marketType = '趋势多';
+			if (
+				emaFastSlope < emaSlowSlope &&
+				emaFastSlope < 0 &&
+				emaSlowSlope > 0 &&
+				emaTrendSlope > 20
+			)
+				marketType = '趋势多且增强';
+		}
 
-	if (emaFast < emaTrend && emaSlow < emaTrend) {
-		// marketType = '趋势空';
-		if (
-			emaFastSlope > emaSlowSlope &&
-			emaFastSlope > 0 &&
-			emaSlowSlope < 0 &&
-			emaTrendSlope < -20
-		)
-			marketType = '趋势空且增强';
-	}
+		if (emaFast < emaTrend && emaSlow < emaTrend) {
+			// marketType = '趋势空';
+			if (
+				emaFastSlope > emaSlowSlope &&
+				emaFastSlope > 0 &&
+				emaSlowSlope < 0 &&
+				emaTrendSlope < -20
+			)
+				marketType = '趋势空且增强';
+		}
 
 		// if (close > emaSlow) {
 		// 	marketType = '趋势多';
