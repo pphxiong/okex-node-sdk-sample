@@ -784,26 +784,26 @@ class Backtester {
 		const lastWeeker = lastEmaFast < lastEmaSlow;
 
 		if (emaFast > emaTrend && emaSlow > emaTrend) {
-			marketType = '趋势多';
-			if (
-				emaFastSlope < emaSlowSlope &&
-				emaFastSlope < 0 &&
-				emaSlowSlope > 0 &&
-				emaTrendSlope > 0
-			)
-				marketType = '趋势多且增强';
-		}
+		// marketType = '趋势多';
+		if (
+			emaFastSlope < emaSlowSlope &&
+			emaFastSlope < 0 &&
+			emaSlowSlope > 0 &&
+			emaTrendSlope > 0
+		)
+			marketType = '趋势多且增强';
+	}
 
-		if (emaFast < emaTrend && emaSlow < emaTrend) {
-			marketType = '趋势空';
-			if (
-				emaFastSlope > emaSlowSlope &&
-				emaFastSlope > 0 &&
-				emaSlowSlope < 0 &&
-				emaTrendSlope < 0
-			)
-				marketType = '趋势空且增强';
-		}
+	if (emaFast < emaTrend && emaSlow < emaTrend) {
+		// marketType = '趋势空';
+		if (
+			emaFastSlope > emaSlowSlope &&
+			emaFastSlope > 0 &&
+			emaSlowSlope < 0 &&
+			emaTrendSlope < 0
+		)
+			marketType = '趋势空且增强';
+	}
 
 		// if (close > emaSlow) {
 		// 	marketType = '趋势多';
