@@ -730,9 +730,10 @@ class OrderManager {
 					// } else {
 					//   config.isPaused = false;
 					// }
-					config.lnpPercent = 0;
-					config.maxLnpPercent = 0;
-					config.minLnpPercent = 10000;
+
+					// config.lnpPercent = 0;
+					// config.maxLnpPercent = 0;
+					// config.minLnpPercent = 10000;
 				}
 
 				this.writeData();
