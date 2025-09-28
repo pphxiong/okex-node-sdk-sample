@@ -786,21 +786,13 @@ class Backtester {
 
 		if (emaFast > emaTrend && emaSlow > emaTrend) {
 			marketType = '趋势多';
-			if (
-				emaFastSlope < -10 &&
-				emaSlowSlope > 10 &&
-				emaTrendSlope > 10
-			)
+			if (emaFastSlope < -10 && emaSlowSlope > 10 && emaTrendSlope > 20)
 				marketType = '趋势多且增强';
 		}
 
 		if (emaFast < emaTrend && emaSlow < emaTrend) {
 			marketType = '趋势空';
-			if (
-				emaFastSlope > 10 &&
-				emaSlowSlope < -10 &&
-				emaTrendSlope < -10
-			)
+			if (emaFastSlope > 10 && emaSlowSlope < -10 && emaTrendSlope < -20)
 				marketType = '趋势空且增强';
 		}
 
@@ -1653,7 +1645,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-01-01';
+	const start = '2025-09-01';
 	const end = '2025-09-30';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1667,8 +1659,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	while (moment(end).isAfter(startTime)) {
-	// while (i === 0) {
+	// while (moment(end).isAfter(startTime)) {
+	while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
