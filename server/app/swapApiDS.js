@@ -1410,16 +1410,18 @@ async function strategyLoop(isShowLog = false) {
 			config.minLnpPercent = lnpPercent;
 			await OrderManager.writeData();
 		}
+		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		if (
-			(config.maxLnpPercent >
-				config.basicLnp * 1.5 * config.leverage * 100 &&
-				lnpPercent <
-					config.maxLnpPercent -
-						config.basicLnp * config.leverage * 100) ||
-			(config.minLnpPercent < -config.basicLnp * config.leverage * 100 &&
-				lnpPercent >
-					config.minLnpPercent +
-						config.basicLnp * 1.5 * config.leverage * 100)
+			(Math.abs(config.maxLnpPercent) > basicLnpPercent * 1.5 &&
+				Math.abs(config.maxLnpPercent) >
+					Math.abs(config.minLnpPercent) &&
+				Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
+					basicLnpPercent) ||
+			(Math.abs(config.minLnpPercent) > basicLnpPercent &&
+				Math.abs(config.maxLnpPercent) <
+					Math.abs(config.minLnpPercent) &&
+				Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) >
+					basicLnpPercent)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
