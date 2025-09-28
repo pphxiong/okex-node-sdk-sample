@@ -788,8 +788,8 @@ class Backtester {
 			marketType = '趋势多';
 			if (
 				emaFastSlope < -10 &&
-				emaSlowSlope > 30 &&
-				emaTrendSlope > 40
+				emaSlowSlope > 10 &&
+				emaTrendSlope > 10
 			)
 				marketType = '趋势多且增强';
 		}
@@ -798,8 +798,8 @@ class Backtester {
 			marketType = '趋势空';
 			if (
 				emaFastSlope > 10 &&
-				emaSlowSlope < -30 &&
-				emaTrendSlope < -40
+				emaSlowSlope < -10 &&
+				emaTrendSlope < -10
 			)
 				marketType = '趋势空且增强';
 		}
