@@ -165,7 +165,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	if (emaFast > emaTrend && emaSlow > emaTrend) {
 		marketType = '趋势多';
 		if (
-			// emaFastSlope < emaSlowSlope &&
 			emaFastSlope < -10 &&
 			emaSlowSlope > 20 &&
 			emaTrendSlope > 30
@@ -176,7 +175,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 	if (emaFast < emaTrend && emaSlow < emaTrend) {
 		marketType = '趋势空';
 		if (
-			// emaFastSlope > emaSlowSlope &&
 			emaFastSlope > 10 &&
 			emaSlowSlope < -20 &&
 			emaTrendSlope < -30
