@@ -1055,7 +1055,7 @@ class RiskManager {
 		const isProfitFirst =
 			amount > (config.tradeAmount * 8) / 10 && lnp > basicLnp;
 		const isProfitSecond =
-			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 3;
+			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 2;
 		const isLossFirst =
 			amount > (config.tradeAmount * 8) / 10 && lnp < -basicLnp / 1.5;
 		const isLossSecond =
@@ -1429,7 +1429,7 @@ async function strategyLoop(isShowLog = false) {
 		}
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		if (
-			(Math.abs(config.maxLnpPercent) > basicLnpPercent * 1.5 &&
+			(Math.abs(config.maxLnpPercent) > basicLnpPercent &&
 				Math.abs(config.maxLnpPercent) >
 					Math.abs(config.minLnpPercent) &&
 				Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
