@@ -164,21 +164,13 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
 	if (emaFast > emaTrend && emaSlow > emaTrend) {
 		marketType = '趋势多';
-		if (
-			emaFastSlope < -10 &&
-			emaSlowSlope > 10 &&
-			emaTrendSlope > 20
-		)
+		if (emaFastSlope < -10 && emaSlowSlope > 10 && emaTrendSlope > 20)
 			marketType = '趋势多且增强';
 	}
 
 	if (emaFast < emaTrend && emaSlow < emaTrend) {
 		marketType = '趋势空';
-		if (
-			emaFastSlope > 10 &&
-			emaSlowSlope < -10 &&
-			emaTrendSlope < -20
-		)
+		if (emaFastSlope > 10 && emaSlowSlope < -10 && emaTrendSlope < -20)
 			marketType = '趋势空且增强';
 	}
 
@@ -1243,7 +1235,23 @@ class RiskManager {
 		// await OrderManager.writeData();
 	}
 
+	static async getIsHasPosition() {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { positions } = positionResult;
+		if (positions) {
+			const holding = positions.find(
+				(item) =>
+					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+			);
+			return holding ? true : false;
+		}
+		return false
+	}
+
 	static async openPosition(signal, orderBook) {
+    const getIsHasPosition = await RiskManager.getIsHasPosition()
+    if(getIsHasPosition) return;
+    
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
 			if (!signal.buySignal && !signal.sellSignal) {
