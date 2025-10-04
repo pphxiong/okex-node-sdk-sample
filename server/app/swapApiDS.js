@@ -1044,13 +1044,13 @@ class RiskManager {
     const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
     const isStopLoss = lnp < -basicLnp * 1.5;
     const isProfitFirst =
-      amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp;
+      amount > (config.tradeAmount * 9) / 10 && lnp > basicLnp;
     const isProfitSecond =
-      amount > (config.tradeAmount * 1) / 10 && lnp > basicLnp * 2;
+      amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 2;
     const isLossFirst =
-      amount > (config.tradeAmount * 4) / 10 && lnp < -basicLnp / 1.5;
+      amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp / 1.5;
     const isLossSecond =
-      amount > (config.tradeAmount * 1) / 10 && lnp < -basicLnp * 1;
+      amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 1;
 
     // const takeProfit =
     //   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
