@@ -1407,12 +1407,10 @@ async function strategyLoop(isShowLog = false) {
     }
     const basicLnpPercent = config.basicLnp * config.leverage * 100;
     if (
-      (Math.abs(config.maxLnpPercent) > basicLnpPercent &&
-        Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
+      (Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
         Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
           basicLnpPercent / 1.5) ||
-      (Math.abs(config.minLnpPercent) > basicLnpPercent &&
-        Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
+      (Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
         Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) >
           basicLnpPercent / 1.5)
     )
