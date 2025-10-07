@@ -39,19 +39,19 @@ require("dotenv").config();
 const config = {
   symbol: "DOGE/USDT",
   // timeframe: '1m',
-  timeframes: ["15m" /*  '5m''1m'*/], // 多周期参数
+  timeframes: ["5m" /*  '5m''1m'*/], // 多周期参数
   emaSettings: {
     // '30m': { periods: [10, 5], slopeWindow: 5 },
     // '15m': { periods: [12, 26, 50], slopeWindow: 5 },
     // '1m': { periods: [8, 21, 55], slopeWindow: 3 },
-    "15m": { periods: [5, 15, 30], slopeWindow: 3 },
+    "5m": { periods: [5, 15, 30], slopeWindow: 3 },
     // '15m': { periods: [21, 55, 200], slopeWindow: 5 },
     // '15m': { periods: [8, 34, 144], slopeWindow: 5 },
     // '5m': { periods: [25, 5], slopeWindow: 5 },
   },
-  macdParams: { "15m": [12, 26, 9] },
-  slowframe: "15m",
-  fastframe: "15m",
+  macdParams: { "5m": [12, 26, 9] },
+  slowframe: "5m",
+  fastframe: "5m",
   // 布林线参数
   bollinger: {
     period: 20,
@@ -1033,14 +1033,23 @@ class RiskManager {
     const amount = Math.abs(position) * currentPrice;
     const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
     const isStopLoss = lnp < -basicLnp * 1.5;
-    const isProfitFirst =
+    let isProfitFirst =
       amount > (config.tradeAmount * 9) / 10 && lnp > basicLnp;
-    const isProfitSecond =
+    let isProfitSecond =
       amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 2;
-    const isLossFirst =
+    let isLossFirst =
       amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp / 1.5;
-    const isLossSecond =
+    let isLossSecond =
       amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 1;
+    if (config.marketMode == 2) {
+      isProfitFirst =
+        amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp / 1.5;
+      isProfitSecond =
+        amount > (config.tradeAmount * 3.5) / 10 && lnp > basicLnp * 1;
+      isLossFirst = amount > (config.tradeAmount * 9) / 10 && lnp < -basicLnp;
+      isLossSecond =
+        amount > (config.tradeAmount * 5) / 10 && lnp < -basicLnp * 2;
+    }
 
     // const takeProfit =
     //   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1139,6 +1148,12 @@ class RiskManager {
     if (isLossFirst) amount = (amount * 5) / 10;
     if (isProfitSecond) amount = (amount * 6) / (10 - 2);
     if (isLossSecond) amount = (amount * 3) / (10 - 5);
+    if (config.marketMode == 2) {
+      if (isLossFirst) amount = (amount * 2) / 10;
+      if (isProfitFirst) amount = (amount * 5) / 10;
+      if (isLossSecond) amount = (amount * 6) / (10 - 2);
+      if (isProfitSecond) amount = (amount * 3) / (10 - 5);
+    }
     const lnp = getLnp(
       Math.abs(state.entryPrice),
       Math.abs(currentPrice),
