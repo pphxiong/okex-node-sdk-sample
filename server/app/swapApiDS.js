@@ -39,19 +39,19 @@ require("dotenv").config();
 const config = {
   symbol: "DOGE/USDT",
   // timeframe: '1m',
-  timeframes: ["5m" /*  '5m''1m'*/], // 多周期参数
+  timeframes: ["15m" /*  '5m''1m'*/], // 多周期参数
   emaSettings: {
     // '30m': { periods: [10, 5], slopeWindow: 5 },
     // '15m': { periods: [12, 26, 50], slopeWindow: 5 },
     // '1m': { periods: [8, 21, 55], slopeWindow: 3 },
-    "5m": { periods: [5, 15, 30], slopeWindow: 3 },
+    "15m": { periods: [5, 15, 30], slopeWindow: 3 },
     // '15m': { periods: [21, 55, 200], slopeWindow: 5 },
     // '15m': { periods: [8, 34, 144], slopeWindow: 5 },
     // '5m': { periods: [25, 5], slopeWindow: 5 },
   },
-  macdParams: { "5m": [12, 26, 9] },
-  slowframe: "5m",
-  fastframe: "5m",
+  macdParams: { "15m": [12, 26, 9] },
+  slowframe: "15m",
+  fastframe: "15m",
   // 布林线参数
   bollinger: {
     period: 20,
@@ -171,7 +171,13 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
       emaTrendSlope < 80
     )
       marketType = "趋势多且增强";
-    if (emaFast > emaSlow && emaTrendSlope > 30) marketType = "趋势多且增强-2";
+    if (
+      emaFast > emaSlow &&
+      emaFastSlope > 30 &&
+      emaSlowSlope > 30 &&
+      emaTrendSlope > 30
+    )
+      marketType = "趋势多且增强-2";
   }
 
   if (emaFast < emaTrend && emaSlow < emaTrend) {
@@ -183,7 +189,13 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
       emaTrendSlope > -80
     )
       marketType = "趋势空且增强";
-    if (emaFast < emaSlow && emaTrendSlope < -30) marketType = "趋势空且增强-2";
+    if (
+      emaFast < emaSlow &&
+      emaFastSlope < -30 &&
+      emaSlowSlope < -30 &&
+      emaTrendSlope < -30
+    )
+      marketType = "趋势空且增强-2";
   }
 
   // if (emaFast > emaTrend && emaSlow > emaTrend) {
@@ -1034,22 +1046,22 @@ class RiskManager {
     const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
     const isStopLoss = lnp < -basicLnp * 1.5;
     let isProfitFirst =
-      amount > (config.tradeAmount * 9) / 10 && lnp > basicLnp;
+      amount > (config.tradeAmount * 9) / 10 && lnp > basicLnp * 2;
     let isProfitSecond =
-      amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 2;
+      amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 4;
     let isLossFirst =
       amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp / 1.5;
     let isLossSecond =
       amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 1;
-    if (config.marketMode == 2) {
-      isProfitFirst =
-        amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp / 1.5;
-      isProfitSecond =
-        amount > (config.tradeAmount * 3.5) / 10 && lnp > basicLnp * 1;
-      isLossFirst = amount > (config.tradeAmount * 9) / 10 && lnp < -basicLnp;
-      isLossSecond =
-        amount > (config.tradeAmount * 5) / 10 && lnp < -basicLnp * 2;
-    }
+    // if (config.marketMode == 2) {
+    //   isProfitFirst =
+    //     amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp / 1.5;
+    //   isProfitSecond =
+    //     amount > (config.tradeAmount * 3.5) / 10 && lnp > basicLnp * 1;
+    //   isLossFirst = amount > (config.tradeAmount * 9) / 10 && lnp < -basicLnp;
+    //   isLossSecond =
+    //     amount > (config.tradeAmount * 5) / 10 && lnp < -basicLnp * 2;
+    // }
 
     // const takeProfit =
     //   lastKline5M[config.fastframe].atr * config.atrParam.takeProfit;
@@ -1148,12 +1160,13 @@ class RiskManager {
     if (isLossFirst) amount = (amount * 5) / 10;
     if (isProfitSecond) amount = (amount * 6) / (10 - 2);
     if (isLossSecond) amount = (amount * 3) / (10 - 5);
-    if (config.marketMode == 2) {
-      if (isLossFirst) amount = (amount * 2) / 10;
-      if (isProfitFirst) amount = (amount * 5) / 10;
-      if (isLossSecond) amount = (amount * 6) / (10 - 2);
-      if (isProfitSecond) amount = (amount * 3) / (10 - 5);
-    }
+    // if (config.marketMode == 2) {
+    //   if (isLossFirst) amount = (amount * 2) / 10;
+    //   if (isProfitFirst) amount = (amount * 5) / 10;
+    //   if (isLossSecond) amount = (amount * 6) / (10 - 2);
+    //   if (isProfitSecond) amount = (amount * 3) / (10 - 5);
+    // }
+    if (isLossFirst) amount = Math.abs(state.position);
     const lnp = getLnp(
       Math.abs(state.entryPrice),
       Math.abs(currentPrice),
@@ -1185,12 +1198,8 @@ class RiskManager {
       }
       await OrderManager.writeData();
 
-      if (config.isMarketModeAuto && false) {
-        if (config.marketMode == 1) {
-          config.marketMode = 2;
-        } else if (kline && kline.adx > kline.adx_threshold - 10) {
-          config.marketMode = 1;
-        }
+      if (config.isMarketModeAuto) {
+        config.marketMode = config.marketMode == 1 ? 2 : 1;
         await OrderManager.writeData();
       }
 
@@ -1225,7 +1234,7 @@ class RiskManager {
       );
     }
 
-    if (config.isMarketModeAuto) {
+    if (config.isMarketModeAuto && isLossFirst) {
       config.marketMode = config.marketMode == 1 ? 2 : 1;
       await OrderManager.writeData();
     }
@@ -1411,17 +1420,16 @@ async function strategyLoop(isShowLog = false) {
       await OrderManager.writeData();
     }
     const basicLnpPercent = config.basicLnp * config.leverage * 100;
-    if (
-      (Math.abs(config.maxLnpPercent) > basicLnpPercent / 1.5 &&
-        Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
-        Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
-          basicLnpPercent / 1.5) ||
-      (Math.abs(config.minLnpPercent) > basicLnpPercent / 1.5 &&
-        Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
-        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) >
-          basicLnpPercent / 1.5)
-    )
-      isStopReverse = true;
+    // if (
+    //   (Math.abs(config.maxLnpPercent) > basicLnpPercent / 1.5 &&
+    //     Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
+    //     Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
+    //       basicLnpPercent) ||
+    //   (Math.abs(config.minLnpPercent) > basicLnpPercent / 1.5 &&
+    //     Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
+    //     Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent)
+    // )
+    //   isStopReverse = true;
     if (isStop || isStopReverse) {
       await RiskManager.closePosition(signal, orderBook, isStopLoss);
       return;
@@ -1840,7 +1848,7 @@ app.get("/changeMode", async function (req, res) {
     state.marketMode = config.marketMode;
     config.isPaused = false;
     await OrderManager.writeData();
-    restart("change mode restart success...");
+    // restart("change mode restart success...");
     send(res, {
       errcode: 0,
       errmsg: "ok",
