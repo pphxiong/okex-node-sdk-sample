@@ -162,40 +162,44 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
   // marketType = '趋势多且增强';
 
-  if (emaFast > emaTrend && emaSlow > emaTrend) {
+  if ((emaFast > emaTrend && emaSlow > emaTrend) || close > emaTrend) {
     marketType = "趋势多";
-    if (
-      emaFastSlope < -10 &&
-      emaSlowSlope > 10 &&
-      emaTrendSlope > 20 &&
-      emaTrendSlope < 80
-    )
-      marketType = "趋势多且增强";
-    if (
-      emaFast > emaSlow &&
-      emaFastSlope > 30 &&
-      emaSlowSlope > 30 &&
-      emaTrendSlope > 30
-    )
-      marketType = "趋势多且增强-2";
+    if (close > emaTrend) {
+      if (
+        emaFastSlope < -10 &&
+        emaSlowSlope > 10 &&
+        emaTrendSlope > 20 &&
+        emaTrendSlope < 80
+      )
+        marketType = "趋势多且增强";
+      if (
+        emaFast > emaSlow &&
+        emaFastSlope > 30 &&
+        emaSlowSlope > 30 &&
+        emaTrendSlope > 30
+      )
+        marketType = "趋势多且增强-2";
+    }
   }
 
-  if (emaFast < emaTrend && emaSlow < emaTrend) {
+  if ((emaFast < emaTrend && emaSlow < emaTrend) || close < emaTrend) {
     marketType = "趋势空";
-    if (
-      emaFastSlope > 10 &&
-      emaSlowSlope < -10 &&
-      emaTrendSlope < -20 &&
-      emaTrendSlope > -80
-    )
-      marketType = "趋势空且增强";
-    if (
-      emaFast < emaSlow &&
-      emaFastSlope < -30 &&
-      emaSlowSlope < -30 &&
-      emaTrendSlope < -30
-    )
-      marketType = "趋势空且增强-2";
+    if (close < emaTrend) {
+      if (
+        emaFastSlope > 10 &&
+        emaSlowSlope < -10 &&
+        emaTrendSlope < -20 &&
+        emaTrendSlope > -80
+      )
+        marketType = "趋势空且增强";
+      if (
+        emaFast < emaSlow &&
+        emaFastSlope < -30 &&
+        emaSlowSlope < -30 &&
+        emaTrendSlope < -30
+      )
+        marketType = "趋势空且增强-2";
+    }
   }
 
   // if (emaFast > emaTrend && emaSlow > emaTrend) {
@@ -1427,15 +1431,17 @@ async function strategyLoop(isShowLog = false) {
           basicLnpPercent / 1.5) ||
       (Math.abs(config.minLnpPercent) > basicLnpPercent / 1.5 &&
         Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
-        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent / 1.5)
+        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) >
+          basicLnpPercent / 1.5)
     )
       isStopReverse = false;
     if (isStop || isStopReverse) {
       await RiskManager.closePosition(signal, orderBook, isStopLoss);
       return;
-    } else if (isProfitFirst || isProfitSecond || isLossFirst || isLossSecond) {
-    return;  
-    await RiskManager.closePosition(
+    }
+    // else if (isProfitFirst || isProfitSecond || isLossFirst || isLossSecond) {
+    else if (isLossFirst) {
+      await RiskManager.closePosition(
         signal,
         orderBook,
         isStopLoss,
