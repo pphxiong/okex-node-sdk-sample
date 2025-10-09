@@ -39,19 +39,19 @@ require("dotenv").config();
 const config = {
   symbol: "DOGE/USDT",
   // timeframe: '1m',
-  timeframes: ["15m" /*  '5m''1m'*/], // 多周期参数
+  timeframes: ["5m" /*  '5m''1m'*/], // 多周期参数
   emaSettings: {
     // '30m': { periods: [10, 5], slopeWindow: 5 },
     // '15m': { periods: [12, 26, 50], slopeWindow: 5 },
     // '1m': { periods: [8, 21, 55], slopeWindow: 3 },
-    "15m": { periods: [5, 15, 30], slopeWindow: 3 },
+    "5m": { periods: [5, 15, 30], slopeWindow: 3 },
     // '15m': { periods: [21, 55, 200], slopeWindow: 5 },
     // '15m': { periods: [8, 34, 144], slopeWindow: 5 },
     // '5m': { periods: [25, 5], slopeWindow: 5 },
   },
-  macdParams: { "15m": [12, 26, 9] },
-  slowframe: "15m",
-  fastframe: "15m",
+  macdParams: { "5m": [12, 26, 9] },
+  slowframe: "5m",
+  fastframe: "5m",
   // 布林线参数
   bollinger: {
     period: 20,
@@ -1420,16 +1420,16 @@ async function strategyLoop(isShowLog = false) {
       await OrderManager.writeData();
     }
     const basicLnpPercent = config.basicLnp * config.leverage * 100;
-    // if (
-    //   (Math.abs(config.maxLnpPercent) > basicLnpPercent / 1.5 &&
-    //     Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
-    //     Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
-    //       basicLnpPercent) ||
-    //   (Math.abs(config.minLnpPercent) > basicLnpPercent / 1.5 &&
-    //     Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
-    //     Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent)
-    // )
-    //   isStopReverse = true;
+    if (
+      (Math.abs(config.maxLnpPercent) > basicLnpPercent / 1.5 &&
+        Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
+        Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
+          basicLnpPercent / 1.5) ||
+      (Math.abs(config.minLnpPercent) > basicLnpPercent / 1.5 &&
+        Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
+        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent / 1.5)
+    )
+      isStopReverse = true;
     if (isStop || isStopReverse) {
       await RiskManager.closePosition(signal, orderBook, isStopLoss);
       return;
