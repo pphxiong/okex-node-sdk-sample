@@ -1410,62 +1410,11 @@ async function strategyLoop(isShowLog = false) {
 		// 	return;
 		// }
 
+		if (state.activeOrders.length > 0) {
+			console.log('当前有未完成订单，跳过开仓检查');
+			return;
+		}
 		await RiskManager.openPosition(signal, orderBook);
-
-		// // 步骤4: 生成限价单
-		// if (state.position === 0 && !RiskManager.isCoolingDown()) {
-		// 	if (!signal.buySignal && !signal.sellSignal) {
-		// 		return;
-		// 	}
-		// 	const { klin, slowMarketType } = signal;
-		// 	if (
-		// 		signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
-		// 	) {
-		// 		const limitPrice = orderBook.bid * (1 - config.orderDepth);
-		// 		const amount = getPositionSize(limitPrice) / limitPrice;
-
-		// 		state = JSON.parse(JSON.stringify(initState));
-		// 		state.slowMarketType = slowMarketType;
-
-		// 		await OrderManager.createLimitOrder(
-		// 			'buy',
-		// 			amount,
-		// 			limitPrice,
-		// 			true,
-		// 			signal
-		// 			// kline.atr
-		// 		);
-		// 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
-		// 		console.log(
-		// 			`%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
-		// 			'color: red; font-weight: bold;'
-		// 		);
-		// 	}
-
-		// 	if (
-		// 		signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
-		// 	) {
-		// 		const limitPrice = orderBook.ask * (1 + config.orderDepth);
-		// 		const amount = getPositionSize(limitPrice) / limitPrice;
-
-		// 		state = JSON.parse(JSON.stringify(initState));
-		// 		state.slowMarketType = slowMarketType;
-
-		// 		await OrderManager.createLimitOrder(
-		// 			'sell',
-		// 			amount,
-		// 			limitPrice,
-		// 			true,
-		// 			signal
-		// 			// kline.atr
-		// 		);
-		// 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
-		// 		console.log(
-		// 			`%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
-		// 			'color: red; font-weight: bold;'
-		// 		);
-		// 	}
-		// }
 	} catch (err) {
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
 		console.error('策略错误:', err.message);
