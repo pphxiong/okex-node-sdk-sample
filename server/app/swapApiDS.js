@@ -51,7 +51,7 @@ const config = {
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
-	macdParams: { '5m': [12, 26, 9] },
+	macdParams: { '3m': [12, 26, 9], '5m': [12, 26, 9], '15m': [12, 26, 9] },
 	slowframe: '3m',
 	fastframe: '5m',
 	trendframe: '15m',
