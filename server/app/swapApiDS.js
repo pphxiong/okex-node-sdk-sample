@@ -162,10 +162,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
 
   // marketType = '趋势多且增强';
 
-  if (close > emaSlow) {
-    marketType = "趋势多";
     if (emaFast > emaTrend && emaSlow > emaTrend) {
-      if (
+      marketType = "趋势多";
+       if (
         emaFastSlope < -10 &&
         emaSlowSlope > 10 &&
         emaTrendSlope > 20 &&
@@ -180,11 +179,9 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
       )
         marketType = "趋势多且增强-2";
     }
-  }
 
-  if (close < emaSlow) {
-    marketType = "趋势空";
     if (emaFast < emaTrend && emaSlow < emaTrend) {
+      marketType = "趋势空";
       if (
         emaFastSlope > 10 &&
         emaSlowSlope < -10 &&
@@ -200,7 +197,6 @@ function getMarketType(candle, lastCandle, lastLastCandle) {
       )
         marketType = "趋势空且增强-2";
     }
-  }
 
   // if (emaFast > emaTrend && emaSlow > emaTrend) {
   // 	marketType = '趋势多';
