@@ -927,10 +927,7 @@ class RiskManager {
 		const [slowSecondKline, slowLastKline] = JSON.parse(
 			JSON.stringify(marketData[config.slowframe].slice(-2))
 		);
-		const candle = {
-			[config.fastframe]: fastLastKline,
-			[config.slowframe]: slowLastKline,
-		};
+
 		const candle = {
 			[config.fastframe]: fastLastKline,
 			[config.slowframe]: slowLastKline,
