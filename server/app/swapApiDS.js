@@ -118,6 +118,8 @@ function getMarketType(marketData) {
 		JSON.stringify(marketData[config.trendframe].slice(-2))
 	);
 
+  console.log(11,fastSecondKline);
+
 	let marketType = '';
 	if (!fastSecondKline) return marketType;
 	if (!slowSecondKline) return marketType;
