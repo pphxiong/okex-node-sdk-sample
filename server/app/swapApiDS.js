@@ -118,8 +118,6 @@ function getMarketType(marketData) {
 		JSON.stringify(marketData[config.trendframe].slice(-2))
 	);
 
-	console.log(11, fastSecondKline, slowSecondKline, trendSecondKline);
-
 	let marketType = '';
 	if (!fastSecondKline) return marketType;
 	if (!slowSecondKline) return marketType;
@@ -173,9 +171,30 @@ function getMarketType(marketData) {
 	if (shortCondition) marketType = '趋势空且增强';
 
 	console.log('市场类型:', marketType);
-	console.log('趋势周期:', trendLastKline);
-	console.log('慢速周期:', slowLastKline);
-	console.log('快速周期:', fastLastKline);
+	console.log(
+		'趋势周期:',
+		Object.assign(trendLastKline, {
+			timestamp: moment(trendLastKline.timestamp).format(
+				'YYYY-MM-DD HH:mm:ss'
+			),
+		})
+	);
+	console.log(
+		'慢速周期:',
+		Object.assign(slowLastKline, {
+			timestamp: moment(slowLastKline.timestamp).format(
+				'YYYY-MM-DD HH:mm:ss'
+			),
+		})
+	);
+	console.log(
+		'快速周期:',
+		Object.assign(fastLastKline, {
+			timestamp: moment(fastLastKline.timestamp).format(
+				'YYYY-MM-DD HH:mm:ss'
+			),
+		})
+	);
 
 	return marketType;
 }
