@@ -1270,16 +1270,19 @@ async function initialize() {
 		);
 	});
 
-	const [candlesFast] = await Promise.all(candlePromises);
+	const [candlesFast, candlesSlow, candlesTrend] = await Promise.all(
+		candlePromises
+	);
 
-	// candlesSlow.pop();
-	// candlesMedium.pop();
 	candlesFast.pop();
+	candlesSlow.pop();
+	candlesTrend.pop();
 
-	// marketData[config.slowframe] = candlesSlow.map(parseKLine);
 	marketData[config.fastframe] = candlesFast.map(parseKLine);
+	marketData[config.slowframe] = candlesSlow.map(parseKLine);
+	marketData[config.trendframe] = candlesTrend.map(parseKLine);
 
-	mergeTimeframes();
+	// mergeTimeframes();
 
 	// console.log(
 	// 	`已加载${config.slowframe} ${
@@ -1289,6 +1292,16 @@ async function initialize() {
 	console.log(
 		`已加载${config.fastframe} ${
 			marketData[config.fastframe].length
+		}根历史K线`
+	);
+	console.log(
+		`已加载${config.slowframe} ${
+			marketData[config.slowframe].length
+		}根历史K线`
+	);
+	console.log(
+		`已加载${config.trendframe} ${
+			marketData[config.trendframe].length
 		}根历史K线`
 	);
 }
