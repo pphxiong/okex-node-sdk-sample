@@ -545,7 +545,7 @@ class OrderManager {
 			kline,
 			timestamp: Date.now(),
 		});
-    await this.writeData();
+		await this.writeData();
 		return order;
 	}
 
@@ -831,18 +831,15 @@ function toogleMarketType(marketType, candle) {
 
 // 交易信号生成
 async function generateSignal(currentPrice, isShowLog = false) {
-	const lastKline5M = JSON.parse(
-		JSON.stringify(marketData[config.fastframe].slice(-1)[0])
+	const [fastSecondKline, fastLastKline] = JSON.parse(
+		JSON.stringify(marketData[config.fastframe].slice(-2))
 	);
-	const secondKline5M = JSON.parse(
-		JSON.stringify(marketData[config.fastframe].slice(-2)[0])
+	const [slowSecondKline, slowLastKline] = JSON.parse(
+		JSON.stringify(marketData[config.slowframe].slice(-2))
 	);
 	const candle = {
-		// [config.slowframe]: getTimeStampBefore(
-		// 	marketData[config.slowframe],
-		// 	lastKline5M.timestamp
-		// ),
-		[config.fastframe]: lastKline5M,
+		[config.fastframe]: fastLastKline,
+		[config.slowframe]: slowLastKline,
 	};
 
 	// 当 slowframe 与 fastframe 相同或未显式设置时，使用 fastframe 的最新K线
@@ -924,24 +921,30 @@ class RiskManager {
 		const { side, position } = state;
 		if (position === 0) return { isStop: false };
 
-		const lastKline5M = JSON.parse(
-			JSON.stringify(marketData[config.fastframe].slice(-1)[0])
+		const [fastSecondKline, fastLastKline] = JSON.parse(
+			JSON.stringify(marketData[config.fastframe].slice(-2))
+		);
+		const [slowSecondKline, slowLastKline] = JSON.parse(
+			JSON.stringify(marketData[config.slowframe].slice(-2))
 		);
 		const candle = {
-			// [config.slowframe]: getTimeStampBefore(
-			//   marketData[config.slowframe],
-			//   lastKline5M.timestamp
-			// ),
-			[config.fastframe]: lastKline5M,
+			[config.fastframe]: fastLastKline,
+			[config.slowframe]: slowLastKline,
+		};
+		const candle = {
+			[config.fastframe]: fastLastKline,
+			[config.slowframe]: slowLastKline,
 		};
 
 		const { marketType: fastMarketType } = candle[config.fastframe];
 		let { marketType: slowMarketType } = candle[config.slowframe];
 
-		slowMarketType = toogleMarketType(
-			slowMarketType,
-			candle[config.slowframe]
-		);
+		// slowMarketType = toogleMarketType(
+		// 	slowMarketType,
+		// 	candle[config.slowframe]
+		// );
+
+		slowMarketType = getMarketType(marketData);
 
 		const { price: currentPrice } = signal;
 		let isStop = false;
