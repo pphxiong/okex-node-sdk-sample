@@ -190,8 +190,8 @@ function getMarketType(marketData) {
 
 function filterCandleData(data) {
 	const whiteList = ['timestamp', 'open', 'close','emaFast', 'emaSlow', 'emaTrend'];
-  const target
-  whiteList.forEach((key) => {
+  const target = {}
+  whiteList.forEach((key) => {  
     if(key === 'timestamp'){
       target[key] = moment(data[key]).format('YYYY-MM-DD HH:mm:ss');
       continue;
