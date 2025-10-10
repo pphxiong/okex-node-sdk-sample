@@ -909,7 +909,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 		buySignal: longCondition,
 		sellSignal: shortCondition,
 		price: currentPrice,
-		kline: lastKline5M,
+		kline: slowLastKline,
 		fastMarketType,
 		slowMarketType,
 	};
