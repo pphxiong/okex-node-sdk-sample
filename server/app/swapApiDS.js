@@ -44,9 +44,10 @@ const config = {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
-		'3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'5m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'15m': { periods: [5, 15, 30], slopeWindow: 3 },
+		// '3m': { periods: [5, 15, 30], slopeWindow: 3 },
+		'3m': { periods: [8, 21, 55], slopeWindow: 3 },
+		'5m': { periods: [8, 21, 55], slopeWindow: 3 },
+		'15m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
@@ -152,15 +153,15 @@ function getMarketType(marketData) {
 		trendClose > trendEmaTrend &&
 		trendEmaFast > trendEmaSlow &&
 		slowEmaFast > slowEmaSlow &&
-		fastEmaFast > fastEmaSlow &&
-		fastLastEmaFast < fastLastEmaSlow;
+		fastEmaFast > fastEmaSlow;
+	// fastLastEmaFast < fastLastEmaSlow;
 
 	const shortCondition =
 		trendClose < trendEmaTrend &&
 		trendEmaFast < trendEmaSlow &&
 		slowEmaFast < slowEmaSlow &&
-		fastEmaFast < fastEmaSlow &&
-		fastLastEmaFast > fastLastEmaSlow;
+		fastEmaFast < fastEmaSlow;
+	// fastLastEmaFast > fastLastEmaSlow;
 
 	const longCloseCondition = slowEmaFast < slowEmaSlow;
 	const shortCloseCondition = slowEmaFast > slowEmaSlow;
@@ -171,30 +172,30 @@ function getMarketType(marketData) {
 	if (shortCondition) marketType = '趋势空且增强';
 
 	console.log('市场类型:', marketType);
-	console.log(
-		'趋势周期:',
-		Object.assign(trendLastKline, {
-			timestamp: moment(trendLastKline.timestamp).format(
-				'YYYY-MM-DD HH:mm:ss'
-			),
-		})
-	);
-	console.log(
-		'慢速周期:',
-		Object.assign(slowLastKline, {
-			timestamp: moment(slowLastKline.timestamp).format(
-				'YYYY-MM-DD HH:mm:ss'
-			),
-		})
-	);
-	console.log(
-		'快速周期:',
-		Object.assign(fastLastKline, {
-			timestamp: moment(fastLastKline.timestamp).format(
-				'YYYY-MM-DD HH:mm:ss'
-			),
-		})
-	);
+	// console.log(
+	// 	'趋势周期:',
+	// 	Object.assign(trendLastKline, {
+	// 		timestamp: moment(trendLastKline.timestamp).format(
+	// 			'YYYY-MM-DD HH:mm:ss'
+	// 		),
+	// 	})
+	// );
+	// console.log(
+	// 	'慢速周期:',
+	// 	Object.assign(slowLastKline, {
+	// 		timestamp: moment(slowLastKline.timestamp).format(
+	// 			'YYYY-MM-DD HH:mm:ss'
+	// 		),
+	// 	})
+	// );
+	// console.log(
+	// 	'快速周期:',
+	// 	Object.assign(fastLastKline, {
+	// 		timestamp: moment(fastLastKline.timestamp).format(
+	// 			'YYYY-MM-DD HH:mm:ss'
+	// 		),
+	// 	})
+	// );
 
 	return marketType;
 }
