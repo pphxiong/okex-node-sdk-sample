@@ -64,7 +64,7 @@ const config = {
 	profitStopLossRatio: 4, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
-	coolingPeriod: 120, // 基础冷却时间(秒)
+	coolingPeriod: 180, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
 	// BOLL参数
@@ -1069,15 +1069,15 @@ class RiskManager {
 			config;
 		const amount = Math.abs(position) * currentPrice;
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
-		const isStopLoss = lnp < -basicLnp / 2;
+		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
 			amount > (config.tradeAmount * 9) / 10 && lnp > basicLnp * 2;
 		let isProfitSecond =
 			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
-			amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp / 1.5;
+			amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp ;
 		let isLossSecond =
-			amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 1;
+			amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 2;
 		// if (config.marketMode == 2) {
 		//   isProfitFirst =
 		//     amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp / 1.5;
@@ -1478,18 +1478,18 @@ async function strategyLoop(isShowLog = false) {
 			return;
 		}
 		// else if (isProfitFirst || isProfitSecond || isLossFirst || isLossSecond) {
-		else if (isLossFirst) {
-			await RiskManager.closePosition(
-				signal,
-				orderBook,
-				isStopLoss,
-				isProfitFirst,
-				isProfitSecond,
-				isLossFirst,
-				isLossSecond
-			);
-			return;
-		}
+		// else if (isLossFirst) {
+		// 	await RiskManager.closePosition(
+		// 		signal,
+		// 		orderBook,
+		// 		isStopLoss,
+		// 		isProfitFirst,
+		// 		isProfitSecond,
+		// 		isLossFirst,
+		// 		isLossSecond
+		// 	);
+		// 	return;
+		// }
 
 		await RiskManager.openPosition(signal, orderBook);
 
