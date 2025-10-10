@@ -172,32 +172,33 @@ function getMarketType(marketData) {
 	if (shortCondition) marketType = '趋势空且增强';
 
 	console.log('市场类型:', marketType);
-	// console.log(
-	// 	'趋势周期:',
-	// 	Object.assign(trendLastKline, {
-	// 		timestamp: moment(trendLastKline.timestamp).format(
-	// 			'YYYY-MM-DD HH:mm:ss'
-	// 		),
-	// 	})
-	// );
-	// console.log(
-	// 	'慢速周期:',
-	// 	Object.assign(slowLastKline, {
-	// 		timestamp: moment(slowLastKline.timestamp).format(
-	// 			'YYYY-MM-DD HH:mm:ss'
-	// 		),
-	// 	})
-	// );
-	// console.log(
-	// 	'快速周期:',
-	// 	Object.assign(fastLastKline, {
-	// 		timestamp: moment(fastLastKline.timestamp).format(
-	// 			'YYYY-MM-DD HH:mm:ss'
-	// 		),
-	// 	})
-	// );
+	console.log(
+		'趋势周期:',
+		filterCandleData(trendLastKline)
+	);
+	console.log(
+		'慢速周期:',
+		filterCandleData(slowLastKline)
+	);
+	console.log(
+		'快速周期:',
+		filterCandleData(fastLastKline)
+	);
 
 	return marketType;
+}
+
+function filterCandleData(data) {
+	const whiteList = ['timestamp', 'open', 'close','emaFast', 'emaSlow', 'emaTrend'];
+  const target
+  whiteList.forEach((key) => {
+    if(key === 'timestamp'){
+      target[key] = moment(data[key]).format('YYYY-MM-DD HH:mm:ss');
+      continue;
+    }
+    target[key] = data[key];
+  });
+  return target
 }
 
 const initState = {
