@@ -53,8 +53,8 @@ const config = {
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	macdParams: { '3m': [12, 26, 9], '5m': [12, 26, 9], '15m': [12, 26, 9] },
-	slowframe: '3m',
-	fastframe: '5m',
+	fastframe: '3m',
+	slowframe: '5m',
 	trendframe: '15m',
 	// 布林线参数
 	bollinger: {
