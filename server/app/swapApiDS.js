@@ -170,11 +170,11 @@ function getMarketType(marketData) {
 	if (shortCloseCondition) marketType = '趋势多';
 	if (longCondition) marketType = '趋势多且增强';
 	if (shortCondition) marketType = '趋势空且增强';
-
-	console.log('市场类型:', marketType);
-	console.log('趋势周期:', filterCandleData(trendLastKline));
-	console.log('慢速周期:', filterCandleData(slowLastKline));
+  
 	console.log('快速周期:', filterCandleData(fastLastKline));
+	console.log('慢速周期:', filterCandleData(slowLastKline));
+	console.log('趋势周期:', filterCandleData(trendLastKline));
+	console.log('市场类型:', marketType);
 
 	return marketType;
 }
