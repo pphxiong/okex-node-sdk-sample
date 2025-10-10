@@ -1884,7 +1884,7 @@ app.get("/changeIsPaused", async function (req, res) {
   if (pw && pw.trim() === PASSWORD) {
     config.isPaused = !config.isPaused;
     await OrderManager.writeData();
-    restart("change isPaused restart success...");
+    // restart("change isPaused restart success...");
     send(res, {
       errcode: 0,
       errmsg: "ok",
