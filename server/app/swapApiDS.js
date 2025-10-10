@@ -545,6 +545,7 @@ class OrderManager {
 			kline,
 			timestamp: Date.now(),
 		});
+    await this.writeData();
 		return order;
 	}
 
@@ -1438,6 +1439,7 @@ const readData = async () => {
 		maxLnpPercent,
 		minLnpPercent,
 		lnpPercent,
+		activeOrders,
 	} = dataConfig;
 
 	// if (!config.isMarketModeAuto) {
@@ -1458,6 +1460,7 @@ const readData = async () => {
 			? Number(minLnpPercent)
 			: config.minLnpPercent,
 		lnpPercent: lnpPercent ? Number(lnpPercent) : config.lnpPercent,
+		activeOrders: activeOrders || [],
 	});
 
 	console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -1483,6 +1486,7 @@ async function initPositionData() {
 	config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
 	config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
 	config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
+	state.activeOrders = dataConfig.activeOrders || [];
 	if (positions) {
 		const holding = positions.find(
 			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
