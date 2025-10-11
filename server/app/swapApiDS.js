@@ -137,6 +137,12 @@ function getMarketType(marketData) {
     emaTrend: slowEmaTrend,
   } = slowLastKline;
   const {
+    close: slowLastClose,
+    emaFast: slowLastEmaFast,
+    emaSlow: slowLastEmaSlow,
+    emaTrend: slowLastEmaTrend,
+  } = slowSecondKline;
+  const {
     close: fastClose,
     emaFast: fastEmaFast,
     emaSlow: fastEmaSlow,
@@ -154,14 +160,14 @@ function getMarketType(marketData) {
     // trendEmaFast > trendEmaSlow &&
     slowClose > slowEmaSlow &&
     fastClose > fastEmaSlow &&
-    fastLastClose < fastLastEmaSlow;
+    (slowLastClose < slowLastEmaSlow || fastLastClose < fastLastEmaSlow);
 
   const shortCondition =
     trendClose < trendEmaTrend &&
     // trendEmaFast < trendEmaSlow &&
     slowClose < slowEmaSlow &&
     fastClose < fastEmaSlow &&
-    fastLastClose > fastLastEmaSlow;
+    (slowLastClose > slowLastEmaSlow || fastLastClose > fastLastEmaSlow);
 
   const longCloseCondition = slowClose < slowEmaSlow;
   const shortCloseCondition = slowClose > slowEmaSlow;
