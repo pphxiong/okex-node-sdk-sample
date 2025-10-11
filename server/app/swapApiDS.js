@@ -959,7 +959,7 @@ class RiskManager {
     const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
     const isStopLoss = lnp < -basicLnp;
     let isProfitFirst =
-      amount > (config.tradeAmount * 9) / 10 && lnp > basicLnp * 2;
+      amount > (config.tradeAmount * 8) / 10 && lnp > basicLnp * 2;
     let isProfitSecond =
       amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 4;
     let isLossFirst =
@@ -1069,7 +1069,7 @@ class RiskManager {
     const { price: currentPrice, kline } = singnal;
     const side = state.position > 0 ? "sell" : "buy";
     let amount = Math.abs(state.position);
-    if (isProfitFirst) amount = (amount * 2) / 10;
+    if (isProfitFirst) amount = (amount * 5) / 10;
     if (isLossFirst) amount = (amount * 5) / 10;
     if (isProfitSecond) amount = (amount * 6) / (10 - 2);
     if (isLossSecond) amount = (amount * 3) / (10 - 5);
@@ -1345,14 +1345,13 @@ async function strategyLoop(isShowLog = false) {
     }
     const basicLnpPercent = config.basicLnp * config.leverage * 100;
     if (
-      (Math.abs(config.maxLnpPercent) > basicLnpPercent / 1.5 &&
+      (Math.abs(config.maxLnpPercent) > basicLnpPercent &&
         Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
         Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
-          basicLnpPercent / 1.5) ||
-      (Math.abs(config.minLnpPercent) > basicLnpPercent / 1.5 &&
+          basicLnpPercent) ||
+      (Math.abs(config.minLnpPercent) > basicLnpPercent &&
         Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
-        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) >
-          basicLnpPercent / 1.5)
+        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent)
     )
       isStopReverse = false;
     if (isStop || isStopReverse) {
@@ -1360,18 +1359,18 @@ async function strategyLoop(isShowLog = false) {
       return;
     }
     // else if (isProfitFirst || isProfitSecond || isLossFirst || isLossSecond) {
-    // else if (isLossFirst) {
-    // 	await RiskManager.closePosition(
-    // 		signal,
-    // 		orderBook,
-    // 		isStopLoss,
-    // 		isProfitFirst,
-    // 		isProfitSecond,
-    // 		isLossFirst,
-    // 		isLossSecond
-    // 	);
-    // 	return;
-    // }
+    else if (isProfitFirst) {
+      await RiskManager.closePosition(
+        signal,
+        orderBook,
+        isStopLoss,
+        isProfitFirst,
+        isProfitSecond,
+        isLossFirst,
+        isLossSecond
+      );
+      return;
+    }
 
     if (state.activeOrders.length > 0) {
       console.log("当前有未完成订单，跳过开仓检查");
@@ -1510,15 +1509,15 @@ function connectWebSocket() {
       if (!msg.data.k.x) return; // 仅处理闭合K线
       console.log("-----------------收到消息-----------------------");
       console.log(`更新: ${symbol} ${periodMap[period]} K线`);
-      // if (periodMap[period] === config.fastframe) {
-      //   await OrderManager.checkOrderStatus();
-      //   restart("kline update");
-      // }
-
-      debounce(async () => {
+      if (periodMap[period] === config.fastframe) {
         await OrderManager.checkOrderStatus();
         restart("kline update");
-      }, 1000 * 3)();
+      }
+
+      // debounce(async () => {
+      //   await OrderManager.checkOrderStatus();
+      //   restart("kline update");
+      // }, 1000 * 2)();
 
       // await handleKlineUpdate(msg.data, periodMap[period]);
       // await strategyLoop();
