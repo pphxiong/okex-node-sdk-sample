@@ -166,8 +166,8 @@ function getMarketType(marketData) {
   const longCloseCondition = slowClose < slowEmaSlow;
   const shortCloseCondition = slowClose > slowEmaSlow;
 
-  if (longCloseCondition) marketType = "趋势空";
-  if (shortCloseCondition) marketType = "趋势多";
+  // if (longCloseCondition) marketType = "趋势空";
+  // if (shortCloseCondition) marketType = "趋势多";
   if (longCondition) marketType = "趋势多且增强";
   if (shortCondition) marketType = "趋势空且增强";
 
@@ -1465,6 +1465,18 @@ async function initPositionData() {
   return Number(totalMarginBalance);
 }
 
+function debounce(fn, delay) {
+  let timer = 0;
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
 // 实时数据订阅
 function connectWebSocket() {
   const symbolForWS = config.symbol.replace("/", "").toLowerCase();
@@ -1502,6 +1514,11 @@ function connectWebSocket() {
         await OrderManager.checkOrderStatus();
         restart("kline update");
       }
+
+      debounce(async () => {
+        await OrderManager.checkOrderStatus();
+        restart("kline update");
+      }, 1000 * 3)();
 
       // await handleKlineUpdate(msg.data, periodMap[period]);
       // await strategyLoop();
