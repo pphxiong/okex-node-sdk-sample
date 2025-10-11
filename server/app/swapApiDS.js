@@ -153,15 +153,15 @@ function getMarketType(marketData) {
     trendClose > trendEmaTrend &&
     // trendEmaFast > trendEmaSlow &&
     slowClose > slowEmaSlow &&
-    fastClose > fastEmaSlow;
-  // fastLastEmaFast < fastLastEmaSlow;
+    fastClose > fastEmaSlow &&
+    fastLastClose < fastLastEmaSlow;
 
   const shortCondition =
     trendClose < trendEmaTrend &&
     // trendEmaFast < trendEmaSlow &&
     slowClose < slowEmaSlow &&
-    fastClose < fastEmaSlow;
-  // fastLastEmaFast > fastLastEmaSlow;
+    fastClose < fastEmaSlow &&
+    fastLastClose > fastLastEmaSlow;
 
   const longCloseCondition = slowClose < slowEmaSlow;
   const shortCloseCondition = slowClose > slowEmaSlow;
@@ -1510,10 +1510,10 @@ function connectWebSocket() {
       if (!msg.data.k.x) return; // 仅处理闭合K线
       console.log("-----------------收到消息-----------------------");
       console.log(`更新: ${symbol} ${periodMap[period]} K线`);
-      if (periodMap[period] === config.fastframe) {
-        await OrderManager.checkOrderStatus();
-        restart("kline update");
-      }
+      // if (periodMap[period] === config.fastframe) {
+      //   await OrderManager.checkOrderStatus();
+      //   restart("kline update");
+      // }
 
       debounce(async () => {
         await OrderManager.checkOrderStatus();
