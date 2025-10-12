@@ -965,11 +965,11 @@ class RiskManager {
     const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
     const isStopLoss = lnp < -basicLnp;
     let isProfitFirst =
-      amount > (config.tradeAmount * 8) / 10 && lnp > basicLnp * 2;
+      amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp * 2;
     let isProfitSecond =
       amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 4;
     let isLossFirst =
-      amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp;
+      amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp / 2;
     let isLossSecond =
       amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 2;
     // if (config.marketMode == 2) {
@@ -1085,7 +1085,7 @@ class RiskManager {
     //   if (isLossSecond) amount = (amount * 6) / (10 - 2);
     //   if (isProfitSecond) amount = (amount * 3) / (10 - 5);
     // }
-    if (isLossFirst) amount = Math.abs(state.position);
+    // if (isLossFirst) amount = Math.abs(state.position);
     const lnp = getLnp(
       Math.abs(state.entryPrice),
       Math.abs(currentPrice),
@@ -1365,7 +1365,7 @@ async function strategyLoop(isShowLog = false) {
       return;
     }
     // else if (isProfitFirst || isProfitSecond || isLossFirst || isLossSecond) {
-    else if (isProfitFirst) {
+    else if (isProfitFirst || isLossFirst) {
       await RiskManager.closePosition(
         signal,
         orderBook,
