@@ -109,14 +109,14 @@ const config = {
 let intervalId = null;
 
 function getMarketType(marketData) {
-  const [fastSecondKline, fastLastKline] = JSON.parse(
-    JSON.stringify(marketData[config.fastframe].slice(-2))
+  const [fastThirdKline, fastSecondKline, fastLastKline] = JSON.parse(
+    JSON.stringify(marketData[config.fastframe].slice(-3))
   );
-  const [slowSecondKline, slowLastKline] = JSON.parse(
-    JSON.stringify(marketData[config.slowframe].slice(-2))
+  const [slowThirdKline, slowSecondKline, slowLastKline] = JSON.parse(
+    JSON.stringify(marketData[config.slowframe].slice(-3))
   );
-  const [trendSecondKline, trendLastKline] = JSON.parse(
-    JSON.stringify(marketData[config.trendframe].slice(-2))
+  const [trendThirdKline, trendSecondKline, trendLastKline] = JSON.parse(
+    JSON.stringify(marketData[config.trendframe].slice(-3))
   );
 
   let marketType = "";
@@ -143,6 +143,12 @@ function getMarketType(marketData) {
     emaTrend: slowLastEmaTrend,
   } = slowSecondKline;
   const {
+    close: slowThirdClose,
+    emaFast: slowThirdEmaFast,
+    emaSlow: slowThirdEmaSlow,
+    emaTrend: slowThirdEmaTrend,
+  } = slowThirdKline;
+  const {
     close: fastClose,
     emaFast: fastEmaFast,
     emaSlow: fastEmaSlow,
@@ -154,26 +160,40 @@ function getMarketType(marketData) {
     emaSlow: fastLastEmaSlow,
     emaTrend: fastLastEmaTrend,
   } = fastSecondKline;
+  const {
+    close: fastThirdClose,
+    emaFast: fastThirdEmaFast,
+    emaSlow: fastThirdEmaSlow,
+    emaTrend: fastThirdEmaTrend,
+  } = fastThirdKline;
 
   const longCondition =
     trendClose > trendEmaTrend &&
     // trendEmaFast > trendEmaSlow &&
     slowClose > slowEmaSlow &&
     fastClose > fastEmaSlow &&
-    (slowLastClose < slowLastEmaSlow || fastLastClose < fastLastEmaSlow);
+    (slowLastClose < slowLastEmaSlow ||
+      fastLastClose < fastLastEmaSlow ||
+      slowThirdClose < slowThirdEmaSlow ||
+      fastThirdClose < fastThirdEmaSlow ||
+      (fastClose > fastEmaFast && fastLastClose < fastLastEmaFast));
 
   const shortCondition =
     trendClose < trendEmaTrend &&
     // trendEmaFast < trendEmaSlow &&
     slowClose < slowEmaSlow &&
     fastClose < fastEmaSlow &&
-    (slowLastClose > slowLastEmaSlow || fastLastClose > fastLastEmaSlow);
+    (slowLastClose > slowLastEmaSlow ||
+      fastLastClose > fastLastEmaSlow ||
+      slowThirdClose > slowThirdEmaSlow ||
+      fastThirdClose > fastThirdEmaSlow ||
+      (fastClose < fastEmaFast && fastLastClose > fastLastEmaFast));
 
-  const longCloseCondition = slowClose < slowEmaSlow;
-  const shortCloseCondition = slowClose > slowEmaSlow;
+  const longCloseCondition = fastClose < fastEmaSlow;
+  const shortCloseCondition = fastClose > fastEmaSlow;
 
-  // if (longCloseCondition) marketType = "趋势空";
-  // if (shortCloseCondition) marketType = "趋势多";
+  if (longCloseCondition) marketType = "趋势潜在逆转空";
+  if (shortCloseCondition) marketType = "趋势潜在逆转多";
   if (longCondition) marketType = "趋势多且增强";
   if (shortCondition) marketType = "趋势空且增强";
 
@@ -1351,13 +1371,9 @@ async function strategyLoop(isShowLog = false) {
     }
     const basicLnpPercent = config.basicLnp * config.leverage * 100;
     if (
-      (Math.abs(config.maxLnpPercent) > basicLnpPercent &&
-        Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
-        Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) >
-          basicLnpPercent) ||
-      (Math.abs(config.minLnpPercent) > basicLnpPercent &&
-        Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
-        Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent)
+      Math.abs(config.maxLnpPercent) > basicLnpPercent &&
+      Math.abs(config.maxLnpPercent) > Math.abs(config.minLnpPercent) &&
+      Math.abs(config.maxLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent
     )
       isStopReverse = true;
     if (isStop || isStopReverse) {
