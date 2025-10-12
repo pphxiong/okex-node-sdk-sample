@@ -1359,7 +1359,7 @@ async function strategyLoop(isShowLog = false) {
         Math.abs(config.maxLnpPercent) < Math.abs(config.minLnpPercent) &&
         Math.abs(config.minLnpPercent) - Math.abs(lnpPercent) > basicLnpPercent)
     )
-      isStopReverse = false;
+      isStopReverse = true;
     if (isStop || isStopReverse) {
       await RiskManager.closePosition(signal, orderBook, isStopLoss);
       return;
