@@ -63,7 +63,7 @@ const config = {
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
 	tradeAmount: 2400, // 每单交易金额(USDT)
-	maxOrderAge: 1000 * 20, // 限价单最长存活时间(30秒)
+	maxOrderAge: 1000 * 30, // 限价单最长存活时间(30秒)
 	basicLnp: (0.01 * 2) / 3,
 	profitStopLossRatio: 4, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
