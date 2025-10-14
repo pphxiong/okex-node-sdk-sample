@@ -1416,7 +1416,8 @@ async function strategyLoop(isShowLog = false) {
 				Math.abs(config.maxLnpPercent) - lnpPercent >
 					basicLnpPercent * 2) ||
 			(Math.abs(config.minLnpPercent) > basicLnpPercent &&
-				lnpPercent > basicLnpPercent)
+				Math.abs(config.minLnpPercent) + lnpPercent >
+					basicLnpPercent * 2)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
