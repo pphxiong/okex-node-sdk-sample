@@ -1314,6 +1314,7 @@ async function initialize() {
 		config.coldStartBars / 3
 	);
 	const marketState = judgeMarketState(oneHourData);
+  config.marketState = marketState;
 
 	const dataConfig = await readData();
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
