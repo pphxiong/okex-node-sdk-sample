@@ -59,9 +59,7 @@ function judgeMarketState(
 		bbWidthThreshold
 	);
 	console.log(
-		`当前指标 - ADX: ${currentAdx.toFixed(2)}, BB宽度: ${bbWidth.toFixed(
-			4
-		)}, 阈值: ${bbWidthThreshold.toFixed(4)}`
+		`当前指标 - ADX: ${currentAdx}, BB宽度: ${bbWidth}, 阈值: ${bbWidthThreshold}`
 	);
 
 	// 逻辑判断
