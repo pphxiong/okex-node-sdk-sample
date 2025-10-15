@@ -45,9 +45,9 @@ const config = {
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'5m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'15m': { periods: [5, 15, 30], slopeWindow: 3 },
+		'3m': { periods: [5, 21, 55], slopeWindow: 3 },
+		'5m': { periods: [5, 21, 55], slopeWindow: 3 },
+		'15m': { periods: [5, 21, 55], slopeWindow: 3 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
@@ -173,38 +173,30 @@ function getMarketType(marketData) {
 	const longCondition =
 		trendClose > trendEmaTrend &&
 		trendEmaFast > trendEmaSlow &&
-		trendEmaSlowSlope > 30 &&
-		trendEmaTrendSlope > 30 &&
 		slowEmaFast > slowEmaSlow &&
-		slowClose > slowEmaSlow &&
-		slowEmaSlowSlope > 10 &&
-		fastClose > fastEmaSlow &&
-		// slowLastClose < slowLastEmaSlow ||
-		(fastLastClose < fastLastEmaSlow ||
-			// slowThirdClose < slowThirdEmaSlow ||
-			fastThirdClose < fastThirdEmaSlow ||
-			(fastClose > fastEmaFast && fastLastClose < fastLastEmaFast));
+		(slowLastEmaFast < slowLastEmaSlow ||
+			slowThirdEmaFast < slowThirdEmaSlow);
+	fastEmaFast > fastEmaSlow &&
+		(fastLastEmaFast < fastLastEmaSlow ||
+			fastThirdEmaFast < fastThirdEmaSlow);
 
 	const shortCondition =
 		trendClose < trendEmaTrend &&
 		trendEmaFast < trendEmaSlow &&
-		trendEmaSlowSlope < -30 &&
-		trendEmaTrendSlope < -30 &&
 		slowEmaFast < slowEmaSlow &&
-	         slowClose < slowEmaSlow &&
-	        slowEmaSlowSlope < -10 &&
-		fastClose < fastEmaSlow &&
-		// slowLastClose > slowLastEmaSlow ||
-		(fastLastClose > fastLastEmaSlow ||
-			// slowThirdClose > slowThirdEmaSlow ||
-			fastThirdClose > fastThirdEmaSlow ||
-			(fastClose < fastEmaFast && fastLastClose > fastLastEmaFast));
+		(slowLastEmaFast > slowLastEmaSlow ||
+			slowThirdEmaFast > slowThirdEmaSlow);
+	fastEmaFast < fastEmaSlow &&
+		(fastLastEmaFast > fastLastEmaSlow ||
+			fastThirdEmaFast > fastThirdEmaSlow);
 
-	const longCloseCondition = fastClose < fastEmaSlow;
-	const shortCloseCondition = fastClose > fastEmaSlow;
+	const longCloseCondition =
+		slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend;
+	const shortCloseCondition =
+		slowEmaFast > slowEmaSlow || slowClose > slowEmaTrend;
 
-	if (longCloseCondition) marketType = '趋势潜在逆转空';
-	if (shortCloseCondition) marketType = '趋势潜在逆转多';
+	if (longCloseCondition) marketType = '趋势空';
+	if (shortCloseCondition) marketType = '趋势多';
 	if (longCondition) marketType = '趋势多且增强';
 	if (shortCondition) marketType = '趋势空且增强';
 
@@ -890,7 +882,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 
 	slowMarketType = getMarketType(marketData);
 
-	config.currentCandle = Object.assign(candle[config.slowframe], {
+	config.currentCandle = Object.assign(candle[config.fastframe], {
 		marketType: slowMarketType,
 	});
 
@@ -945,7 +937,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 		buySignal: longCondition,
 		sellSignal: shortCondition,
 		price: currentPrice,
-		kline: slowLastKline,
+		kline: fastLastKline,
 		fastMarketType,
 		slowMarketType,
 	};
@@ -1418,9 +1410,9 @@ async function strategyLoop(isShowLog = false) {
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		if (
 			(Math.abs(config.maxLnpPercent) > basicLnpPercent &&
-				Math.abs(config.maxLnpPercent) - lnpPercent >
-					basicLnpPercent * 2) ||
-			(config.minLnpPercent  < -basicLnpPercent/2 && config.minLnpPercent  + lnpPercent > 0)
+				lnpPercent < 0) 
+			// (config.minLnpPercent < -basicLnpPercent / 2 &&
+			// 	config.minLnpPercent + lnpPercent > 0)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
@@ -1428,7 +1420,7 @@ async function strategyLoop(isShowLog = false) {
 			return;
 		}
 		// else if (isProfitFirst || isProfitSecond || isLossFirst || isLossSecond) {
-		else if (isProfitFirst || isLossFirst) {
+		else if (isProfitFirst) {
 			await RiskManager.closePosition(
 				signal,
 				orderBook,
