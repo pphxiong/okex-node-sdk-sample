@@ -64,6 +64,7 @@ const config = {
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
 	tradeAmount: 2400, // 每单交易金额(USDT)
+	realTradeAmount: 200, // 实际交易金额(USDT)
 	maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
 	basicLnp: (0.01 * 1) / 3,
 	profitStopLossRatio: 4, // 盈亏比
@@ -527,7 +528,7 @@ function getPositionSize() {
 	// 	globalAvailableBalance * config.leverage * 1 / 3,
 	// 	config.tradeAmount
 	// );
-	return config.tradeAmount;
+	return config.realTradeAmount;
 }
 
 // 限价单管理模块
@@ -1316,7 +1317,6 @@ async function initialize() {
 
 	const dataConfig = await readData();
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
-  console.log('当前交易金额:', config.tradeAmount);
 
 	// 2. 根据市场状态调整策略
 	let positionSize = config.tradeAmount;
@@ -1343,8 +1343,9 @@ async function initialize() {
 		return;
 	}
 
-	config.tradeAmount = positionSize;
+	config.realTradeAmount = positionSize;
 	await OrderManager.writeData();
+	console.log('当前交易金额:', config.realTradeAmount);
 
 	console.log('正在获取历史数据...');
 	const candlePromises = [];
