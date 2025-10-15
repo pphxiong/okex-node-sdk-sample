@@ -174,21 +174,21 @@ function getMarketType(marketData) {
 		trendClose > trendEmaTrend &&
 		trendEmaFast > trendEmaSlow &&
 		slowEmaFast > slowEmaSlow &&
-		(slowLastEmaFast < slowLastEmaSlow ||
-			slowThirdEmaFast < slowThirdEmaSlow);
-	fastEmaFast > fastEmaSlow &&
-		(fastLastEmaFast < fastLastEmaSlow ||
-			fastThirdEmaFast < fastThirdEmaSlow);
+		// (slowLastEmaFast < slowLastEmaSlow ||
+		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
+		fastEmaFast > fastEmaSlow;
+	// (fastLastEmaFast < fastLastEmaSlow ||
+	// 	fastThirdEmaFast < fastThirdEmaSlow);
 
 	const shortCondition =
 		trendClose < trendEmaTrend &&
 		trendEmaFast < trendEmaSlow &&
 		slowEmaFast < slowEmaSlow &&
-		(slowLastEmaFast > slowLastEmaSlow ||
-			slowThirdEmaFast > slowThirdEmaSlow);
-	fastEmaFast < fastEmaSlow &&
-		(fastLastEmaFast > fastLastEmaSlow ||
-			fastThirdEmaFast > fastThirdEmaSlow);
+		// (slowLastEmaFast > slowLastEmaSlow ||
+		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
+		fastEmaFast < fastEmaSlow;
+	// (fastLastEmaFast > fastLastEmaSlow ||
+	// 	fastThirdEmaFast > fastThirdEmaSlow);
 
 	const longCloseCondition =
 		slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend;
@@ -1706,6 +1706,8 @@ app.get('/getMode', async function (req, res) {
 			errcode: 0,
 			errmsg: 'ok',
 			data: {
+				marketState: config.marketState,
+				realTradeAmount: config.realTradeAmount,
 				marketMode: config.marketMode,
 				isPaused: config.isPaused,
 				tradeAmount: config.tradeAmount,
@@ -1714,6 +1716,7 @@ app.get('/getMode', async function (req, res) {
 				minLnpPercent: config.minLnpPercent,
 				profitStopLossRatio: config.profitStopLossRatio,
 				isMarketModeAuto: config.isMarketModeAuto,
+				signal: config.signal,
 				currentCandle: Object.assign(config.currentCandle, {
 					timestamp: moment(config.currentCandle.timestamp).format(
 						'YYYY-MM-DD HH:mm:ss'
