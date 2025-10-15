@@ -53,12 +53,6 @@ function judgeMarketState(
 		historicalBBWidths[Math.floor(historicalBBWidths.length * 0.2)];
 
 	console.log(
-		'\n=== 当前市场指标 ===',
-		currentAdx,
-		bbWidth,
-		bbWidthThreshold
-	);
-	console.log(
 		`当前指标 - ADX: ${currentAdx}, BB宽度: ${bbWidth}, 阈值: ${bbWidthThreshold}`
 	);
 

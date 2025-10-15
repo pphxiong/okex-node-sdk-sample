@@ -1316,6 +1316,7 @@ async function initialize() {
 
 	const dataConfig = await readData();
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
+  console.log('当前交易金额:', config.tradeAmount);
 
 	// 2. 根据市场状态调整策略
 	let positionSize = config.tradeAmount;
