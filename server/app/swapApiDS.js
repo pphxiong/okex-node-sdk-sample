@@ -1312,7 +1312,7 @@ async function initialize() {
 		undefined,
 		config.coldStartBars / 3
 	);
-	const marketState = judgeMarketState(klines);
+	const marketState = judgeMarketState(oneHourData);
 
 	const dataConfig = await readData();
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
