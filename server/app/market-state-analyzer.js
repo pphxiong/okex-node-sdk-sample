@@ -185,9 +185,9 @@ async function main() {
 
 // 导出函数供其他模块使用
 module.exports = {
-    judgeMarketState,
-    analyzeMarket,
-    MarketStateMonitor
+	judgeMarketState,
+	// analyzeMarket,
+	MarketStateMonitor,
 };
 
 // 如果直接运行此文件，执行main函数
