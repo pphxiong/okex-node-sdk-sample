@@ -137,6 +137,7 @@ function getMarketType(marketData) {
 		emaFast: slowEmaFast,
 		emaSlow: slowEmaSlow,
 		emaTrend: slowEmaTrend,
+		emaSlowSlope: slowEmaSlowSlope,
 	} = slowLastKline;
 	const {
 		close: slowLastClose,
@@ -175,6 +176,8 @@ function getMarketType(marketData) {
 		trendEmaSlowSlope > 30 &&
 		trendEmaTrendSlope > 30 &&
 		slowEmaFast > slowEmaSlow &&
+		slowClose > slowEmaSlow &&
+		slowEmaSlowSlope > 10 &&
 		fastClose > fastEmaSlow &&
 		// slowLastClose < slowLastEmaSlow ||
 		(fastLastClose < fastLastEmaSlow ||
@@ -188,6 +191,8 @@ function getMarketType(marketData) {
 		trendEmaSlowSlope < -30 &&
 		trendEmaTrendSlope < -30 &&
 		slowEmaFast < slowEmaSlow &&
+	         slowClose < slowEmaSlow &&
+	        slowEmaSlowSlope < -10 &&
 		fastClose < fastEmaSlow &&
 		// slowLastClose > slowLastEmaSlow ||
 		(fastLastClose > fastLastEmaSlow ||
@@ -1415,9 +1420,7 @@ async function strategyLoop(isShowLog = false) {
 			(Math.abs(config.maxLnpPercent) > basicLnpPercent &&
 				Math.abs(config.maxLnpPercent) - lnpPercent >
 					basicLnpPercent * 2) ||
-			(Math.abs(config.minLnpPercent) > basicLnpPercent &&
-				Math.abs(config.minLnpPercent) + lnpPercent >
-					basicLnpPercent * 2)
+			(config.minLnpPercent  < -basicLnpPercent/2 && config.minLnpPercent  + lnpPercent > 0)
 		)
 			isStopReverse = true;
 		if (isStop || isStopReverse) {
