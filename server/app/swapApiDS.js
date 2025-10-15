@@ -1,6 +1,7 @@
 import moment from 'moment';
 import helper from '../utils/index';
 const customAuthClientBN = require('./customAuthClientBN');
+const { judgeMarketState } = require('./market-state-analyzer');
 
 const PASSWORD = '@Xiong092479';
 
@@ -59,7 +60,7 @@ const config = {
 	// 布林线参数
 	bollinger: {
 		period: 20,
-		stdDev: 1.8,
+		stdDev: 2,
 	},
 	orderDepth: 0.00012, // 限价单挂单深度 (0.1%)
 	tradeAmount: 2400, // 每单交易金额(USDT)
@@ -71,9 +72,6 @@ const config = {
 	coolingPeriod: 180, // 基础冷却时间(秒)
 	numSegments: 5, // 分段数量
 	icebergRatio: 0.2, // 冰山可见部分比例
-	// BOLL参数
-	bollPeriod: 14,
-	bollStdDev: 3.0,
 	// MACD参数
 	macdFast: 8,
 	macdSlow: 17,
@@ -105,6 +103,7 @@ const config = {
 	lnpPercent: 0,
 	maxLnpPercent: 0,
 	minLnpPercent: 10000,
+	marketState: {},
 };
 let intervalId = null;
 
@@ -1306,6 +1305,46 @@ class RiskManager {
 
 // 初始化历史数据
 async function initialize() {
+	console.log('获取1小时数据...');
+	const oneHourData = await exchange.fetchOHLCV(
+		config.symbol,
+		'1h',
+		undefined,
+		config.coldStartBars / 3
+	);
+	const marketState = judgeMarketState(klines);
+
+	const dataConfig = await readData();
+	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
+
+	// 2. 根据市场状态调整策略
+	let positionSize = config.tradeAmount;
+	let shouldTrade = true;
+
+	switch (marketState.signal) {
+		case 1: // 趋势市
+			positionSize = positionSize * 1.5;
+			console.log('🟢 趋势市 - 积极交易模式');
+			break;
+		case 0: // 震荡市
+			positionSize = positionSize * 0.2;
+			console.log('🟡 震荡市 - 保守交易模式');
+			// 或者完全停止交易: shouldTrade = false;
+			break;
+		case -1: // 不确定
+			positionSize = positionSize * 0.8;
+			console.log('🟠 不确定 - 谨慎交易模式');
+			break;
+	}
+
+	if (!shouldTrade) {
+		console.log('跳过交易：市场处于震荡市');
+		return;
+	}
+
+	config.tradeAmount = positionSize;
+	await OrderManager.writeData();
+
 	console.log('正在获取历史数据...');
 	const candlePromises = [];
 	config.timeframes.forEach((timeframe) => {
@@ -1409,8 +1448,8 @@ async function strategyLoop(isShowLog = false) {
 		}
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		if (
-			(Math.abs(config.maxLnpPercent) > basicLnpPercent &&
-				lnpPercent < 0) 
+			Math.abs(config.maxLnpPercent) > basicLnpPercent &&
+			lnpPercent < 0
 			// (config.minLnpPercent < -basicLnpPercent / 2 &&
 			// 	config.minLnpPercent + lnpPercent > 0)
 		)

@@ -62,6 +62,7 @@
 		"cross-env": "^7.0.3",
 		"mathjs": "^14.3.1",
 		"perf_hooks": "0.0.1",
+		"technicalindicators": "^3.1.0",
 		"tulind": "^0.8.20"
 	}
 }
