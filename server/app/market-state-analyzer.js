@@ -38,7 +38,7 @@ function judgeMarketState(
 	const bbResults = TechnicalIndicators.BollingerBands.calculate(bbInput);
 
 	// 获取最新的指标值
-	const currentAdx = adxValues[adxValues.length - 1];
+	const currentAdx = adxValues[adxValues.length - 1].adx;
 	const currentBB = bbResults[bbResults.length - 1];
 
 	// 计算布林带宽度（标准化）
