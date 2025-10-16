@@ -156,6 +156,9 @@ function getMarketType(marketData) {
 		emaFast: fastEmaFast,
 		emaSlow: fastEmaSlow,
 		emaTrend: fastEmaTrend,
+		emaFastSlope: fastEmaFastSlope,
+		emaSlowSlope: fastEmaSlowSlope,
+		emaTrendSlope: fastEmaTrendSlope,
 	} = fastLastKline;
 	const {
 		close: fastLastClose,
@@ -176,7 +179,9 @@ function getMarketType(marketData) {
 		slowEmaFast > slowEmaSlow &&
 		// (slowLastEmaFast < slowLastEmaSlow ||
 		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
-		fastEmaFast > fastEmaSlow;
+		fastEmaFast > fastEmaSlow &&
+		fastEmaFastSlope > 30 &&
+		fastEmaSlowSlope > 30;
 	// (fastLastEmaFast < fastLastEmaSlow ||
 	// 	fastThirdEmaFast < fastThirdEmaSlow);
 
@@ -186,7 +191,9 @@ function getMarketType(marketData) {
 		slowEmaFast < slowEmaSlow &&
 		// (slowLastEmaFast > slowLastEmaSlow ||
 		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
-		fastEmaFast < fastEmaSlow;
+		fastEmaFast < fastEmaSlow &&
+		fastEmaFastSlope < -30 &&
+		fastEmaSlowSlope < -30;
 	// (fastLastEmaFast > fastLastEmaSlow ||
 	// 	fastThirdEmaFast > fastThirdEmaSlow);
 
@@ -1006,21 +1013,21 @@ class RiskManager {
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
-			amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp * 2;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp;
 		let isProfitSecond =
-			amount > (config.tradeAmount * 5) / 10 && lnp > basicLnp * 4;
+			amount > (config.realTradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
-			amount > (config.tradeAmount * 7.5) / 10 && lnp < -basicLnp / 2;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp < -basicLnp / 2;
 		let isLossSecond =
-			amount > (config.tradeAmount * 3.5) / 10 && lnp < -basicLnp * 2;
+			amount > (config.realTradeAmount * 3.5) / 10 && lnp < -basicLnp * 2;
 		// if (config.marketMode == 2) {
 		//   isProfitFirst =
-		//     amount > (config.tradeAmount * 7.5) / 10 && lnp > basicLnp / 1.5;
+		//     amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp / 1.5;
 		//   isProfitSecond =
-		//     amount > (config.tradeAmount * 3.5) / 10 && lnp > basicLnp * 1;
-		//   isLossFirst = amount > (config.tradeAmount * 9) / 10 && lnp < -basicLnp;
+		//     amount > (config.realTradeAmount * 3.5) / 10 && lnp > basicLnp * 1;
+		//   isLossFirst = amount > (config.realTradeAmount * 9) / 10 && lnp < -basicLnp;
 		//   isLossSecond =
-		//     amount > (config.tradeAmount * 5) / 10 && lnp < -basicLnp * 2;
+		//     amount > (config.realTradeAmount * 5) / 10 && lnp < -basicLnp * 2;
 		// }
 
 		// const takeProfit =
@@ -1314,7 +1321,7 @@ async function initialize() {
 		config.coldStartBars / 3
 	);
 	const marketState = judgeMarketState(oneHourData);
-  config.marketState = marketState;
+	config.marketState = marketState;
 
 	const dataConfig = await readData();
 	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
