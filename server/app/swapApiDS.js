@@ -40,23 +40,23 @@ require('dotenv').config();
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['3m', '5m', '15m' /*  '5m''1m'*/], // 多周期参数
+	timeframes: ['5m', '15m', '1h' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'3m': { periods: [5, 21, 55], slopeWindow: 3 },
-		'5m': { periods: [5, 21, 55], slopeWindow: 3 },
-		'15m': { periods: [5, 21, 55], slopeWindow: 3 },
+		'5m': { periods: [6, 13, 34], slopeWindow: 3 },
+		'15m': { periods: [9, 21, 55], slopeWindow: 4 },
+		'1h': { periods: [12, 26, 60], slopeWindow: 5 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
-	macdParams: { '3m': [12, 26, 9], '5m': [12, 26, 9], '15m': [12, 26, 9] },
-	fastframe: '3m',
-	slowframe: '5m',
-	trendframe: '15m',
+	macdParams: { '5m': [12, 26, 9], '15m': [12, 26, 9], '1h': [12, 26, 9] },
+	fastframe: '5m',
+	slowframe: '15m',
+	trendframe: '1h',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -1013,7 +1013,7 @@ class RiskManager {
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
-			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 10;
 		let isProfitSecond =
 			amount > (config.realTradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
@@ -1313,12 +1313,12 @@ class RiskManager {
 
 // 初始化历史数据
 async function initialize() {
-	console.log('获取1小时数据...');
+	console.log('获取4小时数据...');
 	const oneHourData = await exchange.fetchOHLCV(
 		config.symbol,
-		'1h',
+		'4h',
 		undefined,
-		config.coldStartBars / 3
+		config.coldStartBars / 4
 	);
 	const marketState = judgeMarketState(oneHourData);
 	config.marketState = marketState;
@@ -1461,7 +1461,7 @@ async function strategyLoop(isShowLog = false) {
 		if (
 			(Math.abs(config.maxLnpPercent) > basicLnpPercent ||
 				amount < (config.realTradeAmount * 7.5) / 10) &&
-			lnpPercent < 0
+			lnpPercent < basicLnpPercent / 2
 			// (config.minLnpPercent < -basicLnpPercent / 2 &&
 			// 	config.minLnpPercent + lnpPercent > 0)
 		)
