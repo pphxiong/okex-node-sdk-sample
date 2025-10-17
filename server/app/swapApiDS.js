@@ -123,7 +123,7 @@ const professionalApproach = {
 	example: {
 		account: 1000000,
 		riskPerTrade: 0.5, // 5000U
-		atrStop: 2 * ATR, // 假设6%
+		atrStop: 2 * 0.03, // 假设6%
 		positionSize: 5000 / 0.06, // 8.3万U仓位 = 83333
 		positionPercent: 8.33, // 仅占总资金8.33%
 	},
