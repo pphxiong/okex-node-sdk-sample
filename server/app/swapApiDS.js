@@ -116,26 +116,26 @@ const configB = {
 	effectiveLeverage: 0.25,
 	goldenRule: '止损距离永远要大于（爆仓距离 + 安全边际）',
 };
-const professionalApproach = {
-	rule1: '单笔风险永远控制在0.5-1%',
-	rule2: '止损基于市场波动率（ATR）而非固定百分比',
-	rule3: '仓位大小由止损距离反向决定',
-	example: {
-		account: 1000000,
-		riskPerTrade: 0.5, // 5000U
-		atrStop: 2 * 0.03, // 假设6%
-		positionSize: 5000 / 0.06, // 8.3万U仓位 = 83333
-		positionPercent: 8.33, // 仅占总资金8.33%
-	},
-	philosophy: '先确定能亏多少，再决定能买多少',
-};
-const correctWorkflow = {
-	step1: '确定单笔风险（如1%总资金）',
-	step2: '分析市场，设定合理的止损距离（如4%）',
-	step3: '计算仓位：风险资金 / 止损幅度',
-	step4: '开仓并立即设置止损',
-	step5: '盈利后使用移动止损保护利润',
-};
+// const professionalApproach = {
+// 	rule1: '单笔风险永远控制在0.5-1%',
+// 	rule2: '止损基于市场波动率（ATR）而非固定百分比',
+// 	rule3: '仓位大小由止损距离反向决定',
+// 	example: {
+// 		account: 1000000,
+// 		riskPerTrade: 0.5, // 5000U
+// 		atrStop: 2 * 0.03, // 假设6%
+// 		positionSize: 5000 / 0.06, // 8.3万U仓位 = 83333
+// 		positionPercent: 8.33, // 仅占总资金8.33%
+// 	},
+// 	philosophy: '先确定能亏多少，再决定能买多少',
+// };
+// const correctWorkflow = {
+// 	step1: '确定单笔风险（如1%总资金）',
+// 	step2: '分析市场，设定合理的止损距离（如4%）',
+// 	step3: '计算仓位：风险资金 / 止损幅度',
+// 	step4: '开仓并立即设置止损',
+// 	step5: '盈利后使用移动止损保护利润',
+// };
 
 function getMarketType(marketData) {
 	const [fastThirdKline, fastSecondKline, fastLastKline] = JSON.parse(
