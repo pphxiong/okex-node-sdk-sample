@@ -106,6 +106,7 @@ const config = {
 	minLnpPercent: 10000,
 	marketState: {},
 };
+let intervalId = null;
 const configB = {
 	account: 1000,
 	riskPerTrade: 1,
