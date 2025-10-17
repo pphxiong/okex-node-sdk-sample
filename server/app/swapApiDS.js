@@ -66,7 +66,7 @@ const config = {
 	tradeAmount: 2400, // 每单交易金额(USDT)
 	realTradeAmount: 200, // 实际交易金额(USDT)
 	maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-	basicLnp: (0.01 * 2) / 1,
+	basicLnp: (0.01 * 2) / 3,
 	profitStopLossRatio: 20, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -111,9 +111,9 @@ const configB = {
 	account: 1000,
 	riskPerTrade: 1,
 	name: '技术位止损',
-	stopLoss: 0.04, // 4%止损
-	positionSize: 10 / 0.04, // 开仓250U
-	margin: 250 / 40, // 6.25
+	stopLoss: 0.02, // 4%止损
+	positionSize: 10 / 0.02, // 开仓250U 500
+	margin: 500 / 40, // 6.25
 	effectiveLeverage: 0.25,
 	goldenRule: '止损距离永远要大于（爆仓距离 + 安全边际）',
 };
