@@ -46,8 +46,8 @@ const config = {
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'5m': { periods: [6, 13, 34], slopeWindow: 3 },
-		'15m': { periods: [9, 21, 55], slopeWindow: 4 },
+		'5m': { periods: [6, 13, 34], slopeWindow: 2 },
+		'15m': { periods: [9, 21, 55], slopeWindow: 3 },
 		'1h': { periods: [12, 26, 60], slopeWindow: 5 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
@@ -66,8 +66,8 @@ const config = {
 	tradeAmount: 2400, // 每单交易金额(USDT)
 	realTradeAmount: 200, // 实际交易金额(USDT)
 	maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-	basicLnp: (0.01 * 1) / 3,
-	profitStopLossRatio: 4, // 盈亏比
+	basicLnp: (0.01 * 2) / 1,
+	profitStopLossRatio: 20, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
 	coolingPeriod: 180, // 基础冷却时间(秒)
@@ -106,7 +106,36 @@ const config = {
 	minLnpPercent: 10000,
 	marketState: {},
 };
-let intervalId = null;
+const configB = {
+	account: 1000,
+	riskPerTrade: 1,
+	name: '技术位止损',
+	stopLoss: 0.04, // 4%止损
+	positionSize: 10 / 0.04, // 开仓250U
+	margin: 250 / 40, // 6.25
+	effectiveLeverage: 0.25,
+	goldenRule: '止损距离永远要大于（爆仓距离 + 安全边际）',
+};
+const professionalApproach = {
+	rule1: '单笔风险永远控制在0.5-1%',
+	rule2: '止损基于市场波动率（ATR）而非固定百分比',
+	rule3: '仓位大小由止损距离反向决定',
+	example: {
+		account: 1000000,
+		riskPerTrade: 0.5, // 5000U
+		atrStop: 2 * ATR, // 假设6%
+		positionSize: 5000 / 0.06, // 8.3万U仓位 = 83333
+		positionPercent: 8.33, // 仅占总资金8.33%
+	},
+	philosophy: '先确定能亏多少，再决定能买多少',
+};
+const correctWorkflow = {
+	step1: '确定单笔风险（如1%总资金）',
+	step2: '分析市场，设定合理的止损距离（如4%）',
+	step3: '计算仓位：风险资金 / 止损幅度',
+	step4: '开仓并立即设置止损',
+	step5: '盈利后使用移动止损保护利润',
+};
 
 function getMarketType(marketData) {
 	const [fastThirdKline, fastSecondKline, fastLastKline] = JSON.parse(
@@ -1459,9 +1488,9 @@ async function strategyLoop(isShowLog = false) {
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		const amount = Math.abs(state.position) * currentPrice;
 		if (
-			(Math.abs(config.maxLnpPercent) > basicLnpPercent ||
+			(config.maxLnpPercent > basicLnpPercent ||
 				amount < (config.realTradeAmount * 7.5) / 10) &&
-			lnpPercent < basicLnpPercent / 2
+			lnpPercent < config.maxLnpPercent * 0.618
 			// (config.minLnpPercent < -basicLnpPercent / 2 &&
 			// 	config.minLnpPercent + lnpPercent > 0)
 		)
