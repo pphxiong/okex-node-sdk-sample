@@ -230,11 +230,11 @@ function getMarketType(marketData) {
   const longCloseCondition =
     slowEmaFast < slowEmaSlow ||
     slowClose < slowEmaTrend ||
-    fastEmaFastSlope > 80;
+    fastEmaFastSlope < -80;
   const shortCloseCondition =
     slowEmaFast > slowEmaSlow ||
     slowClose > slowEmaTrend ||
-    fastEmaFastSlope < -80;
+    fastEmaFastSlope > 80;
 
   if (longCloseCondition) marketType = "趋势空";
   if (shortCloseCondition) marketType = "趋势多";
