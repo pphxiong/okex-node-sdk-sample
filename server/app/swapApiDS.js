@@ -203,29 +203,29 @@ function getMarketType(marketData) {
 		emaTrend: fastThirdEmaTrend,
 	} = fastThirdKline;
 
-	const longCondition =
-		trendClose > trendEmaTrend &&
-		trendEmaFast > trendEmaSlow &&
-		slowEmaFast > slowEmaSlow &&
-		// (slowLastEmaFast < slowLastEmaSlow ||
-		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
-		fastEmaFast > fastEmaSlow &&
-		fastEmaFastSlope > 30 &&
-		fastEmaSlowSlope > 30;
-	// (fastLastEmaFast < fastLastEmaSlow ||
-	// 	fastThirdEmaFast < fastThirdEmaSlow);
+  const longCondition =
+    trendClose > trendEmaTrend &&
+   // trendEmaFast > trendEmaSlow &&
+    slowEmaFast > slowEmaSlow &&
+    // (slowLastEmaFast < slowLastEmaSlow ||
+    // 	slowThirdEmaFast < slowThirdEmaSlow) &&
+    fastEmaFast > fastEmaSlow &&
+    fastEmaFastSlope > 30 &&
+    fastEmaSlowSlope > 30;
+  // (fastLastEmaFast < fastLastEmaSlow ||
+  // 	fastThirdEmaFast < fastThirdEmaSlow);
 
-	const shortCondition =
-		trendClose < trendEmaTrend &&
-		trendEmaFast < trendEmaSlow &&
-		slowEmaFast < slowEmaSlow &&
-		// (slowLastEmaFast > slowLastEmaSlow ||
-		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
-		fastEmaFast < fastEmaSlow &&
-		fastEmaFastSlope < -30 &&
-		fastEmaSlowSlope < -30;
-	// (fastLastEmaFast > fastLastEmaSlow ||
-	// 	fastThirdEmaFast > fastThirdEmaSlow);
+  const shortCondition =
+    trendClose < trendEmaTrend &&
+   // trendEmaFast < trendEmaSlow &&
+    slowEmaFast < slowEmaSlow &&
+    // (slowLastEmaFast > slowLastEmaSlow ||
+    // 	slowThirdEmaFast > slowThirdEmaSlow) &&
+    fastEmaFast < fastEmaSlow &&
+    fastEmaFastSlope < -30 &&
+    fastEmaSlowSlope < -30;
+  // (fastLastEmaFast > fastLastEmaSlow ||
+  // 	fastThirdEmaFast > fastThirdEmaSlow);
 
 	const longCloseCondition =
 		((slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend) &&
