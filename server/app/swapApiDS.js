@@ -205,7 +205,7 @@ function getMarketType(marketData) {
 
   const longCondition =
     trendClose > trendEmaTrend &&
-    trendEmaFast > trendEmaSlow &&
+   // trendEmaFast > trendEmaSlow &&
     slowEmaFast > slowEmaSlow &&
     // (slowLastEmaFast < slowLastEmaSlow ||
     // 	slowThirdEmaFast < slowThirdEmaSlow) &&
@@ -217,7 +217,7 @@ function getMarketType(marketData) {
 
   const shortCondition =
     trendClose < trendEmaTrend &&
-    trendEmaFast < trendEmaSlow &&
+   // trendEmaFast < trendEmaSlow &&
     slowEmaFast < slowEmaSlow &&
     // (slowLastEmaFast > slowLastEmaSlow ||
     // 	slowThirdEmaFast > slowThirdEmaSlow) &&
