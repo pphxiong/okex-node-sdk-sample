@@ -46,9 +46,9 @@ const config = {
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'5m': { periods: [6, 13, 34], slopeWindow: 2 },
-		'15m': { periods: [9, 21, 55], slopeWindow: 3 },
-		'1h': { periods: [12, 26, 60], slopeWindow: 5 },
+		'5m': { periods: [6, 13, 34], slopeWindow: 3 },
+		'15m': { periods: [9, 21, 55], slopeWindow: 5 },
+		'1h': { periods: [12, 26, 60], slopeWindow: 6 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
@@ -203,37 +203,37 @@ function getMarketType(marketData) {
 		emaTrend: fastThirdEmaTrend,
 	} = fastThirdKline;
 
-  const longCondition =
-    trendClose > trendEmaTrend &&
-   // trendEmaFast > trendEmaSlow &&
-    slowEmaFast > slowEmaSlow &&
-    // (slowLastEmaFast < slowLastEmaSlow ||
-    // 	slowThirdEmaFast < slowThirdEmaSlow) &&
-    fastEmaFast > fastEmaSlow &&
-    fastEmaFastSlope > 30 &&
-    fastEmaSlowSlope > 30;
-  // (fastLastEmaFast < fastLastEmaSlow ||
-  // 	fastThirdEmaFast < fastThirdEmaSlow);
+	const longCondition =
+		trendClose > trendEmaTrend &&
+		// trendEmaFast > trendEmaSlow &&
+		slowEmaFast > slowEmaSlow &&
+		// (slowLastEmaFast < slowLastEmaSlow ||
+		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
+		fastEmaFast > fastEmaSlow &&
+		fastEmaFastSlope > 50 &&
+		fastEmaSlowSlope > 30;
+	// (fastLastEmaFast < fastLastEmaSlow ||
+	// 	fastThirdEmaFast < fastThirdEmaSlow);
 
-  const shortCondition =
-    trendClose < trendEmaTrend &&
-   // trendEmaFast < trendEmaSlow &&
-    slowEmaFast < slowEmaSlow &&
-    // (slowLastEmaFast > slowLastEmaSlow ||
-    // 	slowThirdEmaFast > slowThirdEmaSlow) &&
-    fastEmaFast < fastEmaSlow &&
-    fastEmaFastSlope < -30 &&
-    fastEmaSlowSlope < -30;
-  // (fastLastEmaFast > fastLastEmaSlow ||
-  // 	fastThirdEmaFast > fastThirdEmaSlow);
+	const shortCondition =
+		trendClose < trendEmaTrend &&
+		// trendEmaFast < trendEmaSlow &&
+		slowEmaFast < slowEmaSlow &&
+		// (slowLastEmaFast > slowLastEmaSlow ||
+		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
+		fastEmaFast < fastEmaSlow &&
+		fastEmaFastSlope < -50 &&
+		fastEmaSlowSlope < -30;
+	// (fastLastEmaFast > fastLastEmaSlow ||
+	// 	fastThirdEmaFast > fastThirdEmaSlow);
 
 	const longCloseCondition =
 		((slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend) &&
-			fastEmaFastSlope < -30) ||
+			fastEmaFastSlope < -50) ||
 		fastEmaFastSlope < -80;
 	const shortCloseCondition =
 		((slowEmaFast > slowEmaSlow || slowClose > slowEmaTrend) &&
-			fastEmaFastSlope > 30) ||
+			fastEmaFastSlope > 50) ||
 		fastEmaFastSlope > 80;
 
 	if (longCloseCondition) marketType = '趋势空';
