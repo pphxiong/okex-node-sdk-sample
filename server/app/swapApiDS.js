@@ -1348,44 +1348,6 @@ class RiskManager {
 
 // 初始化历史数据
 async function initialize() {
-	console.log('获取4小时数据...');
-	const oneHourData = await exchange.fetchOHLCV(
-		config.symbol,
-		'4h',
-		undefined,
-		config.coldStartBars / 4
-	);
-	const marketState = judgeMarketState(oneHourData);
-	config.marketState = marketState;
-
-	// 2. 根据市场状态调整策略
-	let positionSize = config.tradeAmount;
-	let shouldTrade = true;
-
-	switch (marketState.signal) {
-		case 1: // 趋势市
-			positionSize = positionSize * 1.5;
-			console.log('🟢 趋势市 - 积极交易模式');
-			break;
-		case 0: // 震荡市
-			positionSize = positionSize * 0.2;
-			console.log('🟡 震荡市 - 保守交易模式');
-			// 或者完全停止交易: shouldTrade = false;
-			break;
-		case -1: // 不确定
-			positionSize = positionSize * 0.8;
-			console.log('🟠 不确定 - 谨慎交易模式');
-			break;
-	}
-
-	if (!shouldTrade) {
-		console.log('跳过交易：市场处于震荡市');
-		return;
-	}
-
-	config.realTradeAmount = positionSize;
-	console.log('当前交易金额:', config.realTradeAmount);
-
 	console.log('正在获取历史数据...');
 	const candlePromises = [];
 	config.timeframes.forEach((timeframe) => {
@@ -1412,12 +1374,6 @@ async function initialize() {
 	marketData[config.trendframe] = candlesTrend.map(parseKLine);
 
 	// mergeTimeframes();
-
-	// console.log(
-	// 	`已加载${config.slowframe} ${
-	// 		marketData[config.slowframe].length
-	// 	}根历史K线`
-	// );
 	console.log(
 		`已加载${config.fastframe} ${
 			marketData[config.fastframe].length
@@ -1433,6 +1389,46 @@ async function initialize() {
 			marketData[config.trendframe].length
 		}根历史K线`
 	);
+
+	const marketState = judgeMarketState(candlesTrend);
+	config.marketState = marketState;
+
+	// 2. 根据市场状态调整策略
+	let positionSize = config.tradeAmount;
+	let shouldTrade = true;
+
+	switch (marketState.signal) {
+		case 1: // 趋势市
+			positionSize =
+				marketState.confidence > 0.6
+					? positionSize * 1.5
+					: positionSize;
+			console.log('🟢 趋势市 - 积极交易模式');
+			break;
+		case 0: // 震荡市
+			positionSize =
+				marketState.confidence > 0.6
+					? positionSize * 0.2
+					: positionSize * 0.1;
+			console.log('🟡 震荡市 - 保守交易模式');
+			// 或者完全停止交易: shouldTrade = false;
+			break;
+		case -1: // 不确定
+			positionSize =
+				marketState.confidence > 0.6
+					? positionSize * 0.8
+					: positionSize * 0.5;
+			console.log('🟠 不确定 - 谨慎交易模式');
+			break;
+	}
+
+	if (!shouldTrade) {
+		console.log('跳过交易：市场处于震荡市');
+		return;
+	}
+
+	config.realTradeAmount = positionSize;
+	console.log('当前交易金额:', config.realTradeAmount);
 }
 
 function getLnp(entryPrice, close, side) {

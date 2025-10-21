@@ -8,8 +8,9 @@ function judgeMarketState(
 	klines,
 	adxPeriod = 14,
 	bbPeriod = 20,
-	bbDev = 2,
-	adxThreshold = 25
+	bbDev = 2.2,
+	adxThreshold = 22,
+	bbWidthPercentile = 0.15
 ) {
 	if (klines.length < Math.max(adxPeriod, bbPeriod) + 1) {
 		throw new Error('数据长度不足');
@@ -50,7 +51,9 @@ function judgeMarketState(
 		.map((bb) => (bb.upper - bb.lower) / bb.middle);
 	historicalBBWidths.sort((a, b) => a - b);
 	const bbWidthThreshold =
-		historicalBBWidths[Math.floor(historicalBBWidths.length * 0.2)];
+		historicalBBWidths[
+			Math.floor(historicalBBWidths.length * bbWidthPercentile)
+		];
 
 	console.log(
 		`当前指标 - ADX: ${currentAdx}, BB宽度: ${bbWidth}, 阈值: ${bbWidthThreshold}`
@@ -66,6 +69,7 @@ function judgeMarketState(
 			signal: 1,
 			adx: currentAdx,
 			bbWidth: bbWidth,
+			confidence: calculateConfidence(currentAdx, bbWidth),
 		};
 	} else if (!isTrendStrengthHigh && isVolatilityLow) {
 		return {
@@ -73,6 +77,7 @@ function judgeMarketState(
 			signal: 0,
 			adx: currentAdx,
 			bbWidth: bbWidth,
+			confidence: calculateConfidence(currentAdx, bbWidth),
 		};
 	} else {
 		return {
@@ -80,62 +85,26 @@ function judgeMarketState(
 			signal: -1,
 			adx: currentAdx,
 			bbWidth: bbWidth,
+			confidence: calculateConfidence(currentAdx, bbWidth),
 		};
 	}
 }
 
-// 获取K线数据并判断市场状态
-// async function analyzeMarket(symbol = 'DOGEUSDT', interval = '1h', limit = 200) {
-//     try {
-//         console.log(`正在分析 ${symbol} 市场状态...`);
+// 置信度计算（辅助函数）
+function calculateConfidence(adx, bbWidth) {
+	let confidence = 0.5; // 基础置信度
 
-//         // 从币安获取K线数据
-//         const klines = await binance.futuresCandles(symbol, interval, { limit: limit });
+	// ADX越高，趋势判断置信度越高
+	if (adx > 30) confidence += 0.3;
+	else if (adx > 25) confidence += 0.2;
+	else if (adx > 20) confidence += 0.1;
 
-//         if (!klines || klines.length === 0) {
-//             throw new Error('未能获取到K线数据');
-//         }
+	// 布林带宽度极端值增加置信度
+	if (bbWidth < 0.02) confidence += 0.1; // 极低波动
+	if (bbWidth > 0.08) confidence += 0.1; // 极高波动
 
-//         // 判断市场状态
-//         const marketState = judgeMarketState(klines);
-
-//         console.log('\n=== 市场状态分析结果 ===');
-//         console.log(`交易对: ${symbol}`);
-//         console.log(`时间周期: ${interval}`);
-//         console.log(`市场状态: ${marketState.state}`);
-//         console.log(`ADX值: ${marketState.adx.toFixed(2)}`);
-//         console.log(`布林带宽度: ${marketState.bbWidth.toFixed(4)}`);
-
-//         // 交易建议
-//         console.log('\n=== 交易建议 ===');
-//         switch (marketState.signal) {
-//             case 1:
-//                 console.log('✅ 趋势市 detected - 建议积极使用三周期EMA策略');
-//                 console.log('   • 正常或加大仓位');
-//                 console.log('   • 顺趋势方向交易');
-//                 console.log('   • 让利润奔跑');
-//                 break;
-//             case 0:
-//                 console.log('⚠️ 震荡市 detected - 建议暂停三周期EMA策略');
-//                 console.log('   • 减少交易频率或停止交易');
-//                 console.log('   • 降低仓位或使用震荡策略');
-//                 console.log('   • 等待趋势突破');
-//                 break;
-//             case -1:
-//                 console.log('🔶 不确定状态 - 建议保持谨慎');
-//                 console.log('   • 降低仓位执行');
-//                 console.log('   • 等待更明确的信号');
-//                 console.log('   • 严格止损');
-//                 break;
-//         }
-
-//         return marketState;
-
-//     } catch (error) {
-//         console.error('分析市场状态时出错:', error.message);
-//         throw error;
-//     }
-// }
+	return Math.min(confidence, 0.95); // 最大95%置信度
+}
 
 // 实时监控函数
 class MarketStateMonitor {
