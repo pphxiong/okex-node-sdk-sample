@@ -1401,7 +1401,7 @@ async function initialize() {
 		case 1: // 趋势市
 			positionSize =
 				marketState.confidence > 0.6
-					? positionSize * 0.8
+					? positionSize * 0.5
 					: positionSize * 0.6;
 			console.log('🟢 趋势市 - 积极交易模式');
 			break;
