@@ -37,6 +37,9 @@ function judgeMarketState(
 		stdDev: bbDev,
 	};
 	const bbResults = TechnicalIndicators.BollingerBands.calculate(bbInput);
+	const bbWidthValues = bbResults.map(
+		(bb) => (bb.upper - bb.lower) / bb.middle
+	);
 
 	// 获取最新的指标值
 	const currentAdx = adxValues[adxValues.length - 1].adx;
@@ -69,7 +72,12 @@ function judgeMarketState(
 			signal: 1,
 			adx: currentAdx,
 			bbWidth: bbWidth,
-			confidence: calculateConfidence(currentAdx, bbWidth),
+			// confidence: calculateConfidence(currentAdx, bbWidth),
+			confidence: calculateDynamicConfidence(
+				adxValues.slice(-10),
+				bbWidthValues.slice(-10),
+				closes.slice(-10)
+			),
 		};
 	} else if (!isTrendStrengthHigh && isVolatilityLow) {
 		return {
@@ -77,7 +85,12 @@ function judgeMarketState(
 			signal: 0,
 			adx: currentAdx,
 			bbWidth: bbWidth,
-			confidence: calculateConfidence(currentAdx, bbWidth),
+			// confidence: calculateConfidence(currentAdx, bbWidth),
+			confidence: calculateDynamicConfidence(
+				adxValues.slice(-10),
+				bbWidthValues.slice(-10),
+				closes.slice(-10)
+			),
 		};
 	} else {
 		return {
@@ -85,7 +98,12 @@ function judgeMarketState(
 			signal: -1,
 			adx: currentAdx,
 			bbWidth: bbWidth,
-			confidence: calculateConfidence(currentAdx, bbWidth),
+			// confidence: calculateConfidence(currentAdx, bbWidth),
+			confidence: calculateDynamicConfidence(
+				adxValues.slice(-10),
+				bbWidthValues.slice(-10),
+				closes.slice(-10)
+			),
 		};
 	}
 }
@@ -100,10 +118,122 @@ function calculateConfidence(adx, bbWidth) {
 	else if (adx > 20) confidence += 0.1;
 
 	// 布林带宽度极端值增加置信度
-	if (bbWidth < 0.02) confidence += 0.1; // 极低波动
-	if (bbWidth > 0.08) confidence += 0.1; // 极高波动
+	if (bbWidth < 0.03) confidence += 0.1; // 极低波动
+	if (bbWidth > 0.07) confidence += 0.1; // 极高波动
 
 	return Math.min(confidence, 0.95); // 最大95%置信度
+}
+
+function calculateDynamicConfidence(adxSeries, bbWidthSeries, priceSeries) {
+	if (adxSeries.length < 5 || bbWidthSeries.length < 5) {
+		return 0.5; // 数据不足时返回中性置信度
+	}
+
+	let confidence = 0.5; // 基础置信度
+
+	// 1. ADX动量分析（3期变化率）
+	const adxMomentum = calculateMomentum(adxSeries, 3);
+	const adxAcceleration = calculateMomentum(adxSeries.slice(-4), 2); // 加速度
+
+	// 2. 布林带宽度动量
+	const bbMomentum = calculateMomentum(bbWidthSeries, 3);
+
+	// 3. 价格动量确认
+	const priceMomentum = calculateMomentum(priceSeries, 3);
+
+	const currentADX = adxSeries[adxSeries.length - 1];
+	const currentBBWidth = bbWidthSeries[bbWidthSeries.length - 1];
+
+	// 动态ADX阈值（基于近期波动）
+	const dynamicADXThreshold = calculateDynamicADXThreshold(adxSeries);
+
+	// 4. 趋势强度评分（考虑动量和水平）
+	let trendStrength = 0;
+
+	// ADX水平得分
+	if (currentADX > dynamicADXThreshold * 1.5) trendStrength += 0.3;
+	else if (currentADX > dynamicADXThreshold) trendStrength += 0.2;
+	else if (currentADX > dynamicADXThreshold * 0.7) trendStrength += 0.1;
+
+	// ADX动量得分
+	if (adxMomentum > 0.1) trendStrength += 0.2; // 快速上升
+	else if (adxMomentum > 0.05) trendStrength += 0.1; // 缓慢上升
+	else if (adxMomentum < -0.1) trendStrength -= 0.1; // 快速下降
+
+	// ADX加速度得分
+	if (adxAcceleration > 0.05) trendStrength += 0.1; // 加速上升
+	else if (adxAcceleration < -0.05) trendStrength -= 0.05; // 加速下降
+
+	// 5. 波动性评分
+	let volatilityScore = 0;
+
+	// 布林带宽度得分
+	const bbWidthPercentile = calculatePercentile(
+		bbWidthSeries,
+		currentBBWidth
+	);
+	if (bbWidthPercentile < 0.2) volatilityScore += 0.2; // 极低波动
+	else if (bbWidthPercentile > 0.8) volatilityScore += 0.1; // 极高波动
+
+	// 布林带动量得分
+	if (bbMomentum < -0.1) volatilityScore += 0.1; // 快速收窄（可能爆发前夜）
+	else if (bbMomentum > 0.1) volatilityScore += 0.05; // 快速扩张
+
+	// 6. 方向一致性得分
+	const directionConsistency = calculateDirectionConsistency(
+		adxMomentum,
+		priceMomentum
+	);
+	consistencyScore = directionConsistency * 0.2;
+
+	// 7. 综合置信度
+	confidence = 0.5 + trendStrength + volatilityScore + consistencyScore;
+
+	return Math.min(Math.max(confidence, 0.1), 0.95); // 限制在10%-95%
+}
+
+// 辅助函数：计算动量（变化率）
+function calculateMomentum(series, period = 3) {
+	if (series.length < period + 1) return 0;
+
+	const current = series[series.length - 1];
+	const previous = series[series.length - 1 - period];
+
+	return (current - previous) / previous;
+}
+
+// 辅助函数：计算动态ADX阈值
+function calculateDynamicADXThreshold(adxSeries) {
+	if (adxSeries.length < 20) return 25; // 默认值
+
+	const recentADX = adxSeries.slice(-20);
+	const avgADX = recentADX.reduce((a, b) => a + b, 0) / recentADX.length;
+
+	// 动态阈值：近期平均ADX + 调整
+	return Math.max(20, Math.min(30, avgADX * 1.1));
+}
+
+// 辅助函数：计算百分位
+function calculatePercentile(series, value) {
+	const sorted = [...series].sort((a, b) => a - b);
+	const index = sorted.findIndex((x) => x >= value);
+	return index / sorted.length;
+}
+
+// 辅助函数：计算方向一致性
+function calculateDirectionConsistency(adxMomentum, priceMomentum) {
+	// ADX上升 + 价格动量强 = 高一致性
+	if (adxMomentum > 0.05 && Math.abs(priceMomentum) > 0.02) {
+		return 1.0;
+	}
+	// ADX下降 + 价格动量弱 = 中等一致性
+	else if (adxMomentum < -0.05 && Math.abs(priceMomentum) < 0.01) {
+		return 0.5;
+	}
+	// 其他情况 = 低一致性
+	else {
+		return 0.2;
+	}
 }
 
 // 实时监控函数
