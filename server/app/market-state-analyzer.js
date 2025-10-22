@@ -9,7 +9,7 @@ function judgeMarketState(
 	adxPeriod = 14,
 	bbPeriod = 20,
 	bbDev = 2.2,
-	adxThreshold = 22,
+	adxThreshold = 20,
 	bbWidthPercentile = 0.15
 ) {
 	if (klines.length < Math.max(adxPeriod, bbPeriod) + 1) {
