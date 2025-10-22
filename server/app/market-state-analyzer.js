@@ -184,7 +184,7 @@ function calculateDynamicConfidence(adxSeries, bbWidthSeries, priceSeries) {
 		adxMomentum,
 		priceMomentum
 	);
-	consistencyScore = directionConsistency * 0.2;
+	const consistencyScore = directionConsistency * 0.2;
 
 	// 7. 综合置信度
 	confidence = 0.5 + trendStrength + volatilityScore + consistencyScore;
