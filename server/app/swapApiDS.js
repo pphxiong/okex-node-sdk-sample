@@ -1547,6 +1547,10 @@ async function strategyLoop(isShowLog = false) {
 		await RiskManager.openPosition(signal, orderBook);
 	} catch (err) {
 		console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+		if (state.activeOrders.length > 0) {
+			state.activeOrders = [];
+			await OrderManager.writeData();
+		}
 		console.error('策略错误:', err.message);
 		// if (config.isMarketModeAuto) {
 		// 	config.marketMode = config.marketMode == 1 ? 2 : 1;
