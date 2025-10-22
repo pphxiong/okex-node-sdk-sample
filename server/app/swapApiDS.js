@@ -105,6 +105,7 @@ const config = {
 	maxLnpPercent: 0,
 	minLnpPercent: 10000,
 	marketState: {},
+	riskMode: 'aggressive', // 保守 conservative  激进 aggressive 平衡 balanced
 };
 let intervalId = null;
 const configB = {
@@ -1346,6 +1347,34 @@ class RiskManager {
 	}
 }
 
+function getConfidenceLevel(confidence) {
+	if (confidence >= 0.7) return 'high';
+	if (confidence >= 0.4) return 'medium';
+	return 'low';
+}
+
+function getPositionRules(mode) {
+	const rules = {
+		conservative: {
+			trending: { high: 1.0, medium: 0.5, low: 0.25 },
+			ranging: { high: 0.03, medium: 0.02, low: 0.01 },
+			uncertain: { high: 0.25, medium: 0.2, low: 0.1 },
+		},
+		balanced: {
+			trending: { high: 1.2, medium: 0.8, low: 0.4 },
+			ranging: { high: 0.03, medium: 0.02, low: 0.01 },
+			uncertain: { high: 0.5, medium: 0.25, low: 0.1 },
+		},
+		aggressive: {
+			trending: { high: 1.5, medium: 1.0, low: 0.5 },
+			ranging: { high: 0.03, medium: 0.02, low: 0.01 },
+			uncertain: { high: 0.8, medium: 0.4, low: 0.1 },
+		},
+	};
+
+	return rules[mode] || rules.balanced;
+}
+
 // 初始化历史数据
 async function initialize() {
 	console.log('正在获取历史数据...');
@@ -1397,27 +1426,24 @@ async function initialize() {
 	let positionSize = config.tradeAmount;
 	let shouldTrade = true;
 
+	const confidenceLevel = getConfidenceLevel(marketState.confidence);
+	const positionRules = getPositionRules(config.riskMode);
+
 	switch (marketState.signal) {
 		case 1: // 趋势市
 			positionSize =
-				marketState.confidence > 0.6
-					? positionSize * 1.5
-					: positionSize;
+				positionSize * positionRules.trending[confidenceLevel];
 			console.log('🟢 趋势市 - 积极交易模式');
 			break;
 		case 0: // 震荡市
 			positionSize =
-				marketState.confidence > 0.6
-					? positionSize * 0.2
-					: positionSize * 0.1;
+				positionSize * positionRules.ranging[confidenceLevel];
 			console.log('🟡 震荡市 - 保守交易模式');
 			// 或者完全停止交易: shouldTrade = false;
 			break;
 		case -1: // 不确定
 			positionSize =
-				marketState.confidence > 0.6
-					? positionSize * 0.8
-					: positionSize * 0.5;
+				positionSize * positionRules.uncertain[confidenceLevel];
 			console.log('🟠 不确定 - 谨慎交易模式');
 			break;
 	}

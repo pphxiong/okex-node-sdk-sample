@@ -68,7 +68,7 @@ function judgeMarketState(
 
 	if (isTrendStrengthHigh && !isVolatilityLow) {
 		return {
-			state: 'Trending',
+			state: 'trending',
 			signal: 1,
 			adx: currentAdx,
 			bbWidth: bbWidth,
@@ -81,7 +81,7 @@ function judgeMarketState(
 		};
 	} else if (!isTrendStrengthHigh && isVolatilityLow) {
 		return {
-			state: 'Ranging',
+			state: 'ranging',
 			signal: 0,
 			adx: currentAdx,
 			bbWidth: bbWidth,
@@ -94,7 +94,7 @@ function judgeMarketState(
 		};
 	} else {
 		return {
-			state: 'Uncertain',
+			state: 'uncertain',
 			signal: -1,
 			adx: currentAdx,
 			bbWidth: bbWidth,
