@@ -253,21 +253,19 @@ async function getMarketType(marketData) {
 		// return { valid: false, reason: 'EMA过于接近被过滤' };
 	}
 
-	// 获取信号强度
-	const strength = await emaFilter.getSignalStrengthWithATR(
-		slowEmaFast,
-		slowEmaSlow,
-		marketData[config.slowframe]
-	);
-
-	if (strength === 'filtered') {
-		// marketType = '信号强度不足';
-		// return { valid: false, reason: '信号强度不足' };
-	}
-	console.log('shouldFilter:', shouldFilter);
-	console.log('strength:', strength);
-
 	if (!shouldFilter) {
+		// 获取信号强度
+		const strength = await emaFilter.getSignalStrengthWithATR(
+			slowEmaFast,
+			slowEmaSlow,
+			marketData[config.slowframe]
+		);
+
+		if (strength === 'filtered') {
+			// marketType = '信号强度不足';
+			// return { valid: false, reason: '信号强度不足' };
+		}
+
 		if (longCloseCondition) marketType = '趋势空';
 		if (shortCloseCondition) marketType = '趋势多';
 		if (longCondition) marketType = '趋势多且增强';
