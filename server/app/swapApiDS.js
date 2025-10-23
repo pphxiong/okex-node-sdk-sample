@@ -210,9 +210,10 @@ function getMarketType(marketData) {
 		slowEmaFast > slowEmaSlow &&
 		// (slowLastEmaFast < slowLastEmaSlow ||
 		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
-		fastEmaFast > fastEmaSlow &&
-		fastEmaFastSlope > 50 &&
-		fastEmaSlowSlope > 30;
+		fastEmaFast < fastEmaSlow &&
+		fastEmaFastSlope < -50 &&
+		fastEmaSlowSlope < -30 &&
+		fastEmaFastSlope > -100;
 	// (fastLastEmaFast < fastLastEmaSlow ||
 	// 	fastThirdEmaFast < fastThirdEmaSlow);
 
@@ -222,20 +223,21 @@ function getMarketType(marketData) {
 		slowEmaFast < slowEmaSlow &&
 		// (slowLastEmaFast > slowLastEmaSlow ||
 		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
-		fastEmaFast < fastEmaSlow &&
-		fastEmaFastSlope < -50 &&
-		fastEmaSlowSlope < -30;
+		fastEmaFast > fastEmaSlow &&
+		fastEmaFastSlope > 50 &&
+		fastEmaSlowSlope > 30 &&
+		fastEmaFastSlope < 100;
 	// (fastLastEmaFast > fastLastEmaSlow ||
 	// 	fastThirdEmaFast > fastThirdEmaSlow);
 
 	const longCloseCondition =
 		((slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend) &&
 			fastEmaFastSlope < -50) ||
-		fastEmaFastSlope < -80;
+		fastEmaFastSlope < -100;
 	const shortCloseCondition =
 		((slowEmaFast > slowEmaSlow || slowClose > slowEmaTrend) &&
 			fastEmaFastSlope > 50) ||
-		fastEmaFastSlope > 80;
+		fastEmaFastSlope > 100;
 
 	if (longCloseCondition) marketType = '趋势空';
 	if (shortCloseCondition) marketType = '趋势多';
@@ -1049,7 +1051,7 @@ class RiskManager {
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
-			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 10;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp;
 		let isProfitSecond =
 			amount > (config.realTradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
@@ -1512,15 +1514,13 @@ async function strategyLoop(isShowLog = false) {
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		const amount = Math.abs(state.position) * currentPrice;
 		if (
-			(config.maxLnpPercent > basicLnpPercent  &&
-				amount < config.realTradeAmount * 1.2 &&
+			(config.maxLnpPercent > basicLnpPercent &&
 				lnpPercent < config.maxLnpPercent * 0.618) ||
 			(config.maxLnpPercent > basicLnpPercent / 3 &&
-				amount < config.realTradeAmount * 1.2 &&
-				lnpPercent < config.maxLnpPercent * 0.382) ||
-			(config.maxLnpPercent < basicLnpPercent / 3 &&
-				amount < config.realTradeAmount * 1.2 &&
-				lnpPercent < -basicLnpPercent / 3)
+				lnpPercent < config.maxLnpPercent * 0.382)
+			// (config.maxLnpPercent < basicLnpPercent / 3 &&
+			// 	amount < config.realTradeAmount * 1.2 &&
+			// 	lnpPercent < -basicLnpPercent / 3)
 			// (config.minLnpPercent < -basicLnpPercent / 2 &&
 			// 	config.minLnpPercent + lnpPercent > 0)
 		)
