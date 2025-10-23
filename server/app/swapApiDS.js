@@ -2,6 +2,7 @@ import moment from 'moment';
 import helper from '../utils/index';
 const customAuthClientBN = require('./customAuthClientBN');
 const { judgeMarketState } = require('./market-state-analyzer');
+const { DynamicEMAFilterWithATR } = require('./dynamic-ema-filter');
 
 const PASSWORD = '@Xiong092479';
 
@@ -139,7 +140,8 @@ const configB = {
 // 	step5: '盈利后使用移动止损保护利润',
 // };
 
-function getMarketType(marketData) {
+const emaFilter = new DynamicEMAFilterWithATR();
+async function getMarketType(marketData) {
 	const [fastThirdKline, fastSecondKline, fastLastKline] = JSON.parse(
 		JSON.stringify(marketData[config.fastframe].slice(-3))
 	);
@@ -248,6 +250,32 @@ function getMarketType(marketData) {
 	console.log('慢速周期:', filterCandleData(slowLastKline));
 	console.log('趋势周期:', filterCandleData(trendLastKline));
 	console.log('市场类型:', marketType);
+
+	if (longCondition || shortCondition) {
+		// 使用ATR动态过滤
+		const shouldFilter = await emaFilter.shouldFilterAdaptive(
+			slowEmaFast,
+			slowEmaSlow,
+			marketData[config.slowframe]
+		);
+
+		if (shouldFilter) {
+			marketType = 'EMA过于接近被过滤';
+			// return { valid: false, reason: 'EMA过于接近被过滤' };
+		}
+
+		// 获取信号强度
+		const strength = await emaFilter.getSignalStrengthWithATR(
+			slowEmaFast,
+			slowEmaSlow,
+			marketData[config.slowframe]
+		);
+
+		if (strength === 'filtered') {
+			marketType = '信号强度不足';
+			// return { valid: false, reason: '信号强度不足' };
+		}
+	}
 
 	return marketType;
 }
