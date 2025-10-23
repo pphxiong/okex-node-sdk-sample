@@ -1552,18 +1552,13 @@ async function strategyLoop(isShowLog = false) {
 		}
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		const amount = Math.abs(state.position) * currentPrice;
-		if (
-			(config.maxLnpPercent > basicLnpPercent &&
-				lnpPercent < config.maxLnpPercent * 0.382) ||
-			(config.maxLnpPercent > basicLnpPercent / 3 &&
-				lnpPercent < config.maxLnpPercent * 0.382)
-			// (config.maxLnpPercent < basicLnpPercent / 3 &&
-			// 	amount < config.realTradeAmount * 1.2 &&
-			// 	lnpPercent < -basicLnpPercent / 3)
-			// (config.minLnpPercent < -basicLnpPercent / 2 &&
-			// 	config.minLnpPercent + lnpPercent > 0)
-		)
-			isStopReverse = true;
+		// if (
+		// 	(config.maxLnpPercent > basicLnpPercent &&
+		// 		lnpPercent < config.maxLnpPercent * 0.382) ||
+		// 	(config.maxLnpPercent > basicLnpPercent / 3 &&
+		// 		lnpPercent < config.maxLnpPercent * 0.382)
+		// )
+		// 	isStopReverse = true;
 		if (isStop || isStopReverse) {
 			await RiskManager.closePosition(signal, orderBook, isStopLoss);
 			return;
