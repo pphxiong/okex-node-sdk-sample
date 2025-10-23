@@ -953,7 +953,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 	const { marketType: fastMarketType } = candle[config.fastframe];
 	let { marketType: slowMarketType } = candle[config.slowframe];
 
-	slowMarketType = getMarketType(marketData);
+	slowMarketType = await getMarketType(marketData);
 	slowMarketType = toogleMarketType(slowMarketType, candle[config.slowframe]);
 
 	config.currentCandle = Object.assign(candle[config.fastframe], {
@@ -1019,7 +1019,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 
 // 风险管理模块
 class RiskManager {
-	static checkStopConditions(signal) {
+	static async checkStopConditions(signal) {
 		const { side, position } = state;
 		if (position === 0) return { isStop: false };
 
@@ -1038,7 +1038,7 @@ class RiskManager {
 		const { marketType: fastMarketType } = candle[config.fastframe];
 		let { marketType: slowMarketType } = candle[config.slowframe];
 
-		slowMarketType = getMarketType(marketData);
+		slowMarketType = await getMarketType(marketData);
 		slowMarketType = toogleMarketType(
 			slowMarketType,
 			candle[config.slowframe]
@@ -1528,7 +1528,7 @@ async function strategyLoop(isShowLog = false) {
 			lnpPercent,
 			isLossFirst,
 			isLossSecond,
-		} = RiskManager.checkStopConditions(signal);
+		} = await RiskManager.checkStopConditions(signal);
 		let isStopReverse = false;
 		config.lnpPercent = lnpPercent;
 		if (lnpPercent > config.maxLnpPercent) {
