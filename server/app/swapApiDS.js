@@ -251,7 +251,7 @@ async function getMarketType(marketData) {
 	console.log('趋势周期:', filterCandleData(trendLastKline));
 	console.log('市场类型:', marketType);
 
-	if (longCondition || shortCondition || true) {
+	if (longCondition || shortCondition) {
 		// 使用ATR动态过滤
 		const shouldFilter = await emaFilter.shouldFilterAdaptive(
 			slowEmaFast,
@@ -260,7 +260,7 @@ async function getMarketType(marketData) {
 		);
 
 		if (shouldFilter) {
-			marketType = 'EMA过于接近被过滤';
+			marketType = '趋势多趋势空-EMA过于接近被过滤';
 			// return { valid: false, reason: 'EMA过于接近被过滤' };
 		}
 
@@ -272,7 +272,7 @@ async function getMarketType(marketData) {
 		);
 
 		if (strength === 'filtered') {
-			marketType = '信号强度不足';
+			// marketType = '信号强度不足';
 			// return { valid: false, reason: '信号强度不足' };
 		}
 		console.log('shouldFilter:', shouldFilter);

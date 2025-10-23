@@ -85,11 +85,13 @@ class DynamicEMAFilterWithATR {
 		if (normalizedVolatility > 0.03) strengthScore += 0.2;
 		else if (normalizedVolatility < 0.01) strengthScore -= 0.1;
 
+		console.log('strengthScore:', strengthScore, atrData);
+    
 		// 转换为强度等级
 		if (strengthScore >= 0.6) return 'strong';
 		if (strengthScore >= 0.4) return 'good';
 		if (strengthScore >= 0.2) return 'weak';
-		console.log('strength:', strengthScore, atrData);
+
 		return 'filtered';
 	}
 
