@@ -216,7 +216,7 @@ async function getMarketType(marketData) {
 		((fastEmaFast < fastEmaSlow &&
 			fastEmaFastSlope < -50 &&
 			fastEmaSlowSlope < -30 &&
-			fastEmaFastSlope > -100) ||
+			fastEmaFastSlope > -120) ||
 			(fastEmaFast > fastEmaSlow &&
 				fastEmaFastSlope > 50 &&
 				fastEmaSlowSlope > 30));
@@ -233,7 +233,7 @@ async function getMarketType(marketData) {
 		((fastEmaFast > fastEmaSlow &&
 			fastEmaFastSlope > 50 &&
 			fastEmaSlowSlope > 30 &&
-			fastEmaFastSlope < 100) ||
+			fastEmaFastSlope < 120) ||
 			(fastEmaFast < fastEmaSlow &&
 				fastEmaFastSlope < -50 &&
 				fastEmaSlowSlope < -30));
@@ -243,11 +243,11 @@ async function getMarketType(marketData) {
 	const longCloseCondition =
 		((slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend) &&
 			fastEmaFastSlope < -50) ||
-		fastEmaFastSlope < -100;
+		fastEmaFastSlope < -150;
 	const shortCloseCondition =
 		((slowEmaFast > slowEmaSlow || slowClose > slowEmaTrend) &&
 			fastEmaFastSlope > 50) ||
-		fastEmaFastSlope > 100;
+		fastEmaFastSlope > 150;
 
 	// 使用ATR动态过滤
 	const shouldFilter = await emaFilter.shouldFilterAdaptive(
