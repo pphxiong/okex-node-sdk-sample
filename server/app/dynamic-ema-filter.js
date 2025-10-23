@@ -60,7 +60,7 @@ class DynamicEMAFilterWithATR {
 				).toFixed(2)}%`
 			);
 		}
-
+    
 		return shouldFilter;
 	}
 
