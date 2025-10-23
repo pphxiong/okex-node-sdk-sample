@@ -1515,7 +1515,7 @@ async function strategyLoop(isShowLog = false) {
 		const amount = Math.abs(state.position) * currentPrice;
 		if (
 			(config.maxLnpPercent > basicLnpPercent &&
-				lnpPercent < config.maxLnpPercent * 0.618) ||
+				lnpPercent < config.maxLnpPercent * 0.382) ||
 			(config.maxLnpPercent > basicLnpPercent / 3 &&
 				lnpPercent < config.maxLnpPercent * 0.382)
 			// (config.maxLnpPercent < basicLnpPercent / 3 &&
