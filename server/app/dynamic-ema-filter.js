@@ -2,7 +2,7 @@ const tulind = require('tulind');
 
 class DynamicEMAFilterWithATR {
 	constructor() {
-		this.baseThreshold = 0.005; // 0.8%基础阈值
+		this.baseThreshold = 0.003; // 0.8%基础阈值
 		this.atrPeriod = 14;
 	}
 
