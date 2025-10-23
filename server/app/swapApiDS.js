@@ -210,12 +210,16 @@ async function getMarketType(marketData) {
 		trendClose > trendEmaTrend &&
 		// trendEmaFast > trendEmaSlow &&
 		slowEmaFast > slowEmaSlow &&
+		slowClose > slowEmaTrend &&
 		// (slowLastEmaFast < slowLastEmaSlow ||
 		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
-		fastEmaFast < fastEmaSlow &&
-		fastEmaFastSlope < -50 &&
-		fastEmaSlowSlope < -30 &&
-		fastEmaFastSlope > -100;
+		((fastEmaFast < fastEmaSlow &&
+			fastEmaFastSlope < -50 &&
+			fastEmaSlowSlope < -30 &&
+			fastEmaFastSlope > -100) ||
+			(fastEmaFast > fastEmaSlow &&
+				fastEmaFastSlope > 50 &&
+				fastEmaSlowSlope > 30));
 	// (fastLastEmaFast < fastLastEmaSlow ||
 	// 	fastThirdEmaFast < fastThirdEmaSlow);
 
@@ -223,12 +227,16 @@ async function getMarketType(marketData) {
 		trendClose < trendEmaTrend &&
 		// trendEmaFast < trendEmaSlow &&
 		slowEmaFast < slowEmaSlow &&
+		slowClose < slowEmaTrend &&
 		// (slowLastEmaFast > slowLastEmaSlow ||
 		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
-		fastEmaFast > fastEmaSlow &&
-		fastEmaFastSlope > 50 &&
-		fastEmaSlowSlope > 30 &&
-		fastEmaFastSlope < 100;
+		((fastEmaFast > fastEmaSlow &&
+			fastEmaFastSlope > 50 &&
+			fastEmaSlowSlope > 30 &&
+			fastEmaFastSlope < 100) ||
+			(fastEmaFast < fastEmaSlow &&
+				fastEmaFastSlope < -50 &&
+				fastEmaSlowSlope < -30));
 	// (fastLastEmaFast > fastLastEmaSlow ||
 	// 	fastThirdEmaFast > fastThirdEmaSlow);
 
