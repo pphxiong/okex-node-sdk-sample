@@ -89,6 +89,7 @@ class DynamicEMAFilterWithATR {
 		if (strengthScore >= 0.6) return 'strong';
 		if (strengthScore >= 0.4) return 'good';
 		if (strengthScore >= 0.2) return 'weak';
+		console.log('strength:', strengthScore, atrData);
 		return 'filtered';
 	}
 
