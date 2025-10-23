@@ -217,7 +217,7 @@ async function getMarketType(marketData) {
 			fastEmaFastSlope < -50 &&
 			fastEmaSlowSlope < -30 &&
 			fastEmaFastSlope > -120) ||
-			(fastEmaFast > fastEmaSlow &&
+			(false && fastEmaFast > fastEmaSlow &&
 				fastEmaFastSlope > 50 &&
 				fastEmaSlowSlope > 30));
 	// (fastLastEmaFast < fastLastEmaSlow ||
@@ -234,7 +234,7 @@ async function getMarketType(marketData) {
 			fastEmaFastSlope > 50 &&
 			fastEmaSlowSlope > 30 &&
 			fastEmaFastSlope < 120) ||
-			(fastEmaFast < fastEmaSlow &&
+			(false && fastEmaFast < fastEmaSlow &&
 				fastEmaFastSlope < -50 &&
 				fastEmaSlowSlope < -30));
 	// (fastLastEmaFast > fastLastEmaSlow ||
