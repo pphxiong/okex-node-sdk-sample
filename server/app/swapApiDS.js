@@ -214,7 +214,7 @@ async function getMarketType(marketData) {
 	const shortCondition =
 		slowClose < slowEmaTrend &&
 		slowEmaFast < slowEmaSlow &&
-		fastEmaFast > fastEmaSlow;
+		fastEmaFast < fastEmaSlow;
 
 	// 使用ATR动态过滤
 	const shouldFilter = await emaFilter.shouldFilterAdaptive(
@@ -1056,7 +1056,7 @@ class RiskManager {
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
-			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 10;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 20;
 		let isProfitSecond =
 			amount > (config.realTradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
