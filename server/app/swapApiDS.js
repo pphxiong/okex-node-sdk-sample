@@ -170,6 +170,7 @@ async function getMarketType(marketData) {
 		emaFast: slowEmaFast,
 		emaSlow: slowEmaSlow,
 		emaTrend: slowEmaTrend,
+		emaFastSlope: slowEmaFastSlope,
 		emaSlowSlope: slowEmaSlowSlope,
 	} = slowLastKline;
 	const {
@@ -209,12 +210,20 @@ async function getMarketType(marketData) {
 	const longCondition =
 		slowClose > slowEmaTrend &&
 		slowEmaFast > slowEmaSlow &&
-		fastEmaFast > fastEmaSlow;
+		fastEmaFast < fastEmaSlow &&
+		fastEmaFastSlope > -100 &&
+		fastEmaFastSlope < -50 &&
+		slowEmaFastSlope > 20 &&
+		slowEmaSlowSlope > 10;
 
 	const shortCondition =
 		slowClose < slowEmaTrend &&
 		slowEmaFast < slowEmaSlow &&
-		fastEmaFast < fastEmaSlow;
+		fastEmaFast > fastEmaSlow &&
+		fastEmaFastSlope < 100 &&
+		fastEmaFastSlope > 50 &&
+		slowEmaFastSlope < -20 &&
+		slowEmaSlowSlope < -10;
 
 	// 使用ATR动态过滤
 	const shouldFilter = await emaFilter.shouldFilterAdaptive(
@@ -223,8 +232,19 @@ async function getMarketType(marketData) {
 		marketData[config.slowframe]
 	);
 
-	const longCloseCondition = slowEmaFast < slowEmaSlow && !shouldFilter;
-	const shortCloseCondition = slowEmaFast > slowEmaSlow && !shouldFilter;
+	const longCloseCondition =
+		(slowEmaFast < slowEmaSlow ||
+			fastEmaFastSlope > 300 ||
+			fastEmaFastSlope < -120 ||
+			slowEmaFastSlope < -20 ||
+			slowEmaFastSlope) &&
+		!shouldFilter;
+	const shortCloseCondition =
+		(slowEmaFast > slowEmaSlow ||
+			fastEmaFastSlope < -300 ||
+			fastEmaFastSlope > 120 ||
+			slowEmaFastSlope > 20) &&
+		!shouldFilter;
 
 	// if (shouldFilter) {
 	// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
