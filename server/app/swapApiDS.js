@@ -233,16 +233,16 @@ async function getMarketType(marketData) {
 	);
 
 	const longCloseCondition =
-		((slowEmaFast > slowEmaSlow && slowEmaFastSlope > 300) ||
-			(slowEmaFastSlope > -300 &&
-				(slowEmaFast < slowEmaSlow ||
+		((slowEmaFast > slowEmaSlow && slowEmaSlowSlope > 300) ||
+			(slowEmaSlowSlope > -300 &&
+				((slowEmaFast < slowEmaSlow && fastEmaFastSlope < -50) ||
 					fastEmaFastSlope < -120 ||
 					slowEmaFastSlope < -20))) &&
 		!shouldFilter;
 	const shortCloseCondition =
-		((slowEmaFast < slowEmaSlow && slowEmaFastSlope < -300) ||
-			(slowEmaFastSlope < 300 &&
-				(slowEmaFast > slowEmaSlow ||
+		((slowEmaFast < slowEmaSlow && slowEmaSlowSlope < -300) ||
+			(slowEmaSlowSlope < 300 &&
+				((slowEmaFast > slowEmaSlow && fastEmaFastSlope > 50) ||
 					fastEmaFastSlope > 120 ||
 					slowEmaFastSlope > 20))) &&
 		!shouldFilter;
