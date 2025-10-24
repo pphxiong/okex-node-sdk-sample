@@ -67,7 +67,7 @@ const config = {
 	tradeAmount: 2400, // 每单交易金额(USDT)
 	realTradeAmount: 200, // 实际交易金额(USDT)
 	maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-	basicLnp: (0.01 * 2) / 3,
+	basicLnp: (0.02 * 2) / 3,
 	profitStopLossRatio: 20, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -106,7 +106,7 @@ const config = {
 	maxLnpPercent: 0,
 	minLnpPercent: 10000,
 	marketState: {},
-	riskMode: 'aggressive', // 保守 conservative  激进 aggressive 平衡 balanced
+	riskMode: 'balanced', // 保守 conservative  激进 aggressive 平衡 balanced
 };
 let intervalId = null;
 const configB = {
@@ -207,47 +207,14 @@ async function getMarketType(marketData) {
 	} = fastThirdKline;
 
 	const longCondition =
-		trendClose > trendEmaTrend &&
-		// trendEmaFast > trendEmaSlow &&
-		slowEmaFast > slowEmaSlow &&
 		slowClose > slowEmaTrend &&
-		// (slowLastEmaFast < slowLastEmaSlow ||
-		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
-		((fastEmaFast < fastEmaSlow &&
-			fastEmaFastSlope < -50 &&
-			fastEmaSlowSlope < -30 &&
-			fastEmaFastSlope > -120) ||
-			(false && fastEmaFast > fastEmaSlow &&
-				fastEmaFastSlope > 50 &&
-				fastEmaSlowSlope > 30));
-	// (fastLastEmaFast < fastLastEmaSlow ||
-	// 	fastThirdEmaFast < fastThirdEmaSlow);
+		slowEmaFast > slowEmaSlow &&
+		fastEmaFast > fastEmaSlow;
 
 	const shortCondition =
-		trendClose < trendEmaTrend &&
-		// trendEmaFast < trendEmaSlow &&
-		slowEmaFast < slowEmaSlow &&
 		slowClose < slowEmaTrend &&
-		// (slowLastEmaFast > slowLastEmaSlow ||
-		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
-		((fastEmaFast > fastEmaSlow &&
-			fastEmaFastSlope > 50 &&
-			fastEmaSlowSlope > 30 &&
-			fastEmaFastSlope < 120) ||
-			(false && fastEmaFast < fastEmaSlow &&
-				fastEmaFastSlope < -50 &&
-				fastEmaSlowSlope < -30));
-	// (fastLastEmaFast > fastLastEmaSlow ||
-	// 	fastThirdEmaFast > fastThirdEmaSlow);
-
-	const longCloseCondition =
-		((slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend) &&
-			fastEmaFastSlope < -50) ||
-		fastEmaFastSlope < -150;
-	const shortCloseCondition =
-		((slowEmaFast > slowEmaSlow || slowClose > slowEmaTrend) &&
-			fastEmaFastSlope > 50) ||
-		fastEmaFastSlope > 150;
+		slowEmaFast < slowEmaSlow &&
+		fastEmaFast > fastEmaSlow;
 
 	// 使用ATR动态过滤
 	const shouldFilter = await emaFilter.shouldFilterAdaptive(
@@ -256,29 +223,28 @@ async function getMarketType(marketData) {
 		marketData[config.slowframe]
 	);
 
+	const longCloseCondition = slowEmaFast < slowEmaSlow && !shouldFilter;
+	const shortCloseCondition = slowEmaFast > slowEmaSlow && !shouldFilter;
+
 	if (shouldFilter) {
 		marketType = '趋势多趋势空-EMA过于接近被过滤';
-		// return { valid: false, reason: 'EMA过于接近被过滤' };
 	}
 
-	if (!shouldFilter) {
-		// 获取信号强度
-		const strength = await emaFilter.getSignalStrengthWithATR(
-			slowEmaFast,
-			slowEmaSlow,
-			marketData[config.slowframe]
-		);
+	// if (!shouldFilter) {
+	// 	// 获取信号强度
+	// 	const strength = await emaFilter.getSignalStrengthWithATR(
+	// 		slowEmaFast,
+	// 		slowEmaSlow,
+	// 		marketData[config.slowframe]
+	// 	);
+	// 	if (strength === 'filtered') {
+	// 	}
+	// }
 
-		if (strength === 'filtered') {
-			// marketType = '信号强度不足';
-			// return { valid: false, reason: '信号强度不足' };
-		}
-
-		if (longCloseCondition) marketType = '趋势空';
-		if (shortCloseCondition) marketType = '趋势多';
-		if (longCondition) marketType = '趋势多且增强';
-		if (shortCondition) marketType = '趋势空且增强';
-	}
+	if (longCloseCondition) marketType = '趋势空';
+	if (shortCloseCondition) marketType = '趋势多';
+	if (longCondition) marketType = '趋势多且增强';
+	if (shortCondition) marketType = '趋势空且增强';
 
 	console.log('快速周期:', filterCandleData(fastLastKline));
 	console.log('慢速周期:', filterCandleData(slowLastKline));
@@ -1090,7 +1056,7 @@ class RiskManager {
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
-			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 10;
 		let isProfitSecond =
 			amount > (config.realTradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
@@ -1402,9 +1368,9 @@ function getPositionRules(mode) {
 			uncertain: { high: 0.25, medium: 0.2, low: 0.1 },
 		},
 		balanced: {
-			trending: { high: 1.2, medium: 0.8, low: 0.4 },
+			trending: { high: 0.8, medium: 1.2, low: 0.4 },
 			ranging: { high: 0.03, medium: 0.02, low: 0.01 },
-			uncertain: { high: 0.5, medium: 0.25, low: 0.1 },
+			uncertain: { high: 0.25, medium: 0.5, low: 0.1 },
 		},
 		aggressive: {
 			trending: { high: 1.5, medium: 1.0, low: 0.5 },
