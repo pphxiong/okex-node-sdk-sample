@@ -226,9 +226,9 @@ async function getMarketType(marketData) {
 	const longCloseCondition = slowEmaFast < slowEmaSlow && !shouldFilter;
 	const shortCloseCondition = slowEmaFast > slowEmaSlow && !shouldFilter;
 
-	if (shouldFilter) {
-		marketType = '趋势多趋势空-EMA过于接近被过滤';
-	}
+	// if (shouldFilter) {
+	// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
+	// }
 
 	// if (!shouldFilter) {
 	// 	// 获取信号强度
@@ -1369,8 +1369,8 @@ function getPositionRules(mode) {
 		},
 		balanced: {
 			trending: { high: 0.8, medium: 1.2, low: 0.4 },
-			ranging: { high: 0.03, medium: 0.02, low: 0.01 },
-			uncertain: { high: 0.25, medium: 0.5, low: 0.1 },
+			ranging: { high: 0.5, medium: 0.5, low: 0.5 },
+			uncertain: { high: 0.5, medium: 0.8, low: 0.5 },
 		},
 		aggressive: {
 			trending: { high: 1.5, medium: 1.0, low: 0.5 },
