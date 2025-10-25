@@ -213,16 +213,16 @@ async function getMarketType(marketData) {
   const longCondition =
     fastEmaFast > fastEmaSlow &&
     fastEmaSlow > fastEmaTrend &&
-    ema4 > fastEmaFast &&
-    ema5 > ema4 &&
-    ema6 > ema5;
+    fastEmaTrend > ema4 &&
+    ema4 > ema5 &&
+    ema5 > ema6;
 
   const shortCondition =
     fastEmaFast < fastEmaSlow &&
     fastEmaSlow < fastEmaTrend &&
-    ema4 < fastEmaFast &&
-    ema5 < ema4 &&
-    ema6 < ema5;
+    fastEmaTrend < ema4 &&
+    ema4 < ema5 &&
+    ema5 < ema6;
 
   // 使用ATR动态过滤
   const shouldFilter = await emaFilter.shouldFilterAdaptive(
