@@ -1402,9 +1402,9 @@ async function initialize() {
     candlePromises
   );
 
-  // candlesFast.pop();
-  // candlesSlow.pop();
-  // candlesTrend.pop();
+  candlesFast.pop();
+  candlesSlow.pop();
+  candlesTrend.pop();
 
   marketData[config.fastframe] = candlesFast.map(parseKLine);
   marketData[config.slowframe] = candlesSlow.map(parseKLine);
