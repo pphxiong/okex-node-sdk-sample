@@ -543,9 +543,9 @@ async function calculateIndicators() {
           const rsiIndex = i - config.rsiPeriod;
           d.rsi = rsi[0][rsiIndex];
         }
-        d.emaFast = emaFast[0][i];
-        d.emaSlow = emaSlow[0][i];
-        d.emaTrend = emaTrend[0][i];
+        d.emaFast = Number(emaFast[0][i].toFixed(5));
+        d.emaSlow = Number(emaSlow[0][i].toFixed(5));
+        d.emaTrend = Number(emaTrend[0][i].toFixed(5));
         d.ema4 = Number(ema4[0][i].toFixed(5));
         d.ema5 = Number(ema5[0][i].toFixed(5));
         d.ema6 = Number(ema6[0][i].toFixed(5));
