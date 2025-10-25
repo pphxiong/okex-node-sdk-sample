@@ -543,9 +543,9 @@ async function calculateIndicators() {
         d.emaFast = emaFast[0][i];
         d.emaSlow = emaSlow[0][i];
         d.emaTrend = emaTrend[0][i];
-        d.ema4 = ema4[0][i];
-        d.ema5 = ema5[0][i];
-        d.ema6 = ema6[0][i];
+        d.ema4 = Number(ema4[0][i].toFixed(5));
+        d.ema5 = Number(ema5[0][i].toFixed(5));
+        d.ema6 = Number(ema6[0][i].toFixed(5));
         if (d.adx && d.atr) {
           // const isVolatility = d.adx > 30;
           const volatility_ratio = d.atr / d.emaSlow;
