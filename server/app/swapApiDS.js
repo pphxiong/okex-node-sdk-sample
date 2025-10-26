@@ -67,7 +67,7 @@ const config = {
   tradeAmount: 2400, // 每单交易金额(USDT)
   realTradeAmount: 200, // 实际交易金额(USDT)
   maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-  basicLnp: (0.01 * 2) / 4,
+  basicLnp: (0.01 * 1) / 4,
   profitStopLossRatio: 20, // 盈亏比
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -215,14 +215,14 @@ async function getMarketType(marketData) {
     // fastEmaSlow > fastEmaTrend &&
     fastEmaTrend > ema4 &&
     ema4 > ema5 &&
-    ema5 > ema6;
+    ema4 > ema6;
 
   const shortCondition =
     fastEmaFast > fastEmaSlow &&
     // fastEmaSlow < fastEmaTrend &&
     fastEmaTrend < ema4 &&
     ema4 < ema5 &&
-    ema5 < ema6;
+    ema4 < ema6;
 
   // 使用ATR动态过滤
   const shouldFilter = await emaFilter.shouldFilterAdaptive(
@@ -543,12 +543,12 @@ async function calculateIndicators() {
           const rsiIndex = i - config.rsiPeriod;
           d.rsi = rsi[0][rsiIndex];
         }
-        d.emaFast = Number(emaFast[0][i].toFixed(5));
-        d.emaSlow = Number(emaSlow[0][i].toFixed(5));
-        d.emaTrend = Number(emaTrend[0][i].toFixed(5));
-        d.ema4 = Number(ema4[0][i].toFixed(5));
-        d.ema5 = Number(ema5[0][i].toFixed(5));
-        d.ema6 = Number(ema6[0][i].toFixed(5));
+        d.emaFast = Number(emaFast[0][i].toFixed(8));
+        d.emaSlow = Number(emaSlow[0][i].toFixed(8));
+        d.emaTrend = Number(emaTrend[0][i].toFixed(8));
+        d.ema4 = Number(ema4[0][i].toFixed(8));
+        d.ema5 = Number(ema5[0][i].toFixed(8));
+        d.ema6 = Number(ema6[0][i].toFixed(8));
         if (d.adx && d.atr) {
           // const isVolatility = d.adx > 30;
           const volatility_ratio = d.atr / d.emaSlow;
