@@ -212,16 +212,18 @@ async function getMarketType(marketData) {
 
   const longCondition =
     fastEmaFast < fastEmaSlow &&
+    fastLastEmaFast > fastLastEmaSlow &&
     // fastEmaSlow > fastEmaTrend &&
-    fastEmaTrend > ema4 &&
-    ema4 > ema5 &&
+    fastEmaTrend > ema5 &&
+    // ema4 > ema5 &&
     ema4 > ema6;
 
   const shortCondition =
     fastEmaFast > fastEmaSlow &&
+    fastLastEmaFast < fastLastEmaSlow &&
     // fastEmaSlow < fastEmaTrend &&
-    fastEmaTrend < ema4 &&
-    ema4 < ema5 &&
+    fastEmaTrend < ema5 &&
+    // ema4 < ema5 &&
     ema4 < ema6;
 
   // 使用ATR动态过滤
@@ -231,8 +233,8 @@ async function getMarketType(marketData) {
     marketData[config.slowframe]
   );
 
-  const longCloseCondition = fastEmaTrend < ema4;
-  const shortCloseCondition = fastEmaTrend > ema4;
+  const longCloseCondition = fastEmaTrend < ema5;
+  const shortCloseCondition = fastEmaTrend > ema5;
 
   // if (shouldFilter) {
   // 	marketType = '趋势多趋势空-EMA过于接近被过滤';
