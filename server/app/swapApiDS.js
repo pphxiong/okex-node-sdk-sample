@@ -67,7 +67,7 @@ const config = {
   tradeAmount: 2400, // 每单交易金额(USDT)
   realTradeAmount: 200, // 实际交易金额(USDT)
   maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-  basicLnp: (0.02 * 2) / 3,
+  basicLnp: (0.01 * 2) / 4,
   profitStopLossRatio: 20, // 盈亏比
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)
@@ -211,15 +211,15 @@ async function getMarketType(marketData) {
   } = fastThirdKline;
 
   const longCondition =
-    fastEmaFast > fastEmaSlow &&
-    fastEmaSlow > fastEmaTrend &&
+    fastEmaFast < fastEmaSlow &&
+    // fastEmaSlow > fastEmaTrend &&
     fastEmaTrend > ema4 &&
     ema4 > ema5 &&
     ema5 > ema6;
 
   const shortCondition =
-    fastEmaFast < fastEmaSlow &&
-    fastEmaSlow < fastEmaTrend &&
+    fastEmaFast > fastEmaSlow &&
+    // fastEmaSlow < fastEmaTrend &&
     fastEmaTrend < ema4 &&
     ema4 < ema5 &&
     ema5 < ema6;
@@ -231,8 +231,8 @@ async function getMarketType(marketData) {
     marketData[config.slowframe]
   );
 
-  const longCloseCondition = fastEmaFast > ema6 &&  fastEmaFast < fastEmaSlow;
-  const shortCloseCondition = fastEmaFast < ema6 &&  fastEmaFast > fastEmaSlow;
+  const longCloseCondition = fastEmaTrend < ema4;
+  const shortCloseCondition = fastEmaTrend > ema4;
 
   // if (shouldFilter) {
   // 	marketType = '趋势多趋势空-EMA过于接近被过滤';
@@ -249,10 +249,10 @@ async function getMarketType(marketData) {
   // 	}
   // }
 
-  if (longCloseCondition) marketType = "趋势多且增强";
-  if (shortCloseCondition) marketType = "趋势空且增强";
-  if (longCondition) marketType = "趋势空";
-  if (shortCondition) marketType = "趋势多";
+  if (longCloseCondition) marketType = "趋势空";
+  if (shortCloseCondition) marketType = "趋势多";
+  if (longCondition) marketType = "趋势多且增强";
+  if (shortCondition) marketType = "趋势空且增强";
 
   console.log("快速周期:", filterCandleData(fastLastKline));
   console.log("慢速周期:", filterCandleData(slowLastKline));
