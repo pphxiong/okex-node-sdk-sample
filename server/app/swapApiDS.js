@@ -231,8 +231,8 @@ async function getMarketType(marketData) {
     marketData[config.slowframe]
   );
 
-  const longCloseCondition = fastEmaFast < fastEmaSlow;
-  const shortCloseCondition = fastEmaFast > fastEmaSlow;
+  const longCloseCondition = fastEmaFast > ema6 &&  fastEmaFast < fastEmaSlow;
+  const shortCloseCondition = fastEmaFast < ema6 &&  fastEmaFast > fastEmaSlow;
 
   // if (shouldFilter) {
   // 	marketType = '趋势多趋势空-EMA过于接近被过滤';
@@ -249,10 +249,10 @@ async function getMarketType(marketData) {
   // 	}
   // }
 
-  if (longCloseCondition) marketType = "趋势空";
-  if (shortCloseCondition) marketType = "趋势多";
-  if (longCondition) marketType = "趋势多且增强";
-  if (shortCondition) marketType = "趋势空且增强";
+  if (longCloseCondition) marketType = "趋势多且增强";
+  if (shortCloseCondition) marketType = "趋势空且增强";
+  if (longCondition) marketType = "趋势空";
+  if (shortCondition) marketType = "趋势多";
 
   console.log("快速周期:", filterCandleData(fastLastKline));
   console.log("慢速周期:", filterCandleData(slowLastKline));
