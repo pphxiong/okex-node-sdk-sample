@@ -67,7 +67,7 @@ const config = {
   tradeAmount: 2400, // 每单交易金额(USDT)
   realTradeAmount: 200, // 实际交易金额(USDT)
   maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-  basicLnp: (0.01 * 1) / 4,
+  basicLnp: (0.01 * 1.5) / 4,
   profitStopLossRatio: 20, // 盈亏比
   trailingStop: 0.0025, // 浮动止盈止损(0.25%)
   stopLoss: 0.01, // 硬止损(0.5%)

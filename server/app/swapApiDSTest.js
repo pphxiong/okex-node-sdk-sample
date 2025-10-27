@@ -811,25 +811,39 @@ class Backtester {
 		const stronger = emaFast > emaSlow;
 		const weeker = emaFast < emaSlow;
 
-		const longCondition =
-			emaFast > emaSlow &&
-			// lastEmaFast > lastEmaSlow &&
+		let longCondition = false;
+		let shortCondition = false;
+		let longCloseCondition = false;
+		let shortCloseCondition = false;
+		const { marketMode } = this;
+
+		longCondition =
+			emaFast < emaSlow &&
+			lastEmaFast > lastEmaSlow &&
 			// fastEmaSlow > fastEmaTrend &&
 			emaTrend > ema5 &&
 			// ema4 > ema5 &&
 			ema4 > ema6;
 
-		const shortCondition =
-			emaFast < emaSlow &&
-			// lastEmaFast < lastEmaSlow &&
+		shortCondition =
+			emaFast > emaSlow &&
+			lastEmaFast < lastEmaSlow &&
 			// emaSlow < emaTrend &&
 			emaTrend < ema5 &&
 			// ema4 < ema5 &&
 			ema4 < ema6;
 
-		// const { marketMode } = this;
-		const longCloseCondition =  emaTrend < ema5;
-		const shortCloseCondition =  emaTrend > ema5;
+		longCloseCondition = emaTrend < ema5;
+		shortCloseCondition = emaTrend > ema5;
+
+		if (marketMode == 2) {
+      cont tempCondition = longCondition;
+			longCondition = shortCondition;
+			shortCondition = tempCondition;
+
+      longCloseCondition = false;
+      shortCloseCondition = false;
+		}
 
 		// if (shouldFilter) {
 		// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
@@ -931,17 +945,17 @@ class Backtester {
 		// 	}
 		// }
 		// }
-		if (this.marketMode == 2) {
-			if (marketType.indexOf('多') != -1) {
-				marketType = marketType.replace('多', '空');
-			} else if (marketType.indexOf('空') != -1) {
-				marketType = marketType.replace('空', '多');
-			}
+		// if (this.marketMode == 2) {
+		// 	if (marketType.indexOf('多') != -1) {
+		// 		marketType = marketType.replace('多', '空');
+		// 	} else if (marketType.indexOf('空') != -1) {
+		// 		marketType = marketType.replace('空', '多');
+		// 	}
 
-      if (marketType.indexOf('且增强') == -1) {
-				marketType = '';
-			}
-		}
+		// 	if (marketType.indexOf('且增强') == -1) {
+		// 		marketType = '';
+		// 	}
+		// }
 
 		return marketType;
 	}
@@ -1512,13 +1526,11 @@ class Backtester {
 		const { marketMode } = this;
 		if (config.isMarketModeAuto) {
 			const basicLnp = (0.01 * 1.5) / 4;
-			if (lnp < -basicLnp) {
-				if (marketMode == 1) {
-					this.marketMode = 2;
-				} else if (marketMode == 2) {
+			if (marketMode == 2) {
 					this.marketMode = 1;
+				} else if (marketMode == 1 && lnp < -basicLnp) {
+					this.marketMode = 2;
 				}
-			}
 		}
 		config.marketMode = this.marketMode;
 	}
