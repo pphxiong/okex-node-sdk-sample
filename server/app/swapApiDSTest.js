@@ -837,12 +837,22 @@ class Backtester {
 		shortCloseCondition = emaTrend > ema5;
 
 		if (marketMode == 2) {
-      const tempCondition = longCondition;
-			longCondition = shortCondition;
-			shortCondition = tempCondition;
+			// const tempCondition = longCondition;
+			longCondition =
+				emaFast > emaSlow &&
+				lastEmaFast > lastEmaSlow &&
+				emaTrend > ema5 &&
+				ema4 > ema6;
+			shortCondition =
+				emaFast < emaSlow &&
+				lastEmaFast < lastEmaSlow &&
+				// emaSlow < emaTrend &&
+				emaTrend < ema5 &&
+				// ema4 < ema5 &&
+				ema4 < ema6;
 
-      longCloseCondition = false;
-      shortCloseCondition = false;
+			longCloseCondition = false;
+			shortCloseCondition = false;
 		}
 
 		// if (shouldFilter) {
@@ -1125,7 +1135,7 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				const basicLnp = (0.01 * 6) / 4;
+				const basicLnp = (0.01 * 1.5) / 4;
 				isProfitTarget = lnp > basicLnp * 3.5;
 				isStopLoss = lnp < -basicLnp;
 
@@ -1527,10 +1537,10 @@ class Backtester {
 		if (config.isMarketModeAuto) {
 			const basicLnp = (0.01 * 1.5) / 4;
 			if (marketMode == 2) {
-					this.marketMode = 1;
-				} else if (marketMode == 1 && lnp < -basicLnp) {
-					this.marketMode = 2;
-				}
+				this.marketMode = 1;
+			} else if (marketMode == 1 && lnp < -basicLnp) {
+				this.marketMode = 2;
+			}
 		}
 		config.marketMode = this.marketMode;
 	}
@@ -1719,7 +1729,7 @@ function carryForluma(p, rl, rw) {
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
 	const start = '2025-10-01';
-	const end = '2025-10-31';
+	const end = '2025-10-30';
 	const interval = 30;
 	let profitTotal = 0;
 	let maxLossTotal = 0;
