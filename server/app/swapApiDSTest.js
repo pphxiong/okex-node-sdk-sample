@@ -837,7 +837,7 @@ class Backtester {
 		shortCloseCondition = emaTrend > ema5;
 
 		if (marketMode == 2) {
-      cont tempCondition = longCondition;
+      const tempCondition = longCondition;
 			longCondition = shortCondition;
 			shortCondition = tempCondition;
 
