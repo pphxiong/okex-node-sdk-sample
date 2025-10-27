@@ -828,8 +828,8 @@ class Backtester {
 			ema4 < ema6;
 
 		// const { marketMode } = this;
-		const longCloseCondition =  ema5 < ema6;
-		const shortCloseCondition =  ema5 > ema6;
+		const longCloseCondition =  emaTrend < ema4;
+		const shortCloseCondition =  emaTrend > ema4;
 
 		// if (shouldFilter) {
 		// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
