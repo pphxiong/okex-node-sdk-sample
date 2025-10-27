@@ -34,7 +34,7 @@ const _ = require('lodash');
 const config = {
 	symbol: 'DOGE/USDT',
 	timeframe: '5m',
-	timeframes: ['3m', '5m', '15m'], // 多周期参数
+	timeframes: ['5m'], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
