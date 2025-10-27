@@ -837,20 +837,22 @@ class Backtester {
 		shortCloseCondition = emaTrend > ema5;
 
 		if (marketMode == 2) {
-			longCondition =
-				emaFast > emaSlow &&
-				// lastEmaFast > lastEmaSlow &&
-				emaTrend > ema5 &&
-				ema4 > ema6;
-			shortCondition =
-				emaFast < emaSlow &&
-				// lastEmaFast < lastEmaSlow &&
-				// emaSlow < emaTrend &&
-				emaTrend < ema5 &&
-				// ema4 < ema5 &&
-				ema4 < ema6;
+			// longCondition =
+			// 	emaFast > emaSlow &&
+			// 	// lastEmaFast > lastEmaSlow &&
+			// 	emaTrend > ema5 &&
+			// 	ema4 > ema6;
+			// shortCondition =
+			// 	emaFast < emaSlow &&
+			// 	// lastEmaFast < lastEmaSlow &&
+			// 	// emaSlow < emaTrend &&
+			// 	emaTrend < ema5 &&
+			// 	// ema4 < ema5 &&
+			// 	ema4 < ema6;
 
-			// const tempCondition = longCondition;
+			const tempCondition = longCondition;
+      longCondition = shortCondition;
+      shortCondition = tempCondition;
 			longCloseCondition = shortCondition;
 			shortCloseCondition = longCondition;
 		}
