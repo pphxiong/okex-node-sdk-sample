@@ -94,7 +94,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: true,
+	isMarketModeAuto: false,
 };
 
 // 计算单期EMA
@@ -845,8 +845,8 @@ class Backtester {
 		// 	}
 		// }
 
-		if (longCloseCondition) marketType = '趋势空';
-		if (shortCloseCondition) marketType = '趋势多';
+		if (false && longCloseCondition) marketType = '趋势空';
+		if (false && shortCloseCondition) marketType = '趋势多';
 		if (longCondition) marketType = '趋势多且增强';
 		if (shortCondition) marketType = '趋势空且增强';
 
