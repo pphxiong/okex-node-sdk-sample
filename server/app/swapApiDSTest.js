@@ -94,7 +94,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: true,
+	isMarketModeAuto: false,
 };
 
 // 计算单期EMA
@@ -812,16 +812,16 @@ class Backtester {
 		const weeker = emaFast < emaSlow;
 
 		const longCondition =
-			emaFast < emaSlow &&
-			lastEmaFast > lastEmaSlow &&
+			emaSlow < emaTrend &&
+			lastEmaSlow > lastEmaTrend &&
 			// fastEmaSlow > fastEmaTrend &&
 			emaTrend > ema5 &&
 			// ema4 > ema5 &&
 			ema4 > ema6;
 
 		const shortCondition =
-			emaFast > emaSlow &&
-			lastEmaFast < lastEmaSlow &&
+			emaSlow > emaTrend &&
+			lastEmaSlow < lastEmaTrend &&
 			// emaSlow < emaTrend &&
 			emaTrend < ema5 &&
 			// ema4 < ema5 &&
