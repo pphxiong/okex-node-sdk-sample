@@ -815,20 +815,20 @@ class Backtester {
 			emaFast < emaSlow &&
 			lastEmaFast > lastEmaSlow &&
 			// fastEmaSlow > fastEmaTrend &&
-			emaTrend > ema4 &&
+			emaTrend > ema5 &&
 			// ema4 > ema5 &&
-			ema5 > ema6;
+			ema4 > ema6;
 
 		const shortCondition =
 			emaFast > emaSlow &&
 			lastEmaFast < lastEmaSlow &&
 			// emaSlow < emaTrend &&
-			emaTrend < ema4 &&
+			emaTrend < ema5 &&
 			// ema4 < ema5 &&
-			ema5 < ema6;
+			ema4 < ema6;
 
-		const longCloseCondition = emaTrend < ema4;
-		const shortCloseCondition = emaTrend > ema4;
+		const longCloseCondition = emaTrend < ema5;
+		const shortCloseCondition = emaTrend > ema5;
 
 		// if (shouldFilter) {
 		// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
@@ -1106,7 +1106,7 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				const basicLnp = (0.01 * 1) / 4;
+				const basicLnp = (0.01 * 1.5) / 4;
 				isProfitTarget = lnp > basicLnp * 5;
 				isStopLoss = lnp < -basicLnp;
 
