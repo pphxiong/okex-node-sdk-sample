@@ -827,9 +827,9 @@ class Backtester {
 			// ema4 < ema5 &&
 			ema4 < ema6;
 
-		const { marketMode } = this;
-		const longCloseCondition = marketMode == 1 && emaTrend < ema5;
-		const shortCloseCondition = marketMode == 1 && emaTrend > ema5;
+		// const { marketMode } = this;
+		const longCloseCondition =  emaTrend < ema5;
+		const shortCloseCondition =  emaTrend > ema5;
 
 		// if (shouldFilter) {
 		// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
@@ -936,6 +936,10 @@ class Backtester {
 				marketType = marketType.replace('多', '空');
 			} else if (marketType.indexOf('空') != -1) {
 				marketType = marketType.replace('空', '多');
+			}
+
+      if (marketType.indexOf('且增强') == -1) {
+				marketType = '';
 			}
 		}
 
