@@ -821,21 +821,13 @@ class Backtester {
 			(emaFast < emaSlow &&
 				lastEmaFast > lastEmaSlow &&
 				emaTrend > ema5 &&
-				ema4 > ema6) ||
-			(emaFast < emaSlow &&
-				emaSlow < emaTrend &&
-				ema4 > ema5 &&
-				ema5 > ema6);
+				ema4 > ema6);
 
 		shortCondition =
 			(emaFast > emaSlow &&
 				lastEmaFast < lastEmaSlow &&
 				emaTrend < ema5 &&
-				ema4 < ema6) ||
-			(emaFast > emaSlow &&
-				emaSlow > emaTrend &&
-				ema4 < ema5 &&
-				ema5 < ema6);
+				ema4 < ema6);
 
 		longCloseCondition = emaTrend < ema5;
 		shortCloseCondition = emaTrend > ema5;
