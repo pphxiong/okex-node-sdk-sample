@@ -789,7 +789,7 @@ class Backtester {
       emaSlow > emaTrend &&
       // lastEmaFast > lastEmaSlow &&
       emaTrend > ema4 &&
-      ema4 > ema5 &&
+      close > emaTrend &&
       close > ema6;
 
     shortCondition =
@@ -797,11 +797,11 @@ class Backtester {
       emaSlow < emaTrend &&
       // lastEmaFast > lastEmaSlow &&
       emaTrend < ema4 &&
-      ema4 < ema5 &&
+      close < emaTrend &&
       close < ema6;
 
-    longCloseCondition = emaFast < emaSlow;
-    shortCloseCondition = emaFast > emaSlow;
+    longCloseCondition = close < emaTrend;
+    shortCloseCondition = close > emaTrend;
 
     // if (marketMode == 2) {
     // 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
