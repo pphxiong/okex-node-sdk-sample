@@ -1721,7 +1721,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-10-01';
+	const start = '2025-08-01';
 	const end = '2025-10-30';
 	const interval = 30;
 	let profitTotal = 0;
@@ -1735,8 +1735,8 @@ function carryForluma(p, rl, rw) {
 	let i = 0;
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
-	// while (moment(end).isAfter(startTime)) {
-	while (i === 0) {
+	while (moment(end).isAfter(startTime)) {
+	// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
