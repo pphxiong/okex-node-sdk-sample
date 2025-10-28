@@ -94,7 +94,7 @@ const config = {
 	adxPeriod: 14,
 	rsiPeriod: 14,
 	marketMode: 1,
-	isMarketModeAuto: true,
+	isMarketModeAuto: false,
 };
 
 // 计算单期EMA
@@ -818,44 +818,35 @@ class Backtester {
 		const { marketMode } = this;
 
 		longCondition =
-			emaFast < emaSlow &&
-			lastEmaFast > lastEmaSlow &&
-			// fastEmaSlow > fastEmaTrend &&
-			emaTrend > ema5 &&
-			// ema4 > ema5 &&
-			ema4 > ema6;
+			(emaFast < emaSlow &&
+				lastEmaFast > lastEmaSlow &&
+				emaTrend > ema5 &&
+				ema4 > ema6) ||
+			(emaFast > emaSlow &&
+				emaSlow > emaTrend &&
+				emaTrend > ema5 &&
+				ema4 < ema5 &&
+				ema5 < ema6);
 
 		shortCondition =
-			emaFast > emaSlow &&
-			lastEmaFast < lastEmaSlow &&
-			// emaSlow < emaTrend &&
-			emaTrend < ema5 &&
-			// ema4 < ema5 &&
-			ema4 < ema6;
+			(emaFast > emaSlow &&
+				lastEmaFast < lastEmaSlow &&
+				emaTrend < ema5 &&
+				ema4 < ema6) ||
+			(emaFast < emaSlow &&
+				emaSlow < emaTrend &&
+				emaTrend < ema5 &&
+				ema4 > ema5 &&
+				ema5 > ema6);
 
 		longCloseCondition = emaTrend < ema5;
 		shortCloseCondition = emaTrend > ema5;
 
-		if (marketMode == 2) {
-			// longCondition =
-			// 	emaFast > emaSlow &&
-			// 	// lastEmaFast > lastEmaSlow &&
-			// 	emaTrend > ema5 &&
-			// 	ema4 > ema6;
-			// shortCondition =
-			// 	emaFast < emaSlow &&
-			// 	// lastEmaFast < lastEmaSlow &&
-			// 	// emaSlow < emaTrend &&
-			// 	emaTrend < ema5 &&
-			// 	// ema4 < ema5 &&
-			// 	ema4 < ema6;
-
-			const tempCondition = longCondition;
-      longCondition = shortCondition;
-      shortCondition = tempCondition;
-			longCloseCondition = shortCondition;
-			shortCloseCondition = longCondition;
-		}
+		// if (marketMode == 2) {
+		// 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
+		// 	shortCondition =
+		// 		emaFast < emaSlow && emaTrend < ema5 && ema4 < ema6;
+		// }
 
 		// if (shouldFilter) {
 		// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
