@@ -40,7 +40,7 @@ const config = {
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 21, 55], slopeWindow: 3 },
-		'5m': { periods: [5, 8, 13, 21, 34, 55], slopeWindow: 3 },
+		'5m': { periods: [3, 5, 8, 13, 21, 34], slopeWindow: 3 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// "15m": { periods: [25, 5], slopeWindow: 5 },
 		// '5m': { periods: [10, 5], slopeWindow: 5 },
@@ -818,19 +818,27 @@ class Backtester {
 		const { marketMode } = this;
 
 		longCondition =
-			emaFast < emaSlow &&
-			lastEmaFast > lastEmaSlow &&
-			emaTrend > ema5 &&
-			ema4 > ema6;
+			(emaFast < emaSlow &&
+				lastEmaFast > lastEmaSlow &&
+				emaTrend > ema5 &&
+				ema4 > ema6) ||
+			(emaFast > emaSlow &&
+				emaSlow > emaTrend &&
+				ema4 < ema5 &&
+				ema5 < ema6);
 
 		shortCondition =
-			emaFast > emaSlow &&
-			lastEmaFast < lastEmaSlow &&
-			emaTrend < ema5 &&
-			ema4 < ema6;
+			(emaFast > emaSlow &&
+				lastEmaFast < lastEmaSlow &&
+				emaTrend < ema5 &&
+				ema4 < ema6) ||
+			(emaFast < emaSlow &&
+				emaSlow < emaTrend &&
+				ema4 > ema5 &&
+				ema5 > ema6);
 
-		longCloseCondition = emaTrend < ema5;
-		shortCloseCondition = emaTrend > ema5;
+		longCloseCondition = false && emaTrend < ema5;
+		shortCloseCondition = false && emaTrend > ema5;
 
 		// if (marketMode == 2) {
 		// 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
