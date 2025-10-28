@@ -818,26 +818,16 @@ class Backtester {
 		const { marketMode } = this;
 
 		longCondition =
-			(emaFast < emaSlow &&
-				lastEmaFast > lastEmaSlow &&
-				emaTrend > ema5 &&
-				ema4 > ema6) ||
-			(emaFast > emaSlow &&
-				emaSlow > emaTrend &&
-				emaTrend > ema5 &&
-				ema4 < ema5 &&
-				ema5 < ema6);
+			emaFast < emaSlow &&
+			lastEmaFast > lastEmaSlow &&
+			emaTrend > ema5 &&
+			ema4 > ema6;
 
 		shortCondition =
-			(emaFast > emaSlow &&
-				lastEmaFast < lastEmaSlow &&
-				emaTrend < ema5 &&
-				ema4 < ema6) ||
-			(emaFast < emaSlow &&
-				emaSlow < emaTrend &&
-				emaTrend < ema5 &&
-				ema4 > ema5 &&
-				ema5 > ema6);
+			emaFast > emaSlow &&
+			lastEmaFast < lastEmaSlow &&
+			emaTrend < ema5 &&
+			ema4 < ema6;
 
 		longCloseCondition = emaTrend < ema5;
 		shortCloseCondition = emaTrend > ema5;
@@ -1736,7 +1726,7 @@ function carryForluma(p, rl, rw) {
 	let loop = 1;
 	let startTime = moment(start).add(i, 'days');
 	while (moment(end).isAfter(startTime)) {
-	// while (i === 0) {
+		// while (i === 0) {
 		loop += 1;
 		try {
 			backtester.data = {
