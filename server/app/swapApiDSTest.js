@@ -794,7 +794,7 @@ class Backtester {
       ema4 > ema6;
 
     shortCondition =
-      emaFast > emaTrend &&
+      emaFast < emaTrend &&
       // emaSlow > emaTrend &&
       // lastEmaFast < lastEmaSlow &&
       emaSlow < ema4 &&
