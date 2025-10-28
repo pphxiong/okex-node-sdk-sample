@@ -828,7 +828,8 @@ class Backtester {
 			emaFast > emaSlow &&
 			lastEmaFast < lastEmaSlow &&
 			emaTrend < ema5 &&
-			ema4 < ema6 && close < ema5;
+			ema4 < ema6 &&
+			close < ema5;
 
 		longCloseCondition = close < ema5 || emaTrend < ema5;
 		shortCloseCondition = close > ema5 || emaTrend > ema5;
