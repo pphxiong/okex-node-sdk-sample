@@ -837,8 +837,8 @@ class Backtester {
 				ema4 < ema5 &&
 				ema5 < ema6);
 
-		longCloseCondition = false && emaTrend < ema5;
-		shortCloseCondition = false && emaTrend > ema5;
+		longCloseCondition = emaTrend < ema5;
+		shortCloseCondition = emaTrend > ema5;
 
 		// if (marketMode == 2) {
 		// 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
