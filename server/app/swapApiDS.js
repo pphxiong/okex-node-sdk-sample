@@ -286,8 +286,8 @@ async function getMarketType(marketData) {
 
 	console.log('趋势强度:', trendStrength);
 	console.log('快速周期:', filterCandleData(fastLastKline));
-	console.log('慢速周期:', filterCandleData(slowLastKline));
-	console.log('趋势周期:', filterCandleData(trendLastKline));
+	// console.log('慢速周期:', filterCandleData(slowLastKline));
+	// console.log('趋势周期:', filterCandleData(trendLastKline));
 	console.log('市场类型:', marketType);
 
 	return marketType;
