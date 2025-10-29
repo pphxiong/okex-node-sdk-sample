@@ -827,9 +827,13 @@ class Backtester {
 		// 或添加趋势强度过滤
 		const trendStrength = Math.abs(ema5 - ema6) / close;
 		longCondition =
-			longCondition && trendStrength > 0.001 && trendStrength < 0.005;
+			longCondition &&
+			((trendStrength > 0.003 && trendStrength < 0.005) ||
+				trendStrength < 0.001);
 		shortCondition =
-			shortCondition && trendStrength > 0.001 && trendStrength < 0.005;
+			shortCondition &&
+			((trendStrength > 0.003 && trendStrength < 0.005) ||
+				trendStrength < 0.001);
 
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
