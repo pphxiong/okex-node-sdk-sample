@@ -41,7 +41,7 @@ require('dotenv').config();
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['5m', '15m', '1h' /*  '5m''1m'*/], // 多周期参数
+	timeframes: ['5m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
@@ -56,8 +56,8 @@ const config = {
 	},
 	macdParams: { '5m': [12, 26, 9], '15m': [12, 26, 9], '1h': [12, 26, 9] },
 	fastframe: '5m',
-	slowframe: '15m',
-	trendframe: '1h',
+	slowframe: '5m',
+	trendframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -1346,7 +1346,7 @@ class RiskManager {
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
 			const getIsHasPosition = await RiskManager.getIsHasPosition();
 			if (getIsHasPosition) return;
-      
+
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
@@ -1463,9 +1463,10 @@ async function initialize() {
 		);
 	});
 
-	const [candlesFast, candlesSlow, candlesTrend] = await Promise.all(
-		candlePromises
-	);
+	const [candlesFast] = await Promise.all(candlePromises);
+
+	const candlesSlow = JSON.parse(JSON.stringify(candlesFast));
+	const candlesTrend = JSON.parse(JSON.stringify(candlesFast));
 
 	candlesFast.pop();
 	candlesSlow.pop();
@@ -1724,9 +1725,9 @@ function debounce(fn, delay) {
 function connectWebSocket() {
 	const symbolForWS = config.symbol.replace('/', '').toLowerCase();
 	const streams = [
-		`${symbolForWS}@kline_${config.slowframe}`,
 		`${symbolForWS}@kline_${config.fastframe}`,
-		`${symbolForWS}@kline_${config.trendframe}`,
+		// `${symbolForWS}@kline_${config.slowframe}`,
+		// `${symbolForWS}@kline_${config.trendframe}`,
 	];
 	// ws = new WebSocket(
 	//   "wss://fstream.binance.com/ws/" + symbolForWS + "@kline_1m"
@@ -1745,9 +1746,9 @@ function connectWebSocket() {
 			const streamInfo = msg.stream.split('@');
 			const [symbol, period] = streamInfo;
 			const periodMap = {
-				[`kline_${config.slowframe}`]: config.slowframe,
 				[`kline_${config.fastframe}`]: config.fastframe,
-				[`kline_${config.trendframe}`]: config.trendframe,
+				// [`kline_${config.slowframe}`]: config.slowframe,
+				// [`kline_${config.trendframe}`]: config.trendframe,
 			};
 
 			if (!msg.data.k.x) return; // 仅处理闭合K线
