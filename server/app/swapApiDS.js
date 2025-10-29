@@ -284,7 +284,7 @@ async function getMarketType(marketData) {
 	if (longCondition) marketType = '趋势多且增强';
 	if (shortCondition) marketType = '趋势空且增强';
 
-  console.log('趋势强度:', trendStrength);
+	console.log('趋势强度:', trendStrength);
 	console.log('快速周期:', filterCandleData(fastLastKline));
 	console.log('慢速周期:', filterCandleData(slowLastKline));
 	console.log('趋势周期:', filterCandleData(trendLastKline));
@@ -1342,11 +1342,11 @@ class RiskManager {
 	}
 
 	static async openPosition(signal, orderBook) {
-		const getIsHasPosition = await RiskManager.getIsHasPosition();
-		if (getIsHasPosition) return;
-
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
+			const getIsHasPosition = await RiskManager.getIsHasPosition();
+			if (getIsHasPosition) return;
+      
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
