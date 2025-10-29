@@ -811,29 +811,23 @@ class Backtester {
 		const stronger = emaFast > emaSlow;
 		const weeker = emaFast < emaSlow;
 
+		const { marketMode } = this;
+
 		let longCondition = false;
 		let shortCondition = false;
 		let longCloseCondition = false;
 		let shortCloseCondition = false;
-		const { marketMode } = this;
 
 		longCondition =
-			close > emaTrend &&
-			// close < lastClose &&
-			// emaFast < emaSlow &&
-			// emaSlow > emaTrend &&
-			emaTrend > ema5 &&
-			ema5 > ema6 &&
-			close > ema6;
+			close > emaTrend && emaTrend > ema5 && ema5 > ema6 && close > ema6;
 
 		shortCondition =
-			close < emaTrend &&
-			// close > lastClose &&
-			// emaFast > emaSlow &&
-			// emaSlow < emaTrend &&
-			emaTrend < ema5 &&
-			ema5 < ema6 &&
-			close < ema6;
+			close < emaTrend && emaTrend < ema5 && ema5 < ema6 && close < ema6;
+
+		// 或添加趋势强度过滤
+		const trendStrength = Math.abs(ema5 - ema6) / close;
+		longCondition = longCondition && trendStrength > 0.005;
+		shortCondition = shortCondition && trendStrength > 0.005;
 
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
