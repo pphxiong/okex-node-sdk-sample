@@ -785,7 +785,7 @@ class Backtester {
     const { marketMode } = this;
 
     longCondition =
-      emaFast < ema5 &&
+      close > lastClose &&
       // emaSlow < emaTrend &&
       // lastEmaFast > lastEmaSlow &&
       emaSlow > ema4 &&
@@ -794,7 +794,7 @@ class Backtester {
       close > ema6;
 
     shortCondition =
-      emaFast > ema5 &&
+      close < lastClose &&
       // emaSlow > emaTrend &&
       // lastEmaFast < lastEmaSlow &&
       emaSlow < ema4 &&
@@ -802,8 +802,8 @@ class Backtester {
       // ema4 < ema5 &&
       close < ema6;
 
-    longCloseCondition = emaTrend < ema4;
-    shortCloseCondition = emaTrend > ema4;
+    longCloseCondition = close < lastClose;
+    shortCloseCondition = close > lastClose;
 
     // if (marketMode == 2) {
     // 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
@@ -827,7 +827,7 @@ class Backtester {
     // }
 
     if (longCloseCondition) marketType = "趋势空";
-    if (shortCloseCondition) marketType = `${marketType}趋势多`;
+    if (shortCloseCondition) marketType = `趋势多`;
     if (longCondition) marketType = "趋势多且增强";
     if (shortCondition) marketType = "趋势空且增强";
 
