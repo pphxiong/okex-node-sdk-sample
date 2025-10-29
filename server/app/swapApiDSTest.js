@@ -1261,12 +1261,11 @@ class Backtester {
 					// isLastIndex ||
 
 					isStopLoss ||
-					(lnp > 0 &&
-						(isProfitTarget ||
-							// (lnp < 0 && duration >= 60) ||
-							(position.direction === 'long'
-								? longCloseConditions.some((c) => !!c)
-								: shortCloseConditions.some((c) => !!c))));
+					isProfitTarget ||
+					// (lnp < 0 && duration >= 60) ||
+					(position.direction === 'long'
+						? longCloseConditions.some((c) => !!c)
+						: shortCloseConditions.some((c) => !!c));
 				if (isReverse) {
 					this.closePosition(
 						position,
