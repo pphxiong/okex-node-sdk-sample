@@ -818,25 +818,25 @@ class Backtester {
 		const { marketMode } = this;
 
 		longCondition =
-			close > ema4 &&
+			close > emaTrend &&
 			// close < lastClose &&
 			// emaFast < emaSlow &&
 			// emaSlow > emaTrend &&
-			ema4 > ema5 &&
+			emaTrend > ema4 &&
 			ema5 > ema6 &&
 			close > ema6;
 
 		shortCondition =
-			close < ema4 &&
+			close < emaTrend &&
 			// close > lastClose &&
 			// emaFast > emaSlow &&
 			// emaSlow < emaTrend &&
-			ema4 < ema5 &&
+			emaTrend < ema4 &&
 			ema5 < ema6 &&
 			close < ema6;
 
-		longCloseCondition = close < ema4;
-		shortCloseCondition = close > ema4;
+		longCloseCondition = close < emaTrend;
+		shortCloseCondition = close > emaTrend;
 
 		// if (marketMode == 2) {
 		// 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
