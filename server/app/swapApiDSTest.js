@@ -828,12 +828,12 @@ class Backtester {
 		const trendStrength = Math.abs(ema5 - ema6) / close;
 		longCondition =
 			longCondition &&
-			((trendStrength > 0.003 && trendStrength < 0.005) ||
-				trendStrength < 0.001);
+			((trendStrength > 0.0035 && trendStrength < 0.005) ||
+				trendStrength < 0.0015);
 		shortCondition =
 			shortCondition &&
-			((trendStrength > 0.003 && trendStrength < 0.005) ||
-				trendStrength < 0.001);
+			((trendStrength > 0.0035 && trendStrength < 0.005) ||
+				trendStrength < 0.0015);
 
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
@@ -1717,7 +1717,7 @@ function carryForluma(p, rl, rw) {
 	const backtester = new Backtester();
 	// const start = '2023-01-01';
 	// const end = '2023-07-01';
-	const start = '2025-09-01';
+	const start = '2025-10-01';
 	const end = '2025-10-30';
 	const interval = 30;
 	let profitTotal = 0;
