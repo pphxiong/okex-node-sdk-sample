@@ -822,7 +822,7 @@ class Backtester {
 			// close < lastClose &&
 			// emaFast < emaSlow &&
 			// emaSlow > emaTrend &&
-			emaTrend > ema4 &&
+			emaTrend > ema5 &&
 			ema5 > ema6 &&
 			close > ema6;
 
@@ -831,7 +831,7 @@ class Backtester {
 			// close > lastClose &&
 			// emaFast > emaSlow &&
 			// emaSlow < emaTrend &&
-			emaTrend < ema4 &&
+			emaTrend < ema5 &&
 			ema5 < ema6 &&
 			close < ema6;
 
