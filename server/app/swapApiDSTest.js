@@ -819,15 +819,29 @@ class Backtester {
 		let shortCloseCondition = false;
 
 		longCondition =
-			close > emaTrend && emaTrend > ema5 && ema5 > ema6 && close > ema6;
+			close > emaTrend &&
+			lastClose < lastEmaTrend &&
+			emaTrend > ema5 &&
+			ema5 > ema6 &&
+			close > ema6;
 
 		shortCondition =
-			close < emaTrend && emaTrend < ema5 && ema5 < ema6 && close < ema6;
+			close < emaTrend &&
+			lastClose > lastEmaTrend &&
+			emaTrend < ema5 &&
+			ema5 < ema6 &&
+			close < ema6;
 
 		// 或添加趋势强度过滤
 		const trendStrength = Math.abs(ema5 - ema6) / close;
-		longCondition = longCondition && trendStrength < 0.005;
-		shortCondition = shortCondition && trendStrength < 0.005;
+		longCondition =
+			longCondition &&
+			((trendStrength > 0.003 && trendStrength < 0.005) ||
+				trendStrength < 0.001);
+		shortCondition =
+			shortCondition &&
+			((trendStrength > 0.003 && trendStrength < 0.005) ||
+				trendStrength < 0.001);
 
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
