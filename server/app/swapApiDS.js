@@ -1344,8 +1344,8 @@ class RiskManager {
 	static async openPosition(signal, orderBook) {
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
-			const getIsHasPosition = await RiskManager.getIsHasPosition();
-			if (getIsHasPosition) return;
+			// const getIsHasPosition = await RiskManager.getIsHasPosition();
+			// if (getIsHasPosition) return;
 
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
