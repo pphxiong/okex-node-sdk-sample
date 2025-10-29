@@ -835,8 +835,8 @@ class Backtester {
 			ema4 < ema5 &&
 			close < ema6;
 
-		longCloseCondition = false && close < lastClose;
-		shortCloseCondition = false && close > lastClose;
+		longCloseCondition = close < ema6;
+		shortCloseCondition = close > ema6;
 
 		// if (marketMode == 2) {
 		// 	longCondition = emaFast > emaSlow && emaTrend > ema5 && ema4 > ema6;
@@ -1124,8 +1124,8 @@ class Backtester {
 					isStopLoss = d.close >= position.high + position.atr * 0.3;
 				}
 
-				const basicLnp = (0.01 * 10) / 4;
-				isProfitTarget = lnp > basicLnp * 3.5;
+				const basicLnp = 0.01 * 1;
+				isProfitTarget = lnp > basicLnp * 10;
 				isStopLoss = lnp < -basicLnp;
 
 				// const isProfitTarget =
