@@ -860,7 +860,7 @@ class Backtester {
 		// }
 
 		if (longCloseCondition) marketType = '趋势空';
-		if (shortCloseCondition) marketType = `趋势多`;
+		if (shortCloseCondition) marketType = '趋势多';
 		if (longCondition) marketType = '趋势多且增强';
 		if (shortCondition) marketType = '趋势空且增强';
 
