@@ -874,7 +874,7 @@ class Backtester {
 
     if((trendStrength > 0.001 && trendStrength < 0.003) ||
 				trendStrength > 0.005) {
-          marketMode = this.toogleMarketType(marketMode);
+          marketType = this.toogleMarketType(marketType);
     }
 
 		// if (close > emaSlow) {
