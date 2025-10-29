@@ -1643,9 +1643,9 @@ const readData = async () => {
 
 async function initPositionData() {
   try {
-    // const positionResult = await cAuthClientBN.swap.getPosition();
-    // const { positions, availableBalance, totalMarginBalance } = positionResult;
-    const positions = exchange.fetchPositions();
+    const positionResult = await cAuthClientBN.swap.getPosition();
+    const { positions, availableBalance, totalMarginBalance } = positionResult;
+    // const positions = exchange.fetchPositions();
     const dataConfig = await readData();
     config.marketMode = dataConfig.marketMode || config.marketMode;
     config.isMarketModeAuto =
