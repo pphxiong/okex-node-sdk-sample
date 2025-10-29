@@ -820,7 +820,7 @@ class Backtester {
 		longCondition =
 			close > emaTrend &&
 			// close < lastClose &&
-			emaFast < emaSlow &&
+			// emaFast < emaSlow &&
 			// emaSlow > emaTrend &&
 			emaTrend > ema5 &&
 			ema5 > ema6 &&
@@ -829,7 +829,7 @@ class Backtester {
 		shortCondition =
 			close < emaTrend &&
 			// close > lastClose &&
-			emaFast > emaSlow &&
+			// emaFast > emaSlow &&
 			// emaSlow < emaTrend &&
 			emaTrend < ema5 &&
 			ema5 < ema6 &&
