@@ -226,17 +226,34 @@ async function getMarketType(marketData) {
 
 	// const longCloseCondition = fastClose < ema5 || fastEmaTrend < ema5;
 	// const shortCloseCondition = fastClose > ema5 || fastEmaTrend > ema5;
+	let longCondition = false;
+	let shortCondition = false;
 
-	const longCondition =
+	longCondition =
 		fastClose > fastEmaTrend &&
+		fastLastClose < fastLastEmaTrend &&
 		fastEmaTrend > ema5 &&
 		ema5 > ema6 &&
 		fastClose > ema6;
-	const shortCondition =
+	shortCondition =
 		fastClose < fastEmaTrend &&
+		fastLastClose > fastLastEmaTrend &&
 		fastEmaTrend < ema5 &&
 		ema5 < ema6 &&
 		fastClose < ema6;
+
+	// 或添加趋势强度过滤
+	const trendStrength = Math.abs(ema5 - ema6) / fastClose;
+
+	longCondition =
+		longCondition &&
+		((trendStrength > 0.003 && trendStrength < 0.005) ||
+			trendStrength < 0.001);
+	shortCondition =
+		shortCondition &&
+		((trendStrength > 0.003 && trendStrength < 0.005) ||
+			trendStrength < 0.001);
+
 	const longCloseCondition = fastClose < fastEmaTrend;
 	const shortCloseCondition = fastClose > fastEmaTrend;
 
@@ -267,6 +284,7 @@ async function getMarketType(marketData) {
 	if (longCondition) marketType = '趋势多且增强';
 	if (shortCondition) marketType = '趋势空且增强';
 
+  console.log('趋势强度:', trendStrength);
 	console.log('快速周期:', filterCandleData(fastLastKline));
 	console.log('慢速周期:', filterCandleData(slowLastKline));
 	console.log('趋势周期:', filterCandleData(trendLastKline));
