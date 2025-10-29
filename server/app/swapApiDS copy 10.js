@@ -32,6 +32,7 @@ const ccxt = require('ccxt');
 const tulind = require('tulind');
 const WebSocket = require('ws');
 const fs = require('fs');
+const { fork } = require('child_process');
 require('dotenv').config();
 
 // const MAX_TRADE_POSITION_RATIO = 7 / 10;
@@ -57,7 +58,9 @@ const SYMBOL_LIST = [
 
 // 配置参数
 const config = {
-	symbol: 'DOGE/USDT',
+	// allow overriding symbol by environment variable when spawning multiple bots
+	// if no SYMBOL env is provided this file will run as a single-bot for the default symbol
+	symbol: process.env.SYMBOL || 'DOGE/USDT',
 	// timeframe: '1m',
 	timeframes: ['5m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
@@ -1829,6 +1832,31 @@ function mergeTimeframes() {
 }
 
 // 启动策略
+(function spawnChildrenIfNeeded() {
+	// If no SYMBOL env is set and SYMBOL_LIST contains multiple symbols,
+	// spawn a child process for each symbol and exit the parent. Each
+	// child will run this same script with process.env.SYMBOL set.
+	if (!process.env.SYMBOL && Array.isArray(SYMBOL_LIST) && SYMBOL_LIST.length > 1) {
+		const script = process.argv[1] || __filename;
+		console.log('Parent process spawning bots for symbols:', SYMBOL_LIST);
+		SYMBOL_LIST.forEach((sym) => {
+			try {
+				const child = fork(script, process.argv.slice(2), {
+					env: Object.assign({}, process.env, { SYMBOL: sym }),
+					stdio: 'inherit',
+				});
+				child.on('exit', (code) =>
+					console.log(`child for ${sym} exited with code ${code}`)
+				);
+			} catch (e) {
+				console.error('failed to spawn child for', sym, e);
+			}
+		});
+		// parent should exit after spawning children
+		process.exit(0);
+	}
+})();
+
 (async () => {
 	await exchange.loadMarkets();
 

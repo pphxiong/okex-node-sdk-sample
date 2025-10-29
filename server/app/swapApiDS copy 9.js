@@ -37,24 +37,6 @@ require('dotenv').config();
 // const MAX_TRADE_POSITION_RATIO = 7 / 10;
 // const LEVERAGE = 20;
 
-const BTC_SYMBOL = 'BTC/USDT';
-const ETH_SYMBOL = 'ETH/USDT';
-const EOS_SYMBOL = 'EOS/USDT';
-const XRP_SYMBOL = 'XRP/USDT';
-const DOGE_SYMBOL = 'DOGE/USDT';
-const TRX_SYMBOL = 'TRX/USDT';
-const LTC_SYMBOL = 'LTC/USDT';
-
-const SYMBOL_LIST = [
-	BTC_SYMBOL,
-	ETH_SYMBOL,
-	EOS_SYMBOL,
-	XRP_SYMBOL,
-	DOGE_SYMBOL,
-	TRX_SYMBOL,
-	LTC_SYMBOL,
-];
-
 // 配置参数
 const config = {
 	symbol: 'DOGE/USDT',
