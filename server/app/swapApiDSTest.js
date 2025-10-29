@@ -68,7 +68,7 @@ const config = {
 		stopLoss: 2.5,
 		takeProfit: 2,
 	},
-	feeRate: 2 / 10000, // 交易手续费0.04%
+	feeRate: 0 / 10000, // 交易手续费0.04%
 	slippage: 0, // 滑点率
 	initialBalance: 1000, // 初始本金10000 USDT
 	leverage: 10,
