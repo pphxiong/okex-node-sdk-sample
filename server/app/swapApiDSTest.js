@@ -872,12 +872,9 @@ class Backtester {
 		if (longCondition) marketType = '趋势多且增强';
 		if (shortCondition) marketType = '趋势空且增强';
 
-		// if (
-		// 	(trendStrength > 0.001 && trendStrength < 0.003) ||
-		// 	trendStrength > 0.005
-		// ) {
-		// 	marketType = this.toogleMarketType(marketType, candle);
-		// }
+		if (trendStrength > 0.005) {
+			marketType = this.toogleMarketType(marketType, candle);
+		}
 
 		// if (close > emaSlow) {
 		// 	marketType = '趋势多';
