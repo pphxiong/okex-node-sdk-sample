@@ -848,32 +848,33 @@ class Backtester {
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
 
-		if (
-			(trendStrength > 0.001 && trendStrength < 0.003) ||
-			trendStrength > 0.005
-		) {
-			longCondition =
-				close > emaTrend &&
-				lastClose < lastEmaTrend &&
-				emaTrend < ema5 &&
-				ema5 < ema6 &&
-				close < ema6;
-
-			shortCondition =
-				close < emaTrend &&
-				lastClose > lastEmaTrend &&
-				emaTrend > ema5 &&
-				ema5 > ema6 &&
-				close > ema6;
-
-			longCloseCondition = close < emaTrend;
-			shortCloseCondition = close > emaTrend;
-		}
-
 		if (longCloseCondition) marketType = '趋势空';
 		if (shortCloseCondition) marketType = '趋势多';
 		if (longCondition) marketType = '趋势多且增强';
 		if (shortCondition) marketType = '趋势空且增强';
+
+		if (
+			(trendStrength > 0.001 && trendStrength < 0.003) ||
+			trendStrength > 0.005
+		) {
+			// longCondition =
+			// 	close > emaTrend &&
+			// 	lastClose < lastEmaTrend &&
+			// 	emaTrend < ema5 &&
+			// 	ema5 < ema6 &&
+			// 	close < ema6;
+
+			// shortCondition =
+			// 	close < emaTrend &&
+			// 	lastClose > lastEmaTrend &&
+			// 	emaTrend > ema5 &&
+			// 	ema5 > ema6 &&
+			// 	close > ema6;
+
+			// longCloseCondition = close < emaTrend;
+			// shortCloseCondition = close > emaTrend;
+			marketType = this.toogleMarketType(marketType, candle);
+		}
 
 		// if (close > emaSlow) {
 		// 	marketType = '趋势多';
