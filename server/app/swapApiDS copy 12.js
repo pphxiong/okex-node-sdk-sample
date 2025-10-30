@@ -1,49 +1,94 @@
-import moment from "moment";
-import helper from "../utils/index";
-const customAuthClientBN = require("./customAuthClientBN");
-const { judgeMarketState } = require("./market-state-analyzer");
-const { DynamicEMAFilterWithATR } = require("./dynamic-ema-filter");
+// Parent launcher: spawns one child process per symbol (swapApiDS.child.js).
+// If you set the environment variable SYMBOL, this launcher will start a single child
+// using that SYMBOL; otherwise it will spawn one child per symbol in SYMBOL_LIST.
+const { fork } = require('child_process');
+const path = require('path');
 
-const PASSWORD = "@Xiong092479";
+const LAUNCHER_SYMBOL_LIST = [
+  'BTC/USDT',
+  'ETH/USDT',
+  'EOS/USDT',
+  'XRP/USDT',
+  'DOGE/USDT',
+  'TRX/USDT',
+  'LTC/USDT',
+];
 
-const express = require("express");
+const childScript = path.join(__dirname, 'swapApiDS.child.js');
+
+if (process.env.SYMBOL) {
+  console.log('Launcher: starting single child for', process.env.SYMBOL);
+  const child = fork(childScript, [], {
+    env: process.env,
+    stdio: 'inherit',
+  });
+  child.on('exit', (code) => process.exit(code));
+} else {
+  console.log('Launcher: spawning children for symbols:', LAUNCHER_SYMBOL_LIST);
+  LAUNCHER_SYMBOL_LIST.forEach((sym) => {
+    const env = Object.assign({}, process.env, { SYMBOL: sym });
+    try {
+      const child = fork(childScript, [], {
+        env,
+        stdio: 'inherit',
+      });
+      child.on('exit', (code) =>
+        console.log(`child for ${sym} exited with code ${code}`)
+      );
+    } catch (e) {
+      console.error('failed to spawn child for', sym, e);
+    }
+  });
+  // parent exits; children continue
+  process.exit(0);
+}
+import moment from 'moment';
+import helper from '../utils/index';
+const customAuthClientBN = require('./customAuthClientBN');
+const { judgeMarketState } = require('./market-state-analyzer');
+const { DynamicEMAFilterWithATR } = require('./dynamic-ema-filter');
+
+const PASSWORD = '@Xiong092479';
+
+const express = require('express');
 const app = express();
 
-app.all("*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "content-type");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By", " 3.2.1");
-  res.header("Content-Type", "application/json;charset=utf-8");
-  if (req.method.toLowerCase() == "options") res.send(200);
+app.all('*', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  res.header('Access-Control-Allow-Headers', 'content-type');
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+  res.header('X-Powered-By', ' 3.2.1');
+  res.header('Content-Type', 'application/json;charset=utf-8');
+  if (req.method.toLowerCase() == 'options') res.send(200);
   //让options尝试请求快速结束
   else next();
 });
 
-const configBN = require("./configBN2");
+const configBN = require('./configBN2');
 const cAuthClientBN = new customAuthClientBN(
   configBN.httpkey,
   configBN.httpsecret,
   configBN.urlHost
 );
 
-const ccxt = require("ccxt");
-const tulind = require("tulind");
-const WebSocket = require("ws");
-const fs = require("fs");
-require("dotenv").config();
+const ccxt = require('ccxt');
+const tulind = require('tulind');
+const WebSocket = require('ws');
+const fs = require('fs');
+const { fork } = require('child_process');
+require('dotenv').config();
 
 // const MAX_TRADE_POSITION_RATIO = 7 / 10;
 // const LEVERAGE = 20;
 
-const BTC_SYMBOL = "BTC/USDT";
-const ETH_SYMBOL = "ETH/USDT";
-const EOS_SYMBOL = "EOS/USDT";
-const XRP_SYMBOL = "XRP/USDT";
-const DOGE_SYMBOL = "DOGE/USDT";
-const TRX_SYMBOL = "TRX/USDT";
-const LTC_SYMBOL = "LTC/USDT";
+const BTC_SYMBOL = 'BTC/USDT';
+const ETH_SYMBOL = 'ETH/USDT';
+const EOS_SYMBOL = 'EOS/USDT';
+const XRP_SYMBOL = 'XRP/USDT';
+const DOGE_SYMBOL = 'DOGE/USDT';
+const TRX_SYMBOL = 'TRX/USDT';
+const LTC_SYMBOL = 'LTC/USDT';
 
 const SYMBOL_LIST = [
   BTC_SYMBOL,
@@ -57,25 +102,27 @@ const SYMBOL_LIST = [
 
 // 配置参数
 const config = {
-  symbol: "DOGE/USDT",
+  // allow overriding symbol by environment variable when spawning multiple bots
+  // if no SYMBOL env is provided this file will run as a single-bot for the default symbol
+  symbol: process.env.SYMBOL || 'DOGE/USDT',
   // timeframe: '1m',
-  timeframes: ["5m" /*  '5m''1m'*/], // 多周期参数
+  timeframes: ['5m' /*  '5m''1m'*/], // 多周期参数
   emaSettings: {
     // '30m': { periods: [10, 5], slopeWindow: 5 },
     // '15m': { periods: [12, 26, 50], slopeWindow: 5 },
     // '1m': { periods: [8, 21, 55], slopeWindow: 3 },
     // '3m': { periods: [5, 15, 30], slopeWindow: 3 },
-    "5m": { periods: [3, 5, 8, 13, 21, 34], slopeWindow: 3 },
-    "15m": { periods: [9, 21, 55, 13, 21, 34], slopeWindow: 5 },
-    "1h": { periods: [12, 26, 60, 13, 21, 34], slopeWindow: 6 },
+    '5m': { periods: [3, 5, 8, 13, 21, 34], slopeWindow: 3 },
+    '15m': { periods: [9, 21, 55, 13, 21, 34], slopeWindow: 5 },
+    '1h': { periods: [12, 26, 60, 13, 21, 34], slopeWindow: 6 },
     // '15m': { periods: [21, 55, 200], slopeWindow: 5 },
     // '15m': { periods: [8, 34, 144], slopeWindow: 5 },
     // '5m': { periods: [25, 5], slopeWindow: 5 },
   },
-  macdParams: { "5m": [12, 26, 9], "15m": [12, 26, 9], "1h": [12, 26, 9] },
-  fastframe: "5m",
-  slowframe: "5m",
-  trendframe: "5m",
+  macdParams: { '5m': [12, 26, 9], '15m': [12, 26, 9], '1h': [12, 26, 9] },
+  fastframe: '5m',
+  slowframe: '5m',
+  trendframe: '5m',
   // 布林线参数
   bollinger: {
     period: 20,
@@ -124,18 +171,18 @@ const config = {
   maxLnpPercent: 0,
   minLnpPercent: 10000,
   marketState: {},
-  riskMode: "balanced", // 保守 conservative  激进 aggressive 平衡 balanced
+  riskMode: 'balanced', // 保守 conservative  激进 aggressive 平衡 balanced
 };
 let intervalId = null;
 const configB = {
   account: 1000,
   riskPerTrade: 1,
-  name: "技术位止损",
+  name: '技术位止损',
   stopLoss: 0.02, // 4%止损
   positionSize: 10 / 0.02, // 开仓250U 500
   margin: 500 / 40, // 6.25
   effectiveLeverage: 0.25,
-  goldenRule: "止损距离永远要大于（爆仓距离 + 安全边际）",
+  goldenRule: '止损距离永远要大于（爆仓距离 + 安全边际）',
 };
 // const professionalApproach = {
 // 	rule1: '单笔风险永远控制在0.5-1%',
@@ -170,7 +217,7 @@ async function getMarketType(marketData) {
     JSON.stringify(marketData[config.trendframe].slice(-3))
   );
 
-  let marketType = "";
+  let marketType = '';
   if (!fastSecondKline) return marketType;
   if (!slowSecondKline) return marketType;
   if (!trendSecondKline) return marketType;
@@ -265,10 +312,12 @@ async function getMarketType(marketData) {
 
   longCondition =
     longCondition &&
-    ((trendStrength > 0.003 && trendStrength < 0.005) || trendStrength < 0.001);
+    ((trendStrength > 0.003 && trendStrength < 0.005) ||
+      trendStrength < 0.001);
   shortCondition =
     shortCondition &&
-    ((trendStrength > 0.003 && trendStrength < 0.005) || trendStrength < 0.001);
+    ((trendStrength > 0.003 && trendStrength < 0.005) ||
+      trendStrength < 0.001);
 
   const longCloseCondition = fastClose < fastEmaTrend;
   const shortCloseCondition = fastClose > fastEmaTrend;
@@ -295,39 +344,39 @@ async function getMarketType(marketData) {
   // 	}
   // }
 
-  if (longCloseCondition) marketType = "趋势空";
-  if (shortCloseCondition) marketType = "趋势多";
-  if (longCondition) marketType = "趋势多且增强";
-  if (shortCondition) marketType = "趋势空且增强";
+  if (longCloseCondition) marketType = '趋势空';
+  if (shortCloseCondition) marketType = '趋势多';
+  if (longCondition) marketType = '趋势多且增强';
+  if (shortCondition) marketType = '趋势空且增强';
 
-  console.log("趋势强度:", trendStrength);
-  console.log("快速周期:", filterCandleData(fastLastKline));
+  console.log('趋势强度:', trendStrength);
+  console.log('快速周期:', filterCandleData(fastLastKline));
   // console.log('慢速周期:', filterCandleData(slowLastKline));
   // console.log('趋势周期:', filterCandleData(trendLastKline));
-  console.log("市场类型:", marketType);
+  console.log('市场类型:', marketType);
 
   return marketType;
 }
 
 function filterCandleData(data) {
   const whiteList = [
-    "timestamp",
-    "open",
-    "close",
-    "emaFast",
-    "emaSlow",
-    "emaTrend",
-    "ema4",
-    "ema5",
-    "ema6",
-    "emaFastSlope",
-    "emaSlowSlope",
-    "emaTrendSlope",
+    'timestamp',
+    'open',
+    'close',
+    'emaFast',
+    'emaSlow',
+    'emaTrend',
+    'ema4',
+    'ema5',
+    'ema6',
+    'emaFastSlope',
+    'emaSlowSlope',
+    'emaTrendSlope',
   ];
   const target = {};
   whiteList.forEach((key) => {
-    if (key === "timestamp") {
-      target[key] = moment(data[key]).format("YYYY-MM-DD HH:mm:ss");
+    if (key === 'timestamp') {
+      target[key] = moment(data[key]).format('YYYY-MM-DD HH:mm:ss');
     } else {
       target[key] = data[key];
     }
@@ -341,7 +390,7 @@ const initState = {
   entryPrice: 0, // 持仓均价
   highestPrice: 0, // 持仓期间最高价
   lowestPrice: 10000, // 持仓期间最低价
-  side: "buy", // 交易方向
+  side: 'buy', // 交易方向
   coolingUntil: 0, // 基础冷却结束时间
 };
 
@@ -362,7 +411,7 @@ const exchange = new ccxt.binance({
   secret: configBN.httpsecret,
   options: {
     adjustForTimeDifference: true,
-    defaultType: "future",
+    defaultType: 'future',
     hedgeMode: true,
   },
 });
@@ -486,7 +535,10 @@ async function calculateIndicators() {
       );
 
       indicatorPromises.push(
-        tulind.indicators.macd.indicator([closes], config.macdParams[tf])
+        tulind.indicators.macd.indicator(
+          [closes],
+          config.macdParams[tf]
+        )
       );
 
       indicatorPromises.push(calculateAdx(highs, lows, closes));
@@ -528,7 +580,8 @@ async function calculateIndicators() {
         i++
       ) {
         const slope =
-          (emaFast[0][i] - emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
+          (emaFast[0][i] -
+            emaFast[0][i - config.emaSettings[tf].slopeWindow]) /
           emaFast[0][i - config.emaSettings[tf].slopeWindow];
         emaFastSlopes.push(slope);
       }
@@ -538,7 +591,8 @@ async function calculateIndicators() {
         i++
       ) {
         const slope =
-          (emaSlow[0][i] - emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
+          (emaSlow[0][i] -
+            emaSlow[0][i - config.emaSettings[tf].slopeWindow]) /
           emaSlow[0][i - config.emaSettings[tf].slopeWindow];
         emaSlowSlopes.push(slope);
       }
@@ -572,7 +626,8 @@ async function calculateIndicators() {
         if (i >= config.macdParams[tf][1]) {
           const macdIndex = i - config.macdParams[tf][1] + 1;
           d.macd = macd ? macd[0][macdIndex] : null;
-          d.macdHistogram = macd[0][macdIndex] - macd[1][macdIndex] || null;
+          d.macdHistogram =
+            macd[0][macdIndex] - macd[1][macdIndex] || null;
         }
         if (i >= config.atrParam.atrPeriod) {
           const atrIndex = i - config.atrParam.atrPeriod + 1;
@@ -584,7 +639,9 @@ async function calculateIndicators() {
 
           d.adx = adx[adxIndex];
           d.adxPlusDI = adxPlusDI ? adxPlusDI[adxPlusDIIndex] : null;
-          d.adxMinusDI = adxMinusDI ? adxMinusDI[adxPlusDIIndex] : null;
+          d.adxMinusDI = adxMinusDI
+            ? adxMinusDI[adxPlusDIIndex]
+            : null;
         }
         if (i >= config.rsiPeriod) {
           const rsiIndex = i - config.rsiPeriod;
@@ -612,11 +669,14 @@ async function calculateIndicators() {
         // 	marketData[tf][i - 1],
         // 	marketData[tf][i - 2]
         // );
-        d.volumeAvg = SMA(marketData[tf].slice(i - 20, i + 1), "volume");
+        d.volumeAvg = SMA(
+          marketData[tf].slice(i - 20, i + 1),
+          'volume'
+        );
       });
     });
   } catch (e) {
-    console.error("指标计算错误:", e);
+    console.error('指标计算错误:', e);
   }
 }
 
@@ -668,12 +728,12 @@ class OrderManager {
     // const positionSize = isOpen ? getPositionSize() : amount;
     const positionSize = amount;
     const positionSide = isOpen
-      ? side === "buy"
-        ? "LONG"
-        : "SHORT"
-      : side === "buy"
-      ? "SHORT"
-      : "LONG";
+      ? side === 'buy'
+        ? 'LONG'
+        : 'SHORT'
+      : side === 'buy'
+      ? 'SHORT'
+      : 'LONG';
     const order = await exchange.createLimitOrder(
       config.symbol,
       side,
@@ -703,12 +763,12 @@ class OrderManager {
   static async createMarketOrder(side, amount, price) {
     const order = await exchange.createOrder(
       config.symbol,
-      "market",
+      'market',
       side,
       amount,
       null,
       {
-        positionSide: side === "buy" ? "LONG" : "SHORT",
+        positionSide: side === 'buy' ? 'LONG' : 'SHORT',
       }
     );
     state.activeOrders.push({
@@ -764,9 +824,10 @@ class OrderManager {
           state.highestPrice = 0;
           const filledValue = status.filled * status.price;
           state.position +=
-            status.side === "buy" ? status.filled : -status.filled;
+            status.side === 'buy' ? status.filled : -status.filled;
           state.entryPrice =
-            (state.entryPrice * state.position + filledValue) / state.position;
+            (state.entryPrice * state.position + filledValue) /
+            state.position;
           state.side = status.side;
           state.fastMarketType = order.fastMarketType;
           state.slowMarketType = order.slowMarketType;
@@ -780,7 +841,10 @@ class OrderManager {
           if (config.isMarketModeAuto && false) {
             let { marketMode } = config;
             if (lnp) {
-              if (marketMode == 1 && (lnp < -0.015 || lnp > 0.02)) {
+              if (
+                marketMode == 1 &&
+                (lnp < -0.015 || lnp > 0.02)
+              ) {
                 marketMode = 2;
               } else if (marketMode == 2 && lnp < -0.015) {
                 marketMode = 1;
@@ -823,17 +887,17 @@ class OrderManager {
         maxLnpPercent: config.maxLnpPercent,
         minLnpPercent: config.minLnpPercent,
         lnpPercent: config.lnpPercent,
-        writeMoment: moment().format("YYYY-MM-DD HH:mm:ss"),
+        writeMoment: moment().format('YYYY-MM-DD HH:mm:ss'),
       })
     );
 
     const result = await new Promise((resolve) => {
       //将修改后的内容写入文件
-      fs.writeFile("./app/config.json", jsonStr, function (err) {
+      fs.writeFile('./app/config.json', jsonStr, function (err) {
         if (err) {
           console.error(err);
         } else {
-          console.log("----------文件修改成功-------------");
+          console.log('----------文件修改成功-------------');
           console.log(jsonStr);
           resolve(true);
         }
@@ -867,23 +931,26 @@ class OrderManager {
         // 创建冰山订单
         const order = await exchange.createOrder(
           symbol,
-          "limit",
+          'limit',
           side,
           segmentAmount,
           price,
           {
             icebergQty: icebergQty,
-            timeInForce: "GTC",
-            positionSide: side === "buy" ? "LONG" : "SHORT",
+            timeInForce: 'GTC',
+            positionSide: side === 'buy' ? 'LONG' : 'SHORT',
           }
         );
 
-        console.log(`第 ${i + 1}/${numSegments} 段订单已执行:`, order.id);
+        console.log(
+          `第 ${i + 1}/${numSegments} 段订单已执行:`,
+          order.id
+        );
 
         // 等待间隔（避免触发风控）
         await new Promise((resolve) => setTimeout(resolve, 3 * 1000));
       } catch (error) {
-        console.error("订单创建失败:", error.message);
+        console.error('订单创建失败:', error.message);
         break;
       }
     }
@@ -894,14 +961,14 @@ function getHighsAndLows(indicators) {
   const lastHighs = indicators.swingPoints.highs
     .map((i) =>
       Object.assign(i, {
-        timestamp: moment(i.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        timestamp: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
       })
     )
     .slice(-2);
   const lastLows = indicators.swingPoints.lows
     .map((i) =>
       Object.assign(i, {
-        timestamp: moment(i.timestamp).format("YYYY-MM-DD HH:mm:ss"),
+        timestamp: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
       })
     )
     .slice(-2);
@@ -929,10 +996,10 @@ function getTimeStampBefore(dataList, timestamp) {
   dataList = JSON.parse(JSON.stringify(dataList));
   let data;
   let i = 0;
-  const period = config.fastframe.split("m")[0];
+  const period = config.fastframe.split('m')[0];
 
   while (true) {
-    const time = moment(timestamp).subtract(Number(period) * i, "minutes");
+    const time = moment(timestamp).subtract(Number(period) * i, 'minutes');
     const targetIndex = dataList.findIndex(
       (c) => c.timestamp === time.valueOf()
     );
@@ -949,8 +1016,8 @@ function getTimeStampSlowBefore(dataList, timestamp) {
   dataList = JSON.parse(JSON.stringify(dataList));
   let data;
 
-  const hour = moment(timestamp).format("YYYY-MM-DD HH:00:00");
-  const lastHourTimestamp = moment(hour).subtract(1, "hours");
+  const hour = moment(timestamp).format('YYYY-MM-DD HH:00:00');
+  const lastHourTimestamp = moment(hour).subtract(1, 'hours');
 
   const target = dataList.find(
     (c) => c.timestamp === lastHourTimestamp.valueOf()
@@ -964,10 +1031,10 @@ function getTimeStampSlowBefore(dataList, timestamp) {
 function toogleMarketType(marketType, candle) {
   const { adx, adx_threshold } = candle;
   if (config.marketMode == 2) {
-    if (marketType.indexOf("多") != -1) {
-      marketType = marketType.replace("多", "空");
-    } else if (marketType.indexOf("空") != -1) {
-      marketType = marketType.replace("空", "多");
+    if (marketType.indexOf('多') != -1) {
+      marketType = marketType.replace('多', '空');
+    } else if (marketType.indexOf('空') != -1) {
+      marketType = marketType.replace('空', '多');
     }
   }
   return marketType;
@@ -1002,31 +1069,31 @@ async function generateSignal(currentPrice, isShowLog = false) {
   });
 
   const longConditions = [
-    slowMarketType.indexOf("趋势多且增强") !== -1,
-    slowMarketType === "趋势潜在增强",
-    slowMarketType === "震荡市开多",
-    slowMarketType === "潜在转折多",
+    slowMarketType.indexOf('趋势多且增强') !== -1,
+    slowMarketType === '趋势潜在增强',
+    slowMarketType === '震荡市开多',
+    slowMarketType === '潜在转折多',
   ];
   const shortConditions = [
-    slowMarketType.indexOf("趋势空且增强") !== -1,
-    slowMarketType === "趋势潜在减弱",
-    slowMarketType === "震荡市开空",
-    slowMarketType === "潜在转折空",
+    slowMarketType.indexOf('趋势空且增强') !== -1,
+    slowMarketType === '趋势潜在减弱',
+    slowMarketType === '震荡市开空',
+    slowMarketType === '潜在转折空',
   ];
 
   const longCondition = longConditions.some((condition) => !!condition);
   const shortCondition = shortConditions.some((condition) => !!condition);
 
   if (isShowLog) {
-    console.log("################################");
-    console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
-    console.log("currentPrice", currentPrice);
-    console.log("entryPrice", state.entryPrice);
-    console.log("position", state.position);
-    console.log("side", state.side);
-    console.log("longCondition", longCondition);
-    console.log("shortCondition", shortCondition);
-    console.log("marketMode", config.marketMode);
+    console.log('################################');
+    console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+    console.log('currentPrice', currentPrice);
+    console.log('entryPrice', state.entryPrice);
+    console.log('position', state.position);
+    console.log('side', state.side);
+    console.log('longCondition', longCondition);
+    console.log('shortCondition', shortCondition);
+    console.log('marketMode', config.marketMode);
     // console.log(
     // 	config.fastframe,
     // 	Object.assign(candle[config.fastframe], {
@@ -1039,13 +1106,13 @@ async function generateSignal(currentPrice, isShowLog = false) {
       config.fastframe,
       Object.assign(candle[config.fastframe], {
         timestamp: moment(candle[config.fastframe].timestamp).format(
-          "YYYY-MM-DD HH:mm:ss"
+          'YYYY-MM-DD HH:mm:ss'
         ),
       })
     );
     // console.log(marketData[config.slowframe].slice(-3));
-    console.log("marketType", slowMarketType);
-    console.log("################################");
+    console.log('marketType', slowMarketType);
+    console.log('################################');
   }
 
   return {
@@ -1080,7 +1147,10 @@ class RiskManager {
     let { marketType: slowMarketType } = candle[config.slowframe];
 
     slowMarketType = await getMarketType(marketData);
-    slowMarketType = toogleMarketType(slowMarketType, candle[config.slowframe]);
+    slowMarketType = toogleMarketType(
+      slowMarketType,
+      candle[config.slowframe]
+    );
 
     const { price: currentPrice } = signal;
     let isStop = false;
@@ -1093,7 +1163,7 @@ class RiskManager {
     const lnp = getLnp(
       Math.abs(state.entryPrice),
       Math.abs(currentPrice),
-      side === "buy" ? "sell" : "buy"
+      side === 'buy' ? 'sell' : 'buy'
     );
 
     // const isProfitTarget =
@@ -1148,26 +1218,27 @@ class RiskManager {
 
     if (!state.slowMarketType) {
       // state.slowMarketType = slowMarketType;
-      state.slowMarketType = side === "buy" ? "趋势多且增强" : "趋势空且增强";
+      state.slowMarketType =
+        side === 'buy' ? '趋势多且增强' : '趋势空且增强';
       // return { isStop: false, isStopLoss: false };
     }
 
     isStop =
       isProfitTarget ||
       isStopLoss ||
-      (side === "buy"
-        ? state.slowMarketType.indexOf("趋势多且增强") !== -1 &&
-          slowMarketType.indexOf("趋势空") !== -1
-        : state.slowMarketType.indexOf("趋势空且增强") !== -1 &&
-          slowMarketType.indexOf("趋势多") !== -1);
+      (side === 'buy'
+        ? state.slowMarketType.indexOf('趋势多且增强') !== -1 &&
+          slowMarketType.indexOf('趋势空') !== -1
+        : state.slowMarketType.indexOf('趋势空且增强') !== -1 &&
+          slowMarketType.indexOf('趋势多') !== -1);
 
-    console.log("***********************************");
-    console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
-    console.log("entryPrice", state.entryPrice);
-    console.log("position", state.position);
-    console.log("currentPrice", currentPrice);
+    console.log('***********************************');
+    console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
+    console.log('entryPrice', state.entryPrice);
+    console.log('position', state.position);
+    console.log('currentPrice', currentPrice);
     // console.log('state.slowMarketType', state.slowMarketType);
-    console.log("side", state.side);
+    console.log('side', state.side);
     // if (side === 'buy') {
     // 	console.log(
     // 		'state.entryPrice - stopLoss',
@@ -1180,29 +1251,29 @@ class RiskManager {
     // 	);
     // }
     // console.log('fastMarketType', fastMarketType);
-    console.log("isStop", isStop);
-    console.log("marketMode", config.marketMode);
+    console.log('isStop', isStop);
+    console.log('marketMode', config.marketMode);
     console.log(
-      "adx",
+      'adx',
       d.adx,
-      "adx_threshold",
+      'adx_threshold',
       d.adx_threshold,
-      "adxPlusDI",
+      'adxPlusDI',
       d.adxPlusDI,
-      "adxMinusDI",
+      'adxMinusDI',
       d.adxMinusDI
     );
     console.log(
-      "lnp",
+      'lnp',
       lnp,
-      "lnpPercent",
-      (lnp * config.leverage * 100).toFixed(2) + "%",
-      "maxLnpPercent",
+      'lnpPercent',
+      (lnp * config.leverage * 100).toFixed(2) + '%',
+      'maxLnpPercent',
       maxLnpPercent,
-      "minLnpPercent",
+      'minLnpPercent',
       minLnpPercent
     );
-    console.log("***********************************");
+    console.log('***********************************');
     const lnpPercent = lnp * config.leverage * 100;
     return {
       isStop,
@@ -1225,7 +1296,7 @@ class RiskManager {
     isLossSecond = false
   ) {
     const { price: currentPrice, kline } = singnal;
-    const side = state.position > 0 ? "sell" : "buy";
+    const side = state.position > 0 ? 'sell' : 'buy';
     let amount = Math.abs(state.position);
     if (isProfitFirst) amount = (amount * 5) / 10;
     if (isLossFirst) amount = (amount * 5) / 10;
@@ -1244,16 +1315,23 @@ class RiskManager {
       side
     );
 
-    console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
+    console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
     console.log(
       `%c强制平仓 | 方向:${side} 数量:${amount} 均价:${state.entryPrice} 当前价:${currentPrice}`,
-      "color: red; font-weight: bold;"
+      'color: red; font-weight: bold;'
     );
 
     if (isStopLoss) {
-      await exchange.createOrder(config.symbol, "market", side, amount, null, {
-        positionSide: side === "sell" ? "LONG" : "SHORT",
-      });
+      await exchange.createOrder(
+        config.symbol,
+        'market',
+        side,
+        amount,
+        null,
+        {
+          positionSide: side === 'sell' ? 'LONG' : 'SHORT',
+        }
+      );
       // 重置状态
       state.position = 0;
       state.entryPrice = 0;
@@ -1279,10 +1357,10 @@ class RiskManager {
       return;
     }
 
-    if (side === "buy") {
+    if (side === 'buy') {
       const limitPrice = orderBook.bid * (1 - config.orderDepth);
       await OrderManager.createLimitOrder(
-        "buy",
+        'buy',
         amount,
         limitPrice,
         false,
@@ -1292,10 +1370,10 @@ class RiskManager {
       );
     }
 
-    if (side === "sell") {
+    if (side === 'sell') {
       const limitPrice = orderBook.ask * (1 + config.orderDepth);
       await OrderManager.createLimitOrder(
-        "sell",
+        'sell',
         amount,
         limitPrice,
         false,
@@ -1320,7 +1398,8 @@ class RiskManager {
     const { positions } = positionResult;
     if (positions) {
       const holding = positions.find(
-        (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+        (item) =>
+          item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
       );
       return holding ? true : false;
     }
@@ -1341,7 +1420,9 @@ class RiskManager {
       config.minLnpPercent = 10000;
 
       const { slowMarketType } = signal;
-      if (signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */) {
+      if (
+        signal.buySignal /* && orderBook.spread < orderBook.ask * 0.001 */
+      ) {
         const limitPrice = orderBook.bid * (1 - config.orderDepth);
         const amount = getPositionSize(limitPrice) / limitPrice;
 
@@ -1349,21 +1430,23 @@ class RiskManager {
         state.slowMarketType = slowMarketType;
 
         await OrderManager.createLimitOrder(
-          "buy",
+          'buy',
           amount,
           limitPrice,
           true,
           signal
           // kline.atr
         );
-        console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
+        console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
         console.log(
           `%c挂买单 | 价格:${limitPrice} 数量:${amount}`,
-          "color: red; font-weight: bold;"
+          'color: red; font-weight: bold;'
         );
       }
 
-      if (signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */) {
+      if (
+        signal.sellSignal /* && orderBook.spread < orderBook.bid * 0.001 */
+      ) {
         const limitPrice = orderBook.ask * (1 + config.orderDepth);
         const amount = getPositionSize(limitPrice) / limitPrice;
 
@@ -1371,17 +1454,17 @@ class RiskManager {
         state.slowMarketType = slowMarketType;
 
         await OrderManager.createLimitOrder(
-          "sell",
+          'sell',
           amount,
           limitPrice,
           true,
           signal
           // kline.atr
         );
-        console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
+        console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
         console.log(
           `%c挂卖单 | 价格:${limitPrice} 数量:${amount}`,
-          "color: red; font-weight: bold;"
+          'color: red; font-weight: bold;'
         );
       }
     }
@@ -1403,9 +1486,9 @@ class RiskManager {
 }
 
 function getConfidenceLevel(confidence) {
-  if (confidence >= 0.7) return "high";
-  if (confidence >= 0.4) return "medium";
-  return "low";
+  if (confidence >= 0.7) return 'high';
+  if (confidence >= 0.4) return 'medium';
+  return 'low';
 }
 
 function getPositionRules(mode) {
@@ -1432,7 +1515,7 @@ function getPositionRules(mode) {
 
 // 初始化历史数据
 async function initialize() {
-  console.log("正在获取历史数据...");
+  console.log('正在获取历史数据...');
   const candlePromises = [];
   config.timeframes.forEach((timeframe) => {
     candlePromises.push(
@@ -1460,10 +1543,14 @@ async function initialize() {
 
   // mergeTimeframes();
   console.log(
-    `已加载${config.fastframe} ${marketData[config.fastframe].length}根历史K线`
+    `已加载${config.fastframe} ${
+      marketData[config.fastframe].length
+    }根历史K线`
   );
   console.log(
-    `已加载${config.slowframe} ${marketData[config.slowframe].length}根历史K线`
+    `已加载${config.slowframe} ${
+      marketData[config.slowframe].length
+    }根历史K线`
   );
   console.log(
     `已加载${config.trendframe} ${
@@ -1503,12 +1590,12 @@ async function initialize() {
   // }
 
   config.realTradeAmount = positionSize;
-  console.log("当前交易金额:", config.realTradeAmount);
+  console.log('当前交易金额:', config.realTradeAmount);
 }
 
 function getLnp(entryPrice, close, side) {
   const lnp = (close - entryPrice) / entryPrice;
-  return side === "sell" ? lnp : -lnp;
+  return side === 'sell' ? lnp : -lnp;
 }
 
 // 策略主逻辑
@@ -1586,17 +1673,17 @@ async function strategyLoop(isShowLog = false) {
     }
 
     if (state.activeOrders.length > 0) {
-      console.log("当前有未完成订单，跳过开仓检查");
+      console.log('当前有未完成订单，跳过开仓检查');
       return;
     }
     await RiskManager.openPosition(signal, orderBook);
   } catch (err) {
-    console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
+    console.log('time', moment().format('YYYY-MM-DD HH:mm:ss'));
     if (state.activeOrders.length > 0) {
       state.activeOrders = [];
       await OrderManager.writeData();
     }
-    console.error("策略错误:", err.message);
+    console.error('策略错误:', err.message);
     // if (config.isMarketModeAuto) {
     // 	config.marketMode = config.marketMode == 1 ? 2 : 1;
     // 	await OrderManager.writeData();
@@ -1606,7 +1693,7 @@ async function strategyLoop(isShowLog = false) {
 }
 
 const readData = async () => {
-  let dataConfig = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
+  let dataConfig = JSON.parse(fs.readFileSync('./app/config.json', 'utf-8'));
 
   const {
     position,
@@ -1631,59 +1718,60 @@ const readData = async () => {
     profitStopLossRatio: profitStopLossRatio
       ? Number(profitStopLossRatio)
       : config.profitStopLossRatio,
-    maxLnpPercent: maxLnpPercent ? Number(maxLnpPercent) : config.maxLnpPercent,
-    minLnpPercent: minLnpPercent ? Number(minLnpPercent) : config.minLnpPercent,
+    maxLnpPercent: maxLnpPercent
+      ? Number(maxLnpPercent)
+      : config.maxLnpPercent,
+    minLnpPercent: minLnpPercent
+      ? Number(minLnpPercent)
+      : config.minLnpPercent,
     lnpPercent: lnpPercent ? Number(lnpPercent) : config.lnpPercent,
     activeOrders: activeOrders || [],
   });
 
-  console.log("read::", dataConfig, moment().format("YYYY-MM-DD HH:mm:ss"));
+  console.log('read::', dataConfig, moment().format('YYYY-MM-DD HH:mm:ss'));
   return dataConfig;
 };
 
 async function initPositionData() {
-  try {
-    const positionResult = await cAuthClientBN.swap.getPosition();
-    const { positions, availableBalance, totalMarginBalance } = positionResult;
-    // const positions = exchange.fetchPositions();
-    const dataConfig = await readData();
-    config.marketMode = dataConfig.marketMode || config.marketMode;
-    config.isMarketModeAuto =
-      dataConfig.isMarketModeAuto ||
-      dataConfig.isMarketModeAuto === "true" ||
-      config.isMarketModeAuto;
-    config.isPaused =
-      dataConfig.isPaused || dataConfig.isPaused === "true" || config.isPaused;
-    config.profitStopLossRatio =
-      dataConfig.profitStopLossRatio || config.profitStopLossRatio;
-    config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
-    config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
-    config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
-    config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
-    state.activeOrders = dataConfig.activeOrders || [];
-    if (positions) {
-      const holding = positions.find(
-        (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-      );
-      if (holding) {
-        state = {
-          activeOrders: [], // 活跃限价单
-          position: Number(holding.positionAmt), // 当前持仓数量
-          entryPrice: Number(holding.entryPrice), // 持仓均价
-          // highestPrice: Number(holding.entryPrice), // 持仓期间最高价
-          // lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
-          side: holding.positionSide === "LONG" ? "buy" : "sell",
-        };
-        delete dataConfig.position;
-        state = Object.assign(dataConfig, state);
-        // if (config.isMarketModeAuto)
-        // 	config.marketMode = state.marketMode || config.marketMode;
-      }
+  const positionResult = await cAuthClientBN.swap.getPosition();
+  const { positions, availableBalance, totalMarginBalance } = positionResult;
+  const dataConfig = await readData();
+  config.marketMode = dataConfig.marketMode || config.marketMode;
+  config.isMarketModeAuto =
+    dataConfig.isMarketModeAuto ||
+    dataConfig.isMarketModeAuto === 'true' ||
+    config.isMarketModeAuto;
+  config.isPaused =
+    dataConfig.isPaused ||
+    dataConfig.isPaused === 'true' ||
+    config.isPaused;
+  config.profitStopLossRatio =
+    dataConfig.profitStopLossRatio || config.profitStopLossRatio;
+  config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
+  config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
+  config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
+  config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
+  state.activeOrders = dataConfig.activeOrders || [];
+  if (positions) {
+    const holding = positions.find(
+      (item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+    );
+    if (holding) {
+      state = {
+        activeOrders: [], // 活跃限价单
+        position: Number(holding.positionAmt), // 当前持仓数量
+        entryPrice: Number(holding.entryPrice), // 持仓均价
+        // highestPrice: Number(holding.entryPrice), // 持仓期间最高价
+        // lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
+        side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
+      };
+      delete dataConfig.position;
+      state = Object.assign(dataConfig, state);
+      // if (config.isMarketModeAuto)
+      // 	config.marketMode = state.marketMode || config.marketMode;
     }
-    // return Number(totalMarginBalance);
-  } catch (e) {
-    console.log("positions error", e);
   }
+  return Number(totalMarginBalance);
 }
 
 function debounce(fn, delay) {
@@ -1700,7 +1788,7 @@ function debounce(fn, delay) {
 
 // 实时数据订阅
 function connectWebSocket() {
-  const symbolForWS = config.symbol.replace("/", "").toLowerCase();
+  const symbolForWS = config.symbol.replace('/', '').toLowerCase();
   const streams = [
     `${symbolForWS}@kline_${config.fastframe}`,
     // `${symbolForWS}@kline_${config.slowframe}`,
@@ -1710,17 +1798,17 @@ function connectWebSocket() {
   //   "wss://fstream.binance.com/ws/" + symbolForWS + "@kline_1m"
   // );
   ws = new WebSocket(
-    `wss://stream.binance.com:9443/stream?streams=${streams.join("/")}`
+    `wss://stream.binance.com:9443/stream?streams=${streams.join('/')}`
   );
 
-  ws.on("open", () => {
-    console.log("WebSocket连接已建立");
+  ws.on('open', () => {
+    console.log('WebSocket连接已建立');
   });
 
-  ws.on("message", async (data) => {
+  ws.on('message', async (data) => {
     const msg = JSON.parse(data);
     if (msg.stream && msg.data) {
-      const streamInfo = msg.stream.split("@");
+      const streamInfo = msg.stream.split('@');
       const [symbol, period] = streamInfo;
       const periodMap = {
         [`kline_${config.fastframe}`]: config.fastframe,
@@ -1729,11 +1817,11 @@ function connectWebSocket() {
       };
 
       if (!msg.data.k.x) return; // 仅处理闭合K线
-      console.log("-----------------收到消息-----------------------");
+      console.log('-----------------收到消息-----------------------');
       console.log(`更新: ${symbol} ${periodMap[period]} K线`);
       if (periodMap[period] === config.fastframe) {
         await OrderManager.checkOrderStatus();
-        restart("kline update");
+        restart('kline update');
       }
 
       // debounce(async () => {
@@ -1747,8 +1835,8 @@ function connectWebSocket() {
     }
   });
 
-  ws.on("error", (err) => {
-    console.error("WebSocket错误:", err);
+  ws.on('error', (err) => {
+    console.error('WebSocket错误:', err);
   });
 }
 
@@ -1788,13 +1876,36 @@ function mergeTimeframes() {
 }
 
 // 启动策略
+(function spawnChildrenIfNeeded() {
+  // If no SYMBOL env is set and SYMBOL_LIST contains multiple symbols,
+  // spawn a child process for each symbol and exit the parent. Each
+  // child will run this same script with process.env.SYMBOL set.
+  if (!process.env.SYMBOL && Array.isArray(SYMBOL_LIST) && SYMBOL_LIST.length > 1) {
+    const script = process.argv[1] || __filename;
+    console.log('Parent process spawning bots for symbols:', SYMBOL_LIST);
+    SYMBOL_LIST.forEach((sym) => {
+      try {
+        const child = fork(script, process.argv.slice(2), {
+          env: Object.assign({}, process.env, { SYMBOL: sym }),
+          stdio: 'inherit',
+        });
+        child.on('exit', (code) =>
+          console.log(`child for ${sym} exited with code ${code}`)
+        );
+      } catch (e) {
+        console.error('failed to spawn child for', sym, e);
+      }
+    });
+    // parent should exit after spawning children
+    process.exit(0);
+  }
+})();
+
 (async () => {
   await exchange.loadMarkets();
 
-  // globalAvailableBalance = await initPositionData();
-
+  globalAvailableBalance = await initPositionData();
   await initialize();
-  await initPositionData();
 
   connectWebSocket();
   await strategyLoop(true);
@@ -1807,7 +1918,7 @@ function mergeTimeframes() {
     // 	return;
     // }
   }, config.maxOrderAge * 2);
-  console.log("策略已启动...");
+  console.log('策略已启动...');
 })();
 
 function send(res, ret) {
@@ -1815,13 +1926,13 @@ function send(res, ret) {
   res.send(str);
 }
 
-app.get("/getMode", async function (req, res) {
+app.get('/getMode', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: {
         marketState: config.marketState,
         realTradeAmount: config.realTradeAmount,
@@ -1836,17 +1947,17 @@ app.get("/getMode", async function (req, res) {
         signal: config.signal,
         currentCandle: Object.assign(config.currentCandle, {
           timestamp: moment(config.currentCandle.timestamp).format(
-            "YYYY-MM-DD HH:mm:ss"
+            'YYYY-MM-DD HH:mm:ss'
           ),
         }),
       },
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/closePosition", async function (req, res) {
+app.get('/closePosition', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1862,15 +1973,15 @@ app.get("/closePosition", async function (req, res) {
     await RiskManager.closePosition(signal, orderBook, true);
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: {},
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/openPosition", async function (req, res) {
+app.get('/openPosition', async function (req, res) {
   const { query = {} } = req;
   const { pw, side } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1883,36 +1994,36 @@ app.get("/openPosition", async function (req, res) {
     // 步骤2: 获取信号
     // const signal = await generateSignal(currentPrice);
     let signal = null;
-    if (side === "long") {
+    if (side === 'long') {
       signal = {
         buySignal: true,
         sellSignal: false,
         price: currentPrice,
-        fastMarketType: "趋势多且增强",
-        slowMarketType: "趋势多且增强",
+        fastMarketType: '趋势多且增强',
+        slowMarketType: '趋势多且增强',
       };
-    } else if (side === "short") {
+    } else if (side === 'short') {
       signal = {
         buySignal: false,
         sellSignal: true,
         price: currentPrice,
-        fastMarketType: "趋势空且增强",
-        slowMarketType: "趋势空且增强",
+        fastMarketType: '趋势空且增强',
+        slowMarketType: '趋势空且增强',
       };
     }
     const orderBook = await getOrderBook();
     await RiskManager.openPosition(signal, orderBook, true);
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: {},
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/setProfitLossRatio", async function (req, res) {
+app.get('/setProfitLossRatio', async function (req, res) {
   const { query = {} } = req;
   const { pw, ratio } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1920,15 +2031,15 @@ app.get("/setProfitLossRatio", async function (req, res) {
     await OrderManager.writeData();
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: { profitStopLossRatio: config.profitStopLossRatio },
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/setTradeAmount", async function (req, res) {
+app.get('/setTradeAmount', async function (req, res) {
   const { query = {} } = req;
   const { pw, tradeAmount } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1936,15 +2047,15 @@ app.get("/setTradeAmount", async function (req, res) {
     await OrderManager.writeData();
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: { tradeAmount: config.tradeAmount },
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/closeLimitPosition", async function (req, res) {
+app.get('/closeLimitPosition', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1960,15 +2071,15 @@ app.get("/closeLimitPosition", async function (req, res) {
     // await OrderManager.writeData();
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: {},
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/changeMode", async function (req, res) {
+app.get('/changeMode', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1979,15 +2090,15 @@ app.get("/changeMode", async function (req, res) {
     // restart("change mode restart success...");
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: { marketMode: config.marketMode },
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/changeIsMarketModeAuto", async function (req, res) {
+app.get('/changeIsMarketModeAuto', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -1995,15 +2106,15 @@ app.get("/changeIsMarketModeAuto", async function (req, res) {
     await OrderManager.writeData();
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: { isMarketModeAuto: config.isMarketModeAuto },
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/changeIsPaused", async function (req, res) {
+app.get('/changeIsPaused', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
@@ -2012,39 +2123,39 @@ app.get("/changeIsPaused", async function (req, res) {
     // restart("change isPaused restart success...");
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
       data: { isPaused: config.isPaused },
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/restart", async function (req, res) {
+app.get('/restart', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
-    restart("api restart success...");
+    restart('api restart success...');
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
-app.get("/stop", async function (req, res) {
+app.get('/stop', async function (req, res) {
   const { query = {} } = req;
   const { pw } = query;
   if (pw && pw.trim() === PASSWORD) {
-    stop("api stop success...");
+    stop('api stop success...');
     send(res, {
       errcode: 0,
-      errmsg: "ok",
+      errmsg: 'ok',
     });
   } else {
-    send(res, { errcode: 1, errmsg: "password error" });
+    send(res, { errcode: 1, errmsg: 'password error' });
   }
 });
 
@@ -2081,46 +2192,46 @@ app.get("/stop", async function (req, res) {
 
 app.listen(8093);
 
-console.log("8093 server start");
+console.log('8093 server start');
 
-process.on("uncaughtException", function (e) {
+process.on('uncaughtException', function (e) {
   //打印出错误
   restart(e);
 });
 
-let exec = require("child_process").exec;
+let exec = require('child_process').exec;
 function restart(e) {
-  console.log("restarting......", e);
+  console.log('restarting......', e);
   setTimeout(() => {
-    exec("npm run restart", function (err, stdout, stderr) {
+    exec('npm run restart', function (err, stdout, stderr) {
       if (err) {
-        console.log("restarting failed");
+        console.log('restarting failed');
       } else {
-        console.log("restarting success");
+        console.log('restarting success');
       }
     });
   }, 1000 * 2);
 }
 function start() {
-  console.log("starting......");
+  console.log('starting......');
   setTimeout(() => {
-    exec("npm run start", function (err, stdout, stderr) {
+    exec('npm run start', function (err, stdout, stderr) {
       if (err) {
-        console.log("starting failed");
+        console.log('starting failed');
       } else {
-        console.log("starting success");
+        console.log('starting success');
       }
     });
   }, 1000 * 2);
 }
 function stop(e) {
-  console.log("stopping......", e);
+  console.log('stopping......', e);
   setTimeout(() => {
-    exec("npm run stop", function (err, stdout, stderr) {
+    exec('npm run stop', function (err, stdout, stderr) {
       if (err) {
-        console.log("stopping failed");
+        console.log('stopping failed');
       } else {
-        console.log("stopping success");
+        console.log('stopping success');
       }
       setTimeout(() => {
         start();
