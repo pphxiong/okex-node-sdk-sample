@@ -214,6 +214,7 @@ async function getMarketType(marketData) {
 		ema4,
 		ema5,
 		ema6,
+    trendStrength,
 	} = fastLastKline;
 	const {
 		close: fastLastClose,
@@ -259,9 +260,6 @@ async function getMarketType(marketData) {
 		fastEmaTrend < ema5 &&
 		ema5 < ema6 &&
 		fastClose < ema6;
-
-	// 或添加趋势强度过滤
-	const trendStrength = Math.abs(ema5 - ema6) / fastClose;
 
 	longCondition =
 		longCondition &&
@@ -606,6 +604,9 @@ async function calculateIndicators() {
 				d.ema4 = Number(ema4[0][i].toFixed(8));
 				d.ema5 = Number(ema5[0][i].toFixed(8));
 				d.ema6 = Number(ema6[0][i].toFixed(8));
+				// 或添加趋势强度过滤
+				const trendStrength = Math.abs(d.ema5 - d.ema6) / d.close;
+        d.trendStrength = trendStrength;
 				if (d.adx && d.atr) {
 					// const isVolatility = d.adx > 30;
 					const volatility_ratio = d.atr / d.emaSlow;

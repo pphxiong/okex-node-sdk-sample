@@ -630,6 +630,9 @@ class Backtester {
 					d.ema4 = Number(ema4[0][i].toFixed(8));
 					d.ema5 = Number(ema5[0][i].toFixed(8));
 					d.ema6 = Number(ema6[0][i].toFixed(8));
+					// 或添加趋势强度过滤
+					const trendStrength = Math.abs(d.ema5 - d.ema6) / d.close;
+					d.trendStrength = trendStrength;
 					if (i >= 19) {
 						d.volumeEMA20 = volumeEMA20[i - 19].volumeEMA;
 					}
@@ -777,6 +780,7 @@ class Backtester {
 			ema4,
 			ema5,
 			ema6,
+			trendStrength,
 			macdHistogram: macd,
 			volume,
 			rsi_long,
@@ -832,8 +836,6 @@ class Backtester {
 			ema5 < ema6 &&
 			close < ema6;
 
-		// 或添加趋势强度过滤
-		const trendStrength = Math.abs(ema5 - ema6) / close;
 		longCondition =
 			longCondition &&
 			((trendStrength > 0.003 && trendStrength < 0.005) ||
