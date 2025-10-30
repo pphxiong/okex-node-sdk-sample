@@ -2,6 +2,7 @@ import moment from 'moment';
 import helper from '../utils/index';
 const customAuthClientBN = require('./customAuthClientBN');
 const { judgeMarketState } = require('./market-state-analyzer');
+const { DynamicEMAFilterWithATR } = require('./dynamic-ema-filter');
 
 const PASSWORD = '@Xiong092479';
 
@@ -36,27 +37,45 @@ require('dotenv').config();
 // const MAX_TRADE_POSITION_RATIO = 7 / 10;
 // const LEVERAGE = 20;
 
+const BTC_SYMBOL = 'BTC/USDT';
+const ETH_SYMBOL = 'ETH/USDT';
+const EOS_SYMBOL = 'EOS/USDT';
+const XRP_SYMBOL = 'XRP/USDT';
+const DOGE_SYMBOL = 'DOGE/USDT';
+const TRX_SYMBOL = 'TRX/USDT';
+const LTC_SYMBOL = 'LTC/USDT';
+
+const SYMBOL_LIST = [
+	BTC_SYMBOL,
+	ETH_SYMBOL,
+	EOS_SYMBOL,
+	XRP_SYMBOL,
+	DOGE_SYMBOL,
+	TRX_SYMBOL,
+	LTC_SYMBOL,
+];
+
 // 配置参数
 const config = {
 	symbol: 'DOGE/USDT',
 	// timeframe: '1m',
-	timeframes: ['5m', '15m', '1h' /*  '5m''1m'*/], // 多周期参数
+	timeframes: ['5m' /*  '5m''1m'*/], // 多周期参数
 	emaSettings: {
 		// '30m': { periods: [10, 5], slopeWindow: 5 },
 		// '15m': { periods: [12, 26, 50], slopeWindow: 5 },
 		// '1m': { periods: [8, 21, 55], slopeWindow: 3 },
 		// '3m': { periods: [5, 15, 30], slopeWindow: 3 },
-		'5m': { periods: [6, 13, 34], slopeWindow: 3 },
-		'15m': { periods: [9, 21, 55], slopeWindow: 5 },
-		'1h': { periods: [12, 26, 60], slopeWindow: 6 },
+		'5m': { periods: [3, 5, 8, 13, 21, 34], slopeWindow: 3 },
+		'15m': { periods: [9, 21, 55, 13, 21, 34], slopeWindow: 5 },
+		'1h': { periods: [12, 26, 60, 13, 21, 34], slopeWindow: 6 },
 		// '15m': { periods: [21, 55, 200], slopeWindow: 5 },
 		// '15m': { periods: [8, 34, 144], slopeWindow: 5 },
 		// '5m': { periods: [25, 5], slopeWindow: 5 },
 	},
 	macdParams: { '5m': [12, 26, 9], '15m': [12, 26, 9], '1h': [12, 26, 9] },
 	fastframe: '5m',
-	slowframe: '15m',
-	trendframe: '1h',
+	slowframe: '5m',
+	trendframe: '5m',
 	// 布林线参数
 	bollinger: {
 		period: 20,
@@ -66,7 +85,7 @@ const config = {
 	tradeAmount: 2400, // 每单交易金额(USDT)
 	realTradeAmount: 200, // 实际交易金额(USDT)
 	maxOrderAge: 1000 * 33, // 限价单最长存活时间(30秒)
-	basicLnp: (0.01 * 2) / 3,
+	basicLnp: (0.01 * 6) / 4,
 	profitStopLossRatio: 20, // 盈亏比
 	trailingStop: 0.0025, // 浮动止盈止损(0.25%)
 	stopLoss: 0.01, // 硬止损(0.5%)
@@ -105,7 +124,7 @@ const config = {
 	maxLnpPercent: 0,
 	minLnpPercent: 10000,
 	marketState: {},
-	riskMode: 'aggressive', // 保守 conservative  激进 aggressive 平衡 balanced
+	riskMode: 'balanced', // 保守 conservative  激进 aggressive 平衡 balanced
 };
 let intervalId = null;
 const configB = {
@@ -139,7 +158,8 @@ const configB = {
 // 	step5: '盈利后使用移动止损保护利润',
 // };
 
-function getMarketType(marketData) {
+const emaFilter = new DynamicEMAFilterWithATR();
+async function getMarketType(marketData) {
 	const [fastThirdKline, fastSecondKline, fastLastKline] = JSON.parse(
 		JSON.stringify(marketData[config.fastframe].slice(-3))
 	);
@@ -168,6 +188,7 @@ function getMarketType(marketData) {
 		emaFast: slowEmaFast,
 		emaSlow: slowEmaSlow,
 		emaTrend: slowEmaTrend,
+		emaFastSlope: slowEmaFastSlope,
 		emaSlowSlope: slowEmaSlowSlope,
 	} = slowLastKline;
 	const {
@@ -190,6 +211,9 @@ function getMarketType(marketData) {
 		emaFastSlope: fastEmaFastSlope,
 		emaSlowSlope: fastEmaSlowSlope,
 		emaTrendSlope: fastEmaTrendSlope,
+		ema4,
+		ema5,
+		ema6,
 	} = fastLastKline;
 	const {
 		close: fastLastClose,
@@ -204,47 +228,84 @@ function getMarketType(marketData) {
 		emaTrend: fastThirdEmaTrend,
 	} = fastThirdKline;
 
-	const longCondition =
-		trendClose > trendEmaTrend &&
-		// trendEmaFast > trendEmaSlow &&
-		slowEmaFast > slowEmaSlow &&
-		// (slowLastEmaFast < slowLastEmaSlow ||
-		// 	slowThirdEmaFast < slowThirdEmaSlow) &&
-		fastEmaFast > fastEmaSlow &&
-		fastEmaFastSlope > 50 &&
-		fastEmaSlowSlope > 30;
-	// (fastLastEmaFast < fastLastEmaSlow ||
-	// 	fastThirdEmaFast < fastThirdEmaSlow);
+	// const longCondition =
+	// 	fastEmaFast < fastEmaSlow &&
+	// 	fastLastEmaFast > fastLastEmaSlow &&
+	// 	fastEmaTrend > ema5 &&
+	// 	ema4 > ema6 &&
+	// 	fastClose > ema5;
 
-	const shortCondition =
-		trendClose < trendEmaTrend &&
-		// trendEmaFast < trendEmaSlow &&
-		slowEmaFast < slowEmaSlow &&
-		// (slowLastEmaFast > slowLastEmaSlow ||
-		// 	slowThirdEmaFast > slowThirdEmaSlow) &&
-		fastEmaFast < fastEmaSlow &&
-		fastEmaFastSlope < -50 &&
-		fastEmaSlowSlope < -30;
-	// (fastLastEmaFast > fastLastEmaSlow ||
-	// 	fastThirdEmaFast > fastThirdEmaSlow);
+	// const shortCondition =
+	// 	fastEmaFast > fastEmaSlow &&
+	// 	fastLastEmaFast < fastLastEmaSlow &&
+	// 	fastEmaTrend < ema5 &&
+	// 	ema4 < ema6 &&
+	// 	fastClose < ema5;
 
-	const longCloseCondition =
-		((slowEmaFast < slowEmaSlow || slowClose < slowEmaTrend) &&
-			fastEmaFastSlope < -50) ||
-		fastEmaFastSlope < -80;
-	const shortCloseCondition =
-		((slowEmaFast > slowEmaSlow || slowClose > slowEmaTrend) &&
-			fastEmaFastSlope > 50) ||
-		fastEmaFastSlope > 80;
+	// const longCloseCondition = fastClose < ema5 || fastEmaTrend < ema5;
+	// const shortCloseCondition = fastClose > ema5 || fastEmaTrend > ema5;
+	let longCondition = false;
+	let shortCondition = false;
+
+	longCondition =
+		fastClose > fastEmaTrend &&
+		fastLastClose < fastLastEmaTrend &&
+		fastEmaTrend > ema5 &&
+		ema5 > ema6 &&
+		fastClose > ema6;
+	shortCondition =
+		fastClose < fastEmaTrend &&
+		fastLastClose > fastLastEmaTrend &&
+		fastEmaTrend < ema5 &&
+		ema5 < ema6 &&
+		fastClose < ema6;
+
+	// 或添加趋势强度过滤
+	const trendStrength = Math.abs(ema5 - ema6) / fastClose;
+
+	longCondition =
+		longCondition &&
+		((trendStrength > 0.003 && trendStrength < 0.005) ||
+			trendStrength < 0.001);
+	shortCondition =
+		shortCondition &&
+		((trendStrength > 0.003 && trendStrength < 0.005) ||
+			trendStrength < 0.001);
+
+	const longCloseCondition = fastClose < fastEmaTrend;
+	const shortCloseCondition = fastClose > fastEmaTrend;
+
+	// 使用ATR动态过滤
+	const shouldFilter = await emaFilter.shouldFilterAdaptive(
+		slowEmaFast,
+		slowEmaSlow,
+		marketData[config.slowframe]
+	);
+
+	// if (shouldFilter) {
+	// 	marketType = '趋势多趋势空-EMA过于接近被过滤';
+	// }
+
+	// if (!shouldFilter) {
+	// 	// 获取信号强度
+	// 	const strength = await emaFilter.getSignalStrengthWithATR(
+	// 		slowEmaFast,
+	// 		slowEmaSlow,
+	// 		marketData[config.slowframe]
+	// 	);
+	// 	if (strength === 'filtered') {
+	// 	}
+	// }
 
 	if (longCloseCondition) marketType = '趋势空';
 	if (shortCloseCondition) marketType = '趋势多';
-	if (longCondition&& false) marketType = '趋势多且增强';
-	if (shortCondition&& false) marketType = '趋势空且增强';
+	if (longCondition) marketType = '趋势多且增强';
+	if (shortCondition) marketType = '趋势空且增强';
 
+	console.log('趋势强度:', trendStrength);
 	console.log('快速周期:', filterCandleData(fastLastKline));
-	console.log('慢速周期:', filterCandleData(slowLastKline));
-	console.log('趋势周期:', filterCandleData(trendLastKline));
+	// console.log('慢速周期:', filterCandleData(slowLastKline));
+	// console.log('趋势周期:', filterCandleData(trendLastKline));
 	console.log('市场类型:', marketType);
 
 	return marketType;
@@ -258,6 +319,9 @@ function filterCandleData(data) {
 		'emaFast',
 		'emaSlow',
 		'emaTrend',
+		'ema4',
+		'ema5',
+		'ema6',
 		'emaFastSlope',
 		'emaSlowSlope',
 		'emaTrendSlope',
@@ -389,6 +453,27 @@ async function calculateIndicators() {
 			);
 
 			indicatorPromises.push(
+				tulind.indicators.ema.indicator(
+					[closes],
+					[config.emaSettings[tf].periods[3]]
+				)
+			);
+
+			indicatorPromises.push(
+				tulind.indicators.ema.indicator(
+					[closes],
+					[config.emaSettings[tf].periods[4]]
+				)
+			);
+
+			indicatorPromises.push(
+				tulind.indicators.ema.indicator(
+					[closes],
+					[config.emaSettings[tf].periods[5]]
+				)
+			);
+
+			indicatorPromises.push(
 				tulind.indicators.bbands.indicator(
 					[closes],
 					[config.bollinger.period, config.bollinger.stdDev]
@@ -429,12 +514,15 @@ async function calculateIndicators() {
 				emaFast,
 				emaSlow,
 				emaTrend,
+				ema4,
+				ema5,
+				ema6,
 				bollinger,
 				atr,
 				macd,
 				[adx, adxPlusDI, adxMinusDI],
 				rsi,
-			] = result.slice(index * 8, (index + 1) * 8);
+			] = result.slice(index * 11, (index + 1) * 11);
 			// 计算EMA斜率
 			const emaFastSlopes = [];
 			const emaSlowSlopes = [];
@@ -512,9 +600,12 @@ async function calculateIndicators() {
 					const rsiIndex = i - config.rsiPeriod;
 					d.rsi = rsi[0][rsiIndex];
 				}
-				d.emaFast = emaFast[0][i];
-				d.emaSlow = emaSlow[0][i];
-				d.emaTrend = emaTrend[0][i];
+				d.emaFast = Number(emaFast[0][i].toFixed(8));
+				d.emaSlow = Number(emaSlow[0][i].toFixed(8));
+				d.emaTrend = Number(emaTrend[0][i].toFixed(8));
+				d.ema4 = Number(ema4[0][i].toFixed(8));
+				d.ema5 = Number(ema5[0][i].toFixed(8));
+				d.ema6 = Number(ema6[0][i].toFixed(8));
 				if (d.adx && d.atr) {
 					// const isVolatility = d.adx > 30;
 					const volatility_ratio = d.atr / d.emaSlow;
@@ -923,7 +1014,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 	const { marketType: fastMarketType } = candle[config.fastframe];
 	let { marketType: slowMarketType } = candle[config.slowframe];
 
-	slowMarketType = getMarketType(marketData);
+	slowMarketType = await getMarketType(marketData);
 	slowMarketType = toogleMarketType(slowMarketType, candle[config.slowframe]);
 
 	config.currentCandle = Object.assign(candle[config.fastframe], {
@@ -989,7 +1080,7 @@ async function generateSignal(currentPrice, isShowLog = false) {
 
 // 风险管理模块
 class RiskManager {
-	static checkStopConditions(signal) {
+	static async checkStopConditions(signal) {
 		const { side, position } = state;
 		if (position === 0) return { isStop: false };
 
@@ -1008,7 +1099,7 @@ class RiskManager {
 		const { marketType: fastMarketType } = candle[config.fastframe];
 		let { marketType: slowMarketType } = candle[config.slowframe];
 
-		slowMarketType = getMarketType(marketData);
+		slowMarketType = await getMarketType(marketData);
 		slowMarketType = toogleMarketType(
 			slowMarketType,
 			candle[config.slowframe]
@@ -1049,7 +1140,7 @@ class RiskManager {
 		const isProfitTarget = lnp > basicLnp * profitStopLossRatio;
 		const isStopLoss = lnp < -basicLnp;
 		let isProfitFirst =
-			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 10;
+			amount > (config.realTradeAmount * 7.5) / 10 && lnp > basicLnp * 20;
 		let isProfitSecond =
 			amount > (config.realTradeAmount * 5) / 10 && lnp > basicLnp * 4;
 		let isLossFirst =
@@ -1269,11 +1360,11 @@ class RiskManager {
 	}
 
 	static async openPosition(signal, orderBook) {
-		const getIsHasPosition = await RiskManager.getIsHasPosition();
-		if (getIsHasPosition) return;
-
 		// 步骤4: 生成限价单
 		if (state.position === 0 && !RiskManager.isCoolingDown()) {
+			// const getIsHasPosition = await RiskManager.getIsHasPosition();
+			// if (getIsHasPosition) return;
+
 			if (!signal.buySignal && !signal.sellSignal) {
 				return;
 			}
@@ -1361,9 +1452,9 @@ function getPositionRules(mode) {
 			uncertain: { high: 0.25, medium: 0.2, low: 0.1 },
 		},
 		balanced: {
-			trending: { high: 1.2, medium: 0.8, low: 0.4 },
-			ranging: { high: 0.03, medium: 0.02, low: 0.01 },
-			uncertain: { high: 0.5, medium: 0.25, low: 0.1 },
+			trending: { high: 0.8, medium: 1.2, low: 0.4 },
+			ranging: { high: 0.5, medium: 0.5, low: 0.5 },
+			uncertain: { high: 0.5, medium: 0.8, low: 0.5 },
 		},
 		aggressive: {
 			trending: { high: 1.5, medium: 1.0, low: 0.5 },
@@ -1390,13 +1481,14 @@ async function initialize() {
 		);
 	});
 
-	const [candlesFast, candlesSlow, candlesTrend] = await Promise.all(
-		candlePromises
-	);
+	const [candlesFast] = await Promise.all(candlePromises);
 
-	// candlesFast.pop();
-	// candlesSlow.pop();
-	// candlesTrend.pop();
+	const candlesSlow = JSON.parse(JSON.stringify(candlesFast));
+	const candlesTrend = JSON.parse(JSON.stringify(candlesFast));
+
+	candlesFast.pop();
+	candlesSlow.pop();
+	candlesTrend.pop();
 
 	marketData[config.fastframe] = candlesFast.map(parseKLine);
 	marketData[config.slowframe] = candlesSlow.map(parseKLine);
@@ -1429,29 +1521,26 @@ async function initialize() {
 	const confidenceLevel = getConfidenceLevel(marketState.confidence);
 	const positionRules = getPositionRules(config.riskMode);
 
-	switch (marketState.signal) {
-		case 1: // 趋势市
-			positionSize =
-				positionSize * positionRules.trending[confidenceLevel];
-			console.log('🟢 趋势市 - 积极交易模式');
-			break;
-		case 0: // 震荡市
-			positionSize =
-				positionSize * positionRules.ranging[confidenceLevel];
-			console.log('🟡 震荡市 - 保守交易模式');
-			// 或者完全停止交易: shouldTrade = false;
-			break;
-		case -1: // 不确定
-			positionSize =
-				positionSize * positionRules.uncertain[confidenceLevel];
-			console.log('🟠 不确定 - 谨慎交易模式');
-			break;
-	}
+	// switch (marketState.signal) {
+	//   case 1: // 趋势市
+	//     positionSize = positionSize * positionRules.trending[confidenceLevel];
+	//     console.log("🟢 趋势市 - 积极交易模式");
+	//     break;
+	//   case 0: // 震荡市
+	//     positionSize = positionSize * positionRules.ranging[confidenceLevel];
+	//     console.log("🟡 震荡市 - 保守交易模式");
+	//     // 或者完全停止交易: shouldTrade = false;
+	//     break;
+	//   case -1: // 不确定
+	//     positionSize = positionSize * positionRules.uncertain[confidenceLevel];
+	//     console.log("🟠 不确定 - 谨慎交易模式");
+	//     break;
+	// }
 
-	if (!shouldTrade) {
-		console.log('跳过交易：市场处于震荡市');
-		return;
-	}
+	// if (!shouldTrade) {
+	//   console.log("跳过交易：市场处于震荡市");
+	//   return;
+	// }
 
 	config.realTradeAmount = positionSize;
 	console.log('当前交易金额:', config.realTradeAmount);
@@ -1498,7 +1587,7 @@ async function strategyLoop(isShowLog = false) {
 			lnpPercent,
 			isLossFirst,
 			isLossSecond,
-		} = RiskManager.checkStopConditions(signal);
+		} = await RiskManager.checkStopConditions(signal);
 		let isStopReverse = false;
 		config.lnpPercent = lnpPercent;
 		if (lnpPercent > config.maxLnpPercent) {
@@ -1511,17 +1600,13 @@ async function strategyLoop(isShowLog = false) {
 		}
 		const basicLnpPercent = config.basicLnp * config.leverage * 100;
 		const amount = Math.abs(state.position) * currentPrice;
-		if (
-			(config.maxLnpPercent > basicLnpPercent / 3 &&
-				amount < config.realTradeAmount * 1.2 &&
-				lnpPercent < config.maxLnpPercent * 0.382) ||
-			(config.maxLnpPercent < basicLnpPercent / 3 &&
-				amount < config.realTradeAmount * 1.2 &&
-				lnpPercent < -basicLnpPercent / 3)
-			// (config.minLnpPercent < -basicLnpPercent / 2 &&
-			// 	config.minLnpPercent + lnpPercent > 0)
-		)
-			isStopReverse = true;
+		// if (
+		// 	(config.maxLnpPercent > basicLnpPercent &&
+		// 		lnpPercent < config.maxLnpPercent * 0.382) ||
+		// 	(config.maxLnpPercent > basicLnpPercent / 3 &&
+		// 		lnpPercent < config.maxLnpPercent * 0.382)
+		// )
+		// 	isStopReverse = true;
 		if (isStop || isStopReverse) {
 			await RiskManager.closePosition(signal, orderBook, isStopLoss);
 			return;
@@ -1601,45 +1686,52 @@ const readData = async () => {
 };
 
 async function initPositionData() {
-	const positionResult = await cAuthClientBN.swap.getPosition();
-	const { positions, availableBalance, totalMarginBalance } = positionResult;
-	const dataConfig = await readData();
-	config.marketMode = dataConfig.marketMode || config.marketMode;
-	config.isMarketModeAuto =
-		dataConfig.isMarketModeAuto ||
-		dataConfig.isMarketModeAuto === 'true' ||
-		config.isMarketModeAuto;
-	config.isPaused =
-		dataConfig.isPaused ||
-		dataConfig.isPaused === 'true' ||
-		config.isPaused;
-	config.profitStopLossRatio =
-		dataConfig.profitStopLossRatio || config.profitStopLossRatio;
-	config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
-	config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
-	config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
-	config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
-	state.activeOrders = dataConfig.activeOrders || [];
-	if (positions) {
-		const holding = positions.find(
-			(item) => item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
-		);
-		if (holding) {
-			state = {
-				activeOrders: [], // 活跃限价单
-				position: Number(holding.positionAmt), // 当前持仓数量
-				entryPrice: Number(holding.entryPrice), // 持仓均价
-				// highestPrice: Number(holding.entryPrice), // 持仓期间最高价
-				// lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
-				side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
-			};
-			delete dataConfig.position;
-			state = Object.assign(dataConfig, state);
-			// if (config.isMarketModeAuto)
-			// 	config.marketMode = state.marketMode || config.marketMode;
+	try {
+		const positionResult = await cAuthClientBN.swap.getPosition();
+		const { positions, availableBalance, totalMarginBalance } =
+			positionResult;
+		// const positions = exchange.fetchPositions();
+		const dataConfig = await readData();
+		config.marketMode = dataConfig.marketMode || config.marketMode;
+		config.isMarketModeAuto =
+			dataConfig.isMarketModeAuto ||
+			dataConfig.isMarketModeAuto === 'true' ||
+			config.isMarketModeAuto;
+		config.isPaused =
+			dataConfig.isPaused ||
+			dataConfig.isPaused === 'true' ||
+			config.isPaused;
+		config.profitStopLossRatio =
+			dataConfig.profitStopLossRatio || config.profitStopLossRatio;
+		config.tradeAmount = dataConfig.tradeAmount || config.tradeAmount;
+		config.maxLnpPercent = dataConfig.maxLnpPercent || config.maxLnpPercent;
+		config.minLnpPercent = dataConfig.minLnpPercent || config.minLnpPercent;
+		config.lnpPercent = dataConfig.lnpPercent || config.lnpPercent;
+		state.activeOrders = dataConfig.activeOrders || [];
+		if (positions) {
+			const holding = positions.find(
+				(item) =>
+					item.positionAmt && Math.abs(Number(item.positionAmt)) > 0
+			);
+			if (holding) {
+				state = {
+					activeOrders: [], // 活跃限价单
+					position: Number(holding.positionAmt), // 当前持仓数量
+					entryPrice: Number(holding.entryPrice), // 持仓均价
+					// highestPrice: Number(holding.entryPrice), // 持仓期间最高价
+					// lowestPrice: Number(holding.entryPrice), // 持仓期间最低价
+					side: holding.positionSide === 'LONG' ? 'buy' : 'sell',
+				};
+				delete dataConfig.position;
+				state = Object.assign(dataConfig, state);
+				// if (config.isMarketModeAuto)
+				// 	config.marketMode = state.marketMode || config.marketMode;
+			}
 		}
+		// return Number(totalMarginBalance);
+	} catch (e) {
+		console.log('positions error', e);
 	}
-	return Number(totalMarginBalance);
 }
 
 function debounce(fn, delay) {
@@ -1658,9 +1750,9 @@ function debounce(fn, delay) {
 function connectWebSocket() {
 	const symbolForWS = config.symbol.replace('/', '').toLowerCase();
 	const streams = [
-		`${symbolForWS}@kline_${config.slowframe}`,
 		`${symbolForWS}@kline_${config.fastframe}`,
-		`${symbolForWS}@kline_${config.trendframe}`,
+		// `${symbolForWS}@kline_${config.slowframe}`,
+		// `${symbolForWS}@kline_${config.trendframe}`,
 	];
 	// ws = new WebSocket(
 	//   "wss://fstream.binance.com/ws/" + symbolForWS + "@kline_1m"
@@ -1679,9 +1771,9 @@ function connectWebSocket() {
 			const streamInfo = msg.stream.split('@');
 			const [symbol, period] = streamInfo;
 			const periodMap = {
-				[`kline_${config.slowframe}`]: config.slowframe,
 				[`kline_${config.fastframe}`]: config.fastframe,
-				[`kline_${config.trendframe}`]: config.trendframe,
+				// [`kline_${config.slowframe}`]: config.slowframe,
+				// [`kline_${config.trendframe}`]: config.trendframe,
 			};
 
 			if (!msg.data.k.x) return; // 仅处理闭合K线
@@ -1747,7 +1839,9 @@ function mergeTimeframes() {
 (async () => {
 	await exchange.loadMarkets();
 
-	globalAvailableBalance = await initPositionData();
+	// globalAvailableBalance = await initPositionData();
+
+	await initPositionData();
 	await initialize();
 
 	connectWebSocket();
