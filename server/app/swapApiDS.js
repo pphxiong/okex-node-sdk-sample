@@ -807,7 +807,7 @@ class OrderManager {
           // config.minLnpPercent = 10000;
         }
 
-        // this.writeData();
+        this.writeData();
       }
     }
   }
@@ -1552,11 +1552,11 @@ async function strategyLoop(isShowLog = false) {
     config.lnpPercent = lnpPercent;
     if (lnpPercent > config.maxLnpPercent) {
       config.maxLnpPercent = lnpPercent;
-      // await OrderManager.writeData();
+      await OrderManager.writeData();
     }
     if (lnpPercent < config.minLnpPercent) {
       config.minLnpPercent = lnpPercent;
-      // await OrderManager.writeData();
+      await OrderManager.writeData();
     }
     const basicLnpPercent = config.basicLnp * config.leverage * 100;
     const amount = Math.abs(state.position) * currentPrice;
@@ -1594,7 +1594,7 @@ async function strategyLoop(isShowLog = false) {
     console.log("time", moment().format("YYYY-MM-DD HH:mm:ss"));
     if (state.activeOrders.length > 0) {
       state.activeOrders = [];
-      // await OrderManager.writeData();
+      await OrderManager.writeData();
     }
     console.error("策略错误:", err.message);
     // if (config.isMarketModeAuto) {
