@@ -848,11 +848,6 @@ class Backtester {
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
 
-		if (longCloseCondition) marketType = '趋势空';
-		if (shortCloseCondition) marketType = '趋势多';
-		if (longCondition) marketType = '趋势多且增强';
-		if (shortCondition) marketType = '趋势空且增强';
-
 		if (
 			(trendStrength > 0.001 && trendStrength < 0.003) ||
 			trendStrength > 0.005
@@ -874,6 +869,11 @@ class Backtester {
 			longCloseCondition = close < emaTrend;
 			shortCloseCondition = close > emaTrend;
 		}
+
+		if (longCloseCondition) marketType = '趋势空';
+		if (shortCloseCondition) marketType = '趋势多';
+		if (longCondition) marketType = '趋势多且增强';
+		if (shortCondition) marketType = '趋势空且增强';
 
 		// if (close > emaSlow) {
 		// 	marketType = '趋势多';
