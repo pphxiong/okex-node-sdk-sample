@@ -252,13 +252,13 @@ async function getMarketType(marketData) {
 		fastClose > fastEmaTrend &&
 		fastLastClose < fastLastEmaTrend &&
 		fastEmaTrend > ema5 &&
-		ema5 > ema6 &&
+		// ema5 > ema6 &&
 		fastClose > ema6;
 	shortCondition =
 		fastClose < fastEmaTrend &&
 		fastLastClose > fastLastEmaTrend &&
 		fastEmaTrend < ema5 &&
-		ema5 < ema6 &&
+		// ema5 < ema6 &&
 		fastClose < ema6;
 
 	longCondition =

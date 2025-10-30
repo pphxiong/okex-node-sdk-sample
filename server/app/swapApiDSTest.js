@@ -839,11 +839,11 @@ class Backtester {
 		longCondition =
 			longCondition &&
 			((trendStrength > 0.003 && trendStrength < 0.005) ||
-				trendStrength < 0.001);
+				trendStrength < 0.002);
 		shortCondition =
 			shortCondition &&
 			((trendStrength > 0.003 && trendStrength < 0.005) ||
-				trendStrength < 0.001);
+				trendStrength < 0.002);
 
 		longCloseCondition = close < emaTrend;
 		shortCloseCondition = close > emaTrend;
