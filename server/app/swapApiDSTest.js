@@ -836,11 +836,11 @@ class Backtester {
 		const trendStrength = Math.abs(ema5 - ema6) / close;
 		longCondition =
 			longCondition &&
-			((trendStrength > 0.0035 && trendStrength < 0.005) ||
+			((trendStrength > 0.0035 && trendStrength < 0.0055) ||
 				trendStrength < 0.0005);
 		shortCondition =
 			shortCondition &&
-			((trendStrength > 0.0035 && trendStrength < 0.005) ||
+			((trendStrength > 0.0035 && trendStrength < 0.0055) ||
 				trendStrength < 0.0005);
 
 		longCloseCondition = close < emaTrend;
